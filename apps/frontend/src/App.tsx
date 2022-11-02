@@ -1,24 +1,22 @@
-import { log } from "logger";
-import Head from "next/head";
+import * as React from "react";
+import "./App.css";
 import { CounterButton, NewTabLink } from "ui";
 
-export default function Store() {
-  log("Hey! This is Home.");
+function App() {
   return (
     <div className="container">
-      <Head>
-        <title>Store | Kitchen Sink</title>
-      </Head>
       <h1 className="title">
-        Store <br />
+        Admin <br />
         <span>Kitchen Sink</span>
       </h1>
       <CounterButton />
       <p className="description">
         Built With{" "}
         <NewTabLink href="https://turborepo.org/">Turborepo</NewTabLink> +{" "}
-        <NewTabLink href="https://nextjs.org/">Next.js</NewTabLink>
+        <NewTabLink href="https://vitejs.dev/">Vite</NewTabLink>
       </p>
     </div>
   );
 }
+
+export default App;
