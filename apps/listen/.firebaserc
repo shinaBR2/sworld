@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "my-world-dev"
+  },
+  "targets": {
+    "my-world-dev": {
+      "hosting": {
+        "listen": [
+          "shinabr2-listen-dev"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

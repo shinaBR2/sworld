@@ -5,7 +5,7 @@ import { CounterButton, NewTabLink } from "ui";
 function App() {
   return (
     <div className="container">
-      <h1 className="title">My main world</h1>
+      <h1 className="title">Listen</h1>
       <CounterButton />
       <p className="description">
         Built With{" "}
