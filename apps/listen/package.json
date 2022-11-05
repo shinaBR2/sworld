@@ -1,5 +1,5 @@
 {
-  "name": "music",
+  "name": "listen",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,13 +10,15 @@
     "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
   },
   "dependencies": {
+    "firebase": "^9.13.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.1.0",
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:*",
