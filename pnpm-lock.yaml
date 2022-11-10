@@ -152,6 +152,7 @@ importers:
       firebase: ^9.13.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-firebase-hooks: ^5.1.0
       tsconfig: workspace:*
       typescript: ^4.8.3
       ui: workspace:*
@@ -160,6 +161,7 @@ importers:
       firebase: 9.13.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-firebase-hooks: 5.1.0_ldr2ntcns7yrhgxmhisk4aijfi
       ui: link:../../packages/ui
     devDependencies:
       '@originjs/vite-plugin-commonjs': 1.0.3
@@ -9406,6 +9408,16 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+
+  /react-firebase-hooks/5.1.0_ldr2ntcns7yrhgxmhisk4aijfi:
+    resolution: {integrity: sha512-R+2cRCNoA3pw3l9yI90up5/iVhNO3ZgRh+1PPBCj8nIZfcsZHLCktacRhXbzcKX0G47ldHXC9JLsFWOmjzvcxA==}
+    peerDependencies:
+      firebase: '>= 9.0.0'
+      react: '>= 16.8.0'
+    dependencies:
+      firebase: 9.13.0
+      react: 18.2.0
+    dev: false
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}

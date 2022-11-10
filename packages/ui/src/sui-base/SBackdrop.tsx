@@ -1,15 +1,16 @@
-import { Backdrop } from "@mui/material";
+import { Backdrop, CircularProgress } from "@mui/material";
 import React from "react";
 
 export interface SBackdropProps {
   open: boolean;
   onClick?: () => void;
+  loading: boolean;
   children: React.ReactNode;
 }
 
 // https://mui.com/material-ui/react-backdrop/
 const SBackdrop = (props: SBackdropProps) => {
-  const { open, onClick, children } = props;
+  const { open, onClick, loading, children } = props;
 
   return (
     <Backdrop
@@ -17,7 +18,7 @@ const SBackdrop = (props: SBackdropProps) => {
       open={open}
       onClick={onClick}
     >
-      {children}
+      {loading ? <CircularProgress /> : children}
     </Backdrop>
   );
 };
