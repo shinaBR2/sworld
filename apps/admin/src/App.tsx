@@ -1,22 +1,15 @@
-import * as React from "react";
-import "./App.css";
-import { CounterButton, NewTabLink } from "ui";
+import React from "react";
+import Router from "./routes";
+import ThemeProvider from "./theme";
+import ScrollToTop from "./components/scroll-to-top";
 
-function App() {
+// ----------------------------------------------------------------------
+
+export default function App() {
   return (
-    <div className="container">
-      <h1 className="title">
-        Admin <br />
-        <span>Kitchen Sink</span>
-      </h1>
-      <CounterButton />
-      <p className="description">
-        Built With{" "}
-        <NewTabLink href="https://turborepo.org/">Turborepo</NewTabLink> +{" "}
-        <NewTabLink href="https://vitejs.dev/">Vite</NewTabLink>
-      </p>
-    </div>
+    <ThemeProvider>
+      <ScrollToTop />
+      <Router />
+    </ThemeProvider>
   );
 }
-
-export default App;

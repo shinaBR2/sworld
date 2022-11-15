@@ -1,11 +1,22 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import "./index.css";
+import * as ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
+import { AuthProvider } from "./providers/auth";
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
+    <HelmetProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
+    </HelmetProvider>
+  </React.StrictMode>
 );

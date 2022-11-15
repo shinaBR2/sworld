@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "my-world-dev"
+  },
+  "targets": {
+    "my-world-dev": {
+      "hosting": {
+        "admin": [
+          "shinabr2-admin-dev"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
