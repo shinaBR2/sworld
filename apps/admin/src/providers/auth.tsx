@@ -45,12 +45,9 @@ const AuthProvider: FC<Props> = ({ children }) => {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/firebase.User
       const uid = user.uid;
-      console.log(`Signed in`);
 
       if (auth.currentUser) {
         const tokenResult = await auth.currentUser.getIdTokenResult();
-
-        console.log(`tokenResult: ${tokenResult.claims.admin}`);
 
         if (!!tokenResult.claims.admin) {
           setIsAdmin(true);
@@ -59,8 +56,6 @@ const AuthProvider: FC<Props> = ({ children }) => {
 
       setUser(user);
     } else {
-      console.log(`Signed out`);
-
       setUser(null);
     }
   });

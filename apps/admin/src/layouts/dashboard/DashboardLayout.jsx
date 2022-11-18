@@ -39,8 +39,6 @@ export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(`isSignedin: ${isSignedIn}`);
-
   if (!isSignedIn) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
