@@ -1,12 +1,10 @@
-/**
- * This should include all core
- */
-import hooks from "./hooks";
-import {
+import useSAudioPlayer, {
   SAudioPlayerInputs,
   SAudioPlayerAudioItem,
   SAudioPlayerLoopMode,
-} from "./hooks";
+} from "./useSAudioPlayer";
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
+
+const hooks = { useSAudioPlayer };
 export default hooks;
