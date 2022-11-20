@@ -156,3 +156,8 @@ interface SAudioPlayerInputs {
 // Using
 useSAudioPlayer(inputs: SAudioPlayerInputs)
 ```
+
+## Limitation
+
+The source code: https://github.com/shinaBR2/shinabr2-world/tree/main/packages/core/src/universal/hooks/useSAudioPlayer
+There are some problems with monorepo structure and npm packages, I will resolve in the future. Right now the import may not work for TypeScript projects, feel free to PR or fork the repository, the source code itself is quite simple
