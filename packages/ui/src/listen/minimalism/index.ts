@@ -1,3 +1,4 @@
+import MinimalismThemeProvider from "./ThemeProvider";
 import MusicWidget from "./music-widget";
 
-export { MusicWidget };
+export { MinimalismThemeProvider, MusicWidget };

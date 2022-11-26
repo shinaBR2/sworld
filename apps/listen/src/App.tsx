@@ -1,12 +1,16 @@
 import * as React from "react";
-import "./App.css";
+import { ListenUI, SUI } from "ui";
 import { AuthProvider } from "./providers/auth";
 import Home from "./containers/minimalism/Home";
+
+const { MinimalismThemeProvider } = ListenUI.Minimalism;
 
 const App = () => {
   return (
     <AuthProvider>
-      <Home />
+      <MinimalismThemeProvider>
+        <Home />
+      </MinimalismThemeProvider>
     </AuthProvider>
   );
 };
