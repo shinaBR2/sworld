@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { playAudio, seek } from "./utils/actions";
 
 export interface SAudioPlayerAudioItem {
+  id: string;
   src: string;
   name: string;
   artistName: string;
