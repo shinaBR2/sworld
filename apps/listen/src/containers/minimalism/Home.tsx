@@ -4,7 +4,7 @@ import { ListenCore } from "core";
 import db from "../../providers/firestore";
 
 const { SBackdrop } = SUI;
-const { MusicWidget } = ListenUI.Minimalism;
+const { AppBar, MusicWidget } = ListenUI.Minimalism;
 const { useGetHomeAudioList } = ListenCore;
 
 const Home = () => {
@@ -12,6 +12,7 @@ const Home = () => {
 
   return (
     <main>
+      <AppBar />
       <SBackdrop open={true} loading={loading}>
         {!!audioList && <MusicWidget audioList={audioList} />}
       </SBackdrop>
