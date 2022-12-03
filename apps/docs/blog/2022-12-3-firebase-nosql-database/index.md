@@ -77,7 +77,7 @@ From my point of view, there are two kinds of batch-write operations. First, we 
 
 Let's call the first approach just simple "batched-write", second one is "transaction".
 
-"Batched-write" is just simply answer these questions:
+"Batched-write" is just simply answers these questions:
 
 - When the process is started and ended?
 - What should we do during the process?
