@@ -28,6 +28,10 @@ After we have denormalized our data, the next thing is keeping the data consiste
 
 NoSQL is based on the theory that reading is more often than writing.
 
+The way we should structure data is the way our application needs to use.
+
+Never assume what you get from the NoSQL is the thing you expect, especially in the world of mobile apps since the end users may not want does not update the latest version.
+
 A reminder, no matter what kind of your database you are using, the relation among your data still be the same. Don't use your brain to remember how you should structure the database, let's understand the relationship of your data instead.
 
 ## Structure data
@@ -99,7 +103,7 @@ The database behind the scence will double-check the places we want to read + wr
 
 This strategy is known as "optimistic concurrency control", it means to optimize for the happy case (which happens most of the time), and if the worst case happens, just retry the whole process again.
 
-## Cloud Functions
+### Cloud Functions
 
 Forget about the fact that Cloud Functions has not related to the database world, there is one pattern that I usually do to keep all the data consistent. That is using the listener concept of Cloud Functions, you may familiar with that during working with Firebase's NoSQL databases. The idea is "listening" to changes in some specific data, then updating all other denormalized data in other places.
 
@@ -107,3 +111,16 @@ There are no perfect solutions, you can consider some trade-offs, mainly come fr
 
 - Does that make sense to let the client-side update multiple places in the database? If not, let the client-side update one place, then let the Cloud Functions sync up the rest.
 - Does the client need data to be reflected immediately and offline support? If not, let the Cloud Functions do the job.
+
+## Performance
+
+The key in terms of query performance is: don't ask/give more data than you need. It has slightly different between the "Firebase real-time database" and the "Firestore" but there is something you will need to keep in mind.
+
+For Firebase real-time database only: the number of children **DOES** matter to query performance. It means looking for 10 items in a collection that has 10M items is slower than in a collection that has only 100 items. See [this Stackoverflow answer](https://stackoverflow.com/a/39713060/8270395).
+
+One good thing about Firestore is query speed depends on how many entities we actually get, **NOT** the total entities. In other words, your collection has 60M items, it is still fast as same as only 60 items.
+
+Also, check out these Stackoverflow questions:
+
+- A [good answer about the non-query model](https://stackoverflow.com/a/37884772/8270395)
+- [Pipeline the request](https://stackoverflow.com/a/35932786/8270395)
