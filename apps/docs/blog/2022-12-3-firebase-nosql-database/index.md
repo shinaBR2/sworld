@@ -30,7 +30,7 @@ NoSQL is based on the theory that reading is more often than writing.
 
 The way we should structure data is the way our application needs to use.
 
-Never assume what you get from the NoSQL is the thing you expect, especially in the world of mobile apps since the end users may not want does not update the latest version.
+Never assume what you get from the NoSQL is the thing you expect, especially in the world of mobile apps since the end users may not want to update to the latest version.
 
 A reminder, no matter what kind of your database you are using, the relation among your data still be the same. Don't use your brain to remember how you should structure the database, let's understand the relationship of your data instead.
 
