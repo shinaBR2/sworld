@@ -98,3 +98,12 @@ Let's call the first approach just simple "batched-write", second one is "transa
 The database behind the scence will double-check the places we want to read + write data, if nothing changes from the moment we start the transaction, go ahead and commit all the changes. Otherwise, back to step one. The process will repeat until either successful or fail due to too many tries.
 
 This strategy is known as "optimistic concurrency control", it means to optimize for the happy case (which happens most of the time), and if the worst case happens, just retry the whole process again.
+
+## Cloud Functions
+
+Forget about the fact that Cloud Functions has not related to the database world, there is one pattern that I usually do to keep all the data consistent. That is using the listener concept of Cloud Functions, you may familiar with that during working with Firebase's NoSQL databases. The idea is "listening" to changes in some specific data, then updating all other denormalized data in other places.
+
+There are no perfect solutions, you can consider some trade-offs, mainly come from user experience (maybe more that I can not remember now):
+
+- Does that make sense to let the client-side update multiple places in the database? If not, let the client-side update one place, then let the Cloud Functions sync up the rest.
+- Does the client need data to be reflected immediately and offline support? If not, let the Cloud Functions do the job.
