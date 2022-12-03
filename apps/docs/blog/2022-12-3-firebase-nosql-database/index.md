@@ -9,6 +9,13 @@ There are many kinds of NoSQL databases, this article mainly focuses on Firebase
 
 A little reminder, this article is not a comprehensive guide about the NoSQL world. From now on this article, whenever I use "NoSQL", I am talking about the above databases, for other kinds of NoSQL databases, it may vary.
 
+## Inspired
+
+Must checkout:
+
+- [Firebase for SQL developers series](https://www.youtube.com/playlist?list=PLl-K7zZEsYLlP-k-RKFa7RyNPa9_wCH2s)
+- [Get to know Firestore](https://www.youtube.com/playlist?list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCuZgZ)
+
 ## Mindset
 
 First and foremost, mindset is the key to everything.
