@@ -7,6 +7,13 @@ import {
   SAudioPlayerAudioItem,
   SAudioPlayerLoopMode,
 } from "./hooks";
+import { compareString } from "./common";
+
+const commonHelpers = {
+  compareString,
+};
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
+
+export { commonHelpers };
 export default hooks;

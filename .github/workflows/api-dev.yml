@@ -1,0 +1,63 @@
+name: Dev - Deploy API
+"on":
+  push:
+    branches:
+      - api-dev
+    paths:
+      - "apps/api/**"
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    # env:
+    # SLACK_WEBHOOK_URL: '${{ secrets.SLACK_NOTIFICATION_WEBHOOK }}'
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: install_node
+        name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.0
+
+      - id: setup_pnpm
+        name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7.14.1
+          run_install: true
+
+      - id: install_packages
+        name: Install packages
+        run: pnpm install --filter api
+
+      - id: build
+        name: Build
+        run: pnpm build --filter api
+
+      - id: isolate_build
+        name: Isolate build
+        run: pnpx pnpm-isolate-workspace api
+
+      - id: copy_build_to_isolate_folder
+        name: Copy build to isolate folder
+        run: cp -r apps/api/dist apps/api/_isolated_
+
+      - id: fix_package_json
+        name: Fix package.json
+        run: |
+          mv apps/api/_isolated_/package.json apps/api/_isolated_/package-dev.json
+          mv apps/api/_isolated_/package-prod.json apps/api/_isolated_/package.json
+          sed -i 's/"core\"\: \"workspace:\*\"/"core\"\: \"file\:workspaces\/packages\/core\"/g' apps/api/_isolated_/package.json
+
+      - id: deploy
+        name: Deploy
+        uses: w9jds/firebase-action@master
+        with:
+          args: use my-world-dev && firebase deploy --only functions
+        env:
+          GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}"
+          PROJECT_ID: my-world-dev

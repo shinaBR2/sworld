@@ -1,10 +1,5 @@
-import { createServer } from "./server";
-import { log } from "logger";
+import * as healthCheck from "./healthCheck";
 
-// eslint-disable-next-line turbo/no-undeclared-env-vars
-const port = process.env.PORT || 5001;
-const server = createServer();
+// trigger deploy 5
 
-server.listen(port, () => {
-  log(`api running on ${port}`);
-});
+export { healthCheck };
