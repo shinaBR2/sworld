@@ -8,6 +8,7 @@ const storageBucket = import.meta.env.VITE_STORAGE_BUCKET;
 const messagingSenderId = import.meta.env.VITE_MESSAGING_SENDER_ID;
 const appId = import.meta.env.VITE_APP_ID;
 const measurementId = import.meta.env.VITE_MEASUREMENT_ID;
+const region = "asia-south1";
 
 const firebaseConfig = {
   apiKey,
@@ -21,7 +22,7 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-const functions = getFunctions();
+const functions = getFunctions(firebaseApp, region);
 
 const callable = (name: string, data: any) => {
   return httpsCallable(functions, name)(data);
