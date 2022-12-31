@@ -27,7 +27,7 @@ const PlayingList = (
   return (
     <StyledPlayingList ref={ref}>
       <Divider />
-      <Box height="100%" pb={2}>
+      <Box height="100%" pb={2} mb={2}>
         <MenuList>
           {audioList.map((a) => {
             const selected = isSelected(a.id);
