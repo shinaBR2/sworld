@@ -56,9 +56,6 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
     setShowPlayinglist(false);
   };
-  const isSelected = (id: string) => {
-    return audioList[index].id === id;
-  };
 
   const controlProps = {
     isPlay,
@@ -109,7 +106,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
           <PlayingList
             audioList={audioList}
             onSelect={onSelect}
-            isSelected={isSelected}
+            currentId={audioItem.id}
           />
         </Slide>
         <audio {...getAudioProps()} />

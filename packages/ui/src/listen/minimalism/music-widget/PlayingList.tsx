@@ -13,7 +13,7 @@ import { StyledPlayingList } from "./Styled";
 
 interface PlayingListProps {
   audioList: SAudioPlayerAudioItem[];
-  isSelected: (id: string) => boolean;
+  currentId: string;
   onSelect: (id: string) => () => void;
 }
 
@@ -22,7 +22,7 @@ const PlayingList = (
   props: PlayingListProps,
   ref: Ref<unknown> | undefined
 ) => {
-  const { audioList, onSelect, isSelected } = props;
+  const { audioList, onSelect, currentId } = props;
 
   return (
     <StyledPlayingList ref={ref}>
@@ -30,7 +30,8 @@ const PlayingList = (
       <Box height="100%" pb={2} mb={2}>
         <MenuList>
           {audioList.map((a) => {
-            const selected = isSelected(a.id);
+            const selected = a.id === currentId;
+
             return (
               <MenuItem key={a.id} onClick={onSelect(a.id)} selected={selected}>
                 <ListItemText>{a.name}</ListItemText>
