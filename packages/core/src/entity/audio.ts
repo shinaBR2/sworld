@@ -9,7 +9,6 @@ import {
   useAddDoc,
   useDeleteDoc,
   useGetCollectionOn,
-  useGetCollectionOnce,
   useUpdateDoc,
 } from "../universal/dbQuery";
 import { BaseFirestoreInputs } from "../universal/dbQuery/interfaces";
@@ -20,7 +19,7 @@ const basePathSegments: string[] = [""];
 
 type PathConfigs = Omit<BaseFirestoreInputs, "db">;
 
-const converter: FirestoreDataConverter<AudioItem> = {
+const audioConverter: FirestoreDataConverter<AudioItem> = {
   toFirestore: (data: WithFieldValue<AudioItem>) => {
     const { image, ...rest } = data;
 
@@ -51,7 +50,7 @@ const useListenEntityList = (db: Firestore, config?: PathConfigs) => {
     db,
     path: basePath,
     pathSegments: [...basePathSegments],
-    converter,
+    converter: audioConverter,
     ...config,
   };
   const { values, loading, error } = useGetCollectionOn(inputs);
@@ -71,7 +70,7 @@ const useAddEntity = (db: Firestore) => {
       db,
       path: basePath,
       pathSegments: [...basePathSegments],
-      data: converter.toFirestore(inputs),
+      data: audioConverter.toFirestore(inputs),
     };
 
     const id = await addFunc(addInputs);
@@ -89,7 +88,7 @@ const useUpdateEntity = (db: Firestore) => {
       db,
       path: basePath,
       pathSegments: [...basePathSegments, id.toString()],
-      data: converter.toFirestore(inputs),
+      data: audioConverter.toFirestore(inputs),
     };
 
     await udpateFunc(updateInputs);
@@ -110,4 +109,10 @@ const useDeleteEntity = (db: Firestore) => {
   };
 };
 
-export { useListenEntityList, useAddEntity, useUpdateEntity, useDeleteEntity };
+export {
+  audioConverter,
+  useListenEntityList,
+  useAddEntity,
+  useUpdateEntity,
+  useDeleteEntity,
+};
