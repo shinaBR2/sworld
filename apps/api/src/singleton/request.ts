@@ -5,7 +5,9 @@ import { HttpsError } from "firebase-functions/v1/auth";
 const functionConfig = {
   region: "asia-south1",
 };
-const functionBuilder = functions.region(functionConfig.region);
+const functionBuilder = functions.region(functionConfig.region).runWith({
+  maxInstances: 50,
+});
 
 // https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events
 const AppError = (message: string) => new HttpsError("ok", message);
