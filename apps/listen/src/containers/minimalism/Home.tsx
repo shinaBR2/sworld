@@ -5,10 +5,13 @@ import db from "../../providers/firestore";
 
 const { SBackdrop } = SUI;
 const { AppBar, MusicWidget } = ListenUI.Minimalism;
-const { useGetHomeAudioList } = ListenCore;
+const { useListenHomeAudioList } = ListenCore;
+
+console.log(db);
 
 const Home = () => {
-  const { values: audioList, loading } = useGetHomeAudioList(db);
+  const { values: audioList, loading } = useListenHomeAudioList(db);
+  console.log(audioList);
 
   return (
     <main>

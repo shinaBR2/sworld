@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+# Intro
+
 Welcome to the shinabr2-world wiki!
 
 Documents are categorized into:

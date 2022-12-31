@@ -19,18 +19,7 @@ import PlayingList from "./PlayingList";
 
 const { useSAudioPlayer } = hooks;
 
-// FUCK typescript
-// interface SAudioPlayerAudioItem {
-//   src: string;
-//   name: string;
-//   artistName: string;
-//   image: string;
-// }
-
-// interface LoopMode = SAudioPlayerLoopMode;
-
 interface MusicWidgetProps {
-  id: string;
   audioList: SAudioPlayerAudioItem[];
   index?: number;
   shuffle?: boolean;

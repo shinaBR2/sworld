@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const apiKey = import.meta.env.VITE_API_KEY;
 const authDomain = import.meta.env.VITE_AUTH_DOMAIN;
@@ -19,5 +20,13 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
+
+const functions = getFunctions();
+
+const callable = (name: string, data: any) => {
+  return httpsCallable(functions, name)(data);
+};
+
+export { callable };
 
 export default firebaseApp;

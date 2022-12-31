@@ -1,5 +1,8 @@
 import LibraryMusicTwoToneIcon from "@mui/icons-material/LibraryMusicTwoTone";
 import HomeTwoToneIcon from "@mui/icons-material/HomeTwoTone";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import AudiotrackIcon from "@mui/icons-material/Audiotrack";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
 // component
 import SvgColor from "../../../components/svg-color";
@@ -20,14 +23,36 @@ const navConfig = [
     icon: icon("ic_analytics"),
   },
   {
-    title: "Listen",
+    title: "Listen Homepage",
     path: "/dashboard/listen",
     icon: <LibraryMusicTwoToneIcon />,
     children: [
       {
-        title: "Homepage config",
-        path: "/dashboard/listen/home-page",
+        title: "Audio list",
+        path: "/dashboard/listen/homepage-audio-list",
         icon: <HomeTwoToneIcon />,
+      },
+      {
+        title: "Feeling list",
+        path: "/dashboard/listen/homepage-feeling-list",
+        icon: <HomeTwoToneIcon />,
+      },
+    ],
+  },
+  {
+    title: "entity",
+    path: "/dashboard/entity",
+    icon: <AssignmentIcon />,
+    children: [
+      {
+        title: "Audio",
+        path: "/dashboard/entity/audio",
+        icon: <AudiotrackIcon />,
+      },
+      {
+        title: "Feeling list",
+        path: "/dashboard/entity/feeling",
+        icon: <EmojiEmotionsIcon />,
       },
     ],
   },
@@ -45,16 +70,6 @@ const navConfig = [
     title: "blog",
     path: "/dashboard/blog",
     icon: icon("ic_blog"),
-  },
-  {
-    title: "login",
-    path: "/login",
-    icon: icon("ic_lock"),
-  },
-  {
-    title: "Not found",
-    path: "/404",
-    icon: icon("ic_disabled"),
   },
 ];
 

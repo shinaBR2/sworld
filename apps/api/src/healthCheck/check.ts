@@ -1,16 +1,15 @@
 import db, { getTimeStamp, onRequest } from "../singleton";
 
-import { commonHelpers } from "core";
-
-const { compareString } = commonHelpers;
+// import { commonHelpers } from "core";
+import { dbRead } from "../singleton/db";
 
 const checkRead = onRequest(async (req, res) => {
-  const snapshot = await db.collection("feelings").get();
+  const snapshot = (await dbRead(
+    "feelings"
+  )) as FirebaseFirestore.QuerySnapshot;
   snapshot.forEach((doc) => {
     console.log(doc.id, "=>", doc.data());
   });
-
-  console.log(`Compare string str1 and str2: ${compareString("str1", "str2")}`);
 
   res.send("Success");
 });

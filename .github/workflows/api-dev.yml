@@ -46,6 +46,11 @@ jobs:
         name: Copy build to isolate folder
         run: cp -r apps/api/dist apps/api/_isolated_
 
+      - id: fix_firebase_json
+        name: Change firebase.json build to isolated
+        run: |
+          sed -i 's/"source\"\: \"apps\/api"/"source\"\: \"apps\/api\/_isolated_\"/g' firebase.json
+
       - id: fix_package_json
         name: Fix package.json
         run: |
@@ -57,7 +62,9 @@ jobs:
         name: Deploy
         uses: w9jds/firebase-action@master
         with:
-          args: use my-world-dev && firebase deploy --only functions
+          args: >
+            use my-world-dev
+            && firebase deploy --only "functions:admin"
         env:
           GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}"
           PROJECT_ID: my-world-dev

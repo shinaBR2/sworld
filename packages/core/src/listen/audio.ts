@@ -1,11 +1,11 @@
 import {
-  DocumentData,
   Firestore,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
 } from "firebase/firestore";
+import { AudioItem } from "../entity/interfaces";
 import {
   useAddDoc,
   useDeleteDoc,
@@ -13,12 +13,10 @@ import {
   useGetCollectionOnce,
   useUpdateDoc,
 } from "../universal/dbQuery";
-import {
-  AudioItem,
-  AudioItemInputs,
-  CreateAudioItemInputs,
-  UpdateAudioItemInputs,
-} from "./interfaces";
+// import { AudioItem } from "./interfaces";
+
+const path = "homeConfigs";
+const basePathSegments = ["listen", "audios"];
 
 /**
  * Some notes because of TS sucks
@@ -30,7 +28,7 @@ import {
  * - `AudioItem` contains `id` which can not be existed in `CreateAudioItemInputs`
  */
 const converter: FirestoreDataConverter<AudioItem> = {
-  toFirestore: (data: CreateAudioItemInputs) => {
+  toFirestore: (data: WithFieldValue<AudioItem>) => {
     const { image, ...rest } = data;
 
     return {
@@ -58,8 +56,8 @@ const converter: FirestoreDataConverter<AudioItem> = {
 const useListenHomeAudioList = (db: Firestore) => {
   const inputs = {
     db,
-    path: "homeConfigs",
-    pathSegments: ["listen", "audioList"],
+    path,
+    pathSegments: [...basePathSegments],
     converter,
   };
   const { values, loading, error } = useGetCollectionOn(inputs);
@@ -74,8 +72,8 @@ const useListenHomeAudioList = (db: Firestore) => {
 const useGetHomeAudioList = (db: Firestore) => {
   const inputs = {
     db,
-    path: "homeConfigs",
-    pathSegments: ["listen", "audioList"],
+    path,
+    pathSegments: [...basePathSegments],
     converter,
   };
   const { values, loading, error } = useGetCollectionOnce(inputs);
@@ -90,11 +88,11 @@ const useGetHomeAudioList = (db: Firestore) => {
 const useUploadHomeAudio = (db: Firestore) => {
   const addFunc = useAddDoc();
 
-  return async (inputs: CreateAudioItemInputs) => {
+  return async (inputs: WithFieldValue<AudioItem>) => {
     const addInputs = {
       db,
-      path: "homeConfigs",
-      pathSegments: ["listen", "audioList"],
+      path,
+      pathSegments: [...basePathSegments],
       data: converter.toFirestore(inputs),
     };
 
@@ -107,13 +105,13 @@ const useUploadHomeAudio = (db: Firestore) => {
 const useUpdateHomeAudioItem = (db: Firestore) => {
   const udpateFunc = useUpdateDoc();
 
-  return async (inputs: UpdateAudioItemInputs) => {
-    const { id, ...rest } = inputs;
+  return async (inputs: WithFieldValue<AudioItem>) => {
+    const { id } = inputs;
     const updateInputs = {
       db,
-      path: "homeConfigs",
-      pathSegments: ["listen", "audioList", id],
-      data: converter.toFirestore(rest),
+      path,
+      pathSegments: [...basePathSegments, id.toString()],
+      data: converter.toFirestore(inputs),
     };
 
     await udpateFunc(updateInputs);
@@ -126,8 +124,8 @@ const useDeleteHomeAudioItem = (db: Firestore) => {
   return async (id: string) => {
     const deleteInputs = {
       db,
-      path: "homeConfigs",
-      pathSegments: ["listen", "audioList", id],
+      path,
+      pathSegments: [...basePathSegments, id],
     };
 
     await deleteFunc(deleteInputs);

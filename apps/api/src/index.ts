@@ -1,5 +1,8 @@
-import * as healthCheck from "./healthCheck";
+import healthCheck from "./healthCheck";
+import admin from "./admin";
 
-// trigger deploy 5
+// trigger deploy 8 FUCK
 
-export { healthCheck };
+// console.log(healthCheck);
+
+export { healthCheck, admin };

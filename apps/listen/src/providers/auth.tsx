@@ -1,6 +1,7 @@
 import React, { FC, useContext, useMemo, useState } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import firebaseApp from "../firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "../firebase";
+// import firebaseApp from "../firebase";
 
 interface ContextProps {
   user: User | null | undefined;
@@ -11,7 +12,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const auth = getAuth(firebaseApp);
+// const auth = getAuth(firebaseApp);
 
 const AuthContext = React.createContext<ContextProps>({
   user: undefined,

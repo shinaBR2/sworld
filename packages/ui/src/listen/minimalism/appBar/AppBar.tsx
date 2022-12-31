@@ -47,7 +47,7 @@ function ResponsiveAppBar() {
               </Box>*/}
           <StyledLogo component="a" href="">
             <img
-              src="https://res.cloudinary.com/shinabr2/image/upload/v1668238746/Public/Images/sworld-logo-svg.svg"
+              src="https://res.cloudinary.com/shinabr2/image/upload/v1670251329/Public/Images/sworld-logo-72x72.png"
               alt="logo"
             />
           </StyledLogo>

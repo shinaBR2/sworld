@@ -5,6 +5,7 @@ import {
   useUpdateHomeAudioItem,
   useDeleteHomeAudioItem,
 } from "./audio";
+import { useListenHomeFeelingList } from "./feeling";
 
 export {
   useListenHomeAudioList,
@@ -12,4 +13,5 @@ export {
   useUploadHomeAudio,
   useUpdateHomeAudioItem,
   useDeleteHomeAudioItem,
+  useListenHomeFeelingList,
 };

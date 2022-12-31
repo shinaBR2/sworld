@@ -1,0 +1,9 @@
+{
+  "grammarly.selectors": [
+    {
+      "language": "markdown",
+      "scheme": "file",
+      "pattern": "apps/docs/docs/how-to-guide/admin/add-a-new-page.md"
+    }
+  ]
+}

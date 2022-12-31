@@ -2,54 +2,40 @@ import pw from "a-promise-wrapper";
 
 import { Helmet } from "react-helmet-async";
 // @mui
-import { Grid, Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 // components
 import Iconify from "../../components/iconify";
-import { BlogPostsSort, BlogPostsSearch } from "../../sections/@dashboard/blog";
 // mock
-import POSTS from "../../_mock/blog";
-import { ListenCore } from "core";
 import db from "../../providers/firestore";
-import AudioCard from "./components/AudioCard";
 import FullPageLoader from "../../components/@full-page-loader";
 import React, { useState } from "react";
-import AudioCRUDFormDialog from "./components/AudioCRUDFormDialog";
-import { useAuthContext } from "../../providers/auth";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-
-const {
-  useListenHomeAudioList,
-  useUploadHomeAudio,
-  useUpdateHomeAudioItem,
-  useDeleteHomeAudioItem,
-} = ListenCore;
-// ----------------------------------------------------------------------
-
-const SORT_OPTIONS = [
-  { value: "latest", label: "Latest" },
-  { value: "popular", label: "Popular" },
-  { value: "oldest", label: "Oldest" },
-];
-
-// ----------------------------------------------------------------------
+import CRUDDialog from "../@crud-dialog/CRUDDialog";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function ListenHomeConfig() {
-  const { user } = useAuthContext();
-  const { values: audioList, loading } = useListenHomeAudioList(db);
+const CRUDPage = (props) => {
+  const {
+    htmlTitle,
+    entityName,
+    useLoadData,
+    ListComponent,
+    FormComponent,
+    createFunc,
+    updateFunc,
+    deleteFunc,
+    buildCRUDData,
+  } = props;
+  const { values, loading } = useLoadData(db);
+
   const [showForm, setShowForm] = useState(false);
   const [isCreate, setIsCreate] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [activeEditItem, setActiveEditItem] = useState();
-  const createFunc = useUploadHomeAudio(db);
-  const updateFunc = useUpdateHomeAudioItem(db);
-  const deleteFunc = useDeleteHomeAudioItem(db);
-  const { uid } = user;
 
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleCloseError = () => setShowError(false);
@@ -59,36 +45,21 @@ export default function ListenHomeConfig() {
     setShowForm(true);
   };
 
-  const onClickEdit = (audioItem) => {
+  const onClickEdit = (item) => {
     // TODO
-    setActiveEditItem(audioItem);
+    setActiveEditItem(item);
     setIsCreate(false);
     setShowForm(true);
   };
 
-  const onCRUD = (isCreate) => async (data) => {
-    const { id, src, name, artistName, image } = data;
-    const createData = {
-      src,
-      name,
-      artistName,
-      image,
-      uploaderId: uid,
-    };
-    const updateData = {
-      id,
-      src,
-      name,
-      artistName,
-      image,
-      editorId: uid,
-    };
-    const inputs = isCreate ? createData : updateData;
+  const onCRUD = async (data) => {
+    const inputs = buildCRUDData(isCreate, data);
     const func = isCreate ? createFunc : updateFunc;
 
     const { error } = await pw(func(inputs));
 
     if (error) {
+      console.error(error);
       return setShowError(true);
     }
 
@@ -97,6 +68,7 @@ export default function ListenHomeConfig() {
   };
 
   const onDelete = async () => {
+    // TODO
     const { id } = activeEditItem;
 
     if (!id) {
@@ -120,7 +92,7 @@ export default function ListenHomeConfig() {
   return (
     <>
       <Helmet>
-        <title> Listen: Home page configuration </title>
+        <title>{htmlTitle}</title>
       </Helmet>
 
       <Container>
@@ -131,18 +103,18 @@ export default function ListenHomeConfig() {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            Blog
+            {`${entityName} list`}
           </Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={onClickCreate}
           >
-            New Audio
+            {`New ${entityName}`}
           </Button>
         </Stack>
 
-        <Stack
+        {/* <Stack
           mb={5}
           direction="row"
           alignItems="center"
@@ -150,28 +122,18 @@ export default function ListenHomeConfig() {
         >
           <BlogPostsSearch posts={POSTS} />
           <BlogPostsSort options={SORT_OPTIONS} />
-        </Stack>
-
-        <Grid container spacing={3}>
-          {audioList &&
-            audioList.map((audio, index) => (
-              <AudioCard
-                onEdit={onClickEdit}
-                key={audio.id}
-                audio={audio}
-                index={index}
-              />
-            ))}
-        </Grid>
+        </Stack> */}
+        <ListComponent data={values} onClickEdit={onClickEdit} />
 
         {showForm && (
-          <AudioCRUDFormDialog
+          <CRUDDialog
             open={showForm}
             onClose={() => setShowForm(false)}
             onConfirm={onCRUD}
             onDelete={onDelete}
             isCreate={isCreate}
             data={activeEditItem}
+            FormComponent={FormComponent}
           />
         )}
 
@@ -201,11 +163,13 @@ export default function ListenHomeConfig() {
               severity="error"
               sx={{ width: "100%" }}
             >
-              Success!
+              Error!
             </Alert>
           </Snackbar>
         )}
       </Container>
     </>
   );
-}
+};
+
+export default CRUDPage;

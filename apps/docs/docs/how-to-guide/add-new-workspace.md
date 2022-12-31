@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# How to add new workspace from scratch
+# Add new workspace
 
 The most challenge for this task is all about configurations, package manager, and especially the build tool.
 
