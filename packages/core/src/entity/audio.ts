@@ -11,13 +11,11 @@ import {
   useGetCollectionOn,
   useUpdateDoc,
 } from "../universal/dbQuery";
-import { BaseFirestoreInputs } from "../universal/dbQuery/interfaces";
+import { PathConfigs } from "../universal/dbQuery/interfaces";
 import { AudioItem } from "./interfaces";
 
 const basePath = "/audios";
 const basePathSegments: string[] = [""];
-
-type PathConfigs = Omit<BaseFirestoreInputs, "db">;
 
 const audioConverter: FirestoreDataConverter<AudioItem> = {
   toFirestore: (data: WithFieldValue<AudioItem>) => {

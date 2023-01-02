@@ -13,3 +13,5 @@ export interface CollectionInputs<T> extends BaseFirestoreInputs {
 export interface AddDocInputs<T = {}> extends BaseFirestoreInputs {
   data: T;
 }
+
+export type PathConfigs = Omit<BaseFirestoreInputs, "db">;

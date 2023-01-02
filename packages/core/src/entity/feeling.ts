@@ -11,7 +11,7 @@ import {
   useGetCollectionOn,
   useUpdateDoc,
 } from "../universal/dbQuery";
-import { BaseFirestoreInputs } from "../universal/dbQuery/interfaces";
+import { PathConfigs } from "../universal/dbQuery/interfaces";
 import { Feeling } from "./interfaces";
 
 const basePath = "/feelings";
@@ -40,8 +40,6 @@ const converter: FirestoreDataConverter<Feeling> = {
     };
   },
 };
-
-type PathConfigs = Omit<BaseFirestoreInputs, "db">;
 
 const useListenEntityList = (db: Firestore, config?: PathConfigs) => {
   const inputs = {
