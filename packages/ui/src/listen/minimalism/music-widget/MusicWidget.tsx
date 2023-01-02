@@ -6,7 +6,7 @@ import Seeker from "./Seeker";
 import hooks from "core";
 //@ts-ignore
 import { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from "core";
-import { Box, Grid, Slide } from "@mui/material";
+import { Box, Grid, Slide, Theme, useMediaQuery } from "@mui/material";
 import PlaylistButton from "./PlaylistButton";
 import { useRef, useState } from "react";
 import {
@@ -17,28 +17,27 @@ import {
 } from "./Styled";
 import PlayingList from "./PlayingList";
 
-const { useSAudioPlayer } = hooks;
-
 interface MusicWidgetProps {
   audioList: SAudioPlayerAudioItem[];
+  hookResult: any;
+  onItemSelect: (id: string) => void;
   index?: number;
   shuffle?: boolean;
   loopMode?: SAudioPlayerLoopMode;
 }
 
 const MusicWidget = (props: MusicWidgetProps) => {
-  const { audioList } = props;
-  const [index, setIndex] = useState(0);
+  const { audioList, hookResult, onItemSelect } = props;
   const { getAudioProps, getSeekerProps, getControlsProps, playerState } =
-    useSAudioPlayer({
-      audioList,
-      index,
-    });
+    hookResult;
   const { isPlay, isShuffled, loopMode, audioItem } = playerState;
   const { onPlay, onPrev, onNext, onShuffle, onChangeLoopMode } =
     getControlsProps();
   const contentRef = useRef(null);
   const [showPlayinglist, setShowPlayinglist] = useState(false);
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
 
   if (!audioItem) {
     return null;
@@ -47,13 +46,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
   const { name, artistName, image } = audioItem;
 
   const onSelect = (id: string) => () => {
-    const index = audioList.findIndex((a) => a.id === id);
-    setIndex(index);
-
-    if (!isPlay) {
-      onPlay();
-    }
-
+    onItemSelect(id);
     setShowPlayinglist(false);
   };
 
@@ -83,9 +76,11 @@ const MusicWidget = (props: MusicWidgetProps) => {
             <Typography gutterBottom variant="body2" component="p">
               {showPlayinglist ? "Playing list" : "Now playing"}
             </Typography>
-            <PlaylistButton
-              onClick={() => setShowPlayinglist(!showPlayinglist)}
-            />
+            {isMobile && (
+              <PlaylistButton
+                onClick={() => setShowPlayinglist(!showPlayinglist)}
+              />
+            )}
           </Box>
           <Typography gutterBottom variant="h4" component="strong">
             {artistName}
@@ -98,17 +93,19 @@ const MusicWidget = (props: MusicWidgetProps) => {
         <StyledCardActions>
           <Controls {...controlProps} />
         </StyledCardActions>
-        <Slide
-          direction="up"
-          in={showPlayinglist}
-          container={contentRef.current}
-        >
-          <PlayingList
-            audioList={audioList}
-            onSelect={onSelect}
-            currentId={audioItem.id}
-          />
-        </Slide>
+        {isMobile && (
+          <Slide
+            direction="up"
+            in={showPlayinglist}
+            container={contentRef.current}
+          >
+            <PlayingList
+              audioList={audioList}
+              onSelect={onSelect}
+              currentId={audioItem.id}
+            />
+          </Slide>
+        )}
         <audio {...getAudioProps()} />
       </StyledContent>
     </StyledCard>
