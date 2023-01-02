@@ -17,6 +17,7 @@ const contentHeight = 300;
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
   return {
     width: cardWidth,
+    maxWidth: "100%",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
       maxWidth: cardWidth,

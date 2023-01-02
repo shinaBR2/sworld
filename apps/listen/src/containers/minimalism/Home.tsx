@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ListenUI, SUI } from "ui";
 import { ListenCore } from "core";
 import db from "../../providers/firestore";
 
 const { SBackdrop } = SUI;
-const { AppBar, MusicWidget } = ListenUI.Minimalism;
+const { AppBar, HomeContainer } = ListenUI.Minimalism;
 const { useListenHomeAudioList } = ListenCore;
 
 console.log(db);
 
 const Home = () => {
   const { values: audioList, loading } = useListenHomeAudioList(db);
-  console.log(audioList);
+
+  if (loading) {
+    return (
+      <SBackdrop open={true} loading={loading}>
+        {" "}
+      </SBackdrop>
+    );
+  }
 
   return (
     <main>
       <AppBar />
-      <SBackdrop open={true} loading={loading}>
-        {!!audioList && <MusicWidget audioList={audioList} />}
-      </SBackdrop>
+      {!!audioList && <HomeContainer audioList={audioList} />}
     </main>
   );
 };
