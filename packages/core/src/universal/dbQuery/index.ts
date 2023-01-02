@@ -65,7 +65,7 @@ const useUpdateDoc = () => {
 
     const writeData = {
       ...data,
-      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     };
     await updateDoc(doc(db, path, ...pathSegments), writeData);
   };

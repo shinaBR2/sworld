@@ -23,6 +23,11 @@ const navConfig = [
     icon: icon("ic_analytics"),
   },
   {
+    title: "feature flag",
+    path: "/dashboard/feature-flag",
+    icon: icon("ic_analytics"),
+  },
+  {
     title: "Listen Homepage",
     path: "/dashboard/listen",
     icon: <LibraryMusicTwoToneIcon />,
