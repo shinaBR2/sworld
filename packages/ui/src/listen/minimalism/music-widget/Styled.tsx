@@ -48,7 +48,7 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
   return {
     position: "absolute",
     width: "100%",
-    height: "100%",
+    height: "244px",
     top: 56,
     overflowY: "auto",
     backgroundColor: theme.palette.common.white,
