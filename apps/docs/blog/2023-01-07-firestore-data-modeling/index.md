@@ -20,7 +20,7 @@ Subcollection vs top-level collection, consider these things:
 
 Note: this is opinionated, NOT strictly.
 
-Let's review an example of a music listen to site.
+Let's review an example of a music site.
 
 ## Feature
 
