@@ -1,12 +1,5 @@
-import {
-  Firestore,
-  FirestoreDataConverter,
-  QueryDocumentSnapshot,
-  SnapshotOptions,
-  WithFieldValue,
-} from "firebase/firestore";
+import { Firestore } from "firebase/firestore";
 import { audioConverter } from "../entity/audio";
-import { AudioItem } from "../entity/interfaces";
 import { useGetCollectionOn } from "../universal/dbQuery";
 
 const path = "homeConfigs";
