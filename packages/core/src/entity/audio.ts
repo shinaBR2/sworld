@@ -35,6 +35,7 @@ const audioConverter: FirestoreDataConverter<AudioItem> = {
       name: data.name,
       artistName: data.artistName,
       image: data.thumbnailUrl,
+      feelingMap: data.feelingMap,
       uploaderId: data.uploaderId,
       editorId: data.editorId,
       createdAt: data.createdAt,

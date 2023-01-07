@@ -3,6 +3,9 @@ interface BaseAudio {
   name: string;
   artistName: string;
   image: string;
+  feelingMap: {
+    [feelingId: string]: boolean;
+  };
   uploaderId: string;
   editorId?: string;
   createdAt: Object;
