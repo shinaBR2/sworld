@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, Box, CircularProgress, Typography } from "@mui/material";
 import React from "react";
 
 export interface SBackdropProps {
@@ -18,7 +18,14 @@ const SBackdrop = (props: SBackdropProps) => {
       open={open}
       onClick={onClick}
     >
-      {loading ? <CircularProgress /> : children}
+      {loading ? (
+        <Box textAlign="center">
+          <CircularProgress />
+          <Typography>Valuable things deserve waiting</Typography>
+        </Box>
+      ) : (
+        children
+      )}
     </Backdrop>
   );
 };

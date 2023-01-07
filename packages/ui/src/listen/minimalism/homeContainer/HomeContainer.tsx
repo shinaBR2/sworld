@@ -15,12 +15,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import hooks, { SAudioPlayerAudioItem } from "core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MusicWidget from "../music-widget";
 const { useSAudioPlayer } = hooks;
 
 interface HomeContainerProps {
   audioList: SAudioPlayerAudioItem[];
+  feelingList: any[];
 }
 
 interface PlayingListItemProps {
@@ -50,21 +51,33 @@ const PlayingList = (props: PlayingListItemProps) => {
   );
 };
 
+const NoItem = () => {
+  return <Typography variant="body2">No audios found</Typography>;
+};
+
 const HomeContainer = (props: HomeContainerProps) => {
-  const { audioList } = props;
-  const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
+  const { audioList, feelingList } = props;
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
 
   const [index, setIndex] = useState(0);
+  const [activeFeeling, setActiveFeeling] = useState("");
+  const [list, setList] = useState(audioList);
   const hookResult = useSAudioPlayer({
-    audioList,
+    audioList: list,
     index,
   });
   const { getControlsProps, playerState } = hookResult;
   const { isPlay, currentIndex } = playerState;
   const { onPlay } = getControlsProps();
 
+  useEffect(() => {
+    setList(audioList);
+  }, [audioList]);
+
   const onItemSelect = (id: string) => {
-    const index = audioList.findIndex((a) => a.id === id);
+    const index = list.findIndex((a) => a.id === id);
     setIndex(index);
 
     if (!isPlay) {
@@ -72,10 +85,39 @@ const HomeContainer = (props: HomeContainerProps) => {
     }
   };
 
+  const onSelectFeeling = (id: string) => () => {
+    if (!id) {
+      return;
+    }
+
+    const filtered = audioList.filter((a) => {
+      // @ts-ignore
+      if (a.feelingMap && !!a.feelingMap[id]) {
+        return true;
+      }
+
+      return false;
+    });
+    setActiveFeeling(id);
+    setIndex(0);
+    setList(filtered);
+  };
+  const clearFeeling = () => {
+    setActiveFeeling("");
+    setIndex(0);
+    setList(audioList);
+  };
+
+  console.log("Home rendered", list, currentIndex);
+  const currentAudio = list[currentIndex || 0];
+  const htmlTitle = currentAudio ? `Listen - ${currentAudio.name}` : "Listen";
+  const hasNoItem = list.length === 0;
+  const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
+
   return (
     <Container maxWidth="xl">
       <Helmet>
-        <title>{`Listen - ${audioList[currentIndex].name}`}</title>
+        <title>{htmlTitle}</title>
       </Helmet>
 
       <Box my={4}>
@@ -84,33 +126,52 @@ const HomeContainer = (props: HomeContainerProps) => {
         </Typography>
       </Box>
       <Stack direction="row" spacing={1} my={2}>
-        <Chip label="Default" color="primary" onClick={() => {}} />
-        {/* <Chip label="Sad" />
-        <Chip label="Heroic" /> */}
+        <Chip
+          label="Default"
+          color={!activeFeeling ? "primary" : "default"}
+          onClick={clearFeeling}
+        />
+        {feelingList.map((f) => {
+          const isActive = !!activeFeeling && f.id === activeFeeling;
+          const color = isActive ? "primary" : "default";
+
+          return (
+            <Chip
+              key={f.id}
+              label={f.value}
+              color={color}
+              onClick={onSelectFeeling(f.id)}
+            />
+          );
+        })}
       </Stack>
       <Box display="flex" my={4}>
-        <Grid container spacing={2}>
-          {!hidden && (
-            <Grid item md={8} sm={6} xs={0}>
-              <Card
-                sx={{ height: "100%", maxHeight: "600px", overflowY: "auto" }}
-              >
-                <PlayingList
-                  audioList={audioList}
-                  onItemSelect={onItemSelect}
-                  currentId={audioList[currentIndex].id}
-                />
-              </Card>
+        {hasNoItem ? (
+          <NoItem />
+        ) : (
+          <Grid container spacing={2}>
+            {showPlayingList && (
+              <Grid item md={8} sm={6} xs={0}>
+                <Card
+                  sx={{ height: "100%", maxHeight: "600px", overflowY: "auto" }}
+                >
+                  <PlayingList
+                    audioList={list}
+                    onItemSelect={onItemSelect}
+                    currentId={currentAudio.id}
+                  />
+                </Card>
+              </Grid>
+            )}
+            <Grid item md={4} sm={6} xs={12} container justifyContent="center">
+              <MusicWidget
+                audioList={list}
+                hookResult={hookResult}
+                onItemSelect={onItemSelect}
+              />
             </Grid>
-          )}
-          <Grid item md={4} sm={6} xs={12} container justifyContent="center">
-            <MusicWidget
-              audioList={audioList}
-              hookResult={hookResult}
-              onItemSelect={onItemSelect}
-            />
           </Grid>
-        </Grid>
+        )}
       </Box>
     </Container>
   );
