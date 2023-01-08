@@ -1,15 +1,4 @@
-import {
-  AppBar,
-  AppBarProps,
-  Box,
-  BoxProps,
-  Card,
-  CardActions,
-  CardActionsProps,
-  CardMedia,
-  CardMediaProps,
-  CardProps,
-} from "@mui/material";
+import { AppBar, AppBarProps } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 
 const StyledAppBar = styled(AppBar)<AppBarProps>(({ theme }) => {
@@ -18,14 +7,4 @@ const StyledAppBar = styled(AppBar)<AppBarProps>(({ theme }) => {
   };
 }) as typeof AppBar;
 
-const StyledLogo = styled(Box)<BoxProps>(({ theme }) => {
-  return {
-    width: theme.spacing(8),
-    height: theme.spacing(8),
-    "& > img": {
-      width: "100%",
-    },
-  };
-}) as typeof Box;
-
-export { StyledAppBar, StyledLogo };
+export { StyledAppBar };
