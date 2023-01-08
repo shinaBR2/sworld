@@ -1,10 +1,10 @@
 import React from "react";
-import { ListenUI, SUI } from "ui";
+import { ListenUI, UniversalUI } from "ui";
 import { ListenCore } from "core";
 import db from "../../providers/firestore";
 
-const { SBackdrop } = SUI;
-const { AppBar, HomeContainer } = ListenUI.Minimalism;
+const { LoadingBackdrop } = UniversalUI;
+const { AppBar, Logo, HomeContainer } = ListenUI.Minimalism;
 const { useListenHomeAudioList, useListenHomeFeelingList } = ListenCore;
 
 const Home = () => {
@@ -13,22 +13,25 @@ const Home = () => {
   const { values: feelingList, loading: loadingFeelings } =
     useListenHomeFeelingList(db);
   const isLoadig = loadingAudios || loadingFeelings;
+  const hasAudio = !!audioList && !!audioList?.length;
+  const hasFeeling = !!feelingList && !!feelingList?.length;
+  const hasFullData = hasAudio && hasFeeling;
 
   if (isLoadig) {
-    return (
-      <SBackdrop open={true} loading={isLoadig}>
-        {" "}
-      </SBackdrop>
-    );
+    return <LoadingBackdrop message="Valuable things deserve waiting" />;
   }
 
   return (
-    <main>
-      <AppBar />
-      {!!audioList && !!audioList?.length && (
-        <HomeContainer feelingList={feelingList} audioList={audioList} />
-      )}
-    </main>
+    <>
+      <AppBar>
+        <Logo />
+      </AppBar>
+      <main>
+        {hasFullData && (
+          <HomeContainer feelingList={feelingList} audioList={audioList} />
+        )}
+      </main>
+    </>
   );
 };
 
