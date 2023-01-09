@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "lib": ["dom", "ES2015"]
   },
   "extends": "tsconfig/react-library.json",

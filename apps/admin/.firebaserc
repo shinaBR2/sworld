@@ -9,6 +9,13 @@
           "shinabr2-admin-dev"
         ]
       }
+    },
+    "sworld-prod": {
+      "hosting": {
+        "admin": [
+          "sworld-prod"
+        ]
+      }
     }
   },
   "etags": {}
