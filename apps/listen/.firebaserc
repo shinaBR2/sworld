@@ -1,12 +1,19 @@
 {
   "projects": {
-    "default": "my-world-dev"
+    "default": "sworld-prod"
   },
   "targets": {
     "my-world-dev": {
       "hosting": {
         "listen": [
           "shinabr2-listen-dev"
+        ]
+      }
+    },
+    "sworld-prod": {
+      "hosting": {
+        "listen": [
+          "sworld-prod"
         ]
       }
     }

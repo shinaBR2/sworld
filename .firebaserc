@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "dev": "my-world-dev",
+    "prod": "sworld-prod"
+  },
+  "targets": {},
+  "etags": {}
+}
