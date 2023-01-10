@@ -13,7 +13,7 @@
     "sworld-prod": {
       "hosting": {
         "admin": [
-          "sworld-prod"
+          "sworld-admin"
         ]
       }
     }
