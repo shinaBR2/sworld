@@ -13,7 +13,7 @@
     "sworld-prod": {
       "hosting": {
         "listen": [
-          "sworld-prod"
+          "sworld-listen"
         ]
       }
     }
