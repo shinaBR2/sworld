@@ -1,4 +1,5 @@
 {
+  "name": "sworld",
   "private": false,
   "workspaces": [
     "packages/*",
@@ -18,5 +19,6 @@
   "devDependencies": {
     "prettier": "^2.7.1",
     "turbo": "latest"
-  }
+  },
+  "packageManager": "pnpm@9.4.0"
 }
