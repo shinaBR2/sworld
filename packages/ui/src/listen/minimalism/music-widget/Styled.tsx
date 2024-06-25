@@ -36,7 +36,7 @@ const StyledContent = styled("div")<BoxProps>(() => {
     position: "relative",
     height: contentHeight,
   };
-}) as typeof Box;
+}) as any;
 
 const StyledCardActions = styled(CardActions)<CardActionsProps>(() => {
   return {
@@ -53,7 +53,7 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     overflowY: "auto",
     backgroundColor: theme.palette.common.white,
   };
-}) as typeof Box;
+}) as any;
 
 export {
   StyledCard,

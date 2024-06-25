@@ -9,6 +9,6 @@ const StyledLogo = styled(Box)<BoxProps>(({ theme }) => {
       width: "100%",
     },
   };
-}) as typeof Box;
+}) as any;
 
 export { StyledLogo };
