@@ -4,7 +4,7 @@ import {
   onAuthStateChanged,
   User,
   GoogleAuthProvider,
-  signInWithRedirect,
+  signInWithPopup,
   signOut as gSignOut,
 } from "firebase/auth";
 import firebaseApp from "../firebase";
@@ -61,7 +61,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
   });
 
   const signIn = async () => {
-    await signInWithRedirect(auth, provider);
+    await signInWithPopup(auth, provider);
   };
 
   const signOut = async () => {
