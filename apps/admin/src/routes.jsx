@@ -13,8 +13,6 @@ import EntityFeelingPage from "./pages/entity/feeling/";
 import EntityAudioPage from "./pages/entity/audio";
 import FeatureFlags from "./pages/featureFlags";
 
-// ----------------------------------------------------------------------
-
 export default function Router() {
   const routes = useRoutes([
     {
