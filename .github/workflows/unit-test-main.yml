@@ -3,6 +3,9 @@ name: Unit Test Main
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'apps/docs/**'
+      - '**/*.md'
 
 jobs:
   test:

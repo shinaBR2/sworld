@@ -3,6 +3,9 @@ name: Unit Test on PR
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'apps/docs/**'
+      - '**/*.md'
 
 jobs:
   test:
