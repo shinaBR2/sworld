@@ -1,10 +1,10 @@
-import { useAuthContext } from "../../providers/auth";
+import { Auth } from 'core';
 import CRUDPage from "../@crud-page";
 import MockFormComponent from "./MockFormComponent";
 import MockListComponent from "./MockListComponent";
 
 const MockCRUDPage = () => {
-  const { user } = useAuthContext();
+  const { user } = Auth.useAuthContext();
 
   const htmlTitle = "Entity: Audio";
   const entityName = "Audio";

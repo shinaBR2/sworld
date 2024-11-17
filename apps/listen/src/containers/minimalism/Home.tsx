@@ -1,7 +1,7 @@
-import React from "react";
-import { ListenUI, UniversalUI } from "ui";
-import { ListenCore } from "core";
-import db from "../../providers/firestore";
+import React from 'react';
+import { ListenUI, UniversalUI } from 'ui';
+import { ListenCore } from 'core';
+import db from '../../providers/firestore';
 
 const { LoadingBackdrop } = UniversalUI;
 const { AppBar, Logo, HomeContainer } = ListenUI.Minimalism;

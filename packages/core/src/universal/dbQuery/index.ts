@@ -5,16 +5,16 @@ import {
   doc,
   serverTimestamp,
   updateDoc,
-} from "firebase/firestore";
+} from 'firebase/firestore';
 import {
   useCollectionData,
   useCollectionDataOnce,
-} from "react-firebase-hooks/firestore";
+} from 'react-firebase-hooks/firestore';
 import {
   AddDocInputs,
   BaseFirestoreInputs,
   CollectionInputs,
-} from "./interfaces";
+} from './interfaces';
 
 const useGetCollectionOn = <T>(inputs: CollectionInputs<T>) => {
   const { db, path, pathSegments, converter } = inputs;

@@ -4,18 +4,18 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
-} from "firebase/firestore";
-import { Feeling } from "../entity/interfaces";
+} from 'firebase/firestore';
+import { Feeling } from '../entity/interfaces';
 import {
   useAddDoc,
   useDeleteDoc,
   useGetCollectionOn,
   useGetCollectionOnce,
   useUpdateDoc,
-} from "../universal/dbQuery";
+} from '../universal/dbQuery';
 
-const path = "homeConfigs";
-const basePathSegments = ["listen", "feelings"];
+const path = 'homeConfigs';
+const basePathSegments = ['listen', 'feelings'];
 
 const converter: FirestoreDataConverter<Feeling> = {
   toFirestore: (data: WithFieldValue<Feeling>) => {

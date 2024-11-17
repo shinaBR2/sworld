@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import { Helmet } from 'react-helmet';
 import {
   Box,
   Card,
@@ -13,10 +13,10 @@ import {
   Theme,
   Typography,
   useMediaQuery,
-} from "@mui/material";
-import hooks, { SAudioPlayerAudioItem } from "core";
-import { useEffect, useState } from "react";
-import MusicWidget from "../music-widget";
+} from '@mui/material';
+import hooks, { SAudioPlayerAudioItem } from 'core';
+import { useEffect, useState } from 'react';
+import MusicWidget from '../music-widget';
 const { useSAudioPlayer } = hooks;
 
 interface HomeContainerProps {
@@ -36,7 +36,7 @@ const PlayingList = (props: PlayingListItemProps) => {
 
   return (
     <List>
-      {audioList.map((a) => {
+      {audioList.map(a => {
         const { id, name, artistName } = a;
 
         return (
@@ -58,11 +58,11 @@ const NoItem = () => {
 const HomeContainer = (props: HomeContainerProps) => {
   const { audioList, feelingList } = props;
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm')
   );
 
   const [index, setIndex] = useState(0);
-  const [activeFeeling, setActiveFeeling] = useState("");
+  const [activeFeeling, setActiveFeeling] = useState('');
   const [list, setList] = useState(audioList);
   const hookResult = useSAudioPlayer({
     audioList: list,
@@ -77,7 +77,7 @@ const HomeContainer = (props: HomeContainerProps) => {
   }, [audioList]);
 
   const onItemSelect = (id: string) => {
-    const index = list.findIndex((a) => a.id === id);
+    const index = list.findIndex(a => a.id === id);
     setIndex(index);
 
     if (!isPlay) {
@@ -90,7 +90,7 @@ const HomeContainer = (props: HomeContainerProps) => {
       return;
     }
 
-    const filtered = audioList.filter((a) => {
+    const filtered = audioList.filter(a => {
       // @ts-ignore
       if (a.feelingMap && !!a.feelingMap[id]) {
         return true;
@@ -103,14 +103,14 @@ const HomeContainer = (props: HomeContainerProps) => {
     setList(filtered);
   };
   const clearFeeling = () => {
-    setActiveFeeling("");
+    setActiveFeeling('');
     setIndex(0);
     setList(audioList);
   };
 
-  console.log("Home rendered", list, currentIndex);
+  console.log('Home rendered', list, currentIndex);
   const currentAudio = list[currentIndex || 0];
-  const htmlTitle = currentAudio ? `Listen - ${currentAudio.name}` : "Listen";
+  const htmlTitle = currentAudio ? `Listen - ${currentAudio.name}` : 'Listen';
   const hasNoItem = list.length === 0;
   const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
 
@@ -128,12 +128,12 @@ const HomeContainer = (props: HomeContainerProps) => {
       <Stack direction="row" spacing={1} my={2}>
         <Chip
           label="Default"
-          color={!activeFeeling ? "primary" : "default"}
+          color={!activeFeeling ? 'primary' : 'default'}
           onClick={clearFeeling}
         />
-        {feelingList.map((f) => {
+        {feelingList.map(f => {
           const isActive = !!activeFeeling && f.id === activeFeeling;
-          const color = isActive ? "primary" : "default";
+          const color = isActive ? 'primary' : 'default';
 
           return (
             <Chip
@@ -153,7 +153,7 @@ const HomeContainer = (props: HomeContainerProps) => {
             {showPlayingList && (
               <Grid item md={8} sm={6} xs={0}>
                 <Card
-                  sx={{ height: "100%", maxHeight: "600px", overflowY: "auto" }}
+                  sx={{ height: '100%', maxHeight: '600px', overflowY: 'auto' }}
                 >
                   <PlayingList
                     audioList={list}

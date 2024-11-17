@@ -1,22 +1,23 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
-import App from "./App";
-import { AuthProvider } from "./providers/auth";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import App from './App';
+import { Auth } from 'core';
+import { firebaseConfig } from './firebase';
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById('root') as HTMLElement
 );
 
 root.render(
   <React.StrictMode>
     <HelmetProvider>
-      <AuthProvider>
+      <Auth.AuthProvider firebaseConfig={firebaseConfig}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </AuthProvider>
+      </Auth.AuthProvider>
     </HelmetProvider>
   </React.StrictMode>
 );

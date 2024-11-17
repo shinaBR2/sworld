@@ -1,7 +1,7 @@
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
-import { StyledAppBar } from "./Styled";
-import React from "react";
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import { StyledAppBar } from './Styled';
+import React from 'react';
 
 interface Props {
   children: React.ReactNode;

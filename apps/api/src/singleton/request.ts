@@ -1,18 +1,30 @@
-import { FieldValue } from "firebase-admin/firestore";
-import * as functions from "firebase-functions";
-import { HttpsError } from "firebase-functions/v1/auth";
+import { FieldValue } from 'firebase-admin/firestore';
+import * as functions from 'firebase-functions';
+import { HttpsError } from 'firebase-functions/v1/auth';
+import cors from 'cors';
 
 const functionConfig = {
-  region: "asia-south1",
+  region: 'asia-south1',
 };
 const functionBuilder = functions.region(functionConfig.region).runWith({
   maxInstances: 50,
 });
+const corsHandler = cors({
+  origin: true, // Allow all origins in development
+});
 
 // https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events
-const AppError = (message: string) => new HttpsError("ok", message);
+const AppError = (message: string) => new HttpsError('ok', message);
 
 const onRequest = functionBuilder.https.onRequest;
+const onRequestWithCors = (
+  handler: (req: Request, res: Response) => Promise<void>
+) => {
+  return onRequest((req, res) => {
+    // @ts-ignore
+    return corsHandler(req, res, () => handler(req, res));
+  });
+};
 const onCall = functionBuilder.https.onCall;
 const onAdminCall = (handler: (data: any) => void) => {
   return onCall((data, context) => {
@@ -20,7 +32,7 @@ const onAdminCall = (handler: (data: any) => void) => {
     const { auth } = context;
 
     if (!auth) {
-      throw AppError("Require sign in");
+      throw AppError('Require sign in');
     }
 
     const { token } = auth;
@@ -29,7 +41,7 @@ const onAdminCall = (handler: (data: any) => void) => {
     const isAdmin = token.admin === true;
 
     if (!isAdmin) {
-      throw AppError("Require admin privilege");
+      throw AppError('Require admin privilege');
     }
 
     return handler(data);
@@ -38,4 +50,11 @@ const onAdminCall = (handler: (data: any) => void) => {
 
 const getTimeStamp = () => FieldValue.serverTimestamp();
 
-export { onAdminCall, onCall, onRequest, AppError, getTimeStamp };
+export {
+  onAdminCall,
+  onCall,
+  onRequest,
+  onRequestWithCors,
+  AppError,
+  getTimeStamp,
+};

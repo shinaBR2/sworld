@@ -1,0 +1,21 @@
+{
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "test"
+  ],
+  "extends": "tsconfig/vite.json",
+  "compilerOptions": {
+    "target": "ES6",
+    "rootDir": "src",
+    "outDir": "dist",
+    "types": ["jest", "node"],
+    "esModuleInterop": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types/*.d.ts"
+    ]
+  },
+  "include": ["src", "src/**/*.d.ts", "test"],
+}

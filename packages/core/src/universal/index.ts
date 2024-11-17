@@ -2,13 +2,13 @@
  * This should include all core
  */
 
-import hooks from "./hooks";
+import hooks from './hooks';
 import {
   SAudioPlayerInputs,
   SAudioPlayerAudioItem,
   SAudioPlayerLoopMode,
-} from "./hooks";
-import { compareString } from "./common";
+} from './hooks';
+import { compareString } from './common';
 // import { callable } from "./request";
 
 const commonHelpers = {

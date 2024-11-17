@@ -22,7 +22,7 @@ import Scrollbar from "../../../components/scrollbar";
 import NavSection from "../../../components/nav-section";
 //
 import navConfig from "./config";
-import { useAuthContext } from "../../../providers/auth";
+import { Auth } from 'core';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
-  const { user } = useAuthContext();
+  const { user } = Auth.useAuthContext();
 
   const { providerData } = user;
   const { displayName, photoURL } = providerData[0] || {};

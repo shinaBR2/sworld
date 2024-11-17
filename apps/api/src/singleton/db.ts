@@ -1,12 +1,12 @@
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
 initializeApp();
 
 const db = getFirestore();
 
 const sanitizePath = (str: string) => {
-  if (str[0] !== "/") {
+  if (str[0] !== '/') {
     return `/${str}`;
   }
 
@@ -14,7 +14,7 @@ const sanitizePath = (str: string) => {
 };
 
 const isCollection = (pathStr: string) => {
-  const p = pathStr.split("/");
+  const p = pathStr.split('/');
   return p.length % 2 === 0;
 };
 
@@ -46,12 +46,30 @@ const dbAddDoc = async (
   return { id: res.id };
 };
 
+const dbAddDocWithId = async (
+  pathStr: string,
+  id: string,
+  data: FirebaseFirestore.DocumentData
+) => {
+  const p = sanitizePath(pathStr);
+  const res = await db.collection(p).doc(id).set(data);
+
+  return res;
+};
+
 const dbUpdateDoc = async (
   pathStr: string,
   data: FirebaseFirestore.DocumentData
 ) => {
   const p = sanitizePath(pathStr);
   const res = await db.doc(p).update(data);
+
+  return res;
+};
+
+const deleteDoc = async (pathStr: string) => {
+  const p = sanitizePath(pathStr);
+  const res = await db.doc(p).delete();
 
   return res;
 };
@@ -73,6 +91,14 @@ const dbBatchWrite = () => {
   };
 };
 
-export { dbGetRef, dbRead, dbAddDoc, dbUpdateDoc, dbBatchWrite };
+export {
+  dbGetRef,
+  dbRead,
+  dbAddDoc,
+  dbAddDocWithId,
+  dbUpdateDoc,
+  deleteDoc,
+  dbBatchWrite,
+};
 
 export default db;

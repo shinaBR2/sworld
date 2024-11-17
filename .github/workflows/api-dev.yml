@@ -1,15 +1,15 @@
 name: Dev - Deploy API
-"on":
+'on':
   push:
     branches:
       - api-dev
     paths:
-      - "apps/api/**"
+      - 'apps/api/**'
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     environment:
-      name: dev
+      name: prod
     # env:
     # SLACK_WEBHOOK_URL: '${{ secrets.SLACK_NOTIFICATION_WEBHOOK }}'
     steps:
@@ -21,13 +21,12 @@ jobs:
         name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
+          node-version: 18.17.0
 
       - id: setup_pnpm
         name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v4.0.0
         with:
-          version: 7.14.1
           run_install: true
 
       - id: install_packages
@@ -36,6 +35,8 @@ jobs:
 
       - id: build
         name: Build
+        env:
+          NODE_ENV: production
         run: pnpm build --filter api
 
       - id: isolate_build
@@ -64,7 +65,7 @@ jobs:
         with:
           args: >
             use my-world-dev
-            && firebase deploy --only "functions:admin"
+            && firebase deploy --only functions
         env:
-          GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}"
+          GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           PROJECT_ID: my-world-dev

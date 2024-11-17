@@ -1,4 +1,3 @@
-import { useAuthContext } from "../../../providers/auth";
 import { useState } from "react";
 // @mui
 import { alpha } from "@mui/material/styles";
@@ -12,8 +11,8 @@ import {
   IconButton,
   Popover,
 } from "@mui/material";
+import { Auth } from 'core';
 // mocks_
-import account from "../../../_mock/account";
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +35,7 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-  const { user, signOut } = useAuthContext();
+  const { user, signOut } = Auth.useAuthContext();
 
   const { providerData } = user;
   const { displayName, email, photoURL } = providerData[0] || {};

@@ -2,12 +2,12 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy Live Listen Frontend
-"on":
+'on':
   push:
     branches:
       - main
     paths:
-      - "apps/listen/**"
+      - 'apps/listen/**'
 jobs:
   dev_deploy:
     runs-on: ubuntu-latest
@@ -19,16 +19,18 @@ jobs:
         with:
           fetch-depth: 2
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7.14.1
+        uses: pnpm/action-setup@v4.0.0
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
-          cache: "pnpm"
+          node-version: 18.17.0
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Copy .firebaserc file
+        run: cp .firebaserc apps/listen/.firebaserc
+      - name: Copy firebase.json file
+        run: cp firebase.json apps/listen/firebase.json
       - name: Build
         run: pnpm build
         env:
@@ -42,10 +44,10 @@ jobs:
       - name: Deploy listen
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
-          target: "listen"
-          entryPoint: "apps/listen"
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}"
+          target: 'listen'
+          entryPoint: 'apps/listen'
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live
 
@@ -59,16 +61,18 @@ jobs:
         with:
           fetch-depth: 2
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7.14.1
+        uses: pnpm/action-setup@v4.0.0
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
-          cache: "pnpm"
+          node-version: 18.17.0
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Copy .firebaserc file
+        run: cp .firebaserc apps/listen/.firebaserc
+      - name: Copy firebase.json file
+        run: cp firebase.json apps/listen/firebase.json
       - name: Build
         run: pnpm build
         env:
@@ -82,9 +86,9 @@ jobs:
       - name: Deploy listen
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
-          target: "listen"
-          entryPoint: "apps/listen"
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}"
+          target: 'listen'
+          entryPoint: 'apps/listen'
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live

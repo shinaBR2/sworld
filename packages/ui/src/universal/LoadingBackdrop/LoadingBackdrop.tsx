@@ -4,9 +4,9 @@ import {
   Box,
   CircularProgress,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
-interface LoadingBackdropProps extends Omit<BackdropProps, "open"> {
+interface LoadingBackdropProps extends Omit<BackdropProps, 'open'> {
   message?: string;
 }
 

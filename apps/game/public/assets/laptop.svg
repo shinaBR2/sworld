@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Screen -->
+  <rect x="8" y="8" width="16" height="12" fill="#95a5a6"/>
+  <!-- Screen border -->
+  <rect x="7" y="7" width="18" height="14" fill="#7f8c8d" stroke="#2c3e50" stroke-width="1"/>
+  <!-- Keyboard base -->
+  <rect x="7" y="21" width="18" height="2" fill="#bdc3c7"/>
+  <!-- Screen display -->
+  <rect x="9" y="9" width="14" height="10" fill="#2c3e50"/>
+</svg>

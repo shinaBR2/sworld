@@ -1,33 +1,33 @@
-import { Box, IconButton, useTheme } from "@mui/material";
-import PauseRounded from "@mui/icons-material/PauseRounded";
-import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
-import FastForwardRounded from "@mui/icons-material/FastForwardRounded";
-import FastRewindRounded from "@mui/icons-material/FastRewindRounded";
-import RepeatIcon from "@mui/icons-material/Repeat";
-import RepeatOnIcon from "@mui/icons-material/RepeatOn";
-import RepeatOneIcon from "@mui/icons-material/RepeatOne";
-import ShuffleIcon from "@mui/icons-material/Shuffle";
-import ShuffleOnIcon from "@mui/icons-material/ShuffleOn";
+import { Box, IconButton, useTheme } from '@mui/material';
+import PauseRounded from '@mui/icons-material/PauseRounded';
+import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
+import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
+import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
+import RepeatIcon from '@mui/icons-material/Repeat';
+import RepeatOnIcon from '@mui/icons-material/RepeatOn';
+import RepeatOneIcon from '@mui/icons-material/RepeatOne';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
+import ShuffleOnIcon from '@mui/icons-material/ShuffleOn';
 //@ts-ignore
 // import { SAudioPlayerLoopMode } from "core";
 
 // ts sucks
 enum SAudioPlayerLoopMode {
-  None = "none",
-  All = "all",
-  One = "one",
+  None = 'none',
+  All = 'all',
+  One = 'one',
 }
 
 const getWrapperStyles = () => {
   return {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     mt: -1,
   };
 };
 const getButtonStyles = () => {
-  return { fontSize: "3rem" };
+  return { fontSize: '3rem' };
 };
 
 interface Props {
@@ -54,7 +54,7 @@ const Controls = (props: Props) => {
     handlePrev,
     handleNext,
   } = props;
-  const iconColor = theme.palette.mode === "dark" ? "#fff" : "#000";
+  const iconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
 
   const renderIcon = () => {
     if (isPlay) {
@@ -92,7 +92,7 @@ const Controls = (props: Props) => {
       </IconButton>
       <IconButton
         size="large"
-        aria-label={isPlay ? "pause" : "play"}
+        aria-label={isPlay ? 'pause' : 'play'}
         onClick={handlePlay}
       >
         {renderIcon()}

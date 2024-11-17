@@ -5,7 +5,7 @@ import { styled } from "@mui/material/styles";
 //
 import Header from "./header";
 import Nav from "./nav";
-import { useAuthContext } from "../../providers/auth";
+import { Auth } from 'core';
 
 // ----------------------------------------------------------------------
 
@@ -35,11 +35,11 @@ const Main = styled("div")(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
-  const { isSignedIn } = useAuthContext();
+  const { isSignedIn, isAdmin } = Auth.useAuthContext();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  if (!isSignedIn) {
+
+  if (!isSignedIn || !isAdmin) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

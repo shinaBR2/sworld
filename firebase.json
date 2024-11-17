@@ -9,6 +9,38 @@
       "firebase-debug.*.log"
     ]
   },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "hosting": [
+    {
+      "target": "listen",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "target": "admin",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "target": "game",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    }
+  ],
   "emulators": {
     "auth": {
       "port": 9099
@@ -30,6 +62,10 @@
     },
     "firestore": {
       "port": 8080
-    }
+    },
+    "singleProjectMode": true
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

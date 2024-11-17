@@ -1,3 +1,3 @@
-import listen from "./listen";
+import listen from './listen';
 
 export default { listen };

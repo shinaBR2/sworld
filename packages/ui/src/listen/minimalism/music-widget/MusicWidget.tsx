@@ -1,21 +1,21 @@
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Controls from "./Controls";
-import Seeker from "./Seeker";
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Controls from './Controls';
+import Seeker from './Seeker';
 //@ts-ignore
-import hooks from "core";
+import hooks from 'core';
 //@ts-ignore
-import { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from "core";
-import { Box, Grid, Slide, Theme, useMediaQuery } from "@mui/material";
-import PlaylistButton from "./PlaylistButton";
-import { useRef, useState } from "react";
+import { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
+import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
+import PlaylistButton from './PlaylistButton';
+import { useRef, useState } from 'react';
 import {
   StyledCard,
   StyledCardActions,
   StyledCardMedia,
   StyledContent,
-} from "./Styled";
-import PlayingList from "./PlayingList";
+} from './Styled';
+import PlayingList from './PlayingList';
 
 interface MusicWidgetProps {
   audioList: SAudioPlayerAudioItem[];
@@ -36,7 +36,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
   const contentRef = useRef(null);
   const [showPlayinglist, setShowPlayinglist] = useState(false);
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down('sm')
   );
 
   if (!audioItem) {
@@ -74,7 +74,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
             mb={1}
           >
             <Typography gutterBottom variant="body2" component="p">
-              {showPlayinglist ? "Playing list" : "Now playing"}
+              {showPlayinglist ? 'Playing list' : 'Now playing'}
             </Typography>
             {isMobile && (
               <PlaylistButton

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Desktop surface -->
+  <rect x="8" y="24" width="48" height="8" fill="#8b572a"/>
+  <!-- Desk legs -->
+  <rect x="12" y="32" width="4" height="24" fill="#7d4b23"/>
+  <rect x="48" y="32" width="4" height="24" fill="#7d4b23"/>
+  <!-- Desktop edge detail -->
+  <rect x="8" y="28" width="48" height="4" fill="#7d4b23"/>
+</svg>

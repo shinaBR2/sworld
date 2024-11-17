@@ -1,9 +1,9 @@
-import { Firestore } from "firebase/firestore";
-import { audioConverter } from "../entity/audio";
-import { useGetCollectionOn } from "../universal/dbQuery";
+import { Firestore } from 'firebase/firestore';
+import { audioConverter } from '../entity/audio';
+import { useGetCollectionOn } from '../universal/dbQuery';
 
-const path = "homeConfigs";
-const basePathSegments = ["listen", "audios"];
+const path = 'homeConfigs';
+const basePathSegments = ['listen', 'audios'];
 
 const useListenHomeAudioList = (db: Firestore) => {
   const inputs = {

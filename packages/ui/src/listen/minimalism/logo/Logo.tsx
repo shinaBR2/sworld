@@ -1,4 +1,4 @@
-import { StyledLogo } from "./Styled";
+import { StyledLogo } from './Styled';
 
 const Logo = () => {
   return (

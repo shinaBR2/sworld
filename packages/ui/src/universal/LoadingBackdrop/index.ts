@@ -1,3 +1,3 @@
-import LoadingBackdrop from "./LoadingBackdrop";
+import LoadingBackdrop from './LoadingBackdrop';
 
 export default LoadingBackdrop;
