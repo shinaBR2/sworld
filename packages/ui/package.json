@@ -12,29 +12,23 @@
   ],
   "scripts": {
     "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
     "test": "jest"
   },
-  "jest": {
-    "preset": "jest-presets/jest/node"
-  },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@babel/core": "^7.20.2",
-    "@types/jest": "^26.0.24",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@types/react-helmet": "^6.1.6",
     "babel-loader": "^8.3.0",
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:*",
-    "jest": "^26.6.3",
-    "jest-presets": "workspace:*",
+    "@sworld/jest-dom-preset": "workspace:*",
     "react": "^18.2.0",
     "tsconfig": "workspace:*",
-    "ts-jest": "^26.5.0",
     "tsup": "^6.2.3",
     "typescript": "^4.8.3"
   },
