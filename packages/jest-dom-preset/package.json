@@ -1,0 +1,23 @@
+{
+  "name": "@sworld/jest-dom-preset",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "bin": {
+    "jest": "./node_modules/.bin/jest"
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "dependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "@jest/globals": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./@jest/globals": "./node_modules/@jest/globals"
+  }
+}

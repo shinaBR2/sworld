@@ -10,7 +10,6 @@
     "target": "ES6",
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["jest", "node"],
     "esModuleInterop": true,
     "typeRoots": [
       "./node_modules/@types",
