@@ -1,3 +1,3 @@
-import { compareString } from "./stringHelpers";
+import { compareString } from './stringHelpers';
 
 export { compareString };

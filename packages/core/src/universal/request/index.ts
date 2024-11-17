@@ -1,3 +1,3 @@
-import callable from "./callable";
+import callable from './callable';
 
 export { callable };

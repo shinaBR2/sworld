@@ -2,13 +2,13 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy Admin Preview Channels
-"on":
+'on':
   pull_request:
     paths:
-      - "apps/admin/**"
+      - 'apps/admin/**'
 jobs:
   dev_deploy:
-    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     runs-on: ubuntu-latest
     environment:
       name: dev
@@ -18,16 +18,18 @@ jobs:
         with:
           fetch-depth: 2
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7.14.1
+        uses: pnpm/action-setup@v4.0.0
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
-          cache: "pnpm"
+          node-version: 18.17.0
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Copy .firebaserc file
+        run: cp .firebaserc apps/admin/.firebaserc
+      - name: Copy firebase.json file
+        run: cp firebase.json apps/admin/firebase.json
       - name: Build
         run: pnpm build
         env:
@@ -41,14 +43,14 @@ jobs:
       - name: Deploy admin
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
-          target: "admin"
-          entryPoint: "apps/admin"
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}"
+          target: 'admin'
+          entryPoint: 'apps/admin'
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
 
   prod_deploy:
-    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     runs-on: ubuntu-latest
     environment:
       name: prod
@@ -58,16 +60,18 @@ jobs:
         with:
           fetch-depth: 2
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7.14.1
+        uses: pnpm/action-setup@v4.0.0
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
-          cache: "pnpm"
+          node-version: 18.17.0
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Copy .firebaserc file
+        run: cp .firebaserc apps/admin/.firebaserc
+      - name: Copy firebase.json file
+        run: cp firebase.json apps/admin/firebase.json
       - name: Build
         run: pnpm build
         env:
@@ -81,8 +85,8 @@ jobs:
       - name: Deploy admin
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
-          target: "admin"
-          entryPoint: "apps/admin"
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}"
+          target: 'admin'
+          entryPoint: 'apps/admin'
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}

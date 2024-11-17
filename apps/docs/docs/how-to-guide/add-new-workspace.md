@@ -57,3 +57,4 @@ Steps:
   ```
 
 - Back to the root folder run `pnpm install`
+- Add new `.env.development.local` file at the new created folder

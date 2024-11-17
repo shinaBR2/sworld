@@ -1,8 +1,36 @@
 {
   "projects": {
+    "default": "my-world-dev",
     "dev": "my-world-dev",
     "prod": "sworld-prod"
   },
-  "targets": {},
+  "targets": {
+    "my-world-dev": {
+      "hosting": {
+        "listen": [
+          "shinabr2-listen-dev"
+        ],
+        "admin": [
+          "shinabr2-admin-dev"
+        ],
+        "game": [
+          "shinabr2-game-dev"
+        ]
+      }
+    },
+    "sworld-prod": {
+      "hosting": {
+        "listen": [
+          "sworld-listen"
+        ],
+        "admin": [
+          "sworld-admin"
+        ],
+        "game": [
+          "sworld-game"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

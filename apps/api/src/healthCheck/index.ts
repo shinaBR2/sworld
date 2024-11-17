@@ -1,3 +1,3 @@
-import { checkRead, checkWrite } from "./check";
+import { checkRead, checkWrite } from './check';
 
 export default { checkRead, checkWrite };

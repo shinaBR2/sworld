@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { playAudio, seek } from "./utils/actions";
+import { useEffect, useRef, useState } from 'react';
+import { playAudio, seek } from './utils/actions';
 
 export interface SAudioPlayerAudioItem {
   id: string;
@@ -10,9 +10,9 @@ export interface SAudioPlayerAudioItem {
 }
 
 export enum SAudioPlayerLoopMode {
-  None = "none",
-  All = "all",
-  One = "one",
+  None = 'none',
+  All = 'all',
+  One = 'one',
 }
 
 interface SAudioPlayerConfigs {
@@ -44,7 +44,7 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   const total = audioList.length;
-  const loopModes = ["all", "one", "none"];
+  const loopModes = ['all', 'one', 'none'];
 
   useEffect(() => {
     if (total) {
@@ -193,7 +193,7 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
     if (!isShuffled) {
       const sortFunc = () => (Math.random() > 0.5 ? 1 : -1);
       const newIndexes = [...indexes.sort(sortFunc)];
-      const newCurrentIndex = newIndexes.findIndex((i) => i === currentIndex);
+      const newCurrentIndex = newIndexes.findIndex(i => i === currentIndex);
 
       setIndexes(newIndexes);
       setCurrentIndex(newCurrentIndex);

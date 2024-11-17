@@ -1,4 +1,4 @@
-import { PlayArrowRounded } from "@mui/icons-material";
+import { PlayArrowRounded } from '@mui/icons-material';
 import {
   Divider,
   Box,
@@ -6,10 +6,10 @@ import {
   MenuItem,
   ListItemText,
   Typography,
-} from "@mui/material";
-import { SAudioPlayerAudioItem } from "core";
-import { forwardRef, Ref } from "react";
-import { StyledPlayingList } from "./Styled";
+} from '@mui/material';
+import { SAudioPlayerAudioItem } from 'core';
+import { forwardRef, Ref } from 'react';
+import { StyledPlayingList } from './Styled';
 
 interface PlayingListProps {
   audioList: SAudioPlayerAudioItem[];
@@ -29,7 +29,7 @@ const PlayingList = (
       <Divider />
       <Box height="100%" pb={2} mb={2}>
         <MenuList>
-          {audioList.map((a) => {
+          {audioList.map(a => {
             const selected = a.id === currentId;
 
             return (

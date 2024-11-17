@@ -7,8 +7,8 @@ import {
   CardMedia,
   CardMediaProps,
   CardProps,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const cardWidth = 345;
 const imageHeight = 300;
@@ -17,9 +17,9 @@ const contentHeight = 300;
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
   return {
     width: cardWidth,
-    maxWidth: "100%",
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
+    maxWidth: '100%',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
       maxWidth: cardWidth,
     },
   };
@@ -31,26 +31,26 @@ const StyledCardMedia = styled(CardMedia)<CardMediaProps>(({ theme }) => {
   };
 }) as typeof CardMedia;
 
-const StyledContent = styled("div")<BoxProps>(() => {
+const StyledContent = styled('div')<BoxProps>(() => {
   return {
-    position: "relative",
+    position: 'relative',
     height: contentHeight,
   };
 }) as any;
 
 const StyledCardActions = styled(CardActions)<CardActionsProps>(() => {
   return {
-    display: "block",
+    display: 'block',
   };
 }) as typeof CardActions;
 
 const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
   return {
-    position: "absolute",
-    width: "100%",
-    height: "244px",
+    position: 'absolute',
+    width: '100%',
+    height: '244px',
     top: 56,
-    overflowY: "auto",
+    overflowY: 'auto',
     backgroundColor: theme.palette.common.white,
   };
 }) as any;

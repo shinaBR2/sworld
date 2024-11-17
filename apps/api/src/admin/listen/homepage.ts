@@ -1,9 +1,9 @@
-import pw from "a-promise-wrapper";
-import { CallableContext } from "firebase-functions/v1/https";
-import { onCall, onRequest } from "../../singleton";
-import { dbBatchWrite, dbGetRef, dbRead } from "../../singleton/db";
-import { AppError, onAdminCall } from "../../singleton/request";
-import { saveHomepageAudios, saveHomepageFeelings } from "./helpers";
+import pw from 'a-promise-wrapper';
+import { CallableContext } from 'firebase-functions/v1/https';
+import { onCall, onRequest } from '../../singleton';
+import { dbBatchWrite, dbGetRef, dbRead } from '../../singleton/db';
+import { AppError, onAdminCall } from '../../singleton/request';
+import { saveHomepageAudios, saveHomepageFeelings } from './helpers';
 
 const saveAudios = async (data: any) => {
   const { audios } = data;
@@ -12,10 +12,10 @@ const saveAudios = async (data: any) => {
 
   if (error) {
     console.log(error);
-    throw AppError("Can not save homepage audios");
+    throw AppError('Can not save homepage audios');
   }
 
-  return "Success";
+  return 'Success';
 };
 
 const saveFeelings = async (data: any) => {
@@ -25,10 +25,10 @@ const saveFeelings = async (data: any) => {
 
   if (error) {
     console.log(error);
-    throw AppError("Can not save homepage feelings");
+    throw AppError('Can not save homepage feelings');
   }
 
-  return "Success";
+  return 'Success';
 };
 
 const withRequest = {

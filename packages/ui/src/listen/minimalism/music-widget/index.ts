@@ -1,3 +1,3 @@
-import MusicWidget from "./MusicWidget";
+import MusicWidget from './MusicWidget';
 
 export default MusicWidget;

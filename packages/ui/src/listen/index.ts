@@ -1,1 +1,1 @@
-export * as Minimalism from "./minimalism";
+export * as Minimalism from './minimalism';

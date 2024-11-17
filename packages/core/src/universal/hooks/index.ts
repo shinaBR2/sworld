@@ -2,7 +2,7 @@ import useSAudioPlayer, {
   SAudioPlayerInputs,
   SAudioPlayerAudioItem,
   SAudioPlayerLoopMode,
-} from "./useSAudioPlayer";
+} from './useSAudioPlayer';
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 

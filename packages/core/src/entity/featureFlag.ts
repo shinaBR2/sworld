@@ -3,10 +3,10 @@ import {
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
-} from "firebase/firestore";
-import { useGetCollectionOn, useUpdateDoc } from "../universal/dbQuery";
-import { PathConfigs } from "../universal/dbQuery/interfaces";
-import { FeatureFlagItem } from "./interfaces/featureFlag";
+} from 'firebase/firestore';
+import { useGetCollectionOn, useUpdateDoc } from '../universal/dbQuery';
+import { PathConfigs } from '../universal/dbQuery/interfaces';
+import { FeatureFlagItem } from './interfaces/featureFlag';
 
 const reduceFunc = (ids: string[]) => {
   return ids.reduce((acc, id) => {
@@ -18,7 +18,7 @@ const reduceFunc = (ids: string[]) => {
 };
 
 const featureFlagConverter: FirestoreDataConverter<FeatureFlagItem> = {
-  toFirestore: (data) => {
+  toFirestore: data => {
     const { isGlobal, allowedUserIds: ids } = data;
     const allowedUserIds = !ids ? null : reduceFunc(ids as string[]);
 

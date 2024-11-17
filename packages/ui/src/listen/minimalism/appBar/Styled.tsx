@@ -1,5 +1,5 @@
-import { AppBar, AppBarProps } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
+import { AppBar, AppBarProps } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 
 const StyledAppBar = styled(AppBar)<AppBarProps>(({ theme }) => {
   return {

@@ -1,5 +1,5 @@
 import CRUDPage from "../../../components/@crud-page";
-import { useAuthContext } from "../../../providers/auth";
+import { Auth } from 'core';
 
 import { Entity } from "core";
 import FeelingCRUDForm from "./components/FeelingCRUDForm";
@@ -11,7 +11,7 @@ const { useListenEntityList, useAddEntity, useUpdateEntity, useDeleteEntity } =
   EntityFeeling;
 
 const EntityFeelingPage = () => {
-  const { user } = useAuthContext();
+  const { user } = Auth.useAuthContext();
 
   const htmlTitle = "Entity: Feeling";
   const entityName = "Feeling";

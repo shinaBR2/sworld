@@ -1,4 +1,4 @@
-import { dbBatchWrite, dbGetRef } from "../../singleton/db";
+import { dbBatchWrite, dbGetRef } from '../../singleton/db';
 
 interface InputItem {
   id: string;
@@ -23,12 +23,12 @@ const saveHomepageAudios = async (data: AudiosInputs) => {
    * - Clear all the current feelings
    * - Push all new feelings
    */
-  const path = "/homeConfigs/listen/audios";
+  const path = '/homeConfigs/listen/audios';
   const ref = dbGetRef(path) as FirebaseFirestore.CollectionReference;
   const allDocs = await ref.listDocuments();
 
   if (allDocs && allDocs.length) {
-    allDocs.map((doc) => {
+    allDocs.map(doc => {
       const { id } = doc;
 
       const docPath = `${path}/${id}`;
@@ -37,7 +37,7 @@ const saveHomepageAudios = async (data: AudiosInputs) => {
     });
   }
 
-  audios.map((doc) => {
+  audios.map(doc => {
     const { id, value } = doc;
     const { image: thumbnailUrl, ...rest } = value;
 
@@ -60,11 +60,11 @@ const saveHomepageFeelings = async (data: FeelingInputs) => {
    * - Clear all the current feelings
    * - Push all new feelings
    */
-  const path = "/homeConfigs/listen/feelings";
+  const path = '/homeConfigs/listen/feelings';
   const ref = dbGetRef(path) as FirebaseFirestore.CollectionReference;
   const allDocs = await ref.listDocuments();
 
-  allDocs.map((doc) => {
+  allDocs.map(doc => {
     const { id } = doc;
 
     const docPath = `${path}/${id}`;
@@ -72,7 +72,7 @@ const saveHomepageFeelings = async (data: FeelingInputs) => {
     batch.delete(ref);
   });
 
-  feelings.map((doc) => {
+  feelings.map(doc => {
     const { id, value } = doc;
 
     const docPath = `${path}/${id}`;

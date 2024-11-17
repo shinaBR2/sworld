@@ -6,7 +6,7 @@ import { Entity } from "core";
 import db from "../../providers/firestore";
 import FullPageLoader from "../../components/@full-page-loader";
 import pw from "a-promise-wrapper";
-import { useAuthContext } from "../../providers/auth";
+import { Auth } from 'core';
 
 const { useListenFeatureFlag, useSaveFeatureFlag } = Entity.EntityFeatureFlag;
 
@@ -21,7 +21,7 @@ const TabPanel = (props) => {
 };
 
 const FeatureFlags = () => {
-  const { user } = useAuthContext();
+  const { user } = Auth.useAuthContext();
   const [tabValue, setTabValue] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);

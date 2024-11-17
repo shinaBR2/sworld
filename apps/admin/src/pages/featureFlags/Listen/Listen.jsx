@@ -159,7 +159,7 @@ const ListenFeatureFlags = (props) => {
                           <TableCell align="left">
                             {allowedUserIds
                               ? allowedUserIds.map((id) => (
-                                  <Box m={1}>
+                                  <Box key={id} m={1}>
                                     <Chip key={id} label={id} />
                                   </Box>
                                 ))
