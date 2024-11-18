@@ -88,7 +88,7 @@ my-turborepo/
 │       └── src/
 ```
 
-**Important**: In firebase.json, use relative paths for public directory:
+**Important**: In `firebase.json`, use relative paths for public directory:
 
 ```json
 {
@@ -137,9 +137,9 @@ GitHub Actions Configuration:
 - `VITE_PROJECT_ID`
 - `VITE_STORAGE_BUCKET`
 
-### Deployment Strategy
+### 3. Deployment Strategy
 
 - Independent deployments per site
-- Triggered by changes in main branch
+- Triggered by changes in `main` branch
 - Uses Firebase Hosting preview channels for pre-deployment testing
-- Cloud Functions deployment handled via custom script (apps/api/scripts/prepare-deploy.ts). The deployment script avoids external dependencies for better long-term maintainability.
+- Cloud Functions deployment handled via custom script (`apps/api/scripts/prepare-deploy.ts`). The deployment script avoids external dependencies for better long-term maintainability.
