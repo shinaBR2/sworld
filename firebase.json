@@ -1,7 +1,7 @@
 {
   "functions": {
-    "source": "apps/api",
-    "runtime": "nodejs18",
+    "source": "apps/api/dist",
+    "runtime": "nodejs20",
     "ignore": [
       "node_modules",
       ".git",
@@ -64,8 +64,5 @@
       "port": 8080
     },
     "singleProjectMode": true
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
 }

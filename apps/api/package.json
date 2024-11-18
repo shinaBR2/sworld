@@ -2,17 +2,20 @@
   "name": "api",
   "version": "0.0.0",
   "private": true,
-  "main": "dist/index.js",
+  "main": "index.js",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production tsc",
     "build:watch": "tsc --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev-old": "tsup src/index.ts --format cjs --watch --onSuccess \"node dist/index.js\"",
-    "dev": "cross-env NODE_ENV=development firebase emulators:start --only functions,firestore",
-    "deploy": "firebase deploy --only functions",
+    "start-emulator": "cross-env NODE_ENV=development && firebase emulators:start --only functions,firestore",
+    "dev": "concurrently \"pnpm run build:watch\" \"pnpm run start-emulator\"",
+    "prepare-deploy": "tsc scripts/prepare-deploy.ts && node scripts/prepare-deploy.js",
+    "deploy:dev": "pnpm build && pnpm prepare-deploy && cd dist && npm install && npm install -g firebase-tools && firebase use my-world-dev && firebase deploy --only functions",
+    "deploy:prod": "firebase use sworld-prod && firebase deploy --only functions",
     "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\"",
     "start": "node dist/index.js"
   },
@@ -35,6 +38,7 @@
     "@types/morgan": "^1.9.2",
     "@types/node": "^18.11.9",
     "@types/supertest": "^2.0.12",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-custom-server": "workspace:*",

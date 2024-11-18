@@ -6,130 +6,128 @@ sidebar_position: 9
 
 ## Goal
 
-- One Firebase project with multiple sites
-- Two environments: dev and production
-- Cloud Functions shared across apps
-- Automated deployment via GitHub Actions
+Create a Firebase deployment setup with:
 
-## First! Setup Firebase project
+- Single Firebase project
+- Two environments (development and production)
+- Multiple hosting sites in `apps/*` folders
+- Cloud Functions in `apps/api` folder
+- Streamlined development and CI/CD using GitHub Actions
 
-- Create a new Firebase project
-- Create two project aliases:
-  - dev: for development/testing
-  - production: for live environment
+## Challenges & Solutions
 
-## Project Structure
+### 1. Project Structure Configuration
 
-Simplified structure for demonstration
+**Challenge:** Maintaining single source of truth for Firebase configuration files.
 
-```plaintext
-my-turborepo/
-├── apps/
-│   ├── listen/
-│   └── admin/
-├── packages/
-│   └── core/
-│   └── ui/
-├── firebase.json
-└── .firebaserc
-```
+**Solution:**
 
-## Configure .firebaserc
+- Keep `firebase.json` and `.firebaserc` in root folder as templates
+- Copy these files to specific app folders during deployment
 
-```json
-{
-  "projects": {
-    "default": "my-world-dev",
-    "dev": "my-world-dev",
-    "prod": "sworld-prod"
-  },
-  "targets": {
-    "my-world-dev": {
-      "hosting": {
-        "listen": ["shinabr2-listen-dev"],
-        "admin": ["shinabr2-admin-dev"]
-      }
-    },
-    "sworld-prod": {
-      "hosting": {
-        "listen": ["sworld-listen"],
-        "admin": ["sworld-admin"]
-      }
-    }
-  },
-  "etags": {}
-}
-```
+### 2. Firebase Cloud Functions Setup
 
-## Configure firebase.json
+**Challenge:** Firebase Cloud Functions lacks native monorepo support and doesn't work with pnpm's `workspace:*` protocol ([Issue #653](https://github.com/firebase/firebase-tools/issues/653)).
+
+#### Local development
+
+Configure `firebase.json`:
 
 ```json
 {
   "functions": {
-    "source": "apps/api",
-    "runtime": "nodejs18",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log"
-    ]
-  },
-  "firestore": {
-    "rules": "firestore.rules"
-  },
-  "hosting": [
-    {
-      "target": "listen",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    },
-    {
-      "target": "admin",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    }
-  ],
-  "emulators": {
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
-      "port": 5001
-    },
-    "database": {
-      "port": 9000
-    },
-    "hosting": {
-      "port": 5000
-    },
-    "storage": {
-      "port": 9199
-    },
-    "ui": {
-      "enabled": true
-    },
-    "firestore": {
-      "port": 8080
-    },
-    "singleProjectMode": true
-  },
-  "storage": {
-    "rules": "storage.rules"
+    "source": "apps/api/dist" // IMPORTANT! Points to TypeScript output
   }
 }
 ```
 
-## GitHub Actions Deployment
+#### Deployment Process
 
-### 1. Create Environment Secrets
+1. Create `firebase-for-deploy.json` in apps/api with `source": "."`
+2. Process `apps/api/package.json`:
 
-Add these repository secrets:
+- Copy to `apps/api/dist`
+- Build all dependencies
+- Convert workspace dependencies:
+
+  ```json
+  // Before
+  {
+    "dependencies": {
+      "core": "workspace:*"
+    }
+  }
+
+  // After
+  {
+    "dependencies": {
+      "core": "file:./core"
+    }
+  }
+  ```
+
+- Remove `devDependencies`
+- Copy `firebase-for-deploy.json` to `dist/firebase.json`
+
+### 3. Firebase Hosting Configuration
+
+Project Structure:
+
+```
+my-turborepo/
+├── .firebaserc                # Root template
+├── firebase.json              # Root template
+├── apps/
+│   ├── listen/
+│   │   ├── .firebaserc       # Copied for deployment
+│   │   ├── firebase.json     # Copied for deployment
+│   │   └── src/
+│   └── admin/
+│       ├── .firebaserc       # Copied for deployment
+│       ├── firebase.json     # Copied for deployment
+│       └── src/
+```
+
+**Important**: In firebase.json, use relative paths for public directory:
+
+```json
+{
+  "hosting": [
+    {
+      "public": "dist" // Relative to apps/* folder
+    }
+  ]
+}
+```
+
+GitHub Actions Configuration:
+
+```
+- name: Copy Firebase configs
+  run: |
+    cp .firebaserc apps/admin/.firebaserc
+    cp firebase.json apps/admin/firebase.json
+```
+
+## Setup Instructions
+
+### 1. Firebase Project Setup
+
+- Create new Firebase project
+- Set up project aliases:
+  - `dev` for development/testing
+  - `production` for live environment
+
+### 2. GitHub Actions Configuration
+
+#### Environment Secrets
+
+1. Repository Secrets:
 
 - `FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV`: Service account for dev environment
 - `FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD`: Service account for production environment
 
-Add these Environment secrets (for each environment):
+2. Environment Secrets (per environment):
 
 - `VITE_API_KEY`
 - `VITE_APP_ID`
@@ -139,102 +137,9 @@ Add these Environment secrets (for each environment):
 - `VITE_PROJECT_ID`
 - `VITE_STORAGE_BUCKET`
 
-### 2. Hack to deploy Firebase Cloud Functions via Github Action
+### Deployment Strategy
 
-The full workflow file at `.github/workflows/api-dev.yml`. The hack part is
-
-```bash
-- id: isolate_build
-  name: Isolate build
-  run: pnpx pnpm-isolate-workspace api
-
-- id: copy_build_to_isolate_folder
-  name: Copy build to isolate folder
-  run: cp -r apps/api/dist apps/api/_isolated_
-
-- id: fix_firebase_json
-  name: Change firebase.json build to isolated
-  run: |
-    sed -i 's/"source\"\: \"apps\/api"/"source\"\: \"apps\/api\/_isolated_\"/g' firebase.json
-
-- id: fix_package_json
-  name: Fix package.json
-  run: |
-    mv apps/api/_isolated_/package.json apps/api/_isolated_/package-dev.json
-    mv apps/api/_isolated_/package-prod.json apps/api/_isolated_/package.json
-    sed -i 's/"core\"\: \"workspace:\*\"/"core\"\: \"file\:workspaces\/packages\/core\"/g' apps/api/_isolated_/package.json
-```
-
-Explanation:
-
-- We put Cloud Functions code at `apps/api` folder
-- At this moment, Firebase deploy does not support monorepo and PNPM
-- Firebase deploy expect having `.firebaserc`, `firebase.json`
-- Solution is build and copy the built into an `_isolated_` folder
-- `pnpm` `workspace:*` protocol does not work, fixed by this hacky line
-
-  ```
-  sed -i 's/"core\"\: \"workspace:\*\"/"core\"\: \"file\:workspaces\/packages\/core\"/g' apps/api/_isolated_/package.json
-  ```
-
-- Done
-
-### 3. Deploy other Firebase sites
-
-#### The problem
-
-When deploying multiple apps from a monorepo to Firebase Hosting, we encountered several challenges:
-
-1. Firebase CLI expects configuration files (`.firebaserc` and `firebase.json`) to be in the same directory as the app being deployed
-2. GitHub Actions deployment needs these files to be in the app directory when using `FirebaseExtended/action-hosting-deploy`
-3. Different apps might need different Firebase configurations
-
-#### Our Solution
-
-We maintain Firebase configurations at both the root and app level
-
-```plaintext
-my-turborepo/
-├── .firebaserc                # Root config (template)
-├── firebase.json              # Root config (template)
-├── apps/
-│   ├── listen/
-│   │   ├── .firebaserc       # Copied from root with web-specific configs
-│   │   ├── firebase.json     # Copied from root with web-specific configs
-│   │   └── src/
-│   └── admin/
-│       ├── .firebaserc       # Copied from root with admin-specific configs
-│       ├── firebase.json     # Copied from root with admin-specific configs
-│       └── src/
-```
-
-Put this inside each Github action workflow file for automation copy
-
-```yml
-- name: Copy .firebaserc file
-  run: cp .firebaserc apps/admin/.firebaserc
-- name: Copy firebase.json file
-  run: cp firebase.json apps/admin/firebase.json
-```
-
-> **IMPORTANT!**
-> In `firebase.json` file, the `public` should be relative to the `apps/*` folder, not the root folder
-
-```json
-"hosting": [
-  {
-    "target": "admin",
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
-  // other sites
-],
-```
-
-#### Why This Approach?
-
-Single source of truth for firebase configurations since all apps are only one Firebase project
+- Independent deployments per site
+- Triggered by changes in main branch
+- Uses Firebase Hosting preview channels for pre-deployment testing
+- Cloud Functions deployment handled via custom script (apps/api/scripts/prepare-deploy.ts). The deployment script avoids external dependencies for better long-term maintainability.

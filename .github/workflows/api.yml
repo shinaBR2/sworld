@@ -9,7 +9,7 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     environment:
-      name: dev
+      name: prod
     # env:
     # SLACK_WEBHOOK_URL: '${{ secrets.SLACK_NOTIFICATION_WEBHOOK }}'
     steps:
@@ -21,7 +21,7 @@ jobs:
         name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.17.0
+          node-version: 20.10.0
 
       - id: setup_pnpm
         name: Setup pnpm
@@ -33,39 +33,21 @@ jobs:
         name: Install packages
         run: pnpm install --filter api
 
+      - name: Copy firebase.json file
+        run: cp firebase.json apps/api/firebase.json
+
       - id: build
         name: Build
         env:
           NODE_ENV: production
         run: pnpm build --filter api
 
-      - id: isolate_build
-        name: Isolate build
-        run: pnpx pnpm-isolate-workspace api
-
-      - id: copy_build_to_isolate_folder
-        name: Copy build to isolate folder
-        run: cp -r apps/api/dist apps/api/_isolated_
-
-      - id: fix_firebase_json
-        name: Change firebase.json build to isolated
-        run: |
-          sed -i 's/"source\"\: \"apps\/api"/"source\"\: \"apps\/api\/_isolated_\"/g' firebase.json
-
-      - id: fix_package_json
-        name: Fix package.json
-        run: |
-          mv apps/api/_isolated_/package.json apps/api/_isolated_/package-dev.json
-          mv apps/api/_isolated_/package-prod.json apps/api/_isolated_/package.json
-          sed -i 's/"core\"\: \"workspace:\*\"/"core\"\: \"file\:workspaces\/packages\/core\"/g' apps/api/_isolated_/package.json
+      - id: authentication
+        name: Authentication
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
 
       - id: deploy
         name: Deploy
-        uses: w9jds/firebase-action@master
-        with:
-          args: >
-            use sworld-prod
-            && firebase deploy --only functions
-        env:
-          GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
-          PROJECT_ID: sworld-prod
+        run: pnpm --filter=api deploy:dev
