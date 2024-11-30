@@ -15,6 +15,9 @@
         ],
         "game": [
           "shinabr2-game-dev"
+        ],
+        "docs": [
+          "shinabr2-docs-dev"
         ]
       }
     },
@@ -28,6 +31,9 @@
         ],
         "game": [
           "sworld-game"
+        ],
+        "docs": [
+          "sworld-prod-docs"
         ]
       }
     }
