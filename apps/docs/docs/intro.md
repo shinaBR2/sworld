@@ -6,9 +6,16 @@ sidebar_position: 1
 
 Welcome to the shinabr2-world wiki!
 
+This documentation space (/docs) serves as the central knowledge repository for my internal project. Here contains comprehensive project-specific documentation covering everything from philosophical approaches to technical implementation details.
+
 Documents are categorized into:
 
-- [Philosophy](category/philosophy): philosophy, concept, mindset I used to working with this project
-- [Workflow](category/workflow): contains workflow, the process of how to do the right things, beside the checklist
-- [How to guide](category/how-to-guide): guide for delopers
-- [Techinical notes](category/techincal-notes): all notes during development process should come here, it should contains faced problems, status, solutions or just a note that I need to write down.
+- [Philosophy](category/philosophy): The foundational principles, concepts, and mindsets that guide my project development and decision-making process.
+
+- [Workflow](category/workflow): Detailed processes and procedures that ensure consistent and effective project execution, complementing my standard checklists.
+
+- [How to Guide](category/how-to-guide): Practical implementation guides and instructions specifically tailored for project developers.
+
+- [Technical Notes](category/technical-notes): A collection of development insights, including encountered challenges, current status updates, solutions, and important observations related to this project.
+
+For broader topics beyond this project, please visit my blog section (/blog). The blog contains articles, insights, and other related subjects that aren't specifically tied to this project.
