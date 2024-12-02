@@ -32,7 +32,7 @@ jobs:
       - name: Copy firebase.json file
         run: cp firebase.json apps/admin/firebase.json
       - name: Build
-        run: pnpm build
+        run: pnpm build --filter=admin
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
@@ -74,7 +74,7 @@ jobs:
       - name: Copy firebase.json file
         run: cp firebase.json apps/admin/firebase.json
       - name: Build
-        run: pnpm build
+        run: pnpm build --filter=admin
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
