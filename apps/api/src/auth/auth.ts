@@ -4,13 +4,12 @@ import * as authenticationHelpers from './authenticationPasskeyHelpers';
 import { saveNewPasskey } from './userHelpers';
 import { AppError } from '../singleton/request';
 
-const generatePasskeyRegistrationOptions = onCall(async payload => {
+const generatePasskeyRegistrationOptions = onCall(async ({ data }) => {
   try {
-    const { userId } = payload;
+    const { userId } = data;
     const options = await registrationHelpers.generateOptions(userId);
 
     if (!options) {
-      console.error('Failed to generate options:');
       throw AppError('Failed to generate options');
     }
 
@@ -21,9 +20,9 @@ const generatePasskeyRegistrationOptions = onCall(async payload => {
   }
 });
 
-const verifyPasskeyRegistration = onCall(async payload => {
+const verifyPasskeyRegistration = onCall(async request => {
   try {
-    const { userId: firebaseUserId, credential: userCredential } = payload;
+    const { userId: firebaseUserId, credential: userCredential } = request.data;
     const { isVerified, verification, user } = await registrationHelpers.verify(
       firebaseUserId,
       userCredential
@@ -45,9 +44,9 @@ const verifyPasskeyRegistration = onCall(async payload => {
   }
 });
 
-const generatePasskeyAuthenticationOptions = onCall(async payload => {
+const generatePasskeyAuthenticationOptions = onCall(async ({ data }) => {
   try {
-    const { userId } = payload;
+    const { userId } = data;
     const options = await authenticationHelpers.generateOptions(userId);
 
     if (!options) {
@@ -62,9 +61,9 @@ const generatePasskeyAuthenticationOptions = onCall(async payload => {
   }
 });
 
-const verifyPasskeyAuthentication = onCall(async payload => {
+const verifyPasskeyAuthentication = onCall(async ({ data }) => {
   try {
-    const { userId: firebaseUserId, credential: userCredential } = payload;
+    const { userId: firebaseUserId, credential: userCredential } = data;
     const { isVerified } = await authenticationHelpers.verify(
       firebaseUserId,
       userCredential

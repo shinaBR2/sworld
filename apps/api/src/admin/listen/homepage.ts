@@ -1,7 +1,4 @@
 import pw from 'a-promise-wrapper';
-import { CallableContext } from 'firebase-functions/v1/https';
-import { onCall, onRequest } from '../../singleton';
-import { dbBatchWrite, dbGetRef, dbRead } from '../../singleton/db';
 import { AppError, onAdminCall } from '../../singleton/request';
 import { saveHomepageAudios, saveHomepageFeelings } from './helpers';
 

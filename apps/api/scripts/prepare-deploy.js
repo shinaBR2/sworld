@@ -48,5 +48,5 @@ delete corePkgJson.scripts;
 (0, fs_1.writeFileSync)((0, path_1.join)(CORE_DEST, 'package.json'), JSON.stringify(corePkgJson, null, 2));
 // Copy firebase.json to dist
 console.log('Copying firebase.json...');
-(0, fs_1.cpSync)((0, path_1.resolve)(ROOT_DIR, 'firebase.json'), (0, path_1.join)(DIST_DIR, 'firebase.json'));
+(0, fs_1.cpSync)((0, path_1.resolve)(API_DIR, 'firebase-for-deploy.json'), (0, path_1.join)(DIST_DIR, 'firebase.json'));
 console.log('Deployment preparation completed!');
