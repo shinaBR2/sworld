@@ -1,35 +1,29 @@
 import { FieldValue } from 'firebase-admin/firestore';
-import * as functions from 'firebase-functions';
-import { HttpsError } from 'firebase-functions/v1/auth';
-import cors from 'cors';
+import {
+  HttpsError,
+  onRequest,
+  onCall,
+  HttpsFunction,
+} from 'firebase-functions/v2/https';
+import { setGlobalOptions } from 'firebase-functions/v2';
+import { Request, Response } from 'express';
 
-const functionConfig = {
-  region: 'asia-south1',
-};
-const functionBuilder = functions.region(functionConfig.region).runWith({
-  maxInstances: 50,
-});
-const corsHandler = cors({
-  origin: true, // Allow all origins in development
-});
+setGlobalOptions({ region: 'asia-south1', maxInstances: 50 });
 
 // https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events
-const AppError = (message: string) => new HttpsError('ok', message);
+const AppError = (message: string) => {
+  throw new HttpsError('ok', message);
+};
 
-const onRequest = functionBuilder.https.onRequest;
 const onRequestWithCors = (
   handler: (req: Request, res: Response) => Promise<void>
-) => {
-  return onRequest((req, res) => {
-    // @ts-ignore
-    return corsHandler(req, res, () => handler(req, res));
-  });
+): HttpsFunction => {
+  return onRequest({ cors: true }, handler);
 };
-const onCall = functionBuilder.https.onCall;
 const onAdminCall = (handler: (data: any) => void) => {
-  return onCall((data, context) => {
+  return onCall((request, context) => {
     // Check context
-    const { auth } = context;
+    const { auth } = request;
 
     if (!auth) {
       throw AppError('Require sign in');
@@ -44,7 +38,7 @@ const onAdminCall = (handler: (data: any) => void) => {
       throw AppError('Require admin privilege');
     }
 
-    return handler(data);
+    return handler(request.data);
   });
 };
 
