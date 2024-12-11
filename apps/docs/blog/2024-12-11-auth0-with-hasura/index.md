@@ -2,7 +2,7 @@
 slug: auth0-with-hasura
 title: Auth0 with Hasura
 authors: [ShinaBR2]
-tags: [Auth0, Authentication, Authorization]
+tags: [Auth0, Authentication, Authorization, Hasura, serverless]
 ---
 
 # Building Flexible Authentication with Auth0 and Hasura in a Monorepo

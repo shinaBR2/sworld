@@ -2,7 +2,7 @@
 slug: firebase-functions-deployment
 title: Deploy Firebase Functions in monorepo with pnpm
 authors: [ShinaBR2]
-tags: [Firebase, monorepo, pnpm]
+tags: [Firebase, monorepo, pnpm, serverless]
 ---
 
 ## Problem
