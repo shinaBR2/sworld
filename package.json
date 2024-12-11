@@ -17,6 +17,8 @@
     "dev:admin": "pnpm run predev:admin && turbo run dev --filter=admin --filter=core --no-cache --parallel --continue",
     "predev:game": "cp .env.development.local apps/game/.env.development.local",
     "dev:game": "pnpm run predev:game && turbo run dev --filter=game --filter=core --filter=ui --no-cache --parallel --continue",
+    "predev:main": "cp .env.development.local apps/main/.env.development.local",
+    "dev:main": "pnpm run predev:main && turbo run dev --filter=main --filter=core --filter=ui --no-cache --parallel --continue",
     "dev:docs": "turbo run dev --filter=docs",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
