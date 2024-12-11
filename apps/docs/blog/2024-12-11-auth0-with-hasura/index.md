@@ -34,7 +34,6 @@ CREATE TABLE users (
   name TEXT,
   email TEXT
 );
-// kaka
 ```
 
 This design provides several advantages:
