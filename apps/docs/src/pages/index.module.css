@@ -1,7 +1,12 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
+.techStackSection {
+  padding: 2rem 0;
+  background: #f8f9fa;
+}
+
+.techCard {
+  height: 100%;
+  padding: 1.5rem;
+}
 
 .heroBanner {
   padding: 4rem 0;
@@ -14,10 +19,4 @@
   .heroBanner {
     padding: 2rem;
   }
-}
-
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

@@ -208,9 +208,21 @@ importers:
       '@docusaurus/preset-classic':
         specifier: 2.2.0
         version: 2.2.0(@algolia/client-search@5.14.2)(@types/react@18.3.12)(encoding@0.1.13)(eslint@7.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.17.2)(typescript@4.9.5)
+      '@emotion/react':
+        specifier: ^11.10.5
+        version: 11.13.3(@types/react@18.3.12)(react@18.3.1)
+      '@emotion/styled':
+        specifier: ^11.10.5
+        version: 11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mdx-js/react':
         specifier: ^1.6.22
         version: 1.6.22(react@18.3.1)
+      '@mui/icons-material':
+        specifier: ^5.10.9
+        version: 5.16.7(@mui/material@5.16.7(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
+      '@mui/material':
+        specifier: ^5.10.12
+        version: 5.16.7(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx:
         specifier: ^1.2.1
         version: 1.2.1
