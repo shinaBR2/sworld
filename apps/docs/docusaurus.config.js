@@ -81,7 +81,7 @@ const config = {
       footer: {
         style: 'dark',
         links: [],
-        copyright: `</> made with enthusiasm • ShinaBR2`,
+        copyright: `made with enthusiasm • ShinaBR2`,
       },
       prism: {
         theme: lightCodeTheme,
