@@ -34,6 +34,7 @@ CREATE TABLE users (
   name TEXT,
   email TEXT
 );
+// test
 ```
 
 This design provides several advantages:
