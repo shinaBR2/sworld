@@ -25,7 +25,7 @@ const isWebAuthnSupported = () => {
 
 const Home = () => {
   const authContext = Auth.useAuthContext();
-  const { signOut } = authContext;
+  const { signIn, signOut } = authContext;
 
   console.log('auth context', authContext);
   const [status, setStatus] = useState('');
@@ -189,6 +189,9 @@ const Home = () => {
       <HomeContainer gameList={gameList} />
       <div>
         <div className="space-y-2">
+          <button onClick={signIn} className="w-full">
+            Login
+          </button>
           <button
             onClick={registerPasskey}
             disabled={!isWebAuthnSupported()}

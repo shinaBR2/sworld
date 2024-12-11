@@ -46,9 +46,7 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
   const { user } = Auth.useAuthContext();
-
-  const { providerData } = user;
-  const { displayName, photoURL } = providerData[0] || {};
+  const {name: displayName, picture: photoURL } = user;
 
   const isDesktop = useResponsive("up", "lg");
 

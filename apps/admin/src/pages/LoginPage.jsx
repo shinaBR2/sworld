@@ -53,6 +53,7 @@ export default function LoginPage() {
   const { signIn, isSignedIn, isAdmin, isLoading } = authContext;
   const location = useLocation();
 
+
   if (isSignedIn && isAdmin) {
     const origin = location.state?.from?.pathname || "/dashboard";
     return <Navigate to={origin} replace state={{ from: location }} />;
