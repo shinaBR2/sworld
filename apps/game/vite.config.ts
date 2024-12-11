@@ -9,7 +9,7 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 export default defineConfig({
   server: {
     port: 3003,
-    host: 'localhost',
+    host: '0.0.0.0',
   },
   plugins: [
     viteCommonjs(),
