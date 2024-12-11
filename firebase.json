@@ -2,6 +2,7 @@
   "functions": {
     "source": "apps/api/dist",
     "runtime": "nodejs20",
+    "region": "asia-southeast1",
     "ignore": [
       "node_modules",
       ".git",
