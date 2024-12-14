@@ -1,23 +1,12 @@
 import "dotenv/config";
 
-// import dotenv from "dotenv";
-// dotenv.config(); // Load environment variables before anything else
-
 console.log("fuahkhak", process.env.DATABASE_URL);
 
-import express from "express";
 import { initialize, listUsers } from "./database"; // Ensure this is correctly implemented
+import { app } from "./server";
 
-const app = express();
+// const app = express();
 const port = process.env.PORT || 4000;
-
-// Middleware to handle JSON body parsing
-app.use(express.json());
-
-// Sample route
-app.get("/", (req, res) => {
-  res.send("Hello from Express!");
-});
 
 // Endpoint to list users
 app.get("/videos/test-users", async (req, res) => {
@@ -44,7 +33,21 @@ app.get("/videos/test-users", async (req, res) => {
   // res.json({ message: "Test users endpoint" });
 });
 
-app.listen(port, () => {
-  console.log("fuahkhak", process.env.DATABASE_URL);
+const server = app.listen(port, () => {
+  // TODO
+  // const { NODE_ENV, HOST, PORT } = env;
+  // logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
   console.log(`Server is running on port ${port}`);
 });
+
+const onCloseSignal = () => {
+  // logger.info("sigint received, shutting down");
+  server.close(() => {
+    // logger.info("server closed");
+    process.exit();
+  });
+  setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+};
+
+process.on("SIGINT", onCloseSignal);
+process.on("SIGTERM", onCloseSignal);
