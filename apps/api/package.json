@@ -10,7 +10,7 @@
     "build": "cross-env NODE_ENV=production tsc",
     "build:watch": "tsc --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "start-emulator": "cross-env NODE_ENV=development && firebase emulators:start --only functions,firestore",
+    "start-emulator": "cross-env NODE_ENV=development && firebase emulators:start --only functions",
     "dev:setup": "pnpm run prepare-deploy && cd dist && npm install && cd ..",
     "dev:watch": "concurrently \"pnpm run build:watch\" \"pnpm run start-emulator\"",
     "dev": "pnpm run dev:setup && pnpm run dev:watch",
@@ -19,11 +19,13 @@
     "deploy:prod": "firebase use sworld-prod && firebase deploy --only functions",
     "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\"",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest  --coverage"
   },
   "dependencies": {
+    "@prisma/client": "^6.0.1",
     "@simplewebauthn/server": "^11.0.0",
     "@simplewebauthn/types": "^11.0.0",
+    "database": "workspace:*",
     "a-promise-wrapper": "^1.1.3",
     "body-parser": "^1.19.0",
     "core": "workspace:*",

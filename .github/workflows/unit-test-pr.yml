@@ -39,4 +39,4 @@ jobs:
         run: pnpm install
 
       - name: Run tests
-        run: pnpm turbo run test
+        run: pnpm run test
