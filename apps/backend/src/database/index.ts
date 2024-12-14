@@ -1,6 +1,7 @@
 import Sequelize, { DataTypes } from "sequelize";
+import { envConifg } from "src/utils/envConfig";
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = envConifg.databaseUrl;
 
 console.log(`ajdksad`, databaseUrl);
 // @ts-ignore

@@ -2,6 +2,7 @@
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
+import { videosRouter } from "./services/videos";
 
 // TODO
 // import { env } from "@/common/utils/envConfig";
@@ -27,6 +28,7 @@ app.use(helmet());
 // Routes
 // app.use("/health-check", healthCheckRouter);
 // app.use("/users", userRouter);
+app.use("/videos", videosRouter);
 
 // Swagger UI
 // app.use(openAPIRouter);
