@@ -83,7 +83,6 @@
       "port": 9199
     },
     "ui": {
-      "port": 4004,
       "enabled": true
     },
     "firestore": {
