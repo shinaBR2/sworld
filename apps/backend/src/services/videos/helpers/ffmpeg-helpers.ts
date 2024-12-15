@@ -1,17 +1,21 @@
-import * as os from 'os';
-// @ts-ignore
-import ffmpeg from 'fluent-ffmpeg';
-import { stat } from 'fs';
-import { mkdir } from 'fs/promises';
-import { rm } from 'fs/promises';
-import { promisify } from 'util';
-import path from 'path';
+import * as os from "os";
+import { stat } from "fs";
+import { mkdir } from "fs/promises";
+import { rm } from "fs/promises";
+import { promisify } from "util";
+import path from "path";
 import {
   generateTempDirName,
   downloadFile,
   uploadDirectory,
   getDownloadUrl,
-} from './file-helpers';
+} from "./file-helpers";
+
+// https://stackoverflow.com/questions/45555960/nodejs-fluent-ffmpeg-cannot-find-ffmpeg
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+//@ts-ignore
+const ffmpeg = require("fluent-ffmpeg");
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 export interface ConversionVideo {
   id: string;
@@ -24,7 +28,7 @@ const cleanupWorkingDirectory = async (workingDir: string) => {
     await rm(workingDir, { recursive: true, force: true });
   } catch (error) {
     // Log the error but don't throw it - cleanup failures shouldn't break the main flow
-    console.error('Cleanup failed:', error);
+    console.error("Cleanup failed:", error);
   }
 };
 
@@ -34,7 +38,7 @@ const handleConvertVideo = async (data: ConversionVideo) => {
   // Generate unique working directory name
   const uniqueDir = generateTempDirName();
   const workingDir = path.join(os.tmpdir(), uniqueDir);
-  const outputDir = path.join(workingDir, 'output');
+  const outputDir = path.join(workingDir, "output");
 
   try {
     // await ensureDir(workingDir);
@@ -42,7 +46,7 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     await mkdir(outputDir, { recursive: true });
     // await ensureDir(outputDir);
 
-    const inputPath = path.join(workingDir, 'input.mp4');
+    const inputPath = path.join(workingDir, "input.mp4");
     await downloadFile(videoUrl, inputPath);
 
     // Check file size after download
@@ -51,28 +55,28 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     const stats = await statAsync(inputPath);
     if (stats.size > 400 * 1024 * 1024) {
       // 400MB
-      throw new Error('Downloaded file too large for processing');
+      throw new Error("Downloaded file too large for processing");
     }
 
     // Generate a clean storage path
     const outputPath = `videos/${id}`;
     const cleanOutputPath = path
       .normalize(outputPath)
-      .replace(/^\/+|\/+$/g, '');
+      .replace(/^\/+|\/+$/g, "");
 
     // Convert to HLS
     await new Promise<void>((resolve, reject) => {
       ffmpeg(inputPath)
         .outputOptions([
-          '-codec copy',
-          '-start_number 0',
-          '-hls_time 10',
-          '-hls_list_size 0',
-          '-f hls',
+          "-codec copy",
+          "-start_number 0",
+          "-hls_time 10",
+          "-hls_list_size 0",
+          "-f hls",
         ])
-        .output(path.join(outputDir, 'playlist.m3u8'))
-        .on('end', () => resolve())
-        .on('error', (err: any) => reject(err))
+        .output(path.join(outputDir, "playlist.m3u8"))
+        .on("end", () => resolve())
+        .on("error", (err: any) => reject(err))
         .run();
     });
 
@@ -87,11 +91,11 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     await cleanupWorkingDirectory(workingDir);
 
     if (error instanceof Error) {
-      console.error('Video conversion error:', error);
+      console.error("Video conversion error:", error);
       throw new Error(error.message);
     } else {
-      console.error('Unknown error during video conversion:', error);
-      throw new Error('Unknown error during video conversion');
+      console.error("Unknown error during video conversion:", error);
+      throw new Error("Unknown error during video conversion");
     }
   }
 };
