@@ -3,9 +3,7 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
 import { videosRouter } from "./services/videos";
-
-// TODO
-// import { env } from "@/common/utils/envConfig";
+import { envConifg } from "./utils/envConfig";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -29,6 +27,11 @@ app.use(helmet());
 // app.use("/health-check", healthCheckRouter);
 // app.use("/users", userRouter);
 app.use("/videos", videosRouter);
+
+app.get("/debug-sentry", function mainHandler(req, res) {
+  console.log(`dsn`, envConifg.sentrydsn);
+  throw new Error("My second Sentry error!");
+});
 
 // Swagger UI
 // app.use(openAPIRouter);

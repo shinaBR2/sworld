@@ -10,7 +10,8 @@
     "build": "tsc",
     "start": "tsx src/index.ts",
     "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
-    "test": "vitest"
+    "test": "vitest",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sworld-dc --project node-express ./dist && sentry-cli sourcemaps upload --org sworld-dc --project node-express ./dist"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",
@@ -22,6 +23,9 @@
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@sentry/cli": "^2.39.1",
+    "@sentry/node": "^8.45.0",
+    "@sentry/profiling-node": "^8.45.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

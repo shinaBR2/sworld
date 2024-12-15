@@ -1,10 +1,13 @@
 import "dotenv/config";
+import "./instrument";
 
-import { initialize, listUsers } from "./database"; // Ensure this is correctly implemented
+import * as Sentry from "@sentry/node";
 import { app } from "./server";
 import { envConifg } from "./utils/envConfig";
 
 const port = envConifg.port || 4000;
+
+Sentry.setupExpressErrorHandler(app);
 
 const server = app.listen(port, () => {
   // TODO
