@@ -22,10 +22,8 @@
     "test": "jest  --coverage"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.1",
     "@simplewebauthn/server": "^11.0.0",
     "@simplewebauthn/types": "^11.0.0",
-    "database": "workspace:*",
     "a-promise-wrapper": "^1.1.3",
     "body-parser": "^1.19.0",
     "core": "workspace:*",

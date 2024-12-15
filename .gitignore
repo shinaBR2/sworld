@@ -13,9 +13,5 @@ public/dist
 .turbo
 coverage/
 
-apps/backend/encore.gen.go
-apps/backend/encore.gen.cue
-apps/backend/.encore
-apps/backend/encore.gen
 
 apps/api/scripts/prepare-deploy.js
