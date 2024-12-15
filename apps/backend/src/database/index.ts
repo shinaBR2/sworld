@@ -3,7 +3,6 @@ import { envConifg } from "src/utils/envConfig";
 
 const databaseUrl = envConifg.databaseUrl;
 
-console.log(`ajdksad`, databaseUrl);
 // @ts-ignore
 const sequelize = new Sequelize(databaseUrl, {
   dialect: "postgres",
