@@ -25,7 +25,7 @@ videosRouter.get("/test-users", async (req, res) => {
 videosRouter.post(
   "/convert",
   validateRequest<ConvertRequest>(ConvertSchema),
-  async (req, res) => {
+  async (req: any, res) => {
     try {
       const video = await convert(req);
 

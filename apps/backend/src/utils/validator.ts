@@ -12,7 +12,7 @@ interface ValidatedRequest<T> extends Request {
 }
 
 type ValidateRequest = <T>(
-  schema: ZodSchema
+  schema: ZodSchema<T, any, any>
 ) => (req: Request, res: Response, next: NextFunction) => void;
 
 const validateRequest: ValidateRequest =
