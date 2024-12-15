@@ -12,11 +12,11 @@ import {
 } from "./file-helpers";
 
 // https://stackoverflow.com/questions/45555960/nodejs-fluent-ffmpeg-cannot-find-ffmpeg
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 //@ts-ignore
-const ffmpeg = require("fluent-ffmpeg");
-ffmpeg.setFfmpegPath(ffmpegPath);
+import ffmpeg from "fluent-ffmpeg";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 export interface ConversionVideo {
   id: string;
   videoUrl: string;
