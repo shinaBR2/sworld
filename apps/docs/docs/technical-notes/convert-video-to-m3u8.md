@@ -47,16 +47,6 @@ sidebar_position: 10
 For now, use a new `backend` branch for backend
 
 - Build new docker and push to docker hub: https://github.com/marketplace/actions/build-and-push-docker-images
-- Deploy Cloud Run using (see `apps/docs/docs/technical-notes/encore-with-cloud-run.md`)
-
-  ```
-  gcloud run deploy sworld-backend \
-  --image docker.io/shinabr2/sworld-backend:1.2.0 \
-  --platform managed \
-  --port 4000 \
-  --region asia-southeast1 \
-  --allow-unauthenticated
-  ```
-
+- Deploy Cloud Run using
 - I removed 2 lines from `.npmrc` and `vitest` can run again
 - CI running the test now it took forever, it seems the `encore test` is the root cause. When running locally, `encore test && vitest` or `vitest && encore test` will result the same behavior, it running forever
