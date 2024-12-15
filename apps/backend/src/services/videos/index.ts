@@ -1,7 +1,10 @@
 import express, { Router } from "express";
 import { initializeApp } from "firebase-admin/app";
-import { initialize, listUsers } from "src/database";
 import { envConifg } from "src/utils/envConfig";
+import { testUsers } from "./test-users";
+import { AppError, AppResponse } from "src/utils/schema";
+import { validateRequest } from "src/utils/validator";
+import { convert, ConvertRequest, ConvertSchema } from "./convert";
 
 initializeApp({
   storageBucket: envConifg.storageBucket,
@@ -11,25 +14,31 @@ const videosRouter: Router = express.Router();
 
 videosRouter.get("/test-users", async (req, res) => {
   try {
-    console.log(`testUsers called`, envConifg.databaseUrl);
-    await initialize(); // Ensure this properly initializes your DB connection
-    const users = await listUsers(); // Fetch users
+    const users = await testUsers();
 
-    // Loop through users and log their info
-    for (let index = 0; index < users.length; index++) {
-      const user = users[index];
-      console.log(`user id`, user.id);
-      console.log(`user email`, user.email);
-      console.log(`user auth0_id`, user.auth0_id);
-      console.log(`user auth0Id`, user.auth0Id); // Ensure correct field name if necessary
-    }
-
-    res.json({ status: "ok" });
+    res.json(AppResponse(true, "ok", users));
   } catch (error) {
-    console.error("Error fetching users:", error);
-    // @ts-ignore
-    res.status(500).json({ status: "error", message: error.message });
+    res.json(AppError("Error fetching users", error));
   }
 });
+
+videosRouter.post(
+  "/convert",
+  validateRequest<ConvertRequest>(ConvertSchema),
+  async (req, res) => {
+    console.log(`convert recived`);
+    try {
+      // @ts-ignore
+      const video = await convert(req);
+
+      console.log(`muy adaskd voide`, video);
+
+      res.json(AppResponse(true, "ok", video));
+    } catch (error) {
+      console.log(`some thing wrong`, error);
+      res.json(AppError("Error fetching users", error));
+    }
+  }
+);
 
 export { videosRouter };
