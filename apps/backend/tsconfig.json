@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "ES2020",
     "baseUrl": ".",
     "moduleResolution": "Node",
+    "resolveJsonModule": true,
     "outDir": "dist",
     "importsNotUsedAsValues": "remove",
     "strict": true,
