@@ -54,11 +54,8 @@ const ConvertSchema = z
   }));
 
 const convert = async (request: ValidatedRequest<ConvertRequest>) => {
-  // console.log(`request parsed`, request);
   const { validatedData } = request;
   const { signatureHeader, data } = validatedData;
-
-  // const { validatedData } = request;
 
   // {
   //   body: {
@@ -91,7 +88,6 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   let video;
   try {
     video = await convertVideo(extractVideoData(data));
-    console.log(`updated video`, video);
   } catch (error) {
     throw AppError("Failed to convert");
   }

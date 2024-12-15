@@ -26,12 +26,8 @@ videosRouter.post(
   "/convert",
   validateRequest<ConvertRequest>(ConvertSchema),
   async (req, res) => {
-    console.log(`convert recived`);
     try {
-      // @ts-ignore
       const video = await convert(req);
-
-      console.log(`muy adaskd voide`, video);
 
       res.json(AppResponse(true, "ok", video));
     } catch (error) {

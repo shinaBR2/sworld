@@ -4,8 +4,6 @@ import { initialize, listUsers } from "./database"; // Ensure this is correctly 
 import { app } from "./server";
 import { envConifg } from "./utils/envConfig";
 
-console.log("fuahkhak", envConifg);
-// const app = express();
 const port = envConifg.port || 4000;
 
 const server = app.listen(port, () => {
