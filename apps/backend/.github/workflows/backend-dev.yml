@@ -47,10 +47,5 @@ jobs:
             --platform managed \
             --port 4000 \
             --region asia-southeast1 \
-            --allow-unauthenticated \
-            --set-env-vars \
-            NOCODB_IP=${{ secrets.NOCODB_IP }},\
-            NOCODB_WEBHOOK_SIGNATURE=${{ secrets.NOCODB_WEBHOOK_SIGNATURE }},\
-            DATABASE_URL=${{ secrets.DATABASE_URL }},\
-            GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }}
+            --allow-unauthenticated
 
