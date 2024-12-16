@@ -171,6 +171,7 @@ const GameDialog = (props: GameDialogProps) => {
           payload: { char: currentPageText[index] },
         });
         index++;
+        // @ts-ignore
         timeoutId = setTimeout(typeNextChar, typewriterSpeed);
       } else {
         dispatch({ type: 'COMPLETE_TYPING' });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListenUI, UniversalUI } from 'ui';
-import { ListenCore } from 'core';
+import { Auth, ListenCore, watchQueryHooks } from 'core';
 import db from '../../providers/firestore';
 
 const { LoadingBackdrop } = UniversalUI;
@@ -8,6 +8,10 @@ const { AppBar, Logo, HomeContainer } = ListenUI.Minimalism;
 const { useListenHomeAudioList, useListenHomeFeelingList } = ListenCore;
 
 const Home = () => {
+  const { user, signIn, isLoading, getAccessToken } = Auth.useAuthContext();
+  const data = watchQueryHooks.useLoadVideos({
+    getAccessToken,
+  });
   const { values: audioList, loading: loadingAudios } =
     useListenHomeAudioList(db);
   const { values: feelingList, loading: loadingFeelings } =
