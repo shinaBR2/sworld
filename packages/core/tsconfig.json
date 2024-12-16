@@ -3,7 +3,13 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "ES2015"]
+    "lib": ["dom", "ES2015"],
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "./schema.graphql"
+      }
+    ]
   },
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"]

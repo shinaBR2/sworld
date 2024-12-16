@@ -51,12 +51,9 @@ const AuthProvider: FC<Props> = ({ firebaseConfig, children }) => {
       // https://firebase.google.com/docs/reference/js/firebase.User
       const uid = user.uid;
 
-      console.log('uid', uid);
-
       if (auth.currentUser) {
         const tokenResult = await auth.currentUser.getIdTokenResult();
 
-        console.log('token', tokenResult);
         const { admin, email } = tokenResult.claims;
         const isAmin = !!admin || email == 'admin@shinabr2.com';
 

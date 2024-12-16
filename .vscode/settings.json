@@ -5,5 +5,7 @@
       "scheme": "file",
       "pattern": "apps/docs/docs/how-to-guide/admin/add-a-new-page.md"
     }
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

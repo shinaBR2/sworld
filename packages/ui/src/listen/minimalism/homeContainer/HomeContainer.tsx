@@ -108,7 +108,6 @@ const HomeContainer = (props: HomeContainerProps) => {
     setList(audioList);
   };
 
-  console.log('Home rendered', list, currentIndex);
   const currentAudio = list[currentIndex || 0];
   const htmlTitle = currentAudio ? `Listen - ${currentAudio.name}` : 'Listen';
   const hasNoItem = list.length === 0;
