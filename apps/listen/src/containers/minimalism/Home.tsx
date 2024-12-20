@@ -3,8 +3,8 @@ import { ListenUI, UniversalUI } from 'ui';
 import { Auth, ListenCore, watchQueryHooks } from 'core';
 import db from '../../providers/firestore';
 
-const { LoadingBackdrop } = UniversalUI;
-const { AppBar, Logo, HomeContainer } = ListenUI.Minimalism;
+const { LoadingBackdrop, Logo } = UniversalUI;
+const { AppBar, HomeContainer } = ListenUI.Minimalism;
 const { useListenHomeAudioList, useListenHomeFeelingList } = ListenCore;
 
 const Home = () => {

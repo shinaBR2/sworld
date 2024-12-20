@@ -13,6 +13,11 @@
         "^build"
       ]
     },
+    "build-watch": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "test": {
       "inputs": [
         "src/**/*.{js,jsx,ts,tsx}",
@@ -30,7 +35,11 @@
       "outputs": []
     },
     "dev": {
-      "cache": false
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "^build"
+      ]
     },
     "clean": {
       "cache": false
