@@ -17,7 +17,7 @@ import {
 } from './Styled';
 import PlayingList from './PlayingList';
 
-interface MusicWidgetProps {
+export interface MusicWidgetProps {
   audioList: SAudioPlayerAudioItem[];
   hookResult: any;
   onItemSelect: (id: string) => void;
