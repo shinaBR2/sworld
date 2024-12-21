@@ -21,21 +21,21 @@ SET row_security = off;
 -- Name: google_vacuum_mgmt; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA google_vacuum_mgmt;
+-- CREATE SCHEMA google_vacuum_mgmt;
 
 
 --
 -- Name: google_vacuum_mgmt; Type: EXTENSION; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS google_vacuum_mgmt WITH SCHEMA google_vacuum_mgmt;
+-- CREATE EXTENSION IF NOT EXISTS google_vacuum_mgmt WITH SCHEMA google_vacuum_mgmt;
 
 
 --
 -- Name: EXTENSION google_vacuum_mgmt; Type: COMMENT; Schema: -; Owner: -
 --
 
-COMMENT ON EXTENSION google_vacuum_mgmt IS 'extension for assistive operational tooling';
+-- COMMENT ON EXTENSION google_vacuum_mgmt IS 'extension for assistive operational tooling';
 
 
 --
