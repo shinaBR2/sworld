@@ -56,7 +56,7 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 -- Name: set_current_timestamp_updated_at(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.set_current_timestamp_updated_at() RETURNS trigger
+CREATE OR REPLACE FUNCTION public.set_current_timestamp_updated_at() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
