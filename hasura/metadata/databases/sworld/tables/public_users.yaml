@@ -1,0 +1,39 @@
+table:
+  name: users
+  schema: public
+array_relationships:
+  - name: audios
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: audios
+          schema: public
+  - name: video_views
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: video_views
+          schema: public
+  - name: videos
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: videos
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - auth0_id
+        - created_at
+        - email
+        - id
+        - updated_at
+        - username
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: Only select their own user profile based on `auth0_id`

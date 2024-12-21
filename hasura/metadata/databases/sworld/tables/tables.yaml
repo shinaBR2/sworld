@@ -1,0 +1,8 @@
+- "!include public_audio_tags.yaml"
+- "!include public_audios.yaml"
+- "!include public_tags.yaml"
+- "!include public_test.yaml"
+- "!include public_users.yaml"
+- "!include public_video_tags.yaml"
+- "!include public_video_views.yaml"
+- "!include public_videos.yaml"

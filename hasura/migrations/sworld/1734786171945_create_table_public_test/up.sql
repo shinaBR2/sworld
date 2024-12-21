@@ -1,0 +1,1 @@
+CREATE TABLE "public"."test" ("id" serial NOT NULL, "description" text NOT NULL, PRIMARY KEY ("id") );COMMENT ON TABLE "public"."test" IS E'This is a workaround when running CLI to dump from Hasura Cloud does not work, so I tried to use CLI run console to connect to db, create this table to make changes to generata migration files';

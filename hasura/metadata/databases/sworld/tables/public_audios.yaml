@@ -1,0 +1,87 @@
+table:
+  name: audios
+  schema: public
+configuration:
+  column_config:
+    artist_name:
+      custom_name: artistName
+    created_at:
+      custom_name: createdAt
+    thumbnail_url:
+      custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    artist_name: artistName
+    created_at: createdAt
+    thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+array_relationships:
+  - name: audio_tags
+    using:
+      foreign_key_constraint_on:
+        column: audio_id
+        table:
+          name: audio_tags
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      columns:
+        - artist_name
+        - created_at
+        - id
+        - name
+        - public
+        - source
+        - thumbnail_url
+        - updated_at
+        - user_id
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - artist_name
+        - created_at
+        - id
+        - name
+        - public
+        - source
+        - thumbnail_url
+        - updated_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - artist_name
+        - created_at
+        - name
+        - public
+        - source
+        - thumbnail_url
+        - updated_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
