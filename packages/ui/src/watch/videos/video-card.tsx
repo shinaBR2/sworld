@@ -59,6 +59,9 @@ const VideoCard = ({ video }: { video: Video }) => {
             backgroundColor: '#e0e0e0',
           }}
           light={thumbnail ?? defaultThumbnailUrl}
+          onError={error => {
+            console.error('ReactPlayer Error:', error);
+          }}
         />
         {duration && (
           <Typography

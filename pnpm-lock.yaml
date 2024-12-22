@@ -697,8 +697,8 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0(react@18.3.1)
       react-player:
-        specifier: ^2.16.0
-        version: 2.16.0(react@18.3.1)
+        specifier: 3.0.0-canary.3
+        version: 3.0.0-canary.3(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@babel/core':
         specifier: ^7.20.2
@@ -750,7 +750,7 @@ importers:
         version: 6.1.11
       babel-loader:
         specifier: ^8.3.0
-        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
+        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
       eslint:
         specifier: ^7.32.0
         version: 7.32.0
@@ -9836,10 +9836,12 @@ packages:
       react-loadable: '*'
       webpack: '>=4.41.1 || 5.x'
 
-  react-player@2.16.0:
-    resolution: {integrity: sha512-mAIPHfioD7yxO0GNYVFD1303QFtI3lyyQZLY229UEAp/a10cSW+hPcakg0Keq8uWJxT2OiT/4Gt+Lc9bD6bJmQ==}
+  react-player@3.0.0-canary.3:
+    resolution: {integrity: sha512-xyBQLIKJsbVT5mvugv2igCn2kF5m9iH+ZbDueCwc0Ld+hEnS5QoKEDaK6GjU6+lCP0RUj1NKbgJUp9AY6tD+aQ==}
     peerDependencies:
-      react: '>=16.6.0'
+      '@types/react': ^17.0.0 || ^18
+      react: ^17.0.2 || ^18
+      react-dom: ^17.0.2 || ^18
 
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
@@ -18095,14 +18097,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
+  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
     dependencies:
       '@babel/core': 7.26.0
       find-cache-dir: 3.3.2
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
 
   babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1):
     dependencies:
@@ -23379,13 +23381,15 @@ snapshots:
       react-loadable: '@docusaurus/react-loadable@5.5.2(react@18.3.1)'
       webpack: 5.96.1
 
-  react-player@2.16.0(react@18.3.1):
+  react-player@3.0.0-canary.3(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
+      '@types/react': 18.3.12
       deepmerge: 4.3.1
       load-script: 1.0.0
       memoize-one: 5.2.1
       prop-types: 15.8.1
       react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       react-fast-compare: 3.2.2
 
   react-refresh@0.14.2: {}
@@ -24495,17 +24499,17 @@ snapshots:
       type-fest: 0.16.0
       unique-string: 2.0.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
     optionalDependencies:
       '@swc/core': 1.10.1
-      esbuild: 0.18.20
+      esbuild: 0.17.19
 
   terser-webpack-plugin@5.3.10(webpack@5.96.1):
     dependencies:
@@ -25335,7 +25339,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20):
+  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -25357,7 +25361,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
