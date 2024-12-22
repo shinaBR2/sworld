@@ -1,4 +1,3 @@
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -7,6 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { SAudioPlayerAudioItem } from 'core';
+import { ResponsiveAvatar } from '../../../universal';
 
 interface PlayingListItemProps {
   audioList: SAudioPlayerAudioItem[];
@@ -34,7 +34,7 @@ const Item = (props: ItemProps) => {
       onClick={() => onSelect(id)}
     >
       <ListItemAvatar>
-        <Avatar src={image} variant="rounded" />
+        <ResponsiveAvatar src={image} alt={name} variant="rounded" />
       </ListItemAvatar>
       <ListItemText
         primary={name}
