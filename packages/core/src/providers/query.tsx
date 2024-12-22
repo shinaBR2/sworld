@@ -11,7 +11,7 @@ interface Config {
   hasuraUrl: string;
 }
 
-const QueryContext = createContext<QueryContextValue>({} as QueryContextValue);
+const QueryContext = createContext<QueryContextValue | undefined>(undefined);
 const QueryContextProvider = (props: { config: Config; children: any }) => {
   const { config, children } = props;
   const { hasuraUrl } = config;

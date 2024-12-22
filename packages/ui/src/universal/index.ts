@@ -5,5 +5,7 @@ import LoadingBackdrop from './LoadingBackdrop';
 import Logo from './logo';
 export * as Minimalism from './minimalism';
 export * as Dialogs from './dialogs';
+import { FullWidthContainer } from './containers/full-width';
+import { ErrorBoundary } from './error-boundary';
 
-export { LoadingBackdrop, Logo };
+export { ErrorBoundary, LoadingBackdrop, Logo, FullWidthContainer };
