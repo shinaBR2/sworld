@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button, Dialog, DialogContent, Box, Typography } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 
@@ -8,7 +7,7 @@ interface LoginDialogProps {
 
 const texts = {
   welcome: 'Welcome Back',
-  cta: 'Continue with Google',
+  cta: 'FLOW',
 };
 
 export const LoginDialog = (props: LoginDialogProps) => {
