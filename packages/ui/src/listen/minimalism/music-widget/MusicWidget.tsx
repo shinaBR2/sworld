@@ -6,13 +6,9 @@ import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
-import {
-  StyledCard,
-  StyledCardActions,
-  StyledCardMedia,
-  StyledContent,
-} from './Styled';
+import { StyledCard, StyledCardActions, StyledContent } from './Styled';
 import PlayingList from './PlayingList';
+import { ResponsiveCardMedia } from '../../../universal';
 const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
@@ -61,7 +57,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard>
-      <StyledCardMedia component="img" alt={name} image={image} />
+      <ResponsiveCardMedia src={image} alt={name} sx={{ height: '300px' }} />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box
