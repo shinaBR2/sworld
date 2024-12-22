@@ -8,6 +8,9 @@ name: Deploy Live Listen Frontend
       - main
     paths:
       - 'apps/listen/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - '.github/workflows/live-listen-fe.yml'
 jobs:
   dev_deploy:
     runs-on: ubuntu-latest
