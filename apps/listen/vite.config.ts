@@ -6,6 +6,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig({
+  server: {
+    port: 3001,
+    host: '0.0.0.0',
+  },
   plugins: [
     viteCommonjs(),
     react(),

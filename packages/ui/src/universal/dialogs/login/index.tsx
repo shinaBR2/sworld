@@ -3,7 +3,7 @@ import { Button, Dialog, DialogContent, Box, Typography } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 
 interface LoginDialogProps {
-  onAction: () => void;
+  onAction?: () => void;
 }
 
 const texts = {

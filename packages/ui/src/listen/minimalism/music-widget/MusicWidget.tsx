@@ -2,10 +2,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Controls from './Controls';
 import Seeker from './Seeker';
-//@ts-ignore
-import hooks from 'core';
-//@ts-ignore
-import { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
+import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
@@ -16,10 +13,11 @@ import {
   StyledContent,
 } from './Styled';
 import PlayingList from './PlayingList';
+const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
   audioList: SAudioPlayerAudioItem[];
-  hookResult: any;
+  hookResult: ReturnType<typeof useSAudioPlayer>;
   onItemSelect: (id: string) => void;
   index?: number;
   shuffle?: boolean;
