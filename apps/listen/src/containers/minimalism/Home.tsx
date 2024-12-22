@@ -6,7 +6,9 @@ const { LoadingBackdrop } = UniversalUI;
 const { MainContainer, Header, FeelingList, AudioList } = ListenUI.Minimalism;
 
 const AnonymousContent = () => {
-  return <UniversalUI.Dialogs.LoginDialog />;
+  const { signIn } = Auth.useAuthContext();
+
+  return <UniversalUI.Dialogs.LoginDialog onAction={signIn} />;
 };
 
 const AuthenticatedContent = () => {
