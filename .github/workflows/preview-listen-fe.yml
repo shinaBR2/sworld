@@ -6,6 +6,9 @@ name: Deploy Listen Preview Channels
   pull_request:
     paths:
       - 'apps/listen/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - '.github/workflows/preview-listen-fe.yml'
 
 jobs:
   dev_deploy:

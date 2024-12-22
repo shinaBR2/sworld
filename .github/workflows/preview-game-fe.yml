@@ -6,6 +6,9 @@ name: Deploy Game Preview Channels
   pull_request:
     paths:
       - 'apps/game/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - '.github/workflows/preview-game-fe.yml'
 jobs:
   dev_deploy:
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
