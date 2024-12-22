@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import ReactPlayer from 'react-player';
 
 interface Creator {
   username: string;
@@ -10,6 +10,7 @@ interface Creator {
 export interface Video {
   id: string;
   title: string;
+  source: string;
   thumbnail?: string;
   // views: number;
   createdAt: string;
@@ -28,7 +29,7 @@ const defaultThumbnailUrl = `data:image/svg+xml,${encodeURIComponent(`
   `)}`;
 
 const VideoCard = ({ video }: { video: Video }) => {
-  const { title, thumbnail, duration, createdAt, user } = video;
+  const { title, source, thumbnail, duration, createdAt, user } = video;
   const createdTime = new Date(createdAt).toISOString().split('T')[0];
   const { username: creator } = user;
 
@@ -48,15 +49,16 @@ const VideoCard = ({ video }: { video: Video }) => {
       }}
     >
       <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden' }}>
-        <CardMedia
-          component="img"
-          image={thumbnail ?? defaultThumbnailUrl}
-          alt={title}
-          sx={{
+        <ReactPlayer
+          url={source}
+          controls={true}
+          width="100%"
+          height="100%"
+          style={{
             aspectRatio: '16/9',
-            objectFit: 'cover',
-            bgcolor: '#e0e0e0',
+            backgroundColor: '#e0e0e0',
           }}
+          light={thumbnail ?? defaultThumbnailUrl}
         />
         {duration && (
           <Typography

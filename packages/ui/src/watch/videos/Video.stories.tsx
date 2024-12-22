@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import type { Meta, StoryObj } from '@storybook/react';
 import { VideoCard } from './video-card';
 
@@ -7,6 +8,13 @@ const meta: Meta<typeof VideoCard> = {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <Box width={'400px'}>
+        <Story />
+      </Box>
+    ),
+  ],
   tags: ['autodocs'],
 };
 
@@ -19,7 +27,8 @@ export const Default: Story = {
     video: {
       id: '2e061abc-3dfe-47d7-b266-edc890f69e9c',
       title: 'Title',
-      // source: 'https://example.com/video-url.mp4',
+      source:
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       // thumbnail: 'https://example.com/video-thumbnail.png',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',
@@ -35,7 +44,8 @@ export const WithThumbnail: Story = {
     video: {
       id: '2e061abc-3dfe-47d7-b266-edc890f69e9c',
       title: 'Title',
-      // source: 'https://example.com/video-url.mp4',
+      source:
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       thumbnail: 'https://picsum.photos/536/354',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',
