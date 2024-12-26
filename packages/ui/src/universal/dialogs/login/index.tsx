@@ -15,7 +15,7 @@ export const LoginDialog = (props: LoginDialogProps) => {
 
   return (
     <Dialog open={true} onClose={() => {}} disableEscapeKeyDown={true}>
-      <DialogContent sx={{ width: 400, py: 4 }}>
+      <DialogContent sx={{ width: 400, maxWidth: '100%', py: 4 }}>
         <Box
           sx={{
             display: 'flex',
