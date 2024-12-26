@@ -10,8 +10,6 @@
     "build-watch": "turbo run build-watch",
     "clean": "turbo run clean",
     "dev": "turbo run dev --no-cache --parallel --continue",
-    "predev:api": "cp .env.development.local apps/api/.env",
-    "dev:api": "pnpm run predev:api && turbo run dev --filter=api",
     "predev:listen": "cp .env.development.local apps/listen/.env.development.local",
     "dev:listen": "pnpm run predev:listen && turbo run dev --filter=listen --filter=core --filter=ui --no-cache --parallel --continue",
     "predev:game": "cp .env.development.local apps/game/.env.development.local",
