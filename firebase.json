@@ -33,15 +33,6 @@
       ]
     },
     {
-      "target": "admin",
-      "public": "dist",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ]
-    },
-    {
       "target": "game",
       "public": "dist",
       "ignore": [
