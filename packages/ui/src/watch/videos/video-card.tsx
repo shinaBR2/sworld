@@ -1,8 +1,10 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import ReactPlayer from 'react-player';
+import React from 'react';
+import { Suspense } from 'react';
 
 interface Creator {
   username: string;
@@ -12,7 +14,6 @@ export interface Video {
   title: string;
   source: string;
   thumbnail?: string;
-  // views: number;
   createdAt: string;
   duration?: string;
   user: Creator;
@@ -27,6 +28,8 @@ const defaultThumbnailUrl = `data:image/svg+xml,${encodeURIComponent(`
     <path d="M0 800 Q 480 600 960 800 T 1920 800" stroke="#e8e8e8" fill="none" stroke-width="40"/>
   </svg>
   `)}`;
+
+const ReactPlayer = React.lazy(() => import('react-player'));
 
 const VideoCard = ({ video }: { video: Video }) => {
   const { title, source, thumbnail, duration, createdAt, user } = video;
@@ -49,20 +52,36 @@ const VideoCard = ({ video }: { video: Video }) => {
       }}
     >
       <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden' }}>
-        <ReactPlayer
-          url={source}
-          controls={true}
-          width="100%"
-          height="100%"
-          style={{
-            aspectRatio: '16/9',
-            backgroundColor: '#e0e0e0',
-          }}
-          light={thumbnail ?? defaultThumbnailUrl}
-          onError={error => {
-            console.error('ReactPlayer Error:', error);
-          }}
-        />
+        <Suspense
+          fallback={
+            <CardMedia
+              component="img"
+              image={defaultThumbnailUrl}
+              alt={title}
+              sx={{
+                aspectRatio: '16/9',
+                objectFit: 'cover',
+                bgcolor: '#e0e0e0',
+              }}
+            />
+          }
+        >
+          <ReactPlayer
+            url={source}
+            controls={true}
+            width="100%"
+            height="100%"
+            style={{
+              aspectRatio: '16/9',
+              backgroundColor: '#e0e0e0',
+            }}
+            light={thumbnail ?? defaultThumbnailUrl}
+            onError={error => {
+              console.error('ReactPlayer Error:', error);
+            }}
+          />
+        </Suspense>
+
         {duration && (
           <Typography
             variant="caption"
