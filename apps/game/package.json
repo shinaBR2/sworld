@@ -3,7 +3,8 @@
   "scripts": {
     "build": "vite build",
     "serve": "vite preview",
-    "dev": "vite",
+    "dev": "pnpm run pre-dev && vite",
+    "pre-dev": "cp ../../.env.development.local .env",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "test": "jest",
     "test:watch": "jest --watch",

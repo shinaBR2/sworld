@@ -13,6 +13,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+// console.log(`main file`, import.meta.env);
+console.log(`main file`);
+
+const validateEnvVars = () => {
+  const required = [
+    'VITE_AUTH0_DOMAIN',
+    'VITE_AUTH0_CLIENT_ID',
+    'VITE_HASURA_GRAPHQL_URL',
+  ];
+  const missing = required.filter(key => !import.meta.env[key]);
+  if (missing.length) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(', ')}`
+    );
+  }
+};
+
+validateEnvVars();
+
 const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
