@@ -1,7 +1,5 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-// import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from 'vite-plugin-pwa';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
@@ -12,7 +10,6 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   plugins: [
-    viteCommonjs(),
     TanStackRouterVite(),
     react(),
     // visualizer(),
