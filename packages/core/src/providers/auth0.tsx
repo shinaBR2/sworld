@@ -22,7 +22,7 @@ interface HasuraClaims {
   'x-hasura-user-id': string;
 }
 
-interface AuthContextValue {
+export interface AuthContextValue {
   isSignedIn: boolean;
   isLoading: boolean;
   user: CustomUser | null;
@@ -161,6 +161,7 @@ const AuthProvider: FC<Props> = ({ config, children }) => {
         audience: config.audience,
         redirect_uri: config.redirectUri,
       }}
+      cacheLocation="localstorage"
     >
       <AuthContextProvider>{children}</AuthContextProvider>
     </Auth0Provider>

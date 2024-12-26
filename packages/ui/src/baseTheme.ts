@@ -18,6 +18,4 @@ const baseTheme = createTheme({
   },
 });
 
-console.log(baseTheme);
-
 export default baseTheme;

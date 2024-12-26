@@ -4,14 +4,11 @@ import {
   Card,
   CardActions,
   CardActionsProps,
-  CardMedia,
-  CardMediaProps,
   CardProps,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const cardWidth = 345;
-const imageHeight = 300;
 const contentHeight = 300;
 
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
@@ -24,12 +21,6 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
     },
   };
 }) as typeof Card;
-
-const StyledCardMedia = styled(CardMedia)<CardMediaProps>(({ theme }) => {
-  return {
-    height: imageHeight,
-  };
-}) as typeof CardMedia;
 
 const StyledContent = styled('div')<BoxProps>(() => {
   return {
@@ -55,10 +46,4 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
   };
 }) as any;
 
-export {
-  StyledCard,
-  StyledCardMedia,
-  StyledContent,
-  StyledCardActions,
-  StyledPlayingList,
-};
+export { StyledCard, StyledContent, StyledCardActions, StyledPlayingList };

@@ -7,30 +7,49 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "engines": {
+    "node": "20"
+  },
   "files": [
     "dist/**"
   ],
   "scripts": {
     "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
+    "build-watch": "tsup src/index.tsx --watch --format esm,cjs --dts --external react",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
-    "test": "jest"
+    "test": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@babel/core": "^7.20.2",
+    "@jest/globals": "^29.7.0",
+    "@storybook/addon-actions": "^7.0.0",
+    "@storybook/addon-essentials": "^7.0.0",
+    "@storybook/addon-interactions": "^7.0.0",
+    "@storybook/addon-links": "^7.0.0",
+    "@storybook/blocks": "^7.0.0",
+    "@storybook/react": "^7.0.0",
+    "@storybook/react-vite": "^7.0.0",
+    "@storybook/testing-library": "^0.2.0",
+    "@sworld/jest-dom-preset": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@types/react-helmet": "^6.1.6",
     "babel-loader": "^8.3.0",
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:*",
-    "@sworld/jest-dom-preset": "workspace:*",
+    "jsdom": "^25.0.1",
     "react": "^18.2.0",
+    "storybook": "^7.0.0",
     "tsconfig": "workspace:*",
     "tsup": "^6.2.3",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.3",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -40,6 +59,8 @@
     "@tanstack/react-router": "^1.78.2",
     "core": "workspace:*",
     "react-dom": "^18.2.0",
-    "react-helmet": "^6.1.0"
+    "react-error-boundary": "^4.1.2",
+    "react-helmet": "^6.1.0",
+    "react-player": "3.0.0-canary.3"
   }
 }

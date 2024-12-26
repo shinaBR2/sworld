@@ -5,8 +5,8 @@ export interface SAudioPlayerAudioItem {
   id: string;
   src: string;
   name: string;
-  artistName: string;
   image: string;
+  artistName: string;
 }
 
 export enum SAudioPlayerLoopMode {

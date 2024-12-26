@@ -51,6 +51,21 @@
       ]
     },
     {
+      "target": "watch",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
       "target": "docs",
       "public": "build",
       "ignore": [

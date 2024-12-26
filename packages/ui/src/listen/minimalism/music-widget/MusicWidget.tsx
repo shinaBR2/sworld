@@ -2,24 +2,18 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Controls from './Controls';
 import Seeker from './Seeker';
-//@ts-ignore
-import hooks from 'core';
-//@ts-ignore
-import { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
+import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
-import {
-  StyledCard,
-  StyledCardActions,
-  StyledCardMedia,
-  StyledContent,
-} from './Styled';
+import { StyledCard, StyledCardActions, StyledContent } from './Styled';
 import PlayingList from './PlayingList';
+import { ResponsiveCardMedia } from '../../../universal';
+const { useSAudioPlayer } = hooks;
 
-interface MusicWidgetProps {
+export interface MusicWidgetProps {
   audioList: SAudioPlayerAudioItem[];
-  hookResult: any;
+  hookResult: ReturnType<typeof useSAudioPlayer>;
   onItemSelect: (id: string) => void;
   index?: number;
   shuffle?: boolean;
@@ -63,7 +57,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard>
-      <StyledCardMedia component="img" alt={name} image={image} />
+      <ResponsiveCardMedia src={image} alt={name} sx={{ height: '300px' }} />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box

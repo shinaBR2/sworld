@@ -6,16 +6,13 @@
     "build": "vite build",
     "serve": "vite preview",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
-    "deploy": "vercel deploy dist --team=turborepo --confirm",
-    "dev": "vite --host 0.0.0.0 --port 3001 --clearScreen false",
-    "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
+    "pre-dev": "cp ../../.env.development.local .env",
+    "dev": "pnpm run pre-dev && vite"
   },
   "dependencies": {
     "core": "workspace:*",
-    "firebase": "9.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-firebase-hooks": "^5.1.0",
     "ui": "workspace:*"
   },
   "devDependencies": {
