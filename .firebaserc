@@ -10,9 +10,6 @@
         "listen": [
           "shinabr2-listen-dev"
         ],
-        "admin": [
-          "shinabr2-admin-dev"
-        ],
         "game": [
           "shinabr2-game-dev"
         ],
@@ -31,9 +28,6 @@
       "hosting": {
         "listen": [
           "sworld-listen"
-        ],
-        "admin": [
-          "sworld-admin"
         ],
         "game": [
           "sworld-game"
