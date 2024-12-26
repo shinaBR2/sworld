@@ -26,6 +26,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "prettier": "^2.7.1",
     "turbo": "latest"
   },
