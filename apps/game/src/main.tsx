@@ -13,9 +13,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-// console.log(`main file`, import.meta.env);
-console.log(`main file`);
-
 const validateEnvVars = () => {
   const required = [
     'VITE_AUTH0_DOMAIN',
