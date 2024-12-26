@@ -131,3 +131,4 @@ dist
 
 # Sentry Config File
 .sentryclirc
+.DS_Store
