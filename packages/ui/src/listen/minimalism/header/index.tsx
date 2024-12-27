@@ -6,8 +6,17 @@ import Toolbar from '@mui/material/Toolbar';
 import Logo from '../../../universal/logo';
 import SiteChoices from '../../../universal/site-choices';
 
-const Header = (props: { toggleSetting: any }) => {
-  const { toggleSetting } = props;
+interface HeaderProps {
+  toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
+  sites: {
+    listen: string;
+    watch: string;
+    play: string;
+  };
+}
+
+const Header = (props: HeaderProps) => {
+  const { toggleSetting, sites } = props;
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
@@ -22,7 +31,7 @@ const Header = (props: { toggleSetting: any }) => {
           }}
         >
           <Logo />
-          <SiteChoices activeSite="listen" />
+          <SiteChoices sites={sites} activeSite="listen" />
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>

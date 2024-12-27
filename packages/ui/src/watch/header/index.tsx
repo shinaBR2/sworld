@@ -4,8 +4,17 @@ import Logo from '../../universal/logo';
 import SearchBar from '../../universal/search-bar';
 import SiteChoices from '../../universal/site-choices';
 
-const Header = (props: { toggleSetting: any }) => {
-  const { toggleSetting } = props;
+interface HeaderProps {
+  toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
+  sites: {
+    listen: string;
+    watch: string;
+    play: string;
+  };
+}
+
+const Header = (props: HeaderProps) => {
+  const { toggleSetting, sites } = props;
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
@@ -21,7 +30,7 @@ const Header = (props: { toggleSetting: any }) => {
             <Menu open={false} />
           </IconButton> */}
           <Logo />
-          <SiteChoices activeSite="watch" />
+          <SiteChoices activeSite="watch" sites={sites} />
         </Box>
 
         <Box

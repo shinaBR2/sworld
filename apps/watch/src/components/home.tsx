@@ -1,6 +1,7 @@
 import { Auth, watchQueryHooks } from 'core';
 import React, { useState } from 'react';
 import { WatchUI, UniversalUI } from 'ui';
+import { appConfig } from '../config';
 const { Header, SettingsPanel, VideosContainer } = WatchUI;
 
 const Home = () => {
@@ -10,10 +11,11 @@ const Home = () => {
     getAccessToken,
   });
   const [settingOpen, toggleSetting] = useState<boolean>(false);
+  const { sites } = appConfig;
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header toggleSetting={toggleSetting} />
+      <Header toggleSetting={toggleSetting} sites={sites} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}

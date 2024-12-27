@@ -17,5 +17,10 @@ type Story = StoryObj<typeof SiteChoices>;
 export const Default: Story = {
   args: {
     activeSite: 'listen',
+    sites: {
+      listen: 'https://listen.example.com',
+      watch: 'https://watch.example.com',
+      play: 'https://play.example.com',
+    }
   },
 };
