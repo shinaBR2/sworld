@@ -37,6 +37,7 @@ interface Auth0Config {
   clientId: string;
   audience: string;
   redirectUri: string;
+  cookieDomain: string;
 }
 
 interface Props {
@@ -161,6 +162,7 @@ const AuthProvider: FC<Props> = ({ config, children }) => {
         audience: config.audience,
         redirect_uri: config.redirectUri,
       }}
+      cookieDomain={config.cookieDomain}
       cacheLocation="localstorage"
     >
       <AuthContextProvider>{children}</AuthContextProvider>

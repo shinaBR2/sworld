@@ -33,14 +33,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
           flexDirection: 'column',
         }}
       >
-        <List sx={{ flex: 1 }}>
-          {/* <ListItem button>
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </ListItem> */}
-        </List>
+        <List sx={{ flex: 1 }}></List>
         <Divider />
         <List>
           <ListItemButton onClick={logout}>

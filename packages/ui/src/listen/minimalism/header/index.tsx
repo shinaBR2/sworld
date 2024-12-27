@@ -1,8 +1,10 @@
 import { AccountCircle } from '@mui/icons-material';
-import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
-import Logo from '../../universal/logo';
-import SearchBar from '../../universal/search-bar';
-import SiteChoices from '../../universal/site-choices';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Logo from '../../../universal/logo';
+import SiteChoices from '../../../universal/site-choices';
 
 interface HeaderProps {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +20,9 @@ const Header = (props: HeaderProps) => {
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
-      <Toolbar sx={{ display: 'flex', gap: 2 }}>
+      <Toolbar
+        sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -26,21 +30,8 @@ const Header = (props: HeaderProps) => {
             minWidth: 'fit-content',
           }}
         >
-          {/* <IconButton>
-            <Menu open={false} />
-          </IconButton> */}
           <Logo />
-          <SiteChoices activeSite="watch" sites={sites} />
-        </Box>
-
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <SearchBar />
+          <SiteChoices sites={sites} activeSite="listen" />
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>

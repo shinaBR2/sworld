@@ -14,4 +14,13 @@ export default meta;
 type Story = StoryObj<typeof SiteChoices>;
 
 // Basic story with default props
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    activeSite: 'listen',
+    sites: {
+      listen: 'https://listen.example.com',
+      watch: 'https://watch.example.com',
+      play: 'https://play.example.com',
+    }
+  },
+};
