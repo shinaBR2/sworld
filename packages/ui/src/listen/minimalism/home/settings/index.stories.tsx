@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { SettingsPanel } from '.';
 
 const meta: Meta<typeof SettingsPanel> = {
-  title: 'Watch/SettingsPanel',
+  title: 'Listen/SettingsPanel',
   component: SettingsPanel,
   parameters: {
     layout: 'centered',
@@ -18,5 +18,8 @@ export const Default: Story = {
   args: {
     open: true,
     toggle: () => {},
+    actions: {
+      logout: () => {},
+    },
   },
 };
