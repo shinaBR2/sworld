@@ -3,7 +3,8 @@ import { ListenUI, UniversalUI } from 'ui';
 import { Auth, listenQueryHooks } from 'core';
 
 const { LoadingBackdrop } = UniversalUI;
-const { MainContainer, Header, FeelingList, AudioList } = ListenUI.Minimalism;
+const { MainContainer, Header, SettingsPanel, FeelingList, AudioList } =
+  ListenUI.Minimalism;
 
 const AnonymousContent = () => {
   const { signIn } = Auth.useAuthContext();
@@ -35,7 +36,8 @@ const AuthenticatedContent = () => {
 };
 
 const Home = () => {
-  const { isSignedIn, isLoading: authLoading } = Auth.useAuthContext();
+  const { isSignedIn, isLoading: authLoading, signOut } = Auth.useAuthContext();
+  const [settingOpen, toggleSetting] = useState<boolean>(false);
 
   if (authLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;
@@ -43,7 +45,14 @@ const Home = () => {
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header />
+      <Header toggleSetting={toggleSetting} />
+      <SettingsPanel
+        open={settingOpen}
+        toggle={toggleSetting}
+        actions={{
+          logout: signOut,
+        }}
+      />
       <MainContainer>
         {isSignedIn ? <AuthenticatedContent /> : <AnonymousContent />}
       </MainContainer>
