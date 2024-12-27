@@ -47,10 +47,10 @@ jobs:
           VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
           VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
           VITE_HASURA_GRAPHQL_URL: ${{ secrets.VITE_HASURA_GRAPHQL_URL }}
-          VITE_MAIN_SITE_URL: ${{ env.VITE_MAIN_SITE_URL }}
-          VITE_LISTEN_SITE_URL: ${{ env.VITE_LISTEN_SITE_URL }}
-          VITE_WATCH_SITE_URL: ${{ env.VITE_WATCH_SITE_URL }}
-          VITE_PLAY_SITE_URL: ${{ env.VITE_PLAY_SITE_URL }}
+          VITE_MAIN_SITE_URL: ${{ vars.VITE_MAIN_SITE_URL }}
+          VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
+          VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
+          VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
       - name: Deploy game
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
@@ -95,10 +95,10 @@ jobs:
           VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
           VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
           VITE_HASURA_GRAPHQL_URL: ${{ secrets.VITE_HASURA_GRAPHQL_URL }}
-          VITE_MAIN_SITE_URL: ${{ env.VITE_MAIN_SITE_URL }}
-          VITE_LISTEN_SITE_URL: ${{ env.VITE_LISTEN_SITE_URL }}
-          VITE_WATCH_SITE_URL: ${{ env.VITE_WATCH_SITE_URL }}
-          VITE_PLAY_SITE_URL: ${{ env.VITE_PLAY_SITE_URL }}
+          VITE_MAIN_SITE_URL: ${{ vars.VITE_MAIN_SITE_URL }}
+          VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
+          VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
+          VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
       - name: Deploy game
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
