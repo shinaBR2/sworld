@@ -9,6 +9,7 @@ const queryConfig = {
 };
 const appConfig = {
   sites: {
+    main: import.meta.env.VITE_MAIN_SITE_URL,
     listen: import.meta.env.VITE_LISTEN_SITE_URL,
     watch: import.meta.env.VITE_WATCH_SITE_URL,
     play: import.meta.env.VITE_PLAY_SITE_URL,
@@ -20,6 +21,7 @@ const validateEnvVars = () => {
     'VITE_AUTH0_DOMAIN',
     'VITE_AUTH0_CLIENT_ID',
     'VITE_HASURA_GRAPHQL_URL',
+    'VITE_MAIN_SITE_URL',
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
