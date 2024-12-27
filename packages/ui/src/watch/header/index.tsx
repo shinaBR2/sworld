@@ -21,7 +21,7 @@ const Header = (props: { toggleSetting: any }) => {
             <Menu open={false} />
           </IconButton> */}
           <Logo />
-          <SiteChoices />
+          <SiteChoices activeSite="watch" />
         </Box>
 
         <Box

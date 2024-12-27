@@ -15,11 +15,25 @@ const sites = [
   },
 ];
 
-const SiteChoices = () => {
+interface SiteChoicesProps {
+  activeSite: string;
+}
+
+const SiteChoices = (props: SiteChoicesProps) => {
+  const { activeSite } = props;
+
   return (
-    <Select defaultValue="watch" size="small" sx={{ ml: 1, minWidth: 100 }}>
+    <Select
+      defaultValue={activeSite}
+      size="small"
+      sx={{ ml: 1, minWidth: 100 }}
+    >
       {sites.map(site => (
-        <MenuItem key={site.value} value={site.value}>
+        <MenuItem
+          key={site.value}
+          value={site.value}
+          selected={site.value === activeSite}
+        >
           {site.name}
         </MenuItem>
       ))}

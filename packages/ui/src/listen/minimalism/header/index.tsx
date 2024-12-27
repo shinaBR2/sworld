@@ -22,7 +22,7 @@ const Header = (props: { toggleSetting: any }) => {
           }}
         >
           <Logo />
-          <SiteChoices />
+          <SiteChoices activeSite="listen" />
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
