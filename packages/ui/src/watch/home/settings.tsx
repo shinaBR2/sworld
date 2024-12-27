@@ -10,6 +10,9 @@ import ListItemText from '@mui/material/ListItemText';
 interface SettingsPanelProps {
   open: boolean;
   toggle: React.Dispatch<React.SetStateAction<boolean>>;
+  actions: {
+    logout: () => void;
+  };
 }
 
 const texts = {
@@ -17,7 +20,8 @@ const texts = {
 };
 
 const SettingsPanel = (props: SettingsPanelProps) => {
-  const { open, toggle } = props;
+  const { open, toggle, actions } = props;
+  const { logout } = actions;
 
   return (
     <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
@@ -39,7 +43,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
         </List>
         <Divider />
         <List>
-          <ListItemButton>
+          <ListItemButton onClick={logout}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
