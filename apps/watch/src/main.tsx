@@ -5,6 +5,7 @@ import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalUI } from 'ui';
+import { auth0Config, queryConfig, validateEnvVars } from './config';
 
 const ThemeProvider = UniversalUI.Minimalism.UniversalMinimalismThemeProvider;
 const router = createRouter({
@@ -22,15 +23,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const auth0Config = {
-  domain: import.meta.env.VITE_AUTH0_DOMAIN,
-  clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-  audience: import.meta.env.VITE_HASURA_GRAPHQL_URL,
-  redirectUri: window.location.origin,
-};
-const queryConfig = {
-  hasuraUrl: import.meta.env.VITE_HASURA_GRAPHQL_URL,
-};
+validateEnvVars();
 
 const App = () => {
   const auth = Auth.useAuthContext();
