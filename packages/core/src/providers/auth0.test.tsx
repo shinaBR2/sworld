@@ -218,7 +218,7 @@ describe('AuthProvider', () => {
       .mockRejectedValue(new Error('Session expired'));
 
     mockUseAuth0.mockReturnValue({
-      isAuthenticated: false,
+      isAuthenticated: true,
       isLoading: false,
       user: null,
       getAccessTokenSilently: mockGetAccessTokenSilently,
@@ -232,7 +232,7 @@ describe('AuthProvider', () => {
       ),
     });
 
-    expect(result.current.isSignedIn).toBe(false);
+    expect(result.current.isSignedIn).toBe(true);
     expect(result.current.user).toBeNull();
     expect(mockGetAccessTokenSilently).toHaveBeenCalled();
   });
