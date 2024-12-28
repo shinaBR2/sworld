@@ -34,7 +34,18 @@ const PlayingList = (
 
             return (
               <MenuItem key={a.id} onClick={onSelect(a.id)} selected={selected}>
-                <ListItemText>{a.name}</ListItemText>
+                <ListItemText
+                  primaryTypographyProps={{
+                    sx: {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '280px', // Adjust width as needed
+                    },
+                  }}
+                >
+                  {a.name}
+                </ListItemText>
                 {selected && (
                   <Typography variant="body2" color="text.secondary">
                     <PlayArrowRounded />
