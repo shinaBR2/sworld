@@ -7,9 +7,13 @@ const { LoadingBackdrop } = UniversalUI;
 const { MainContainer, Header, SettingsPanel, FeelingList, AudioList } =
   ListenUI.Minimalism;
 
-const AnonymousContent = () => {
+interface ContentProps {
+  queryRs: any;
+}
+
+const Content = (props: ContentProps) => {
   const [activeFeelingId, setActiveFeelingId] = useState<string>('');
-  const queryRs = listenQueryHooks.useLoadPublicAudios();
+  const { queryRs } = props;
 
   return (
     <>
@@ -27,27 +31,19 @@ const AnonymousContent = () => {
   );
 };
 
+const AnonymousContent = () => {
+  const queryRs = listenQueryHooks.useLoadPublicAudios();
+
+  return <Content queryRs={queryRs} />;
+};
+
 const AuthenticatedContent = () => {
-  const [activeFeelingId, setActiveFeelingId] = useState<string>('');
   const { getAccessToken } = Auth.useAuthContext();
   const queryRs = listenQueryHooks.useLoadAudios({
     getAccessToken,
   });
 
-  return (
-    <>
-      <FeelingList
-        activeId={activeFeelingId}
-        onSelect={setActiveFeelingId}
-        queryRs={queryRs}
-      />
-      <AudioList
-        queryRs={queryRs}
-        list={queryRs.data?.audios ?? []}
-        activeFeelingId={activeFeelingId}
-      />
-    </>
-  );
+  return <Content queryRs={queryRs} />;
 };
 
 const Home = () => {
