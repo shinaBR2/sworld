@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Header } from './index';
 import '@testing-library/jest-dom';
 
@@ -15,6 +15,12 @@ vi.mock('../../../universal/site-choices', () => ({
 describe('Header', () => {
   const defaultProps = {
     toggleSetting: vi.fn(),
+    sites: {
+      listen: 'listen',
+      watch: 'watch',
+      play: 'play',
+    },
+    user: null,
   };
 
   beforeEach(() => {
@@ -28,13 +34,30 @@ describe('Header', () => {
     expect(screen.getByTestId('mock-site-choices')).toBeInTheDocument();
   });
 
-  it('renders account circle button', () => {
+  it('renders account circle button for anonymous visitors', () => {
     render(<Header {...defaultProps} />);
 
     const accountButton = screen
       .getByTestId('AccountCircleIcon')
       .closest('button');
     expect(accountButton).toBeInTheDocument();
+  });
+
+  it('renders avatar for signed in user', () => {
+    const props = {
+      ...defaultProps,
+      user: {
+        id: '123',
+        name: 'John Doe',
+        picture: 'https://example.com/avatar.jpg',
+      },
+    };
+    const { container } = render(<Header {...props} />);
+
+    const avatar = within(container).getByTestId('user-avatar');
+    const avatarImg = within(avatar).getByRole('img');
+    expect(avatarImg).toHaveAttribute('src', props.user.picture);
+    expect(avatarImg).toHaveAttribute('alt', props.user.name);
   });
 
   it('calls toggleSetting with true when account button is clicked', () => {

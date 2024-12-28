@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { SetStateAction } from 'react';
 import { Header } from './index';
 
 const meta: Meta<typeof Header> = {
@@ -53,7 +54,7 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
         'Function called when the account button is clicked. Receives a boolean parameter.',
       control: 'function',
       table: {
-        type: { summary: '(open: boolean) => void' },
+        type: { summary: 'Dispatch<SetStateAction<boolean>>' },
       },
     },
   },
@@ -64,16 +65,44 @@ type Story = StoryObj<typeof Header>;
 
 export const Default: Story = {
   args: {
-    toggleSetting: (open: boolean) => {
-      console.log('Settings toggled:', open);
+    toggleSetting: (value: SetStateAction<boolean>) => {
+      console.log('Settings toggled:', value);
+    },
+    sites: {
+      listen: 'Listen',
+      watch: 'Watch',
+      play: 'Play',
+    },
+  },
+};
+
+export const SignedIn: Story = {
+  args: {
+    toggleSetting: (value: SetStateAction<boolean>) => {
+      console.log('Settings toggled:', value);
+    },
+    sites: {
+      listen: 'Listen',
+      watch: 'Watch',
+      play: 'Play',
+    },
+    user: {
+      id: '123',
+      name: 'John Doe',
+      picture: 'https://example.com/avatar.jpg',
     },
   },
 };
 
 export const NarrowContainer: Story = {
   args: {
-    toggleSetting: (open: boolean) => {
-      console.log('Settings toggled:', open);
+    toggleSetting: (value: SetStateAction<boolean>) => {
+      console.log('Settings toggled:', value);
+    },
+    sites: {
+      listen: 'Listen',
+      watch: 'Watch',
+      play: 'Play',
     },
   },
   decorators: [
