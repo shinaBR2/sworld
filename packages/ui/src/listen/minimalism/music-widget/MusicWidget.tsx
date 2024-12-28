@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { StyledCard, StyledCardActions, StyledContent } from './Styled';
 import PlayingList from './PlayingList';
 import { ResponsiveCardMedia } from '../../../universal';
+import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
 const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
@@ -57,7 +58,11 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard>
-      <ResponsiveCardMedia src={image} alt={name} sx={{ height: '300px' }} />
+      <ResponsiveCardMedia
+        src={image || defaultAudioThumbnailUrl}
+        alt={name}
+        sx={{ height: '300px' }}
+      />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box
