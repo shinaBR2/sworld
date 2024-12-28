@@ -1,5 +1,7 @@
 import { AccountCircle } from '@mui/icons-material';
 import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
+import { Auth } from 'core';
+import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SearchBar from '../../universal/search-bar';
 import SiteChoices from '../../universal/site-choices';
@@ -11,10 +13,12 @@ interface HeaderProps {
     watch: string;
     play: string;
   };
+  user: Auth.CustomUser | null;
 }
 
 const Header = (props: HeaderProps) => {
-  const { toggleSetting, sites } = props;
+  const { toggleSetting, sites, user } = props;
+  const avatarUrl = user?.picture;
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
@@ -45,7 +49,15 @@ const Header = (props: HeaderProps) => {
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
           <IconButton onClick={() => toggleSetting(true)}>
-            <AccountCircle />
+            {avatarUrl ? (
+              <ResponsiveAvatar
+                src={avatarUrl}
+                alt={user.name}
+                data-testid="user-avatar"
+              />
+            ) : (
+              <AccountCircle />
+            )}
           </IconButton>
         </Box>
       </Toolbar>

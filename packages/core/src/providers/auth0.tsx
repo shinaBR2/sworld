@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { Auth0Provider, useAuth0, User } from '@auth0/auth0-react';
 
-interface CustomUser {
+export interface CustomUser {
   id: string;
   email?: string | undefined;
   name?: string | undefined;
