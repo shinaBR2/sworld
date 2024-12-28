@@ -28,9 +28,7 @@ const publicAudiosAndFeelingsQuery = `
       name
       source
       thumbnailUrl
-      public
       artistName
-      createdAt
       audio_tags {
         tag_id
       }
