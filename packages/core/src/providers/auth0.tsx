@@ -115,6 +115,24 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
   const [userId, setUserId] = useState('');
   const { claims, error, fetchClaims } = useTokenClaims(getAccessTokenSilently);
 
+  /**
+   * This awesome effect will run once when the component mounts
+   * It will check if the user has a valid session and refresh it if needed
+   * THIS MADE SSO WORKS
+   */
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await getAccessTokenSilently();
+        // This will refresh the auth state if a valid session exists
+      } catch (error) {
+        console.error('Session validation failed:', error);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   // Effect to handle role-based authentication
   useEffect(() => {
     if (isSignedIn && !isLoading) {

@@ -34,6 +34,7 @@ const mockConfig = {
   clientId: 'test-client-id',
   audience: 'test-audience',
   redirectUri: 'http://localhost:3000',
+  cookieDomain: 'localhost',
 };
 
 const mockUser: User = {
@@ -183,5 +184,56 @@ describe('AuthProvider', () => {
         })
       );
     });
+  });
+
+  test('should check session on mount', async () => {
+    const mockToken = createMockToken({ 'x-hasura-role': 'user' });
+    const mockGetAccessTokenSilently = vi.fn().mockResolvedValue(mockToken);
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: mockUser,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    const { result } = renderHook(() => useAuthContext(), {
+      wrapper: ({ children }) => (
+        <AuthProvider config={mockConfig}>{children}</AuthProvider>
+      ),
+    });
+
+    // Verify initial render
+    expect(result.current.isSignedIn).toBe(true);
+
+    // Verify session check was called
+    expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+  });
+
+  test('should handle session check failure', async () => {
+    const mockGetAccessTokenSilently = vi
+      .fn()
+      .mockRejectedValue(new Error('Session expired'));
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    const { result } = renderHook(() => useAuthContext(), {
+      wrapper: ({ children }) => (
+        <AuthProvider config={mockConfig}>{children}</AuthProvider>
+      ),
+    });
+
+    expect(result.current.isSignedIn).toBe(false);
+    expect(result.current.user).toBeNull();
+    expect(mockGetAccessTokenSilently).toHaveBeenCalled();
   });
 });
