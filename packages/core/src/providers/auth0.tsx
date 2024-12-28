@@ -45,39 +45,29 @@ interface Props {
   children: React.ReactNode;
 }
 
-// Create context with a default value that matches our type
-const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
+const AuthContext = createContext<AuthContextValue>({
+  isSignedIn: false,
+  isLoading: true,
+  user: null,
+  isAdmin: false,
+  signIn: () => {},
+  signOut: () => {},
+  getAccessToken: async () => '',
+});
 
-/**
- * Custom hook to decode and extract claims from a JWT token
- * @param getToken Function to retrieve the access token
- * @returns Object containing the decoded claims and any error
- */
-const useTokenClaims = (getToken: () => Promise<string>) => {
-  const [claims, setClaims] = useState<HasuraClaims | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+const getClaims = (token: string): HasuraClaims | null => {
+  try {
+    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    const namespace = 'https://hasura.io/jwt/claims';
 
-  const fetchClaims = useCallback(async () => {
-    try {
-      const token = await getToken();
-      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      const namespace = 'https://hasura.io/jwt/claims';
-
-      if (tokenPayload[namespace]) {
-        setClaims(tokenPayload[namespace] as HasuraClaims);
-        setError(null);
-      } else {
-        throw new Error('No Hasura claims found in token');
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error('Failed to fetch claims')
-      );
-      setClaims(null);
+    if (tokenPayload[namespace]) {
+      return tokenPayload[namespace] as HasuraClaims;
+    } else {
+      throw new Error('No Hasura claims found in token');
     }
-  }, [getToken]);
-
-  return { claims, error, fetchClaims };
+  } catch (err) {
+    return null;
+  }
 };
 
 /**
@@ -89,7 +79,7 @@ const transformUser = (
   id: string,
   auth0User: User | undefined
 ): CustomUser | null => {
-  if (!auth0User?.sub) return null;
+  if (!id || !auth0User?.sub) return null;
 
   return {
     id,
@@ -103,7 +93,7 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const {
-    isAuthenticated: isSignedIn,
+    isAuthenticated,
     isLoading,
     loginWithRedirect,
     logout,
@@ -111,24 +101,45 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
     getAccessTokenSilently,
   } = useAuth0();
 
+  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [userId, setUserId] = useState('');
-  const { claims, error, fetchClaims } = useTokenClaims(getAccessTokenSilently);
+  const [user, setUser] = useState<CustomUser | null>(null);
 
-  // Effect to handle role-based authentication
   useEffect(() => {
-    if (isSignedIn && !isLoading) {
-      fetchClaims();
-    }
-  }, [isSignedIn, isLoading, fetchClaims]);
+    /**
+     * This check will run once when the component mounts
+     * It will check if the user has a valid session and refresh it if needed
+     * THIS MADE SSO WORKS
+     */
+    const checkAuth = async () => {
+      try {
+        // This will refresh the auth state if a valid session exists
+        const token = await getAccessTokenSilently();
+        const claims = getClaims(token);
 
-  // Effect to update admin status based on claims
-  useEffect(() => {
-    if (claims) {
-      setIsAdmin(claims['x-hasura-default-role'] === 'admin');
-      setUserId(claims['x-hasura-user-id']);
+        if (claims) {
+          /**
+           * This was a bit confusing at first,
+           * but the 'x-hasura-default-role' is ACTUALLY the role of current signed in user
+           * and not the "default" role for ALL users
+           * See how the claims set in Auth0 dasboard > Actions > Library > Hasura syncs
+           * This claims can NOT be changed
+           */
+          setIsAdmin(claims['x-hasura-default-role'] === 'admin');
+
+          const userId = claims['x-hasura-user-id'];
+          setIsSignedIn(true);
+          setUser(transformUser(userId, auth0User));
+        }
+      } catch (error) {
+        console.error('Session validation failed:', error);
+      }
+    };
+
+    if (isAuthenticated && !isLoading) {
+      checkAuth();
     }
-  }, [claims]);
+  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
 
   const handleSignOut = useCallback(() => {
     logout({
@@ -141,7 +152,7 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
   const contextValue: AuthContextValue = {
     isSignedIn,
     isLoading,
-    user: transformUser(userId, auth0User),
+    user,
     isAdmin,
     signIn: loginWithRedirect,
     signOut: handleSignOut,
