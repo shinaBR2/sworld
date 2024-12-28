@@ -4,9 +4,14 @@ import { useQueryContext } from '../../providers/query';
 
 interface UseRequestProps {
   queryKey: unknown[];
-  getAccessToken: () => Promise<string>;
   document: string;
   variables?: Variables;
+  getAccessToken?: () => Promise<string>;
+}
+
+interface Headers {
+  'content-type': string;
+  Authorization?: string;
 }
 
 const useRequest = <TData = unknown>(props: UseRequestProps) => {
@@ -16,16 +21,26 @@ const useRequest = <TData = unknown>(props: UseRequestProps) => {
   const rs = useQuery<TData>({
     queryKey,
     queryFn: async () => {
-      let token: string;
-      try {
-        token = await getAccessToken();
+      let headers: Headers = {
+        'content-type': 'application/json',
+      };
+      if (typeof getAccessToken !== 'undefined') {
+        let token: string;
+        try {
+          token = await getAccessToken();
 
-        if (!token) {
-          throw new Error('Invalid access token');
+          if (!token) {
+            throw new Error('Invalid access token');
+          }
+
+          headers = {
+            ...headers,
+            Authorization: `Bearer ${token}`,
+          };
+        } catch (error) {
+          console.error('Authentication failed:', error);
+          throw error;
         }
-      } catch (error) {
-        console.error('Authentication failed:', error);
-        throw error;
       }
 
       try {
@@ -33,7 +48,7 @@ const useRequest = <TData = unknown>(props: UseRequestProps) => {
           url: hasuraUrl,
           document,
           requestHeaders: {
-            Authorization: `Bearer ${token}`,
+            ...headers,
           },
           variables,
         });
