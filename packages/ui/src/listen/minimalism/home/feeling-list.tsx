@@ -21,7 +21,7 @@ const FeelingList = (props: FeelingListProps) => {
   const { tags: feelings } = data;
 
   return (
-    <Stack direction="row" spacing={1} my={2}>
+    <Stack direction="row" spacing={1} my={2} sx={{ overflowX: 'auto' }}>
       <Chip
         label="Default"
         color={!activeId ? 'primary' : 'default'}
