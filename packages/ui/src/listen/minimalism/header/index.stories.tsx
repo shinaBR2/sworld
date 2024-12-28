@@ -57,35 +57,39 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
         type: { summary: 'Dispatch<SetStateAction<boolean>>' },
       },
     },
+    sites: {
+      description: 'Site choices for navigation links',
+      control: 'object',
+      table: {
+        type: { summary: '{ listen: string; watch: string; play: string }' },
+      },
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Header>;
 
+const defaultArgs = {
+  toggleSetting: (value: SetStateAction<boolean>) => {
+    console.log(value);
+  },
+  sites: {
+    listen: 'Listen',
+    watch: 'Watch',
+    play: 'Play',
+  },
+};
+
 export const Default: Story = {
   args: {
-    toggleSetting: (value: SetStateAction<boolean>) => {
-      console.log('Settings toggled:', value);
-    },
-    sites: {
-      listen: 'Listen',
-      watch: 'Watch',
-      play: 'Play',
-    },
+    ...defaultArgs,
   },
 };
 
 export const SignedIn: Story = {
   args: {
-    toggleSetting: (value: SetStateAction<boolean>) => {
-      console.log('Settings toggled:', value);
-    },
-    sites: {
-      listen: 'Listen',
-      watch: 'Watch',
-      play: 'Play',
-    },
+    ...defaultArgs,
     user: {
       id: '123',
       name: 'John Doe',
@@ -96,14 +100,7 @@ export const SignedIn: Story = {
 
 export const NarrowContainer: Story = {
   args: {
-    toggleSetting: (value: SetStateAction<boolean>) => {
-      console.log('Settings toggled:', value);
-    },
-    sites: {
-      listen: 'Listen',
-      watch: 'Watch',
-      play: 'Play',
-    },
+    ...defaultArgs,
   },
   decorators: [
     Story => (
