@@ -8,9 +8,23 @@ const { MainContainer, Header, SettingsPanel, FeelingList, AudioList } =
   ListenUI.Minimalism;
 
 const AnonymousContent = () => {
-  const { signIn } = Auth.useAuthContext();
+  const [activeFeelingId, setActiveFeelingId] = useState<string>('');
+  const queryRs = listenQueryHooks.useLoadPublicAudios();
 
-  return <UniversalUI.Dialogs.LoginDialog onAction={signIn} />;
+  return (
+    <>
+      <FeelingList
+        activeId={activeFeelingId}
+        onSelect={setActiveFeelingId}
+        queryRs={queryRs}
+      />
+      <AudioList
+        queryRs={queryRs}
+        list={queryRs.data?.audios ?? []}
+        activeFeelingId={activeFeelingId}
+      />
+    </>
+  );
 };
 
 const AuthenticatedContent = () => {
