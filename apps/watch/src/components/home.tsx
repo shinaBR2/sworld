@@ -6,7 +6,7 @@ const { Header, SettingsPanel, VideosContainer } = WatchUI;
 
 const Home = () => {
   const authContext = Auth.useAuthContext();
-  const { getAccessToken, signOut } = authContext;
+  const { getAccessToken, signOut, user } = authContext;
   const videoResult = watchQueryHooks.useLoadVideos({
     getAccessToken,
   });
@@ -15,7 +15,7 @@ const Home = () => {
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header toggleSetting={toggleSetting} sites={sites} />
+      <Header toggleSetting={toggleSetting} sites={sites} user={user} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}

@@ -37,7 +37,12 @@ const AuthenticatedContent = () => {
 };
 
 const Home = () => {
-  const { isSignedIn, isLoading: authLoading, signOut } = Auth.useAuthContext();
+  const {
+    isSignedIn,
+    isLoading: authLoading,
+    signOut,
+    user,
+  } = Auth.useAuthContext();
   const [settingOpen, toggleSetting] = useState<boolean>(false);
   const { sites } = appConfig;
 
@@ -47,7 +52,7 @@ const Home = () => {
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header sites={sites} toggleSetting={toggleSetting} />
+      <Header sites={sites} toggleSetting={toggleSetting} user={user} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}
