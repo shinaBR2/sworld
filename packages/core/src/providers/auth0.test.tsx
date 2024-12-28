@@ -187,7 +187,10 @@ describe('AuthProvider', () => {
   });
 
   test('should check session on mount', async () => {
-    const mockToken = createMockToken({ 'x-hasura-role': 'user' });
+    const mockToken = createMockToken({
+      'x-hasura-default-role': 'user',
+      'x-hasura-user-id': 'db-user',
+    });
     const mockGetAccessTokenSilently = vi.fn().mockResolvedValue(mockToken);
 
     mockUseAuth0.mockReturnValue({
@@ -205,11 +208,12 @@ describe('AuthProvider', () => {
       ),
     });
 
-    // Verify initial render
-    expect(result.current.isSignedIn).toBe(true);
+    await vi.waitFor(() => {
+      expect(result.current.isSignedIn).toBe(true);
 
-    // Verify session check was called
-    expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+      // Verify session check was called
+      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+    });
   });
 
   test('should handle session check failure', async () => {
@@ -232,12 +236,48 @@ describe('AuthProvider', () => {
       ),
     });
 
-    expect(result.current.isSignedIn).toBe(true);
-    expect(result.current.user).toBeNull();
-    expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(result.current.isSignedIn).toBe(false);
+      expect(result.current.user).toBeNull();
+      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+    });
   });
 
-  test('should not call getAccessTokenSilently when not signed in', () => {
+  test('should handle invalid claims format', async () => {
+    const invalidToken = btoa(
+      JSON.stringify({
+        // Missing hasura namespace
+        'x-hasura-default-role': 'user',
+        'x-hasura-allowed-roles': ['user'],
+        'x-hasura-user-id': 'test-id',
+      })
+    );
+
+    const mockGetAccessTokenSilently = vi.fn().mockResolvedValue(invalidToken);
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: null,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    const { result } = renderHook(() => useAuthContext(), {
+      wrapper: ({ children }) => (
+        <AuthProvider config={mockConfig}>{children}</AuthProvider>
+      ),
+    });
+
+    await vi.waitFor(() => {
+      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+      expect(result.current.isSignedIn).toBe(false);
+      expect(result.current.user).toBeNull();
+    });
+  });
+
+  test('should not call getAccessTokenSilently when not signed in', async () => {
     const mockGetAccessTokenSilently = vi.fn();
 
     mockUseAuth0.mockReturnValue({
@@ -249,12 +289,15 @@ describe('AuthProvider', () => {
       logout: vi.fn(),
     });
 
-    renderHook(() => useAuthContext(), {
+    const { result } = renderHook(() => useAuthContext(), {
       wrapper: ({ children }) => (
         <AuthProvider config={mockConfig}>{children}</AuthProvider>
       ),
     });
 
-    expect(mockGetAccessTokenSilently).not.toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(mockGetAccessTokenSilently).not.toHaveBeenCalled();
+      expect(result.current.isSignedIn).toBe(false);
+    });
   });
 });
