@@ -236,4 +236,25 @@ describe('AuthProvider', () => {
     expect(result.current.user).toBeNull();
     expect(mockGetAccessTokenSilently).toHaveBeenCalled();
   });
+
+  test('should not call getAccessTokenSilently when not signed in', () => {
+    const mockGetAccessTokenSilently = vi.fn();
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    renderHook(() => useAuthContext(), {
+      wrapper: ({ children }) => (
+        <AuthProvider config={mockConfig}>{children}</AuthProvider>
+      ),
+    });
+
+    expect(mockGetAccessTokenSilently).not.toHaveBeenCalled();
+  });
 });
