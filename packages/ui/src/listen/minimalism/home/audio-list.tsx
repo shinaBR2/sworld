@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import hooks, { listenQueryHooks } from 'core';
 import { useEffect, useMemo, useState } from 'react';
-import MusicWidget from '../music-widget/MusicWidget';
+import MusicWidget from '../music-widget';
 import { PlayingList } from './playing-list';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
 import { PlayingListSkeleton } from './playing-list-skeleton';
