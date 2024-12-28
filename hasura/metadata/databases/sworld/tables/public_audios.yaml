@@ -47,6 +47,19 @@ insert_permissions:
         - user_id
     comment: ""
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - artist_name
+        - id
+        - name
+        - public
+        - source
+        - thumbnail_url
+      filter:
+        public:
+          _eq: true
+    comment: ""
   - role: user
     permission:
       columns:
