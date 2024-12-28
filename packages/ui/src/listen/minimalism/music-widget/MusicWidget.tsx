@@ -7,7 +7,7 @@ import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
 import { StyledCard, StyledCardActions, StyledContent } from './Styled';
-import PlayingList from './PlayingList';
+import PlayingList from './playing-list';
 import { ResponsiveCardMedia } from '../../../universal';
 import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
 const { useSAudioPlayer } = hooks;
