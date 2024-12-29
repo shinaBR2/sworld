@@ -17,6 +17,18 @@ array_relationships:
           name: video_tags
           schema: public
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - display_order
+        - id
+        - name
+        - site
+        - slug
+      filter:
+        site:
+          _eq: listen
+    comment: ""
   - role: user
     permission:
       columns:

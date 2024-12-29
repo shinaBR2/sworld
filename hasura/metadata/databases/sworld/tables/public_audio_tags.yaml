@@ -9,6 +9,16 @@ object_relationships:
     using:
       foreign_key_constraint_on: tag_id
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - audio_id
+        - tag_id
+      filter:
+        audio:
+          public:
+            _eq: true
+    comment: Only see tags belong to public audios
   - role: user
     permission:
       columns:
