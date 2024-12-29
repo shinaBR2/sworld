@@ -14,7 +14,7 @@ vi.mock('../../../universal/site-choices', () => ({
 
 describe('Header', () => {
   const defaultProps = {
-    toggleSetting: vi.fn(),
+    onProfileClick: vi.fn(),
     sites: {
       listen: 'listen',
       watch: 'watch',
@@ -60,7 +60,7 @@ describe('Header', () => {
     expect(avatarImg).toHaveAttribute('alt', props.user.name);
   });
 
-  it('calls toggleSetting with true when account button is clicked', () => {
+  it('calls onProfileClick', () => {
     render(<Header {...defaultProps} />);
 
     const accountButton = screen
@@ -68,8 +68,7 @@ describe('Header', () => {
       .closest('button');
     fireEvent.click(accountButton as Element);
 
-    expect(defaultProps.toggleSetting).toHaveBeenCalledTimes(1);
-    expect(defaultProps.toggleSetting).toHaveBeenCalledWith(true);
+    expect(defaultProps.onProfileClick).toHaveBeenCalledTimes(1);
   });
 
   it('has correct MUI styling for AppBar', () => {

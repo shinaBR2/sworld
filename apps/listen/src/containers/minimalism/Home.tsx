@@ -50,11 +50,19 @@ const Home = () => {
   const {
     isSignedIn,
     isLoading: authLoading,
+    signIn,
     signOut,
     user,
   } = Auth.useAuthContext();
   const [settingOpen, toggleSetting] = useState<boolean>(false);
   const { sites } = appConfig;
+  const onProfileClick = () => {
+    if (user) {
+      toggleSetting(true);
+    } else {
+      signIn();
+    }
+  };
 
   if (authLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;
@@ -62,7 +70,7 @@ const Home = () => {
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header sites={sites} toggleSetting={toggleSetting} user={user} />
+      <Header sites={sites} onProfileClick={onProfileClick} user={user} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}
