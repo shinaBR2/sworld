@@ -18,7 +18,6 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
     maxWidth: '100%',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      maxWidth: cardWidth,
     },
     background: `linear-gradient(to bottom, ${palette.grey[900]}, ${palette.grey[800]})`,
     color: palette.common.white,
