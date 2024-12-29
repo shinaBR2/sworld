@@ -72,9 +72,12 @@ select_permissions:
         - thumbnail_url
         - updated_at
       filter:
-        user_id:
-          _eq: X-Hasura-User-Id
-    comment: ""
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - public:
+              _eq: true
+    comment: Either see their own audios or public audios
 update_permissions:
   - role: user
     permission:

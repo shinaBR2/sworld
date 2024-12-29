@@ -14,8 +14,11 @@ select_permissions:
       columns:
         - audio_id
         - tag_id
-      filter: {}
-    comment: ""
+      filter:
+        audio:
+          public:
+            _eq: true
+    comment: Only see tags belong to public audios
   - role: user
     permission:
       columns:
