@@ -30,7 +30,7 @@ export default defineConfig({
       open: true,
       gzipSize: true,
       brotliSize: true,
-      filename: 'bundle-analysis.html',
+      filename: 'stats.html',
     }),
     VitePWA({
       registerType: 'autoUpdate',
