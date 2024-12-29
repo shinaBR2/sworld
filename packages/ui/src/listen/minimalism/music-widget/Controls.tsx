@@ -104,7 +104,7 @@ const Controls = (props: Props) => {
     <Box sx={getWrapperStyles()}>
       <IconButton
         size="small"
-        aria-label="loop mode"
+        aria-label="toggle loop mode"
         onClick={onChangeLoopMode}
         sx={getSideButtonStyles()}
       >
@@ -138,7 +138,7 @@ const Controls = (props: Props) => {
       </Box>
       <IconButton
         size="small"
-        aria-label="loop mode"
+        aria-label="shuffle"
         onClick={onShuffle}
         sx={getSideButtonStyles()}
       >
