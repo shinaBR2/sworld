@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { PlayingList } from './playing-list';
+import PlayingList from './playing-list';
 import { SAudioPlayerAudioItem } from 'core';
 
 // Mock audio items for testing

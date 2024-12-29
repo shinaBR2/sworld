@@ -6,7 +6,7 @@ import theme from '../theme';
 
 const { useSAudioPlayer } = hooks;
 
-import MusicWidget from './MusicWidget';
+import MusicWidget from './music-widget';
 
 const audioList = [
   {

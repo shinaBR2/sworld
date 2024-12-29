@@ -53,11 +53,19 @@ const getInfoStyles = () => {
   };
 };
 
-const TinyText = styled(Typography)({
-  fontSize: '0.75rem',
-  opacity: 0.38,
-  fontWeight: 500,
-  letterSpacing: 0.2,
+const TinyText = styled(Typography)(({ theme }) => {
+  const { white } = theme.palette.common;
+
+  return {
+    fontSize: '0.75rem',
+    opacity: 0.38,
+    fontWeight: 500,
+    letterSpacing: 0.2,
+    color: white,
+    [theme.breakpoints.down('sm')]: {
+      color: white,
+    },
+  };
 });
 
 const Seeker = (props: Props) => {
@@ -69,7 +77,7 @@ const Seeker = (props: Props) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <Slider
         aria-label="time-indicator"
         size="small"

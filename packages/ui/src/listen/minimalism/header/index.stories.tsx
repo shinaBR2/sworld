@@ -40,7 +40,7 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
 \`\`\`tsx
 // Example container setup
 <Box sx={{ width: '100%' }}>
-  <Header toggleSetting={handleToggle} />
+  <Header onProfileClick={handleToggle} />
 </Box>
 \`\`\`
 `,
@@ -49,12 +49,11 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
   },
   tags: ['autodocs'],
   argTypes: {
-    toggleSetting: {
-      description:
-        'Function called when the account button is clicked. Receives a boolean parameter.',
+    onProfileClick: {
+      description: 'Function called when the account button is clicked.',
       control: 'function',
       table: {
-        type: { summary: 'Dispatch<SetStateAction<boolean>>' },
+        type: { summary: '() => void' },
       },
     },
     sites: {
@@ -71,8 +70,8 @@ export default meta;
 type Story = StoryObj<typeof Header>;
 
 const defaultArgs = {
-  toggleSetting: (value: SetStateAction<boolean>) => {
-    console.log(value);
+  onProfileClick: () => {
+    console.log('Profile clicked');
   },
   sites: {
     listen: 'Listen',

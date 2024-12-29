@@ -46,6 +46,33 @@ describe('useRequest', () => {
     vi.mocked(request).mockResolvedValue(mockResponse);
   });
 
+  it('should fetch data anonymously', async () => {
+    const { result } = renderHook(
+      () =>
+        useRequest({
+          queryKey: ['test'],
+          document: mockDocument,
+        }),
+      { wrapper }
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.isSuccess).toBe(true);
+      },
+      { timeout: 2000 }
+    );
+
+    expect(result.current.data).toEqual(mockResponse);
+    expect(request).toHaveBeenCalledWith({
+      url: mockHasuraUrl,
+      document: mockDocument,
+      requestHeaders: {
+        'content-type': 'application/json',
+      },
+    });
+  });
+
   it('should fetch data successfully with variables', async () => {
     const { result } = renderHook(
       () =>
@@ -71,6 +98,7 @@ describe('useRequest', () => {
       url: mockHasuraUrl,
       document: mockDocument,
       requestHeaders: {
+        'content-type': 'application/json',
         Authorization: `Bearer ${mockToken}`,
       },
       variables: mockVariables,
@@ -153,6 +181,7 @@ describe('useRequest', () => {
       document: expect.any(String),
       requestHeaders: {
         Authorization: `Bearer ${mockToken}`,
+        'content-type': 'application/json',
       },
     });
   });

@@ -7,18 +7,13 @@ const { LoadingBackdrop } = UniversalUI;
 const { MainContainer, Header, SettingsPanel, FeelingList, AudioList } =
   ListenUI.Minimalism;
 
-const AnonymousContent = () => {
-  const { signIn } = Auth.useAuthContext();
+interface ContentProps {
+  queryRs: any;
+}
 
-  return <UniversalUI.Dialogs.LoginDialog onAction={signIn} />;
-};
-
-const AuthenticatedContent = () => {
+const Content = (props: ContentProps) => {
   const [activeFeelingId, setActiveFeelingId] = useState<string>('');
-  const { getAccessToken } = Auth.useAuthContext();
-  const queryRs = listenQueryHooks.useLoadAudios({
-    getAccessToken,
-  });
+  const { queryRs } = props;
 
   return (
     <>
@@ -36,15 +31,38 @@ const AuthenticatedContent = () => {
   );
 };
 
+const AnonymousContent = () => {
+  const queryRs = listenQueryHooks.useLoadPublicAudios();
+
+  return <Content queryRs={queryRs} />;
+};
+
+const AuthenticatedContent = () => {
+  const { getAccessToken } = Auth.useAuthContext();
+  const queryRs = listenQueryHooks.useLoadAudios({
+    getAccessToken,
+  });
+
+  return <Content queryRs={queryRs} />;
+};
+
 const Home = () => {
   const {
     isSignedIn,
     isLoading: authLoading,
+    signIn,
     signOut,
     user,
   } = Auth.useAuthContext();
   const [settingOpen, toggleSetting] = useState<boolean>(false);
   const { sites } = appConfig;
+  const onProfileClick = () => {
+    if (user) {
+      toggleSetting(true);
+    } else {
+      signIn();
+    }
+  };
 
   if (authLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;
@@ -52,7 +70,7 @@ const Home = () => {
 
   return (
     <UniversalUI.FullWidthContainer>
-      <Header sites={sites} toggleSetting={toggleSetting} user={user} />
+      <Header sites={sites} onProfileClick={onProfileClick} user={user} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}
