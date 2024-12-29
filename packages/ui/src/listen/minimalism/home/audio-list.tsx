@@ -90,7 +90,7 @@ const Content = (props: AudioListProps) => {
     <Grid container spacing={2}>
       {showPlayingList && (
         <Grid item md={8} sm={6} xs={0}>
-          <Card sx={{ height: '100%', maxHeight: '600px', overflowY: 'auto' }}>
+          <Card sx={{ height: '100%', maxHeight: '37vh', overflowY: 'auto' }}>
             <Suspense fallback={<PlayingListSkeleton />}>
               <PlayingList
                 audioList={list}

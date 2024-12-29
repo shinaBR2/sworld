@@ -6,7 +6,7 @@ import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
-import { StyledCard, StyledCardActions, StyledContent } from './Styled';
+import { StyledCard, StyledContent } from './Styled';
 import PlayingList from './playing-list';
 import { ResponsiveCardMedia } from '../../../universal';
 import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
@@ -96,11 +96,11 @@ const MusicWidget = (props: MusicWidgetProps) => {
           <Typography gutterBottom component="p">
             {artistName}
           </Typography>
-          <Seeker {...getSeekerProps()} />
         </CardContent>
-        <StyledCardActions>
+        <CardContent>
+          <Seeker {...getSeekerProps()} />
           <Controls {...controlProps} />
-        </StyledCardActions>
+        </CardContent>
         {isMobile && (
           <Slide
             direction="up"

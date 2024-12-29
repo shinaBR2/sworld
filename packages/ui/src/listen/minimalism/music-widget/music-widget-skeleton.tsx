@@ -36,7 +36,7 @@ const MusicWidgetSkeleton = () => {
             height={16}
             animation="wave"
             sx={{
-              my: 2,
+              my: 1.5,
             }}
           />
           <Skeleton

@@ -70,7 +70,7 @@ const Seeker = (props: Props) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <Slider
         aria-label="time-indicator"
         size="small"

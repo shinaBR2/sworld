@@ -9,7 +9,6 @@ import {
 import { keyframes, styled } from '@mui/material/styles';
 
 const cardWidth = 345;
-const contentHeight = 300;
 
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
   return {
@@ -27,15 +26,8 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
 const StyledContent = styled('div')<BoxProps>(() => {
   return {
     position: 'relative',
-    height: contentHeight,
   };
 }) as any;
-
-const StyledCardActions = styled(CardActions)<CardActionsProps>(() => {
-  return {
-    display: 'block',
-  };
-}) as typeof CardActions;
 
 const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
   return {
@@ -58,10 +50,4 @@ const pulseAnimation = keyframes`
   100% { opacity: 0.6 }
 `;
 
-export {
-  StyledCard,
-  StyledContent,
-  StyledCardActions,
-  StyledPlayingList,
-  pulseAnimation,
-};
+export { StyledCard, StyledContent, StyledPlayingList, pulseAnimation };
