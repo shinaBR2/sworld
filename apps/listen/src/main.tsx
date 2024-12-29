@@ -1,5 +1,5 @@
 import { Auth, Query } from 'core';
-import { UniversalUI } from 'ui';
+import { ErrorBoundary } from 'ui/universal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
@@ -13,12 +13,12 @@ validateEnvVars();
 
 root.render(
   <React.StrictMode>
-    <UniversalUI.ErrorBoundary>
+    <ErrorBoundary>
       <Auth.AuthProvider config={auth0Config}>
         <Query.QueryProvider config={queryConfig}>
           <App />
         </Query.QueryProvider>
       </Auth.AuthProvider>
-    </UniversalUI.ErrorBoundary>
+    </ErrorBoundary>
   </React.StrictMode>
 );

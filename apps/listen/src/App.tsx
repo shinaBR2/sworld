@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { ListenUI } from 'ui';
+import { MinimalismThemeProvider } from 'ui/listen/minimalism';
 import Home from './containers/minimalism/Home';
-
-const { MinimalismThemeProvider } = ListenUI.Minimalism;
 
 const App = () => {
   return (
