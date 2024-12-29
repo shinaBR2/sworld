@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FeelingListSkeleton } from './feeling-list-skeleton';
+import { FeelingListSkeleton } from './skeleton';
 
 const meta: Meta<typeof FeelingListSkeleton> = {
   title: 'Listen/Home/FeelingListSkeleton',

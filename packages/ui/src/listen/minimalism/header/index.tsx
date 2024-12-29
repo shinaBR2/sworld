@@ -9,7 +9,7 @@ import Logo from '../../../universal/logo';
 import SiteChoices from '../../../universal/site-choices';
 
 interface HeaderProps {
-  toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
+  onProfileClick: () => void;
   sites: {
     listen: string;
     watch: string;
@@ -19,7 +19,7 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
-  const { toggleSetting, sites, user } = props;
+  const { onProfileClick, sites, user } = props;
   const avatarUrl = user?.picture;
 
   return (
@@ -39,7 +39,7 @@ const Header = (props: HeaderProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
-          <IconButton onClick={() => toggleSetting(true)}>
+          <IconButton onClick={onProfileClick} aria-label="account options">
             {avatarUrl ? (
               <ResponsiveAvatar
                 src={avatarUrl}

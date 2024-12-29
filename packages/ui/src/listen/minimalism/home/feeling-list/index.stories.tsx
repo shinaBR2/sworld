@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { FeelingList } from './feeling-list';
+import { FeelingList } from '.';
 import Box from '@mui/material/Box';
 
 const meta: Meta<typeof FeelingList> = {

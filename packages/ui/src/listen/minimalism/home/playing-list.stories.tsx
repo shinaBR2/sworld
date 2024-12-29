@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { PlayingList } from './playing-list';
+import PlayingList from './playing-list';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 
