@@ -33,7 +33,7 @@ const publicAudiosAndFeelingsQuery = `
         tag_id
       }
     }
-    tags(where: { site: { _eq: "listen" } }) {
+    tags(where: {site: {_eq: "listen"}, audio_tags: {audio: {public: {_eq: true}}}}) {
       id
       name
     }
