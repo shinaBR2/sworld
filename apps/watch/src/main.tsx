@@ -4,10 +4,9 @@ import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
-import { UniversalUI } from 'ui';
+import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { auth0Config, queryConfig, validateEnvVars } from './config';
 
-const ThemeProvider = UniversalUI.Minimalism.UniversalMinimalismThemeProvider;
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
@@ -35,9 +34,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Auth.AuthProvider config={auth0Config}>
       <Query.QueryProvider config={queryConfig}>
-        <ThemeProvider>
+        <UniversalMinimalismThemeProvider>
           <App />
-        </ThemeProvider>
+        </UniversalMinimalismThemeProvider>
       </Query.QueryProvider>
     </Auth.AuthProvider>
   </StrictMode>

@@ -15,7 +15,17 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "ui": [
+        "../../packages/ui/src"
+      ],
+      "ui/*": [
+        "../../packages/ui/src/*"
+      ]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
