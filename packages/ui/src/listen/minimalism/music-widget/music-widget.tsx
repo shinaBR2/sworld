@@ -58,11 +58,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard>
-      <ResponsiveCardMedia
-        src={image || defaultAudioThumbnailUrl}
-        alt={name}
-        sx={{ height: '300px' }}
-      />
+      <ResponsiveCardMedia src={image || defaultAudioThumbnailUrl} alt={name} />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box
@@ -81,11 +77,21 @@ const MusicWidget = (props: MusicWidgetProps) => {
               />
             )}
           </Box>
-          <Typography gutterBottom variant="h4" component="strong">
-            {artistName}
-          </Typography>
-          <Typography gutterBottom variant="h5" component="p">
+          <Typography
+            gutterBottom
+            variant="h4"
+            sx={{
+              display: '-webkit-Box',
+              '-webkit-line-clamp': '2',
+              '-webkit-box-orient': 'vertical',
+              overflow: 'hidden',
+              'text-overflow': 'ellipsisBox',
+            }}
+          >
             {name}
+          </Typography>
+          <Typography gutterBottom component="p">
+            {artistName}
           </Typography>
           <Seeker {...getSeekerProps()} />
         </CardContent>

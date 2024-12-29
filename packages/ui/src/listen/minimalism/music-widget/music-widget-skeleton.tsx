@@ -13,7 +13,7 @@ const MusicWidgetSkeleton = () => {
         <Skeleton
           variant="rectangular"
           width="100%"
-          height={300}
+          height={194}
           animation="wave"
         />
         <Box mt={2}>
