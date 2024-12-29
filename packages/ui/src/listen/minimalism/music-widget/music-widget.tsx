@@ -85,7 +85,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
             variant="h4"
             sx={{
               display: '-webkit-Box',
-              WebkitLineClamp: '2',
+              WebkitLineClamp: '1',
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsisBox',
