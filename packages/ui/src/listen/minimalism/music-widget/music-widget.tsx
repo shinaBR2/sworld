@@ -40,7 +40,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   const { name, artistName, image } = audioItem;
 
-  const onSelect = (id: string) => () => {
+  const onSelect = (id: string) => {
     onItemSelect(id);
     setShowPlayinglist(false);
   };

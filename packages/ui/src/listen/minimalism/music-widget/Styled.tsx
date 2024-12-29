@@ -6,7 +6,7 @@ import {
   CardActionsProps,
   CardProps,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { keyframes, styled } from '@mui/material/styles';
 
 const cardWidth = 345;
 const contentHeight = 300;
@@ -49,4 +49,19 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
   };
 }) as any;
 
-export { StyledCard, StyledContent, StyledCardActions, StyledPlayingList };
+/**
+ * For Music widget playing list
+ */
+const pulseAnimation = keyframes`
+  0% { opacity: 0.6 }
+  50% { opacity: 1 }
+  100% { opacity: 0.6 }
+`;
+
+export {
+  StyledCard,
+  StyledContent,
+  StyledCardActions,
+  StyledPlayingList,
+  pulseAnimation,
+};

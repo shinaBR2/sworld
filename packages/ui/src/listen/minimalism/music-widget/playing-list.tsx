@@ -8,17 +8,23 @@ import {
 } from '@mui/material';
 import { SAudioPlayerAudioItem } from 'core';
 import { forwardRef, Ref } from 'react';
-import { StyledPlayingList } from './Styled';
+import { pulseAnimation, StyledPlayingList } from './Styled';
 
+/**
+ * Props for the PlayingList component
+ * @property {SAudioPlayerAudioItem[]} audioList - List of audio items to display
+ * @property {string} currentId - ID of the currently selected audio item
+ * @property {(id: string) => void} onSelect - Callback when an audio item is selected
+ */
 interface PlayingListProps {
   audioList: SAudioPlayerAudioItem[];
   currentId: string;
-  onSelect: (id: string) => () => void;
+  onSelect: (id: string) => void;
 }
 
 const PlayingList = (
   props: PlayingListProps,
-  ref: Ref<unknown> | undefined
+  ref: Ref<HTMLElement> | undefined
 ) => {
   const { audioList, onSelect, currentId } = props;
 
@@ -34,8 +40,10 @@ const PlayingList = (
               <ListItemButton
                 component="li"
                 key={a.id}
-                onClick={onSelect(a.id)}
+                onClick={() => onSelect(a.id)}
                 selected={selected}
+                aria-current={selected ? 'true' : undefined}
+                role="option"
                 sx={{
                   pl: 2,
                   pr: 1,
@@ -56,12 +64,7 @@ const PlayingList = (
                   <GraphicEq
                     sx={{
                       color: 'primary.main',
-                      animation: 'pulse 1s infinite',
-                      '@keyframes pulse': {
-                        '0%': { opacity: 0.6 },
-                        '50%': { opacity: 1 },
-                        '100%': { opacity: 0.6 },
-                      },
+                      animation: `${pulseAnimation} 1s infinite`,
                     }}
                   />
                 )}
