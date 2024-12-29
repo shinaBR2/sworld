@@ -32,9 +32,7 @@ const Content = (props: ContentProps) => {
         onSelect={setActiveFeelingId}
         queryRs={queryRs}
       />
-      <React.Suspense
-        fallback={<LoadingBackdrop message="Loading audios..." />}
-      >
+      <React.Suspense fallback={<div />}>
         <AudioList
           queryRs={queryRs}
           list={queryRs.data?.audios ?? []}
