@@ -11,6 +11,8 @@ import { keyframes, styled } from '@mui/material/styles';
 const cardWidth = 345;
 
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
+  const { palette } = theme;
+
   return {
     width: cardWidth,
     maxWidth: '100%',
@@ -18,8 +20,8 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
       width: '100%',
       maxWidth: cardWidth,
     },
-    background: 'linear-gradient(to bottom, #242424, #323232)',
-    color: '#fff',
+    background: `linear-gradient(to bottom, ${palette.grey[900]}, ${palette.grey[800]})`,
+    color: palette.common.white,
   };
 }) as typeof Card;
 

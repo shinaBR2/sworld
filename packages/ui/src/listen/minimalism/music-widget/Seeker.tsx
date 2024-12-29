@@ -53,12 +53,19 @@ const getInfoStyles = () => {
   };
 };
 
-const TinyText = styled(Typography)({
-  fontSize: '0.75rem',
-  opacity: 0.38,
-  fontWeight: 500,
-  letterSpacing: 0.2,
-  color: 'rgba(255, 255, 255, 0.6)',
+const TinyText = styled(Typography)(({ theme }) => {
+  const { white } = theme.palette.common;
+
+  return {
+    fontSize: '0.75rem',
+    opacity: 0.38,
+    fontWeight: 500,
+    letterSpacing: 0.2,
+    color: white,
+    [theme.breakpoints.down('sm')]: {
+      color: white,
+    },
+  };
 });
 
 const Seeker = (props: Props) => {
