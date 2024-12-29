@@ -11,7 +11,7 @@ const SECONDARY_TEXT_WIDTH = '60%';
 const PlayingListSkeleton = () => {
   return (
     <Card
-      sx={{ height: '100%', maxHeight: '37vh', overflowY: 'auto' }}
+      sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }}
       aria-label="Loading content"
     >
       <List>
