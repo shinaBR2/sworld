@@ -6,7 +6,8 @@ import RepeatOnIcon from '@mui/icons-material/RepeatOn';
 import RepeatOneIcon from '@mui/icons-material/RepeatOne';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import ShuffleOnIcon from '@mui/icons-material/ShuffleOn';
-import { SkipNextRounded, SkipPreviousRounded } from '@mui/icons-material';
+import SkipNextRounded from '@mui/icons-material/SkipNextRounded';
+import SkipPreviousRounded from '@mui/icons-material/SkipPreviousRounded';
 //@ts-ignore
 // import { SAudioPlayerLoopMode } from "core";
 
