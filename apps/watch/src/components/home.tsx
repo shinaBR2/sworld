@@ -1,8 +1,8 @@
 import { Auth, watchQueryHooks } from 'core';
 import React, { useState } from 'react';
-import { WatchUI, UniversalUI } from 'ui';
+import { FullWidthContainer } from 'ui/universal';
+import { Header, SettingsPanel, VideosContainer } from 'ui/watch';
 import { appConfig } from '../config';
-const { Header, SettingsPanel, VideosContainer } = WatchUI;
 
 const Home = () => {
   const authContext = Auth.useAuthContext();
@@ -14,7 +14,7 @@ const Home = () => {
   const { sites } = appConfig;
 
   return (
-    <UniversalUI.FullWidthContainer>
+    <FullWidthContainer>
       <Header toggleSetting={toggleSetting} sites={sites} user={user} />
       <SettingsPanel
         open={settingOpen}
@@ -24,7 +24,7 @@ const Home = () => {
         }}
       />
       <VideosContainer {...videoResult} />
-    </UniversalUI.FullWidthContainer>
+    </FullWidthContainer>
   );
 };
 

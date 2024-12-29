@@ -10,10 +10,28 @@ export default defineConfig({
     port: 3001,
     host: '0.0.0.0',
   },
+  // https://stackoverflow.com/a/76694634/8270395
+  build: {
+    chunkSizeWarningLimit: 100,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+          return;
+        }
+        warn(warning);
+      },
+    },
+  },
   plugins: [
     viteCommonjs(),
     react(),
-    visualizer(),
+    // @ts-ignore
+    visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'stats.html',
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [

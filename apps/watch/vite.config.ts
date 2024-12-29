@@ -8,5 +8,17 @@ export default defineConfig({
     port: 3002,
     host: '0.0.0.0',
   },
+  // https://stackoverflow.com/a/76694634/8270395
+  build: {
+    chunkSizeWarningLimit: 100,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+          return;
+        }
+        warn(warning);
+      },
+    },
+  },
   plugins: [TanStackRouterVite(), react()],
 });
