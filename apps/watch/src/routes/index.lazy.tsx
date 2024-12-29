@@ -1,11 +1,9 @@
 import React from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { UniversalUI } from 'ui';
+import { LoadingBackdrop } from 'ui/universal';
+import { LoginDialog } from 'ui/universal/dialogs';
 import { Auth } from 'core';
 import { Home } from '../components/home';
-
-const { Dialogs, LoadingBackdrop } = UniversalUI;
-const { LoginDialog } = Dialogs;
 
 const Index = () => {
   const authContext = Auth.useAuthContext();

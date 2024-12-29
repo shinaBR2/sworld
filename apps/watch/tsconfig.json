@@ -5,7 +5,14 @@
     "target": "ES6",
     "rootDir": "src",
     "outDir": "dist",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    // This is FUCKING need, FUCK ts
+    // otherwise import to ui won't work
+    // fucking ts will complain
+    "paths": {
+      "ui": ["../../packages/ui/src"],
+      "ui/*": ["../../packages/ui/src/*"]
+    }
   },
   "include": ["src"]
 }
