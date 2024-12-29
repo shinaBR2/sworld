@@ -6,9 +6,10 @@ import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import { Box, Grid, Slide, Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
-import { StyledCard, StyledCardActions, StyledContent } from './Styled';
-import PlayingList from './PlayingList';
+import { StyledCard, StyledContent } from './Styled';
+import PlayingList from './playing-list';
 import { ResponsiveCardMedia } from '../../../universal';
+import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
 const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
@@ -39,7 +40,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   const { name, artistName, image } = audioItem;
 
-  const onSelect = (id: string) => () => {
+  const onSelect = (id: string) => {
     onItemSelect(id);
     setShowPlayinglist(false);
   };
@@ -57,7 +58,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard>
-      <ResponsiveCardMedia src={image} alt={name} sx={{ height: '300px' }} />
+      <ResponsiveCardMedia src={image || defaultAudioThumbnailUrl} alt={name} />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box
@@ -73,20 +74,33 @@ const MusicWidget = (props: MusicWidgetProps) => {
             {isMobile && (
               <PlaylistButton
                 onClick={() => setShowPlayinglist(!showPlayinglist)}
+                sx={{
+                  color: 'white',
+                }}
               />
             )}
           </Box>
-          <Typography gutterBottom variant="h4" component="strong">
-            {artistName}
-          </Typography>
-          <Typography gutterBottom variant="h5" component="p">
+          <Typography
+            gutterBottom
+            variant="h4"
+            sx={{
+              display: '-webkit-Box',
+              WebkitLineClamp: '1',
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsisBox',
+            }}
+          >
             {name}
           </Typography>
-          <Seeker {...getSeekerProps()} />
+          <Typography gutterBottom component="p">
+            {artistName}
+          </Typography>
         </CardContent>
-        <StyledCardActions>
+        <CardContent>
+          <Seeker {...getSeekerProps()} />
           <Controls {...controlProps} />
-        </StyledCardActions>
+        </CardContent>
         {isMobile && (
           <Slide
             direction="up"

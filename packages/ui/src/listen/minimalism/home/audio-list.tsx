@@ -4,9 +4,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import hooks, { listenQueryHooks } from 'core';
-import { useEffect, useMemo, useState } from 'react';
-import MusicWidget from '../music-widget/MusicWidget';
-import { PlayingList } from './playing-list';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
 import { PlayingListSkeleton } from './playing-list-skeleton';
 
@@ -32,6 +31,8 @@ const toAudioItem = (item: any) => {
     tagIds: tags.map((t: { tag_id: string }) => t.tag_id),
   };
 };
+
+const PlayingList = lazy(() => import('./playing-list'));
 
 const Content = (props: AudioListProps) => {
   const { list: originalList, activeFeelingId } = props;
@@ -89,12 +90,14 @@ const Content = (props: AudioListProps) => {
     <Grid container spacing={2}>
       {showPlayingList && (
         <Grid item md={8} sm={6} xs={0}>
-          <Card sx={{ height: '100%', maxHeight: '600px', overflowY: 'auto' }}>
-            <PlayingList
-              audioList={list}
-              onItemSelect={onItemSelect}
-              currentId={currentAudio.id}
-            />
+          <Card sx={{ height: '100%', maxHeight: '37vh', overflowY: 'auto' }}>
+            <Suspense fallback={<PlayingListSkeleton />}>
+              <PlayingList
+                audioList={list}
+                onItemSelect={onItemSelect}
+                currentId={currentAudio.id}
+              />
+            </Suspense>
           </Card>
         </Grid>
       )}

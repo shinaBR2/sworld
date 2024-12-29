@@ -21,6 +21,25 @@ const audiosAndFeelingsQuery = `
   }
 `;
 
+const publicAudiosAndFeelingsQuery = `
+  query GetPublicAudiosAndFeelings @cached {
+    audios(where: {public: {_eq: true}}) {
+      id
+      name
+      source
+      thumbnailUrl
+      artistName
+      audio_tags {
+        tag_id
+      }
+    }
+    tags(where: {site: {_eq: "listen"}, audio_tags: {audio: {public: {_eq: true}}}}) {
+      id
+      name
+    }
+  }
+`;
+
 interface LoadAudiosProps {
   getAccessToken: () => Promise<string>;
 }
@@ -37,4 +56,13 @@ const useLoadAudios = (props: LoadAudiosProps) => {
   return rs;
 };
 
-export { useLoadAudios };
+const useLoadPublicAudios = () => {
+  const rs = useRequest({
+    queryKey: ['public-audios-and-feelings'],
+    document: publicAudiosAndFeelingsQuery,
+  });
+
+  return rs;
+};
+
+export { useLoadAudios, useLoadPublicAudios };

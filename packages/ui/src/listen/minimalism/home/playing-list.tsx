@@ -97,4 +97,4 @@ const PlayingList = (props: PlayingListItemProps) => {
   );
 };
 
-export { PlayingList };
+export default PlayingList;
