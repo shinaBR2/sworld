@@ -3,14 +3,7 @@
   "extends": "tsconfig/vite.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    // This is FUCKING need, FUCK ts
-    // otherwise import to ui won't work
-    // fucking ts will complain
-    "paths": {
-      "ui": ["../../packages/ui/src"],
-      "ui/*": ["../../packages/ui/src/*"]
-    }
+    "outDir": "dist"
   },
   "include": ["src"]
 }
