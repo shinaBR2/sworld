@@ -16,7 +16,6 @@ interface PlayingListProps {
   onSelect: (id: string) => () => void;
 }
 
-// ts-sucks
 const PlayingList = (
   props: PlayingListProps,
   ref: Ref<unknown> | undefined
@@ -33,6 +32,7 @@ const PlayingList = (
 
             return (
               <ListItemButton
+                component="li"
                 key={a.id}
                 onClick={onSelect(a.id)}
                 selected={selected}
