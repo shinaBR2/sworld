@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { ListenUI, UniversalUI } from 'ui';
 import { Auth, listenQueryHooks } from 'core';
 import { appConfig } from '../../config';
 
-const { LoadingBackdrop } = UniversalUI;
-const { MainContainer, Header, SettingsPanel, FeelingList, AudioList } =
-  ListenUI.Minimalism;
+import { LoadingBackdrop, FullWidthContainer } from 'ui/universal';
+import { MainContainer, Header, FeelingList } from 'ui/listen/minimalism';
 
 interface ContentProps {
   queryRs: any;
 }
+
+const SettingsPanel = React.lazy(() =>
+  import('ui/listen/minimalism').then(mod => ({
+    default: mod.SettingsPanel,
+  }))
+);
+
+const AudioList = React.lazy(() =>
+  import('ui/listen/minimalism').then(mod => ({
+    default: mod.AudioList,
+  }))
+);
 
 const Content = (props: ContentProps) => {
   const [activeFeelingId, setActiveFeelingId] = useState<string>('');
@@ -22,11 +32,13 @@ const Content = (props: ContentProps) => {
         onSelect={setActiveFeelingId}
         queryRs={queryRs}
       />
-      <AudioList
-        queryRs={queryRs}
-        list={queryRs.data?.audios ?? []}
-        activeFeelingId={activeFeelingId}
-      />
+      <React.Suspense fallback={<div />}>
+        <AudioList
+          queryRs={queryRs}
+          list={queryRs.data?.audios ?? []}
+          activeFeelingId={activeFeelingId}
+        />
+      </React.Suspense>
     </>
   );
 };
@@ -69,19 +81,21 @@ const Home = () => {
   }
 
   return (
-    <UniversalUI.FullWidthContainer>
+    <FullWidthContainer>
       <Header sites={sites} onProfileClick={onProfileClick} user={user} />
-      <SettingsPanel
-        open={settingOpen}
-        toggle={toggleSetting}
-        actions={{
-          logout: signOut,
-        }}
-      />
+      <React.Suspense fallback={<div />}>
+        <SettingsPanel
+          open={settingOpen}
+          toggle={toggleSetting}
+          actions={{
+            logout: signOut,
+          }}
+        />
+      </React.Suspense>
       <MainContainer>
         {isSignedIn ? <AuthenticatedContent /> : <AnonymousContent />}
       </MainContainer>
-    </UniversalUI.FullWidthContainer>
+    </FullWidthContainer>
   );
 };
 
