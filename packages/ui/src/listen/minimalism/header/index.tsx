@@ -39,7 +39,7 @@ const Header = (props: HeaderProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
-          <IconButton onClick={onProfileClick}>
+          <IconButton onClick={onProfileClick} aria-label="account options">
             {avatarUrl ? (
               <ResponsiveAvatar
                 src={avatarUrl}

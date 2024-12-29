@@ -19,6 +19,8 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
       width: '100%',
       maxWidth: cardWidth,
     },
+    background: 'linear-gradient(to bottom, #242424, #323232)',
+    color: '#fff',
   };
 }) as typeof Card;
 
@@ -43,6 +45,7 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     top: 56,
     overflowY: 'auto',
     backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
   };
 }) as any;
 

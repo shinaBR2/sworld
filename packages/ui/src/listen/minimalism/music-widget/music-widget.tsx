@@ -74,6 +74,9 @@ const MusicWidget = (props: MusicWidgetProps) => {
             {isMobile && (
               <PlaylistButton
                 onClick={() => setShowPlayinglist(!showPlayinglist)}
+                sx={{
+                  color: 'white',
+                }}
               />
             )}
           </Box>
@@ -82,10 +85,10 @@ const MusicWidget = (props: MusicWidgetProps) => {
             variant="h4"
             sx={{
               display: '-webkit-Box',
-              '-webkit-line-clamp': '2',
-              '-webkit-box-orient': 'vertical',
+              WebkitLineClamp: '2',
+              WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              'text-overflow': 'ellipsisBox',
+              textOverflow: 'ellipsisBox',
             }}
           >
             {name}

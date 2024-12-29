@@ -1,11 +1,10 @@
-import { PlayArrowRounded } from '@mui/icons-material';
+import { GraphicEq } from '@mui/icons-material';
 import {
   Divider,
   Box,
-  MenuList,
-  MenuItem,
   ListItemText,
-  Typography,
+  List,
+  ListItemButton,
 } from '@mui/material';
 import { SAudioPlayerAudioItem } from 'core';
 import { forwardRef, Ref } from 'react';
@@ -28,33 +27,48 @@ const PlayingList = (
     <StyledPlayingList ref={ref}>
       <Divider />
       <Box height="100%" pb={2} mb={2}>
-        <MenuList>
+        <List aria-label="audio tracks">
           {audioList.map(a => {
             const selected = a.id === currentId;
 
             return (
-              <MenuItem key={a.id} onClick={onSelect(a.id)} selected={selected}>
+              <ListItemButton
+                key={a.id}
+                onClick={onSelect(a.id)}
+                selected={selected}
+                sx={{
+                  pl: 2,
+                  pr: 1,
+                }}
+              >
                 <ListItemText
                   primaryTypographyProps={{
                     sx: {
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      maxWidth: '280px', // Adjust width as needed
                     },
                   }}
                 >
                   {a.name}
                 </ListItemText>
                 {selected && (
-                  <Typography variant="body2" color="text.secondary">
-                    <PlayArrowRounded />
-                  </Typography>
+                  <GraphicEq
+                    sx={{
+                      color: 'primary.main',
+                      animation: 'pulse 1s infinite',
+                      '@keyframes pulse': {
+                        '0%': { opacity: 0.6 },
+                        '50%': { opacity: 1 },
+                        '100%': { opacity: 0.6 },
+                      },
+                    }}
+                  />
                 )}
-              </MenuItem>
+              </ListItemButton>
             );
           })}
-        </MenuList>
+        </List>
       </Box>
     </StyledPlayingList>
   );

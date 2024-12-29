@@ -58,6 +58,7 @@ const TinyText = styled(Typography)({
   opacity: 0.38,
   fontWeight: 500,
   letterSpacing: 0.2,
+  color: 'rgba(255, 255, 255, 0.6)',
 });
 
 const Seeker = (props: Props) => {

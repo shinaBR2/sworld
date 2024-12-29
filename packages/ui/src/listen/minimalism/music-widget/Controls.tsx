@@ -1,13 +1,12 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
-import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
-import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import RepeatOnIcon from '@mui/icons-material/RepeatOn';
 import RepeatOneIcon from '@mui/icons-material/RepeatOne';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import ShuffleOnIcon from '@mui/icons-material/ShuffleOn';
+import { SkipNextRounded, SkipPreviousRounded } from '@mui/icons-material';
 //@ts-ignore
 // import { SAudioPlayerLoopMode } from "core";
 
@@ -18,17 +17,37 @@ enum SAudioPlayerLoopMode {
   One = 'one',
 }
 
-const getWrapperStyles = () => {
-  return {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    mt: -1,
-  };
-};
-const getButtonStyles = () => {
-  return { fontSize: '3rem' };
-};
+const getWrapperStyles = () => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+  gap: 1,
+});
+
+const getCenterControlsStyles = () => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 2,
+});
+
+const getMainButtonStyles = () => ({
+  fontSize: '3rem',
+  p: 0,
+  color: 'white',
+  '&:hover': {
+    bgcolor: 'rgba(255,255,255,0.1)',
+  },
+});
+
+const getSideButtonStyles = (isActive = false) => ({
+  color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
+  fontSize: '1.75rem',
+  '&:hover': {
+    color: 'white',
+    bgcolor: 'rgba(255,255,255,0.1)',
+  },
+});
 
 interface Props {
   isPlay: boolean;
@@ -54,53 +73,75 @@ const Controls = (props: Props) => {
     handlePrev,
     handleNext,
   } = props;
-  const iconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
 
   const renderIcon = () => {
     if (isPlay) {
-      return <PauseRounded sx={getButtonStyles()} htmlColor={iconColor} />;
+      return <PauseRounded sx={getMainButtonStyles()} />;
     }
 
-    return <PlayArrowRounded sx={getButtonStyles()} htmlColor={iconColor} />;
+    return <PlayArrowRounded sx={getMainButtonStyles()} />;
   };
 
   const renderLoopMode = () => {
     if (loopMode === SAudioPlayerLoopMode.All) {
-      return <RepeatOnIcon fontSize="large" htmlColor={iconColor} />;
+      return <RepeatOnIcon fontSize="large" />;
     } else if (loopMode === SAudioPlayerLoopMode.One) {
-      return <RepeatOneIcon fontSize="large" htmlColor={iconColor} />;
+      return <RepeatOneIcon fontSize="large" />;
     } else {
-      return <RepeatIcon fontSize="large" htmlColor={iconColor} />;
+      return <RepeatIcon fontSize="large" />;
     }
   };
 
   const renderShuffle = () => {
     if (shuffle) {
-      return <ShuffleOnIcon fontSize="large" htmlColor={iconColor} />;
+      return <ShuffleOnIcon fontSize="large" />;
     }
 
-    return <ShuffleIcon fontSize="large" htmlColor={iconColor} />;
+    return <ShuffleIcon fontSize="large" />;
   };
 
   return (
     <Box sx={getWrapperStyles()}>
-      <IconButton aria-label="loop mode" onClick={onChangeLoopMode}>
+      <IconButton
+        size="small"
+        aria-label="loop mode"
+        onClick={onChangeLoopMode}
+        sx={getSideButtonStyles()}
+      >
         {renderLoopMode()}
       </IconButton>
-      <IconButton aria-label="previous song" onClick={handlePrev}>
-        <FastRewindRounded fontSize="large" htmlColor={iconColor} />
-      </IconButton>
+      <Box sx={getCenterControlsStyles()}>
+        <IconButton
+          size="small"
+          aria-label="previous song"
+          onClick={handlePrev}
+          sx={getMainButtonStyles()}
+        >
+          <SkipPreviousRounded fontSize="large" />
+        </IconButton>
+        <IconButton
+          size="medium"
+          aria-label={isPlay ? 'pause' : 'play'}
+          onClick={handlePlay}
+          sx={getMainButtonStyles()}
+        >
+          {renderIcon()}
+        </IconButton>
+        <IconButton
+          size="small"
+          aria-label="next song"
+          onClick={handleNext}
+          sx={getMainButtonStyles()}
+        >
+          <SkipNextRounded fontSize="large" />
+        </IconButton>
+      </Box>
       <IconButton
-        size="large"
-        aria-label={isPlay ? 'pause' : 'play'}
-        onClick={handlePlay}
+        size="small"
+        aria-label="loop mode"
+        onClick={onShuffle}
+        sx={getSideButtonStyles()}
       >
-        {renderIcon()}
-      </IconButton>
-      <IconButton aria-label="next song" onClick={handleNext}>
-        <FastForwardRounded fontSize="large" htmlColor={iconColor} />
-      </IconButton>
-      <IconButton aria-label="loop mode" onClick={onShuffle}>
         {renderShuffle()}
       </IconButton>
     </Box>
