@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { Auth } from 'core';
 import { routeTree } from './routeTree.gen';
+import { auth0Config } from './config';
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -28,13 +29,6 @@ const validateEnvVars = () => {
 };
 
 validateEnvVars();
-
-const auth0Config = {
-  domain: import.meta.env.VITE_AUTH0_DOMAIN,
-  clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-  audience: import.meta.env.VITE_HASURA_GRAPHQL_URL,
-  redirectUri: window.location.origin,
-};
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

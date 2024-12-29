@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { GameUI } from 'ui';
+import { GameDialogue } from 'ui/game/minimalism/dialogs';
+import { DialogueContent } from 'ui/game/types/dialog';
 import GameContainer from '../../core/GameContainer';
 import { EventBus } from '../../core/EventBus';
 import config from './config';
@@ -8,10 +9,7 @@ import {
   PLAYER_READ_HOUSE_SIGN,
 } from './events/playerEvents';
 
-const { Dialogs, Containers } = GameUI.Minimalism;
-const { GameDialogue } = Dialogs;
-
-const dialogue: GameUI.Dialog.DialogueContent = {
+const dialogue: DialogueContent = {
   speaker: 'Elder Sage',
   text: `Welcome, young adventurer. Our village has been plagued by mysterious creatures emerging from the ancient ruins to the north. Many of our bravest warriors have ventured forth to investigate, but none have returned. The situation grows dire with each passing day, and our resources dwindle as we struggle to defend our homes. We desperately need someone with your skills and courage to help us uncover the source of these attacks and put an end to them. Will you assist us in our time of need?`,
   choices: [

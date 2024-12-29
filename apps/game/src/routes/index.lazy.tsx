@@ -2,10 +2,7 @@ import * as React from 'react';
 // @ts-ignore
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { Auth } from 'core';
-import { GameUI } from 'ui';
-
-const { Containers } = GameUI.Minimalism;
-const { HomeContainer } = Containers;
+import { HomeContainer } from 'ui/game/minimalism/containers';
 
 const Home = () => {
   const authContext = Auth.useAuthContext();

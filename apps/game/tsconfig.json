@@ -1,20 +1,19 @@
 {
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "test"
-  ],
+  "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts", "test"],
   "extends": "tsconfig/vite.json",
   "compilerOptions": {
     "target": "ES6",
     "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types/*.d.ts"
-    ]
+    "typeRoots": ["./node_modules/@types", "./src/types/*.d.ts"],
+    // This is FUCKING need, FUCK ts
+    // otherwise import to ui won't work
+    // fucking ts will complain
+    "paths": {
+      "ui": ["../../packages/ui/src"],
+      "ui/*": ["../../packages/ui/src/*"]
+    }
   },
-  "include": ["src", "src/**/*.d.ts", "test"],
+  "include": ["src", "src/**/*.d.ts", "test"]
 }
