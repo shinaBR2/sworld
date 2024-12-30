@@ -23,12 +23,11 @@ export default defineConfig({
       output: {
         manualChunks: id => {
           if (id.includes('node_modules')) {
-            if (id.includes('@mui')) {
-              console.log('MUI module:', id);
-              return 'mui-vendor';
-            }
+            /**
+             * App broken if bundle mui separetely
+             */
             if (id.includes('react')) return 'react-vendor';
-            return 'vendor'; // other dependencies
+            return 'vendor';
           }
         },
       },
