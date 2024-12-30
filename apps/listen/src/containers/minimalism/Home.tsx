@@ -10,7 +10,7 @@ interface ContentProps {
 }
 
 const SettingsPanel = React.lazy(() =>
-  import('ui/listen/minimalism').then(mod => ({
+  import('ui/listen/minimalism/home/settings').then(mod => ({
     default: mod.SettingsPanel,
   }))
 );
