@@ -4,6 +4,16 @@ import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { VitePWA } from 'vite-plugin-pwa';
 
+/**
+ * For debug production build
+ * esbuild: {
+    keepNames: true,
+    minifyIdentifiers: false,
+    minifySyntax: true,
+    minifyWhitespace: false,
+  },
+ */
+
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig({
   server: {
@@ -34,13 +44,6 @@ export default defineConfig({
         },
       },
     },
-  },
-  esbuild: {
-    // Move esbuild options here at root level
-    keepNames: true,
-    minifyIdentifiers: false,
-    minifySyntax: true,
-    minifyWhitespace: false,
   },
   plugins: [
     viteCommonjs(),
