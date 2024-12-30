@@ -15,7 +15,7 @@ export const mockPhaser = {
         on: (event: string, callback: MutationCallback, context: any) => this =
           () => this;
 
-        constructor(world: any, x: number, y: number, texture: string) {
+        constructor(world: any, _x: number, _y: number, _texture: string) {
           this.scene = world.scene;
           this.body = { velocity: { x: 0, y: 0 } };
         }

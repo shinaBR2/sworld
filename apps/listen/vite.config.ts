@@ -1,8 +1,18 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { VitePWA } from 'vite-plugin-pwa';
+
+/**
+ * For debug production build
+ * esbuild: {
+    keepNames: true,
+    minifyIdentifiers: false,
+    minifySyntax: true,
+    minifyWhitespace: false,
+  },
+ */
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig({
@@ -12,6 +22,8 @@ export default defineConfig({
   },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
+    sourcemap: true,
+    minify: 'esbuild', // Use esbuild minifier instead of turning off completely
     chunkSizeWarningLimit: 100,
     rollupOptions: {
       onwarn(warning, warn) {
@@ -20,18 +32,32 @@ export default defineConfig({
         }
         warn(warning);
       },
+      output: {
+        manualChunks: id => {
+          if (id.includes('node_modules')) {
+            /**
+             * App broken if bundle mui separetely
+             */
+            if (id.includes('react')) return 'react-vendor';
+            return 'vendor';
+          }
+        },
+      },
     },
   },
   plugins: [
     viteCommonjs(),
     react(),
-    // @ts-ignore
-    visualizer({
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-      filename: 'stats.html',
-    }),
+    // Local bundle analyzer
+    // visualizer({
+    //   open: true,
+    //   gzipSize: true,
+    //   sourcemap: true,
+    //   brotliSize: true,
+    //   // template: 'treemap',
+    //   template: 'network',
+    //   filename: 'stats.html',
+    // }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [

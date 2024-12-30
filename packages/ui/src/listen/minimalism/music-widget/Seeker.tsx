@@ -1,11 +1,7 @@
-import {
-  Box,
-  Slider,
-  styled,
-  Theme,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
+import { styled, Theme, useTheme } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 interface Props {
   max: number;

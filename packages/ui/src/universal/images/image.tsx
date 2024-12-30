@@ -1,4 +1,5 @@
-import { Avatar, AvatarProps } from '@mui/material';
+import { AvatarProps } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import CardMedia from '@mui/material/CardMedia';
 import React from 'react';
 
@@ -89,7 +90,7 @@ const ResponsiveCardMedia = ({
   src,
   alt,
   className,
-  sizes,
+  sizes = '(max-width: 768px) calc(100vw - 2rem), (max-width: 1200px) calc(50vw - 2rem), calc(33vw - 2rem)',
   widths,
   sx = {},
   ...props

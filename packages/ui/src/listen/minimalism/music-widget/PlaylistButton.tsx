@@ -1,4 +1,5 @@
-import { ButtonProps, IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { ButtonProps } from '@mui/material';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 
 const PlaylistButton = (props: ButtonProps) => {

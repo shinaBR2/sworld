@@ -1,12 +1,10 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-  Stack,
-  Button,
-  DialogActions,
-} from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 import { useEffect, useReducer } from 'react';
 import { DialogueChoice, GameDialogProps } from '../../../types/dialog';
 import {
