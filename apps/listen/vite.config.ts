@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { VitePWA } from 'vite-plugin-pwa';
 
 /**
@@ -48,16 +48,16 @@ export default defineConfig({
   plugins: [
     viteCommonjs(),
     react(),
-    // @ts-ignore
-    visualizer({
-      open: true,
-      gzipSize: true,
-      sourcemap: true,
-      brotliSize: true,
-      // template: 'treemap',
-      template: 'network',
-      filename: 'stats.html',
-    }),
+    // Local bundle analyzer
+    // visualizer({
+    //   open: true,
+    //   gzipSize: true,
+    //   sourcemap: true,
+    //   brotliSize: true,
+    //   // template: 'treemap',
+    //   template: 'network',
+    //   filename: 'stats.html',
+    // }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
