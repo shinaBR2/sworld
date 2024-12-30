@@ -2,7 +2,7 @@ export default {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
@@ -22,6 +22,8 @@ export default {
         vars: 'all',
         args: 'after-used',
         ignoreRestSiblings: false,
+        // Ignore variables and parameters prefixed with underscore
+        // Example: function example(_unused: string) {}
         varsIgnorePattern: '^_',
         argsIgnorePattern: '^_',
       },
