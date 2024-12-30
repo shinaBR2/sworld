@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 
 import { ReactNode } from 'react';
 
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
   return (
     <Box
       display="flex"

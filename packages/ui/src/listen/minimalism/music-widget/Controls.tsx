@@ -65,7 +65,6 @@ interface Props {
 
 // https://mui.com/material-ui/react-slider/#music-player
 const Controls = (props: Props) => {
-  const theme = useTheme();
   const {
     isPlay,
     shuffle,
