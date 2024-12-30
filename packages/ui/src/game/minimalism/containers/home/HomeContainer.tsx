@@ -9,7 +9,7 @@ interface HomeContainerProps {
 
 const HomeContainer = (props: HomeContainerProps) => {
   const { gameList } = props;
-  const htmlTitle = 'Games';
+  // const htmlTitle = 'Games';
 
   return (
     <Container maxWidth="xl">

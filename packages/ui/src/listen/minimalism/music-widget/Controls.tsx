@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import { useTheme } from '@mui/material';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import RepeatIcon from '@mui/icons-material/Repeat';

@@ -13,7 +13,7 @@ interface GameCardProps {
 }
 
 const GameCard = (props: GameCardProps) => {
-  const { id, url, name, slug, imageUrl } = props;
+  const { id, url, name, imageUrl } = props;
 
   return (
     <StyledCard key={id}>
