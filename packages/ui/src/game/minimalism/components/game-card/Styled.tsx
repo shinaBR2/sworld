@@ -1,16 +1,8 @@
-import {
-  Box,
-  BoxProps,
-  Card,
-  CardActions,
-  CardActionsProps,
-  CardMedia,
-  CardMediaProps,
-  CardProps,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import { CardProps } from '@mui/material';
+import styled from '@emotion/styled';
 
-const StyledCard = styled(Card)<CardProps>(({ theme }) => {
+const StyledCard = styled(Card)<CardProps>(() => {
   return {
     aspectRatio: 1.75,
   };

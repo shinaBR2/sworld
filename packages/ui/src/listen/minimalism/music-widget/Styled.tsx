@@ -1,11 +1,6 @@
-import {
-  Box,
-  BoxProps,
-  Card,
-  CardActions,
-  CardActionsProps,
-  CardProps,
-} from '@mui/material';
+import { BoxProps, CardProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import { keyframes, styled } from '@mui/material/styles';
 
 const cardWidth = 345;

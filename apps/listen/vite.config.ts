@@ -20,6 +20,18 @@ export default defineConfig({
         }
         warn(warning);
       },
+      output: {
+        manualChunks: id => {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui')) {
+              console.log('MUI module:', id);
+              return 'mui-vendor';
+            }
+            if (id.includes('react')) return 'react-vendor';
+            return 'vendor'; // other dependencies
+          }
+        },
+      },
     },
   },
   plugins: [
@@ -29,7 +41,10 @@ export default defineConfig({
     visualizer({
       open: true,
       gzipSize: true,
+      sourcemap: true,
       brotliSize: true,
+      // template: 'treemap',
+      template: 'network',
       filename: 'stats.html',
     }),
     VitePWA({

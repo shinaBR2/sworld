@@ -1,5 +1,8 @@
-import { AccountCircle } from '@mui/icons-material';
-import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import { Auth } from 'core';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';

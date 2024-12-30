@@ -1,18 +1,12 @@
-import {
-  Headphones,
-  KeyboardArrowDown,
-  Link,
-  OndemandVideo,
-  PlayCircle,
-} from '@mui/icons-material';
-import {
-  Select,
-  MenuItem,
-  Button,
-  Menu,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+import Headphones from '@mui/icons-material/Headphones';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import OndemandVideo from '@mui/icons-material/OndemandVideo';
+import PlayCircle from '@mui/icons-material/PlayCircle';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
 
 const sites = [

@@ -1,6 +1,7 @@
 import { StyledComponent } from '@emotion/styled';
 import { Card, CardProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
+// import styled from '@emotion/styled';
 
 interface StyledAvatarProps extends CardProps {
   isActive: boolean;
