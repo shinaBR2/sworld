@@ -4,19 +4,10 @@ import '@testing-library/jest-dom/vitest';
 import { LoginDialog } from '../index';
 
 // Mock Material-UI Dialog
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual('@mui/material');
-  return {
-    ...actual,
-    Dialog: ({
-      children,
-      open,
-    }: {
-      children: React.ReactNode;
-      open: boolean;
-    }) => (open ? <div data-testid="dialog">{children}</div> : null),
-  };
-});
+vi.mock('@mui/material/Dialog', () => ({
+  default: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+    open ? <div data-testid="dialog">{children}</div> : null,
+}));
 
 describe('LoginDialog', () => {
   it('renders correctly when open', () => {

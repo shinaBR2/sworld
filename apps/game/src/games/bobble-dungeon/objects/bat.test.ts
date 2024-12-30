@@ -1,5 +1,4 @@
 import { describe, beforeEach, jest, test, expect } from '@jest/globals';
-import { mockScene, mockPhysics } from '../../../../test/mocks/phaser';
 import Bat from './bat';
 
 describe('Bat', () => {

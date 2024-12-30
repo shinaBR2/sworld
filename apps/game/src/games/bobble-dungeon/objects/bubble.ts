@@ -63,7 +63,7 @@ export default class Bubble extends Phaser.Physics.Matter.Sprite {
       to: Phaser.Math.Between(-400, 400),
       duration: 3500,
       ease: Phaser.Math.Easing.Sine.InOut,
-      onUpdate: (tween, target) => {
+      onUpdate: (_tween, target) => {
         const x = this.startX + target.value;
         const dx = x - this.x;
         this.x = x;

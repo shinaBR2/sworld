@@ -1,4 +1,4 @@
-import { createTheme, responsiveFontSizes, Paper } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material';
 import baseTheme from '../../baseTheme';
 
 const theme = createTheme({

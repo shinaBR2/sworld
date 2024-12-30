@@ -2,17 +2,16 @@ import {
   ErrorBoundary as ReactErrorBoundary,
   FallbackProps,
 } from 'react-error-boundary';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Container,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+
 import { ReactNode } from 'react';
 
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
   return (
     <Box
       display="flex"

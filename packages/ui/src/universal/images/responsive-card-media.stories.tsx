@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ResponsiveCardMedia } from './image'; // Adjust import path
-import { Card, CardContent } from '@mui/material'; // Adjust import path as needed
+import { ResponsiveCardMedia } from './image';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 /**
  * ResponsiveCardMedia is a wrapper around Material-UI's CardMedia component

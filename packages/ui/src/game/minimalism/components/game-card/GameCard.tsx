@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import { CardActionArea, CardMedia } from '@mui/material';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardMedia from '@mui/material/CardMedia';
 import { StyledCard } from './Styled';
 
 interface GameCardProps {
@@ -12,7 +13,7 @@ interface GameCardProps {
 }
 
 const GameCard = (props: GameCardProps) => {
-  const { id, url, name, slug, imageUrl } = props;
+  const { id, url, name, imageUrl } = props;
 
   return (
     <StyledCard key={id}>

@@ -1,13 +1,6 @@
-import {
-  Container,
-  Box,
-  Typography,
-  Stack,
-  Chip,
-  Grid,
-  Card,
-} from '@mui/material';
-import { Helmet } from 'react-helmet';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import CardList from '../card-list/CardList';
 
 interface HomeContainerProps {
@@ -16,7 +9,7 @@ interface HomeContainerProps {
 
 const HomeContainer = (props: HomeContainerProps) => {
   const { gameList } = props;
-  const htmlTitle = 'Games';
+  // const htmlTitle = 'Games';
 
   return (
     <Container maxWidth="xl">
