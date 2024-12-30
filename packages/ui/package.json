@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && NODE_OPTIONS=--max_old_space_size=8192 tsup",
-    "build-watch": "tsup --watch --format esm,cjs --external react",
+    "build-watch": "tsup --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
