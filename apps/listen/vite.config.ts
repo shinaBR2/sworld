@@ -12,6 +12,8 @@ export default defineConfig({
   },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
+    sourcemap: true,
+    minify: 'esbuild', // Use esbuild minifier instead of turning off completely
     chunkSizeWarningLimit: 100,
     rollupOptions: {
       onwarn(warning, warn) {
@@ -32,6 +34,13 @@ export default defineConfig({
         },
       },
     },
+  },
+  esbuild: {
+    // Move esbuild options here at root level
+    keepNames: true,
+    minifyIdentifiers: false,
+    minifySyntax: true,
+    minifyWhitespace: false,
   },
   plugins: [
     viteCommonjs(),
