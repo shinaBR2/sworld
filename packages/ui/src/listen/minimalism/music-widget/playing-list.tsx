@@ -1,11 +1,9 @@
-import { GraphicEq } from '@mui/icons-material';
-import {
-  Divider,
-  Box,
-  ListItemText,
-  List,
-  ListItemButton,
-} from '@mui/material';
+import GraphicEq from '@mui/icons-material/GraphicEq';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
+import ListItemText from '@mui/material/ListItemText';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
 import { SAudioPlayerAudioItem } from 'core';
 import { forwardRef, Ref } from 'react';
 import { pulseAnimation, StyledPlayingList } from './Styled';

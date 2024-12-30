@@ -1,4 +1,5 @@
-import { Box, IconButton, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import RepeatIcon from '@mui/icons-material/Repeat';
@@ -63,7 +64,6 @@ interface Props {
 
 // https://mui.com/material-ui/react-slider/#music-player
 const Controls = (props: Props) => {
-  const theme = useTheme();
   const {
     isPlay,
     shuffle,

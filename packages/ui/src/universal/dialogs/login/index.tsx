@@ -1,4 +1,8 @@
-import { Button, Dialog, DialogContent, Box, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import GoogleIcon from '@mui/icons-material/Google';
 
 interface LoginDialogProps {

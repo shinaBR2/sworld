@@ -1,10 +1,8 @@
-import {
-  Backdrop,
-  BackdropProps,
-  Box,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
+import { BackdropProps } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 
 interface LoadingBackdropProps extends Omit<BackdropProps, 'open'> {
   message?: string;

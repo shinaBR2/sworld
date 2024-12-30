@@ -1,4 +1,3 @@
-import Fireball from './fireball';
 import Bubble from './bubble';
 import { GameScene } from '../scenes/game';
 
@@ -66,13 +65,7 @@ The wizard will try to shoot directly at the player. It will shoot a fireball an
   */
   directShot() {
     this.scene.playAudio('fireball');
-    const distance = Phaser.Math.Distance.BetweenPoints(
-      // @ts-ignore
-      this.scene.player,
-      this
-    );
     this.anims.play('wizardshot', true);
-    const fireball = new Fireball(this.scene, this.x, this.y, this.direction);
     this.delayedTurn = this.scene.time.delayedCall(
       1000,
       () => {

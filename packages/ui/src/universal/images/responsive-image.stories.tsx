@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ResponsiveImage } from './image'; // Adjust import path
-import { Box } from '@mui/material'; // Adjust import path as needed
+import { ResponsiveImage } from './image';
+import Box from '@mui/material/Box';
 
 /**
  * ResponsiveImage is a versatile image component with built-in
