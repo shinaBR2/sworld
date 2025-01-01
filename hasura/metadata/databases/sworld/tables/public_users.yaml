@@ -27,7 +27,6 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - auth0_id
         - created_at
         - email
         - id
