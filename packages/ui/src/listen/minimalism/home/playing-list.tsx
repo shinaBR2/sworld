@@ -26,6 +26,7 @@ const Item = (props: ItemProps) => {
 
   return (
     <ListItemButton
+      aria-selected={isPlaying}
       sx={{
         borderLeft: isPlaying ? 4 : 0,
         borderColor: 'primary.main',
@@ -80,7 +81,7 @@ const PlayingList = (props: PlayingListItemProps) => {
   }
 
   return (
-    <List>
+    <List role="list" aria-label="playing list">
       {audioList.map(a => {
         const { id } = a;
 

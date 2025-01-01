@@ -51,6 +51,7 @@ jobs:
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
       - name: Deploy listen
+        id: deploy
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
           target: 'listen'
@@ -58,6 +59,37 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
+      - name: Debug Firebase Deploy Outputs
+        run: |
+          echo "Deploy Action Outputs:"
+          echo "details_url: ${{ steps.deploy.outputs.details_url }}"
+          echo "hosting_url: ${{ steps.deploy.outputs.hosting_url }}"
+          echo "All outputs: ${{ toJSON(steps.deploy.outputs) }}"
+      - name: Verify preview URL
+        run: |
+          if [ -z "${{ steps.deploy.outputs.details_url }}" ]; then
+            echo "Error: Firebase preview URL is empty or undefined"
+            exit 1
+          fi
+          if [[ ! "${{ steps.deploy.outputs.details_url }}" =~ ^https?:// ]]; then
+            echo "Error: Invalid preview URL format"
+            exit 1
+          fi
+      - name: Run Playwright Tests
+        working-directory: apps/listen
+        if: success()
+        run: |
+          pnpm exec playwright install --with-deps
+          pnpm run e2e
+        env:
+          PLAYWRIGHT_LISTEN_URL: ${{ steps.deploy.outputs.details_url }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: apps/listen/playwright-report/
+          retention-days: 30
 
   prod_deploy:
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'

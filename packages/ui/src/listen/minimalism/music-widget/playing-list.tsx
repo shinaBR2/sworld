@@ -40,8 +40,9 @@ const PlayingList = (
                 key={a.id}
                 onClick={() => onSelect(a.id)}
                 selected={selected}
-                aria-current={selected ? 'true' : undefined}
+                aria-selected={selected ? 'true' : false}
                 role="option"
+                aria-label="audio track"
                 sx={{
                   pl: 2,
                   pr: 1,
