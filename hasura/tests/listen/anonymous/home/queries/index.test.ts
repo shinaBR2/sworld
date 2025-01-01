@@ -1,10 +1,6 @@
 import { expect } from "vitest";
-import { GraphQLClient } from "graphql-request";
+import client from "../../../../client";
 import { describe, test, expect } from "vitest";
-
-const client = new GraphQLClient(
-  `${process.env.HASURA_GRAPHQL_ENDPOINT}/v1/graphql`
-);
 
 const forbiddenQueries = [
   {
