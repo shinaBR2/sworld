@@ -8,7 +8,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "pre-dev": "cp ../../.env.development.local .env",
     "dev": "pnpm run pre-dev && vite",
-    "e2e": "pnpm exec playwright test"
+    "e2e": "pnpm exec playwright test",
+    "e2e-codegen": "pnpm exec playwright codegen"
   },
   "dependencies": {
     "core": "workspace:*",
