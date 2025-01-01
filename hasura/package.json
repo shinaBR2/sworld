@@ -4,11 +4,12 @@
   "description": "hasura v2 for sworld",
   "main": "index.js",
   "directories": {
-    "test": "vitest",
-    "test:ci": "vitest run"
+    "test": "tests"
   },
   "scripts": {
-    "test": "test"
+    "lint": "npx eslint .",
+    "test": "dotenvx run -- vitest",
+    "test:ci": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -24,10 +25,19 @@
   },
   "homepage": "https://github.com/shinaBR2/sworld-hasura-v2#readme",
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.3",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
     "graphql-request": "^7.1.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
     "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0"
   }
 }
