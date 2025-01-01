@@ -36,7 +36,7 @@ test.describe('home visual', () => {
     await expect(widget).toBeVisible();
 
     await expect(
-      widget.getByRole('img', { name: 'audio thumnail' })
+      widget.getByRole('img', { name: 'audio thumbnail' })
     ).toBeVisible();
 
     const nowPlaying = widget.getByLabel('now playing');

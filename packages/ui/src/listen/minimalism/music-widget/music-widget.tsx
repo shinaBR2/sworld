@@ -62,7 +62,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
   return (
     <StyledCard role="region" aria-label="music widget">
       <ResponsiveCardMedia
-        aria-label="audio thumnail"
+        aria-label="audio thumbnail"
         src={image || defaultAudioThumbnailUrl}
         alt={name}
       />
