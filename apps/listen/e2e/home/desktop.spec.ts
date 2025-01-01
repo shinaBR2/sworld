@@ -11,3 +11,18 @@ test.describe('playing list', () => {
     ).toBeVisible();
   });
 });
+
+test.describe('music widget', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('visual', async ({ page }) => {
+    const widget = page.getByRole('region', { name: 'music widget' });
+    await expect(widget).toBeVisible();
+
+    await expect(
+      widget.getByRole('button', { name: 'list audio' })
+    ).toBeHidden();
+  });
+});
