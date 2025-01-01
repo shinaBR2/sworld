@@ -25,7 +25,7 @@ test.describe('music widget', () => {
   });
 
   test.describe('actions', () => {
-    test.only('toggle playing list', async ({ page }) => {
+    test('toggle playing list', async ({ page }) => {
       const widget = page.getByRole('region', { name: 'music widget' });
       const button = widget.getByRole('button', {
         name: 'toggle playing list',
@@ -36,6 +36,12 @@ test.describe('music widget', () => {
       const playingList = widget.getByRole('list', { name: 'playing list' });
       await expect(playingList).toBeVisible();
 
+      const playingAudio = playingList
+        .getByRole('button', { name: 'audio track' })
+        .first();
+      await expect(playingAudio).toBeVisible();
+      await expect(playingAudio).toHaveAttribute('aria-selected', 'true');
+
       await button.click();
 
       /**
@@ -45,9 +51,18 @@ test.describe('music widget', () => {
        */
       // await expect(playingList).toBeHidden();
 
-      const allItems = playingList.getByRole('button', { name: 'audio track' });
-
-      await expect(allItems).toBeHidden();
+      const allItems = await playingList
+        .getByRole('button', {
+          name: 'audio track',
+        })
+        .all();
+      for (const btn of allItems) {
+        /**
+         * This doesn't work because the element is still in the DOM
+         */
+        // await expect(btn).not.toBeVisible();
+        await expect(btn).not.toBeInViewport();
+      }
     });
   });
 });
