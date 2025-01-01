@@ -1,28 +1,7 @@
 import { expect } from "vitest";
-import client from "../../../../client";
-import { describe, test, expect } from "vitest";
+import { createRoleTestSuite } from "../create-role-test-suite";
 
-const forbiddenQueries = [
-  {
-    name: "audio createdAt",
-    query: `
-      query MyQuery {
-        audios {
-          createdAt
-        }
-      }
-    `,
-  },
-  {
-    name: "audio updatedAt",
-    query: `
-      query MyQuery {
-        audios {
-          updatedAt
-        }
-      }
-    `,
-  },
+const userDeniedQueries = [
   {
     name: "tags aggregate",
     query: `
@@ -79,6 +58,7 @@ const allowedQueries = [
       query MyQuery {
         audios {
           thumbnailUrl
+          artistName
           source
           name
           public
@@ -186,30 +166,66 @@ const emptyResponseQueries = [
   },
 ];
 
-describe("Home queries", () => {
-  describe("allowed queries", () => {
-    test.each(allowedQueries)("$name is allowed", async ({ query }) => {
-      const response = await client.request(query);
-
-      if (typeof additionalTest !== "undefined") {
-        additionalTest(response);
+const anonymousDeniedMutations = [
+  {
+    name: "All",
+    key: "audios",
+    mutation: `
+      mutation {
+        # This is a placeholder and won't match any real schema
+        # The point is to ensure ANY mutation is rejected
+        __typename
       }
-    });
-  });
+    `,
+  },
+];
 
-  describe("empty response queries", () => {
-    test.each(emptyResponseQueries)(
-      "$name return empty",
-      async ({ query, key }) => {
-        const response = await client.request(query);
-        expect(response[key]).toEqual([]);
+const anonymousDeniedQueries = [
+  ...userDeniedQueries,
+  {
+    name: "audio createdAt",
+    query: `
+      query MyQuery {
+        audios {
+          createdAt
+        }
       }
-    );
-  });
+    `,
+  },
+  {
+    name: "audio updatedAt",
+    query: `
+      query MyQuery {
+        audios {
+          updatedAt
+        }
+      }
+    `,
+  },
+];
 
-  describe("forbidden queries", () => {
-    test.each(forbiddenQueries)("$name is NOT allowed", async ({ query }) => {
-      await expect(client.request(query)).rejects.toThrow();
-    });
-  });
+createRoleTestSuite("Anonymous", {
+  queries: {
+    allowed: allowedQueries,
+    denied: anonymousDeniedQueries,
+    empty: emptyResponseQueries,
+  },
+  mutations: {
+    allowed: [],
+    denied: anonymousDeniedMutations,
+  },
+});
+
+createRoleTestSuite("User", {
+  queries: {
+    allowed: allowedQueries,
+    denied: userDeniedQueries,
+    empty: emptyResponseQueries,
+  },
+  mutations: {
+    allowed: [],
+    denied: [],
+  },
+  token:
+    "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkRiNWNWaFFiaXJCRUZJY3BwOFhESSJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWFsbG93ZWQtcm9sZXMiOlsidXNlciIsImFkbWluIl0sIngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6InVzZXIiLCJ4LWhhc3VyYS11c2VyLWlkIjoiMzBhMGYyMjMtM2RkZS00NjRjLWJjMTQtMGY3OGQ3YzRkNGEwIn0sImlzcyI6Imh0dHBzOi8vc2hpbmFicjIuYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTE3MTg1MjI1MTk0ODYyNjE1NTcwIiwiYXVkIjpbImh0dHBzOi8vcmVsaWV2ZWQtcGFudGhlci01OC5oYXN1cmEuYXBwL3YxL2dyYXBocWwiLCJodHRwczovL3NoaW5hYnIyLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3MzU3Mzk1NDYsImV4cCI6MTczNTgyNTk0Niwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6ImJyZTFXS2JoQUhIdGFheE9tMU9zSzYyUUxOMlpyOTY4In0.A7SMzJyjVORGWDXMf08g8e-w_9S2weBhv1h5gZM22BORcq8TYaGlzE5Lvs2g_4eg_AHG_F3ykzipYGlJBHsEE0yT1nIEb4Anpu4TzLGLxqvoa5ea1SD00B8caFLM0xymK5mOprLoUAgKd71otAK0pe5zeM7c4kK8z4NP08ab-S5Bx5ZEQKKj3ZDU-Z41K9jgcJT_Lxj_EGNlO7dXWhFxywMIi0DKpMuAeILwr06iELwDluk4stme1oEP-xMU_R2bMtB3DGhadKRVVkBEeDX-WhpDVR0LkQmsI8xbio8PSip-xOcxTuCZhuxOd0AMRPBdXpcTFVeR4Wei1lmMBplRSg",
 });
