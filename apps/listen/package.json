@@ -7,7 +7,8 @@
     "serve": "vite preview",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "pre-dev": "cp ../../.env.development.local .env",
-    "dev": "pnpm run pre-dev && vite"
+    "dev": "pnpm run pre-dev && vite",
+    "e2e": "pnpm exec playwright test"
   },
   "dependencies": {
     "core": "workspace:*",
