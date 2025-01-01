@@ -2,6 +2,10 @@ import { expect } from "vitest";
 import { GraphQLClient } from "graphql-request";
 import { describe, test, expect } from "vitest";
 
+const client = new GraphQLClient(
+  `${process.env.HASURA_GRAPHQL_ENDPOINT}/v1/graphql`
+);
+
 const forbiddenQueries = [
   {
     name: "audio createdAt",
@@ -85,10 +89,22 @@ const allowedQueries = [
         }
       }
     `,
-    additionalTest: (response) => {
+    additionalTest: async (response) => {
       const audios = response.audios;
       const isAllPublic = audios.every((audio) => audio.public);
       expect(isAllPublic).toBe(true);
+
+      const hasSource = audios.every(
+        (audio) => typeof audio.source === "string"
+      );
+      const hasName = audios.every((audio) => typeof audio.name === "string");
+      const hasArtistName = audios.every(
+        (audio) => typeof audio.artistName === "string"
+      );
+
+      expect(hasSource).toBe(true);
+      expect(hasName).toBe(true);
+      expect(hasArtistName).toBe(true);
     },
   },
   {
@@ -104,6 +120,15 @@ const allowedQueries = [
     additionalTest: (response) => {
       const audioTags = response.audio_tags;
       expect(audioTags).toBeDefined();
+
+      const hasAudioId = audioTags.every(
+        (audioTag) => typeof audioTag.audio_id === "string"
+      );
+      const hasTagId = audioTags.every(
+        (audioTag) => typeof audioTag.tag_id === "string"
+      );
+      expect(hasAudioId).toBe(true);
+      expect(hasTagId).toBe(true);
     },
   },
   {
@@ -125,6 +150,17 @@ const allowedQueries = [
 
       const isAllListenSite = tags.every((tag) => tag.site === "listen");
       expect(isAllListenSite).toBe(true);
+
+      const hasDisplayOrder = tags.every(
+        (tag) => typeof tag.display_order === "number"
+      );
+      const hasId = tags.every((tag) => typeof tag.id === "string");
+      const hasName = tags.every((tag) => typeof tag.name === "string");
+      const hasSlug = tags.every((tag) => typeof tag.slug === "string");
+      expect(hasDisplayOrder).toBe(true);
+      expect(hasId).toBe(true);
+      expect(hasName).toBe(true);
+      expect(hasSlug).toBe(true);
     },
   },
 ];
@@ -155,10 +191,6 @@ const emptyResponseQueries = [
 ];
 
 describe("Home queries", () => {
-  const client = new GraphQLClient(
-    `${process.env.HASURA_GRAPHQL_ENDPOINT}/v1/graphql`
-  );
-
   describe("allowed queries", () => {
     test.each(allowedQueries)("$name is allowed", async ({ query }) => {
       await expect(client.request(query)).resolves.not.toThrow();
