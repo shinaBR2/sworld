@@ -8,6 +8,9 @@ import { defineConfig, devices } from '@playwright/test';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+const desktopTestMatch = ['**/common.spec.ts', '**/desktop.spec.ts'];
+const mobileTestMatch = ['**/common.spec.ts', '**/desktop.spec.ts'];
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -37,26 +40,31 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: desktopTestMatch,
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      testMatch: desktopTestMatch,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testMatch: desktopTestMatch,
     },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
+      testMatch: mobileTestMatch,
     },
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
+      testMatch: mobileTestMatch,
     },
 
     /* Test against branded browsers. */

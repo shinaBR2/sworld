@@ -58,7 +58,7 @@ const SiteChoices = (props: SiteChoicesProps) => {
   return (
     <>
       <Button
-        aria-label="site-choices"
+        aria-label="site choices"
         onClick={handleClick}
         endIcon={<KeyboardArrowDown />}
         size="small"
