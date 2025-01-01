@@ -59,6 +59,12 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
+      - name: Debug Firebase Deploy Outputs
+        run: |
+          echo "Deploy Action Outputs:"
+          echo "details_url: ${{ steps.deploy.outputs.details_url }}"
+          echo "hosting_url: ${{ steps.deploy.outputs.hosting_url }}"
+          echo "All outputs: ${{ toJSON(steps.deploy.outputs) }}"
       - name: Verify preview URL
         run: |
           if [ -z "${{ steps.deploy.outputs.details_url }}" ]; then
