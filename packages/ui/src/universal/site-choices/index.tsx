@@ -58,6 +58,7 @@ const SiteChoices = (props: SiteChoicesProps) => {
   return (
     <>
       <Button
+        aria-label="site choices"
         onClick={handleClick}
         endIcon={<KeyboardArrowDown />}
         size="small"
@@ -71,6 +72,7 @@ const SiteChoices = (props: SiteChoicesProps) => {
           <MenuItem
             key={site.value}
             component="a"
+            aria-label={site.name}
             href={siteUrls[site.value as SiteName]}
             selected={site.value === activeSite}
           >

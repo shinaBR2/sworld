@@ -7,7 +7,9 @@
     "serve": "vite preview",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "pre-dev": "cp ../../.env.development.local .env",
-    "dev": "pnpm run pre-dev && vite"
+    "dev": "pnpm run pre-dev && vite",
+    "e2e": "pnpm exec playwright test",
+    "e2e-codegen": "pnpm exec playwright codegen"
   },
   "dependencies": {
     "core": "workspace:*",
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@playwright/test": "^1.49.1",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",

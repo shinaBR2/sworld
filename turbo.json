@@ -40,6 +40,13 @@
         "^build"
       ]
     },
+    "e2e": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "clean": {
       "cache": false
     },
