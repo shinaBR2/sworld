@@ -193,7 +193,6 @@ const emptyResponseQueries = [
 describe("Home queries", () => {
   describe("allowed queries", () => {
     test.each(allowedQueries)("$name is allowed", async ({ query }) => {
-      await expect(client.request(query)).resolves.not.toThrow();
       const response = await client.request(query);
 
       if (typeof additionalTest !== "undefined") {
