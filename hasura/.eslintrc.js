@@ -1,8 +1,10 @@
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "./tsconfig.json",
+    // eslint-disable-next-line no-undef
     tsconfigRootDir: __dirname,
   },
   plugins: ["@typescript-eslint", "prettier"],
