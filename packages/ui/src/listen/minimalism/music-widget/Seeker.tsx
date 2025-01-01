@@ -75,7 +75,6 @@ const Seeker = (props: Props) => {
   return (
     <Box sx={{ position: 'relative' }} aria-label="audio time seeker">
       <Slider
-        role="slider"
         aria-label="time indicator"
         size="small"
         value={position}

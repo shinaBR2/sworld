@@ -33,11 +33,11 @@ test.describe('music widget', () => {
 
       await button.click();
 
-      const playingList = widget.getByRole('list', { name: 'playing list' });
+      const playingList = widget.getByRole('listbox', { name: 'audio tracks' });
       await expect(playingList).toBeVisible();
 
       const playingAudio = playingList
-        .getByRole('button', { name: 'audio track' })
+        .getByRole('option', { name: 'audio track' })
         .first();
       await expect(playingAudio).toBeVisible();
       await expect(playingAudio).toHaveAttribute('aria-selected', 'true');
@@ -52,7 +52,7 @@ test.describe('music widget', () => {
       // await expect(playingList).toBeHidden();
 
       const allItems = await playingList
-        .getByRole('button', {
+        .getByRole('option', {
           name: 'audio track',
         })
         .all();
@@ -70,7 +70,7 @@ test.describe('music widget', () => {
        * This does not cover yet the case the playing list
        * has only one item
        */
-      const playingList = page.getByRole('list', { name: 'playing list' });
+      const playingList = page.getByRole('listbox', { name: 'audio tracks' });
       const widget = page.getByRole('region', { name: 'music widget' });
       const controls = widget.getByRole('group', { name: 'playback controls' });
       const nextButton = controls.getByRole('button', { name: 'next audio' });
@@ -83,11 +83,11 @@ test.describe('music widget', () => {
       await nextButton.click();
       await togglePlayingListbutton.click();
 
-      await expect(playingList.getByRole('button').first()).toHaveAttribute(
+      await expect(playingList.getByRole('option').first()).toHaveAttribute(
         'aria-selected',
         'false'
       );
-      await expect(playingList.getByRole('button').nth(1)).toHaveAttribute(
+      await expect(playingList.getByRole('option').nth(1)).toHaveAttribute(
         'aria-selected',
         'true'
       );
@@ -98,7 +98,7 @@ test.describe('music widget', () => {
        * This does not cover yet the case the playing list
        * has only one item
        */
-      const playingList = page.getByRole('list', { name: 'playing list' });
+      const playingList = page.getByRole('listbox', { name: 'audio tracks' });
       const widget = page.getByRole('region', { name: 'music widget' });
       const controls = widget.getByRole('group', { name: 'playback controls' });
       const prevButton = controls.getByRole('button', {
@@ -113,11 +113,11 @@ test.describe('music widget', () => {
       await prevButton.click();
       await togglePlayingListbutton.click();
 
-      await expect(playingList.getByRole('button').first()).toHaveAttribute(
+      await expect(playingList.getByRole('option').first()).toHaveAttribute(
         'aria-selected',
         'false'
       );
-      await expect(playingList.getByRole('button').last()).toHaveAttribute(
+      await expect(playingList.getByRole('option').last()).toHaveAttribute(
         'aria-selected',
         'true'
       );
