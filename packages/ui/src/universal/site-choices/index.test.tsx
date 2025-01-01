@@ -16,7 +16,7 @@ describe('SiteChoices', () => {
   it('renders button with correct active site name and icon', () => {
     render(<SiteChoices {...defaultProps} />);
 
-    const button = screen.getByRole('button', { name: /listen/i });
+    const button = screen.getByRole('button', { name: /site choices/i });
     expect(button).toBeInTheDocument();
 
     // Check if icons are present within the button
@@ -128,7 +128,7 @@ describe('SiteChoices', () => {
 
     const { rerender } = render(<SiteChoices {...propsWithWatch} />);
 
-    const watchButton = screen.getByRole('button', { name: /watch/i });
+    const watchButton = screen.getByRole('button', { name: /site choices/i });
     expect(
       watchButton.querySelector('[data-testid="OndemandVideoIcon"]')
     ).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('SiteChoices', () => {
     // Rerender with different active site
     rerender(<SiteChoices {...defaultProps} activeSite="play" />);
 
-    const playButton = screen.getByRole('button', { name: /play/i });
+    const playButton = screen.getByRole('button', { name: /site choices/i });
     expect(
       playButton.querySelector('[data-testid="PlayCircleIcon"]')
     ).toBeInTheDocument();

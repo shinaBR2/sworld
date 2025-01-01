@@ -194,8 +194,6 @@ describe('useLoadPublicAudios', () => {
     <QueryProvider config={mockConfig}>{children}</QueryProvider>
   );
 
-  const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
-
   beforeEach(() => {
     vi.clearAllMocks();
 
