@@ -64,5 +64,63 @@ test.describe('music widget', () => {
         await expect(btn).not.toBeInViewport();
       }
     });
+
+    test('next audio', async ({ page }) => {
+      /**
+       * This does not cover yet the case the playing list
+       * has only one item
+       */
+      const playingList = page.getByRole('list', { name: 'playing list' });
+      const widget = page.getByRole('region', { name: 'music widget' });
+      const controls = widget.getByRole('group', { name: 'playback controls' });
+      const nextButton = controls.getByRole('button', { name: 'next audio' });
+      const togglePlayingListbutton = widget.getByRole('button', {
+        name: 'toggle playing list',
+      });
+
+      await expect(widget).toBeVisible();
+
+      await nextButton.click();
+      await togglePlayingListbutton.click();
+
+      await expect(playingList.getByRole('button').first()).toHaveAttribute(
+        'aria-selected',
+        'false'
+      );
+      await expect(playingList.getByRole('button').nth(1)).toHaveAttribute(
+        'aria-selected',
+        'true'
+      );
+    });
+
+    test('previous audio', async ({ page }) => {
+      /**
+       * This does not cover yet the case the playing list
+       * has only one item
+       */
+      const playingList = page.getByRole('list', { name: 'playing list' });
+      const widget = page.getByRole('region', { name: 'music widget' });
+      const controls = widget.getByRole('group', { name: 'playback controls' });
+      const prevButton = controls.getByRole('button', {
+        name: 'previous audio',
+      });
+      const togglePlayingListbutton = widget.getByRole('button', {
+        name: 'toggle playing list',
+      });
+
+      await expect(widget).toBeVisible();
+
+      await prevButton.click();
+      await togglePlayingListbutton.click();
+
+      await expect(playingList.getByRole('button').first()).toHaveAttribute(
+        'aria-selected',
+        'false'
+      );
+      await expect(playingList.getByRole('button').last()).toHaveAttribute(
+        'aria-selected',
+        'true'
+      );
+    });
   });
 });

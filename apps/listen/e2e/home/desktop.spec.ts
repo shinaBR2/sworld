@@ -79,7 +79,7 @@ test.describe('music widget', () => {
       const playingList = page.getByRole('list', { name: 'playing list' });
       const widget = page.getByRole('region', { name: 'music widget' });
       const controls = widget.getByRole('group', { name: 'playback controls' });
-      const nextButton = controls.getByRole('button', {
+      const prevButton = controls.getByRole('button', {
         name: 'previous audio',
       });
 
@@ -87,7 +87,7 @@ test.describe('music widget', () => {
       await expect(playingList.getByRole('button').first()).toContainText(
         'Now Playing'
       );
-      await nextButton.click();
+      await prevButton.click();
       await expect(playingList.getByRole('button').first()).not.toContainText(
         'Now Playing'
       );
