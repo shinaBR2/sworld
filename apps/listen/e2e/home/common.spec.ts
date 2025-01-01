@@ -46,7 +46,7 @@ test.describe('home visual', () => {
     await expect(widget.getByLabel('audio title')).toBeVisible();
     await expect(widget.getByLabel('audio artist')).toBeVisible();
 
-    const seeker = widget.getByLabel('seeker');
+    const seeker = widget.getByLabel('audio time seeker');
     await expect(
       seeker.getByRole('slider', { name: 'time indicator' })
     ).toBeVisible();
