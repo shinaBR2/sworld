@@ -82,7 +82,7 @@ jobs:
           pnpm exec playwright install --with-deps
           pnpm run e2e
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.deploy.outputs.details_url }}
+          PLAYWRIGHT_LISTEN_URL: ${{ steps.deploy.outputs.details_url }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
