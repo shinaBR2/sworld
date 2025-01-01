@@ -6,7 +6,7 @@ const PlaylistButton = (props: ButtonProps) => {
   const { onClick, ...rest } = props;
 
   return (
-    <IconButton aria-label="list audio" onClick={onClick} {...rest}>
+    <IconButton aria-label="toggle playing list" onClick={onClick} {...rest}>
       <LibraryMusicIcon />
     </IconButton>
   );

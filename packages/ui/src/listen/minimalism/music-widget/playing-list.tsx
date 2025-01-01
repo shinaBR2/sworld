@@ -27,7 +27,7 @@ const PlayingList = (
   const { audioList, onSelect, currentId } = props;
 
   return (
-    <StyledPlayingList ref={ref}>
+    <StyledPlayingList ref={ref} role="list" aria-label="playing list">
       <Divider />
       <Box height="100%" pb={2} mb={2}>
         <List aria-label="audio tracks" role="listbox">
@@ -41,7 +41,8 @@ const PlayingList = (
                 onClick={() => onSelect(a.id)}
                 selected={selected}
                 aria-current={selected ? 'true' : undefined}
-                role="option"
+                role="button"
+                aria-label="audio track"
                 sx={{
                   pl: 2,
                   pr: 1,

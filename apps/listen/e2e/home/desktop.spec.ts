@@ -5,7 +5,7 @@ test.describe('playing list', () => {
     await page.goto('/');
   });
 
-  test.only('show the list', async ({ page }) => {
+  test('show the list', async ({ page }) => {
     const playingList = page.getByRole('list', { name: 'playing list' });
     await expect(playingList).toBeVisible();
 
