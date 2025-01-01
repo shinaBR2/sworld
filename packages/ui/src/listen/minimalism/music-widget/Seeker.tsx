@@ -73,9 +73,10 @@ const Seeker = (props: Props) => {
   };
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: 'relative' }} aria-label="seeker">
       <Slider
-        aria-label="time-indicator"
+        role="slider"
+        aria-label="time indicator"
         size="small"
         value={position}
         min={0}
@@ -85,8 +86,8 @@ const Seeker = (props: Props) => {
         sx={getStyles(theme)}
       />
       <Box sx={getInfoStyles()}>
-        <TinyText>{formatDuration(position)}</TinyText>
-        <TinyText>-{formatDuration(max - position)}</TinyText>
+        <TinyText aria-label="start">{formatDuration(position)}</TinyText>
+        <TinyText aria-label="end">-{formatDuration(max - position)}</TinyText>
       </Box>
     </Box>
   );

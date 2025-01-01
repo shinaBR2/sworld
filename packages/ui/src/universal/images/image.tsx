@@ -97,6 +97,7 @@ const ResponsiveCardMedia = ({
 }: ResponsiveCardMediaProps) => {
   return (
     <CardMedia
+      role="img"
       component="img"
       image={src}
       alt={alt}

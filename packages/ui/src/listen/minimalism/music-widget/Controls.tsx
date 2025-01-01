@@ -102,7 +102,7 @@ const Controls = (props: Props) => {
   };
 
   return (
-    <Box sx={getWrapperStyles()}>
+    <Box sx={getWrapperStyles()} role="group" aria-label="playback controls">
       <IconButton
         size="small"
         aria-label="toggle loop mode"
@@ -114,7 +114,7 @@ const Controls = (props: Props) => {
       <Box sx={getCenterControlsStyles()}>
         <IconButton
           size="small"
-          aria-label="previous song"
+          aria-label="previous audio"
           onClick={handlePrev}
           sx={getMainButtonStyles()}
         >
@@ -130,7 +130,7 @@ const Controls = (props: Props) => {
         </IconButton>
         <IconButton
           size="small"
-          aria-label="next song"
+          aria-label="next audio"
           onClick={handleNext}
           sx={getMainButtonStyles()}
         >

@@ -60,8 +60,12 @@ const MusicWidget = (props: MusicWidgetProps) => {
   };
 
   return (
-    <StyledCard>
-      <ResponsiveCardMedia src={image || defaultAudioThumbnailUrl} alt={name} />
+    <StyledCard role="region" aria-label="music widget">
+      <ResponsiveCardMedia
+        aria-label="audio thumnail"
+        src={image || defaultAudioThumbnailUrl}
+        alt={name}
+      />
       <StyledContent ref={contentRef}>
         <CardContent>
           <Box
@@ -71,7 +75,13 @@ const MusicWidget = (props: MusicWidgetProps) => {
             alignItems="center"
             mb={1}
           >
-            <Typography gutterBottom variant="body2" component="p">
+            <Typography
+              role="text"
+              aria-label="now playing"
+              gutterBottom
+              variant="body2"
+              component="p"
+            >
               {showPlayinglist ? 'Playing list' : 'Now playing'}
             </Typography>
             {isMobile && (
@@ -84,6 +94,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
             )}
           </Box>
           <Typography
+            aria-label="audio title"
             gutterBottom
             variant="h4"
             sx={{
@@ -96,7 +107,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
           >
             {name}
           </Typography>
-          <Typography gutterBottom component="p">
+          <Typography aria-label="audio artist" gutterBottom component="p">
             {artistName}
           </Typography>
         </CardContent>
