@@ -8,8 +8,6 @@ describe("Anonymous Role - All Mutations Forbidden", () => {
   );
 
   test("should reject mutations", async () => {
-    // Attempt to write a catch-all mutation test
-    // The key is to try something that definitively looks like a mutation
     await expect(
       client.request(`
         mutation {
