@@ -9,7 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const desktopTestMatch = ['**/common.spec.ts', '**/desktop.spec.ts'];
-const mobileTestMatch = ['**/common.spec.ts', '**/desktop.spec.ts'];
+const mobileTestMatch = ['**/common.spec.ts', '**/mobile.spec.ts'];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
