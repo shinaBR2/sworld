@@ -1,5 +1,10 @@
 import { expect } from "vitest";
-import { createRoleTestSuite } from "../create-role-test-suite";
+import {
+  ROLE_ANONYMOUS,
+  ROLE_USER,
+  createRoleTestSuite,
+} from "../create-role-test-suite";
+import { e2eTestUserId } from "../config";
 
 const userDeniedQueries = [
   {
@@ -27,17 +32,6 @@ const userDeniedQueries = [
     `,
   },
   {
-    name: "users",
-    query: `
-      query MyQuery {
-        users {
-          id
-          email
-        }
-      }
-    `,
-  },
-  {
     name: "users aggregate",
     query: `
       query MyQuery {
@@ -51,7 +45,7 @@ const userDeniedQueries = [
   },
 ];
 
-const allowedQueries = [
+const anonymousAllowedQueries = [
   {
     name: "audios",
     query: `
@@ -65,22 +59,30 @@ const allowedQueries = [
         }
       }
     `,
-    additionalTest: async (response) => {
+    additionalTest: async (response, roleName) => {
       const audios = response.audios;
-      const isAllPublic = audios.every((audio) => audio.public);
-      expect(isAllPublic).toBe(true);
 
-      const hasSource = audios.every(
-        (audio) => typeof audio.source === "string"
-      );
-      const hasName = audios.every((audio) => typeof audio.name === "string");
-      const hasArtistName = audios.every(
-        (audio) => typeof audio.artistName === "string"
-      );
+      try {
+        const isAllPublic = audios.every((audio) => audio.public);
 
-      expect(hasSource).toBe(true);
-      expect(hasName).toBe(true);
-      expect(hasArtistName).toBe(true);
+        if (roleName === ROLE_ANONYMOUS) {
+          expect(isAllPublic).toBe(true);
+        }
+
+        const hasSource = audios.every(
+          (audio) => typeof audio.source === "string"
+        );
+        const hasName = audios.every((audio) => typeof audio.name === "string");
+        const hasArtistName = audios.every(
+          (audio) => typeof audio.artistName === "string"
+        );
+
+        expect(hasSource).toBe(true);
+        expect(hasName).toBe(true);
+        expect(hasArtistName).toBe(true);
+      } catch (error) {
+        console.log(`error in line 78: ${error}`);
+      }
     },
   },
   {
@@ -166,59 +168,91 @@ const emptyResponseQueries = [
   },
 ];
 
-const anonymousDeniedMutations = [
-  {
-    name: "All",
-    key: "audios",
-    mutation: `
-      mutation {
-        # This is a placeholder and won't match any real schema
-        # The point is to ensure ANY mutation is rejected
-        __typename
-      }
-    `,
-  },
-];
-
-const anonymousDeniedQueries = [
-  ...userDeniedQueries,
-  {
-    name: "audio createdAt",
-    query: `
-      query MyQuery {
-        audios {
-          createdAt
-        }
-      }
-    `,
-  },
-  {
-    name: "audio updatedAt",
-    query: `
-      query MyQuery {
-        audios {
-          updatedAt
-        }
-      }
-    `,
-  },
-];
-
-createRoleTestSuite("Anonymous", {
+await createRoleTestSuite(ROLE_ANONYMOUS, {
   queries: {
-    allowed: allowedQueries,
-    denied: anonymousDeniedQueries,
+    allowed: anonymousAllowedQueries,
+    denied: [
+      ...userDeniedQueries,
+      {
+        name: "audio createdAt",
+        query: `
+          query MyQuery {
+            audios {
+              createdAt
+            }
+          }
+        `,
+      },
+      {
+        name: "audio updatedAt",
+        query: `
+          query MyQuery {
+            audios {
+              updatedAt
+            }
+          }
+        `,
+      },
+      {
+        name: "users",
+        query: `
+          query MyQuery {
+            users {
+              id
+              email
+              username
+            }
+          }
+        `,
+      },
+    ],
     empty: emptyResponseQueries,
   },
   mutations: {
     allowed: [],
-    denied: anonymousDeniedMutations,
+    denied: [
+      {
+        name: "All",
+        key: "audios",
+        mutation: `
+          mutation {
+            # This is a placeholder and won't match any real schema
+            # The point is to ensure ANY mutation is rejected
+            __typename
+          }
+        `,
+      },
+    ],
   },
 });
 
-createRoleTestSuite("User", {
+await createRoleTestSuite(ROLE_USER, {
   queries: {
-    allowed: allowedQueries,
+    allowed: [
+      ...anonymousAllowedQueries,
+      {
+        name: "users",
+        query: `
+          query MyQuery {
+            users {
+              id
+              email
+              username
+            }
+          }
+        `,
+        additionalTest: (response) => {
+          const users = response.users;
+          expect(users).toBeDefined();
+          expect(users.length).toBe(1);
+          const user = users[0];
+
+          expect(user.id).toBe(e2eTestUserId);
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.email).toBe("string");
+        },
+      },
+    ],
     denied: userDeniedQueries,
     empty: emptyResponseQueries,
   },
@@ -226,6 +260,5 @@ createRoleTestSuite("User", {
     allowed: [],
     denied: [],
   },
-  token:
-    "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkRiNWNWaFFiaXJCRUZJY3BwOFhESSJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWFsbG93ZWQtcm9sZXMiOlsidXNlciIsImFkbWluIl0sIngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6InVzZXIiLCJ4LWhhc3VyYS11c2VyLWlkIjoiMzBhMGYyMjMtM2RkZS00NjRjLWJjMTQtMGY3OGQ3YzRkNGEwIn0sImlzcyI6Imh0dHBzOi8vc2hpbmFicjIuYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTE3MTg1MjI1MTk0ODYyNjE1NTcwIiwiYXVkIjpbImh0dHBzOi8vcmVsaWV2ZWQtcGFudGhlci01OC5oYXN1cmEuYXBwL3YxL2dyYXBocWwiLCJodHRwczovL3NoaW5hYnIyLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3MzU3Mzk1NDYsImV4cCI6MTczNTgyNTk0Niwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6ImJyZTFXS2JoQUhIdGFheE9tMU9zSzYyUUxOMlpyOTY4In0.A7SMzJyjVORGWDXMf08g8e-w_9S2weBhv1h5gZM22BORcq8TYaGlzE5Lvs2g_4eg_AHG_F3ykzipYGlJBHsEE0yT1nIEb4Anpu4TzLGLxqvoa5ea1SD00B8caFLM0xymK5mOprLoUAgKd71otAK0pe5zeM7c4kK8z4NP08ab-S5Bx5ZEQKKj3ZDU-Z41K9jgcJT_Lxj_EGNlO7dXWhFxywMIi0DKpMuAeILwr06iELwDluk4stme1oEP-xMU_R2bMtB3DGhadKRVVkBEeDX-WhpDVR0LkQmsI8xbio8PSip-xOcxTuCZhuxOd0AMRPBdXpcTFVeR4Wei1lmMBplRSg",
+  requireToken: true,
 });

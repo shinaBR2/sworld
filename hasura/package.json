@@ -38,6 +38,7 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.32.0"
+    "@dotenvx/dotenvx": "^1.32.0",
+    "node-fetch": "^3.3.2"
   }
 }
