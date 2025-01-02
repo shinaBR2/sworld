@@ -10,6 +10,10 @@ jobs:
 
     env:
       HASURA_GRAPHQL_ENDPOINT: ${{ secrets.HASURA_GRAPHQL_ENDPOINT }}
+      AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+      AUTH0_E2E_CLIENT_ID: ${{ secrets.AUTH0_E2E_CLIENT_ID }}
+      AUTH0_E2E_CLIENT_SECRET: ${{ secrets.AUTH0_E2E_CLIENT_SECRET }}
+      E2E_TEST_USER_ID: ${{ secrets.E2E_TEST_USER_ID }}
 
     steps:
       - uses: actions/checkout@v4

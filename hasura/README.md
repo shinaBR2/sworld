@@ -48,7 +48,10 @@ Create a `.env` file in the root directory with the following variables:
 ```bash
 # HASURA_GRAPHQL_ENDPOINT doesn't include "/v1/graphql"
 HASURA_GRAPHQL_ENDPOINT=hasura-cloud-endpoint
-HASURA_GRAPHQL_ADMIN_SECRET=admin-secret
+AUTH0_DOMAIN=auth0-domain-for-authen
+AUTH0_E2E_CLIENT_ID=e2e-test-m2m-auth0-application
+AUTH0_E2E_CLIENT_SECRET=e2e-test-m2m-auth0-application-secret
+E2E_TEST_USER_ID=test-user-id-in-database
 ```
 
 Note: Although `.env` is tracked in the repository, ensure sensitive production credentials are never committed.
