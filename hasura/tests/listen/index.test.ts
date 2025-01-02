@@ -62,27 +62,23 @@ const anonymousAllowedQueries = [
     additionalTest: async (response, roleName) => {
       const audios = response.audios;
 
-      try {
-        const isAllPublic = audios.every((audio) => audio.public);
+      const isAllPublic = audios.every((audio) => audio.public);
 
-        if (roleName === ROLE_ANONYMOUS) {
-          expect(isAllPublic).toBe(true);
-        }
-
-        const hasSource = audios.every(
-          (audio) => typeof audio.source === "string"
-        );
-        const hasName = audios.every((audio) => typeof audio.name === "string");
-        const hasArtistName = audios.every(
-          (audio) => typeof audio.artistName === "string"
-        );
-
-        expect(hasSource).toBe(true);
-        expect(hasName).toBe(true);
-        expect(hasArtistName).toBe(true);
-      } catch (error) {
-        console.log(`error in line 78: ${error}`);
+      if (roleName === ROLE_ANONYMOUS) {
+        expect(isAllPublic).toBe(true);
       }
+
+      const hasSource = audios.every(
+        (audio) => typeof audio.source === "string"
+      );
+      const hasName = audios.every((audio) => typeof audio.name === "string");
+      const hasArtistName = audios.every(
+        (audio) => typeof audio.artistName === "string"
+      );
+
+      expect(hasSource).toBe(true);
+      expect(hasName).toBe(true);
+      expect(hasArtistName).toBe(true);
     },
   },
   {
