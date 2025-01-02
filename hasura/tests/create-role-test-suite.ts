@@ -11,8 +11,8 @@ type QueryTestCase = {
   additionalTest?: (response: unknown) => void;
 };
 
-const ROLE_ANONYMOUS = 'anonymous';
-const ROLE_USER = 'user';
+const ROLE_ANONYMOUS = "anonymous";
+const ROLE_USER = "user";
 
 const initClient = async (requireToken = false) => {
   let token = "";
@@ -109,9 +109,9 @@ const createRoleTestSuite = async (
 
     if (mutations.allowed.length > 0) {
       describe("Allowed Mutations", () => {
-        test.each(mutations.denied)(
+        test.each(mutations.allowed)(
           "$name mutation is allowed",
-          async ({ mutation, variables }) => {
+          async ({ mutation, variables, additionalTest }) => {
             const response = await client.request(mutation, variables);
 
             if (additionalTest) {
