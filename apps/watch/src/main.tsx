@@ -11,7 +11,9 @@ import LogRocket from 'logrocket';
 validateEnvVars();
 
 if (systemConfig.logRocket) {
-  LogRocket.init(systemConfig.logRocket);
+  LogRocket.init(systemConfig.logRocket, {
+    rootHostname: appConfig.sites.main,
+  });
 }
 
 const router = createRouter({
