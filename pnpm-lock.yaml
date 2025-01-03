@@ -235,7 +235,7 @@ importers:
         version: link:../../packages/eslint-config-custom
       rollup-plugin-visualizer:
         specifier: ^5.8.3
-        version: 5.12.0(rollup@2.79.2)
+        version: 5.12.0(rollup@4.28.1)
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -306,6 +306,9 @@ importers:
       core:
         specifier: workspace:*
         version: link:../../packages/core
+      logrocket:
+        specifier: ^9.0.0
+        version: 9.0.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -23179,15 +23182,6 @@ snapshots:
       rollup: 2.79.2
       serialize-javascript: 4.0.0
       terser: 5.37.0
-
-  rollup-plugin-visualizer@5.12.0(rollup@2.79.2):
-    dependencies:
-      open: 8.4.2
-      picomatch: 2.3.1
-      source-map: 0.7.4
-      yargs: 17.7.2
-    optionalDependencies:
-      rollup: 2.79.2
 
   rollup-plugin-visualizer@5.12.0(rollup@4.28.1):
     dependencies:

@@ -6,6 +6,9 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { auth0Config, queryConfig, validateEnvVars } from './config';
+import LogRocket from 'logrocket';
+
+LogRocket.init(systemConfig.logRocket);
 
 const router = createRouter({
   routeTree,
