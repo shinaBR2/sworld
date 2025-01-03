@@ -5,7 +5,12 @@ import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  systemConfig,
+  validateEnvVars,
+} from './config';
 import LogRocket from 'logrocket';
 
 validateEnvVars();

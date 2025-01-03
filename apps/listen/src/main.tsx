@@ -3,7 +3,12 @@ import { ErrorBoundary } from 'ui/universal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  systemConfig,
+  validateEnvVars,
+} from './config';
 import LogRocket from 'logrocket';
 
 validateEnvVars();
