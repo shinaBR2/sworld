@@ -5,6 +5,7 @@ import * as ReactDOM from 'react-dom/client';
 import App from './App';
 import {
   auth0Config,
+  appConfig,
   queryConfig,
   systemConfig,
   validateEnvVars,
