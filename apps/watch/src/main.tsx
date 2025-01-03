@@ -5,7 +5,21 @@ import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  systemConfig,
+  validateEnvVars,
+} from './config';
+import LogRocket from 'logrocket';
+
+validateEnvVars();
+
+if (systemConfig.logRocket) {
+  LogRocket.init(systemConfig.logRocket, {
+    rootHostname: appConfig.sites.main,
+  });
+}
 
 const router = createRouter({
   routeTree,
@@ -21,8 +35,6 @@ declare module '@tanstack/react-router' {
     router: typeof router;
   }
 }
-
-validateEnvVars();
 
 const App = () => {
   const auth = Auth.useAuthContext();

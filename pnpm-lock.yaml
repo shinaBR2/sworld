@@ -199,6 +199,9 @@ importers:
       core:
         specifier: workspace:*
         version: link:../../packages/core
+      logrocket:
+        specifier: ^9.0.0
+        version: 9.0.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -303,6 +306,9 @@ importers:
       core:
         specifier: workspace:*
         version: link:../../packages/core
+      logrocket:
+        specifier: ^9.0.0
+        version: 9.0.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -544,7 +550,7 @@ importers:
         version: 6.1.11
       babel-loader:
         specifier: ^8.3.0
-        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
+        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
@@ -7993,6 +7999,9 @@ packages:
   log-update@4.0.0:
     resolution: {integrity: sha512-9fkkDevMefjg0mmzWFBW8YkFP91OrizzkW3diF7CpG+S2EYdy4+TVfGwz1zeF8x7hCx1ovSPTOE9Ngib74qqUg==}
     engines: {node: '>=10'}
+
+  logrocket@9.0.0:
+    resolution: {integrity: sha512-/nYoKA4W8nr3YETPyOin9oiFFzwGDv8Lh02DG8ZnS9coKBYwrEG+dE2OqpOotVbs4zJWjCCPaqhR/HAMi+O3yA==}
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
@@ -17311,14 +17320,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
+  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
     dependencies:
       '@babel/core': 7.26.0
       find-cache-dir: 3.3.2
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
 
   babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1):
     dependencies:
@@ -20922,6 +20931,8 @@ snapshots:
       slice-ansi: 4.0.0
       wrap-ansi: 6.2.0
 
+  logrocket@9.0.0: {}
+
   longest-streak@3.1.0: {}
 
   loose-envify@1.4.0:
@@ -23810,17 +23821,17 @@ snapshots:
       type-fest: 0.16.0
       unique-string: 2.0.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.37.0
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
     optionalDependencies:
       '@swc/core': 1.10.1
-      esbuild: 0.17.19
+      esbuild: 0.18.20
 
   terser-webpack-plugin@5.3.10(webpack@5.96.1):
     dependencies:
@@ -24598,7 +24609,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19):
+  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -24620,7 +24631,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
