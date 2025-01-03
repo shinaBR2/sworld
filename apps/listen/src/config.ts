@@ -16,6 +16,9 @@ const appConfig = {
     play: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
+const systemConfig = {
+  logRocket: import.meta.env.VITE_LOGROCKET_APP_ID,
+};
 
 const validateEnvVars = () => {
   const required = [
@@ -26,6 +29,7 @@ const validateEnvVars = () => {
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
+    'VITE_LOGROCKET_APP_ID',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
@@ -35,4 +39,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, appConfig, validateEnvVars };
+export { auth0Config, queryConfig, appConfig, systemConfig, validateEnvVars };
