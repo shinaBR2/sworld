@@ -8,7 +8,11 @@ import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { auth0Config, queryConfig, validateEnvVars } from './config';
 import LogRocket from 'logrocket';
 
-LogRocket.init(systemConfig.logRocket);
+validateEnvVars();
+
+if (systemConfig.logRocket) {
+  LogRocket.init(systemConfig.logRocket);
+}
 
 const router = createRouter({
   routeTree,
@@ -24,8 +28,6 @@ declare module '@tanstack/react-router' {
     router: typeof router;
   }
 }
-
-validateEnvVars();
 
 const App = () => {
   const auth = Auth.useAuthContext();

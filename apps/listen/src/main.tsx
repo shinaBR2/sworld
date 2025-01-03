@@ -8,7 +8,9 @@ import LogRocket from 'logrocket';
 
 validateEnvVars();
 
-LogRocket.init(systemConfig.logRocket);
+if (systemConfig.logRocket) {
+  LogRocket.init(systemConfig.logRocket);
+}
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

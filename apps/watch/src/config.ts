@@ -29,7 +29,6 @@ const validateEnvVars = () => {
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
-    'VITE_LOGROCKET_APP_ID',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
