@@ -7,6 +7,7 @@ import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import {
   auth0Config,
+  appConfig,
   queryConfig,
   systemConfig,
   validateEnvVars,
