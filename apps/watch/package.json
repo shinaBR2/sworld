@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "pre-dev": "cp ../../.env.development.local .env",
-    "dev": "pnpm run pre-dev && vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@astrojs/react": "^4.1.2",
     "@tanstack/react-router": "^1.78.2",
+    "astro": "^5.1.2",
     "core": "workspace:*",
     "logrocket": "^9.0.0",
     "react": "^18.3.1",
