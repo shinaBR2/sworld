@@ -446,6 +446,9 @@ importers:
       eslint-config-turbo:
         specifier: latest
         version: 2.3.3(eslint@9.17.0(jiti@2.4.1))
+      eslint-plugin-jsx-a11y:
+        specifier: ^6.7.1
+        version: 6.10.2(eslint@9.17.0(jiti@2.4.1))
       eslint-plugin-react:
         specifier: 7.37.2
         version: 7.37.2(eslint@9.17.0(jiti@2.4.1))
@@ -553,13 +556,10 @@ importers:
         version: 6.1.11
       babel-loader:
         specifier: ^8.3.0
-        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
+        version: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
-      eslint-plugin-jsx-a11y:
-        specifier: ^6.10.2
-        version: 6.10.2(eslint@9.17.0(jiti@2.4.1))
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
@@ -17359,14 +17359,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
+  babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
     dependencies:
       '@babel/core': 7.26.0
       find-cache-dir: 3.3.2
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
 
   babel-loader@8.4.1(@babel/core@7.26.0)(webpack@5.96.1):
     dependencies:
@@ -23918,17 +23918,17 @@ snapshots:
       type-fest: 0.16.0
       unique-string: 2.0.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.37.0
-      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.17.19)
+      webpack: 5.96.1(@swc/core@1.10.1)(esbuild@0.18.20)
     optionalDependencies:
       '@swc/core': 1.10.1
-      esbuild: 0.17.19
+      esbuild: 0.18.20
 
   terser-webpack-plugin@5.3.10(webpack@5.96.1):
     dependencies:
@@ -24710,7 +24710,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19):
+  webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -24732,7 +24732,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.17.19)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.17.19))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(esbuild@0.18.20)(webpack@5.96.1(@swc/core@1.10.1)(esbuild@0.18.20))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
