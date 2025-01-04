@@ -31,7 +31,7 @@ Steps:
     "@vitejs/plugin-react": "^2.1.0",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^4.8.3",
+    "typescript": "^5.6.2",
     "vite": "^3.1.0",
   }
   ```
