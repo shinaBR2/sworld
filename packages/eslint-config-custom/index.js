@@ -1,6 +1,6 @@
-export default {
+module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'jsx-a11y'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -8,7 +8,7 @@ export default {
       jsx: true,
     },
   },
-  extends: ['turbo', 'prettier'],
+  extends: ['eslint:recommended', 'turbo', 'prettier', 'plugin:@typescript-eslint/recommended'],
   settings: {
     react: {
       version: 'detect',
