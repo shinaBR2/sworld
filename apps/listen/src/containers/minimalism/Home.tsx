@@ -6,6 +6,7 @@ import { LoadingBackdrop, FullWidthContainer } from 'ui/universal';
 import { MainContainer, Header, FeelingList } from 'ui/listen/minimalism';
 
 interface ContentProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryRs: any;
 }
 
