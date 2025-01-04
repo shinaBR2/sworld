@@ -32,7 +32,7 @@ describe('Query Provider and Context', () => {
     expect(() => {
       const { result } = renderHook(() => useQueryContext());
       // Access the result to trigger the error
-      const value = result.current;
+      result.current;
     }).toThrow('useQueryContext must be used within an QueryProvider');
 
     spy.mockRestore();
