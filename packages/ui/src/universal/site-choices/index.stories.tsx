@@ -21,6 +21,6 @@ export const Default: Story = {
       listen: 'https://listen.example.com',
       watch: 'https://watch.example.com',
       play: 'https://play.example.com',
-    }
+    },
   },
 };

@@ -3,9 +3,12 @@
   "extends": "tsconfig/vite.json",
   "compilerOptions": {
     "target": "ES6",
-    "rootDir": "src",
     "outDir": "dist",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "ui": ["../../packages/ui/src"],
+      "ui/*": ["../../packages/ui/src/*"]
+    }
   },
   "include": ["src"]
 }
