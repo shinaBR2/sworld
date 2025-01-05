@@ -4,15 +4,15 @@ interface Uploader {
   username: string;
 }
 
-export type RequiredLinkComponent = {
-  LinkComponent: NonNullable<WithLinkComponent['LinkComponent']>;
+export type RequiredLinkComponent<P = any> = {
+  LinkComponent: NonNullable<WithLinkComponent<P>['LinkComponent']>;
 };
 
-export interface WithLinkComponent {
+export interface WithLinkComponent<P = any> {
   asLink?: boolean;
   LinkComponent?: React.ComponentType<{
     to: string;
-    params?: Record<string, string>;
+    params?: P;
     children: React.ReactNode;
     style?: React.CSSProperties;
   }>;
@@ -28,10 +28,11 @@ export interface Video {
   user: Uploader;
 }
 
-export interface VideosContainerProps extends RequiredLinkComponent {
+export interface HomeContainerProps<P = any> extends RequiredLinkComponent<P> {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
 
-export interface VideoDetailContainerProps extends RequiredLinkComponent {
+export interface VideoDetailContainerProps<P = any>
+  extends RequiredLinkComponent<P> {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }

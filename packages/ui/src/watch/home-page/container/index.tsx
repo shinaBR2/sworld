@@ -1,8 +1,8 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { VideoSkeleton } from '../videos/video-skeleton';
-import { Video, VideosContainerProps } from '../videos/interface';
-import { VideoCard } from '../videos/video-card';
+import { VideoSkeleton } from '../../videos/video-skeleton';
+import { Video, HomeContainerProps } from '../../videos/interface';
+import { VideoCard } from '../../videos/video-card';
 
 const Loading = () => {
   return (
@@ -18,7 +18,7 @@ const Loading = () => {
   );
 };
 
-const VideosContainer = (props: VideosContainerProps) => {
+const HomeContainer = (props: HomeContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
 
@@ -41,4 +41,4 @@ const VideosContainer = (props: VideosContainerProps) => {
   );
 };
 
-export { VideosContainer };
+export { HomeContainer };

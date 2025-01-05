@@ -3,10 +3,16 @@ import Container from '@mui/material/Container';
 import { useIsMobile } from '../../../universal/responsive';
 import { RelatedList } from '../related-list';
 import { VideoDetailContainerProps } from '../../videos/interface';
+import { VideoPlayer } from '../../videos/video-player';
 
 const VideoDetailContainer = (props: VideoDetailContainerProps) => {
-  const { LinkComponent } = props;
+  const { queryRs, LinkComponent } = props;
+  const { videos, isLoading } = queryRs;
   const isMobile = useIsMobile();
+
+  if (isLoading) {
+    return 'is Loading';
+  }
 
   if (isMobile) {
     return (
@@ -76,7 +82,9 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
       }}
     >
       {/* Main video section */}
-      <Box sx={{ width: '100%', height: '100%' }}>videoSection</Box>
+      <Box sx={{ width: '100%', height: '100%' }}>
+        <VideoPlayer video={videos[0]} />
+      </Box>
 
       {/* Right sidebar */}
       <Box
@@ -87,7 +95,7 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
         }}
       >
         <RelatedList
-          videos={[]}
+          videos={videos}
           title="other videos"
           LinkComponent={LinkComponent}
         />
