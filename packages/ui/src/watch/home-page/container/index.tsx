@@ -23,7 +23,10 @@ const HomeContainer = (props: HomeContainerProps) => {
   const { videos, isLoading } = queryRs;
 
   return (
-    <Container maxWidth={false} sx={{ py: 3, px: { xs: 2, sm: 3 } }}>
+    <Container
+      maxWidth={false}
+      sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}
+    >
       <Grid container spacing={3}>
         {isLoading && <Loading />}
         {!isLoading &&
