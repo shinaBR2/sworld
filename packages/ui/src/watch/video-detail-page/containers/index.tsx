@@ -48,7 +48,7 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
             },
           }}
         >
-          videoSection
+          <VideoPlayer video={videos[0]} />
         </Box>
 
         {/* Scrollable list section */}
@@ -60,7 +60,7 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
           }}
         >
           <RelatedList
-            videos={[]}
+            videos={videos}
             title="other videos"
             LinkComponent={LinkComponent}
           />
