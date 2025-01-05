@@ -12,17 +12,22 @@ import {
   systemConfig,
   validateEnvVars,
 } from './config';
-import LogRocket from 'logrocket';
 
 validateEnvVars();
 
-if (systemConfig.logRocket) {
-  console.log(`logrocket `, systemConfig.logRocket);
+const initLogRocket = async () => {
+  const LogRocket = (await import('logrocket')).default;
+
   LogRocket.init(systemConfig.logRocket, {
     rootHostname: appConfig.sites.main,
   });
+};
+
+if (systemConfig.logRocket) {
+  initLogRocket();
 }
 
+// @ts-ignore
 const router = createRouter({
   routeTree,
   defaultViewTransition: true,
