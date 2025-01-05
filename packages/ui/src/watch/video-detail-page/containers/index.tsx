@@ -56,7 +56,6 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
           sx={{
             flexGrow: 1,
             overflow: 'auto',
-            px: 2,
           }}
         >
           <RelatedList

@@ -2,16 +2,17 @@ import CardMedia from '@mui/material/CardMedia';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 
 interface VideoThumnailProps {
+  src?: string;
   title: string;
 }
 
 const VideoThumnail = (props: VideoThumnailProps) => {
-  const { title } = props;
+  const { src, title } = props;
 
   return (
     <CardMedia
       component="img"
-      image={defaultThumbnailUrl}
+      image={src || defaultThumbnailUrl}
       alt={title}
       sx={{
         aspectRatio: '16/9',

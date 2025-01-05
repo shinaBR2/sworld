@@ -2,24 +2,68 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent, Video } from '../interface';
 import PlayCircle from '@mui/icons-material/PlayCircle';
+import { ResponsiveImage } from '../../../universal/images/image';
+import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import { CSSProperties } from 'react';
+
+interface ThumbnailProps {
+  src?: string;
+  title: string;
+}
 
 interface VideoListItemProps extends RequiredLinkComponent {
   video: Video;
 }
+
+const thumbnailImgStyle: CSSProperties = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+};
+
+const Thumbnail = (props: ThumbnailProps) => {
+  const { src, title } = props;
+
+  if (!src) {
+    return (
+      <Box
+        component="img"
+        src={defaultThumbnailUrl}
+        alt={title}
+        sx={thumbnailImgStyle}
+      />
+    );
+  }
+
+  return (
+    <ResponsiveImage
+      sizes="(max-width: 768px) 64px, (max-width: 1200px) 64px"
+      widths={[64, 128, 192]}
+      src={src}
+      alt={title}
+      imgProps={{
+        style: thumbnailImgStyle,
+      }}
+    />
+  );
+};
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, LinkComponent } = props;
   const { id, title, thumbnail, duration, user } = video;
 
   return (
-    <LinkComponent to="/$videoId" params={{ videoId: id }}>
+    <LinkComponent
+      to="/$videoId"
+      params={{ videoId: id }}
+      style={{ textDecoration: 'none' }}
+    >
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           gap: 2,
           py: 1,
-          px: 2,
           '&:hover': {
             bgcolor: 'action.hover',
             '& .play-icon': {
@@ -31,16 +75,15 @@ const VideoListItem = (props: VideoListItemProps) => {
         {/* Thumbnail with play overlay */}
         <Box sx={{ position: 'relative', flexShrink: 0 }}>
           <Box
-            component="img"
-            src={thumbnail}
-            alt={title}
             sx={{
               width: 64,
               height: 64,
               objectFit: 'cover',
               borderRadius: 1,
             }}
-          />
+          >
+            <Thumbnail src={thumbnail} title={title} />
+          </Box>
           <Box
             className="play-icon"
             sx={{
