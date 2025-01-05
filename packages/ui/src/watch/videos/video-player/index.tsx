@@ -14,7 +14,7 @@ const VideoPlayer = ({ video }: { video: Video }) => {
         url={source}
         controls={true}
         width="100%"
-        height="100%"
+        // height="100%"
         style={{
           aspectRatio: '16/9',
           backgroundColor: '#e0e0e0',
