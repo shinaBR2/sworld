@@ -1,8 +1,8 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { watchQueryHooks } from 'core';
-import { Video, VideoCard } from '../videos/video-card';
 import { VideoSkeleton } from '../videos/video-skeleton';
+import { Video, VideosContainerProps } from '../videos/interface';
+import { VideoCard } from '../videos/video-card';
 
 const Loading = () => {
   return (
@@ -18,10 +18,9 @@ const Loading = () => {
   );
 };
 
-const VideosContainer = (
-  props: ReturnType<typeof watchQueryHooks.useLoadVideos>
-) => {
-  const { videos, isLoading } = props;
+const VideosContainer = (props: VideosContainerProps) => {
+  const { queryRs, LinkComponent } = props;
+  const { videos, isLoading } = queryRs;
 
   return (
     <Container maxWidth={false} sx={{ py: 3, px: { xs: 2, sm: 3 } }}>
@@ -30,7 +29,11 @@ const VideosContainer = (
         {!isLoading &&
           videos.map((video: Video) => (
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={video.id}>
-              <VideoCard video={video} />
+              <VideoCard
+                video={video}
+                asLink={true}
+                LinkComponent={LinkComponent}
+              />
             </Grid>
           ))}
       </Grid>

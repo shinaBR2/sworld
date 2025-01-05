@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
-import { routeTree } from './routeTree.gen';
+import { routeTree } from '../routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
@@ -11,7 +11,7 @@ import {
   queryConfig,
   systemConfig,
   validateEnvVars,
-} from './config';
+} from '../config';
 import LogRocket from 'logrocket';
 
 validateEnvVars();
@@ -24,7 +24,6 @@ if (systemConfig.logRocket) {
 
 const router = createRouter({
   routeTree,
-  defaultViewTransition: true,
   defaultPreload: 'intent',
   context: {
     auth: undefined!,
@@ -57,7 +56,5 @@ const AppWrapper = () => {
     </StrictMode>
   );
 };
-
-createRoot(document.getElementById('root')!).render(<AppWrapper />);
 
 export { AppWrapper };
