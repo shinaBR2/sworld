@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import type { Meta, StoryObj } from '@storybook/react';
-import { VideoCard } from './video-card';
+import { VideoCard } from '.';
 
 const meta: Meta<typeof VideoCard> = {
   title: 'Watch/VideoCard',

@@ -1,6 +1,6 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { VideoSkeleton } from '../../videos/video-skeleton';
+import { VideoSkeleton } from '../../videos/video-card-skeleton';
 import { Video, HomeContainerProps } from '../../videos/interface';
 import { VideoCard } from '../../videos/video-card';
 

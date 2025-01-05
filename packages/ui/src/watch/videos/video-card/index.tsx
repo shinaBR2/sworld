@@ -5,10 +5,10 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { Suspense } from 'react';
-import { defaultThumbnailUrl } from '../../universal/images/default-thumbnail';
-import { Video, WithLinkComponent } from './interface';
-import { VideoPlayer } from './video-player';
-import { VideoThumnail } from './video-thumbnail';
+import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import { Video, WithLinkComponent } from '../interface';
+import { VideoPlayer } from '../video-player';
+import { VideoThumnail } from '../video-thumbnail';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
