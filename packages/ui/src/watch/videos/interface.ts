@@ -5,11 +5,11 @@ interface Uploader {
 }
 
 // TODO move this into universal
-export type RequiredLinkComponent<P = any> = {
+export type RequiredLinkComponent<P = unknown> = {
   LinkComponent: NonNullable<WithLinkComponent<P>['LinkComponent']>;
 };
 
-export interface WithLinkComponent<P = any> {
+export interface WithLinkComponent<P = unknown> {
   asLink?: boolean;
   LinkComponent?: React.ComponentType<{
     to: string;
@@ -29,11 +29,12 @@ export interface Video {
   user: Uploader;
 }
 
-export interface HomeContainerProps<P = any> extends RequiredLinkComponent<P> {
+export interface HomeContainerProps<P = unknown>
+  extends RequiredLinkComponent<P> {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
 
-export interface VideoDetailContainerProps<P = any>
+export interface VideoDetailContainerProps<P = unknown>
   extends RequiredLinkComponent<P> {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
