@@ -16,7 +16,7 @@ vi.mock('../../related-list', () => ({
 const mockVideo = {
   id: '1',
   title: 'Test Video',
-  thumbnail: 'test.jpg',
+  thumbnailUrl: 'test.jpg',
   duration: '3:45',
   user: {
     username: 'testuser',

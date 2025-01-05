@@ -7,11 +7,12 @@ import React from 'react';
 function VideoDetails() {
   const { videoId } = Route.useParams();
   const authContext = Auth.useAuthContext();
-  const videoResult = watchQueryHooks.useLoadVideos({
+  const videoResult = watchQueryHooks.useLoadVideoDetail({
     getAccessToken: authContext.getAccessToken,
+    id: videoId,
   });
 
-  console.log(`videoIr`, videoId);
+  console.log(`videoResult`, videoResult);
 
   return (
     <Layout>

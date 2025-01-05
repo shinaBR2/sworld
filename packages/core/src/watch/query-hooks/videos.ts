@@ -6,6 +6,7 @@ const videosQuery = `
       id
       title
       description
+      thumbnailUrl
       source
       slug
       createdAt

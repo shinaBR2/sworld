@@ -8,7 +8,7 @@ import { useIsMobile } from '../../../universal/responsive';
 const ReactPlayer = React.lazy(() => import('react-player'));
 
 const VideoPlayer = ({ video }: { video: Video }) => {
-  const { title, source, thumbnail } = video;
+  const { title, source, thumbnailUrl } = video;
   const isMobile = useIsMobile();
 
   return (
@@ -22,7 +22,7 @@ const VideoPlayer = ({ video }: { video: Video }) => {
           aspectRatio: '16/9',
           backgroundColor: '#e0e0e0',
         }}
-        light={thumbnail ?? defaultThumbnailUrl}
+        light={thumbnailUrl ?? defaultThumbnailUrl}
         onError={(error: unknown) => {
           console.error('ReactPlayer Error:', error);
         }}

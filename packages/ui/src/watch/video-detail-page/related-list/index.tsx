@@ -37,42 +37,6 @@ const RelatedList = ({
             />
           </Box>
         ))}
-        {videos.map(video => (
-          <Box key={video.id} sx={{ px: 2 }}>
-            <VideoListItem
-              key={video.id}
-              video={video}
-              LinkComponent={LinkComponent}
-            />
-          </Box>
-        ))}
-        {videos.map(video => (
-          <Box key={video.id} sx={{ px: 2 }}>
-            <VideoListItem
-              key={video.id}
-              video={video}
-              LinkComponent={LinkComponent}
-            />
-          </Box>
-        ))}
-        {videos.map(video => (
-          <Box key={video.id} sx={{ px: 2 }}>
-            <VideoListItem
-              key={video.id}
-              video={video}
-              LinkComponent={LinkComponent}
-            />
-          </Box>
-        ))}
-        {videos.map(video => (
-          <Box key={video.id} sx={{ px: 2 }}>
-            <VideoListItem
-              key={video.id}
-              video={video}
-              LinkComponent={LinkComponent}
-            />
-          </Box>
-        ))}
       </Stack>
     </Box>
   );

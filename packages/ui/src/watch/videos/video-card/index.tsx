@@ -21,7 +21,7 @@ interface VideoCardProps extends ContentProps, WithLinkComponent {}
 
 const Content = (props: ContentProps) => {
   const { video, asLink } = props;
-  const { title, duration, createdAt, user } = video;
+  const { title, thumbnailUrl, duration, createdAt, user } = video;
   const createdTime = new Date(createdAt).toISOString().split('T')[0];
   const { username: creator } = user;
 
@@ -44,7 +44,7 @@ const Content = (props: ContentProps) => {
         {asLink ? (
           <VideoPlayer video={video} />
         ) : (
-          <VideoThumnail title={title} />
+          <VideoThumnail src={thumbnailUrl} title={title} />
         )}
 
         {duration && (
@@ -94,7 +94,7 @@ const Content = (props: ContentProps) => {
 
 const VideoCard = (props: VideoCardProps) => {
   const { video, asLink, LinkComponent } = props;
-  const { id, title, source, thumbnail, duration, createdAt, user } = video;
+  const { id, title, source, thumbnailUrl, duration, createdAt, user } = video;
   const createdTime = new Date(createdAt).toISOString().split('T')[0];
   const { username: creator } = user;
 
@@ -149,7 +149,7 @@ const VideoCard = (props: VideoCardProps) => {
               aspectRatio: '16/9',
               backgroundColor: '#e0e0e0',
             }}
-            light={thumbnail ?? defaultThumbnailUrl}
+            light={thumbnailUrl ?? defaultThumbnailUrl}
             onError={(error: unknown) => {
               console.error('ReactPlayer Error:', error);
             }}

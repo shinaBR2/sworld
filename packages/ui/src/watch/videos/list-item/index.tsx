@@ -50,7 +50,7 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, LinkComponent } = props;
-  const { id, title, thumbnail, duration, user } = video;
+  const { id, title, thumbnailUrl, duration, user } = video;
 
   return (
     <LinkComponent
@@ -82,7 +82,7 @@ const VideoListItem = (props: VideoListItemProps) => {
               borderRadius: 1,
             }}
           >
-            <Thumbnail src={thumbnail} title={title} />
+            <Thumbnail src={thumbnailUrl} title={title} />
           </Box>
           <Box
             className="play-icon"

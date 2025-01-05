@@ -80,7 +80,7 @@ const DesktopViewSkeleton = () => {
 
 const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
-  const { videos, isLoading } = queryRs;
+  const { videoDetail, videos, isLoading } = queryRs;
 
   if (isLoading) {
     return <DesktopViewSkeleton />;
@@ -97,7 +97,8 @@ const DesktopView = (props: VideoDetailContainerProps) => {
         lg={9}
         sx={styles.videoContainer}
       >
-        <VideoPlayer video={videos[0]} />
+        {/* @ts-ignore */}
+        <VideoPlayer video={videoDetail} />
       </Grid>
 
       <Grid

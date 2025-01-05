@@ -23,7 +23,7 @@ export interface Video {
   id: string;
   title: string;
   source: string;
-  thumbnail?: string;
+  thumbnailUrl?: string;
   createdAt: string;
   duration?: string;
   user: Uploader;
@@ -36,5 +36,5 @@ export interface HomeContainerProps<P = unknown>
 
 export interface VideoDetailContainerProps<P = unknown>
   extends RequiredLinkComponent<P> {
-  queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
+  queryRs: ReturnType<typeof watchQueryHooks.useLoadVideoDetail>;
 }

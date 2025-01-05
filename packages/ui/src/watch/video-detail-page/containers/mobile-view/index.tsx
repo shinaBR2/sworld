@@ -46,7 +46,7 @@ const LoadingSkeleton = () => (
 
 const MobileView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
-  const { videos, isLoading } = queryRs;
+  const { videoDetail, videos, isLoading } = queryRs;
 
   if (isLoading) {
     return <LoadingSkeleton />;
@@ -55,7 +55,7 @@ const MobileView = (props: VideoDetailContainerProps) => {
   return (
     <Grid container direction="row" sx={styles.container}>
       <Grid sx={styles.videoContainer}>
-        <VideoPlayer video={videos[0]} />
+        <VideoPlayer video={videoDetail} />
       </Grid>
 
       <Grid item xs={12} sx={styles.scrollableList}>
