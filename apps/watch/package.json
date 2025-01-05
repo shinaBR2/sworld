@@ -11,9 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@astrojs/react": "^4.1.2",
     "@tanstack/react-router": "^1.78.2",
-    "astro": "^5.1.2",
     "core": "workspace:*",
     "logrocket": "^9.0.0",
     "react": "^18.3.1",

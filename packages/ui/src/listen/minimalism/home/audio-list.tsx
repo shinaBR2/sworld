@@ -1,13 +1,12 @@
-import { Theme } from '@mui/material';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import hooks, { listenQueryHooks } from 'core';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
 import { PlayingListSkeleton } from './playing-list-skeleton';
+import { useIsMobile } from '../../../universal/responsive';
 
 const { useSAudioPlayer } = hooks;
 
@@ -45,9 +44,7 @@ const Content = (props: AudioListProps) => {
   }, [originalList, activeFeelingId]);
 
   const [index, setIndex] = useState(0);
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm')
-  );
+  const isMobile = useIsMobile();
 
   const hookResult = useSAudioPlayer({
     audioList: list,
@@ -115,9 +112,7 @@ const Content = (props: AudioListProps) => {
 const AudioList = (props: AudioListProps) => {
   const { queryRs } = props;
   const { isLoading } = queryRs;
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm')
-  );
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return (

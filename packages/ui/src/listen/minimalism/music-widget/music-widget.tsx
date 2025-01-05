@@ -6,13 +6,13 @@ import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Slide from '@mui/material/Slide';
-import { Theme, useMediaQuery } from '@mui/material';
 import PlaylistButton from './PlaylistButton';
 import { useRef, useState } from 'react';
 import { StyledCard, StyledContent } from './Styled';
 import PlayingList from './playing-list';
 import { ResponsiveCardMedia } from '../../../universal';
 import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import { useIsMobile } from '../../../universal/responsive';
 const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
@@ -33,9 +33,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
     getControlsProps();
   const contentRef = useRef(null);
   const [showPlayinglist, setShowPlayinglist] = useState(false);
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('sm')
-  );
+  const isMobile = useIsMobile();
 
   if (!audioItem) {
     return null;

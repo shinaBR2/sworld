@@ -1,4 +1,4 @@
-// TODO remove this
+// TODO pass LinkComponent from apps/*
 import { Link } from '@tanstack/react-router';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardMedia from '@mui/material/CardMedia';
