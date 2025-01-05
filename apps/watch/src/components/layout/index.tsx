@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Header } from 'ui/watch/header';
 import { SettingsPanel } from 'ui/watch/home-page/settings';
 import { Link } from '@tanstack/react-router';
+import React from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
