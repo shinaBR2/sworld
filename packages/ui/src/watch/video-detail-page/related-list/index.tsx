@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent, Video } from '../../videos/interface';
-import { VideoListItem } from '../../videos/video-list-item';
+import { VideoListItem } from '../../videos/list-item';
 
 interface RelatedListProps extends RequiredLinkComponent {
   videos: Video[];
