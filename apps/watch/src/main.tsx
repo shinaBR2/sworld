@@ -17,6 +17,7 @@ import LogRocket from 'logrocket';
 validateEnvVars();
 
 if (systemConfig.logRocket) {
+  console.log(`logrocket `, systemConfig.logRocket);
   LogRocket.init(systemConfig.logRocket, {
     rootHostname: appConfig.sites.main,
   });
@@ -59,5 +60,3 @@ const AppWrapper = () => {
 };
 
 createRoot(document.getElementById('root')!).render(<AppWrapper />);
-
-export { AppWrapper };
