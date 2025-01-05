@@ -1,6 +1,7 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { VideoDetail } from '../components/video-detail';
 import { Auth, watchQueryHooks } from 'core';
+import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
+import { Layout } from '../components/layout';
 
 function VideoDetails() {
   const { videoId } = Route.useParams();
@@ -9,9 +10,13 @@ function VideoDetails() {
     getAccessToken: authContext.getAccessToken,
   });
 
-  console.log(`videoId`, videoId);
+  console.log(`videoIr`, videoId);
 
-  return <VideoDetail queryRs={videoResult} LinkComponent={Link} />;
+  return (
+    <Layout>
+      <VideoDetailContainer queryRs={videoResult} LinkComponent={Link} />
+    </Layout>
+  );
 }
 
 export const Route = createLazyFileRoute('/$videoId')({

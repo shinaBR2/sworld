@@ -4,6 +4,7 @@ interface Uploader {
   username: string;
 }
 
+// TODO move this into universal
 export type RequiredLinkComponent<P = any> = {
   LinkComponent: NonNullable<WithLinkComponent<P>['LinkComponent']>;
 };

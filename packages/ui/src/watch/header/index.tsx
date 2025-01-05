@@ -8,8 +8,9 @@ import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SearchBar from '../../universal/search-bar';
 import SiteChoices from '../../universal/site-choices';
+import { RequiredLinkComponent } from '../videos/interface';
 
-interface HeaderProps {
+interface HeaderProps extends RequiredLinkComponent {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
   sites: {
     listen: string;
@@ -20,7 +21,7 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
-  const { toggleSetting, sites, user } = props;
+  const { toggleSetting, sites, user, LinkComponent } = props;
   const avatarUrl = user?.picture;
 
   return (
@@ -36,7 +37,7 @@ const Header = (props: HeaderProps) => {
           {/* <IconButton>
             <Menu open={false} />
           </IconButton> */}
-          <Logo />
+          <Logo LinkComponent={LinkComponent} />
           <SiteChoices activeSite="watch" sites={sites} />
         </Box>
 
