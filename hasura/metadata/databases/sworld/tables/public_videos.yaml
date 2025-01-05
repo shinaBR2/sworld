@@ -5,8 +5,11 @@ configuration:
   column_config:
     created_at:
       custom_name: createdAt
+    thumbnail_url:
+      custom_name: thumbnailUrl
   custom_column_names:
     created_at: createdAt
+    thumbnail_url: thumbnailUrl
   custom_root_fields: {}
 object_relationships:
   - name: user
@@ -36,6 +39,7 @@ select_permissions:
         - id
         - slug
         - source
+        - thumbnail_url
         - title
       filter:
         user_id:
