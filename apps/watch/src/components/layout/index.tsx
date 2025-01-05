@@ -1,4 +1,4 @@
-import { FullWidthContainer } from 'ui/universal/containers/full-width';
+import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { appConfig } from '../../config';
 import { Auth } from 'core';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ const Layout = (props: LayoutProps) => {
   const { sites } = appConfig;
 
   return (
-    <FullWidthContainer>
+    <FullPageContainer>
       <Header
         LinkComponent={Link}
         toggleSetting={toggleSetting}
@@ -34,7 +34,7 @@ const Layout = (props: LayoutProps) => {
         }}
       />
       {children}
-    </FullWidthContainer>
+    </FullPageContainer>
   );
 };
 

@@ -1,9 +1,11 @@
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 import { useIsMobile } from '../../../universal/responsive';
 import { RelatedList } from '../related-list';
 import { VideoDetailContainerProps } from '../../videos/interface';
 import { VideoPlayer } from '../../videos/video-player';
+
+const HEADER_DESKTOP_HEIGHT = 64;
+const HEADER_MOBILE_HEIGHT = 64;
 
 const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
@@ -16,46 +18,17 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
 
   if (isMobile) {
     return (
-      <Box
-        sx={{
-          width: '100%',
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Sticky video section with 16:9 aspect ratio */}
-        <Box
-          sx={{
-            position: 'sticky',
-            top: 0,
-            width: '100%',
-            bgcolor: 'background.paper',
-            zIndex: 1,
-            // Parent container for maintaining aspect ratio
-            '&::before': {
-              content: '""',
-              display: 'block',
-              paddingTop: '56.25%', // 16:9 Aspect Ratio
-            },
-            // Container for actual content
-            '& > *': {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-            },
-          }}
-        >
+      <Grid container direction="row" sx={{ flex: 1, minHeight: 0 }}>
+        <Grid sx={{ height: '56.25vw' }}>
           <VideoPlayer video={videos[0]} />
-        </Box>
+        </Grid>
 
-        {/* Scrollable list section */}
-        <Box
+        <Grid
+          item
+          xs={12}
           sx={{
-            flexGrow: 1,
             overflow: 'auto',
+            height: `calc(100vh - 56.25vw - ${HEADER_MOBILE_HEIGHT}px)`,
           }}
         >
           <RelatedList
@@ -63,33 +36,26 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
             title="other videos"
             LinkComponent={LinkComponent}
           />
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
     );
   }
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        height: '100vh',
-        display: 'grid',
-        gridTemplateColumns: '1fr 400px', // Adjust the 400px as needed
-        gap: 2,
-        px: { xs: 2, sm: 3 },
-        py: 2,
-      }}
-    >
-      {/* Main video section */}
-      <Box sx={{ width: '100%', height: '100%' }}>
+    <Grid container spacing={2} sx={{ flex: 1, ml: 0, mt: 0, height: 0 }}>
+      <Grid item xs={12} md={8} lg={9} sx={{ height: '100%' }}>
         <VideoPlayer video={videos[0]} />
-      </Box>
+      </Grid>
 
-      {/* Right sidebar */}
-      <Box
+      <Grid
+        container
+        direction="column"
+        item
+        xs={12}
+        md={4}
+        lg={3}
         sx={{
-          width: '100%',
-          height: '100%',
+          height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
           overflow: 'auto',
         }}
       >
@@ -98,8 +64,8 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
           title="other videos"
           LinkComponent={LinkComponent}
         />
-      </Box>
-    </Container>
+      </Grid>
+    </Grid>
   );
 };
 
