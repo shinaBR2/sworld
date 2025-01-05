@@ -1,5 +1,5 @@
 import Grid from '@mui/material/Grid';
-import { VideoDetailContainerProps } from '../../../videos/interface';
+import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { VideoPlayer } from '../../../videos/video-player';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
@@ -55,7 +55,7 @@ const MobileView = (props: VideoDetailContainerProps) => {
   return (
     <Grid container direction="row" sx={styles.container}>
       <Grid sx={styles.videoContainer}>
-        <VideoPlayer video={videoDetail} />
+        <VideoPlayer video={videoDetail as Video} />
       </Grid>
 
       <Grid item xs={12} sx={styles.scrollableList}>

@@ -71,7 +71,7 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
 
   return {
     videos: data?.videos ?? [],
-    videoDetail: data?.videos_by_pk ?? null,
+    videoDetail: data?.videos_by_pk ?? {},
     isLoading,
   };
 };
