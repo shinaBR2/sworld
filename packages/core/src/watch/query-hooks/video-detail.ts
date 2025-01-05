@@ -47,7 +47,7 @@ interface VideoDetail {
   description: string;
 }
 
-interface LoadVideosProps {
+interface LoadVideoDetailProps {
   id: string;
   getAccessToken: () => Promise<string>;
 }
@@ -57,7 +57,7 @@ interface VideoDetailResponse {
   videos_by_pk: VideoDetail | null;
 }
 
-const useLoadVideoDetail = (props: LoadVideosProps) => {
+const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
   const { data, isLoading } = useRequest<VideoDetailResponse>({
