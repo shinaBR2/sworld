@@ -12,8 +12,6 @@ function VideoDetails() {
     id: videoId,
   });
 
-  console.log(`videoResult`, videoResult);
-
   return (
     <Layout>
       <VideoDetailContainer queryRs={videoResult} LinkComponent={Link} />
