@@ -4,8 +4,9 @@ import { VideoPlayer } from '../../../videos/video-player';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
+import Box from '@mui/material/Box';
 
-const HEADER_MOBILE_HEIGHT = 64;
+const HEADER_MOBILE_HEIGHT = 56;
 const VIDEO_ASPECT_RATIO = '56.25vw'; // 16:9 ratio
 
 const styles = {
@@ -34,9 +35,11 @@ const LoadingSkeleton = () => (
       />
     </Grid>
     <Grid item xs={12} sx={styles.scrollableList}>
-      {[...Array(5)].map((_, index) => (
-        <VideoListItemSkeleton key={index} />
-      ))}
+      <Box px={2}>
+        {[...Array(5)].map((_, index) => (
+          <VideoListItemSkeleton key={index} />
+        ))}
+      </Box>
     </Grid>
   </Grid>
 );
