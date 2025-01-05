@@ -30,15 +30,9 @@ const VideoPlayerSkeleton = () => (
       width: '100%',
       height: 'auto',
       aspectRatio: '16/9',
-      bgcolor: 'background.paper',
     }}
   >
-    <Skeleton
-      variant="rectangular"
-      width="100%"
-      height="100%"
-      sx={{ bgcolor: 'grey.800' }}
-    />
+    <Skeleton variant="rectangular" width="100%" height="100%" />
   </Box>
 );
 
