@@ -6,7 +6,7 @@ interface VideoThumnailProps {
   title: string;
 }
 
-const VideoThumnail = (props: VideoThumnailProps) => {
+const VideoThumbnail = (props: VideoThumnailProps) => {
   const { src, title } = props;
 
   return (
@@ -23,4 +23,4 @@ const VideoThumnail = (props: VideoThumnailProps) => {
   );
 };
 
-export { VideoThumnail };
+export { VideoThumbnail };

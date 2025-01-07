@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoPlayer } from '../video-player';
-import { VideoThumnail } from '../video-thumbnail';
+import { VideoThumbnail } from '../video-thumbnail';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
@@ -44,7 +44,7 @@ const Content = (props: ContentProps) => {
         {asLink ? (
           <VideoPlayer video={video} />
         ) : (
-          <VideoThumnail src={thumbnailUrl} title={title} />
+          <VideoThumbnail src={thumbnailUrl} title={title} />
         )}
 
         {duration && (

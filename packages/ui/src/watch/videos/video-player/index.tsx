@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import React from 'react';
 import { Video } from '../interface';
-import { VideoThumnail } from '../video-thumbnail';
+import { VideoThumbnail } from '../video-thumbnail';
 import { useIsMobile } from '../../../universal/responsive';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
@@ -12,7 +12,7 @@ const VideoPlayer = ({ video }: { video: Video }) => {
   const isMobile = useIsMobile();
 
   return (
-    <Suspense fallback={<VideoThumnail title={title} />}>
+    <Suspense fallback={<VideoThumbnail title={title} />}>
       <ReactPlayer
         url={source}
         controls={true}
