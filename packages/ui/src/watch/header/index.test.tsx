@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Header } from './index';
 import '@testing-library/jest-dom';
+import { Link } from '@mui/material';
 
 // Mock the child components
 vi.mock('../../universal/logo', () => ({
@@ -25,6 +26,7 @@ describe('Header', () => {
       play: 'play',
     },
     user: null,
+    LinkComponent: Link,
   };
 
   it('renders all components correctly', () => {
