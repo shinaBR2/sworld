@@ -7,6 +7,7 @@ import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
 import Box from '@mui/material/Box';
 import { HEADER_MOBILE_HEIGHT, VIDEO_ASPECT_RATIO } from '../../../theme';
 
+// TODO: check orientation events
 const styles = {
   container: {
     flex: 1,
