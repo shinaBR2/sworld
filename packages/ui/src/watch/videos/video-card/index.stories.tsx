@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import type { Meta, StoryObj } from '@storybook/react';
-import { VideoCard } from './video-card';
+import { VideoCard } from '.';
 
 const meta: Meta<typeof VideoCard> = {
   title: 'Watch/VideoCard',
@@ -29,7 +29,7 @@ export const Default: Story = {
       title: 'Title',
       source:
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      // thumbnail: 'https://example.com/video-thumbnail.png',
+      // thumbnailUrl: 'https://example.com/video-thumbnail.png',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',
       user: {
@@ -46,7 +46,7 @@ export const WithThumbnail: Story = {
       title: 'Title',
       source:
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      thumbnail: 'https://picsum.photos/536/354',
+      thumbnailUrl: 'https://picsum.photos/536/354',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',
       user: {

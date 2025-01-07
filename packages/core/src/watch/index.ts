@@ -1,1 +1,1 @@
-export * as queryHooks from './query-hooks/videos';
+export * as queryHooks from './query-hooks';

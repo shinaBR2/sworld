@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "pre-dev": "cp ../../.env.development.local .env",
+    "lint": "eslint .",
     "dev": "pnpm run pre-dev && vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
