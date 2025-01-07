@@ -30,11 +30,16 @@ const VideoPlayerSkeleton = () => (
       height: 'auto',
       aspectRatio: '16/9',
     }}
+<<<<<<< Updated upstream
+=======
+    aria-label="Loading video player"
+>>>>>>> Stashed changes
   >
     <Skeleton variant="rectangular" width="100%" height="100%" />
   </Box>
 );
 
+<<<<<<< Updated upstream
 const RelatedListSkeleton = () => (
   <Box sx={{ p: 2 }}>
     {/* Title skeleton */}
@@ -42,6 +47,23 @@ const RelatedListSkeleton = () => (
 
     {/* Related videos list */}
     {Array.from(new Array(6)).map((_, index) => (
+=======
+const SKELETON_ITEMS_COUNT = 6;
+
+const RelatedListSkeleton = () => (
+  <Box sx={{ p: 2 }}>
+    {/* Title skeleton */}
+    <Skeleton
+      aria-label="Loading related videos"
+      variant="text"
+      width={120}
+      height={32}
+      sx={{ mb: 2 }}
+    />
+
+    {/* Related videos list */}
+    {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
+>>>>>>> Stashed changes
       <VideoListItemSkeleton key={index} />
     ))}
   </Box>
