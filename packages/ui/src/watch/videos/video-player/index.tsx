@@ -7,6 +7,7 @@ import { useIsMobile } from '../../../universal/responsive';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
+// TODO handle error
 const VideoPlayer = ({ video }: { video: Video }) => {
   const { title, source, thumbnailUrl } = video;
   const isMobile = useIsMobile();
