@@ -4,6 +4,10 @@ import Skeleton from '@mui/material/Skeleton';
 const VideoListItemSkeleton = () => {
   return (
     <Box
+      component="article"
+      role="article"
+      aria-busy="true"
+      aria-label="Loading video item"
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -12,36 +16,30 @@ const VideoListItemSkeleton = () => {
       }}
     >
       {/* Thumbnail skeleton */}
-      <Box sx={{ position: 'relative', flexShrink: 0 }}>
+      <Box
+        component="figure"
+        aria-label="Loading thumbnail"
+        sx={{ position: 'relative', flexShrink: 0 }}
+      >
         <Skeleton
           variant="rectangular"
           width={64}
           height={64}
           sx={{ borderRadius: 1 }}
+          animation="wave"
         />
-        {/* Duration skeleton */}
-        {/* <Skeleton
-          variant="rectangular"
-          width={35}
-          height={20}
-          sx={{
-            position: 'absolute',
-            bottom: 4,
-            right: 4,
-            borderRadius: 0.5,
-          }}
-        /> */}
       </Box>
 
       {/* Text content skeletons */}
-      <Box sx={{ minWidth: 0, flex: 1 }}>
+      <Box role="presentation" sx={{ minWidth: 0, flex: 1 }}>
         <Skeleton
           variant="text"
           width="85%"
           height={20}
           sx={{ marginBottom: 0.5 }}
+          animation="wave"
         />
-        <Skeleton variant="text" width="40%" height={16} />
+        <Skeleton variant="text" width="40%" height={16} animation="wave" />
       </Box>
     </Box>
   );
