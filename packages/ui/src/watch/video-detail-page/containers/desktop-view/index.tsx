@@ -5,8 +5,7 @@ import { VideoPlayer } from '../../../videos/video-player';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
-
-const HEADER_DESKTOP_HEIGHT = 64;
+import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
 
 const styles = {
   container: {
