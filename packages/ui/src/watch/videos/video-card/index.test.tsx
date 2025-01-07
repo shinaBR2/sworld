@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { VideoCard } from './video-card';
+import { VideoCard } from '.';
 import '@testing-library/jest-dom';
 
 // Mock react-player
@@ -17,7 +17,7 @@ describe('VideoCard Component', () => {
     id: '1',
     title: 'Test Video',
     source: 'https://example.com/video.mp4',
-    thumbnail: 'https://example.com/thumbnail.jpg',
+    thumbnailUrl: 'https://example.com/thumbnail.jpg',
     createdAt: '2024-01-01T00:00:00.000Z',
     duration: '5:30',
     user: {
@@ -45,7 +45,7 @@ describe('VideoCard Component', () => {
   it('uses default thumbnail when thumbnail prop is not provided', () => {
     const videoWithoutThumbnail = {
       ...mockVideo,
-      thumbnail: undefined,
+      thumbnailUrl: undefined,
     };
 
     render(<VideoCard video={videoWithoutThumbnail} />);

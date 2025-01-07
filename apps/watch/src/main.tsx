@@ -12,18 +12,25 @@ import {
   systemConfig,
   validateEnvVars,
 } from './config';
-import LogRocket from 'logrocket';
 
 validateEnvVars();
 
-if (systemConfig.logRocket) {
+const initLogRocket = async () => {
+  const LogRocket = (await import('logrocket')).default;
+
   LogRocket.init(systemConfig.logRocket, {
     rootHostname: appConfig.sites.main,
   });
+};
+
+if (systemConfig.logRocket) {
+  initLogRocket();
 }
 
+// @ts-ignore
 const router = createRouter({
   routeTree,
+  defaultViewTransition: true,
   defaultPreload: 'intent',
   context: {
     auth: undefined!,
@@ -43,14 +50,18 @@ const App = () => {
   return <RouterProvider router={router} context={{ auth }} />;
 };
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Auth.AuthProvider config={auth0Config}>
-      <Query.QueryProvider config={queryConfig}>
-        <UniversalMinimalismThemeProvider>
-          <App />
-        </UniversalMinimalismThemeProvider>
-      </Query.QueryProvider>
-    </Auth.AuthProvider>
-  </StrictMode>
-);
+const AppWrapper = () => {
+  return (
+    <StrictMode>
+      <Auth.AuthProvider config={auth0Config}>
+        <Query.QueryProvider config={queryConfig}>
+          <UniversalMinimalismThemeProvider>
+            <App />
+          </UniversalMinimalismThemeProvider>
+        </Query.QueryProvider>
+      </Auth.AuthProvider>
+    </StrictMode>
+  );
+};
+
+createRoot(document.getElementById('root')!).render(<AppWrapper />);
