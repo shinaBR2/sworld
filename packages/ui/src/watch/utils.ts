@@ -1,4 +1,7 @@
-export const formatCreatedDate = (date: string | null | undefined): string => {
+export const formatCreatedDate = (
+  date: string | null | undefined,
+  locale: string = 'en-CA'
+): string => {
   if (!date) {
     return '';
   }
@@ -8,7 +11,7 @@ export const formatCreatedDate = (date: string | null | undefined): string => {
       throw new Error('Invalid date');
     }
     // Use UTC to avoid timezone shifts
-    return parsedDate.toLocaleDateString('en-CA'); // Returns YYYY-MM-DD
+    return parsedDate.toLocaleDateString(locale); // Returns YYYY-MM-DD
   } catch (error) {
     console.error(`Error formatting date: ${date}`, error);
     return '';
