@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
@@ -7,7 +6,7 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-import { cardStyles, durationBadgeStyles, titleStyles } from './styles';
+import { StyledCard, StyledDuration, StyledTitle } from './styles';
 import { formatCreatedDate } from '../../utils';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
@@ -21,11 +20,7 @@ interface VideoCardProps extends WithLinkComponent {
 const DurationBadge = ({ duration }: { duration?: string }) => {
   if (!duration) return null;
 
-  return (
-    <Typography variant="caption" sx={durationBadgeStyles}>
-      {duration}
-    </Typography>
-  );
+  return <StyledDuration variant="caption">{duration}</StyledDuration>;
 };
 
 interface VideoCardContentProps {
@@ -39,9 +34,9 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 
   return (
     <CardContent sx={{ p: 1.5, pt: 2, '&:last-child': { pb: 1 } }}>
-      <Typography gutterBottom variant="body1" component="h3" sx={titleStyles}>
+      <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
-      </Typography>
+      </StyledTitle>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
         {creator} • {createdTime}
       </Typography>
@@ -99,14 +94,14 @@ const VideoContent = (props: VideoContentProps) => {
 
 const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
   const cardContent = (
-    <Card sx={cardStyles}>
+    <StyledCard>
       <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={video.title}
         creator={video.user.username}
         createdTime={formatCreatedDate(video.createdAt)}
       />
-    </Card>
+    </StyledCard>
   );
 
   if (asLink && LinkComponent) {

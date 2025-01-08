@@ -1,3 +1,16 @@
-export const formatCreatedDate = (date: string) => {
-  return new Date(date).toISOString().split('T')[0];
+export const formatCreatedDate = (date: string | null | undefined): string => {
+  if (!date) {
+    return '';
+  }
+  try {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      throw new Error('Invalid date');
+    }
+    // Use UTC to avoid timezone shifts
+    return parsedDate.toLocaleDateString('en-CA'); // Returns YYYY-MM-DD
+  } catch (error) {
+    console.error(`Error formatting date: ${date}`, error);
+    return '';
+  }
 };
