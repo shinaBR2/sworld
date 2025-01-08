@@ -1,15 +1,7 @@
-<<<<<<< Updated upstream
-// import { graphql } from '../../graphql';
-import { useRequest } from '../../universal/hooks/use-request';
-
-const videoDetailQuery = `
-  query AllVideos ($id: uuid!) @cached {
-=======
 import { useRequest } from '../../universal/hooks/use-request';
 
 const videoDetailQuery = `
   query VideoDetail ($id: uuid!) @cached {
->>>>>>> Stashed changes
     videos {
       id
       title

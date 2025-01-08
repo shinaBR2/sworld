@@ -7,11 +7,8 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-<<<<<<< Updated upstream
-=======
 import { cardStyles, durationBadgeStyles, titleStyles } from './styles';
 import { formatCreatedDate } from '../../utils';
->>>>>>> Stashed changes
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
@@ -20,46 +17,6 @@ interface VideoCardProps extends WithLinkComponent {
   asLink?: boolean;
 }
 
-<<<<<<< Updated upstream
-// Shared styles as constants
-const cardStyles = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  boxShadow: 'none',
-  bgcolor: 'transparent',
-  transition: 'all 0.2s',
-  '&:hover': {
-    transform: 'scale(1.02)',
-    cursor: 'pointer',
-  },
-} as const;
-
-const durationBadgeStyles = {
-  position: 'absolute',
-  bottom: 8,
-  right: 8,
-  bgcolor: 'rgba(0, 0, 0, 0.8)',
-  color: 'white',
-  px: 1,
-  py: 0.5,
-  borderRadius: 1,
-  fontWeight: 500,
-} as const;
-
-const titleStyles = {
-  fontWeight: 500,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  display: '-webkit-box',
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: 'vertical',
-  mb: 0.5,
-  lineHeight: 1.3,
-} as const;
-
-=======
->>>>>>> Stashed changes
 // Helper components
 const DurationBadge = ({ duration }: { duration?: string }) => {
   if (!duration) return null;
@@ -141,22 +98,13 @@ const VideoContent = (props: VideoContentProps) => {
 };
 
 const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
-<<<<<<< Updated upstream
-  const createdTime = new Date(video.createdAt).toISOString().split('T')[0];
-
-=======
->>>>>>> Stashed changes
   const cardContent = (
     <Card sx={cardStyles}>
       <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={video.title}
         creator={video.user.username}
-<<<<<<< Updated upstream
-        createdTime={createdTime}
-=======
         createdTime={formatCreatedDate(video.createdAt)}
->>>>>>> Stashed changes
       />
     </Card>
   );

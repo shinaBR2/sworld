@@ -23,11 +23,8 @@ const styles = {
   },
 } as const;
 
-<<<<<<< Updated upstream
-=======
 const SKELETON_ITEMS_COUNT = 5;
 
->>>>>>> Stashed changes
 const LoadingSkeleton = () => (
   <Grid container direction="row" sx={styles.container}>
     <Grid sx={styles.videoContainer}>
@@ -40,11 +37,7 @@ const LoadingSkeleton = () => (
     </Grid>
     <Grid item xs={12} sx={styles.scrollableList}>
       <Box px={2}>
-<<<<<<< Updated upstream
-        {[...Array(5)].map((_, index) => (
-=======
         {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
->>>>>>> Stashed changes
           <VideoListItemSkeleton key={index} />
         ))}
       </Box>
