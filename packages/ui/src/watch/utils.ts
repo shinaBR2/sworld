@@ -4,7 +4,7 @@ export const formatCreatedDate = (date: string | null | undefined): string => {
   }
   try {
     const parsedDate = new Date(date);
-    if (isNaN(parsedDate.getTime())) {
+    if (Number.isNaN(parsedDate.getTime())) {
       throw new Error('Invalid date');
     }
     // Use UTC to avoid timezone shifts
