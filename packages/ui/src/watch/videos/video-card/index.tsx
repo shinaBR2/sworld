@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
@@ -7,6 +6,8 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
+import { StyledCard, StyledDuration, StyledTitle } from './styles';
+import { formatCreatedDate } from '../../utils';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
@@ -15,52 +16,11 @@ interface VideoCardProps extends WithLinkComponent {
   asLink?: boolean;
 }
 
-// Shared styles as constants
-const cardStyles = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  boxShadow: 'none',
-  bgcolor: 'transparent',
-  transition: 'all 0.2s',
-  '&:hover': {
-    transform: 'scale(1.02)',
-    cursor: 'pointer',
-  },
-} as const;
-
-const durationBadgeStyles = {
-  position: 'absolute',
-  bottom: 8,
-  right: 8,
-  bgcolor: 'rgba(0, 0, 0, 0.8)',
-  color: 'white',
-  px: 1,
-  py: 0.5,
-  borderRadius: 1,
-  fontWeight: 500,
-} as const;
-
-const titleStyles = {
-  fontWeight: 500,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  display: '-webkit-box',
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: 'vertical',
-  mb: 0.5,
-  lineHeight: 1.3,
-} as const;
-
 // Helper components
 const DurationBadge = ({ duration }: { duration?: string }) => {
   if (!duration) return null;
 
-  return (
-    <Typography variant="caption" sx={durationBadgeStyles}>
-      {duration}
-    </Typography>
-  );
+  return <StyledDuration variant="caption">{duration}</StyledDuration>;
 };
 
 interface VideoCardContentProps {
@@ -74,9 +34,9 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 
   return (
     <CardContent sx={{ p: 1.5, pt: 2, '&:last-child': { pb: 1 } }}>
-      <Typography gutterBottom variant="body1" component="h3" sx={titleStyles}>
+      <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
-      </Typography>
+      </StyledTitle>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
         {creator} • {createdTime}
       </Typography>
@@ -133,17 +93,15 @@ const VideoContent = (props: VideoContentProps) => {
 };
 
 const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
-  const createdTime = new Date(video.createdAt).toISOString().split('T')[0];
-
   const cardContent = (
-    <Card sx={cardStyles}>
+    <StyledCard>
       <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={video.title}
         creator={video.user.username}
-        createdTime={createdTime}
+        createdTime={formatCreatedDate(video.createdAt)}
       />
-    </Card>
+    </StyledCard>
   );
 
   if (asLink && LinkComponent) {
