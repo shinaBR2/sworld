@@ -30,18 +30,27 @@ const VideoPlayerSkeleton = () => (
       height: 'auto',
       aspectRatio: '16/9',
     }}
+    aria-label="Loading video player"
   >
     <Skeleton variant="rectangular" width="100%" height="100%" />
   </Box>
 );
 
+const SKELETON_ITEMS_COUNT = 6;
+
 const RelatedListSkeleton = () => (
   <Box sx={{ p: 2 }}>
     {/* Title skeleton */}
-    <Skeleton variant="text" width={120} height={32} sx={{ mb: 2 }} />
+    <Skeleton
+      aria-label="Loading related videos"
+      variant="text"
+      width={120}
+      height={32}
+      sx={{ mb: 2 }}
+    />
 
     {/* Related videos list */}
-    {Array.from(new Array(6)).map((_, index) => (
+    {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
       <VideoListItemSkeleton key={index} />
     ))}
   </Box>
