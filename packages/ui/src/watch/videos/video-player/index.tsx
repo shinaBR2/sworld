@@ -3,14 +3,12 @@ import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail
 import React from 'react';
 import { Video } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-import { useIsMobile } from '../../../universal/responsive';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
 
 // TODO handle error
 const VideoPlayer = ({ video }: { video: Video }) => {
   const { title, source, thumbnailUrl } = video;
-  const isMobile = useIsMobile();
 
   return (
     <Suspense fallback={<VideoThumbnail title={title} />}>
@@ -18,7 +16,7 @@ const VideoPlayer = ({ video }: { video: Video }) => {
         url={source}
         controls={true}
         width="100%"
-        height={isMobile ? '100%' : 'auto'}
+        height="100%"
         style={{
           aspectRatio: '16/9',
         }}
