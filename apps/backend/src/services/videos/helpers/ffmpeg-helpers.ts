@@ -1,5 +1,5 @@
 import * as os from "os";
-import { stat, unlink, access } from "fs";
+import { stat, unlink } from "fs";
 import { mkdir } from "fs/promises";
 import { rm } from "fs/promises";
 import { promisify } from "util";
@@ -15,7 +15,6 @@ import {
 //@ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-import { tmpdir } from "os";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 export interface ConversionVideo {
