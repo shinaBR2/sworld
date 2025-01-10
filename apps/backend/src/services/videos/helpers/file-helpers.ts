@@ -1,13 +1,14 @@
-import { createWriteStream, unlink, readdir } from 'fs';
-import { promisify } from 'util';
-import * as path from 'path';
-import * as crypto from 'crypto';
+import { createWriteStream, unlink, readdir, stat } from "fs";
+import { promisify } from "util";
+import * as path from "path";
+import * as crypto from "crypto";
+import { mkdir, rm } from "fs/promises";
 
-import { getStorage } from 'firebase-admin/storage';
+import { getStorage } from "firebase-admin/storage";
 
 // Helper to generate unique temporary directory names
 const generateTempDirName = () => {
-  return crypto.randomBytes(16).toString('hex');
+  return crypto.randomBytes(16).toString("hex");
 };
 
 // Improved file download with stream handling and cleanup
@@ -19,13 +20,13 @@ const downloadFile = async (url: string, localPath: string) => {
   }
 
   // Get content length if available
-  const contentLength = response.headers.get('content-length');
+  const contentLength = response.headers.get("content-length");
   if (contentLength) {
     const size = parseInt(contentLength);
     // Check if we have enough space (leaving some buffer)
     if (size > 400 * 1024 * 1024) {
       // 400MB limit
-      throw new Error('File too large for temporary storage');
+      throw new Error("File too large for temporary storage");
     }
   }
 
@@ -36,7 +37,7 @@ const downloadFile = async (url: string, localPath: string) => {
       // unlink(localPath).catch(console.error);
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(console.error);
-      return reject(new Error('No response body'));
+      return reject(new Error("No response body"));
     }
 
     (async () => {
@@ -62,7 +63,7 @@ const downloadFile = async (url: string, localPath: string) => {
       }
     })();
 
-    fileStream.on('error', (error: any) => {
+    fileStream.on("error", (error: any) => {
       // unlink(localPath).catch(console.error);
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(console.error);
@@ -80,7 +81,7 @@ const uploadToStorage = async (localPath: string, storagePath: string) => {
     destination: storagePath,
     resumable: true, // Enable resumable uploads for larger files
     metadata: {
-      cacheControl: 'public, max-age=31536000',
+      cacheControl: "public, max-age=31536000",
     },
   });
 };
@@ -110,4 +111,42 @@ const getDownloadUrl = (outputPath: string) => {
   return `https://storage.googleapis.com/${bucket.name}/${outputPath}/playlist.m3u8`;
 };
 
-export { generateTempDirName, downloadFile, uploadDirectory, getDownloadUrl };
+const createDirectory = async (dirPath: string): Promise<void> => {
+  await mkdir(dirPath, { recursive: true });
+};
+
+const cleanupDirectory = async (dirPath: string): Promise<void> => {
+  try {
+    if (path.extname(dirPath)) {
+      // If it's a file
+      const unlinkAsync = promisify(unlink);
+      await unlinkAsync(dirPath);
+    } else {
+      // If it's a directory
+      await rm(dirPath, { recursive: true, force: true });
+    }
+  } catch (error) {
+    console.error("Cleanup failed:", error);
+  }
+};
+
+const verifyFileSize = async (
+  filePath: string,
+  maxSize: number
+): Promise<void> => {
+  const statAsync = promisify(stat);
+  const stats = await statAsync(filePath);
+  if (stats.size > maxSize) {
+    throw new Error("Downloaded file too large for processing");
+  }
+};
+
+export {
+  generateTempDirName,
+  downloadFile,
+  uploadDirectory,
+  getDownloadUrl,
+  createDirectory,
+  cleanupDirectory,
+  verifyFileSize,
+};
