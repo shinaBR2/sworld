@@ -1,4 +1,4 @@
-const envConifg = {
+const envConfig = {
   databaseUrl: process.env.DATABASE_URL,
   port: process.env.PORT,
   storageBucket: process.env.GCP_STORAGE_BUCKET,
@@ -8,4 +8,4 @@ const envConifg = {
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 };
 
-export { envConifg };
+export { envConfig };

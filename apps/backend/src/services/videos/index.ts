@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import { initializeApp } from "firebase-admin/app";
-import { envConifg } from "src/utils/envConfig";
+import { envConfig } from "src/utils/envConfig";
 import { testUsers } from "./test-users";
 import { AppError, AppResponse } from "src/utils/schema";
 import { validateRequest } from "src/utils/validator";
 import { ConvertRequest, ConvertSchema, convert } from "./convert";
 
 initializeApp({
-  storageBucket: envConifg.storageBucket,
+  storageBucket: envConfig.storageBucket,
 });
 
 const videosRouter: Router = express.Router();

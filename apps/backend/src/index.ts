@@ -3,9 +3,9 @@ import "./instrument";
 
 import * as Sentry from "@sentry/node";
 import { app } from "./server";
-import { envConifg } from "./utils/envConfig";
+import { envConfig } from "./utils/envConfig";
 
-const port = envConifg.port || 4000;
+const port = envConfig.port || 4000;
 
 Sentry.setupExpressErrorHandler(app);
 

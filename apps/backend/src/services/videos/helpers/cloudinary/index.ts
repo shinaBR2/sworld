@@ -1,11 +1,11 @@
 import { v2 as cloudinary } from "cloudinary";
-import { envConifg } from "src/utils/envConfig";
+import { envConfig } from "src/utils/envConfig";
 
 const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
   cloudinary.config({
-    cloud_name: envConifg.cloudinaryName,
-    api_key: envConifg.cloudinaryApiKey,
-    api_secret: envConifg.cloudinaryApiSecret,
+    cloud_name: envConfig.cloudinaryName,
+    api_key: envConfig.cloudinaryApiKey,
+    api_secret: envConfig.cloudinaryApiSecret,
   });
 
   const uploadResult = await cloudinary.uploader

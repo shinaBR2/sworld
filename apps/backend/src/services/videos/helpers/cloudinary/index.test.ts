@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 import { uploadFromLocalFilePath } from ".";
-import { envConifg } from "src/utils/envConfig";
+import { envConfig } from "src/utils/envConfig";
 
 // Mock the cloudinary module
 vi.mock("cloudinary", () => ({
@@ -15,7 +15,7 @@ vi.mock("cloudinary", () => ({
 
 // Mock the envConfig
 vi.mock("src/utils/envConfig", () => ({
-  envConifg: {
+  envConfig: {
     cloudinaryName: "test-cloud",
     cloudinaryApiKey: "test-api-key",
     cloudinaryApiSecret: "test-secret",
@@ -48,9 +48,9 @@ describe("uploadFromLocalFilePath", () => {
 
     // Assert
     expect(cloudinary.config).toHaveBeenCalledWith({
-      cloud_name: envConifg.cloudinaryName,
-      api_key: envConifg.cloudinaryApiKey,
-      api_secret: envConifg.cloudinaryApiSecret,
+      cloud_name: envConfig.cloudinaryName,
+      api_key: envConfig.cloudinaryApiKey,
+      api_secret: envConfig.cloudinaryApiSecret,
     });
   });
 
