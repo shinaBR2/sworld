@@ -1,4 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
+import { existsSync } from "fs";
+import { unlink } from "fs/promises";
 import { envConfig } from "src/utils/envConfig";
 
 cloudinary.config({
@@ -8,21 +10,24 @@ cloudinary.config({
 });
 
 const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
-  const uploadResult = await cloudinary.uploader
-    .upload(localFilePath, {
-      ...options,
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  console.log(uploadResult);
-
-  if (uploadResult) {
-    return uploadResult.url;
+  if (!localFilePath || !existsSync(localFilePath)) {
+    throw new Error("Invalid or missing file path");
   }
 
-  return "";
+  try {
+    const uploadResult = await cloudinary.uploader.upload(localFilePath, {
+      ...options,
+    });
+
+    if (uploadResult) {
+      return uploadResult.url;
+    }
+
+    throw new Error("Upload failed: No result returned");
+  } catch (error) {
+    console.error("Cloudinary upload failed:", error);
+    throw error;
+  }
 };
 
 export { uploadFromLocalFilePath };
