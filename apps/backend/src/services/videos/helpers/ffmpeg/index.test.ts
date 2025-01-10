@@ -1,6 +1,13 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import {
+  describe,
+  expect,
+  it,
+  vi,
+  beforeEach,
+  afterEach,
+  type Mock,
+} from "vitest";
 import * as path from "path";
-// @ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 import { convertToHLS, takeScreenshot } from ".";
 
@@ -30,7 +37,7 @@ describe("FFmpeg Helpers", () => {
     };
 
     // Mock the ffmpeg function to return our mock chain
-    (ffmpeg as unknown as jest.Mock).mockReturnValue(mockFFmpeg);
+    (ffmpeg as unknown as Mock).mockReturnValue(mockFFmpeg);
   });
 
   afterEach(() => {
