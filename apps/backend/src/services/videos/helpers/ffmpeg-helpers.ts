@@ -8,7 +8,7 @@ import {
   createDirectory,
   cleanupDirectory,
   verifyFileSize,
-} from "./file-helpers";
+} from "./file";
 import { getDownloadUrl, uploadDirectory } from "./gcp-cloud-storage";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);

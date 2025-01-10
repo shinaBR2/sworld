@@ -1,7 +1,7 @@
 import * as os from "os";
 import { AppError } from "src/utils/schema";
 import { ValidatedRequest } from "src/utils/validator";
-import { downloadFile, generateTempDirName } from "./helpers/file-helpers";
+import { downloadFile, generateTempDirName } from "./helpers/file";
 import { generateThumbnail } from "./helpers/ffmpeg-helpers";
 import { uploadFromLocalFilePath } from "./helpers/cloudinary";
 import path from "path";

@@ -15,7 +15,7 @@ import { mkdir, rm } from "fs/promises";
 // @ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 import { handleConvertVideo } from "./ffmpeg-helpers";
-import * as videoHelpers from "./file-helpers";
+import * as videoHelpers from "./file";
 
 vi.mock("fluent-ffmpeg");
 vi.mock("@google-cloud/storage");
