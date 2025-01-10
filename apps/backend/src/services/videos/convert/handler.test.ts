@@ -7,6 +7,7 @@ import {
   afterEach,
   afterAll,
   MockedFunction,
+  Mock,
 } from "vitest";
 import * as os from "os";
 import * as path from "path";
@@ -181,43 +182,57 @@ describe("handleConvertVideo", () => {
   });
 });
 
+interface ConvertVideoInput {
+  id: string;
+  videoUrl: string;
+}
+
+const createTestConvertVideo = (
+  mockHandleConvertVideo: Mock,
+  mockPostConvert: Mock
+) => {
+  return async (inputData: ConvertVideoInput) => {
+    let videoUrl;
+    try {
+      videoUrl = await mockHandleConvertVideo(inputData);
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+
+    try {
+      return await mockPostConvert({
+        ...inputData,
+        videoUrl,
+      });
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+};
+
 describe("convertVideo", () => {
-  const mockData = {
+  const mockData: ConvertVideoInput = {
     id: "test-123",
     videoUrl: "https://example.com/test.mp4",
   };
+  const mockHandleConvertVideo = vi.fn();
+  const mockPostConvert = vi.fn();
+  let testConvertVideo: ReturnType<typeof createTestConvertVideo>;
 
-  // Create a separate describe block for convertVideo tests
+  beforeEach(() => {
+    vi.clearAllMocks();
+    testConvertVideo = createTestConvertVideo(
+      mockHandleConvertVideo,
+      mockPostConvert
+    );
+  });
+
   it("successfully converts video and saves to database", async () => {
-    const mockHandleConvertVideo = vi.fn();
-    const mockPostConvert = vi.fn();
     const mockConvertedUrl = "https://example.com/converted.m3u8";
     const mockDbResult = { id: mockData.id, url: mockConvertedUrl };
 
     mockHandleConvertVideo.mockResolvedValue(mockConvertedUrl);
     mockPostConvert.mockResolvedValue(mockDbResult);
-
-    // Create a new instance of convertVideo with mocked dependencies
-    const testConvertVideo = async (inputData: any) => {
-      let videoUrl;
-      try {
-        videoUrl = await mockHandleConvertVideo(inputData);
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      let video;
-      try {
-        video = await mockPostConvert({
-          ...inputData,
-          videoUrl,
-        });
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      return video;
-    };
 
     const result = await testConvertVideo(mockData);
 
@@ -230,31 +245,7 @@ describe("convertVideo", () => {
   });
 
   it("handles conversion error", async () => {
-    const mockHandleConvertVideo = vi.fn();
-    const mockPostConvert = vi.fn();
-
     mockHandleConvertVideo.mockRejectedValue(new Error("Conversion failed"));
-
-    const testConvertVideo = async (inputData: any) => {
-      let videoUrl;
-      try {
-        videoUrl = await mockHandleConvertVideo(inputData);
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      let video;
-      try {
-        video = await mockPostConvert({
-          ...inputData,
-          videoUrl,
-        });
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      return video;
-    };
 
     await expect(testConvertVideo(mockData)).rejects.toThrow(
       "Conversion failed"
@@ -263,34 +254,12 @@ describe("convertVideo", () => {
   });
 
   it("handles database error", async () => {
-    const mockHandleConvertVideo = vi.fn();
-    const mockPostConvert = vi.fn();
     const mockConvertedUrl = "https://example.com/converted.m3u8";
 
     mockHandleConvertVideo.mockResolvedValue(mockConvertedUrl);
     mockPostConvert.mockRejectedValue(new Error("Database error"));
 
-    const testConvertVideo = async (inputData: any) => {
-      let videoUrl;
-      try {
-        videoUrl = await mockHandleConvertVideo(inputData);
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      let video;
-      try {
-        video = await mockPostConvert({
-          ...inputData,
-          videoUrl,
-        });
-      } catch (error) {
-        throw new Error((error as Error).message);
-      }
-
-      return video;
-    };
-
     await expect(testConvertVideo(mockData)).rejects.toThrow("Database error");
+    expect(mockHandleConvertVideo).toHaveBeenCalledWith(mockData);
   });
 });
