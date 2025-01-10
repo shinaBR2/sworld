@@ -33,18 +33,28 @@ const convertToHLS = async (
   });
 };
 
+interface ScreenshotOptions {
+  timestamp?: string;
+}
+
 /**
  * Screenshot video to thumbnail at specified timestamp
  */
 const takeScreenshot = async (
   videoPath: string,
   outputDir: string,
-  filename: string
+  filename: string,
+  options: ScreenshotOptions = {}
 ): Promise<void> => {
+  const defaultOptions = {
+    timestamp: "00:03:03",
+  };
+  const finalOptions = { ...defaultOptions, ...options };
+
   return new Promise((resolve, reject) => {
     ffmpeg(videoPath)
       .screenshot({
-        timestamps: ["00:03:03"], // Using earlier timestamp for better performance
+        timestamps: [finalOptions.timestamp], // Using earlier timestamp for better performance
         folder: outputDir,
         filename: filename,
       })
