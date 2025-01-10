@@ -4,10 +4,18 @@ import "./instrument";
 import * as Sentry from "@sentry/node";
 import { app } from "./server";
 import { envConfig } from "./utils/envConfig";
+import rateLimit from "express-rate-limit";
 
 const port = envConfig.port || 4000;
 
 Sentry.setupExpressErrorHandler(app);
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per minute
+});
+
+app.use(limiter);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
