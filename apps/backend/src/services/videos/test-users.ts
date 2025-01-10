@@ -1,5 +1,5 @@
 import { initialize, listUsers } from "src/database";
-import { envConifg } from "src/utils/envConfig";
+import { logger } from "src/utils/logger";
 import { AppError } from "src/utils/schema";
 
 const testUsers = async () => {
@@ -15,10 +15,10 @@ const testUsers = async () => {
     return users;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching users:", error.message);
+      logger.error("Error fetching users:", error.message);
       throw AppError(error.message);
     } else {
-      console.error("Unexpected error:", error);
+      logger.error("Unexpected error:", error);
       throw AppError("An unknown error occurred.");
     }
   }

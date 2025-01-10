@@ -3,20 +3,27 @@ import "./instrument";
 
 import * as Sentry from "@sentry/node";
 import { app } from "./server";
-import { envConifg } from "./utils/envConfig";
+import { envConfig } from "./utils/envConfig";
+import rateLimit from "express-rate-limit";
+import { logger } from "./utils/logger";
 
-const port = envConifg.port || 4000;
+const port = envConfig.port || 4000;
 
 Sentry.setupExpressErrorHandler(app);
 
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per minute
+});
+
+app.use(limiter);
+
 const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });
 
 const onCloseSignal = () => {
-  // logger.info("sigint received, shutting down");
   server.close(() => {
-    // logger.info("server closed");
     process.exit();
   });
   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s

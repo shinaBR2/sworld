@@ -11,6 +11,7 @@ import {
   setCurrentRegistrationOptions,
 } from "./userHelpers";
 import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID, RP_NAME } from "./config";
+import { logger } from "src/utils/logger";
 
 // @ts-ignore
 if (!global.crypto) global.crypto = webcrypto;
@@ -28,14 +29,14 @@ const generateOptions = async (userId: string) => {
   }
   // @ts-ignore
   const user = userSnapshot.data();
-  // console.log('user data', user);
-  // console.log('user data key', user.ref.id);
+  // logger.info('user data', user);
+  // logger.info('user data key', user.ref.id);
 
   // const user: UserModel = getUserFromDB(loggedInUserId);
   // (Pseudocode) Retrieve any of the user's previously-
   // registered authenticators
   const userPasskeys = await getUserPasskeys(userId);
-  console.log("userPasskeys", userPasskeys);
+  logger.info("userPasskeys", userPasskeys);
 
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
@@ -79,7 +80,7 @@ const verify = async (userId: string, credential: any) => {
 
   // @ts-ignore
   const user = userSnapshot.data();
-  console.log("user data", user);
+  logger.info("user data", user);
   const { passkeyRegistrationOptions: currentOptions } = user;
 
   let verification;
@@ -91,7 +92,7 @@ const verify = async (userId: string, credential: any) => {
       expectedRPID: EXPECTED_RP_IDS,
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return {
       isVerified,
     };

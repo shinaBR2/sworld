@@ -1,7 +1,7 @@
 import Sequelize, { DataTypes } from "sequelize";
-import { envConifg } from "src/utils/envConfig";
+import { envConfig } from "src/utils/envConfig";
 
-const databaseUrl = envConifg.databaseUrl;
+const databaseUrl = envConfig.databaseUrl;
 
 // @ts-ignore
 const sequelize = new Sequelize(databaseUrl, {

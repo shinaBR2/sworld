@@ -1,13 +1,14 @@
 import express, { Router } from "express";
 import { initializeApp } from "firebase-admin/app";
-import { envConifg } from "src/utils/envConfig";
+import { envConfig } from "src/utils/envConfig";
 import { testUsers } from "./test-users";
 import { AppError, AppResponse } from "src/utils/schema";
 import { validateRequest } from "src/utils/validator";
-import { convert, ConvertRequest, ConvertSchema } from "./convert";
+import { ConvertRequest, ConvertSchema, convert } from "./convert";
+import { logger } from "src/utils/logger";
 
 initializeApp({
-  storageBucket: envConifg.storageBucket,
+  storageBucket: envConfig.storageBucket,
 });
 
 const videosRouter: Router = express.Router();
@@ -31,7 +32,7 @@ videosRouter.post(
 
       res.json(AppResponse(true, "ok", video));
     } catch (error) {
-      console.log(`some thing wrong`, error);
+      logger.info(`some thing wrong`, error);
       res.json(AppError("Error fetching users", error));
     }
   }
