@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
-import { uploadFromLocalFilePath } from "./cloudinary";
+import { uploadFromLocalFilePath } from ".";
 import { envConifg } from "src/utils/envConfig";
 
 // Mock the cloudinary module

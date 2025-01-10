@@ -1,6 +1,5 @@
 import * as os from "os";
 import * as path from "path";
-//@ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import {
@@ -86,7 +85,7 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     await uploadDirectory(outputDir, outputPath);
     await cleanupDirectory(workingDir);
 
-    return getDownloadUrl(outputPath);
+    return getDownloadUrl(`${outputPath}/playlist.m3u8`);
   } catch (error) {
     await cleanupDirectory(workingDir);
     if (error instanceof Error) {

@@ -1,10 +1,8 @@
-import { createWriteStream, unlink, readdir, stat } from "fs";
+import { createWriteStream, unlink, stat } from "fs";
 import { promisify } from "util";
 import * as path from "path";
 import * as crypto from "crypto";
 import { mkdir, rm } from "fs/promises";
-
-import { getStorage } from "firebase-admin/storage";
 
 // Helper to generate unique temporary directory names
 const generateTempDirName = () => {
