@@ -6,12 +6,11 @@ import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import {
   generateTempDirName,
   downloadFile,
-  uploadDirectory,
-  getDownloadUrl,
   createDirectory,
   cleanupDirectory,
   verifyFileSize,
 } from "./file-helpers";
+import { getDownloadUrl, uploadDirectory } from "./gcp-cloud-storage-helpers";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 

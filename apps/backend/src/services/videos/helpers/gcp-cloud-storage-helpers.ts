@@ -14,12 +14,22 @@ const DEFAULT_OPTIONS: UploadOptions = {
   batchSize: 3,
 };
 
+/**
+ * Generate public download URL for HLS playlist from GCP Cloud Storage
+ * outputPath - Relative path in storage bucket, should NOT start with '/' (e.g., 'videos/123')
+ * @returns Full public URL to the file
+ */
 const getDownloadUrl = (outputPath: string) => {
   const bucket = getStorage().bucket();
   return `https://storage.googleapis.com/${bucket.name}/${outputPath}`;
 };
 
-// Improved Cloud Storage upload with chunking
+/**
+ * Upload a single file to GCP Cloud Storage
+ * @param localPath - Local file path. If relative, it's relative to current working directory
+ * @param storagePath - Destination path in storage bucket, must be relative path (e.g., 'videos/123/file.mp4')
+ * @param options - Upload options for caching and resumable uploads
+ */
 const uploadFile = async (
   localPath: string,
   storagePath: string,
@@ -37,7 +47,27 @@ const uploadFile = async (
   });
 };
 
-// Improved directory upload with concurrency control
+/**
+ * Upload all files from a local directory to GCP Cloud Storage.
+ * Processes files in batches to prevent memory issues.
+ *
+ * @param localDir - Local directory path. If relative, it's relative to current working directory
+ * @param storagePath - Base destination path in storage bucket (e.g., 'videos/123').
+ *                      Must be a relative path, should NOT start with '/'
+ * @param options - Upload options including batch size for concurrent uploads
+ *
+ * Example:
+ * Local directory: /tmp/videos/123/ or ./videos/123/
+ * Files: [1.ts, 2.ts, playlist.m3u8]
+ * storagePath: 'videos/abc' (NOT '/videos/abc')
+ * Result in GCS:
+ * - videos/abc/1.ts
+ * - videos/abc/2.ts
+ * - videos/abc/playlist.m3u8
+ *
+ * Note: Google Cloud Storage doesn't use absolute paths - all paths are relative
+ * to the bucket root. Any leading slashes will be removed.
+ */
 const uploadDirectory = async (
   localDir: string,
   storagePath: string,

@@ -26,7 +26,6 @@ const upload = async (request: ValidatedRequest<UploadRequest>) => {
   const workingDir = path.join(os.tmpdir(), uniqueDir);
   const local_file_path = path.join(workingDir, "input.mp4");
 
-  console.log(`workingDir`, workingDir);
   await mkdir(workingDir, { recursive: true });
 
   // Download video
