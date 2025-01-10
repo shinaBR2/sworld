@@ -10,9 +10,13 @@ import {
 import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import { convertToHLS, takeScreenshot } from ".";
+import { existsSync } from "fs";
 
 vi.mock("fluent-ffmpeg");
 vi.mock("@google-cloud/storage");
+vi.mock("fs", () => ({
+  existsSync: vi.fn(),
+}));
 vi.mock("./file-helpers", () => ({
   downloadFile: vi.fn(),
   uploadDirectory: vi.fn(),
@@ -47,6 +51,20 @@ describe("FFmpeg Helpers", () => {
   describe("convertToHLS", () => {
     const inputPath = "/path/to/input.mp4";
     const outputDir = "/path/to/output";
+
+    beforeEach(() => {
+      // Set default behavior for all tests in this describe block
+      vi.mocked(existsSync).mockReturnValue(true);
+    });
+
+    it("should throw error if input file does not exist", async () => {
+      vi.mocked(existsSync).mockReturnValueOnce(false);
+
+      await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(
+        "Input file does not exist"
+      );
+      expect(ffmpeg).not.toHaveBeenCalled();
+    });
 
     it("should convert video successfully", async () => {
       // Setup the success case
@@ -86,6 +104,7 @@ describe("FFmpeg Helpers", () => {
       });
 
       await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(error);
+      expect(ffmpeg).toHaveBeenCalled();
       expect(mockFFmpeg.run).toHaveBeenCalled();
     });
   });

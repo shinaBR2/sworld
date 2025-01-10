@@ -2,6 +2,7 @@ import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import { cleanupDirectory } from "../file";
+import { existsSync } from "fs";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -17,6 +18,10 @@ const convertToHLS = async (
   inputPath: string,
   outputDir: string
 ): Promise<void> => {
+  if (!existsSync(inputPath)) {
+    throw new Error("Input file does not exist");
+  }
+
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
       .outputOptions([
@@ -27,6 +32,9 @@ const convertToHLS = async (
         "-f hls",
       ])
       .output(path.join(outputDir, "playlist.m3u8"))
+      .on("progress", (progress) => {
+        console.log(`Processing: ${progress.percent}% done`);
+      })
       .on("end", resolve)
       .on("error", reject)
       .run();
