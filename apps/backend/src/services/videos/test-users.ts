@@ -1,5 +1,4 @@
 import { initialize, listUsers } from "src/database";
-import { envConifg } from "src/utils/envConfig";
 import { AppError } from "src/utils/schema";
 
 const testUsers = async () => {

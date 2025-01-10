@@ -1,11 +1,9 @@
-import { Request as ExpressRequest } from "express";
-import { VideoDataInput } from "./helpers/interfaces";
 import { verifySignature } from "./helpers/validator";
 import { convertVideo } from "./helpers/request-handler";
 // @ts-ignore
 import { z } from "zod";
 import { AppError } from "src/utils/schema";
-import { Header, ValidatedRequest } from "src/utils/validator";
+import { ValidatedRequest } from "src/utils/validator";
 
 interface ConvertData {
   rows: { id: string; video_url: string }[];
