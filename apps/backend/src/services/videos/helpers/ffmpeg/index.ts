@@ -8,8 +8,8 @@ import {
   createDirectory,
   cleanupDirectory,
   verifyFileSize,
-} from "./file";
-import { getDownloadUrl, uploadDirectory } from "./gcp-cloud-storage";
+} from "../file";
+import { getDownloadUrl, uploadDirectory } from "../gcp-cloud-storage";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -112,4 +112,4 @@ const generateThumbnail = async (videoPath: string): Promise<string> => {
   }
 };
 
-export { handleConvertVideo, generateThumbnail };
+export { convertToHLS, takeScreenshot, handleConvertVideo, generateThumbnail };

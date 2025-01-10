@@ -1,5 +1,5 @@
 import { saveVideoSource } from "../../../database";
-import { ConversionVideo, handleConvertVideo } from "./ffmpeg-helpers";
+import { ConversionVideo, handleConvertVideo } from "./ffmpeg";
 
 const postConvert = async (data: { id: string; videoUrl: string }) => {
   const { id, videoUrl } = data;
