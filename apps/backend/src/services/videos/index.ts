@@ -4,8 +4,8 @@ import { envConifg } from "src/utils/envConfig";
 import { testUsers } from "./test-users";
 import { AppError, AppResponse } from "src/utils/schema";
 import { validateRequest } from "src/utils/validator";
-import { convert, ConvertRequest, ConvertSchema } from "./convert";
 import { upload } from "./upload";
+import { ConvertRequest, ConvertSchema, convert } from "./convert";
 
 initializeApp({
   storageBucket: envConifg.storageBucket,
@@ -31,21 +31,6 @@ videosRouter.post(
       const video = await convert(req);
 
       res.json(AppResponse(true, "ok", video));
-    } catch (error) {
-      console.log(`some thing wrong`, error);
-      res.json(AppError("Error fetching users", error));
-    }
-  }
-);
-
-videosRouter.post(
-  "/thumbnail",
-  // validateRequest<ConvertRequest>(ConvertSchema),
-  async (req: any, res) => {
-    try {
-      const cloudinaryUrl = await upload(req);
-
-      res.json(AppResponse(true, "ok", cloudinaryUrl));
     } catch (error) {
       console.log(`some thing wrong`, error);
       res.json(AppError("Error fetching users", error));

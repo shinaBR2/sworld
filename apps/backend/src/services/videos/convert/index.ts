@@ -1,9 +1,8 @@
-import { verifySignature } from "./helpers/validator";
-import { convertVideo } from "./helpers/request-handler";
-// @ts-ignore
-import { z } from "zod";
-import { AppError } from "src/utils/schema";
 import { ValidatedRequest } from "src/utils/validator";
+import { verifySignature } from "./validator";
+import { AppError } from "src/utils/schema";
+import { z } from "zod";
+import { convertVideo } from "./handler";
 
 interface ConvertData {
   rows: { id: string; video_url: string }[];
@@ -14,11 +13,6 @@ interface ConvertRequest {
   contentTypeHeader: string;
   signatureHeader: string;
 }
-
-const extractVideoData = (data: ConvertData) => {
-  const { id, video_url: videoUrl } = data.rows[0];
-  return { id, videoUrl };
-};
 
 const VideoDataSchema = z.object({
   id: z.string(),
@@ -50,6 +44,11 @@ const ConvertSchema = z
     contentTypeHeader: req.headers["content-type"] as string,
     signatureHeader: req.headers["x-webhook-signature"] as string,
   }));
+
+const extractVideoData = (data: ConvertData) => {
+  const { id, video_url: videoUrl } = data.rows[0];
+  return { id, videoUrl };
+};
 
 const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   const { validatedData } = request;
@@ -93,4 +92,4 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   return video;
 };
 
-export { ConvertSchema, convert, ConvertRequest };
+export { ConvertRequest, ConvertSchema, convert };

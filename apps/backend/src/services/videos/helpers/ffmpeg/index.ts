@@ -1,15 +1,7 @@
-import * as os from "os";
 import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-import {
-  generateTempDirName,
-  downloadFile,
-  createDirectory,
-  cleanupDirectory,
-  verifyFileSize,
-} from "../file";
-import { getDownloadUrl, uploadDirectory } from "../gcp-cloud-storage";
+import { cleanupDirectory } from "../file";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -52,7 +44,7 @@ const takeScreenshot = async (
   return new Promise((resolve, reject) => {
     ffmpeg(videoPath)
       .screenshot({
-        timestamps: ["00:00:03"], // Using earlier timestamp for better performance
+        timestamps: ["00:03:03"], // Using earlier timestamp for better performance
         folder: outputDir,
         filename: filename,
       })
@@ -63,38 +55,6 @@ const takeScreenshot = async (
         reject(new Error(`FFmpeg error: ${err.message}`));
       });
   });
-};
-
-const handleConvertVideo = async (data: ConversionVideo) => {
-  const { id, videoUrl } = data;
-  const uniqueDir = generateTempDirName();
-  const workingDir = path.join(os.tmpdir(), uniqueDir);
-  const outputDir = path.join(workingDir, "output");
-
-  try {
-    await createDirectory(workingDir);
-    await createDirectory(outputDir);
-
-    const inputPath = path.join(workingDir, "input.mp4");
-    await downloadFile(videoUrl, inputPath);
-    await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
-
-    const outputPath = path.normalize(`videos/${id}`).replace(/^\/+|\/+$/g, "");
-
-    await convertToHLS(inputPath, outputDir);
-    await uploadDirectory(outputDir, outputPath);
-    await cleanupDirectory(workingDir);
-
-    return getDownloadUrl(`${outputPath}/playlist.m3u8`);
-  } catch (error) {
-    await cleanupDirectory(workingDir);
-    if (error instanceof Error) {
-      console.error("Video conversion error:", error);
-      throw new Error(error.message);
-    }
-    console.error("Unknown error during video conversion:", error);
-    throw new Error("Unknown error during video conversion");
-  }
 };
 
 const generateThumbnail = async (videoPath: string): Promise<string> => {
@@ -112,4 +72,4 @@ const generateThumbnail = async (videoPath: string): Promise<string> => {
   }
 };
 
-export { convertToHLS, takeScreenshot, handleConvertVideo, generateThumbnail };
+export { convertToHLS, takeScreenshot, generateThumbnail };
