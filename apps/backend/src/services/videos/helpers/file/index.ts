@@ -32,7 +32,6 @@ const downloadFile = async (url: string, localPath: string) => {
     const fileStream = createWriteStream(localPath);
 
     if (!response.body) {
-      // unlink(localPath).catch(logger.error);
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(logger.error);
       return reject(new Error("No response body"));
@@ -56,13 +55,11 @@ const downloadFile = async (url: string, localPath: string) => {
       } catch (error) {
         const unlinkAsync = promisify(unlink);
         unlinkAsync(localPath).catch(logger.error);
-        // unlink(localPath).catch(logger.error);
         reject(error);
       }
     })();
 
     fileStream.on("error", (error: any) => {
-      // unlink(localPath).catch(logger.error);
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(logger.error);
       reject(error);
