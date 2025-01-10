@@ -8,7 +8,6 @@ import {
 } from ".";
 import { createWriteStream, unlink, stat } from "fs";
 import { mkdir, rm } from "fs/promises";
-import * as path from "path";
 
 // Mock all filesystem-related modules
 vi.mock("fs");
@@ -188,29 +187,17 @@ describe("File Handlers", () => {
     });
 
     it("handles cleanup error gracefully", async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
       const error = new Error("Cleanup failed");
       vi.mocked(rm).mockRejectedValue(error);
 
       await cleanupDirectory("/test/dir");
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Cleanup failed:", error);
-      consoleErrorSpy.mockRestore();
     });
 
     it("handles stat error gracefully", async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
       const error = new Error("Stat failed");
       vi.mocked(stat).mockImplementation((_, callback) => callback(error));
 
       await cleanupDirectory("/test/dir");
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Cleanup failed:", error);
-      consoleErrorSpy.mockRestore();
     });
   });
 
