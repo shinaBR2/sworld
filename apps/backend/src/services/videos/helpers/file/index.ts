@@ -76,7 +76,9 @@ const createDirectory = async (dirPath: string): Promise<void> => {
 
 const cleanupDirectory = async (dirPath: string): Promise<void> => {
   try {
-    if (path.extname(dirPath)) {
+    const statAsync = promisify(stat);
+    const stats = await statAsync(dirPath);
+    if (stats.isFile()) {
       // If it's a file
       const unlinkAsync = promisify(unlink);
       await unlinkAsync(dirPath);
