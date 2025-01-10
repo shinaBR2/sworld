@@ -46,7 +46,11 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     await downloadFile(videoUrl, inputPath);
     await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
 
-    const outputPath = path.normalize(`videos/${id}`).replace(/^\/+|\/+$/g, "");
+    const outputPath = path
+      .join("videos", id)
+      .split(path.sep)
+      .filter(Boolean)
+      .join("/");
 
     await convertToHLS(inputPath, outputDir);
     await uploadDirectory(outputDir, outputPath);
