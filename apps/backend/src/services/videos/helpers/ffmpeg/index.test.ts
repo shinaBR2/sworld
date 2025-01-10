@@ -104,7 +104,7 @@ describe("FFmpeg Helpers", () => {
       // Verify ffmpeg was called with correct parameters
       expect(ffmpeg).toHaveBeenCalledWith(videoPath);
       expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
-        timestamps: ["00:00:03"],
+        timestamps: ["00:03:03"],
         folder: outputDir,
         filename: filename,
       });
