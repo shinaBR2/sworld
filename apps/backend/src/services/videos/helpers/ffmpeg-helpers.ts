@@ -1,5 +1,5 @@
 import * as os from "os";
-import { stat } from "fs";
+import { stat, unlink, access } from "fs";
 import { mkdir } from "fs/promises";
 import { rm } from "fs/promises";
 import { promisify } from "util";
@@ -15,6 +15,7 @@ import {
 //@ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import { tmpdir } from "os";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 export interface ConversionVideo {
@@ -100,4 +101,49 @@ const handleConvertVideo = async (data: ConversionVideo) => {
   }
 };
 
-export { handleConvertVideo };
+/**
+ * Screenshot video to thumnail and return local thumbnail file path
+ * videoPath should be RELATIVE local file path
+ *
+ * @param videoPath string
+ * @returns
+ */
+const generateThumbnail = async (videoPath: string): Promise<string> => {
+  const absoluteVideoPath = path.resolve(videoPath);
+  const outputDir = path.dirname(absoluteVideoPath);
+  const outputFilename = `thumb_${Date.now()}.jpg`;
+  const thumbnailPath = path.join(outputDir, outputFilename);
+
+  try {
+    await new Promise((resolve, reject) => {
+      ffmpeg(absoluteVideoPath)
+        .screenshot({
+          timestamps: ["00:03:00"],
+          folder: outputDir, // Specify the output folder
+          filename: outputFilename, // Just the filename, not the full path
+        })
+        .on("start", (cmd) => {
+          console.log("FFmpeg command:", cmd);
+        })
+        .on("end", resolve)
+        .on("error", (err, stdout, stderr) => {
+          console.error("FFmpeg stdout:", stdout);
+          console.error("FFmpeg stderr:", stderr);
+          reject(new Error(`FFmpeg error: ${err.message}`));
+        });
+    });
+
+    return thumbnailPath;
+  } catch (error) {
+    try {
+      const unlinkAsync = promisify(unlink);
+      unlinkAsync(thumbnailPath).catch(console.error);
+    } catch (e) {
+      // File doesn't exist or can't be accessed, ignore
+    }
+
+    throw error;
+  }
+};
+
+export { handleConvertVideo, generateThumbnail };

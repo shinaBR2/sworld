@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "tsx src/index.ts",
+    "start": "tsx src/index.ts --watch",
     "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
     "test": "vitest",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sworld-dc --project node-express ./dist && sentry-cli sourcemaps upload --org sworld-dc --project node-express ./dist"
@@ -28,6 +28,7 @@
     "@sentry/profiling-node": "^8.45.0",
     "@simplewebauthn/server": "^13.0.0",
     "@simplewebauthn/types": "^12.0.0",
+    "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
