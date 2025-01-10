@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { existsSync } from "fs";
-import { unlink } from "fs/promises";
 import { envConfig } from "src/utils/envConfig";
+import { logger } from "src/utils/logger";
 
 cloudinary.config({
   cloud_name: envConfig.cloudinaryName,
@@ -25,7 +25,7 @@ const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
 
     throw new Error("Upload failed: No result returned");
   } catch (error) {
-    console.error("Cloudinary upload failed:", error);
+    logger.error("Cloudinary upload failed:", error);
     throw error;
   }
 };

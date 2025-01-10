@@ -2,7 +2,6 @@ import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import { envConfig } from "./utils/envConfig";
 
-console.log(`Run sentry init`);
 Sentry.init({
   dsn: envConfig.sentrydsn,
   integrations: [nodeProfilingIntegration()],

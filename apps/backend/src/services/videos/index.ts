@@ -5,6 +5,7 @@ import { testUsers } from "./test-users";
 import { AppError, AppResponse } from "src/utils/schema";
 import { validateRequest } from "src/utils/validator";
 import { ConvertRequest, ConvertSchema, convert } from "./convert";
+import { logger } from "src/utils/logger";
 
 initializeApp({
   storageBucket: envConfig.storageBucket,
@@ -31,7 +32,7 @@ videosRouter.post(
 
       res.json(AppResponse(true, "ok", video));
     } catch (error) {
-      console.log(`some thing wrong`, error);
+      logger.info(`some thing wrong`, error);
       res.json(AppError("Error fetching users", error));
     }
   }

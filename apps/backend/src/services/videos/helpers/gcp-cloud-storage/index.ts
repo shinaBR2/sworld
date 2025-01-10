@@ -2,6 +2,7 @@ import { getStorage } from "firebase-admin/storage";
 import { existsSync } from "fs";
 import { readdir } from "fs/promises";
 import path from "path";
+import { logger } from "src/utils/logger";
 
 interface UploadOptions {
   cacheControl?: string;
@@ -94,11 +95,11 @@ const uploadDirectory = async (
         try {
           await uploadFile(localFilePath, storageFilePath, options);
           uploadedFiles++;
-          console.log(
+          logger.info(
             `Progress: ${uploadedFiles}/${totalFiles} files uploaded`
           );
         } catch (error) {
-          console.error(`Failed to upload ${file}:`, error);
+          logger.error(`Failed to upload ${file}:`, error);
           throw error;
         }
       })

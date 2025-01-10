@@ -11,6 +11,7 @@ import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import { convertToHLS, takeScreenshot } from ".";
 import { existsSync } from "fs";
+import { logger } from "src/utils/logger";
 
 vi.mock("fluent-ffmpeg");
 vi.mock("@google-cloud/storage");
@@ -141,10 +142,8 @@ describe("FFmpeg Helpers", () => {
       const stdout = "FFmpeg process output";
       const stderr = "FFmpeg process error output";
 
-      // Setup console.error mock
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      // Setup logger.error mock
+      const consoleSpy = vi.spyOn(logger, "error").mockImplementation(() => {});
 
       // Setup the error case
       mockFFmpeg.on.mockImplementation((event, callback) => {

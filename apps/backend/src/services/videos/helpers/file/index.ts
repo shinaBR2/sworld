@@ -1,8 +1,8 @@
 import { createWriteStream, unlink, stat } from "fs";
 import { promisify } from "util";
-import * as path from "path";
 import * as crypto from "crypto";
 import { mkdir, rm } from "fs/promises";
+import { logger } from "src/utils/logger";
 
 // Helper to generate unique temporary directory names
 const generateTempDirName = () => {
@@ -32,9 +32,9 @@ const downloadFile = async (url: string, localPath: string) => {
     const fileStream = createWriteStream(localPath);
 
     if (!response.body) {
-      // unlink(localPath).catch(console.error);
+      // unlink(localPath).catch(logger.error);
       const unlinkAsync = promisify(unlink);
-      unlinkAsync(localPath).catch(console.error);
+      unlinkAsync(localPath).catch(logger.error);
       return reject(new Error("No response body"));
     }
 
@@ -55,16 +55,16 @@ const downloadFile = async (url: string, localPath: string) => {
         resolve();
       } catch (error) {
         const unlinkAsync = promisify(unlink);
-        unlinkAsync(localPath).catch(console.error);
-        // unlink(localPath).catch(console.error);
+        unlinkAsync(localPath).catch(logger.error);
+        // unlink(localPath).catch(logger.error);
         reject(error);
       }
     })();
 
     fileStream.on("error", (error: any) => {
-      // unlink(localPath).catch(console.error);
+      // unlink(localPath).catch(logger.error);
       const unlinkAsync = promisify(unlink);
-      unlinkAsync(localPath).catch(console.error);
+      unlinkAsync(localPath).catch(logger.error);
       reject(error);
     });
   });
@@ -87,7 +87,7 @@ const cleanupDirectory = async (dirPath: string): Promise<void> => {
       await rm(dirPath, { recursive: true, force: true });
     }
   } catch (error) {
-    console.error("Cleanup failed:", error);
+    logger.error("Cleanup failed:", error);
   }
 };
 

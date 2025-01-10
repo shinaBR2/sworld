@@ -15,7 +15,7 @@ import { saveNewPasskey } from "./userHelpers";
 
 //     return options;
 //   } catch (error) {
-//     console.error("Error generating registration options:", error);
+//     logger.error("Error generating registration options:", error);
 //     throw AppError("Internal server error");
 //   }
 // });
@@ -39,7 +39,7 @@ import { saveNewPasskey } from "./userHelpers";
 //       message: "Registration successful",
 //     };
 //   } catch (error) {
-//     console.error("Error in registration verification:", error);
+//     logger.error("Error in registration verification:", error);
 //     throw AppError("Internal server error");
 //   }
 // });
@@ -50,13 +50,13 @@ import { saveNewPasskey } from "./userHelpers";
 //     const options = await authenticationHelpers.generateOptions(userId);
 
 //     if (!options) {
-//       console.error("Failed to generate options:");
+//       logger.error("Failed to generate options:");
 //       throw AppError("Failed to generate options");
 //     }
 
 //     return options;
 //   } catch (error) {
-//     console.error("Error generating authentication options:", error);
+//     logger.error("Error generating authentication options:", error);
 //     throw AppError("Internal server error");
 //   }
 // });
@@ -78,7 +78,7 @@ import { saveNewPasskey } from "./userHelpers";
 //       message: "Authentication successful",
 //     };
 //   } catch (error) {
-//     console.error("Error in authentication verification:", error);
+//     logger.error("Error in authentication verification:", error);
 //     throw AppError("Internal server error");
 //   }
 // });

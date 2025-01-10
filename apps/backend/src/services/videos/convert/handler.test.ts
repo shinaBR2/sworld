@@ -21,6 +21,7 @@ import {
 } from "../helpers/file";
 import { getDownloadUrl, uploadDirectory } from "../helpers/gcp-cloud-storage";
 import { convertToHLS } from "../helpers/ffmpeg";
+import { logger } from "src/utils/logger";
 
 vi.mock("src/database", () => ({
   default: {},
@@ -79,12 +80,12 @@ describe("handleConvertVideo", () => {
   const mockConvertToHLS = convertToHLS as MockedFunction<typeof convertToHLS>;
 
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-  const originalConsoleError = console.error;
+  const originalConsoleError = logger.error;
 
   beforeEach(() => {
     vi.clearAllMocks();
     // @ts-ignore
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(logger, "error").mockImplementation(() => {});
 
     // Setup default mock implementations
     mockGenerateTempDirName.mockReturnValue(mockUniqueDir);
@@ -104,7 +105,7 @@ describe("handleConvertVideo", () => {
   });
 
   afterAll(() => {
-    console.error = originalConsoleError;
+    logger.error = originalConsoleError;
   });
 
   it("successfully converts video", async () => {

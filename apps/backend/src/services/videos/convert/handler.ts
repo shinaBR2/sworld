@@ -10,6 +10,7 @@ import {
 import { getDownloadUrl, uploadDirectory } from "../helpers/gcp-cloud-storage";
 import { convertToHLS } from "../helpers/ffmpeg";
 import { saveVideoSource } from "src/database";
+import { logger } from "src/utils/logger";
 
 export interface ConversionVideo {
   id: string;
@@ -55,10 +56,10 @@ const handleConvertVideo = async (data: ConversionVideo) => {
   } catch (error) {
     await cleanupDirectory(workingDir);
     if (error instanceof Error) {
-      console.error("Video conversion error:", error);
+      logger.error("Video conversion error:", error);
       throw new Error(error.message);
     }
-    console.error("Unknown error during video conversion:", error);
+    logger.error("Unknown error during video conversion:", error);
     throw new Error("Unknown error during video conversion");
   }
 };
@@ -74,7 +75,7 @@ const postConvert = async (data: { id: string; videoUrl: string }) => {
   const { id, videoUrl } = data;
   const video = await saveVideoSource(id, videoUrl);
 
-  console.log(`updated video`, video);
+  logger.info(`updated video`, video);
   return video;
 };
 
@@ -97,7 +98,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  console.log(`Converted video, now update database`);
+  logger.info(`Converted video, now update database`);
 
   let video;
   try {
@@ -109,7 +110,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  console.log(`Saved into database`);
+  logger.info(`Saved into database`);
 
   return video;
 };

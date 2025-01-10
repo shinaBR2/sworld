@@ -3,6 +3,7 @@ import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import { cleanupDirectory } from "../file";
 import { existsSync } from "fs";
+import { logger } from "src/utils/logger";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -33,7 +34,7 @@ const convertToHLS = async (
       ])
       .output(path.join(outputDir, "playlist.m3u8"))
       .on("progress", (progress) => {
-        console.log(`Processing: ${progress.percent}% done`);
+        logger.info(`Processing: ${progress.percent}% done`);
       })
       .on("end", resolve)
       .on("error", reject)
@@ -68,8 +69,8 @@ const takeScreenshot = async (
       })
       .on("end", resolve)
       .on("error", (err, stdout, stderr) => {
-        console.error("FFmpeg stdout:", stdout);
-        console.error("FFmpeg stderr:", stderr);
+        logger.error("FFmpeg stdout:", stdout);
+        logger.error("FFmpeg stderr:", stderr);
         reject(new Error(`FFmpeg error: ${err.message}`));
       });
   });
