@@ -1,9 +1,7 @@
-// import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
 import { videosRouter } from "./services/videos";
-import { envConfig } from "./utils/envConfig";
 import pinoHttp from "pino-http";
 
 const app: Express = express();
@@ -53,27 +51,11 @@ app.use(httpLogger);
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(helmet());
-
-// TODO
-// app.use(rateLimiter);
-
-// Request logging
-// app.use(requestLogger);
 
 // Routes
 // app.use("/health-check", healthCheckRouter);
-// app.use("/users", userRouter);
 app.use("/videos", videosRouter);
-
-app.get("/debug-sentry", function mainHandler(req, res) {
-  console.log(`dsn`, envConfig.sentrydsn);
-  throw new Error("My second Sentry error!");
-});
-
-// Swagger UI
-// app.use(openAPIRouter);
 
 // Error handlers
 // app.use(errorHandler());
