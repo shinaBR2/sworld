@@ -1,9 +1,14 @@
 // src/services/videos/helpers/__tests__/gcp-cloud-storage-helpers.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getStorage } from "firebase-admin/storage";
 import { readdir } from "fs/promises";
 import path from "path";
-import { getDownloadUrl, uploadFile, uploadDirectory } from ".";
+import {
+  getDownloadUrl,
+  uploadFile,
+  uploadDirectory,
+  DEFAULT_UPLOAD_OPTIONS,
+} from ".";
+import { existsSync } from "fs";
 
 // Create mock functions
 const uploadMock = vi.fn().mockResolvedValue([{}]);
@@ -19,7 +24,9 @@ vi.mock("firebase-admin/storage", () => ({
   })),
 }));
 
-// Mock fs/promises
+vi.mock("fs", () => ({
+  existsSync: vi.fn(),
+}));
 vi.mock("fs/promises", () => ({
   readdir: vi.fn(),
 }));
@@ -27,6 +34,7 @@ vi.mock("fs/promises", () => ({
 describe("gcp-cloud-storage-helpers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(existsSync).mockReturnValue(true);
   });
 
   describe("getDownloadUrl", () => {
@@ -49,9 +57,9 @@ describe("gcp-cloud-storage-helpers", () => {
 
       expect(uploadMock).toHaveBeenCalledWith(localPath, {
         destination: storagePath,
-        resumable: true,
+        resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
         metadata: {
-          cacheControl: "public, max-age=31536000",
+          cacheControl: DEFAULT_UPLOAD_OPTIONS.cacheControl,
         },
       });
     });
@@ -92,6 +100,8 @@ describe("gcp-cloud-storage-helpers", () => {
       const files = ["1.ts", "2.ts", "3.ts", "4.ts", "5.ts"];
 
       vi.mocked(readdir).mockResolvedValue(files as any);
+      // Use uploadMock directly since it's already set up as a mock function
+      uploadMock.mockResolvedValue(undefined);
 
       await uploadDirectory(localDir, storagePath);
 
@@ -101,9 +111,9 @@ describe("gcp-cloud-storage-helpers", () => {
       // Verify first file upload
       expect(uploadMock).toHaveBeenCalledWith(path.join(localDir, "1.ts"), {
         destination: path.join(storagePath, "1.ts"),
-        resumable: true,
+        resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
         metadata: {
-          cacheControl: "public, max-age=31536000",
+          cacheControl: DEFAULT_UPLOAD_OPTIONS.cacheControl,
         },
       });
     });
@@ -121,24 +131,38 @@ describe("gcp-cloud-storage-helpers", () => {
       const localDir = "/tmp/videos";
       const storagePath = "videos/test";
       const files = ["1.ts", "2.ts", "3.ts", "4.ts"];
+      const customOptions = {
+        ...DEFAULT_UPLOAD_OPTIONS,
+        batchSize: 2,
+      };
 
       vi.mocked(readdir).mockResolvedValue(files as any);
+      uploadMock.mockResolvedValue(undefined);
 
-      await uploadDirectory(localDir, storagePath, { batchSize: 2 });
+      await uploadDirectory(localDir, storagePath, customOptions);
 
       expect(uploadMock).toHaveBeenCalledTimes(4);
-      expect(uploadMock).toHaveBeenCalledWith(
-        path.join(localDir, "1.ts"),
-        expect.any(Object)
-      );
+      // Verify correct options are passed
+      expect(uploadMock).toHaveBeenCalledWith(path.join(localDir, "1.ts"), {
+        destination: path.join(storagePath, "1.ts"),
+        resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
+        metadata: {
+          cacheControl: DEFAULT_UPLOAD_OPTIONS.cacheControl,
+        },
+      });
     });
 
-    it("should handle directory upload errors", async () => {
-      vi.mocked(readdir).mockRejectedValue(new Error("Read directory failed"));
+    it("should handle file upload errors", async () => {
+      const localDir = "/tmp/videos";
+      const storagePath = "videos/test";
+      const files = ["1.ts", "2.ts"];
 
-      await expect(
-        uploadDirectory("/tmp/videos", "videos/test")
-      ).rejects.toThrow("Read directory failed");
+      vi.mocked(readdir).mockResolvedValue(files as any);
+      uploadMock.mockRejectedValue(new Error("Upload failed"));
+
+      await expect(uploadDirectory(localDir, storagePath)).rejects.toThrow(
+        "Upload failed"
+      );
     });
   });
 });

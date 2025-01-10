@@ -1,4 +1,5 @@
 import { getStorage } from "firebase-admin/storage";
+import { existsSync } from "fs";
 import { readdir } from "fs/promises";
 import path from "path";
 
@@ -8,7 +9,7 @@ interface UploadOptions {
   batchSize?: number;
 }
 
-const DEFAULT_OPTIONS: UploadOptions = {
+const DEFAULT_UPLOAD_OPTIONS: UploadOptions = {
   cacheControl: "public, max-age=31536000",
   resumable: true,
   batchSize: 3,
@@ -33,7 +34,7 @@ const getDownloadUrl = (outputPath: string) => {
 const uploadFile = async (
   localPath: string,
   storagePath: string,
-  options: UploadOptions = DEFAULT_OPTIONS
+  options: UploadOptions = DEFAULT_UPLOAD_OPTIONS
 ) => {
   const storage = getStorage();
   const bucket = storage.bucket();
@@ -71,10 +72,17 @@ const uploadFile = async (
 const uploadDirectory = async (
   localDir: string,
   storagePath: string,
-  options: UploadOptions = DEFAULT_OPTIONS
+  options: UploadOptions = DEFAULT_UPLOAD_OPTIONS
 ) => {
+  if (!existsSync(localDir)) {
+    throw new Error("Local directory does not exist");
+  }
+
   const files = await readdir(localDir);
-  const batchSize = (options.batchSize || DEFAULT_OPTIONS.batchSize) as number;
+  const batchSize = (options.batchSize ||
+    DEFAULT_UPLOAD_OPTIONS.batchSize) as number;
+  let uploadedFiles = 0;
+  const totalFiles = files.length;
 
   // Process files in batches to prevent memory issues
   for (let i = 0; i < files.length; i += batchSize) {
@@ -83,10 +91,19 @@ const uploadDirectory = async (
       batch.map(async (file: string) => {
         const localFilePath = path.join(localDir, file);
         const storageFilePath = path.join(storagePath, file);
-        await uploadFile(localFilePath, storageFilePath, options);
+        try {
+          await uploadFile(localFilePath, storageFilePath, options);
+          uploadedFiles++;
+          console.log(
+            `Progress: ${uploadedFiles}/${totalFiles} files uploaded`
+          );
+        } catch (error) {
+          console.error(`Failed to upload ${file}:`, error);
+          throw error;
+        }
       })
     );
   }
 };
 
-export { getDownloadUrl, uploadFile, uploadDirectory };
+export { DEFAULT_UPLOAD_OPTIONS, getDownloadUrl, uploadFile, uploadDirectory };
