@@ -35,7 +35,7 @@ describe("gcp-cloud-storage-helpers", () => {
 
   describe("getDownloadUrl", () => {
     it("should return correct download URL", () => {
-      const outputPath = "videos/test-123";
+      const outputPath = "videos/test-123/playlist.m3u8";
       const expected =
         "https://storage.googleapis.com/test-bucket/videos/test-123/playlist.m3u8";
 

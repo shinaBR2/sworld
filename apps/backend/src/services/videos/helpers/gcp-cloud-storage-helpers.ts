@@ -16,7 +16,7 @@ const DEFAULT_OPTIONS: UploadOptions = {
 
 const getDownloadUrl = (outputPath: string) => {
   const bucket = getStorage().bucket();
-  return `https://storage.googleapis.com/${bucket.name}/${outputPath}/playlist.m3u8`;
+  return `https://storage.googleapis.com/${bucket.name}/${outputPath}`;
 };
 
 // Improved Cloud Storage upload with chunking
