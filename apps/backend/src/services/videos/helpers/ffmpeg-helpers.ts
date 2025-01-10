@@ -9,7 +9,7 @@ import {
   cleanupDirectory,
   verifyFileSize,
 } from "./file-helpers";
-import { getDownloadUrl, uploadDirectory } from "./gcp-cloud-storage-helpers";
+import { getDownloadUrl, uploadDirectory } from "./gcp-cloud-storage";
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 

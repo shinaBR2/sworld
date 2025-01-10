@@ -3,11 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getStorage } from "firebase-admin/storage";
 import { readdir } from "fs/promises";
 import path from "path";
-import {
-  getDownloadUrl,
-  uploadFile,
-  uploadDirectory,
-} from "./gcp-cloud-storage-helpers";
+import { getDownloadUrl, uploadFile, uploadDirectory } from ".";
 
 // Create mock functions
 const uploadMock = vi.fn().mockResolvedValue([{}]);
