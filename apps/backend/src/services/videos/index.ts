@@ -4,7 +4,6 @@ import { envConifg } from "src/utils/envConfig";
 import { testUsers } from "./test-users";
 import { AppError, AppResponse } from "src/utils/schema";
 import { validateRequest } from "src/utils/validator";
-import { upload } from "./upload";
 import { ConvertRequest, ConvertSchema, convert } from "./convert";
 
 initializeApp({
