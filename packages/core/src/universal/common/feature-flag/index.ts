@@ -1,9 +1,16 @@
 import { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
 
-const checkFeatureFlag = (flag: FeatureFlagItemConditions, userId: string) => {
+const checkFeatureFlag = (
+  flag: FeatureFlagItemConditions | null,
+  userId: string
+) => {
+  if (!flag) {
+    return true;
+  }
+
   const { isGlobal, allowedUserIds } = flag;
 
-  if (isGlobal) {
+  if (isGlobal || !flag) {
     return true;
   }
 

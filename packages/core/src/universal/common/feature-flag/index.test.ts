@@ -3,6 +3,13 @@ import { checkFeatureFlag } from './index';
 import type { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
 
 describe('checkFeatureFlag', () => {
+  it('should return true when object is null (default)', () => {
+    const flag = null;
+
+    expect(checkFeatureFlag(flag, 'any-user-id')).toBe(true);
+    expect(checkFeatureFlag(flag, '')).toBe(true);
+  });
+
   it('should return true when isGlobal is true, regardless of userId', () => {
     const flag: FeatureFlagItemConditions = {
       isGlobal: true,
