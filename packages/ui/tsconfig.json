@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "ES2015"]
+    "lib": ["dom", "ES2015"],
+    "paths": {
+      "core/*": ["../core/src/*"],
+      "core": ["../core/src"]
+    }
   },
   "extends": "tsconfig/react-library.json",
   "include": ["."],

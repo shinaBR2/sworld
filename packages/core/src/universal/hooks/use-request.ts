@@ -7,6 +7,7 @@ interface UseRequestProps {
   document: string;
   variables?: Variables;
   getAccessToken?: () => Promise<string>;
+  staleTime?: number;
 }
 
 interface Headers {
@@ -15,7 +16,13 @@ interface Headers {
 }
 
 const useRequest = <TData = unknown>(props: UseRequestProps) => {
-  const { queryKey, getAccessToken, document, variables } = props;
+  const {
+    queryKey,
+    getAccessToken,
+    document,
+    variables,
+    staleTime = 5 * 60 * 1000,
+  } = props;
 
   const { hasuraUrl } = useQueryContext();
   const rs = useQuery<TData>({
@@ -57,6 +64,7 @@ const useRequest = <TData = unknown>(props: UseRequestProps) => {
         throw error;
       }
     },
+    staleTime,
   });
 
   return rs;

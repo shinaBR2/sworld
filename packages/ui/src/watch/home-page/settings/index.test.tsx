@@ -3,6 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { SettingsPanel } from '.';
 import '@testing-library/jest-dom';
 
+vi.mock('./upload-button', () => ({
+  UploadButton: () => <div data-testid="mock-upload-button">Upload Button</div>,
+}));
+
 describe('SettingsPanel', () => {
   const defaultProps = {
     open: true,
