@@ -1,7 +1,7 @@
 import { describe, expect, test, beforeEach, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act, RenderHookResult } from '@testing-library/react';
 import { User } from '@auth0/auth0-react';
-import { AuthProvider, useAuthContext } from './auth0';
+import { AuthContextValue, AuthProvider, useAuthContext } from './auth0';
 
 interface Auth0ContextInterface {
   isAuthenticated: boolean;
@@ -76,17 +76,22 @@ describe('AuthProvider', () => {
       return <AuthProvider config={mockConfig}>{children}</AuthProvider>;
     }
 
-    const { result } = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    });
 
-    await vi.waitFor(() => {
-      expect(result.current).toEqual(
-        expect.objectContaining({
-          isSignedIn: false,
-          isLoading: false,
-          user: null,
-          isAdmin: false,
-        })
-      );
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current).toEqual(
+          expect.objectContaining({
+            isSignedIn: false,
+            isLoading: false,
+            user: null,
+            isAdmin: false,
+          })
+        );
+      });
     });
   });
 
@@ -119,22 +124,27 @@ describe('AuthProvider', () => {
       return <AuthProvider config={mockConfig}>{children}</AuthProvider>;
     }
 
-    const { result } = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    });
 
-    await vi.waitFor(() => {
-      expect(result.current).toEqual(
-        expect.objectContaining({
-          isSignedIn: true,
-          isLoading: false,
-          user: expect.objectContaining({
-            id: 'db-user-123',
-            email: mockUser.email,
-            name: mockUser.name,
-            picture: mockUser.picture,
-          }),
-          isAdmin: false,
-        })
-      );
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current).toEqual(
+          expect.objectContaining({
+            isSignedIn: true,
+            isLoading: false,
+            user: expect.objectContaining({
+              id: 'db-user-123',
+              email: mockUser.email,
+              name: mockUser.name,
+              picture: mockUser.picture,
+            }),
+            isAdmin: false,
+          })
+        );
+      });
     });
   });
 
@@ -167,22 +177,27 @@ describe('AuthProvider', () => {
       return <AuthProvider config={mockConfig}>{children}</AuthProvider>;
     }
 
-    const { result } = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), { wrapper: Wrapper });
+    });
 
-    await vi.waitFor(() => {
-      expect(result.current).toEqual(
-        expect.objectContaining({
-          isSignedIn: true,
-          isLoading: false,
-          user: expect.objectContaining({
-            id: 'db-user-123',
-            email: mockUser.email,
-            name: mockUser.name,
-            picture: mockUser.picture,
-          }),
-          isAdmin: true,
-        })
-      );
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current).toEqual(
+          expect.objectContaining({
+            isSignedIn: true,
+            isLoading: false,
+            user: expect.objectContaining({
+              id: 'db-user-123',
+              email: mockUser.email,
+              name: mockUser.name,
+              picture: mockUser.picture,
+            }),
+            isAdmin: true,
+          })
+        );
+      });
     });
   });
 
@@ -202,17 +217,22 @@ describe('AuthProvider', () => {
       logout: vi.fn(),
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: ({ children }) => (
-        <AuthProvider config={mockConfig}>{children}</AuthProvider>
-      ),
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
     });
 
-    await vi.waitFor(() => {
-      expect(result.current.isSignedIn).toBe(true);
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current.isSignedIn).toBe(true);
 
-      // Verify session check was called
-      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+        // Verify session check was called
+        expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+      });
     });
   });
 
@@ -230,16 +250,21 @@ describe('AuthProvider', () => {
       logout: vi.fn(),
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: ({ children }) => (
-        <AuthProvider config={mockConfig}>{children}</AuthProvider>
-      ),
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
     });
 
-    await vi.waitFor(() => {
-      expect(result.current.isSignedIn).toBe(false);
-      expect(result.current.user).toBeNull();
-      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current.isSignedIn).toBe(false);
+        expect(renderResult.result.current.user).toBeNull();
+        expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+      });
     });
   });
 
@@ -264,16 +289,21 @@ describe('AuthProvider', () => {
       logout: vi.fn(),
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: ({ children }) => (
-        <AuthProvider config={mockConfig}>{children}</AuthProvider>
-      ),
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
     });
 
-    await vi.waitFor(() => {
-      expect(mockGetAccessTokenSilently).toHaveBeenCalled();
-      expect(result.current.isSignedIn).toBe(false);
-      expect(result.current.user).toBeNull();
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(mockGetAccessTokenSilently).toHaveBeenCalled();
+        expect(renderResult.result.current.isSignedIn).toBe(false);
+        expect(renderResult.result.current.user).toBeNull();
+      });
     });
   });
 
@@ -289,15 +319,20 @@ describe('AuthProvider', () => {
       logout: vi.fn(),
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: ({ children }) => (
-        <AuthProvider config={mockConfig}>{children}</AuthProvider>
-      ),
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
     });
 
-    await vi.waitFor(() => {
-      expect(mockGetAccessTokenSilently).not.toHaveBeenCalled();
-      expect(result.current.isSignedIn).toBe(false);
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(mockGetAccessTokenSilently).not.toHaveBeenCalled();
+        expect(renderResult.result.current.isSignedIn).toBe(false);
+      });
     });
   });
 });
