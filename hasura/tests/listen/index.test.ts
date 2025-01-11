@@ -257,5 +257,4 @@ await createRoleTestSuite(ROLE_USER, {
     allowed: [],
     denied: [],
   },
-  requireToken: true,
 });
