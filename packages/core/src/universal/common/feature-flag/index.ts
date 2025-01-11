@@ -5,12 +5,12 @@ const checkFeatureFlag = (
   userId: string
 ) => {
   if (!flag) {
-    return true;
+    return false;
   }
 
   const { isGlobal, allowedUserIds } = flag;
 
-  if (isGlobal || !flag) {
+  if (isGlobal) {
     return true;
   }
 

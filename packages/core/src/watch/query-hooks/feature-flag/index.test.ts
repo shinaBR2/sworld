@@ -135,7 +135,7 @@ describe('useFeatureFlag', () => {
     const { result } = renderHook(() => useFeatureFlag(defaultProps));
 
     expect(result.current).toEqual({
-      enabled: true,
+      enabled: false,
       isLoading: false,
     });
   });
