@@ -8,7 +8,7 @@ type QueryTestCase = {
   query: string;
   headers?: Record<string, string>;
   variables?: Record<string, unknown>;
-  additionalTest?: (response: unknown) => void;
+  additionalTest?: (response: unknown, roleName: string) => void;
 };
 
 const ROLE_ANONYMOUS = "anonymous";
@@ -135,4 +135,4 @@ const createRoleTestSuite = async (
   });
 };
 
-export { ROLE_ANONYMOUS, ROLE_USER, createRoleTestSuite };
+export { ROLE_ANONYMOUS, ROLE_USER, QueryTestCase, createRoleTestSuite };
