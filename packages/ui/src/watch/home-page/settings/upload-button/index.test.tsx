@@ -83,7 +83,6 @@ describe('UploadButton', () => {
     const button = screen.getByRole('button', { name: /Upload file/i });
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-disabled', 'true');
-    // expect(button).toBeDisabled();
   });
 
   it('should call useFeatureFlag with correct parameters', () => {
