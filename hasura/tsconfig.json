@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "types": ["vitest/globals", "node"],
-    "module": "CommonJS",
+    "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
