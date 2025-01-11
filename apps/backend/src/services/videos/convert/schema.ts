@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
 const VideoDataSchema = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  video_url: z.string().url(),
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  video_url: z
+    .string()
+    .url()
+    .regex(/^https:\/\//i, 'URL must use HTTPS')
+    .refine(url => {
+      const videoExtensions = ['.mp4'];
+      return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    }, 'URL must point to a video file'),
 });
 const EventMetadataSchema = z.object({
   id: z.string(),
