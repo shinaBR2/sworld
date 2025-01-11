@@ -4,19 +4,28 @@ interface Uploader {
   username: string;
 }
 
-// TODO move this into universal
-export type RequiredLinkComponent<P = unknown> = {
-  LinkComponent: NonNullable<WithLinkComponent<P>['LinkComponent']>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface GenericLinkProps<T = any> {
+  to: string;
+  params?: T;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type LinkComponentType<T = any> = React.ComponentType<
+  GenericLinkProps<T>
+>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RequiredLinkComponent<T = any> = {
+  LinkComponent: LinkComponentType<T>;
 };
 
-export interface WithLinkComponent<P = unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface WithLinkComponent<T = any> {
   asLink?: boolean;
-  LinkComponent?: React.ComponentType<{
-    to: string;
-    params?: P;
-    children: React.ReactNode;
-    style?: React.CSSProperties;
-  }>;
+  LinkComponent?: LinkComponentType<T>;
 }
 
 export interface Video {
@@ -29,12 +38,10 @@ export interface Video {
   user: Uploader;
 }
 
-export interface HomeContainerProps<P = unknown>
-  extends RequiredLinkComponent<P> {
+export interface HomeContainerProps extends RequiredLinkComponent {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
 
-export interface VideoDetailContainerProps<P = unknown>
-  extends RequiredLinkComponent<P> {
+export interface VideoDetailContainerProps extends RequiredLinkComponent {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideoDetail>;
 }
