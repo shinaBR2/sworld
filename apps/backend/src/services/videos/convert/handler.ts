@@ -15,6 +15,7 @@ import { logger } from "src/utils/logger";
 export interface ConversionVideo {
   id: string;
   videoUrl: string;
+  userId: string;
 }
 
 /**
@@ -33,7 +34,7 @@ export interface ConversionVideo {
  * 6. Clean up temporary files
  */
 const handleConvertVideo = async (data: ConversionVideo) => {
-  const { id, videoUrl } = data;
+  const { id, videoUrl, userId } = data;
   const uniqueDir = generateTempDirName();
   const workingDir = path.join(os.tmpdir(), uniqueDir);
   const outputDir = path.join(workingDir, "output");
@@ -47,7 +48,7 @@ const handleConvertVideo = async (data: ConversionVideo) => {
     await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
 
     const outputPath = path
-      .join("videos", id)
+      .join("videos", userId, id)
       .split(path.sep)
       .filter(Boolean)
       .join("/");
@@ -102,7 +103,9 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  logger.info(`Converted video, now update database`);
+  logger.info(
+    `[/videos/convert] video ${inputData.id} converted and uploaded, updating database...`
+  );
 
   let video;
   try {
@@ -114,7 +117,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  logger.info(`Saved into database`);
+  logger.info(`[/videos/convert] video ${inputData.id} finished!`);
 
   return video;
 };

@@ -54,6 +54,7 @@ describe("handleConvertVideo", () => {
 
   const mockData = {
     id: "test-video-123",
+    userId: "user-123",
     videoUrl: "https://example.com/test.mp4",
   };
 
@@ -92,7 +93,7 @@ describe("handleConvertVideo", () => {
     mockDownloadFile.mockResolvedValue(undefined);
     mockUploadDirectory.mockResolvedValue(undefined);
     mockGetDownloadUrl.mockReturnValue(
-      "https://storage.googleapis.com/test-bucket/videos/test-video-123/playlist.m3u8"
+      "https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8"
     );
     mockCreateDirectory.mockResolvedValue(undefined);
     mockCleanupDirectory.mockResolvedValue(undefined);
@@ -124,11 +125,11 @@ describe("handleConvertVideo", () => {
     expect(mockConvertToHLS).toHaveBeenCalledWith(mockInputPath, mockOutputDir);
     expect(mockUploadDirectory).toHaveBeenCalledWith(
       mockOutputDir,
-      `videos/${mockData.id}`
+      `videos/${mockData.userId}/${mockData.id}`
     );
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
     expect(result).toBe(
-      "https://storage.googleapis.com/test-bucket/videos/test-video-123/playlist.m3u8"
+      "https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8"
     );
   });
 

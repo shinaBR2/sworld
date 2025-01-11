@@ -5,17 +5,20 @@ const VideoDataSchema = z.object({
   user_id: z.string(),
   video_url: z.string().url(),
 });
-const EventTraceContextSchema = z.object({
+const EventMetadaSchema = z.object({
+  id: z.string(),
   span_id: z.string(),
   trace_id: z.string(),
+});
+const EventSchema = z.object({
+  metadata: EventMetadaSchema,
+  data: VideoDataSchema,
 });
 
 const ConvertSchema = z
   .object({
     body: z.object({
-      id: z.string(),
-      event: VideoDataSchema,
-      event_trace_context: EventTraceContextSchema,
+      event: EventSchema,
     }),
     headers: z
       .object({
@@ -25,10 +28,12 @@ const ConvertSchema = z
       .passthrough(), // Allow additional headers
   })
   .transform((req) => ({
-    data: req.body.event,
-    metadata: {
-      id: req.body.id,
-      traceContext: req.body.event_trace_context,
+    event: {
+      data: req.body.event.data,
+      metadata: {
+        spanId: req.body.event.metadata.span_id,
+        traceId: req.body.event.metadata.trace_id,
+      },
     },
     contentTypeHeader: req.headers["content-type"] as string,
     signatureHeader: req.headers["x-webhook-signature"] as string,
