@@ -1,3 +1,4 @@
+import { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
 import { useRequest } from '../../../universal/hooks/use-request';
 
 const featureFlagQuery = `
@@ -10,11 +11,6 @@ const featureFlagQuery = `
 
 `;
 
-interface FeatureFlagItemConditions {
-  isGlobal: boolean;
-  allowedUserIds: string[];
-}
-
 interface FeatureFlag {
   id: string;
   conditions: FeatureFlagItemConditions;
@@ -22,7 +18,7 @@ interface FeatureFlag {
 
 interface useFeatureFlagProps {
   name: string;
-  getAccessToken: () => Promise<string>;
+  getAccessToken?: () => Promise<string>;
 }
 
 interface FeatureFlagResponse {

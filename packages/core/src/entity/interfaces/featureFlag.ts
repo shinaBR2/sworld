@@ -1,8 +1,4 @@
-export interface FeatureFlagItem {
+export interface FeatureFlagItemConditions {
   isGlobal: boolean;
   allowedUserIds: string[];
-  creatorId: string;
-  editorId?: string;
-  createdAt: Object;
-  updatedAt?: Object;
 }
