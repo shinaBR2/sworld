@@ -8,7 +8,7 @@ type QueryTestCase = {
   query: string;
   headers?: Record<string, string>;
   variables?: Record<string, unknown>;
-  additionalTest?: (response: any, roleName: string) => void;
+  additionalTest?: (response: never, roleName: string) => void;
 };
 
 const ROLE_ANONYMOUS = "anonymous";
