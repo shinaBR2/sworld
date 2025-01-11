@@ -50,7 +50,6 @@
     "@storybook/blocks": "^7.0.0",
     "@storybook/react": "^7.0.0",
     "@storybook/react-vite": "^7.0.0",
-    "@storybook/test": "^8.4.7",
     "@storybook/testing-library": "^0.2.2",
     "@sworld/jest-dom-preset": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3",
