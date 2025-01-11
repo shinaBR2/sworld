@@ -1,24 +1,24 @@
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
-import { verifySignature } from "./validator";
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { verifySignature } from './validator';
 
-const mockWebhookSecret = "test-secret";
+const mockWebhookSecret = 'test-secret';
 
-vi.mock("src/utils/envConfig", () => ({
+vi.mock('src/utils/envConfig', () => ({
   envConfig: {
-    webhookSignature: "test-secret",
+    webhookSignature: 'test-secret',
   },
 }));
 
-describe("verifySignature", () => {
+describe('verifySignature', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should return true when signature matches webhook secret", () => {
+  it('should return true when signature matches webhook secret', () => {
     expect(verifySignature(mockWebhookSecret)).toBe(true);
   });
 
-  it("should return false when signature does not match webhook secret", () => {
-    expect(verifySignature("wrong-secret")).toBe(false);
+  it('should return false when signature does not match webhook secret', () => {
+    expect(verifySignature('wrong-secret')).toBe(false);
   });
 });

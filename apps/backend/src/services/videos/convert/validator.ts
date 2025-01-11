@@ -1,4 +1,4 @@
-import { envConfig } from "src/utils/envConfig";
+import { envConfig } from 'src/utils/envConfig';
 
 const verifySignature = (signature: string | null) => {
   if (!signature) {

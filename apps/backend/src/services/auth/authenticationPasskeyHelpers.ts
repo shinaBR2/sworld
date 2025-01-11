@@ -4,13 +4,13 @@ import {
   getUserPasskeys,
   saveUpdatedCounter,
   setCurrentAuthenticationOptions,
-} from "./userHelpers";
+} from './userHelpers';
 import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
-} from "@simplewebauthn/server";
-import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID } from "./config";
-import { logger } from "src/utils/logger";
+} from '@simplewebauthn/server';
+import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID } from './config';
+import { logger } from 'src/utils/logger';
 
 const generateOptions = async (userId: string) => {
   const userPasskeys = await getUserPasskeys(userId);
@@ -18,13 +18,13 @@ const generateOptions = async (userId: string) => {
   const options = await generateAuthenticationOptions({
     rpID: RP_ID,
     // Require users to use a previously-registered authenticator
-    allowCredentials: userPasskeys.map((passkey) => ({
+    allowCredentials: userPasskeys.map(passkey => ({
       id: passkey.id,
       transports: passkey.transports,
     })),
   });
 
-  logger.info("auth generateOptions", options);
+  logger.info('auth generateOptions', options);
 
   await setCurrentAuthenticationOptions(userId, options);
   return options;
@@ -43,9 +43,9 @@ const verify = async (userId: string, credential: any) => {
 
   // @ts-ignore
   const user = userSnapshot.data();
-  logger.info("user data", user);
-  logger.info("user id", userId);
-  logger.info("passkey id", credential.id);
+  logger.info('user data', user);
+  logger.info('user id', userId);
+  logger.info('passkey id', credential.id);
   const { passkeyAuthenticationOptions: currentOptions } = user;
   const passkey = await getUserPasskey(userId, credential.id);
 

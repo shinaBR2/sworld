@@ -8,28 +8,28 @@ import {
   afterAll,
   MockedFunction,
   Mock,
-} from "vitest";
-import * as os from "os";
-import * as path from "path";
-import { handleConvertVideo } from "./handler";
+} from 'vitest';
+import * as os from 'os';
+import * as path from 'path';
+import { handleConvertVideo } from './handler';
 import {
   generateTempDirName,
   downloadFile,
   createDirectory,
   cleanupDirectory,
   verifyFileSize,
-} from "../helpers/file";
-import { getDownloadUrl, uploadDirectory } from "../helpers/gcp-cloud-storage";
-import { convertToHLS } from "../helpers/ffmpeg";
-import { logger } from "src/utils/logger";
+} from '../helpers/file';
+import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
+import { convertToHLS } from '../helpers/ffmpeg';
+import { logger } from 'src/utils/logger';
 
-vi.mock("src/database", () => ({
+vi.mock('src/database', () => ({
   default: {},
   prisma: {},
 }));
 
 // Mock all the imported helpers
-vi.mock("../helpers/file", () => ({
+vi.mock('../helpers/file', () => ({
   generateTempDirName: vi.fn(),
   downloadFile: vi.fn(),
   createDirectory: vi.fn(),
@@ -37,25 +37,25 @@ vi.mock("../helpers/file", () => ({
   verifyFileSize: vi.fn(),
 }));
 
-vi.mock("../helpers/gcp-cloud-storage", () => ({
+vi.mock('../helpers/gcp-cloud-storage', () => ({
   getDownloadUrl: vi.fn(),
   uploadDirectory: vi.fn(),
 }));
 
-vi.mock("../helpers/ffmpeg", () => ({
+vi.mock('../helpers/ffmpeg', () => ({
   convertToHLS: vi.fn(),
 }));
 
-describe("handleConvertVideo", () => {
-  const mockUniqueDir = "mock-dir";
+describe('handleConvertVideo', () => {
+  const mockUniqueDir = 'mock-dir';
   const mockWorkingDir = path.join(os.tmpdir(), mockUniqueDir);
-  const mockOutputDir = path.join(mockWorkingDir, "output");
-  const mockInputPath = path.join(mockWorkingDir, "input.mp4");
+  const mockOutputDir = path.join(mockWorkingDir, 'output');
+  const mockInputPath = path.join(mockWorkingDir, 'input.mp4');
 
   const mockData = {
-    id: "test-video-123",
-    userId: "user-123",
-    videoUrl: "https://example.com/test.mp4",
+    id: 'test-video-123',
+    userId: 'user-123',
+    videoUrl: 'https://example.com/test.mp4',
   };
 
   // Type the mocked functions
@@ -86,14 +86,14 @@ describe("handleConvertVideo", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // @ts-ignore
-    consoleErrorSpy = vi.spyOn(logger, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
 
     // Setup default mock implementations
     mockGenerateTempDirName.mockReturnValue(mockUniqueDir);
     mockDownloadFile.mockResolvedValue(undefined);
     mockUploadDirectory.mockResolvedValue(undefined);
     mockGetDownloadUrl.mockReturnValue(
-      "https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8"
+      'https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8'
     );
     mockCreateDirectory.mockResolvedValue(undefined);
     mockCleanupDirectory.mockResolvedValue(undefined);
@@ -109,7 +109,7 @@ describe("handleConvertVideo", () => {
     logger.error = originalConsoleError;
   });
 
-  it("successfully converts video", async () => {
+  it('successfully converts video', async () => {
     const result = await handleConvertVideo(mockData);
 
     expect(mockCreateDirectory).toHaveBeenNthCalledWith(1, mockWorkingDir);
@@ -129,57 +129,57 @@ describe("handleConvertVideo", () => {
     );
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
     expect(result).toBe(
-      "https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8"
+      'https://storage.googleapis.com/test-bucket/videos/user-123/test-video-123/playlist.m3u8'
     );
   });
 
-  it("handles file size verification failure", async () => {
-    mockVerifyFileSize.mockRejectedValueOnce(new Error("File too large"));
+  it('handles file size verification failure', async () => {
+    mockVerifyFileSize.mockRejectedValueOnce(new Error('File too large'));
 
     await expect(handleConvertVideo(mockData)).rejects.toThrow(
-      "File too large"
-    );
-    expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
-    expect(mockUploadDirectory).not.toHaveBeenCalled();
-  });
-
-  it("handles download failure", async () => {
-    mockDownloadFile.mockRejectedValueOnce(new Error("Download failed"));
-
-    await expect(handleConvertVideo(mockData)).rejects.toThrow(
-      "Download failed"
+      'File too large'
     );
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
     expect(mockUploadDirectory).not.toHaveBeenCalled();
   });
 
-  it("handles conversion failure", async () => {
-    mockConvertToHLS.mockRejectedValueOnce(new Error("Conversion failed"));
+  it('handles download failure', async () => {
+    mockDownloadFile.mockRejectedValueOnce(new Error('Download failed'));
 
     await expect(handleConvertVideo(mockData)).rejects.toThrow(
-      "Conversion failed"
+      'Download failed'
     );
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
     expect(mockUploadDirectory).not.toHaveBeenCalled();
   });
 
-  it("handles upload failure", async () => {
-    mockUploadDirectory.mockRejectedValueOnce(new Error("Upload failed"));
+  it('handles conversion failure', async () => {
+    mockConvertToHLS.mockRejectedValueOnce(new Error('Conversion failed'));
 
-    await expect(handleConvertVideo(mockData)).rejects.toThrow("Upload failed");
+    await expect(handleConvertVideo(mockData)).rejects.toThrow(
+      'Conversion failed'
+    );
+    expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
+    expect(mockUploadDirectory).not.toHaveBeenCalled();
+  });
+
+  it('handles upload failure', async () => {
+    mockUploadDirectory.mockRejectedValueOnce(new Error('Upload failed'));
+
+    await expect(handleConvertVideo(mockData)).rejects.toThrow('Upload failed');
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
   });
 
-  it("handles unknown error", async () => {
-    mockDownloadFile.mockRejectedValueOnce("Unknown error");
+  it('handles unknown error', async () => {
+    mockDownloadFile.mockRejectedValueOnce('Unknown error');
 
     await expect(handleConvertVideo(mockData)).rejects.toThrow(
-      "Unknown error during video conversion"
+      'Unknown error during video conversion'
     );
     expect(mockCleanupDirectory).toHaveBeenCalledWith(mockWorkingDir);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Unknown error during video conversion:",
-      "Unknown error"
+      'Unknown error during video conversion:',
+      'Unknown error'
     );
   });
 });
@@ -212,10 +212,10 @@ const createTestConvertVideo = (
   };
 };
 
-describe("convertVideo", () => {
+describe('convertVideo', () => {
   const mockData: ConvertVideoInput = {
-    id: "test-123",
-    videoUrl: "https://example.com/test.mp4",
+    id: 'test-123',
+    videoUrl: 'https://example.com/test.mp4',
   };
   const mockHandleConvertVideo = vi.fn();
   const mockPostConvert = vi.fn();
@@ -229,8 +229,8 @@ describe("convertVideo", () => {
     );
   });
 
-  it("successfully converts video and saves to database", async () => {
-    const mockConvertedUrl = "https://example.com/converted.m3u8";
+  it('successfully converts video and saves to database', async () => {
+    const mockConvertedUrl = 'https://example.com/converted.m3u8';
     const mockDbResult = { id: mockData.id, url: mockConvertedUrl };
 
     mockHandleConvertVideo.mockResolvedValue(mockConvertedUrl);
@@ -246,22 +246,22 @@ describe("convertVideo", () => {
     expect(result).toBe(mockDbResult);
   });
 
-  it("handles conversion error", async () => {
-    mockHandleConvertVideo.mockRejectedValue(new Error("Conversion failed"));
+  it('handles conversion error', async () => {
+    mockHandleConvertVideo.mockRejectedValue(new Error('Conversion failed'));
 
     await expect(testConvertVideo(mockData)).rejects.toThrow(
-      "Conversion failed"
+      'Conversion failed'
     );
     expect(mockPostConvert).not.toHaveBeenCalled();
   });
 
-  it("handles database error", async () => {
-    const mockConvertedUrl = "https://example.com/converted.m3u8";
+  it('handles database error', async () => {
+    const mockConvertedUrl = 'https://example.com/converted.m3u8';
 
     mockHandleConvertVideo.mockResolvedValue(mockConvertedUrl);
-    mockPostConvert.mockRejectedValue(new Error("Database error"));
+    mockPostConvert.mockRejectedValue(new Error('Database error'));
 
-    await expect(testConvertVideo(mockData)).rejects.toThrow("Database error");
+    await expect(testConvertVideo(mockData)).rejects.toThrow('Database error');
     expect(mockHandleConvertVideo).toHaveBeenCalledWith(mockData);
   });
 });

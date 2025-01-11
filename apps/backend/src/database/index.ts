@@ -1,15 +1,15 @@
-import Sequelize, { DataTypes } from "sequelize";
-import { envConfig } from "src/utils/envConfig";
+import Sequelize, { DataTypes } from 'sequelize';
+import { envConfig } from 'src/utils/envConfig';
 
 const databaseUrl = envConfig.databaseUrl;
 
 // @ts-ignore
 const sequelize = new Sequelize(databaseUrl, {
-  dialect: "postgres",
+  dialect: 'postgres',
 });
 
 const User = sequelize.define(
-  "users",
+  'users',
   {
     id: {
       type: DataTypes.UUID,
@@ -25,13 +25,13 @@ const User = sequelize.define(
   {
     underscored: true,
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 
 const Video = sequelize.define(
-  "videos",
+  'videos',
   {
     id: {
       type: DataTypes.UUID,
@@ -50,8 +50,8 @@ const Video = sequelize.define(
   {
     underscored: true,
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 
@@ -66,7 +66,7 @@ const listUsers = async () => {
 
 const saveVideoSource = async (id: string, source: string) => {
   return await Video.update(
-    { source, status: "ready" },
+    { source, status: 'ready' },
     {
       where: {
         id,

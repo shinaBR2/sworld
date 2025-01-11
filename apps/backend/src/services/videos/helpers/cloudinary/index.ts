@@ -1,7 +1,7 @@
-import { v2 as cloudinary } from "cloudinary";
-import { existsSync } from "fs";
-import { envConfig } from "src/utils/envConfig";
-import { logger } from "src/utils/logger";
+import { v2 as cloudinary } from 'cloudinary';
+import { existsSync } from 'fs';
+import { envConfig } from 'src/utils/envConfig';
+import { logger } from 'src/utils/logger';
 
 cloudinary.config({
   cloud_name: envConfig.cloudinaryName,
@@ -11,7 +11,7 @@ cloudinary.config({
 
 const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
   if (!localFilePath || !existsSync(localFilePath)) {
-    throw new Error("Invalid or missing file path");
+    throw new Error('Invalid or missing file path');
   }
 
   try {
@@ -23,9 +23,9 @@ const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
       return uploadResult.url;
     }
 
-    throw new Error("Upload failed: No result returned");
+    throw new Error('Upload failed: No result returned');
   } catch (error) {
-    logger.error("Cloudinary upload failed:", error);
+    logger.error('Cloudinary upload failed:', error);
     throw error;
   }
 };

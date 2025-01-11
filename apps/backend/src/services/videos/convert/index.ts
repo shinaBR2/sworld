@@ -1,8 +1,8 @@
-import { ValidatedRequest } from "src/utils/validator";
-import { verifySignature } from "./validator";
-import { AppError } from "src/utils/schema";
-import { convertVideo } from "./handler";
-import { logger } from "src/utils/logger";
+import { ValidatedRequest } from 'src/utils/validator';
+import { verifySignature } from './validator';
+import { AppError } from 'src/utils/schema';
+import { convertVideo } from './handler';
+import { logger } from 'src/utils/logger';
 
 interface ConvertData {
   id: string;
@@ -38,7 +38,7 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   const { data, metadata } = event;
 
   if (!verifySignature(signatureHeader)) {
-    throw AppError("Invalid signature");
+    throw AppError('Invalid signature');
   }
 
   let video;
@@ -49,7 +49,7 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
     );
     video = await convertVideo(extractVideoData(data));
   } catch (error) {
-    throw AppError("Failed to convert");
+    throw AppError('Failed to convert');
   }
 
   return video;

@@ -1,17 +1,17 @@
-import type { PublicKeyCredentialCreationOptionsJSON } from "@simplewebauthn/types";
-import { webcrypto } from "crypto";
+import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
+import { webcrypto } from 'crypto';
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
-} from "@simplewebauthn/server";
+} from '@simplewebauthn/server';
 // import { dbRead } from '../singleton/db';
 import {
   getUser,
   getUserPasskeys,
   setCurrentRegistrationOptions,
-} from "./userHelpers";
-import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID, RP_NAME } from "./config";
-import { logger } from "src/utils/logger";
+} from './userHelpers';
+import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID, RP_NAME } from './config';
+import { logger } from 'src/utils/logger';
 
 // @ts-ignore
 if (!global.crypto) global.crypto = webcrypto;
@@ -36,7 +36,7 @@ const generateOptions = async (userId: string) => {
   // (Pseudocode) Retrieve any of the user's previously-
   // registered authenticators
   const userPasskeys = await getUserPasskeys(userId);
-  logger.info("userPasskeys", userPasskeys);
+  logger.info('userPasskeys', userPasskeys);
 
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
@@ -44,9 +44,9 @@ const generateOptions = async (userId: string) => {
     userName: user.username,
     // Don't prompt users for additional information about the authenticator
     // (Recommended for smoother UX)
-    attestationType: "none",
+    attestationType: 'none',
     // Prevent users from re-registering existing authenticators
-    excludeCredentials: userPasskeys.map((passkey) => ({
+    excludeCredentials: userPasskeys.map(passkey => ({
       id: passkey.id,
       // Optional
       transports: passkey.transports,
@@ -54,10 +54,10 @@ const generateOptions = async (userId: string) => {
     // See "Guiding use of authenticators via authenticatorSelection" below
     authenticatorSelection: {
       // Defaults
-      residentKey: "preferred",
-      userVerification: "preferred",
+      residentKey: 'preferred',
+      userVerification: 'preferred',
       // Optional
-      authenticatorAttachment: "platform",
+      authenticatorAttachment: 'platform',
     },
   });
 
@@ -80,7 +80,7 @@ const verify = async (userId: string, credential: any) => {
 
   // @ts-ignore
   const user = userSnapshot.data();
-  logger.info("user data", user);
+  logger.info('user data', user);
   const { passkeyRegistrationOptions: currentOptions } = user;
 
   let verification;

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const VideoDataSchema = z.object({
   id: z.string(),
@@ -22,12 +22,12 @@ const ConvertSchema = z
     }),
     headers: z
       .object({
-        "content-type": z.string(),
-        "x-webhook-signature": z.string(),
+        'content-type': z.string(),
+        'x-webhook-signature': z.string(),
       })
       .passthrough(), // Allow additional headers
   })
-  .transform((req) => ({
+  .transform(req => ({
     event: {
       data: req.body.event.data,
       metadata: {
@@ -35,8 +35,8 @@ const ConvertSchema = z
         traceId: req.body.event.metadata.trace_id,
       },
     },
-    contentTypeHeader: req.headers["content-type"] as string,
-    signatureHeader: req.headers["x-webhook-signature"] as string,
+    contentTypeHeader: req.headers['content-type'] as string,
+    signatureHeader: req.headers['x-webhook-signature'] as string,
   }));
 
 export { ConvertSchema };

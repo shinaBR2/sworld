@@ -1,7 +1,7 @@
 // import { onCall } from '../singleton';
-import * as registrationHelpers from "./registrationPasskeyHelpers";
-import * as authenticationHelpers from "./authenticationPasskeyHelpers";
-import { saveNewPasskey } from "./userHelpers";
+import * as registrationHelpers from './registrationPasskeyHelpers';
+import * as authenticationHelpers from './authenticationPasskeyHelpers';
+import { saveNewPasskey } from './userHelpers';
 // import { AppError } from '../singleton/request';
 
 // const generatePasskeyRegistrationOptions = onCall(async ({ data }) => {

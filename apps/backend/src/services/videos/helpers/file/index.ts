@@ -1,12 +1,12 @@
-import { createWriteStream, unlink, stat } from "fs";
-import { promisify } from "util";
-import * as crypto from "crypto";
-import { mkdir, rm } from "fs/promises";
-import { logger } from "src/utils/logger";
+import { createWriteStream, unlink, stat } from 'fs';
+import { promisify } from 'util';
+import * as crypto from 'crypto';
+import { mkdir, rm } from 'fs/promises';
+import { logger } from 'src/utils/logger';
 
 // Helper to generate unique temporary directory names
 const generateTempDirName = () => {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomBytes(16).toString('hex');
 };
 
 // Improved file download with stream handling and cleanup
@@ -18,13 +18,13 @@ const downloadFile = async (url: string, localPath: string) => {
   }
 
   // Get content length if available
-  const contentLength = response.headers.get("content-length");
+  const contentLength = response.headers.get('content-length');
   if (contentLength) {
     const size = parseInt(contentLength);
     // Check if we have enough space (leaving some buffer)
     if (size > 400 * 1024 * 1024) {
       // 400MB limit
-      throw new Error("File too large for temporary storage");
+      throw new Error('File too large for temporary storage');
     }
   }
 
@@ -34,7 +34,7 @@ const downloadFile = async (url: string, localPath: string) => {
     if (!response.body) {
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(logger.error);
-      return reject(new Error("No response body"));
+      return reject(new Error('No response body'));
     }
 
     (async () => {
@@ -59,7 +59,7 @@ const downloadFile = async (url: string, localPath: string) => {
       }
     })();
 
-    fileStream.on("error", (error: any) => {
+    fileStream.on('error', (error: any) => {
       const unlinkAsync = promisify(unlink);
       unlinkAsync(localPath).catch(logger.error);
       reject(error);
@@ -84,7 +84,7 @@ const cleanupDirectory = async (dirPath: string): Promise<void> => {
       await rm(dirPath, { recursive: true, force: true });
     }
   } catch (error) {
-    logger.error("Cleanup failed:", error);
+    logger.error('Cleanup failed:', error);
   }
 };
 
@@ -95,7 +95,7 @@ const verifyFileSize = async (
   const statAsync = promisify(stat);
   const stats = await statAsync(filePath);
   if (stats.size > maxSize) {
-    throw new Error("Downloaded file too large for processing");
+    throw new Error('Downloaded file too large for processing');
   }
 };
 
