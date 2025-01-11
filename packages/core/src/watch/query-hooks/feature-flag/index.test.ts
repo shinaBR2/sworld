@@ -119,7 +119,7 @@ describe('useFeatureFlag', () => {
     });
   });
 
-  it('should return enabled when feature conditions is null (default)', () => {
+  it('should return disabled when feature conditions is null (default)', () => {
     const mockUseRequest = useRequest as Mock;
     mockUseRequest.mockReturnValue({
       data: {
