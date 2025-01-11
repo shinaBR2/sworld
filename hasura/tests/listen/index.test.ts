@@ -1,5 +1,6 @@
 import { expect } from "vitest";
 import {
+  QueryTestCase,
   ROLE_ANONYMOUS,
   ROLE_USER,
   createRoleTestSuite,
@@ -45,7 +46,7 @@ const userDeniedQueries = [
   },
 ];
 
-const anonymousAllowedQueries = [
+const anonymousAllowedQueries: QueryTestCase[] = [
   {
     name: "audios",
     query: `
@@ -256,5 +257,4 @@ await createRoleTestSuite(ROLE_USER, {
     allowed: [],
     denied: [],
   },
-  requireToken: true,
 });

@@ -8,7 +8,8 @@ type QueryTestCase = {
   query: string;
   headers?: Record<string, string>;
   variables?: Record<string, unknown>;
-  additionalTest?: (response: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  additionalTest?: (response: any, roleName: string) => void;
 };
 
 const ROLE_ANONYMOUS = "anonymous";
@@ -41,7 +42,9 @@ const initClient = async (requireToken = false) => {
 
     token = data.access_token;
   }
+
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
   const client = new GraphQLClient(hasuraEndpoint, { headers });
 
   return client;
@@ -56,16 +59,16 @@ const createRoleTestSuite = async (
       empty: [] as QueryTestCase[],
     },
     mutations = { allowed: [], denied: [] },
-    requireToken = false,
   }
 ) => {
+  const requireToken = roleName == ROLE_USER;
   const client = await initClient(requireToken);
 
   describe(`${roleName} Role Permissions`, () => {
     if (queries.allowed.length > 0) {
       describe("Allowed Queries", () => {
         test.each(queries.allowed)(
-          "$name query is allowed",
+          "$name",
           async ({ query, variables, additionalTest }) => {
             const response = await client.request(query, variables);
 
@@ -81,12 +84,9 @@ const createRoleTestSuite = async (
     // Test denied queries
     if (queries.denied.length > 0) {
       describe("Denied Queries", () => {
-        test.each(queries.denied)(
-          "$name query is denied",
-          async ({ query, variables }) => {
-            await expect(client.request(query, variables)).rejects.toThrow();
-          }
-        );
+        test.each(queries.denied)("$name", async ({ query, variables }) => {
+          await expect(client.request(query, variables)).rejects.toThrow();
+        });
       });
     }
 
@@ -94,7 +94,7 @@ const createRoleTestSuite = async (
     if (queries.empty.length > 0) {
       describe("Empty Queries", () => {
         test.each(queries.empty)(
-          "$name query returns empty result",
+          "$name",
           async ({ query, variables, additionalTest }) => {
             const response = await client.request(query, variables);
 
@@ -110,7 +110,7 @@ const createRoleTestSuite = async (
     if (mutations.allowed.length > 0) {
       describe("Allowed Mutations", () => {
         test.each(mutations.allowed)(
-          "$name mutation is allowed",
+          "$name",
           async ({ mutation, variables, additionalTest }) => {
             const response = await client.request(mutation, variables);
 
@@ -125,7 +125,7 @@ const createRoleTestSuite = async (
     if (mutations.denied.length > 0) {
       describe("Denied Mutations", () => {
         test.each(mutations.denied)(
-          "$name mutation is denied",
+          "$name",
           async ({ mutation, variables }) => {
             await expect(client.request(mutation, variables)).rejects.toThrow();
           }
@@ -135,4 +135,4 @@ const createRoleTestSuite = async (
   });
 };
 
-export { ROLE_ANONYMOUS, ROLE_USER, createRoleTestSuite };
+export { ROLE_ANONYMOUS, ROLE_USER, QueryTestCase, createRoleTestSuite };

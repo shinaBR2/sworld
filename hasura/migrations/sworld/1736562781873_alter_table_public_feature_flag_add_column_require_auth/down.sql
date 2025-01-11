@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- alter table "public"."feature_flag" add column "require_auth" boolean
+--  not null default 'true';
