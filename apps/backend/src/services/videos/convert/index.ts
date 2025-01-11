@@ -47,7 +47,7 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   try {
     logger.info(
       metadata,
-      `[/videos/convert] start processing event ${metadata.id}, video ${data.id}`
+      `[/videos/convert] start processing event "${metadata.id}", video "${data.id}"`
     );
     video = await convertVideo(extractVideoData(data));
   } catch (error) {

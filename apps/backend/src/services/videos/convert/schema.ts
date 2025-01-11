@@ -38,6 +38,7 @@ const ConvertSchema = z
     event: {
       data: req.body.event.data,
       metadata: {
+        id: req.body.event.metadata.id,
         spanId: req.body.event.metadata.span_id,
         traceId: req.body.event.metadata.trace_id,
       },
