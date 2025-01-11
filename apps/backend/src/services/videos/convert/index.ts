@@ -4,7 +4,8 @@ import { AppError } from "src/utils/schema";
 import { convertVideo } from "./handler";
 
 interface ConvertData {
-  rows: { id: string; video_url: string }[];
+  id: string;
+  video_url: string;
 }
 
 interface ConvertRequest {
@@ -14,7 +15,7 @@ interface ConvertRequest {
 }
 
 const extractVideoData = (data: ConvertData) => {
-  const { id, video_url: videoUrl } = data.rows[0];
+  const { id, video_url: videoUrl } = data;
   return { id, videoUrl };
 };
 
