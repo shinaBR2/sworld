@@ -5,13 +5,13 @@ const VideoDataSchema = z.object({
   user_id: z.string(),
   video_url: z.string().url(),
 });
-const EventMetadaSchema = z.object({
+const EventMetadataSchema = z.object({
   id: z.string(),
   span_id: z.string(),
   trace_id: z.string(),
 });
 const EventSchema = z.object({
-  metadata: EventMetadaSchema,
+  metadata: EventMetadataSchema,
   data: VideoDataSchema,
 });
 
