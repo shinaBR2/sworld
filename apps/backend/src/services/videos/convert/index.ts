@@ -38,7 +38,9 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   const { data, metadata } = event;
 
   if (!verifySignature(signatureHeader)) {
-    throw AppError('Invalid signature');
+    throw AppError('Invalid webhook signature for event', {
+      eventId: metadata.id,
+    });
   }
 
   let video;
@@ -49,7 +51,10 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
     );
     video = await convertVideo(extractVideoData(data));
   } catch (error) {
-    throw AppError('Failed to convert');
+    throw AppError('Video conversion failed', {
+      videoId: data.id,
+      error: (error as Error).message,
+    });
   }
 
   return video;

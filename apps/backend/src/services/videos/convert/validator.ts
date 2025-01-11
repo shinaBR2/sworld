@@ -7,7 +7,7 @@ const verifySignature = (signature: string | null) => {
 
   const webhookSecret = envConfig.webhookSignature;
 
-  return signature == webhookSecret;
+  return signature === webhookSecret;
 };
 
 export { verifySignature };
