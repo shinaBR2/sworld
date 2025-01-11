@@ -3,7 +3,6 @@ import { verifySignature } from "./validator";
 
 const mockWebhookSecret = "test-secret";
 
-// Move vi.mock outside and use a constant value
 vi.mock("src/utils/envConfig", () => ({
   envConfig: {
     webhookSignature: "test-secret",
