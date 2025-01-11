@@ -33,9 +33,6 @@ const convertToHLS = async (
         '-f hls',
       ])
       .output(path.join(outputDir, 'playlist.m3u8'))
-      .on('progress', progress => {
-        logger.info(`Processing: ${progress.percent}% done`);
-      })
       .on('end', resolve)
       .on('error', reject)
       .run();

@@ -33,7 +33,7 @@ videosRouter.post(
 
       res.json(AppResponse(true, 'ok', video));
     } catch (error) {
-      logger.info(`some thing wrong`, error);
+      logger.info(error, `[/videos/convert] some thing wrong`);
       res.json(AppError('Error fetching users', error));
     }
   }

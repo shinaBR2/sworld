@@ -54,6 +54,11 @@ const handleConvertVideo = async (data: ConversionVideo) => {
       .join('/');
 
     await convertToHLS(inputPath, outputDir);
+
+    logger.info(
+      `[/videos/convert] converted "${id}" to HLS, uploading to Cloud Storage..`
+    );
+
     await uploadDirectory(outputDir, outputPath);
     await cleanupDirectory(workingDir);
 
@@ -61,10 +66,13 @@ const handleConvertVideo = async (data: ConversionVideo) => {
   } catch (error) {
     await cleanupDirectory(workingDir);
     if (error instanceof Error) {
-      logger.error('Video conversion error:', error);
+      logger.error(error, `[/videos/convert] Video ${id} conversion error`);
       throw new Error(error.message);
     }
-    logger.error('Unknown error during video conversion:', error);
+    logger.error(
+      error,
+      `[/videos/convert] Unknown error during video conversion "${id}"`
+    );
     throw new Error('Unknown error during video conversion');
   }
 };
@@ -80,7 +88,6 @@ const postConvert = async (data: { id: string; videoUrl: string }) => {
   const { id, videoUrl } = data;
   const video = await saveVideoSource(id, videoUrl);
 
-  logger.info(`updated video`, video);
   return video;
 };
 
@@ -104,7 +111,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
   }
 
   logger.info(
-    `[/videos/convert] video ${inputData.id} converted and uploaded, updating database...`
+    `[/videos/convert] "${inputData.id}" converted and uploaded, updating database...`
   );
 
   let video;
@@ -117,7 +124,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  logger.info(`[/videos/convert] video ${inputData.id} finished!`);
+  logger.info(`[/videos/convert] "${inputData.id}" finished!`);
 
   return video;
 };

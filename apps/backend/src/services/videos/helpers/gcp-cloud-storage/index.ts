@@ -82,8 +82,6 @@ const uploadDirectory = async (
   const files = await readdir(localDir);
   const batchSize = (options.batchSize ||
     DEFAULT_UPLOAD_OPTIONS.batchSize) as number;
-  let uploadedFiles = 0;
-  const totalFiles = files.length;
 
   // Process files in batches to prevent memory issues
   for (let i = 0; i < files.length; i += batchSize) {
@@ -94,10 +92,6 @@ const uploadDirectory = async (
         const storageFilePath = path.join(storagePath, file);
         try {
           await uploadFile(localFilePath, storageFilePath, options);
-          uploadedFiles++;
-          logger.info(
-            `Progress: ${uploadedFiles}/${totalFiles} files uploaded`
-          );
         } catch (error) {
           logger.error(`Failed to upload ${file}:`, error);
           throw error;
