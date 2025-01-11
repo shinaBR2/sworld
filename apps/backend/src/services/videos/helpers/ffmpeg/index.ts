@@ -1,9 +1,9 @@
-import * as path from "path";
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-import { cleanupDirectory } from "../file";
-import { existsSync } from "fs";
-import { logger } from "src/utils/logger";
+import * as path from 'path';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import { cleanupDirectory } from '../file';
+import { existsSync } from 'fs';
+import { logger } from 'src/utils/logger';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -20,24 +20,24 @@ const convertToHLS = async (
   outputDir: string
 ): Promise<void> => {
   if (!existsSync(inputPath)) {
-    throw new Error("Input file does not exist");
+    throw new Error('Input file does not exist');
   }
 
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
       .outputOptions([
-        "-codec copy",
-        "-start_number 0",
-        "-hls_time 10",
-        "-hls_list_size 0",
-        "-f hls",
+        '-codec copy',
+        '-start_number 0',
+        '-hls_time 10',
+        '-hls_list_size 0',
+        '-f hls',
       ])
-      .output(path.join(outputDir, "playlist.m3u8"))
-      .on("progress", (progress) => {
+      .output(path.join(outputDir, 'playlist.m3u8'))
+      .on('progress', progress => {
         logger.info(`Processing: ${progress.percent}% done`);
       })
-      .on("end", resolve)
-      .on("error", reject)
+      .on('end', resolve)
+      .on('error', reject)
       .run();
   });
 };
@@ -56,7 +56,7 @@ const takeScreenshot = async (
   options: ScreenshotOptions = {}
 ): Promise<void> => {
   const defaultOptions = {
-    timestamp: "00:03:03",
+    timestamp: '00:03:03',
   };
   const finalOptions = { ...defaultOptions, ...options };
 
@@ -67,10 +67,10 @@ const takeScreenshot = async (
         folder: outputDir,
         filename: filename,
       })
-      .on("end", resolve)
-      .on("error", (err, stdout, stderr) => {
-        logger.error("FFmpeg stdout:", stdout);
-        logger.error("FFmpeg stderr:", stderr);
+      .on('end', resolve)
+      .on('error', (err, stdout, stderr) => {
+        logger.error('FFmpeg stdout:', stdout);
+        logger.error('FFmpeg stderr:', stderr);
         reject(new Error(`FFmpeg error: ${err.message}`));
       });
   });

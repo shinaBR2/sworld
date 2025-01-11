@@ -6,26 +6,26 @@ import {
   beforeEach,
   afterEach,
   type Mock,
-} from "vitest";
-import * as path from "path";
-import ffmpeg from "fluent-ffmpeg";
-import { convertToHLS, takeScreenshot } from ".";
-import { existsSync } from "fs";
-import { logger } from "src/utils/logger";
+} from 'vitest';
+import * as path from 'path';
+import ffmpeg from 'fluent-ffmpeg';
+import { convertToHLS, takeScreenshot } from '.';
+import { existsSync } from 'fs';
+import { logger } from 'src/utils/logger';
 
-vi.mock("fluent-ffmpeg");
-vi.mock("@google-cloud/storage");
-vi.mock("fs", () => ({
+vi.mock('fluent-ffmpeg');
+vi.mock('@google-cloud/storage');
+vi.mock('fs', () => ({
   existsSync: vi.fn(),
 }));
-vi.mock("./file-helpers", () => ({
+vi.mock('./file-helpers', () => ({
   downloadFile: vi.fn(),
   uploadDirectory: vi.fn(),
   generateTempDirName: vi.fn(),
   getDownloadUrl: vi.fn(),
 }));
 
-describe("FFmpeg Helpers", () => {
+describe('FFmpeg Helpers', () => {
   let mockFFmpeg: any;
 
   beforeEach(() => {
@@ -49,28 +49,28 @@ describe("FFmpeg Helpers", () => {
     vi.resetAllMocks();
   });
 
-  describe("convertToHLS", () => {
-    const inputPath = "/path/to/input.mp4";
-    const outputDir = "/path/to/output";
+  describe('convertToHLS', () => {
+    const inputPath = '/path/to/input.mp4';
+    const outputDir = '/path/to/output';
 
     beforeEach(() => {
       // Set default behavior for all tests in this describe block
       vi.mocked(existsSync).mockReturnValue(true);
     });
 
-    it("should throw error if input file does not exist", async () => {
+    it('should throw error if input file does not exist', async () => {
       vi.mocked(existsSync).mockReturnValueOnce(false);
 
       await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(
-        "Input file does not exist"
+        'Input file does not exist'
       );
       expect(ffmpeg).not.toHaveBeenCalled();
     });
 
-    it("should convert video successfully", async () => {
+    it('should convert video successfully', async () => {
       // Setup the success case
       mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === "end") {
+        if (event === 'end') {
           callback();
         }
         return mockFFmpeg;
@@ -81,24 +81,24 @@ describe("FFmpeg Helpers", () => {
       // Verify ffmpeg was called with correct parameters
       expect(ffmpeg).toHaveBeenCalledWith(inputPath);
       expect(mockFFmpeg.outputOptions).toHaveBeenCalledWith([
-        "-codec copy",
-        "-start_number 0",
-        "-hls_time 10",
-        "-hls_list_size 0",
-        "-f hls",
+        '-codec copy',
+        '-start_number 0',
+        '-hls_time 10',
+        '-hls_list_size 0',
+        '-f hls',
       ]);
       expect(mockFFmpeg.output).toHaveBeenCalledWith(
-        path.join(outputDir, "playlist.m3u8")
+        path.join(outputDir, 'playlist.m3u8')
       );
       expect(mockFFmpeg.run).toHaveBeenCalled();
     });
 
-    it("should handle conversion errors", async () => {
-      const error = new Error("Conversion failed");
+    it('should handle conversion errors', async () => {
+      const error = new Error('Conversion failed');
 
       // Setup the error case
       mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === "error") {
+        if (event === 'error') {
           callback(error);
         }
         return mockFFmpeg;
@@ -110,15 +110,15 @@ describe("FFmpeg Helpers", () => {
     });
   });
 
-  describe("takeScreenshot", () => {
-    const videoPath = "/path/to/video.mp4";
-    const outputDir = "/path/to/output";
-    const filename = "thumbnail.jpg";
+  describe('takeScreenshot', () => {
+    const videoPath = '/path/to/video.mp4';
+    const outputDir = '/path/to/output';
+    const filename = 'thumbnail.jpg';
 
-    it("should take screenshot successfully", async () => {
+    it('should take screenshot successfully', async () => {
       // Setup the success case
       mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === "end") {
+        if (event === 'end') {
           callback();
         }
         return mockFFmpeg;
@@ -131,23 +131,23 @@ describe("FFmpeg Helpers", () => {
       // Verify ffmpeg was called with correct parameters
       expect(ffmpeg).toHaveBeenCalledWith(videoPath);
       expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
-        timestamps: ["00:03:03"],
+        timestamps: ['00:03:03'],
         folder: outputDir,
         filename: filename,
       });
     });
 
-    it("should handle screenshot errors with ffmpeg output", async () => {
-      const error = new Error("Screenshot failed");
-      const stdout = "FFmpeg process output";
-      const stderr = "FFmpeg process error output";
+    it('should handle screenshot errors with ffmpeg output', async () => {
+      const error = new Error('Screenshot failed');
+      const stdout = 'FFmpeg process output';
+      const stderr = 'FFmpeg process error output';
 
       // Setup logger.error mock
-      const consoleSpy = vi.spyOn(logger, "error").mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
 
       // Setup the error case
       mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === "error") {
+        if (event === 'error') {
           callback(error, stdout, stderr);
         }
         return mockFFmpeg;
@@ -155,22 +155,22 @@ describe("FFmpeg Helpers", () => {
 
       await expect(
         takeScreenshot(videoPath, outputDir, filename)
-      ).rejects.toThrow("FFmpeg error: Screenshot failed");
+      ).rejects.toThrow('FFmpeg error: Screenshot failed');
 
       // Verify error logging
-      expect(consoleSpy).toHaveBeenCalledWith("FFmpeg stdout:", stdout);
-      expect(consoleSpy).toHaveBeenCalledWith("FFmpeg stderr:", stderr);
+      expect(consoleSpy).toHaveBeenCalledWith('FFmpeg stdout:', stdout);
+      expect(consoleSpy).toHaveBeenCalledWith('FFmpeg stderr:', stderr);
 
       // Cleanup
       consoleSpy.mockRestore();
     });
 
-    it("should handle screenshot errors without ffmpeg output", async () => {
-      const error = new Error("Screenshot failed");
+    it('should handle screenshot errors without ffmpeg output', async () => {
+      const error = new Error('Screenshot failed');
 
       // Setup the error case
       mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === "error") {
+        if (event === 'error') {
           callback(error);
         }
         return mockFFmpeg;
@@ -178,7 +178,7 @@ describe("FFmpeg Helpers", () => {
 
       await expect(
         takeScreenshot(videoPath, outputDir, filename)
-      ).rejects.toThrow("FFmpeg error: Screenshot failed");
+      ).rejects.toThrow('FFmpeg error: Screenshot failed');
     });
   });
 });

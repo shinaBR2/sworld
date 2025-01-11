@@ -1,95 +1,63 @@
-import { ValidatedRequest } from "src/utils/validator";
-import { verifySignature } from "./validator";
-import { AppError } from "src/utils/schema";
-import { z } from "zod";
-import { convertVideo } from "./handler";
+import { ValidatedRequest } from 'src/utils/validator';
+import { verifySignature } from './validator';
+import { AppError } from 'src/utils/schema';
+import { convertVideo } from './handler';
+import { logger } from 'src/utils/logger';
 
 interface ConvertData {
-  rows: { id: string; video_url: string }[];
+  id: string;
+  video_url: string;
+  user_id: string;
+}
+
+interface EventMetadata {
+  id: string;
+  spanId: string;
+  traceId: string;
+}
+
+interface EventData {
+  data: ConvertData;
+  metadata: EventMetadata;
 }
 
 interface ConvertRequest {
-  data: ConvertData;
+  event: EventData;
   contentTypeHeader: string;
   signatureHeader: string;
 }
 
-const VideoDataSchema = z.object({
-  id: z.string(),
-  video_url: z.string().url(),
-});
-
-const RecordDataSchema = z.object({
-  table_id: z.string(),
-  table_name: z.string(),
-  rows: z.array(VideoDataSchema),
-});
-
-const ConvertSchema = z
-  .object({
-    body: z.object({
-      type: z.string(),
-      id: z.string(),
-      data: RecordDataSchema,
-    }),
-    headers: z
-      .object({
-        "content-type": z.string(),
-        "x-webhook-signature": z.string(),
-      })
-      .passthrough(), // Allow additional headers
-  })
-  .transform((req) => ({
-    data: req.body.data,
-    contentTypeHeader: req.headers["content-type"] as string,
-    signatureHeader: req.headers["x-webhook-signature"] as string,
-  }));
-
 const extractVideoData = (data: ConvertData) => {
-  const { id, video_url: videoUrl } = data.rows[0];
-  return { id, videoUrl };
+  const { id, video_url: videoUrl, user_id: userId } = data;
+  return { id, videoUrl, userId };
 };
 
 const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   const { validatedData } = request;
-  const { signatureHeader, data } = validatedData;
-
-  // {
-  //   body: {
-  //     type: 'records.manual.trigger',
-  //     id: '************************************',
-  //     data: {
-  //       table_id: 'mlqubpsywyac549',
-  //       table_name: 'videos',
-  //       rows: [Array]
-  //     }
-  //   },
-  //   headers: {
-  //     'content-type': 'application/json',
-  //     'x-webhook-signature': '7a9c2b4e8f3d1a6b5c9d8e7f2a3b4c5d',
-  //     host: 'pheasant-clear-marmot.ngrok-free.app',
-  //     'user-agent': 'axios/1.7.9',
-  //     'content-length': '824',
-  //     accept: 'application/json, text/plain, */*',
-  //     'accept-encoding': 'gzip, compress, deflate, br',
-  //     'x-forwarded-for': '************',
-  //     'x-forwarded-host': 'pheasant-clear-marmot.ngrok-free.app',
-  //     'x-forwarded-proto': 'https'
-  //   }
-  // }
+  const { signatureHeader, event } = validatedData;
+  const { data, metadata } = event;
 
   if (!verifySignature(signatureHeader)) {
-    throw AppError("Invalid signature");
+    throw AppError('Invalid webhook signature for event', {
+      eventId: metadata.id,
+    });
   }
 
   let video;
   try {
+    logger.info(
+      metadata,
+      `[/videos/convert] start processing event ${metadata.id}, video ${data.id}`
+    );
     video = await convertVideo(extractVideoData(data));
   } catch (error) {
-    throw AppError("Failed to convert");
+    throw AppError('Video conversion failed', {
+      videoId: data.id,
+      error: (error as Error).message,
+    });
   }
 
   return video;
 };
 
-export { ConvertRequest, ConvertSchema, convert };
+export { ConvertRequest, convert };

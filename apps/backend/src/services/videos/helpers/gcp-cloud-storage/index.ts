@@ -1,8 +1,8 @@
-import { getStorage } from "firebase-admin/storage";
-import { existsSync } from "fs";
-import { readdir } from "fs/promises";
-import path from "path";
-import { logger } from "src/utils/logger";
+import { getStorage } from 'firebase-admin/storage';
+import { existsSync } from 'fs';
+import { readdir } from 'fs/promises';
+import path from 'path';
+import { logger } from 'src/utils/logger';
 
 interface UploadOptions {
   cacheControl?: string;
@@ -11,7 +11,7 @@ interface UploadOptions {
 }
 
 const DEFAULT_UPLOAD_OPTIONS: UploadOptions = {
-  cacheControl: "public, max-age=31536000",
+  cacheControl: 'public, max-age=31536000',
   resumable: true,
   batchSize: 3,
 };
@@ -76,7 +76,7 @@ const uploadDirectory = async (
   options: UploadOptions = DEFAULT_UPLOAD_OPTIONS
 ) => {
   if (!existsSync(localDir)) {
-    throw new Error("Local directory does not exist");
+    throw new Error('Local directory does not exist');
   }
 
   const files = await readdir(localDir);

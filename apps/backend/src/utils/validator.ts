@@ -1,6 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
-import { type ZodError, type ZodSchema } from "zod";
-import { ServiceResponse } from "./schema";
+import type { NextFunction, Request, Response } from 'express';
+import { type ZodError, type ZodSchema } from 'zod';
+import { ServiceResponse } from './schema';
 
 type Header<T extends string> = {
   value: string;
@@ -29,8 +29,8 @@ const validateRequest: ValidateRequest =
       next();
     } catch (err) {
       const errorMessage = `Invalid input: ${(err as ZodError).errors
-        .map((e) => e.message)
-        .join(", ")}`;
+        .map(e => e.message)
+        .join(', ')}`;
       const serviceResponse: ServiceResponse<null> = {
         success: false,
         message: errorMessage,

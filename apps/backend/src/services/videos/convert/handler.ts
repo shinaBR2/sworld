@@ -1,20 +1,21 @@
-import * as os from "os";
-import * as path from "path";
+import * as os from 'os';
+import * as path from 'path';
 import {
   generateTempDirName,
   downloadFile,
   createDirectory,
   cleanupDirectory,
   verifyFileSize,
-} from "../helpers/file";
-import { getDownloadUrl, uploadDirectory } from "../helpers/gcp-cloud-storage";
-import { convertToHLS } from "../helpers/ffmpeg";
-import { saveVideoSource } from "src/database";
-import { logger } from "src/utils/logger";
+} from '../helpers/file';
+import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
+import { convertToHLS } from '../helpers/ffmpeg';
+import { saveVideoSource } from 'src/database';
+import { logger } from 'src/utils/logger';
 
 export interface ConversionVideo {
   id: string;
   videoUrl: string;
+  userId: string;
 }
 
 /**
@@ -33,24 +34,24 @@ export interface ConversionVideo {
  * 6. Clean up temporary files
  */
 const handleConvertVideo = async (data: ConversionVideo) => {
-  const { id, videoUrl } = data;
+  const { id, videoUrl, userId } = data;
   const uniqueDir = generateTempDirName();
   const workingDir = path.join(os.tmpdir(), uniqueDir);
-  const outputDir = path.join(workingDir, "output");
+  const outputDir = path.join(workingDir, 'output');
 
   try {
     await createDirectory(workingDir);
     await createDirectory(outputDir);
 
-    const inputPath = path.join(workingDir, "input.mp4");
+    const inputPath = path.join(workingDir, 'input.mp4');
     await downloadFile(videoUrl, inputPath);
     await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
 
     const outputPath = path
-      .join("videos", id)
+      .join('videos', userId, id)
       .split(path.sep)
       .filter(Boolean)
-      .join("/");
+      .join('/');
 
     await convertToHLS(inputPath, outputDir);
     await uploadDirectory(outputDir, outputPath);
@@ -60,11 +61,11 @@ const handleConvertVideo = async (data: ConversionVideo) => {
   } catch (error) {
     await cleanupDirectory(workingDir);
     if (error instanceof Error) {
-      logger.error("Video conversion error:", error);
+      logger.error('Video conversion error:', error);
       throw new Error(error.message);
     }
-    logger.error("Unknown error during video conversion:", error);
-    throw new Error("Unknown error during video conversion");
+    logger.error('Unknown error during video conversion:', error);
+    throw new Error('Unknown error during video conversion');
   }
 };
 
@@ -102,7 +103,9 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  logger.info(`Converted video, now update database`);
+  logger.info(
+    `[/videos/convert] video ${inputData.id} converted and uploaded, updating database...`
+  );
 
   let video;
   try {
@@ -114,7 +117,7 @@ const convertVideo = async (inputData: ConversionVideo) => {
     throw new Error((error as unknown as Error).message);
   }
 
-  logger.info(`Saved into database`);
+  logger.info(`[/videos/convert] video ${inputData.id} finished!`);
 
   return video;
 };

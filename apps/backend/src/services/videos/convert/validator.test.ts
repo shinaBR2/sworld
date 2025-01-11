@@ -1,15 +1,17 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { verifySignature } from './validator';
 
+const mockWebhookSecret = 'test-secret';
+
+vi.mock('src/utils/envConfig', () => ({
+  envConfig: {
+    webhookSignature: 'test-secret',
+  },
+}));
+
 describe('verifySignature', () => {
-  const mockWebhookSecret = 'test-secret';
-
-  beforeEach(() => {
-    process.env.NOCODB_WEBHOOK_SIGNATURE = mockWebhookSecret;
-  });
-
   afterEach(() => {
-    delete process.env.NOCODB_WEBHOOK_SIGNATURE;
+    vi.clearAllMocks();
   });
 
   it('should return true when signature matches webhook secret', () => {

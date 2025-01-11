@@ -1,11 +1,11 @@
-import "dotenv/config";
-import "./instrument";
+import 'dotenv/config';
+import './instrument';
 
-import * as Sentry from "@sentry/node";
-import { app } from "./server";
-import { envConfig } from "./utils/envConfig";
-import rateLimit from "express-rate-limit";
-import { logger } from "./utils/logger";
+import * as Sentry from '@sentry/node';
+import { app } from './server';
+import { envConfig } from './utils/envConfig';
+import rateLimit from 'express-rate-limit';
+import { logger } from './utils/logger';
 
 const port = envConfig.port || 4000;
 
@@ -29,5 +29,5 @@ const onCloseSignal = () => {
   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
 };
 
-process.on("SIGINT", onCloseSignal);
-process.on("SIGTERM", onCloseSignal);
+process.on('SIGINT', onCloseSignal);
+process.on('SIGTERM', onCloseSignal);

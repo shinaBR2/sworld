@@ -1,11 +1,13 @@
+import { envConfig } from 'src/utils/envConfig';
+
 const verifySignature = (signature: string | null) => {
   if (!signature) {
     return false;
   }
 
-  const webhookSecret = process.env.NOCODB_WEBHOOK_SIGNATURE;
+  const webhookSecret = envConfig.webhookSignature;
 
-  return signature == webhookSecret;
+  return signature === webhookSecret;
 };
 
 export { verifySignature };
