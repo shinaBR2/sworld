@@ -8,7 +8,8 @@ type QueryTestCase = {
   query: string;
   headers?: Record<string, string>;
   variables?: Record<string, unknown>;
-  additionalTest?: (response: never, roleName: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  additionalTest?: (response: any, roleName: string) => void;
 };
 
 const ROLE_ANONYMOUS = "anonymous";
