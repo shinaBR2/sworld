@@ -1,5 +1,6 @@
 - "!include public_audio_tags.yaml"
 - "!include public_audios.yaml"
+- "!include public_feature_flag.yaml"
 - "!include public_tags.yaml"
 - "!include public_test.yaml"
 - "!include public_users.yaml"
