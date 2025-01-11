@@ -13,23 +13,27 @@ export const StyledDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
 
 export const StyledCloseButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
-  right: 8,
-  top: 8,
+  right: theme.spacing(1),
+  top: theme.spacing(1),
   color: theme.palette.grey[500],
 })) as typeof IconButton;
 
-export const StyledResultsStack = styled(Stack)(({ theme }) => ({
-  maxHeight: '200px',
-  overflowY: 'auto',
-  '&::-webkit-scrollbar': {
-    width: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: theme.palette.grey[100],
-    borderRadius: '4px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: theme.palette.grey[400],
-    borderRadius: '4px',
-  },
-})) as typeof Stack;
+export const StyledResultsStack = styled(Stack)(({ theme }) => {
+  const { borderRadius } = theme.shape;
+
+  return {
+    maxHeight: '200px',
+    overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      width: borderRadius / 1.5,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme.palette.grey[100],
+      borderRadius: borderRadius / 3,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: theme.palette.grey[400],
+      borderRadius: borderRadius / 3,
+    },
+  };
+}) as typeof Stack;

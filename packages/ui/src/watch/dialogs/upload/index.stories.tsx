@@ -7,12 +7,6 @@ const meta: Meta<typeof VideoUploadDialog> = {
   component: VideoUploadDialog,
   parameters: {
     layout: 'centered',
-    // docs: {
-    //   story: {
-    //     inline: false,
-    //     height: '500px',
-    //   },
-    // },
     docs: {
       story: {
         inline: false,
@@ -170,24 +164,15 @@ export const MixedUrlValidation: Story = {
       },
     },
   },
-  play: async ({ canvasElement, step }) => {
+  play: async ({ step }) => {
     const utils = within(document.body);
     const user = userEvent.setup();
 
-    console.log('Initial HTML:', canvasElement.innerHTML);
-
     await step('Enter mixed URLs', async () => {
-      // const urlInput = canvas.getByPlaceholderText(
-      //   'Paste video URLs, separated by commas'
-      // );
       const dialog = await utils.findByRole('dialog');
-      console.log('Dialog found:', dialog);
 
       // Now search within the dialog instead of the canvas
       const dialogElement = within(dialog);
-
-      console.log('Canvas element:', canvasElement);
-      console.log('Available elements:', canvasElement.innerHTML);
 
       const urlInput = dialogElement.getByPlaceholderText(
         'Paste video URLs, separated by commas'
