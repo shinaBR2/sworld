@@ -1,8 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
 import { checkFeatureFlag } from './index';
 import type { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
 
 describe('checkFeatureFlag', () => {
+  it('should return false when userId is empty string and not global', () => {
+    const flag: FeatureFlagItemConditions = {
+      isGlobal: false,
+      allowedUserIds: ['user1'],
+    };
+    expect(checkFeatureFlag(flag, '')).toBe(false);
+  });
+
+  it('should handle malformed allowedUserIds gracefully', () => {
+    const flag: FeatureFlagItemConditions = {
+      isGlobal: false,
+      allowedUserIds: ['', null, undefined] as any,
+    };
+    expect(checkFeatureFlag(flag, 'user1')).toBe(false);
+  });
+
   it('should return false when object is null (default)', () => {
     const flag = null;
 

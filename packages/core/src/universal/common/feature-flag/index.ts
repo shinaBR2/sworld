@@ -14,7 +14,11 @@ const checkFeatureFlag = (
     return true;
   }
 
-  return allowedUserIds.indexOf(userId) > -1;
+  if (!userId?.trim()) {
+    return false;
+  }
+
+  return allowedUserIds.includes(userId);
 };
 
 export { checkFeatureFlag };
