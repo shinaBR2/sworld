@@ -20,24 +20,6 @@ const convertToHLS = async (
   inputPath: string,
   outputDir: string
 ): Promise<void> => {
-  /**
-   * Example console output
-   * [09:30:24.916] ERROR (16312): [convertToHLS] failed
-    err: {
-      "type": "Error",
-      "message": "Input file does not exist at \"something\"",
-      "stack":
-          Error: Input file does not exist at "something"
-              at Server.<anonymous> (/Users/tranvanvuong/Projects/sworld/sworld-backend/src/index.ts:23:17)
-              at Object.onceWrapper (node:events:628:28)
-              at Server.emit (node:events:526:35)
-              at Server.incomingRequest (/Users/tranvanvuong/Projects/sworld/sworld-backend/node_modules/@opentelemetry/instrumentation-http/src/http.ts:600:25)
-              at Server.incomingRequest (/Users/tranvanvuong/Projects/sworld/sworld-backend/node_modules/@sentry/node/src/integrations/http/SentryHttpInstrumentation.ts:130:27)
-              at emitListeningNT (node:net:1906:10)
-              at process.processTicksAndRejections (node:internal/process/task_queues:81:21)
-    }
-   */
-
   if (!existsSync(inputPath)) {
     const error = new Error(`Input file does not exist at "${inputPath}"`);
     logger.error(error, 'Conversion failed');
