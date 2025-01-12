@@ -39,9 +39,11 @@ describe('uploadFromLocalFilePath', () => {
     vi.resetAllMocks();
   });
 
-  it('should upload file successfully and return url', async () => {
+  it('should upload file successfully and return secure_url', async () => {
     const localFilePath = '/path/to/file.mp4';
-    const mockUploadResponse = { url: 'https://cloudinary.com/test-video.mp4' };
+    const mockUploadResponse = {
+      secure_url: 'https://cloudinary.com/test-video.mp4',
+    };
     vi.mocked(cloudinary.uploader.upload).mockResolvedValueOnce(
       mockUploadResponse as UploadApiResponse
     );
@@ -49,13 +51,15 @@ describe('uploadFromLocalFilePath', () => {
     const result = await uploadFromLocalFilePath(localFilePath);
 
     expect(cloudinary.uploader.upload).toHaveBeenCalledWith(localFilePath, {});
-    expect(result).toBe(mockUploadResponse.url);
+    expect(result).toBe(mockUploadResponse.secure_url);
   });
 
   it('should pass additional options to upload', async () => {
     const localFilePath = '/path/to/file.mp4';
     const options = { folder: 'videos', resource_type: 'video' };
-    const mockUploadResponse = { url: 'https://cloudinary.com/test-video.mp4' };
+    const mockUploadResponse = {
+      secure_url: 'https://cloudinary.com/test-video.mp4',
+    };
     vi.mocked(cloudinary.uploader.upload).mockResolvedValueOnce(
       mockUploadResponse as UploadApiResponse
     );
@@ -66,7 +70,7 @@ describe('uploadFromLocalFilePath', () => {
       localFilePath,
       options
     );
-    expect(result).toBe(mockUploadResponse.url);
+    expect(result).toBe(mockUploadResponse.secure_url);
   });
 
   it('should throw error when file path is missing', async () => {

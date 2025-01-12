@@ -65,7 +65,9 @@ export const convertVideo = async (data: ConversionVideo) => {
     if (!existsSync(thumbnailPath)) {
       throw new Error('Screenshot file not created');
     }
-    const thumbnailUrl = await uploadFromLocalFilePath(thumbnailPath);
+    const thumbnailUrl = await uploadFromLocalFilePath(thumbnailPath, {
+      asset_folder: userId,
+    });
     logger.debug(`Generated and uploaded thumbnail: ${thumbnailUrl}`);
 
     // Step 5: Upload converted video files to cloud storage

@@ -114,7 +114,10 @@ describe('convertVideo', () => {
 
     // Verify uploads
     expect(cloudinaryHelpers.uploadFromLocalFilePath).toHaveBeenCalledWith(
-      expect.stringMatching(/test-video-123--\d+\.jpg$/)
+      expect.stringMatching(/test-video-123--\d+\.jpg$/),
+      {
+        asset_folder: mockData.userId,
+      }
     );
     expect(gcpHelpers.uploadDirectory).toHaveBeenCalledWith(
       mockPaths.outputDir,

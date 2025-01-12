@@ -20,7 +20,7 @@ const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
     });
 
     if (uploadResult) {
-      return uploadResult.url;
+      return uploadResult.secure_url;
     }
 
     throw new Error('Upload failed: No result returned');
