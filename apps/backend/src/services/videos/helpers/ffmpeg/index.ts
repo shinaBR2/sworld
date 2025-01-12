@@ -1,10 +1,12 @@
 import * as path from 'path';
 import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 import { existsSync } from 'fs';
 import { logger } from 'src/utils/logger';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
 /**
  * Converts a video file to HLS (HTTP Live Streaming) format

@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@sentry/cli": "^2.39.1",
     "@sentry/node": "^8.45.0",
     "@sentry/profiling-node": "^8.45.0",
