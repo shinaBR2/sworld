@@ -43,6 +43,9 @@ const Video = sequelize.define(
     source: {
       type: DataTypes.STRING,
     },
+    thumbnail_url: {
+      type: DataTypes.STRING,
+    },
     status: {
       type: DataTypes.STRING,
     },
@@ -64,9 +67,11 @@ const listUsers = async () => {
   return await User.findAll();
 };
 
-const saveVideoSource = async (id: string, source: string) => {
+const finalizeVideo = async (props: any) => {
+  const { id, source, thumbnailUrl } = props;
+
   return await Video.update(
-    { source, status: 'ready' },
+    { source, status: 'ready', thumbnail_url: thumbnailUrl },
     {
       where: {
         id,
@@ -75,4 +80,4 @@ const saveVideoSource = async (id: string, source: string) => {
   );
 };
 
-export { initialize, listUsers, saveVideoSource };
+export { initialize, listUsers, finalizeVideo };

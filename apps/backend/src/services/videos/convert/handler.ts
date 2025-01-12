@@ -9,7 +9,7 @@ import {
 } from '../helpers/file';
 import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
 import { convertToHLS, takeScreenshot } from '../helpers/ffmpeg';
-import { saveVideoSource } from 'src/database';
+import { finalizeVideo } from 'src/database';
 import { logger } from 'src/utils/logger';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { existsSync, statSync } from 'fs';
@@ -80,7 +80,11 @@ export const convertVideo = async (data: ConversionVideo) => {
     logger.debug(`Uploaded converted files to cloud storage: ${playlistUrl}`);
 
     // Step 6: Update database with new video information
-    const video = await saveVideoSource(id, playlistUrl);
+    const video = await finalizeVideo({
+      id,
+      source: playlistUrl,
+      thumbnailUrl,
+    });
     return video;
   } catch (error) {
     logger.error(error, `Video conversion failed for ID ${id}`);

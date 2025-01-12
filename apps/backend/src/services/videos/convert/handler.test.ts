@@ -8,7 +8,7 @@ import { logger } from 'src/utils/logger';
 import { existsSync, statSync } from 'fs';
 import * as os from 'os';
 import path from 'path';
-import { saveVideoSource } from 'src/database';
+import { finalizeVideo } from 'src/database';
 
 // Mock all external dependencies
 vi.mock('../helpers/file');
@@ -19,7 +19,7 @@ vi.mock('src/utils/logger');
 vi.mock('fs');
 
 vi.mock('src/database', () => ({
-  saveVideoSource: vi.fn(),
+  finalizeVideo: vi.fn(),
 }));
 
 describe('convertVideo', () => {
@@ -122,10 +122,11 @@ describe('convertVideo', () => {
     );
 
     // Verify database update
-    expect(saveVideoSource).toHaveBeenCalledWith(
-      mockData.id,
-      'https://storage.googleapis.com/playlist.m3u8'
-    );
+    expect(finalizeVideo).toHaveBeenCalledWith({
+      id: mockData.id,
+      source: 'https://storage.googleapis.com/playlist.m3u8',
+      thumbnailUrl: 'https://cloudinary.com/thumbnail.jpg',
+    });
 
     // Verify cleanup
     expect(fileHelpers.cleanupDirectory).toHaveBeenCalledWith(
@@ -227,7 +228,7 @@ describe('convertVideo', () => {
 
   it('should throw error if database update fails', async () => {
     const error = new Error('Database update failed');
-    vi.mocked(saveVideoSource).mockRejectedValueOnce(error);
+    vi.mocked(finalizeVideo).mockRejectedValueOnce(error);
 
     await expect(convertVideo(mockData)).rejects.toThrow(
       'Video conversion failed: Database update failed'
