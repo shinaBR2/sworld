@@ -8,9 +8,11 @@ import {
   verifyFileSize,
 } from '../helpers/file';
 import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
-import { convertToHLS } from '../helpers/ffmpeg';
-import { saveVideoSource } from 'src/database';
+import { convertToHLS, takeScreenshot } from '../helpers/ffmpeg';
+import { finalizeVideo } from 'src/database';
 import { logger } from 'src/utils/logger';
+import { uploadFromLocalFilePath } from '../helpers/cloudinary';
+import { existsSync, statSync } from 'fs';
 
 export interface ConversionVideo {
   id: string;
@@ -19,114 +21,83 @@ export interface ConversionVideo {
 }
 
 /**
- * Handles the core video conversion process, including file download, conversion, and upload
+ * Handles the complete video conversion process from source URL to HLS format
+ * including downloading, converting, generating thumbnail, and uploading to cloud storage
  *
- * @param data - Object containing video ID and source URL
- * @returns Promise resolving to the URL of the converted video's playlist
- * @throws Error if any step of the conversion process fails
- *
- * Process flow:
- * 1. Create temporary directories for processing
- * 2. Download source video
- * 3. Verify file size is within limits
- * 4. Convert video to HLS format
- * 5. Upload converted files to cloud storage
- * 6. Clean up temporary files
+ * @param data Object containing video ID, source URL, and user ID
+ * @returns Promise resolving to the updated video record
+ * @throws Error if any step in the conversion process fails
  */
-const handleConvertVideo = async (data: ConversionVideo) => {
+export const convertVideo = async (data: ConversionVideo) => {
   const { id, videoUrl, userId } = data;
   const uniqueDir = generateTempDirName();
   const workingDir = path.join(os.tmpdir(), uniqueDir);
   const outputDir = path.join(workingDir, 'output');
+  const thumbnailFilename = `${id}--${Date.now()}.jpg`;
+  const thumbnailPath = path.join(workingDir, thumbnailFilename);
+  const inputPath = path.join(workingDir, 'input.mp4');
 
   try {
+    // Step 1: Create temporary working directories
     await createDirectory(workingDir);
     await createDirectory(outputDir);
+    logger.debug(`Created working directories: ${workingDir}, ${outputDir}`);
 
-    const inputPath = path.join(workingDir, 'input.mp4');
+    // Step 2: Download and verify source video
     await downloadFile(videoUrl, inputPath);
     await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
+    logger.debug(`Downloaded and verified source video: ${inputPath}`);
 
+    // Step 3: Convert video to HLS format
+    await convertToHLS(inputPath, outputDir);
+
+    // Verify input file still exists and check its size after conversion
+    if (!existsSync(inputPath)) {
+      throw new Error('Input file missing after HLS conversion');
+    }
+    const stats = statSync(inputPath);
+    logger.debug(
+      `HLS conversion complete. Input file size: ${stats.size} bytes`
+    );
+
+    // Step 4: Generate and upload thumbnail
+    await takeScreenshot(inputPath, workingDir, thumbnailFilename);
+    if (!existsSync(thumbnailPath)) {
+      throw new Error('Screenshot file not created');
+    }
+    const thumbnailUrl = await uploadFromLocalFilePath(thumbnailPath);
+    logger.debug(`Generated and uploaded thumbnail: ${thumbnailUrl}`);
+
+    // Step 5: Upload converted video files to cloud storage
     const outputPath = path
       .join('videos', userId, id)
       .split(path.sep)
       .filter(Boolean)
       .join('/');
 
-    await convertToHLS(inputPath, outputDir);
-
-    logger.info(
-      `[/videos/convert] converted "${id}" to HLS, uploading to Cloud Storage..`
-    );
-
     await uploadDirectory(outputDir, outputPath);
-    await cleanupDirectory(workingDir);
+    const playlistUrl = getDownloadUrl(`${outputPath}/playlist.m3u8`);
+    logger.debug(`Uploaded converted files to cloud storage: ${playlistUrl}`);
 
-    return getDownloadUrl(`${outputPath}/playlist.m3u8`);
-  } catch (error) {
-    await cleanupDirectory(workingDir);
-    if (error instanceof Error) {
-      logger.error(error, `[/videos/convert] Video ${id} conversion error`);
-      throw new Error(error.message);
-    }
-    logger.error(
-      error,
-      `[/videos/convert] Unknown error during video conversion "${id}"`
-    );
-    throw new Error('Unknown error during video conversion');
-  }
-};
-
-/**
- * Updates the database with the converted video's source URL
- *
- * @param data - Object containing video ID and converted video URL
- * @returns Promise resolving to the updated video record
- * @throws Error if database update fails
- */
-const postConvert = async (data: { id: string; videoUrl: string }) => {
-  const { id, videoUrl } = data;
-  const video = await saveVideoSource(id, videoUrl);
-
-  return video;
-};
-
-/**
- * Main video conversion coordinator that manages the entire conversion workflow
- *
- * @param inputData - Object containing video ID and source URL
- * @returns Promise resolving to the updated video record
- * @throws Error from either conversion or database update process
- *
- * Process flow:
- * 1. Convert the video using handleConvertVideo
- * 2. Update the database with the new video URL using postConvert
- */
-const convertVideo = async (inputData: ConversionVideo) => {
-  let videoUrl;
-  try {
-    videoUrl = await handleConvertVideo(inputData);
-  } catch (error) {
-    throw new Error((error as unknown as Error).message);
-  }
-
-  logger.info(
-    `[/videos/convert] "${inputData.id}" converted and uploaded, updating database...`
-  );
-
-  let video;
-  try {
-    video = await postConvert({
-      ...inputData,
-      videoUrl,
+    // Step 6: Update database with new video information
+    const video = await finalizeVideo({
+      id,
+      source: playlistUrl,
+      thumbnailUrl,
     });
+    return video;
   } catch (error) {
-    throw new Error((error as unknown as Error).message);
+    logger.error(error, `Video conversion failed for ID ${id}`);
+    throw new Error(`Video conversion failed: ${(error as Error).message}`);
+  } finally {
+    try {
+      await cleanupDirectory(workingDir);
+      logger.debug(`Cleaned up working directory: ${workingDir}`);
+    } catch (cleanupError) {
+      logger.error(
+        cleanupError,
+        `Failed to clean up working directory: ${workingDir}`
+      );
+    }
   }
-
-  logger.info(`[/videos/convert] "${inputData.id}" finished!`);
-
-  return video;
 };
-
-export { handleConvertVideo, convertVideo };
