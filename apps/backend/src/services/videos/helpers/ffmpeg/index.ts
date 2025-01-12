@@ -3,8 +3,6 @@ import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import { existsSync } from 'fs';
 import { logger } from 'src/utils/logger';
-import { promisify } from 'util';
-import { Logger } from 'pino';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -95,8 +93,16 @@ const getDuration = async (videoPath: string): Promise<number> => {
       throw new Error('videoPath must be absolute');
     }
 
-    const ffprobe = promisify<string, FfprobeData>(ffmpeg.ffprobe);
-    const metadata = await ffprobe(videoPath);
+    const metadata = await new Promise<FfprobeData>((resolve, reject) => {
+      ffmpeg.ffprobe(videoPath, (err, metadata) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(metadata);
+        }
+      });
+    });
+
     const duration = metadata.format.duration;
 
     if (!duration) {
