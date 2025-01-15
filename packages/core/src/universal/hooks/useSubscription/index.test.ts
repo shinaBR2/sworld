@@ -23,10 +23,6 @@ class MockWebSocket {
   readyState = MockWebSocket.OPEN;
   send = vi.fn();
   close = vi.fn();
-
-  constructor(url: string, protocol: string) {
-    // Constructor implementation
-  }
 }
 
 // Keep track of the latest instance
