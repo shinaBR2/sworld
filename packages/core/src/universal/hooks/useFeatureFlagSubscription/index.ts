@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useAuthContext } from '../../../providers/auth0';
 import { useSubscription } from '../useSubscription';
-import { checkFeatureFlag } from '../../common/feature-flag';
 import type { FeatureFlagsData, FeatureFlagsResponse } from './types';
+import { checkFeatureFlag } from './helpers';
 
 const FEATURE_FLAGS_SUBSCRIPTION = `
   subscription FeatureFlags {
