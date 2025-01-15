@@ -1,14 +1,32 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
-import { useQueryContext, QueryProvider } from './index';
+import { useQueryContext, QueryProvider, QueryContextValue } from './index';
+
+// Mock the useFeatureFlagSubscription hook
+vi.mock('../universal/hooks/useFeatureFlagSubscription', () => ({
+  useFeatureFlagSubscription: (_hasuraUrl: string) => ({
+    data: null,
+    isLoading: false,
+    error: null,
+  }),
+}));
 
 describe('Query Provider and Context', () => {
   const mockConfig = {
     hasuraUrl: 'https://test-hasura.com/graphql',
   };
 
+  const expectedContextValue: QueryContextValue = {
+    hasuraUrl: mockConfig.hasuraUrl,
+    featureFlags: {
+      data: null,
+      isLoading: false,
+      error: null,
+    },
+  };
+
   it('should provide context values to children', () => {
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
 
     const TestComponent = () => {
       contextValue = useQueryContext();
@@ -21,9 +39,7 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
+    expect(contextValue).toEqual(expectedContextValue);
   });
 
   it('should throw error when useQueryContext is used outside provider', () => {
@@ -51,7 +67,7 @@ describe('Query Provider and Context', () => {
   });
 
   it('should pass config correctly through provider chain', () => {
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
 
     const DeepChild = () => {
       contextValue = useQueryContext();
@@ -68,9 +84,7 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
+    expect(contextValue).toEqual(expectedContextValue);
   });
 
   it('should handle multiple nested providers', () => {
@@ -78,8 +92,17 @@ describe('Query Provider and Context', () => {
       hasuraUrl: 'https://nested-hasura.com/graphql',
     };
 
-    let outerContextValue;
-    let innerContextValue;
+    const expectedNestedContextValue: QueryContextValue = {
+      hasuraUrl: nestedConfig.hasuraUrl,
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    };
+
+    let outerContextValue: QueryContextValue | undefined;
+    let innerContextValue: QueryContextValue | undefined;
 
     const OuterComponent = () => {
       outerContextValue = useQueryContext();
@@ -100,17 +123,22 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(outerContextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
-    expect(innerContextValue).toEqual({
-      hasuraUrl: nestedConfig.hasuraUrl,
-    });
+    expect(outerContextValue).toEqual(expectedContextValue);
+    expect(innerContextValue).toEqual(expectedNestedContextValue);
   });
 
   it('should handle missing config gracefully', () => {
     const incompleteConfig = {} as { hasuraUrl: string };
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
+
+    const expectedIncompleteContextValue: QueryContextValue = {
+      hasuraUrl: '',
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    };
 
     const TestComponent = () => {
       contextValue = useQueryContext();
@@ -123,8 +151,6 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual({
-      hasuraUrl: undefined,
-    });
+    expect(contextValue).toEqual(expectedIncompleteContextValue);
   });
 });

@@ -54,4 +54,5 @@ const useQueryContext = (): QueryContextValue => {
   return context;
 };
 
+export type { QueryContextValue };
 export { QueryProvider, useQueryContext };
