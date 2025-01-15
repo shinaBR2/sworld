@@ -27,10 +27,11 @@ export function useFeatureFlagSubscription(url: string) {
     }
 
     return subscription.data.feature_flag.reduce<FeatureFlagsData>(
-      (acc, flag) => ({
-        ...acc,
-        [flag.name]: checkFeatureFlag(flag.conditions, user?.id || ''),
-      }),
+      (acc, flag) => {
+        acc[flag.name] = checkFeatureFlag(flag.conditions, user?.id || '');
+
+        return acc;
+      },
       {}
     );
   }, [subscription.data, user?.id]);
