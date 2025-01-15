@@ -14,6 +14,10 @@ const checkFeatureFlag = (
     return true;
   }
 
+  if (!allowedUserIds) {
+    return false;
+  }
+
   if (!userId?.trim()) {
     return false;
   }
