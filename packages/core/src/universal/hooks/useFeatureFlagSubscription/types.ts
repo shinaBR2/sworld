@@ -8,16 +8,28 @@ export interface FeatureFlagItemConditions {
   allowedUserIds: string[];
 }
 
+/**
+ * Represents a feature flag configuration
+ * @property id Unique identifier for the feature flag
+ * @property name Name of the feature flag
+ * @property conditions Conditions that determine if the flag is enabled
+ */
 export interface FeatureFlag {
   id: string;
   name: string;
   conditions: FeatureFlagItemConditions | null;
 }
 
+/**
+ * Maps feature flag names to their current state
+ */
 export interface FeatureFlagsData {
   [key: string]: boolean;
 }
 
+/**
+ * Response structure from the feature flag subscription
+ */
 export interface FeatureFlagsResponse {
   feature_flag: FeatureFlag[];
 }
