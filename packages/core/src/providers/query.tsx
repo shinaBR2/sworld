@@ -13,8 +13,13 @@ interface Config {
   hasuraUrl: string;
 }
 
+interface QueryContextProviderProps {
+  config: Config;
+  children: React.ReactNode;
+}
+
 const QueryContext = createContext<QueryContextValue | undefined>(undefined);
-const QueryContextProvider = (props: { config: Config; children: any }) => {
+const QueryContextProvider = (props: QueryContextProviderProps) => {
   const { config, children } = props;
   const { hasuraUrl } = config;
   const featureFlags = useFeatureFlagSubscription(hasuraUrl);
@@ -31,7 +36,7 @@ const QueryContextProvider = (props: { config: Config; children: any }) => {
   );
 };
 
-const QueryProvider: FC<any> = ({ config, children }) => {
+const QueryProvider: FC<QueryContextProviderProps> = ({ config, children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <QueryContextProvider config={config}>{children}</QueryContextProvider>
