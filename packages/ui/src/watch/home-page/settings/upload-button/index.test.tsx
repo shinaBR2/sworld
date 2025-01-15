@@ -12,9 +12,6 @@ vi.mock('core', () => ({
   Query: {
     useQueryContext: vi.fn(),
   },
-  watchQueryHooks: {
-    useFeatureFlag: vi.fn(),
-  },
 }));
 
 describe('UploadButton', () => {
@@ -30,7 +27,6 @@ describe('UploadButton', () => {
   });
 
   it('should render loading state correctly', () => {
-    // Mock the useFeatureFlag hook to return loading state
     (Query.useQueryContext as any).mockReturnValue({
       featureFlags: {
         isLoading: true,
@@ -57,7 +53,6 @@ describe('UploadButton', () => {
   });
 
   it('should render enabled state correctly', () => {
-    // Mock the useFeatureFlag hook to return enabled state
     (Query.useQueryContext as any).mockReturnValue({
       featureFlags: {
         isLoading: false,
@@ -80,7 +75,6 @@ describe('UploadButton', () => {
   });
 
   it('should render disabled state correctly', () => {
-    // Mock the useFeatureFlag hook to return disabled state
     (Query.useQueryContext as any).mockReturnValue({
       featureFlags: {
         isLoading: false,
