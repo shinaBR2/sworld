@@ -43,7 +43,7 @@ const UploadButton = () => {
     );
   }
 
-  const enabled = data && data['upload'];
+  const enabled = data?.['upload'];
 
   return (
     <>
