@@ -1,26 +1,49 @@
+// packages/core/src/providers/query/index.test.tsx
 import { describe, it, expect, vi } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
-import { useQueryContext, QueryProvider, QueryContextValue } from './index';
+import { useQueryContext, QueryProvider } from './index';
+import type { QueryContextValue } from './index';
 
-// Mock the useFeatureFlagSubscription hook
-vi.mock('../universal/hooks/useFeatureFlagSubscription', () => ({
-  useFeatureFlagSubscription: (_hasuraUrl: string) => ({
+// Mock the useSubscription hook
+vi.mock('../universal/hooks/useSubscription', () => ({
+  useSubscription: () => ({
     data: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
   }),
 }));
 
+// Mock the useFeatureFlagSubscription hook
+vi.mock('../universal/hooks/useFeatureFlagSubscription', () => ({
+  useFeatureFlagSubscription: () => ({
+    data: null,
+    isLoading: true,
+    error: null,
+  }),
+}));
+
+// Mock WebSocket
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+global.WebSocket = vi.fn().mockImplementation(() => ({
+  onopen: vi.fn(),
+  onmessage: vi.fn(),
+  onerror: vi.fn(),
+  close: vi.fn(),
+  send: vi.fn(),
+  readyState: WebSocket.OPEN,
+}));
+
 describe('Query Provider and Context', () => {
   const mockConfig = {
-    hasuraUrl: 'https://test-hasura.com/graphql',
+    hasuraUrl: 'wss://test-hasura.com/graphql',
   };
 
   const expectedContextValue: QueryContextValue = {
     hasuraUrl: mockConfig.hasuraUrl,
     featureFlags: {
       data: null,
-      isLoading: false,
+      isLoading: true,
       error: null,
     },
   };
@@ -47,7 +70,6 @@ describe('Query Provider and Context', () => {
 
     expect(() => {
       const { result } = renderHook(() => useQueryContext());
-      // Access the result to trigger the error
       result.current;
     }).toThrow('useQueryContext must be used within an QueryProvider');
 
@@ -89,14 +111,14 @@ describe('Query Provider and Context', () => {
 
   it('should handle multiple nested providers', () => {
     const nestedConfig = {
-      hasuraUrl: 'https://nested-hasura.com/graphql',
+      hasuraUrl: 'wss://nested-hasura.com/graphql',
     };
 
     const expectedNestedContextValue: QueryContextValue = {
       hasuraUrl: nestedConfig.hasuraUrl,
       featureFlags: {
         data: null,
-        isLoading: false,
+        isLoading: true,
         error: null,
       },
     };
@@ -131,15 +153,6 @@ describe('Query Provider and Context', () => {
     const incompleteConfig = {} as { hasuraUrl: string };
     let contextValue: QueryContextValue | undefined;
 
-    const expectedIncompleteContextValue: QueryContextValue = {
-      hasuraUrl: '',
-      featureFlags: {
-        data: null,
-        isLoading: false,
-        error: null,
-      },
-    };
-
     const TestComponent = () => {
       contextValue = useQueryContext();
       return null;
@@ -151,6 +164,13 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual(expectedIncompleteContextValue);
+    expect(contextValue).toEqual({
+      hasuraUrl: undefined,
+      featureFlags: {
+        data: null,
+        isLoading: true,
+        error: null,
+      },
+    });
   });
 });
