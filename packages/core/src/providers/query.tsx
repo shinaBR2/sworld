@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, FC, useContext } from 'react';
+import { useFeatureFlagSubscription } from '../universal/hooks/useFeatureFlagSubscription';
 
 const queryClient = new QueryClient();
 
 interface QueryContextValue {
   hasuraUrl: string;
+  featureFlags: ReturnType<typeof useFeatureFlagSubscription>;
 }
 
 interface Config {
@@ -15,8 +17,11 @@ const QueryContext = createContext<QueryContextValue | undefined>(undefined);
 const QueryContextProvider = (props: { config: Config; children: any }) => {
   const { config, children } = props;
   const { hasuraUrl } = config;
+  const featureFlags = useFeatureFlagSubscription(hasuraUrl);
+
   const contextValue: QueryContextValue = {
     hasuraUrl,
+    featureFlags,
   };
 
   return (

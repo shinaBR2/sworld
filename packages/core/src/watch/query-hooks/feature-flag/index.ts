@@ -39,6 +39,7 @@ const useFeatureFlag = (props: useFeatureFlagProps) => {
       name,
       site: 'watch',
     },
+    staleTime: 0,
   });
 
   if (isLoading || userLoading || !data?.feature_flag?.length || !user?.id) {
