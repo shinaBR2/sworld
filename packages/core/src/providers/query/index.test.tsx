@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
-import { useQueryContext, QueryProvider } from './query';
+import { useQueryContext, QueryProvider } from './index';
 
 describe('Query Provider and Context', () => {
   const mockConfig = {
