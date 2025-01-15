@@ -3,19 +3,8 @@ import useSAudioPlayer, {
   SAudioPlayerAudioItem,
   SAudioPlayerLoopMode,
 } from './useSAudioPlayer';
-// import {
-//   SubscriptionConfig,
-//   SubscriptionState,
-//   useSubscription,
-// } from './useSubscription/index.tds';
 
-export type {
-  SAudioPlayerInputs,
-  SAudioPlayerAudioItem,
-  SAudioPlayerLoopMode,
-  // SubscriptionConfig,
-  // SubscriptionState,
-};
+export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 
 const hooks = { useSAudioPlayer };
 export default hooks;
