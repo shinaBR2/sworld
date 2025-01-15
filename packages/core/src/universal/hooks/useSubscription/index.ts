@@ -68,7 +68,7 @@ export function useSubscription<T>(
 
         case 'data':
           setState({
-            data: message.payload.data,
+            data: message.payload.data as T,
             isLoading: false,
             error: null,
           });
@@ -94,6 +94,7 @@ export function useSubscription<T>(
     };
 
     ws.onerror = () => {
+      // TODO handle error and reconnect
       setState({
         data: null,
         isLoading: false,

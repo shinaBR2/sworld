@@ -13,7 +13,6 @@ export type WebSocketMessage =
       payload: { query: string; variables?: Record<string, unknown> };
     }
   | { type: 'stop'; id: string }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | { type: 'data'; payload: { data: any } }
+  | { type: 'data'; payload: { data: { [key: string]: unknown } } }
   | { type: 'error'; payload?: { message?: string } }
   | { type: 'complete' };
