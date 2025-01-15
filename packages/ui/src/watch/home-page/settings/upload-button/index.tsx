@@ -13,9 +13,6 @@ const UploadButton = () => {
   const { featureFlags } = Query.useQueryContext();
   const { data, isLoading } = featureFlags;
 
-  console.log(`featureFlags`, featureFlags);
-  const enabled = data && data['upload'];
-
   if (isLoading) {
     return (
       <ListItemButton
@@ -45,6 +42,8 @@ const UploadButton = () => {
       </ListItemButton>
     );
   }
+
+  const enabled = data && data['upload'];
 
   return (
     <>

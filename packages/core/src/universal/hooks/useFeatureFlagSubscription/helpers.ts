@@ -1,4 +1,4 @@
-import { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
+import { FeatureFlagItemConditions } from './types';
 
 const checkFeatureFlag = (
   flag: FeatureFlagItemConditions | null,

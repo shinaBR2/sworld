@@ -2,12 +2,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { UploadButton } from './index';
-import { Auth, watchQueryHooks } from 'core';
+import { Auth, Query } from 'core';
 
 // Mock the core module
 vi.mock('core', () => ({
   Auth: {
     useAuthContext: vi.fn(),
+  },
+  Query: {
+    useQueryContext: vi.fn(),
   },
   watchQueryHooks: {
     useFeatureFlag: vi.fn(),
@@ -28,9 +31,11 @@ describe('UploadButton', () => {
 
   it('should render loading state correctly', () => {
     // Mock the useFeatureFlag hook to return loading state
-    (watchQueryHooks.useFeatureFlag as any).mockReturnValue({
-      isLoading: true,
-      enabled: false,
+    (Query.useQueryContext as any).mockReturnValue({
+      featureFlags: {
+        isLoading: true,
+        data: null,
+      },
     });
 
     render(<UploadButton />);
@@ -53,9 +58,13 @@ describe('UploadButton', () => {
 
   it('should render enabled state correctly', () => {
     // Mock the useFeatureFlag hook to return enabled state
-    (watchQueryHooks.useFeatureFlag as any).mockReturnValue({
-      isLoading: false,
-      enabled: true,
+    (Query.useQueryContext as any).mockReturnValue({
+      featureFlags: {
+        isLoading: false,
+        data: {
+          upload: true,
+        },
+      },
     });
 
     render(<UploadButton />);
@@ -72,9 +81,13 @@ describe('UploadButton', () => {
 
   it('should render disabled state correctly', () => {
     // Mock the useFeatureFlag hook to return disabled state
-    (watchQueryHooks.useFeatureFlag as any).mockReturnValue({
-      isLoading: false,
-      enabled: false,
+    (Query.useQueryContext as any).mockReturnValue({
+      featureFlags: {
+        isLoading: false,
+        data: {
+          upload: false,
+        },
+      },
     });
 
     render(<UploadButton />);
@@ -83,21 +96,5 @@ describe('UploadButton', () => {
     const button = screen.getByRole('button', { name: /Upload file/i });
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-disabled', 'true');
-  });
-
-  it('should call useFeatureFlag with correct parameters', () => {
-    // Mock the useFeatureFlag hook
-    (watchQueryHooks.useFeatureFlag as any).mockReturnValue({
-      isLoading: false,
-      enabled: true,
-    });
-
-    render(<UploadButton />);
-
-    // Verify useFeatureFlag was called with correct parameters
-    expect(watchQueryHooks.useFeatureFlag).toHaveBeenCalledWith({
-      name: 'upload',
-      getAccessToken: mockGetAccessToken,
-    });
   });
 });
