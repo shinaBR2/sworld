@@ -4,15 +4,16 @@ export interface SubscriptionState<T> {
   error: Error | null;
 }
 
-export interface WebSocketMessage {
-  type:
-    | 'connection_init'
-    | 'connection_ack'
-    | 'start'
-    | 'data'
-    | 'error'
-    | 'stop';
+export type WebSocketMessage =
+  | { type: 'connection_init'; payload: { headers: { Authorization: string } } }
+  | { type: 'connection_ack' }
+  | {
+      type: 'start';
+      id: string;
+      payload: { query: string; variables?: Record<string, unknown> };
+    }
+  | { type: 'stop'; id: string }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload?: any;
-  id?: string;
-}
+  | { type: 'data'; payload: { data: any } }
+  | { type: 'error'; payload?: { message?: string } }
+  | { type: 'complete' };

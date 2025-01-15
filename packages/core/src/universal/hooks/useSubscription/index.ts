@@ -81,6 +81,15 @@ export function useSubscription<T>(
             error: new Error(message.payload?.message || 'Subscription error'),
           });
           break;
+
+        case 'complete':
+          // Subscription has ended; handle cleanup if necessary
+          ws.close();
+          break;
+
+        default:
+          // Handle unexpected message types if needed
+          break;
       }
     };
 
@@ -104,6 +113,7 @@ export function useSubscription<T>(
       }
     };
   }, [hasuraUrl, query, variables, getAccessToken]);
+  // TODO memorize the variables
 
   return state;
 }
