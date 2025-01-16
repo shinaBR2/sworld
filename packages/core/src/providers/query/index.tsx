@@ -1,22 +1,32 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, FC, useContext } from 'react';
+import { useFeatureFlagSubscription } from '../../universal/hooks/useFeatureFlagSubscription';
 
 const queryClient = new QueryClient();
 
 interface QueryContextValue {
   hasuraUrl: string;
+  featureFlags: ReturnType<typeof useFeatureFlagSubscription>;
 }
 
 interface Config {
   hasuraUrl: string;
 }
 
+interface QueryContextProviderProps {
+  config: Config;
+  children: React.ReactNode;
+}
+
 const QueryContext = createContext<QueryContextValue | undefined>(undefined);
-const QueryContextProvider = (props: { config: Config; children: any }) => {
+const QueryContextProvider = (props: QueryContextProviderProps) => {
   const { config, children } = props;
   const { hasuraUrl } = config;
+  const featureFlags = useFeatureFlagSubscription(hasuraUrl);
+
   const contextValue: QueryContextValue = {
     hasuraUrl,
+    featureFlags,
   };
 
   return (
@@ -26,7 +36,7 @@ const QueryContextProvider = (props: { config: Config; children: any }) => {
   );
 };
 
-const QueryProvider: FC<any> = ({ config, children }) => {
+const QueryProvider: FC<QueryContextProviderProps> = ({ config, children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <QueryContextProvider config={config}>{children}</QueryContextProvider>
@@ -44,4 +54,5 @@ const useQueryContext = (): QueryContextValue => {
   return context;
 };
 
+export type { QueryContextValue };
 export { QueryProvider, useQueryContext };

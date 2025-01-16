@@ -1,4 +1,4 @@
-import { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
+import { FeatureFlagItemConditions } from './types';
 
 const checkFeatureFlag = (
   flag: FeatureFlagItemConditions | null,
@@ -12,6 +12,10 @@ const checkFeatureFlag = (
 
   if (isGlobal) {
     return true;
+  }
+
+  if (!allowedUserIds) {
+    return false;
   }
 
   if (!userId?.trim()) {

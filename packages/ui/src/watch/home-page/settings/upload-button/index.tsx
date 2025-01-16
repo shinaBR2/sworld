@@ -3,20 +3,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Skeleton from '@mui/material/Skeleton';
-import { Auth, watchQueryHooks } from 'core';
+import { Query } from 'core';
 import { lazy, Suspense, useState } from 'react';
-
-const { useFeatureFlag } = watchQueryHooks;
 
 const VideoUploadDialog = lazy(() => import('../../../dialogs/upload'));
 
 const UploadButton = () => {
   const [open, setOpen] = useState(false);
-  const { getAccessToken } = Auth.useAuthContext();
-  const { isLoading, enabled } = useFeatureFlag({
-    name: 'upload',
-    getAccessToken,
-  });
+  const { featureFlags } = Query.useQueryContext();
+  const { data, isLoading } = featureFlags;
 
   if (isLoading) {
     return (
@@ -47,6 +42,8 @@ const UploadButton = () => {
       </ListItemButton>
     );
   }
+
+  const enabled = data?.['upload'];
 
   return (
     <>
