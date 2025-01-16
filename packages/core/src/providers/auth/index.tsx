@@ -6,23 +6,12 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { Auth0Provider, useAuth0, User } from '@auth0/auth0-react';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import type LogRocket from 'logrocket';
+import { getClaims, initLogRocket, transformUser } from './helpers';
+import { CustomUser, LogRocketConfig } from './types';
 
-export interface CustomUser {
-  id: string;
-  email?: string | undefined;
-  name?: string | undefined;
-  picture?: string | undefined;
-}
-
-// Define what claims we expect from Auth0
-interface HasuraClaims {
-  'x-hasura-default-role': string;
-  'x-hasura-allowed-roles': string[];
-  'x-hasura-user-id': string;
-}
-
-export interface AuthContextValue {
+interface AuthContextValue {
   isSignedIn: boolean;
   isLoading: boolean;
   user: CustomUser | null;
@@ -42,6 +31,7 @@ interface Auth0Config {
 
 interface Props {
   config: Auth0Config;
+  logRocketConfig?: LogRocketConfig;
   children: React.ReactNode;
 }
 
@@ -55,43 +45,10 @@ const AuthContext = createContext<AuthContextValue>({
   getAccessToken: async () => '',
 });
 
-const getClaims = (token: string): HasuraClaims | null => {
-  try {
-    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-    const namespace = 'https://hasura.io/jwt/claims';
-
-    if (tokenPayload[namespace]) {
-      return tokenPayload[namespace] as HasuraClaims;
-    } else {
-      throw new Error('No Hasura claims found in token');
-    }
-  } catch (err) {
-    return null;
-  }
-};
-
-/**
- * Transforms Auth0 user object into our custom user format
- * @param auth0User The user object from Auth0
- * @returns CustomUser object
- */
-const transformUser = (
-  id: string,
-  auth0User: User | undefined
-): CustomUser | null => {
-  if (!id || !auth0User?.sub) return null;
-
-  return {
-    id,
-    email: auth0User.email,
-    name: auth0User.name,
-    picture: auth0User.picture,
-  };
-};
-
-const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const AuthContextProvider: FC<{
+  logRocketConfig?: LogRocketConfig;
+  children: React.ReactNode;
+}> = ({ logRocketConfig, children }) => {
   const {
     isAuthenticated,
     isLoading,
@@ -104,6 +61,32 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<CustomUser | null>(null);
+  const [logRocket, setLogRocket] = useState<typeof LogRocket | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (logRocketConfig) {
+      initLogRocket(logRocketConfig).then(logRocketInstance => {
+        if (mounted) {
+          setLogRocket(logRocketInstance);
+        }
+      });
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [logRocketConfig]);
+
+  useEffect(() => {
+    if (isSignedIn && logRocket && user?.id) {
+      logRocket.identify(user.id, {
+        name: user.name || '',
+        email: user.email || '',
+      });
+    }
+  }, [isSignedIn, logRocket, user]);
 
   useEffect(() => {
     /**
@@ -164,7 +147,7 @@ const AuthContextProvider: FC<{ children: React.ReactNode }> = ({
   );
 };
 
-const AuthProvider: FC<Props> = ({ config, children }) => {
+const AuthProvider: FC<Props> = ({ config, logRocketConfig, children }) => {
   return (
     <Auth0Provider
       domain={config.domain}
@@ -176,7 +159,9 @@ const AuthProvider: FC<Props> = ({ config, children }) => {
       cookieDomain={config.cookieDomain}
       cacheLocation="localstorage"
     >
-      <AuthContextProvider>{children}</AuthContextProvider>
+      <AuthContextProvider logRocketConfig={logRocketConfig}>
+        {children}
+      </AuthContextProvider>
     </Auth0Provider>
   );
 };
@@ -196,4 +181,6 @@ const useAuthContext = (): AuthContextValue => {
   return context;
 };
 
+// For some packages/ui usage
+export { type CustomUser, type AuthContextValue };
 export { AuthProvider, useAuthContext };
