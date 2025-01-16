@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
-import { checkFeatureFlag } from './index';
-import type { FeatureFlagItemConditions } from '../../../entity/interfaces/featureFlag';
+import { checkFeatureFlag } from './helpers';
+import { FeatureFlagItemConditions } from './types';
 
 describe('checkFeatureFlag', () => {
   it('should return false when userId is empty string and not global', () => {
