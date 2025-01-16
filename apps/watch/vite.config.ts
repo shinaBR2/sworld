@@ -10,6 +10,8 @@ export default defineConfig({
   },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
+    sourcemap: true,
+    minify: 'esbuild',
     chunkSizeWarningLimit: 100,
     rollupOptions: {
       onwarn(warning, warn) {
@@ -17,6 +19,17 @@ export default defineConfig({
           return;
         }
         warn(warning);
+      },
+      output: {
+        manualChunks: id => {
+          if (id.includes('node_modules')) {
+            /**
+             * App broken if bundle mui separetely
+             */
+            if (id.includes('react')) return 'react-vendor';
+            return 'vendor';
+          }
+        },
       },
     },
   },
