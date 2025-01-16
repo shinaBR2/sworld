@@ -1,14 +1,55 @@
+// packages/core/src/providers/query/index.test.tsx
 import { describe, it, expect, vi } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
-import { useQueryContext, QueryProvider } from './query';
+import { useQueryContext, QueryProvider } from './index';
+import type { QueryContextValue } from './index';
+
+// Mock the useSubscription hook
+vi.mock('../universal/hooks/useSubscription', () => ({
+  useSubscription: () => ({
+    data: null,
+    isLoading: true,
+    error: null,
+  }),
+}));
+
+// Mock the useFeatureFlagSubscription hook
+vi.mock('../universal/hooks/useFeatureFlagSubscription', () => ({
+  useFeatureFlagSubscription: () => ({
+    data: null,
+    isLoading: true,
+    error: null,
+  }),
+}));
+
+// Mock WebSocket
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+global.WebSocket = vi.fn().mockImplementation(() => ({
+  onopen: vi.fn(),
+  onmessage: vi.fn(),
+  onerror: vi.fn(),
+  close: vi.fn(),
+  send: vi.fn(),
+  readyState: WebSocket.OPEN,
+}));
 
 describe('Query Provider and Context', () => {
   const mockConfig = {
-    hasuraUrl: 'https://test-hasura.com/graphql',
+    hasuraUrl: 'wss://test-hasura.com/graphql',
+  };
+
+  const expectedContextValue: QueryContextValue = {
+    hasuraUrl: mockConfig.hasuraUrl,
+    featureFlags: {
+      data: null,
+      isLoading: true,
+      error: null,
+    },
   };
 
   it('should provide context values to children', () => {
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
 
     const TestComponent = () => {
       contextValue = useQueryContext();
@@ -21,9 +62,7 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
+    expect(contextValue).toEqual(expectedContextValue);
   });
 
   it('should throw error when useQueryContext is used outside provider', () => {
@@ -31,7 +70,6 @@ describe('Query Provider and Context', () => {
 
     expect(() => {
       const { result } = renderHook(() => useQueryContext());
-      // Access the result to trigger the error
       result.current;
     }).toThrow('useQueryContext must be used within an QueryProvider');
 
@@ -51,7 +89,7 @@ describe('Query Provider and Context', () => {
   });
 
   it('should pass config correctly through provider chain', () => {
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
 
     const DeepChild = () => {
       contextValue = useQueryContext();
@@ -68,18 +106,25 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(contextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
+    expect(contextValue).toEqual(expectedContextValue);
   });
 
   it('should handle multiple nested providers', () => {
     const nestedConfig = {
-      hasuraUrl: 'https://nested-hasura.com/graphql',
+      hasuraUrl: 'wss://nested-hasura.com/graphql',
     };
 
-    let outerContextValue;
-    let innerContextValue;
+    const expectedNestedContextValue: QueryContextValue = {
+      hasuraUrl: nestedConfig.hasuraUrl,
+      featureFlags: {
+        data: null,
+        isLoading: true,
+        error: null,
+      },
+    };
+
+    let outerContextValue: QueryContextValue | undefined;
+    let innerContextValue: QueryContextValue | undefined;
 
     const OuterComponent = () => {
       outerContextValue = useQueryContext();
@@ -100,17 +145,13 @@ describe('Query Provider and Context', () => {
       </QueryProvider>
     );
 
-    expect(outerContextValue).toEqual({
-      hasuraUrl: mockConfig.hasuraUrl,
-    });
-    expect(innerContextValue).toEqual({
-      hasuraUrl: nestedConfig.hasuraUrl,
-    });
+    expect(outerContextValue).toEqual(expectedContextValue);
+    expect(innerContextValue).toEqual(expectedNestedContextValue);
   });
 
   it('should handle missing config gracefully', () => {
     const incompleteConfig = {} as { hasuraUrl: string };
-    let contextValue;
+    let contextValue: QueryContextValue | undefined;
 
     const TestComponent = () => {
       contextValue = useQueryContext();
@@ -125,6 +166,11 @@ describe('Query Provider and Context', () => {
 
     expect(contextValue).toEqual({
       hasuraUrl: undefined,
+      featureFlags: {
+        data: null,
+        isLoading: true,
+        error: null,
+      },
     });
   });
 });
