@@ -2,10 +2,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSubscription } from './index';
-import { AuthContextValue, useAuthContext } from '../../../providers/auth0';
+import { AuthContextValue, useAuthContext } from '../../../providers/auth';
 
 // Mock auth context
-vi.mock('../../../providers/auth0', () => ({
+vi.mock('../../../providers/auth', () => ({
   useAuthContext: vi.fn(),
 }));
 
