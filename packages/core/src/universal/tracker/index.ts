@@ -6,19 +6,25 @@ interface InitSentryParams {
   environment: string;
   release: string;
   dsn: string;
+  site: string;
   // traceDomains: string[];
 }
 
 const initSentry = (options: InitSentryParams) => {
   if (isInitialized) return;
 
-  const { environment, dsn, release } = options;
+  const { environment, dsn, site, release } = options;
   const isProduction = environment == 'production';
 
   Sentry.init({
     dsn,
     environment,
     release,
+    initialScope: {
+      tags: {
+        site,
+      },
+    },
     integrations: [Sentry.browserTracingIntegration()],
     // Tracing
     tracesSampleRate: isProduction ? 0.1 : 1.0,
