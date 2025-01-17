@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuthContext } from '../../../providers/auth0';
+import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
 
 export function useSubscription<T>(
