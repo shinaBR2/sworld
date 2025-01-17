@@ -1,7 +1,7 @@
 import { describe, expect, test, beforeEach, vi } from 'vitest';
 import { renderHook, act, RenderHookResult } from '@testing-library/react';
 import { User } from '@auth0/auth0-react';
-import { AuthContextValue, AuthProvider, useAuthContext } from './auth0';
+import { AuthContextValue, AuthProvider, useAuthContext } from '.';
 
 interface Auth0ContextInterface {
   isAuthenticated: boolean;

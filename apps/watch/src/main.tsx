@@ -5,27 +5,9 @@ import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import {
-  auth0Config,
-  appConfig,
-  queryConfig,
-  systemConfig,
-  validateEnvVars,
-} from './config';
+import { auth0Config, queryConfig, validateEnvVars } from './config';
 
 validateEnvVars();
-
-const initLogRocket = async () => {
-  const LogRocket = (await import('logrocket')).default;
-
-  LogRocket.init(systemConfig.logRocket, {
-    rootHostname: appConfig.sites.main,
-  });
-};
-
-if (systemConfig.logRocket) {
-  initLogRocket();
-}
 
 // @ts-ignore
 const router = createRouter({

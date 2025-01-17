@@ -1,12 +1,14 @@
+const hasuraGraphqlUrl = `${import.meta.env.VITE_HASURA_DOMAIN}/v1/graphql`;
+
 const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-  audience: import.meta.env.VITE_HASURA_GRAPHQL_URL,
+  audience: hasuraGraphqlUrl,
   cookieDomain: `.${import.meta.env.VITE_MAIN_SITE_URL}`,
   redirectUri: window.location.origin,
 };
 const queryConfig = {
-  hasuraUrl: import.meta.env.VITE_HASURA_GRAPHQL_URL,
+  hasuraUrl: hasuraGraphqlUrl,
 };
 const appConfig = {
   sites: {
@@ -24,7 +26,7 @@ const validateEnvVars = () => {
   const required = [
     'VITE_AUTH0_DOMAIN',
     'VITE_AUTH0_CLIENT_ID',
-    'VITE_HASURA_GRAPHQL_URL',
+    'VITE_HASURA_DOMAIN',
     'VITE_MAIN_SITE_URL',
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
