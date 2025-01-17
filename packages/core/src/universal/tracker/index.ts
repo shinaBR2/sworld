@@ -19,10 +19,7 @@ const initSentry = (options: InitSentryParams) => {
     dsn,
     environment,
     release,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
+    integrations: [Sentry.browserTracingIntegration()],
     // Tracing
     tracesSampleRate: isProduction ? 0.1 : 1.0,
     // tracePropagationTargets: traceDomains,
@@ -34,4 +31,10 @@ const initSentry = (options: InitSentryParams) => {
   isInitialized = true;
 };
 
-export { initSentry };
+const loadReplayIntegration = async () => {
+  import('@sentry/react').then(lazyLoadedSentry => {
+    Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
+  });
+};
+
+export { initSentry, loadReplayIntegration };
