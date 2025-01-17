@@ -29,6 +29,18 @@ export default defineConfig({
              * App broken if bundle mui separetely
              */
             if (id.includes('react')) return 'react-vendor';
+
+            if (
+              id.includes('@sentry-internal/replay/') ||
+              id.includes('@sentry-internal/replay-canvas/')
+            ) {
+              return 'sentry-replay-vendor';
+            }
+
+            if (id.includes('@sentry') || id.includes('sentry-internal')) {
+              return 'sentry-vendor';
+            }
+
             return 'vendor';
           }
         },
