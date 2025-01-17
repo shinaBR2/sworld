@@ -45,7 +45,7 @@ jobs:
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
           VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
           VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
-          VITE_HASURA_DOMAIN: ${{ secrets.VITE_HASURA_DOMAIN }}
+          VITE_HASURA_DOMAIN: ${{ vars.VITE_HASURA_DOMAIN }}
           VITE_MAIN_SITE_URL: ${{ vars.VITE_MAIN_SITE_URL }}
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
@@ -93,7 +93,7 @@ jobs:
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
           VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
           VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
-          VITE_HASURA_DOMAIN: ${{ secrets.VITE_HASURA_DOMAIN }}
+          VITE_HASURA_DOMAIN: ${{ vars.VITE_HASURA_DOMAIN }}
           VITE_MAIN_SITE_URL: ${{ vars.VITE_MAIN_SITE_URL }}
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
