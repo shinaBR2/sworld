@@ -7,9 +7,8 @@ import React, {
   useCallback,
 } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import type LogRocket from 'logrocket';
-import { getClaims, initLogRocket, transformUser } from './helpers';
-import { CustomUser, LogRocketConfig } from './types';
+import { getClaims, transformUser } from './helpers';
+import { CustomUser } from './types';
 
 interface AuthContextValue {
   isSignedIn: boolean;
@@ -31,7 +30,6 @@ interface Auth0Config {
 
 interface Props {
   config: Auth0Config;
-  logRocketConfig?: LogRocketConfig;
   children: React.ReactNode;
 }
 
@@ -46,9 +44,8 @@ const AuthContext = createContext<AuthContextValue>({
 });
 
 const AuthContextProvider: FC<{
-  logRocketConfig?: LogRocketConfig;
   children: React.ReactNode;
-}> = ({ logRocketConfig, children }) => {
+}> = ({ children }) => {
   const {
     isAuthenticated,
     isLoading,
@@ -61,36 +58,6 @@ const AuthContextProvider: FC<{
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<CustomUser | null>(null);
-  const [logRocket, setLogRocket] = useState<typeof LogRocket | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    if (logRocketConfig) {
-      initLogRocket(logRocketConfig).then(logRocketInstance => {
-        if (mounted) {
-          setLogRocket(logRocketInstance);
-        }
-      });
-    }
-
-    return () => {
-      mounted = false;
-    };
-  }, [logRocketConfig]);
-
-  useEffect(() => {
-    if (isSignedIn && logRocket && user?.id) {
-      try {
-        logRocket.identify(user.id, {
-          name: user.name || '',
-          email: user.email || '',
-        });
-      } catch (error) {
-        console.error('Failed to identify user in LogRocket:', error);
-      }
-    }
-  }, [isSignedIn, logRocket, user]);
 
   useEffect(() => {
     /**
@@ -151,7 +118,7 @@ const AuthContextProvider: FC<{
   );
 };
 
-const AuthProvider: FC<Props> = ({ config, logRocketConfig, children }) => {
+const AuthProvider: FC<Props> = ({ config, children }) => {
   return (
     <Auth0Provider
       domain={config.domain}
@@ -163,9 +130,7 @@ const AuthProvider: FC<Props> = ({ config, logRocketConfig, children }) => {
       cookieDomain={config.cookieDomain}
       cacheLocation="localstorage"
     >
-      <AuthContextProvider logRocketConfig={logRocketConfig}>
-        {children}
-      </AuthContextProvider>
+      <AuthContextProvider>{children}</AuthContextProvider>
     </Auth0Provider>
   );
 };

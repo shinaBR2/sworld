@@ -376,9 +376,6 @@ importers:
       graphql-request:
         specifier: ^7.1.2
         version: 7.1.2(graphql@16.9.0)
-      logrocket:
-        specifier: ^9.0.0
-        version: 9.0.0
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)

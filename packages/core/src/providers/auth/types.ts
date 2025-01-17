@@ -1,8 +1,3 @@
-interface LogRocketConfig {
-  appId: string;
-  rootHostname: string;
-}
-
 interface CustomUser {
   id: string;
   email?: string | undefined;
@@ -10,4 +5,4 @@ interface CustomUser {
   picture?: string | undefined;
 }
 
-export { type LogRocketConfig, type CustomUser };
+export { type CustomUser };

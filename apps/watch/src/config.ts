@@ -18,9 +18,7 @@ const appConfig = {
     play: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
-const systemConfig = {
-  logRocket: import.meta.env.VITE_LOGROCKET_APP_ID,
-};
+
 const sentryConfig = {
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.VITE_ENVIRONMENT,
@@ -49,11 +47,4 @@ const validateEnvVars = () => {
   }
 };
 
-export {
-  auth0Config,
-  queryConfig,
-  appConfig,
-  systemConfig,
-  sentryConfig,
-  validateEnvVars,
-};
+export { auth0Config, queryConfig, appConfig, sentryConfig, validateEnvVars };
