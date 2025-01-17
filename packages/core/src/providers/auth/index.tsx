@@ -81,10 +81,14 @@ const AuthContextProvider: FC<{
 
   useEffect(() => {
     if (isSignedIn && logRocket && user?.id) {
-      logRocket.identify(user.id, {
-        name: user.name || '',
-        email: user.email || '',
-      });
+      try {
+        logRocket.identify(user.id, {
+          name: user.name || '',
+          email: user.email || '',
+        });
+      } catch (error) {
+        console.error('Failed to identify user in LogRocket:', error);
+      }
     }
   }, [isSignedIn, logRocket, user]);
 
