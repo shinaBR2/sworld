@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+// import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -33,5 +34,17 @@ export default defineConfig({
       },
     },
   },
-  plugins: [TanStackRouterVite(), react()],
+  plugins: [
+    TanStackRouterVite(),
+    react(),
+    // visualizer({
+    //   open: true,
+    //   gzipSize: true,
+    //   sourcemap: true,
+    //   brotliSize: true,
+    //   template: 'treemap',
+    //   // template: 'network',
+    //   filename: 'stats.html',
+    // }),
+  ],
 });
