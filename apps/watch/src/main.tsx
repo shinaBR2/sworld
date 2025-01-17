@@ -13,6 +13,7 @@ import {
 } from './config';
 
 validateEnvVars();
+initSentry(sentryConfig);
 
 // @ts-ignore
 const router = createRouter({
@@ -50,7 +51,5 @@ const AppWrapper = () => {
     </StrictMode>
   );
 };
-
-initSentry(sentryConfig);
 
 createRoot(document.getElementById('root')!).render(<AppWrapper />);
