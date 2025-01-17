@@ -46,4 +46,6 @@ const AppWrapper = () => {
   );
 };
 
+// TODO Init sentry
+
 createRoot(document.getElementById('root')!).render(<AppWrapper />);
