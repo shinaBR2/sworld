@@ -1,3 +1,4 @@
+// import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
@@ -37,6 +38,12 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     react(),
+    // TODO source map upload
+    // sentryVitePlugin({
+    //   org: 'sworld-dc',
+    //   project: 'watch',
+    //   authToken: process.env.SENTRY_AUTH_TOKEN,
+    // }),
     // visualizer({
     //   open: true,
     //   gzipSize: true,
