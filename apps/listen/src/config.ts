@@ -18,9 +18,6 @@ const appConfig = {
     play: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
-const systemConfig = {
-  logRocket: import.meta.env.VITE_LOGROCKET_APP_ID,
-};
 
 const validateEnvVars = () => {
   const required = [
@@ -40,4 +37,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, appConfig, systemConfig, validateEnvVars };
+export { auth0Config, queryConfig, appConfig, validateEnvVars };
