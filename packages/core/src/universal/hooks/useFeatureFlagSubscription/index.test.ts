@@ -1,13 +1,13 @@
-import { AuthContextValue } from './../../../providers/auth0';
+import { AuthContextValue } from './../../../providers/auth';
 // packages/core/src/universal/hooks/useFeatureFlagSubscription/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useFeatureFlagSubscription } from './index';
-import { useAuthContext } from '../../../providers/auth0';
+import { useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 
 // Mock dependencies
-vi.mock('../../../providers/auth0', () => ({
+vi.mock('../../../providers/auth', () => ({
   useAuthContext: vi.fn(),
 }));
 

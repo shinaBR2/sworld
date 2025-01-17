@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+// import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,6 +11,8 @@ export default defineConfig({
   },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
+    sourcemap: true,
+    minify: 'esbuild',
     chunkSizeWarningLimit: 100,
     rollupOptions: {
       onwarn(warning, warn) {
@@ -18,7 +21,30 @@ export default defineConfig({
         }
         warn(warning);
       },
+      output: {
+        manualChunks: id => {
+          if (id.includes('node_modules')) {
+            /**
+             * App broken if bundle mui separetely
+             */
+            if (id.includes('react')) return 'react-vendor';
+            return 'vendor';
+          }
+        },
+      },
     },
   },
-  plugins: [TanStackRouterVite(), react()],
+  plugins: [
+    TanStackRouterVite(),
+    react(),
+    // visualizer({
+    //   open: true,
+    //   gzipSize: true,
+    //   sourcemap: true,
+    //   brotliSize: true,
+    //   template: 'treemap',
+    //   // template: 'network',
+    //   filename: 'stats.html',
+    // }),
+  ],
 });

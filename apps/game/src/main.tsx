@@ -18,7 +18,7 @@ const validateEnvVars = () => {
   const required = [
     'VITE_AUTH0_DOMAIN',
     'VITE_AUTH0_CLIENT_ID',
-    'VITE_HASURA_GRAPHQL_URL',
+    'VITE_HASURA_DOMAIN',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
