@@ -6,13 +6,13 @@ interface InitSentryParams {
   environment: string;
   release: string;
   dsn: string;
-  traceDomains: string[];
+  // traceDomains: string[];
 }
 
 const initSentry = (options: InitSentryParams) => {
   if (isInitialized) return;
 
-  const { environment, dsn, release, traceDomains } = options;
+  const { environment, dsn, release } = options;
   const isProduction = environment == 'production';
 
   Sentry.init({
@@ -25,7 +25,7 @@ const initSentry = (options: InitSentryParams) => {
     ],
     // Tracing
     tracesSampleRate: isProduction ? 0.1 : 1.0,
-    tracePropagationTargets: traceDomains,
+    // tracePropagationTargets: traceDomains,
     // Session Replay
     replaysSessionSampleRate: isProduction ? 0.1 : 1.0,
     replaysOnErrorSampleRate: 1.0,

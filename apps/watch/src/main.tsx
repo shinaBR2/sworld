@@ -3,9 +3,14 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { Auth, Query } from 'core';
+import { Auth, Query, initSentry } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  sentryConfig,
+  validateEnvVars,
+} from './config';
 
 validateEnvVars();
 
@@ -46,6 +51,6 @@ const AppWrapper = () => {
   );
 };
 
-// TODO Init sentry
+initSentry(sentryConfig);
 
 createRoot(document.getElementById('root')!).render(<AppWrapper />);
