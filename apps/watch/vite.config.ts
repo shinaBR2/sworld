@@ -1,4 +1,4 @@
-// import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
@@ -32,7 +32,8 @@ export default defineConfig({
 
             if (
               id.includes('@sentry-internal/replay/') ||
-              id.includes('@sentry-internal/replay-canvas/')
+              id.includes('@sentry-internal/replay-canvas/') ||
+              id.includes('@sentry-internal/feedback/')
             ) {
               return 'sentry-replay-vendor';
             }
@@ -50,12 +51,19 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     react(),
-    // TODO source map upload
-    // sentryVitePlugin({
-    //   org: 'sworld-dc',
-    //   project: 'watch',
-    //   authToken: process.env.SENTRY_AUTH_TOKEN,
-    // }),
+    /**
+     * THIS IS ONLY RUN ON CI SERVER
+     * THEREFORE WE SHOULD NEVER PREFIX SENTRY AUTH TOKEN with VITE_
+     */
+    ...(process.env.CI
+      ? [
+          sentryVitePlugin({
+            org: 'sworld-dc',
+            project: 'frontend',
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+          }),
+        ]
+      : []),
     // visualizer({
     //   open: true,
     //   gzipSize: true,
