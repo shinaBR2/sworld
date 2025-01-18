@@ -26,14 +26,15 @@ export default defineConfig({
         manualChunks: id => {
           if (id.includes('node_modules')) {
             /**
-             * App broken if bundle mui separetely
+             * App broken if bundle mui separately
              */
             if (id.includes('react')) return 'react-vendor';
 
+            // App broken if bundle `@sentry-internal/feedback` separately
             if (
               id.includes('@sentry-internal/replay/') ||
-              id.includes('@sentry-internal/replay-canvas/') ||
-              id.includes('@sentry-internal/feedback/')
+              id.includes('@sentry-internal/replay-canvas/')
+              // id.includes('@sentry-internal/feedback/')
             ) {
               return 'sentry-integration-vendor';
             }
