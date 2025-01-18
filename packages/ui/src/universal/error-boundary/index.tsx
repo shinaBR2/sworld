@@ -10,8 +10,17 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 import { ReactNode } from 'react';
+import { texts } from './texts';
+import { ErrorOutline } from '@mui/icons-material';
 
-const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
+interface ErrorFallbackProps {
+  errorMessage?: string;
+  canRetry?: boolean;
+}
+
+const ErrorFallback = (props: ErrorFallbackProps) => {
+  const { errorMessage = texts.message, canRetry = true } = props;
+
   return (
     <Box
       display="flex"
@@ -22,23 +31,32 @@ const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
     >
       <Container maxWidth="sm">
         <Card elevation={12}>
-          <CardContent>
+          <CardContent sx={{ textAlign: 'center' }}>
+            <ErrorOutline
+              color="error"
+              sx={{
+                fontSize: 80,
+                mb: 2,
+              }}
+            />
             <Box textAlign="center" py={2}>
               <Typography variant="h5" component="h2" gutterBottom>
-                Something went wrong
+                {texts.title}
               </Typography>
               <Typography color="text.secondary" variant="body2" gutterBottom>
-                {'An unexpected error occurred'}
+                {errorMessage}
               </Typography>
-              <Box mt={3}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  onClick={resetErrorBoundary}
-                >
-                  Try again
-                </Button>
-              </Box>
+              {canRetry && (
+                <Box mt={3}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => window.location.reload()}
+                  >
+                    {texts.tryAgain}
+                  </Button>
+                </Box>
+              )}
             </Box>
           </CardContent>
         </Card>
