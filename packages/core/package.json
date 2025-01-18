@@ -35,6 +35,7 @@
     "eslint-config-custom": "workspace:*",
     "jsdom": "^25.0.1",
     "react": "^18.2.0",
+    "sentry-testkit": "^5.0.9",
     "tsconfig": "workspace:*",
     "tsup": "^6.2.3",
     "typescript": "^5.6.2",

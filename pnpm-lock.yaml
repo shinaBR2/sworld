@@ -235,7 +235,7 @@ importers:
         version: link:../../packages/eslint-config-custom
       rollup-plugin-visualizer:
         specifier: ^5.8.3
-        version: 5.12.0(rollup@2.79.2)
+        version: 5.12.0(rollup@4.28.1)
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -419,6 +419,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
+      sentry-testkit:
+        specifier: ^5.0.9
+        version: 5.0.9
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -10316,6 +10319,9 @@ packages:
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
 
+  sentry-testkit@5.0.9:
+    resolution: {integrity: sha512-b9oa3juBM3EXKDU/v5aL4HEC41yGxQZY4pluFN+nvRJLyvHc+JQWPWxxkOPAAr1vGY/4zH+V9NGS+ojIQkc88w==}
+
   serialize-javascript@4.0.0:
     resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
 
@@ -18869,7 +18875,7 @@ snapshots:
       object-keys: 1.1.1
       object.assign: 4.1.5
       regexp.prototype.flags: 1.5.3
-      side-channel: 1.0.6
+      side-channel: 1.1.0
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.2
       which-typed-array: 1.1.15
@@ -23413,7 +23419,7 @@ snapshots:
 
   qs@6.13.0:
     dependencies:
-      side-channel: 1.0.6
+      side-channel: 1.1.0
 
   querystringify@2.2.0: {}
 
@@ -23990,15 +23996,6 @@ snapshots:
       serialize-javascript: 4.0.0
       terser: 5.37.0
 
-  rollup-plugin-visualizer@5.12.0(rollup@2.79.2):
-    dependencies:
-      open: 8.4.2
-      picomatch: 2.3.1
-      source-map: 0.7.4
-      yargs: 17.7.2
-    optionalDependencies:
-      rollup: 2.79.2
-
   rollup-plugin-visualizer@5.12.0(rollup@4.28.1):
     dependencies:
       open: 8.4.2
@@ -24167,6 +24164,13 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
       upper-case-first: 2.0.2
+
+  sentry-testkit@5.0.9:
+    dependencies:
+      body-parser: 1.20.3
+      express: 4.21.2
+    transitivePeerDependencies:
+      - supports-color
 
   serialize-javascript@4.0.0:
     dependencies:

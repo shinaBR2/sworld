@@ -1,17 +1,20 @@
-import {
-  ErrorBoundary as ReactErrorBoundary,
-  FallbackProps,
-} from 'react-error-boundary';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { texts } from './texts';
+import { ErrorOutline } from '@mui/icons-material';
 
-import { ReactNode } from 'react';
+interface ErrorFallbackProps {
+  errorMessage?: string;
+  canRetry?: boolean;
+}
 
-const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = (props: ErrorFallbackProps) => {
+  const { errorMessage = texts.message, canRetry = true } = props;
+
   return (
     <Box
       display="flex"
@@ -22,23 +25,32 @@ const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
     >
       <Container maxWidth="sm">
         <Card elevation={12}>
-          <CardContent>
+          <CardContent sx={{ textAlign: 'center' }}>
+            <ErrorOutline
+              color="error"
+              sx={{
+                fontSize: 80,
+                mb: 2,
+              }}
+            />
             <Box textAlign="center" py={2}>
               <Typography variant="h5" component="h2" gutterBottom>
-                Something went wrong
+                {texts.title}
               </Typography>
               <Typography color="text.secondary" variant="body2" gutterBottom>
-                {'An unexpected error occurred'}
+                {errorMessage}
               </Typography>
-              <Box mt={3}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  onClick={resetErrorBoundary}
-                >
-                  Try again
-                </Button>
-              </Box>
+              {canRetry && (
+                <Box mt={3}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => window.location.reload()}
+                  >
+                    {texts.tryAgain}
+                  </Button>
+                </Box>
+              )}
             </Box>
           </CardContent>
         </Card>
@@ -47,21 +59,4 @@ const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
   );
 };
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
-
-const ErrorBoundary = (props: ErrorBoundaryProps) => {
-  return (
-    <ReactErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        window.location.reload();
-      }}
-    >
-      {props.children}
-    </ReactErrorBoundary>
-  );
-};
-
-export { ErrorFallback, ErrorBoundary };
+export { ErrorFallback };
