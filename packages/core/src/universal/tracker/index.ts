@@ -38,12 +38,14 @@ const initSentry = (options: InitSentryParams) => {
 };
 
 const loadSentryIntegrations = async () => {
-  import('@sentry/react').then(lazyLoadedSentry => {
-    Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
-  });
-  import('@sentry/react').then(lazyLoadedSentry => {
-    Sentry.addIntegration(lazyLoadedSentry.feedbackIntegration());
-  });
+  try {
+    import('@sentry/react').then(lazyLoadedSentry => {
+      Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
+      Sentry.addIntegration(lazyLoadedSentry.feedbackIntegration());
+    });
+  } catch (error) {
+    console.error('Failed to load Sentry integrations:', error);
+  }
 };
 
 export { initSentry, loadSentryIntegrations };
