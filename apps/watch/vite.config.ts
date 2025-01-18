@@ -35,7 +35,7 @@ export default defineConfig({
               id.includes('@sentry-internal/replay-canvas/') ||
               id.includes('@sentry-internal/feedback/')
             ) {
-              return 'sentry-replay-vendor';
+              return 'sentry-integration-vendor';
             }
 
             if (id.includes('@sentry') || id.includes('sentry-internal')) {
