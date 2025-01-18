@@ -18,8 +18,11 @@ const appConfig = {
     play: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
-const systemConfig = {
-  logRocket: import.meta.env.VITE_LOGROCKET_APP_ID,
+const sentryConfig = {
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  environment: import.meta.env.VITE_ENVIRONMENT,
+  release: import.meta.env.VITE_RELEASE,
+  site: 'listen',
 };
 
 const validateEnvVars = () => {
@@ -31,6 +34,9 @@ const validateEnvVars = () => {
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
+    'VITE_SENTRY_DSN',
+    'VITE_ENVIRONMENT',
+    'VITE_RELEASE',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
@@ -40,4 +46,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, appConfig, systemConfig, validateEnvVars };
+export { auth0Config, queryConfig, appConfig, sentryConfig, validateEnvVars };

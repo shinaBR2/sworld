@@ -1,6 +1,5 @@
 import { User } from '@auth0/auth0-react';
-import { CustomUser, LogRocketConfig } from './types';
-import type LRLogRocket from 'logrocket';
+import { CustomUser } from './types';
 
 interface HasuraClaims {
   'x-hasura-default-role': string;
@@ -19,22 +18,6 @@ const getClaims = (token: string): HasuraClaims | null => {
       throw new Error('No Hasura claims found in token');
     }
   } catch (err) {
-    return null;
-  }
-};
-
-const initLogRocket = async (
-  config: LogRocketConfig
-): Promise<typeof LRLogRocket | null> => {
-  const { appId, rootHostname } = config;
-  try {
-    const LogRocket = (await import('logrocket')).default;
-    LogRocket.init(appId, {
-      rootHostname,
-    });
-    return LogRocket;
-  } catch (error) {
-    console.error('Failed to initialize LogRocket:', error);
     return null;
   }
 };
@@ -58,4 +41,4 @@ const transformUser = (
   };
 };
 
-export { getClaims, initLogRocket, transformUser };
+export { getClaims, transformUser };

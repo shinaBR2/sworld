@@ -5,6 +5,8 @@ import {
   SAudioPlayerLoopMode,
   commonHelpers,
   requestHelpers,
+  initSentry,
+  loadSentryIntegrations,
 } from './universal';
 import { queryHooks as watchQueryHooks } from './watch';
 import { queryHooks as listenQueryHooks } from './listen';
@@ -13,6 +15,7 @@ export * as Query from './providers/query';
 export { commonHelpers, requestHelpers };
 
 export { watchQueryHooks, listenQueryHooks };
+export { initSentry, loadSentryIntegrations };
 
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
 export default hooks;
