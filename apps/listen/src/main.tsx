@@ -1,5 +1,5 @@
 import { Auth, initSentry, Query } from 'core';
-import { ErrorBoundary } from 'ui/universal';
+import { ErrorBoundary } from 'core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
@@ -9,6 +9,7 @@ import {
   sentryConfig,
   validateEnvVars,
 } from './config';
+import { ErrorFallback } from 'ui/universal/error-boundary';
 
 validateEnvVars();
 initSentry(sentryConfig);
@@ -19,7 +20,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Auth.AuthProvider config={auth0Config}>
         <Query.QueryProvider config={queryConfig}>
           <App />
