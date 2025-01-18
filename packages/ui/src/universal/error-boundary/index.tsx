@@ -1,12 +1,9 @@
-import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
-import { ReactNode } from 'react';
 import { texts } from './texts';
 import { ErrorOutline } from '@mui/icons-material';
 
@@ -62,21 +59,4 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
   );
 };
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
-
-const ErrorBoundary = (props: ErrorBoundaryProps) => {
-  return (
-    <ReactErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        window.location.reload();
-      }}
-    >
-      {props.children}
-    </ReactErrorBoundary>
-  );
-};
-
-export { ErrorFallback, ErrorBoundary };
+export { ErrorFallback };
