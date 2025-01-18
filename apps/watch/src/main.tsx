@@ -3,8 +3,15 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { Auth, Query, initSentry, loadSentryIntegrations } from 'core';
+import {
+  Auth,
+  ErrorBoundary,
+  Query,
+  initSentry,
+  loadSentryIntegrations,
+} from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
+import { ErrorFallback } from 'ui/universal/error-boundary';
 import {
   auth0Config,
   queryConfig,
@@ -45,13 +52,15 @@ const AppWrapper = () => {
 
   return (
     <StrictMode>
-      <Auth.AuthProvider config={auth0Config}>
-        <Query.QueryProvider config={queryConfig}>
-          <UniversalMinimalismThemeProvider>
-            <App />
-          </UniversalMinimalismThemeProvider>
-        </Query.QueryProvider>
-      </Auth.AuthProvider>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Auth.AuthProvider config={auth0Config}>
+          <Query.QueryProvider config={queryConfig}>
+            <UniversalMinimalismThemeProvider>
+              <App />
+            </UniversalMinimalismThemeProvider>
+          </Query.QueryProvider>
+        </Auth.AuthProvider>
+      </ErrorBoundary>
     </StrictMode>
   );
 };

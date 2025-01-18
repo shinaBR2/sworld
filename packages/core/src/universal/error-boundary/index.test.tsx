@@ -45,7 +45,7 @@ describe('ErrorBoundary', () => {
     const TestComponent = () => <div>Normal Content</div>;
 
     const { container } = render(
-      <ErrorBoundary FallbackComponent={<div>Mocked Error Fallback</div>}>
+      <ErrorBoundary FallbackComponent={() => <div>Mocked Error Fallback</div>}>
         <TestComponent />
       </ErrorBoundary>
     );
@@ -62,7 +62,7 @@ describe('ErrorBoundary', () => {
     expect(testkit.reports()).toHaveLength(0);
 
     const { container } = render(
-      <ErrorBoundary FallbackComponent={<div>Mocked Error Fallback</div>}>
+      <ErrorBoundary FallbackComponent={() => <div>Mocked Error Fallback</div>}>
         <ErrorThrowingComponent />
       </ErrorBoundary>
     );

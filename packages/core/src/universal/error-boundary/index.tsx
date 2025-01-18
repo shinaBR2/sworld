@@ -9,12 +9,6 @@ interface ErrorBoundaryProps {
   }>;
 }
 
-interface ErrorInfo {
-  errorMessage: string;
-  canRetry: boolean;
-  originalError?: Error;
-}
-
 const ErrorBoundary = (props: ErrorBoundaryProps) => {
   const { children, FallbackComponent } = props;
 
@@ -43,5 +37,4 @@ const ErrorBoundary = (props: ErrorBoundaryProps) => {
   );
 };
 
-export { type ErrorInfo };
 export { ErrorBoundary };
