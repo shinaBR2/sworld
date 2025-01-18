@@ -56,7 +56,7 @@ export default defineConfig({
      * THIS IS ONLY RUN ON CI SERVER
      * THEREFORE WE SHOULD NEVER PREFIX SENTRY AUTH TOKEN with VITE_
      */
-    ...(process.env.CI
+    ...(process.env.CI && process.env.SENTRY_AUTH_TOKEN
       ? [
           sentryVitePlugin({
             org: 'sworld-dc',
