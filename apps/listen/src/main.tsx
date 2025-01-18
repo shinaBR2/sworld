@@ -1,11 +1,17 @@
-import { Auth, Query } from 'core';
+import { Auth, initSentry, Query } from 'core';
 import { ErrorBoundary } from 'ui/universal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  sentryConfig,
+  validateEnvVars,
+} from './config';
 
 validateEnvVars();
+initSentry(sentryConfig);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
