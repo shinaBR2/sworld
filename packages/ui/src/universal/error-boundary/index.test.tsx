@@ -1,13 +1,28 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ErrorBoundary, ErrorFallback } from '.';
+import { ErrorFallback } from '.';
 
-describe('ErrorBoundary', () => {
+// Mock the texts import
+vi.mock('./texts', () => ({
+  texts: {
+    title: 'Something went wrong',
+    message: 'An unexpected error occurred',
+    tryAgain: 'Try again',
+  },
+}));
+
+describe('ErrorFallback', () => {
+  let reloadMock: ReturnType<typeof vi.fn>;
+  const originalLocation = window.location;
+
   beforeEach(() => {
+    // Mock console.error to prevent unnecessary error output during testing
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    const reloadMock = vi.fn();
-    const originalLocation = window.location;
 
+    // Create a reload mock
+    reloadMock = vi.fn();
+
+    // Override window.location with mock
     Object.defineProperty(window, 'location', {
       configurable: true,
       value: { ...originalLocation, reload: reloadMock },
@@ -15,68 +30,48 @@ describe('ErrorBoundary', () => {
   });
 
   afterEach(() => {
+    // Restore all mocks after each test
     vi.restoreAllMocks();
-  });
 
-  describe('ErrorFallback', () => {
-    it('renders the error UI', () => {
-      const mockReset = vi.fn();
-      render(
-        <ErrorFallback
-          error={new Error('Test error')}
-          resetErrorBoundary={mockReset}
-        />
-      );
-
-      expect(screen.getByText('Something went wrong')).toBeTruthy();
-      expect(screen.getByText('An unexpected error occurred')).toBeTruthy();
-
-      const tryAgainButton = screen.getByText('Try again');
-      expect(tryAgainButton).toBeTruthy();
-
-      fireEvent.click(tryAgainButton);
-      expect(mockReset).toHaveBeenCalledTimes(1);
+    // Restore original window.location
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: originalLocation,
     });
   });
 
-  describe('ErrorBoundary component', () => {
-    const TestError = () => {
-      throw new Error('Test error');
-    };
+  it('renders the error UI with default props', () => {
+    render(<ErrorFallback />);
 
-    it('renders children when there is no error', () => {
-      render(
-        <ErrorBoundary>
-          <div>Test content</div>
-        </ErrorBoundary>
-      );
+    // Check for default title and message
+    expect(screen.getByText('Something went wrong')).toBeTruthy();
+    expect(screen.getByText('An unexpected error occurred')).toBeTruthy();
 
-      expect(screen.getByText('Test content')).toBeTruthy();
-      expect(screen.queryByText('Something went wrong')).toBeNull();
-    });
+    // Check for retry button
+    const tryAgainButton = screen.getByText('Try again');
+    expect(tryAgainButton).toBeTruthy();
+  });
 
-    it('renders the fallback when there is an error', () => {
-      render(
-        <ErrorBoundary>
-          <TestError />
-        </ErrorBoundary>
-      );
+  it('renders with custom error message', () => {
+    const customMessage = 'Custom error occurred';
+    render(<ErrorFallback errorMessage={customMessage} />);
 
-      expect(screen.getByText('Something went wrong')).toBeTruthy();
-      expect(screen.getByText('An unexpected error occurred')).toBeTruthy();
-    });
+    expect(screen.getByText(customMessage)).toBeTruthy();
+  });
 
-    it('reloads the page when try again is clicked', () => {
-      render(
-        <ErrorBoundary>
-          <TestError />
-        </ErrorBoundary>
-      );
+  it('triggers page reload when retry button is clicked', () => {
+    render(<ErrorFallback />);
 
-      const tryAgainButton = screen.getByText('Try again');
-      fireEvent.click(tryAgainButton);
+    const tryAgainButton = screen.getByText('Try again');
+    fireEvent.click(tryAgainButton);
 
-      expect(window.location.reload).toHaveBeenCalledTimes(1);
-    });
+    expect(reloadMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('hides retry button when canRetry is false', () => {
+    render(<ErrorFallback canRetry={false} />);
+
+    const tryAgainButton = screen.queryByText('Try again');
+    expect(tryAgainButton).toBeNull();
   });
 });
