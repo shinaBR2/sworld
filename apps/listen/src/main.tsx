@@ -1,24 +1,17 @@
-import { Auth, Query } from 'core';
+import { Auth, initSentry, Query } from 'core';
 import { ErrorBoundary } from 'ui/universal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
 import {
   auth0Config,
-  appConfig,
   queryConfig,
-  systemConfig,
+  sentryConfig,
   validateEnvVars,
 } from './config';
-import LogRocket from 'logrocket';
 
 validateEnvVars();
-
-if (systemConfig.logRocket) {
-  LogRocket.init(systemConfig.logRocket, {
-    rootHostname: appConfig.sites.main,
-  });
-}
+initSentry(sentryConfig);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

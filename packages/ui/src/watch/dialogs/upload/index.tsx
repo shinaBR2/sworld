@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactPlayer from 'react-player';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -42,10 +41,13 @@ export const VideoUploadDialog: React.FC<VideoUploadDialogProps> = props => {
       .map(url => url.trim())
       .filter(Boolean);
     const validationResults = await Promise.all(
-      urlList.map(async url => ({
-        url: url.trim(),
-        isValid: ReactPlayer.canPlay(url.trim()),
-      }))
+      urlList.map(async url => {
+        const canPlay = (await import('react-player')).default.canPlay;
+        return {
+          url: url.trim(),
+          isValid: canPlay(url.trim()),
+        };
+      })
     );
 
     setResults(validationResults);

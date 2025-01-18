@@ -1,13 +1,19 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { Auth, Query } from 'core';
+import { Auth, Query, initSentry, loadSentryIntegrations } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import { auth0Config, queryConfig, validateEnvVars } from './config';
+import {
+  auth0Config,
+  queryConfig,
+  sentryConfig,
+  validateEnvVars,
+} from './config';
 
 validateEnvVars();
+initSentry(sentryConfig);
 
 // @ts-ignore
 const router = createRouter({
@@ -33,6 +39,10 @@ const App = () => {
 };
 
 const AppWrapper = () => {
+  useEffect(() => {
+    loadSentryIntegrations();
+  }, []);
+
   return (
     <StrictMode>
       <Auth.AuthProvider config={auth0Config}>
