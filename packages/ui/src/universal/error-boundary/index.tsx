@@ -1,7 +1,4 @@
-import {
-  ErrorBoundary as ReactErrorBoundary,
-  FallbackProps,
-} from 'react-error-boundary';
+import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';

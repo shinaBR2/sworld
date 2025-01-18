@@ -9,7 +9,7 @@ import {
   SAudioPlayerLoopMode,
 } from './hooks';
 import { compareString } from './common';
-// import { callable } from "./request";
+import { ErrorBoundary } from './error-boundary';
 
 const commonHelpers = {
   compareString,
@@ -23,5 +23,6 @@ import { initSentry, loadSentryIntegrations } from './tracker';
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 
 export { initSentry, loadSentryIntegrations };
+export { ErrorBoundary };
 export { commonHelpers, requestHelpers };
 export default hooks;

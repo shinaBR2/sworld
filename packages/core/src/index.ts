@@ -7,6 +7,7 @@ import {
   requestHelpers,
   initSentry,
   loadSentryIntegrations,
+  ErrorBoundary,
 } from './universal';
 import { queryHooks as watchQueryHooks } from './watch';
 import { queryHooks as listenQueryHooks } from './listen';
@@ -16,6 +17,8 @@ export { commonHelpers, requestHelpers };
 
 export { watchQueryHooks, listenQueryHooks };
 export { initSentry, loadSentryIntegrations };
+
+export { ErrorBoundary };
 
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
 export default hooks;
