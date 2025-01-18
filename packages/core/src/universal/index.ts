@@ -18,10 +18,10 @@ const requestHelpers = {
   // callable,
 };
 
-import { initSentry, loadReplayIntegration } from './tracker';
+import { initSentry, loadSentryIntegrations } from './tracker';
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 
-export { initSentry, loadReplayIntegration };
+export { initSentry, loadSentryIntegrations };
 export { commonHelpers, requestHelpers };
 export default hooks;

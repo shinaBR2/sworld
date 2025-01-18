@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { Auth, Query, initSentry, loadReplayIntegration } from 'core';
+import { Auth, Query, initSentry, loadSentryIntegrations } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import {
   auth0Config,
@@ -40,7 +40,7 @@ const App = () => {
 
 const AppWrapper = () => {
   useEffect(() => {
-    loadReplayIntegration();
+    loadSentryIntegrations();
   }, []);
 
   return (

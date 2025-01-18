@@ -41,6 +41,9 @@ const loadReplayIntegration = async () => {
   import('@sentry/react').then(lazyLoadedSentry => {
     Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
   });
+  import('@sentry/react').then(lazyLoadedSentry => {
+    Sentry.addIntegration(lazyLoadedSentry.feedbackIntegration());
+  });
 };
 
 export { initSentry, loadReplayIntegration };
