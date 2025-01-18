@@ -37,7 +37,7 @@ const initSentry = (options: InitSentryParams) => {
   isInitialized = true;
 };
 
-const loadReplayIntegration = async () => {
+const loadSentryIntegrations = async () => {
   import('@sentry/react').then(lazyLoadedSentry => {
     Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
   });
@@ -46,4 +46,4 @@ const loadReplayIntegration = async () => {
   });
 };
 
-export { initSentry, loadReplayIntegration };
+export { initSentry, loadSentryIntegrations };
