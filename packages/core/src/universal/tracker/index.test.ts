@@ -1,6 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-// import * as Sentry from '@sentry/react';
-// import { initSentry, loadSentryIntegrations, captureError } from './index';
 import { AppError } from '../error-boundary/app-error';
 
 vi.mock('@sentry/react', () => {
