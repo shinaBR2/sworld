@@ -23,6 +23,20 @@ export function useSubscription<T>(
   const { getAccessToken } = useAuthContext();
   const backoff = useMemo(() => createExponentialBackoff(), []);
 
+  const memoizedVariables = useMemo(
+    () => variables,
+    // Only recreate when the stringified version changes
+    [JSON.stringify(variables)]
+  );
+
+  const errorContext = useMemo(
+    () => ({
+      query,
+      variables: memoizedVariables,
+    }),
+    [query, memoizedVariables]
+  );
+
   const initializeConnection = useCallback(
     async (ws: WebSocket) => {
       try {
@@ -43,13 +57,13 @@ export function useSubscription<T>(
         captureSubscriptionError({
           error,
           type: SubscriptionErrorType.AUTHENTICATION_FAILED,
-          additionalContext: { query, variables },
+          additionalContext: errorContext,
         });
 
         handleConnectionError(createWebSocketConnection);
       }
     },
-    [query, variables, backoff]
+    [query, memoizedVariables, backoff]
   );
 
   const startSubscription = useCallback(
@@ -60,12 +74,12 @@ export function useSubscription<T>(
         type: 'start',
         payload: {
           query,
-          variables,
+          variables: memoizedVariables,
         },
       };
       ws.send(JSON.stringify(startMessage));
     },
-    [query, variables]
+    [query, memoizedVariables]
   );
 
   const handleConnectionError = useCallback(
@@ -111,10 +125,7 @@ export function useSubscription<T>(
             captureSubscriptionError({
               error,
               type: SubscriptionErrorType.DATA_PARSING_ERROR,
-              additionalContext: {
-                query,
-                variables,
-              },
+              additionalContext: errorContext,
             });
 
             setState({
@@ -140,10 +151,7 @@ export function useSubscription<T>(
         captureSubscriptionError({
           error,
           type: SubscriptionErrorType.DATA_PARSING_ERROR,
-          additionalContext: {
-            query,
-            variables,
-          },
+          additionalContext: errorContext,
         });
 
         setState({
@@ -182,8 +190,6 @@ export function useSubscription<T>(
       }
     };
   }, [createWebSocketConnection]);
-
-  // TODO memorize the variables
 
   return state;
 }
