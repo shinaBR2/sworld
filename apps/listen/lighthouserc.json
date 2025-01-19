@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": {
         "chromeFlags": "--disable-gpu --no-sandbox --no-zygote"
       }
@@ -15,9 +15,9 @@
         "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.05 }],
         "total-blocking-time": ["warn", { "maxNumericValue": 300 }],
         "speed-index": ["warn", { "maxNumericValue": 3000 }],
-        "resource-summary.third-party.count": ["warn", { "maxNumericValue": 15 }],
-        "resource-summary.script.size": ["warn", { "maxNumericValue": 200000 }],
-        "resource-summary.total.size": ["warn", { "maxNumericValue": 420000 }]
+        "resource-summary:third-party:count": ["warn", { "maxNumericValue": 15 }],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 200000 }],
+        "resource-summary:total:size": ["warn", { "maxNumericValue": 420000 }]
       }
     }
   }
