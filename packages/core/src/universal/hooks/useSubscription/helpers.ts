@@ -35,4 +35,27 @@ const captureSubscriptionError = (params: CaptureSubscriptionErrorParams) => {
   });
 };
 
-export { captureSubscriptionError };
+interface CreateExponentialBackoffParams {
+  maxRetries: number;
+  baseDelay: number;
+  maxDelay: number;
+}
+
+const createExponentialBackoff = (params?: CreateExponentialBackoffParams) => {
+  const { maxRetries = 3, baseDelay = 1000, maxDelay = 5000 } = params || {};
+  let retryCount = 0;
+
+  return {
+    shouldRetry: () => retryCount < maxRetries,
+    getNextDelay: () => {
+      const delay = Math.min(maxDelay, baseDelay * Math.pow(2, retryCount) * (1 + Math.random()));
+      retryCount++;
+      return delay;
+    },
+    reset: () => {
+      retryCount = 0;
+    },
+  };
+};
+
+export { captureSubscriptionError, createExponentialBackoff };
