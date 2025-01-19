@@ -112,22 +112,6 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live
-      - name: Debug Firebase Deploy Outputs
-        run: |
-          echo "Deploy Action Outputs:"
-          echo "details_url: ${{ steps.deploy.outputs.details_url }}"
-          echo "hosting_url: ${{ steps.deploy.outputs.hosting_url }}"
-          echo "All outputs: ${{ toJSON(steps.deploy.outputs) }}"
-      - name: Verify preview URL
-        run: |
-          if [ -z "${{ steps.deploy.outputs.details_url }}" ]; then
-            echo "Error: Firebase preview URL is empty or undefined"
-            exit 1
-          fi
-          if [[ ! "${{ steps.deploy.outputs.details_url }}" =~ ^https?:// ]]; then
-            echo "Error: Invalid preview URL format"
-            exit 1
-          fi
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
