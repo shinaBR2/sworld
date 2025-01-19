@@ -175,6 +175,41 @@ jobs:
         uses: thollander/actions-comment-pull-request@v3
         with:
           message: |
-            ${{ steps.lighthouse.outputs.assertionResults }}
-            ${{ steps.lighthouse.outputs.links }}
-            ${{ steps.lighthouse.outputs.manifest }}
+            ## 🚦 Lighthouse CI Results
+
+            ### Performance Metrics
+            ${JSON.parse(steps.lighthouse.outputs.manifest).find(run => run.isRepresentativeRun).summary | format_summary}
+
+            | Metric | Score |
+            |--------|-------|
+            | Performance | ${summary.performance * 100}% |
+            | Accessibility | ${summary.accessibility * 100}% |
+            | Best Practices | ${summary['best-practices'] * 100}% |
+            | SEO | ${summary.seo * 100}% |
+
+            ### ⚠️ Warnings & Errors
+            ${JSON.parse(steps.lighthouse.outputs.assertionResults).map(result => `
+            #### ${result.level === 'warn' ? '⚠️' : '❌'} ${result.auditTitle}
+            - Expected: ${result.operator} ${result.expected}
+            - Found: ${result.actual}
+            - [Learn more](${result.auditDocumentationLink})
+            `).join('\n')}
+
+            ### 📊 Detailed Reports
+            ${Object.entries(JSON.parse(steps.lighthouse.outputs.links)).map(([url, reportUrl]) => `
+            - [View Full Report](${reportUrl})
+            `).join('\n')}
+
+            <details>
+            <summary>View All Runs</summary>
+
+            ${JSON.parse(steps.lighthouse.outputs.manifest).map((run, index) => `
+            #### Run ${index + 1}${run.isRepresentativeRun ? ' (Representative)' : ''}
+            | Metric | Score |
+            |--------|-------|
+            | Performance | ${run.summary.performance * 100}% |
+            | Accessibility | ${run.summary.accessibility * 100}% |
+            | Best Practices | ${run.summary['best-practices'] * 100}% |
+            | SEO | ${run.summary.seo * 100}% |
+            `).join('\n')}
+            </details>
