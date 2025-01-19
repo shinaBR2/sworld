@@ -36,9 +36,9 @@ const captureSubscriptionError = (params: CaptureSubscriptionErrorParams) => {
 };
 
 interface CreateExponentialBackoffParams {
-  maxRetries: number;
-  baseDelay: number;
-  maxDelay: number;
+  maxRetries?: number;
+  baseDelay?: number;
+  maxDelay?: number;
 }
 
 const createExponentialBackoff = (params?: CreateExponentialBackoffParams) => {
