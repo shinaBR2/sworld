@@ -21,6 +21,33 @@ export function useSubscription<T>(
   useEffect(() => {
     const ws = new WebSocket(hasuraUrl, 'graphql-ws');
     const subscriptionId = Math.random().toString(36).substr(2, 9);
+    let timeoutId: NodeJS.Timeout;
+
+    const handleTimeout = () => {
+      if (ws.readyState !== WebSocket.OPEN && ws.readyState !== WebSocket.CONNECTING) {
+        const error = createConnectionError(new Error('WebSocket connection timeout'));
+
+        captureSubscriptionError({
+          error,
+          type: SubscriptionErrorType.NETWORK_ERROR,
+          additionalContext: {
+            query,
+            variables,
+          },
+        });
+
+        setState(prevState => ({
+          ...prevState,
+          data: null,
+          isLoading: false,
+          error,
+        }));
+
+        ws.close();
+      }
+    };
+
+    timeoutId = setTimeout(handleTimeout, 10000);
 
     const initializeConnection = async () => {
       try {
@@ -92,8 +119,9 @@ export function useSubscription<T>(
       ws.send(JSON.stringify(startMessage));
     };
 
-    ws.onopen = () => {
-      initializeConnection();
+    ws.onopen = async () => {
+      await initializeConnection();
+      clearTimeout(timeoutId);
     };
 
     ws.onmessage = event => {
@@ -177,30 +205,8 @@ export function useSubscription<T>(
         error,
       });
       ws.close();
+      clearTimeout(timeoutId);
     };
-
-    const connectionTimeout = setTimeout(() => {
-      if (state.isLoading) {
-        const error = createConnectionError(new Error('WebSocket connection timeout'));
-
-        captureSubscriptionError({
-          error,
-          type: SubscriptionErrorType.NETWORK_ERROR,
-          additionalContext: {
-            query,
-            variables,
-          },
-        });
-
-        setState({
-          data: null,
-          isLoading: false,
-          error,
-        });
-
-        ws.close();
-      }
-    }, 10000);
 
     return () => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -211,7 +217,7 @@ export function useSubscription<T>(
         ws.send(JSON.stringify(stopMessage));
         ws.close();
       }
-      clearTimeout(connectionTimeout);
+      clearTimeout(timeoutId);
     };
   }, [hasuraUrl, query, variables, getAccessToken]);
   // TODO memorize the variables
