@@ -138,7 +138,15 @@ export function useSubscription<T>(
 
           case 'complete': {
             // Subscription has ended; handle cleanup if necessary
-            ws.close();
+            try {
+              ws.close();
+            } catch (err) {
+              captureSubscriptionError({
+                error: createConnectionError(err instanceof Error ? err : new Error('Failed to close connection')),
+                type: SubscriptionErrorType.CONNECTION_CLOSED,
+                additionalContext: errorContext,
+              });
+            }
             break;
           }
 
@@ -181,12 +189,20 @@ export function useSubscription<T>(
 
     return () => {
       if (ws.readyState === WebSocket.OPEN) {
-        const stopMessage: WebSocketMessage = {
-          id: subscriptionId,
-          type: 'stop',
-        };
-        ws.send(JSON.stringify(stopMessage));
-        ws.close();
+        try {
+          const stopMessage: WebSocketMessage = {
+            id: subscriptionId,
+            type: 'stop',
+          };
+          ws.send(JSON.stringify(stopMessage));
+          ws.close();
+        } catch (err) {
+          captureSubscriptionError({
+            error: createConnectionError(err instanceof Error ? err : new Error('Cleanup failed')),
+            type: SubscriptionErrorType.CLEANUP_ERROR,
+            additionalContext: { query, variables },
+          });
+        }
       }
     };
   }, [createWebSocketConnection]);
