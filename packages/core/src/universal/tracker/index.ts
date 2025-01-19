@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react';
+import { AppError } from '../error-boundary/app-error';
 
 let isInitialized = false;
 
@@ -11,7 +12,10 @@ interface InitSentryParams {
 }
 
 const initSentry = (options: InitSentryParams) => {
+  const allowedEnv = ['development', 'production'];
+
   if (isInitialized) return;
+  if (allowedEnv.indexOf(options.environment) == -1) return;
 
   const { environment, dsn, site, release } = options;
   const isProduction = environment == 'production';
@@ -48,4 +52,35 @@ const loadSentryIntegrations = async () => {
   }
 };
 
-export { initSentry, loadSentryIntegrations };
+interface ErrorTag {
+  key: string;
+  value: string | number | boolean;
+}
+
+interface CaptureErrorOptions {
+  tags?: ErrorTag[];
+  extras?: Record<string, unknown>;
+  fingerprint?: string[];
+}
+
+const captureError = (error: AppError, options: CaptureErrorOptions = {}): void => {
+  const { tags = [], extras = {}, fingerprint = ['{{ default }}'] } = options;
+
+  Sentry.withScope(scope => {
+    scope.setExtras({
+      errorMessage: error.errorMessage,
+      canRetry: error.canRetry,
+      ...extras,
+    });
+
+    tags.forEach(tag => {
+      scope.setTag(tag.key, String(tag.value));
+    });
+
+    scope.setFingerprint(fingerprint);
+
+    Sentry.captureException(error);
+  });
+};
+
+export { initSentry, loadSentryIntegrations, captureError };
