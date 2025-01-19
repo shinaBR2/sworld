@@ -1,0 +1,31 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "settings": {
+        "chromeFlags": "--disable-gpu --no-sandbox --no-zygote"
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "interactive": ["error", { "maxNumericValue": 6500 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 3000 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 4000 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 600 }],
+        "speed-index": ["error", { "maxNumericValue": 4200 }],
+        "resource-summary:third-party:count": ["error", { "maxNumericValue": 20 }],
+        "resource-summary:script:size": ["error", { "maxNumericValue": 200000 }],
+        "resource-summary:total:size": ["error", { "maxNumericValue": 420000 }],
+        "is-crawlable": "off",
+        "inspector-issues": "off",
+        "image-size-responsive": "off",
+        "label-content-name-mismatch": "off",
+        "third-party-cookies": "off",
+        "unsized-images": "off",
+        "unused-javascript": "off"
+      }
+    }
+  }
+}
