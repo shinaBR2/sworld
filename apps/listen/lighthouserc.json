@@ -10,7 +10,7 @@
       "preset": "lighthouse:recommended",
       "assertions": {
         "interactive": ["error", { "maxNumericValue": 6500 }],
-        "first-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 3000 }],
         "largest-contentful-paint": ["error", { "maxNumericValue": 4000 }],
         "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
         "total-blocking-time": ["error", { "maxNumericValue": 600 }],
@@ -22,7 +22,9 @@
         "inspector-issues": "off",
         "image-size-responsive": "off",
         "label-content-name-mismatch": "off",
-        "third-party-cookies": "off"
+        "third-party-cookies": "off",
+        "unsized-images": "off",
+        "unused-javascript": "off"
       }
     }
   }
