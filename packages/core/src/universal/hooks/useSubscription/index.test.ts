@@ -1,12 +1,30 @@
-// packages/core/src/universal/hooks/useSubscription/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSubscription } from './index';
 import { AuthContextValue, useAuthContext } from '../../../providers/auth';
+import { captureSubscriptionError, SubscriptionErrorType } from './helpers';
 
-// Mock auth context
+// Mock the dependencies
 vi.mock('../../../providers/auth', () => ({
   useAuthContext: vi.fn(),
+}));
+
+vi.mock('../../error-boundary/errors', () => ({
+  createAuthenticationError: vi.fn().mockImplementation(err => err),
+  createConnectionError: vi.fn().mockImplementation(err => err),
+}));
+
+vi.mock('./helpers', () => ({
+  captureSubscriptionError: vi.fn(),
+  createExponentialBackoff: vi.fn().mockReturnValue({
+    shouldRetry: vi.fn().mockReturnValue(true),
+    getNextDelay: vi.fn().mockReturnValue(1000),
+    reset: vi.fn(),
+  }),
+  SubscriptionErrorType: {
+    AUTHENTICATION_FAILED: 'AUTHENTICATION_FAILED',
+    DATA_PARSING_ERROR: 'DATA_PARSING_ERROR',
+  },
 }));
 
 // Mock WebSocket
@@ -23,24 +41,23 @@ class MockWebSocket {
   readyState = MockWebSocket.OPEN;
   send = vi.fn();
   close = vi.fn();
+
+  constructor(public url: string, public protocol: string) {}
 }
 
-// Keep track of the latest instance
 let mockWsInstance: MockWebSocket;
 
-// Create a constructor spy that saves the instance
-const MockWebSocketSpy = vi
-  .fn()
-  .mockImplementation((url: string, protocol: string) => {
-    mockWsInstance = new MockWebSocket(url, protocol);
-    return mockWsInstance;
-  });
+const MockWebSocketSpy = vi.fn().mockImplementation((url: string, protocol: string) => {
+  mockWsInstance = new MockWebSocket(url, protocol);
+  return mockWsInstance;
+});
 
-// Add the static properties to the spy
-MockWebSocketSpy.CONNECTING = MockWebSocket.CONNECTING;
-MockWebSocketSpy.OPEN = MockWebSocket.OPEN;
-MockWebSocketSpy.CLOSING = MockWebSocket.CLOSING;
-MockWebSocketSpy.CLOSED = MockWebSocket.CLOSED;
+Object.assign(MockWebSocketSpy, {
+  CONNECTING: MockWebSocket.CONNECTING,
+  OPEN: MockWebSocket.OPEN,
+  CLOSING: MockWebSocket.CLOSING,
+  CLOSED: MockWebSocket.CLOSED,
+});
 
 vi.stubGlobal('WebSocket', MockWebSocketSpy);
 
@@ -48,13 +65,10 @@ describe('useSubscription', () => {
   const mockUrl = 'wss://hasura.example.com/graphql';
   const mockQuery = 'subscription { test }';
   const mockToken = 'mock-token';
+  const mockVariables = { id: '123' };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockWsInstance?.close.mockClear();
-    mockWsInstance?.send.mockClear();
-
-    // Mock getAccessToken
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: vi.fn().mockResolvedValue(mockToken),
     } as unknown as AuthContextValue);
@@ -62,7 +76,6 @@ describe('useSubscription', () => {
 
   it('should initialize with loading state', () => {
     const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
-
     expect(result.current).toEqual({
       data: null,
       isLoading: true,
@@ -70,57 +83,49 @@ describe('useSubscription', () => {
     });
   });
 
-  it('should establish connection and start subscription', async () => {
-    renderHook(() => useSubscription(mockUrl, mockQuery));
+  it('should establish connection and handle successful subscription flow', async () => {
+    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
 
-    // Wait for initial WebSocket setup
+    // Initial connection
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
       mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    // Check connection init message
-    expect(mockWsInstance.send).toHaveBeenCalledWith(
-      expect.stringContaining('connection_init')
+    // First message should be connection_init
+    expect(mockWsInstance.send).toHaveBeenNthCalledWith(
+      1,
+      JSON.stringify({
+        type: 'connection_init',
+        payload: {
+          headers: { Authorization: `Bearer ${mockToken}` },
+        },
+      })
     );
 
-    // Simulate connection acknowledgment
+    // Connection acknowledged, should start subscription
     await act(async () => {
       mockWsInstance.onmessage?.({
         data: JSON.stringify({ type: 'connection_ack' }),
       });
-      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    // Check subscription start message
-    expect(mockWsInstance.send).toHaveBeenCalledWith(
-      expect.stringContaining('start')
+    // Second message should be start subscription
+    expect(mockWsInstance.send).toHaveBeenNthCalledWith(
+      2,
+      expect.stringMatching(
+        /{"id":"[^"]+","type":"start","payload":{"query":"subscription { test }","variables":{"id":"123"}}}/
+      )
     );
-  });
 
-  it('should handle successful data message', async () => {
+    // Receive data
     const mockData = { test: 'data' };
-    const { result } = renderHook(() =>
-      useSubscription<{ test: string }>(mockUrl, mockQuery)
-    );
-
     await act(async () => {
-      mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
-
-      mockWsInstance.onmessage?.({
-        data: JSON.stringify({ type: 'connection_ack' }),
-      });
-      await new Promise(resolve => setTimeout(resolve, 0));
-
       mockWsInstance.onmessage?.({
         data: JSON.stringify({
           type: 'data',
           payload: { data: mockData },
         }),
       });
-      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
     expect(result.current).toEqual({
@@ -130,113 +135,129 @@ describe('useSubscription', () => {
     });
   });
 
-  it('should handle subscription with variables', async () => {
-    const variables = { id: '123' };
-    renderHook(() => useSubscription(mockUrl, mockQuery, variables));
-
-    await act(async () => {
-      mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
-
-      mockWsInstance.onmessage?.({
-        data: JSON.stringify({ type: 'connection_ack' }),
-      });
-      await new Promise(resolve => setTimeout(resolve, 0));
-    });
-
-    expect(mockWsInstance.send).toHaveBeenCalledWith(
-      expect.stringContaining(JSON.stringify(variables))
-    );
-  });
-
-  it('should handle auth token error', async () => {
-    const mockError = new Error('Auth error');
+  it('should handle authentication error', async () => {
+    const mockError = new Error('Auth failed');
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: vi.fn().mockRejectedValue(mockError),
     } as unknown as AuthContextValue);
 
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
 
     await act(async () => {
       mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    expect(result.current).toEqual({
-      data: null,
-      isLoading: false,
+    expect(captureSubscriptionError).toHaveBeenCalledWith({
       error: mockError,
+      type: SubscriptionErrorType.AUTHENTICATION_FAILED,
+      additionalContext: {
+        query: mockQuery,
+        variables: mockVariables,
+      },
     });
-    expect(mockWsInstance.close).toHaveBeenCalled();
   });
 
-  it('should handle WebSocket error', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
-
-    await act(async () => {
-      mockWsInstance.onerror?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
-    });
-
-    expect(result.current).toEqual({
-      data: null,
-      isLoading: false,
-      error: new Error('WebSocket connection failed'),
-    });
-    expect(mockWsInstance.close).toHaveBeenCalled();
-  });
-
-  it('should handle subscription error message', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
+  it('should handle server error message', async () => {
+    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
 
     await act(async () => {
       mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
-
       mockWsInstance.onmessage?.({
         data: JSON.stringify({
           type: 'error',
-          payload: { message: 'Subscription failed' },
+          payload: { message: 'Server error' },
         }),
       });
-      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+
+    expect(captureSubscriptionError).toHaveBeenCalledWith({
+      error: expect.any(Error),
+      type: SubscriptionErrorType.DATA_PARSING_ERROR,
+      additionalContext: {
+        query: mockQuery,
+        variables: mockVariables,
+      },
     });
 
     expect(result.current).toEqual({
       data: null,
       isLoading: false,
-      error: new Error('Subscription failed'),
+      error: expect.any(Error),
     });
   });
 
-  it('should cleanup on unmount', async () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+  it('should handle message parsing error', async () => {
+    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
 
     await act(async () => {
-      mockWsInstance.onopen?.();
-      await new Promise(resolve => setTimeout(resolve, 0));
-
       mockWsInstance.onmessage?.({
-        data: JSON.stringify({ type: 'connection_ack' }),
+        data: 'invalid json',
       });
-      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    unmount();
+    expect(captureSubscriptionError).toHaveBeenCalledWith({
+      error: expect.any(Error),
+      type: SubscriptionErrorType.DATA_PARSING_ERROR,
+      additionalContext: {
+        query: mockQuery,
+        variables: mockVariables,
+      },
+    });
 
-    expect(mockWsInstance.send).toHaveBeenCalledWith(
-      expect.stringContaining('stop')
-    );
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: false,
+      error: expect.any(Error),
+    });
+  });
+
+  it('should handle WebSocket errors with reconnection', async () => {
+    vi.useFakeTimers(); // Use fake timers
+
+    renderHook(() => useSubscription(mockUrl, mockQuery));
+
+    await act(async () => {
+      mockWsInstance.onerror?.();
+    });
+
+    // Advance timers to trigger reconnection
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    // Should attempt reconnection
+    expect(MockWebSocketSpy).toHaveBeenCalledTimes(2);
+
+    vi.useRealTimers(); // Restore real timers
+  });
+
+  it('should handle connection complete message', async () => {
+    renderHook(() => useSubscription(mockUrl, mockQuery));
+
+    await act(async () => {
+      mockWsInstance.onmessage?.({
+        data: JSON.stringify({ type: 'complete' }),
+      });
+    });
+
     expect(mockWsInstance.close).toHaveBeenCalled();
   });
 
-  it('should not cleanup if WebSocket is not open', () => {
+  it('should clean up on unmount', async () => {
+    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+
+    unmount();
+
+    expect(mockWsInstance.send).toHaveBeenCalledWith(expect.stringContaining('"type":"stop"'));
+    expect(mockWsInstance.close).toHaveBeenCalled();
+  });
+
+  it('should not send stop message if socket is not open on unmount', () => {
     const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
 
     mockWsInstance.readyState = WebSocket.CLOSED;
     unmount();
 
     expect(mockWsInstance.send).not.toHaveBeenCalled();
-    expect(mockWsInstance.close).not.toHaveBeenCalled();
   });
 });
