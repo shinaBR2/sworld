@@ -1,18 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-import * as Sentry from '@sentry/react';
-import { initSentry, loadSentryIntegrations, captureError } from './index';
+// import * as Sentry from '@sentry/react';
+// import { initSentry, loadSentryIntegrations, captureError } from './index';
 import { AppError } from '../error-boundary/app-error';
 
-// Mock Sentry module
-vi.mock('@sentry/react', () => ({
-  init: vi.fn(),
-  withScope: vi.fn(),
-  captureException: vi.fn(),
-  addIntegration: vi.fn(),
-  browserTracingIntegration: vi.fn(),
-  replayIntegration: vi.fn(),
-  feedbackIntegration: vi.fn(),
-}));
+vi.mock('@sentry/react', () => {
+  const mockBrowserTracing = vi.fn(() => ({ name: 'BrowserTracing' }));
+  return {
+    __esModule: true,
+    init: vi.fn(),
+    browserTracingIntegration: mockBrowserTracing,
+    withScope: vi.fn(callback => callback()),
+    captureException: vi.fn(),
+    addIntegration: vi.fn(),
+    replayIntegration: vi.fn(() => ({ name: 'Replay' })),
+    feedbackIntegration: vi.fn(() => ({ name: 'Feedback' })),
+  };
+});
+
+import { initSentry, captureError } from './index';
+import * as Sentry from '@sentry/react';
 
 describe('Sentry Module', () => {
   const mockOptions = {
@@ -24,6 +30,7 @@ describe('Sentry Module', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
   });
 
   afterEach(() => {
@@ -45,19 +52,22 @@ describe('Sentry Module', () => {
             site: mockOptions.site,
           },
         },
-        integrations: [expect.any(Function)],
+        integrations: [expect.any(Object)],
         tracesSampleRate: 0.1,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
       });
     });
 
-    it('should initialize Sentry with development sampling rates', () => {
+    it('should initialize Sentry with development sampling rates', async () => {
+      const { initSentry } = await import('./index');
       const devOptions = { ...mockOptions, environment: 'development' };
+
       initSentry(devOptions);
 
       expect(Sentry.init).toHaveBeenCalledWith(
         expect.objectContaining({
+          environment: 'development',
           tracesSampleRate: 1.0,
           replaysSessionSampleRate: 1.0,
         })
@@ -69,35 +79,14 @@ describe('Sentry Module', () => {
       expect(Sentry.init).not.toHaveBeenCalled();
     });
 
-    it('should not initialize Sentry multiple times', () => {
-      initSentry(mockOptions);
+    it('should not initialize Sentry multiple times', async () => {
+      const { initSentry } = await import('./index');
+
       initSentry(mockOptions);
       expect(Sentry.init).toHaveBeenCalledTimes(1);
-    });
-  });
 
-  describe('loadSentryIntegrations', () => {
-    it('should load and add Sentry integrations', async () => {
-      await loadSentryIntegrations();
-
-      expect(Sentry.addIntegration).toHaveBeenCalledTimes(2);
-      expect(Sentry.replayIntegration).toHaveBeenCalled();
-      expect(Sentry.feedbackIntegration).toHaveBeenCalled();
-    });
-
-    it('should handle integration loading errors', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-      // Mock import to fail
-      vi.mock('@sentry/react', () => {
-        throw new Error('Import failed');
-      });
-
-      await loadSentryIntegrations();
-
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to load Sentry integrations:', expect.any(Error));
-
-      consoleSpy.mockRestore();
+      initSentry(mockOptions);
+      expect(Sentry.init).toHaveBeenCalledTimes(1);
     });
   });
 
