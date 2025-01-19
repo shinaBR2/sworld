@@ -92,19 +92,21 @@ export function useSubscription<T>(
         const message = JSON.parse(event.data) as WebSocketMessage;
 
         switch (message.type) {
-          case 'connection_ack':
+          case 'connection_ack': {
             startSubscription(connection);
             break;
+          }
 
-          case 'data':
+          case 'data': {
             setState({
               data: message.payload.data as T,
               isLoading: false,
               error: null,
             });
             break;
+          }
 
-          case 'error':
+          case 'error': {
             const errorMessage = message.payload?.message || 'Subscription error';
             const error = createConnectionError(new Error(errorMessage));
             captureSubscriptionError({
@@ -122,15 +124,17 @@ export function useSubscription<T>(
               error,
             });
             break;
+          }
 
-          case 'complete':
+          case 'complete': {
             // Subscription has ended; handle cleanup if necessary
             ws.close();
             break;
+          }
 
-          default:
-            // Handle unexpected message types if needed
+          default: {
             break;
+          }
         }
       } catch (err) {
         const error = createConnectionError(err instanceof Error ? err : new Error('Parse websocket message error'));
