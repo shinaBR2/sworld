@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
 import { createAuthenticationError, createConnectionError } from '../../error-boundary/errors';
-// import { AppError } from '../../error-boundary/app-error';
 import { captureSubscriptionError, createExponentialBackoff, SubscriptionErrorType } from './helpers';
 
 interface ConnectionInfo {
@@ -159,7 +158,7 @@ export function useSubscription<T>(
 
   const createWebSocketConnection = useCallback(() => {
     const ws = new WebSocket(hasuraUrl, 'graphql-ws');
-    const subscriptionId = Math.random().toString(36).substr(2, 9);
+    const subscriptionId = Math.random().toString(36).substring(2, 11);
     const connection = { ws, subscriptionId };
 
     ws.onopen = async () => await initializeConnection(ws);
