@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
+import { createAuthenticationError, createConnectionError } from '../../error-boundary/errors';
+import { AppError } from '../../error-boundary/app-error';
+import { captureSubscriptionError, SubscriptionErrorType } from './helpers';
 
 export function useSubscription<T>(
   hasuraUrl: string,
@@ -21,7 +24,25 @@ export function useSubscription<T>(
 
     const initializeConnection = async () => {
       try {
-        const token = await getAccessToken();
+        let token;
+        try {
+          token = await getAccessToken();
+        } catch (err) {
+          // Since getAccessToken has its own retry mechanisms
+          // If it fails, it's likely a "terminal" auth error
+          const error = createAuthenticationError(err instanceof Error ? err : new Error('Authentication failed'));
+          captureSubscriptionError({
+            error,
+            type: SubscriptionErrorType.AUTHENTICATION_FAILED,
+            additionalContext: {
+              query,
+              variables,
+            },
+          });
+
+          throw error;
+        }
+
         const initMessage: WebSocketMessage = {
           type: 'connection_init',
           payload: {
@@ -30,13 +51,30 @@ export function useSubscription<T>(
             },
           },
         };
-        ws.send(JSON.stringify(initMessage));
-      } catch (error) {
+
+        try {
+          ws.send(JSON.stringify(initMessage));
+        } catch (err) {
+          const error = createConnectionError(
+            err instanceof Error ? err : new Error('Failed to initialize WebSocket connection')
+          );
+
+          captureSubscriptionError({
+            error,
+            type: SubscriptionErrorType.CONNECTION_INIT_FAILED,
+            additionalContext: {
+              query,
+              variables,
+            },
+          });
+
+          throw error;
+        }
+      } catch (error: unknown) {
         setState({
           data: null,
           isLoading: false,
-          error:
-            error instanceof Error ? error : new Error('Failed to get token'),
+          error: error as AppError,
         });
         ws.close();
       }
@@ -59,49 +97,110 @@ export function useSubscription<T>(
     };
 
     ws.onmessage = event => {
-      const message = JSON.parse(event.data) as WebSocketMessage;
+      try {
+        const message = JSON.parse(event.data) as WebSocketMessage;
 
-      switch (message.type) {
-        case 'connection_ack':
-          startSubscription();
-          break;
+        switch (message.type) {
+          case 'connection_ack':
+            startSubscription();
+            break;
 
-        case 'data':
-          setState({
-            data: message.payload.data as T,
-            isLoading: false,
-            error: null,
-          });
-          break;
+          case 'data':
+            setState({
+              data: message.payload.data as T,
+              isLoading: false,
+              error: null,
+            });
+            break;
 
-        case 'error':
-          setState({
-            data: null,
-            isLoading: false,
-            error: new Error(message.payload?.message || 'Subscription error'),
-          });
-          break;
+          case 'error':
+            const errorMessage = message.payload?.message || 'Subscription error';
+            const error = createConnectionError(new Error(errorMessage));
+            captureSubscriptionError({
+              error,
+              type: SubscriptionErrorType.DATA_PARSING_ERROR,
+              additionalContext: {
+                query,
+                variables,
+              },
+            });
 
-        case 'complete':
-          // Subscription has ended; handle cleanup if necessary
-          ws.close();
-          break;
+            setState({
+              data: null,
+              isLoading: false,
+              error,
+            });
+            break;
 
-        default:
-          // Handle unexpected message types if needed
-          break;
+          case 'complete':
+            // Subscription has ended; handle cleanup if necessary
+            ws.close();
+            break;
+
+          default:
+            // Handle unexpected message types if needed
+            break;
+        }
+      } catch (err) {
+        const error = createConnectionError(err instanceof Error ? err : new Error('Parse websocket message error'));
+        captureSubscriptionError({
+          error,
+          type: SubscriptionErrorType.DATA_PARSING_ERROR,
+          additionalContext: {
+            query,
+            variables,
+          },
+        });
+
+        setState({
+          data: null,
+          isLoading: false,
+          error,
+        });
       }
     };
 
     ws.onerror = () => {
-      // TODO handle error and reconnect
+      // Handle reconnect
+      const error = createConnectionError(new Error('WebSocket connection failed'));
+      captureSubscriptionError({
+        error,
+        type: SubscriptionErrorType.NETWORK_ERROR,
+        additionalContext: {
+          query,
+          variables,
+        },
+      });
       setState({
         data: null,
         isLoading: false,
-        error: new Error('WebSocket connection failed'),
+        error,
       });
       ws.close();
     };
+
+    const connectionTimeout = setTimeout(() => {
+      if (state.isLoading) {
+        const error = createConnectionError(new Error('WebSocket connection timeout'));
+
+        captureSubscriptionError({
+          error,
+          type: SubscriptionErrorType.NETWORK_ERROR,
+          additionalContext: {
+            query,
+            variables,
+          },
+        });
+
+        setState({
+          data: null,
+          isLoading: false,
+          error,
+        });
+
+        ws.close();
+      }
+    }, 10000);
 
     return () => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -112,6 +211,7 @@ export function useSubscription<T>(
         ws.send(JSON.stringify(stopMessage));
         ws.close();
       }
+      clearTimeout(connectionTimeout);
     };
   }, [hasuraUrl, query, variables, getAccessToken]);
   // TODO memorize the variables

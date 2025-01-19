@@ -1,7 +1,9 @@
+import { AppError } from '../../error-boundary/app-error';
+
 export interface SubscriptionState<T> {
   data: T | null;
   isLoading: boolean;
-  error: Error | null;
+  error: AppError | null;
 }
 
 export type WebSocketMessage =
