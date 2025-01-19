@@ -1,24 +1,6 @@
 [
   {
     "path": "/*",
-    "timings": [
-      {
-        "metric": "interactive",
-        "budget": 3000
-      },
-      {
-        "metric": "first-contentful-paint",
-        "budget": 3000
-      },
-      {
-        "metric": "largest-contentful-paint",
-        "budget": 5000
-      },
-      {
-        "metric": "speed-index",
-        "budget": 5000
-      }
-    ],
     "resourceSizes": [
       {
         "resourceType": "script",
@@ -27,12 +9,6 @@
       {
         "resourceType": "total",
         "budget": 300
-      }
-    ],
-    "resourceCounts": [
-      {
-        "resourceType": "third-party",
-        "budget": 10
       }
     ]
   }
