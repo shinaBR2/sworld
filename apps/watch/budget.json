@@ -12,11 +12,19 @@
       },
       {
         "metric": "largest-contentful-paint",
-        "budget": 5000
+        "budget": 4000
+      },
+      {
+        "metric": "cumulative-layout-shift",
+        "budget": 0.05
+      },
+      {
+        "metric": "total-blocking-time",
+        "budget": 600
       },
       {
         "metric": "speed-index",
-        "budget": 5000
+        "budget": 4200
       }
     ],
     "resourceSizes": [
