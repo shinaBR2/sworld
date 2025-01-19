@@ -151,7 +151,6 @@ export function useSubscription<T>(
   };
 
   const createWebSocketConnection = useCallback(() => {
-    console.log('Creating WebSocket Connection', { hasuraUrl, query, variables });
     const ws = new WebSocket(hasuraUrl, 'graphql-ws');
     const subscriptionId = Math.random().toString(36).substr(2, 9);
     const connection = { ws, subscriptionId };
@@ -164,11 +163,9 @@ export function useSubscription<T>(
   }, [hasuraUrl]);
 
   useEffect(() => {
-    console.log('Effect triggered', { query, variables });
     const { ws, subscriptionId } = createWebSocketConnection();
 
     return () => {
-      console.log('Cleaning up WebSocket');
       if (ws.readyState === WebSocket.OPEN) {
         const stopMessage: WebSocketMessage = {
           id: subscriptionId,
