@@ -12,6 +12,15 @@ export enum SubscriptionErrorType {
   SERVER_ERROR = 'SERVER_ERROR',
 }
 
+/**
+ * Parameters for capturing subscription errors
+ * @interface CaptureSubscriptionErrorParams
+ * @property {AppError} error - The error object to capture
+ * @property {string} type - The type of subscription error
+ * @property {Object} [additionalContext] - Additional context for error tracking
+ * @property {string} [additionalContext.query] - GraphQL query that caused the error
+ * @property {Record<string, unknown>} [additionalContext.variables] - Query variables
+ */
 interface CaptureSubscriptionErrorParams {
   error: AppError;
   type: string;
