@@ -162,6 +162,7 @@ jobs:
             exit 1
           fi
       - name: Audit URLs using Lighthouse
+        id: lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
@@ -170,3 +171,10 @@ jobs:
           configPath: apps/listen/lighthouserc.json
           uploadArtifacts: true # save results as an action artifacts
           temporaryPublicStorage: true # upload lighthouse report to the temporary storage
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: |
+            ${{ steps.lighthouse.outputs.assertionResults }}
+            ${{ steps.lighthouse.outputs.links }}
+            ${{ steps.lighthouse.outputs.manifest }}
