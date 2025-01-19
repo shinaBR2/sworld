@@ -187,7 +187,7 @@ jobs:
             | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo }}% |
 
             ### 📊 Full Report
-            ${{ steps.lighthouse.outputs.links }}
+            [📊 View Full Report](${{ fromJSON(steps.lighthouse.outputs.links)[fromJSON(steps.lighthouse.outputs.manifest)[0].url] }})
 
             <details>
             <summary>All Runs</summary>
