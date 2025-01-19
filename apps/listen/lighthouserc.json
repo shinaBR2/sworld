@@ -1,0 +1,20 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 1,
+      "settings": {
+        "chromeFlags": "--disable-gpu --no-sandbox --no-zygote"
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "first-contentful-paint": ["warn", { "maxNumericValue": 6000 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 10000 }],
+        "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.05 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 1000 }],
+        "speed-index": ["warn", { "maxNumericValue": 10000 }]
+      }
+    }
+  }
+}
