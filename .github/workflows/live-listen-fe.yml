@@ -133,6 +133,6 @@ jobs:
         with:
           urls: |
             ${{ vars.VITE_LISTEN_SITE_URL }}
-          budgetPath: apps/watch/budget.json # test performance budgets
+          budgetPath: apps/listen/budget.json # test performance budgets
           uploadArtifacts: true # save results as an action artifacts
           temporaryPublicStorage: true # upload lighthouse report to the temporary storage
