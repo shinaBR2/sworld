@@ -9,11 +9,11 @@
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
-        "first-contentful-paint": ["warn", { "maxNumericValue": 6000 }],
-        "largest-contentful-paint": ["warn", { "maxNumericValue": 10000 }],
+        "first-contentful-paint": ["warn", { "maxNumericValue": 1800 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
         "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.05 }],
-        "total-blocking-time": ["warn", { "maxNumericValue": 1000 }],
-        "speed-index": ["warn", { "maxNumericValue": 10000 }]
+        "total-blocking-time": ["warn", { "maxNumericValue": 300 }],
+        "speed-index": ["warn", { "maxNumericValue": 3000 }]
       }
     }
   }
