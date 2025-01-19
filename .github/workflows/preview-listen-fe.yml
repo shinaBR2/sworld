@@ -178,38 +178,41 @@ jobs:
             ## 🚦 Lighthouse CI Results
 
             ### Performance Metrics
-            ${JSON.parse(steps.lighthouse.outputs.manifest).find(run => run.isRepresentativeRun).summary | format_summary}
 
             | Metric | Score |
             |--------|-------|
-            | Performance | ${summary.performance * 100}% |
-            | Accessibility | ${summary.accessibility * 100}% |
-            | Best Practices | ${summary['best-practices'] * 100}% |
-            | SEO | ${summary.seo * 100}% |
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance * 100 }}% |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility * 100 }}% |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] * 100 }}% |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo * 100 }}% |
 
-            ### ⚠️ Warnings & Errors
-            ${JSON.parse(steps.lighthouse.outputs.assertionResults).map(result => `
-            #### ${result.level === 'warn' ? '⚠️' : '❌'} ${result.auditTitle}
-            - Expected: ${result.operator} ${result.expected}
-            - Found: ${result.actual}
-            - [Learn more](${result.auditDocumentationLink})
-            `).join('\n')}
-
-            ### 📊 Detailed Reports
-            ${Object.entries(JSON.parse(steps.lighthouse.outputs.links)).map(([url, reportUrl]) => `
-            - [View Full Report](${reportUrl})
-            `).join('\n')}
+            ### 📊 Full Report
+            ${{ steps.lighthouse.outputs.links }}
 
             <details>
-            <summary>View All Runs</summary>
+            <summary>All Runs</summary>
 
-            ${JSON.parse(steps.lighthouse.outputs.manifest).map((run, index) => `
-            #### Run ${index + 1}${run.isRepresentativeRun ? ' (Representative)' : ''}
+            #### Run 1
             | Metric | Score |
             |--------|-------|
-            | Performance | ${run.summary.performance * 100}% |
-            | Accessibility | ${run.summary.accessibility * 100}% |
-            | Best Practices | ${run.summary['best-practices'] * 100}% |
-            | SEO | ${run.summary.seo * 100}% |
-            `).join('\n')}
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.performance * 100 }}% |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.accessibility * 100 }}% |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary['best-practices'] * 100 }}% |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo * 100 }}% |
+
+            #### Run 2
+            | Metric | Score |
+            |--------|-------|
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.performance * 100 }}% |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.accessibility * 100 }}% |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary['best-practices'] * 100 }}% |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.seo * 100 }}% |
+
+            #### Run 3 (Representative)
+            | Metric | Score |
+            |--------|-------|
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance * 100 }}% |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility * 100 }}% |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] * 100 }}% |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo * 100 }}% |
             </details>
