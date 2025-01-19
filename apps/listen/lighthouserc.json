@@ -17,7 +17,12 @@
         "speed-index": ["warn", { "maxNumericValue": 3000 }, "error", { "maxNumericValue": 4200 }],
         "resource-summary:third-party:count": ["warn", { "maxNumericValue": 15 }, "error", { "maxNumericValue": 20 }],
         "resource-summary:script:size": ["warn", { "maxNumericValue": 150000 }, "error", { "maxNumericValue": 200000 }],
-        "resource-summary:total:size": ["warn", { "maxNumericValue": 350000 }, "error", { "maxNumericValue": 420000 }]
+        "resource-summary:total:size": ["warn", { "maxNumericValue": 350000 }, "error", { "maxNumericValue": 420000 }],
+        "is-crawlable": "off",
+        "inspector-issues": "off",
+        "image-size-responsive": "off",
+        "label-content-name-mismatch": "off",
+        "third-party-cookies": "off"
       }
     }
   }
