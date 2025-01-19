@@ -12,8 +12,10 @@ interface InitSentryParams {
 }
 
 const initSentry = (options: InitSentryParams) => {
+  const allowedEnv = ['development', 'production'];
+
   if (isInitialized) return;
-  if (options.environment == 'local') return;
+  if (allowedEnv.indexOf(options.environment) == -1) return;
 
   const { environment, dsn, site, release } = options;
   const isProduction = environment == 'production';
