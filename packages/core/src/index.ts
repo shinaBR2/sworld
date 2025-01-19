@@ -7,6 +7,7 @@ import {
   requestHelpers,
   initSentry,
   loadSentryIntegrations,
+  captureError,
   ErrorBoundary,
 } from './universal';
 import { queryHooks as watchQueryHooks } from './watch';
@@ -16,7 +17,7 @@ export * as Query from './providers/query';
 export { commonHelpers, requestHelpers };
 
 export { watchQueryHooks, listenQueryHooks };
-export { initSentry, loadSentryIntegrations };
+export { initSentry, loadSentryIntegrations, captureError };
 
 export { ErrorBoundary };
 
