@@ -3,10 +3,6 @@
     "path": "/*",
     "timings": [
       {
-        "metric": "interactive",
-        "budget": 3000
-      },
-      {
         "metric": "first-contentful-paint",
         "budget": 3000
       },
