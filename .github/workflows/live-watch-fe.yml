@@ -121,6 +121,7 @@ jobs:
         with:
           urls: |
             ${{ vars.VITE_WATCH_SITE_URL }}
+          runs: 3
           budgetPath: apps/watch/budget.json # test performance budgets
           uploadArtifacts: true # save results as an action artifacts
           temporaryPublicStorage: true # upload lighthouse report to the temporary storage
