@@ -1,12 +1,15 @@
+import * as os from 'os';
 import { createWriteStream, unlink, stat } from 'fs';
 import { promisify } from 'util';
 import * as crypto from 'crypto';
 import { mkdir, rm } from 'fs/promises';
 import { logger } from 'src/utils/logger';
+import path from 'path';
 
 // Helper to generate unique temporary directory names
-const generateTempDirName = () => {
-  return crypto.randomBytes(16).toString('hex');
+const generateTempDir = () => {
+  const uniqueName = crypto.randomBytes(16).toString('hex');
+  return path.join(os.tmpdir(), uniqueName);
 };
 
 // Improved file download with stream handling and cleanup
@@ -100,7 +103,7 @@ const verifyFileSize = async (
 };
 
 export {
-  generateTempDirName,
+  generateTempDir,
   downloadFile,
   createDirectory,
   cleanupDirectory,

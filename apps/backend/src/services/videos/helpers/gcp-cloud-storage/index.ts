@@ -1,8 +1,13 @@
+import {
+  TransferManager,
+  CreateWriteStreamOptions,
+} from '@google-cloud/storage';
 import { getStorage } from 'firebase-admin/storage';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
 import { logger } from 'src/utils/logger';
+import { systemConfig } from 'src/utils/systemConfig';
 
 interface UploadOptions {
   cacheControl?: string;
@@ -14,6 +19,15 @@ const DEFAULT_UPLOAD_OPTIONS: UploadOptions = {
   cacheControl: 'public, max-age=31536000',
   resumable: true,
   batchSize: 3,
+};
+
+// TODO
+// Consider migrate from firebase-admin to @google-cloud/storage
+const getDefaultBucket = () => {
+  const storage = getStorage();
+  const bucket = storage.bucket();
+
+  return bucket;
 };
 
 /**
@@ -37,8 +51,7 @@ const uploadFile = async (
   storagePath: string,
   options: UploadOptions = DEFAULT_UPLOAD_OPTIONS
 ) => {
-  const storage = getStorage();
-  const bucket = storage.bucket();
+  const bucket = getDefaultBucket();
 
   await bucket.upload(localPath, {
     destination: storagePath,
@@ -101,4 +114,131 @@ const uploadDirectory = async (
   }
 };
 
-export { DEFAULT_UPLOAD_OPTIONS, getDownloadUrl, uploadFile, uploadDirectory };
+const uploadFolderParallel = async (localDir: string, storagePath: string) => {
+  const bucket = getDefaultBucket();
+  const transferManager = new TransferManager(bucket);
+
+  await transferManager.uploadManyFiles(localDir, {
+    customDestinationBuilder: filePath => {
+      const fileName = path.relative(localDir, filePath);
+      return path.join(storagePath, fileName);
+    },
+  });
+};
+
+interface StreamFileParams {
+  /** The readable stream of the file content */
+  stream: NodeJS.ReadableStream;
+  /** Destination path in Cloud Storage (e.g., 'videos/123/segments/file.ts') */
+  storagePath: string;
+  /** Configuration options for the write stream (e.g., contentType, metadata) */
+  options: CreateWriteStreamOptions;
+}
+
+/**
+ * Streams a file to Cloud Storage
+ * @param params Configuration object containing all parameters
+ * @returns Promise that resolves when streaming is complete
+ */
+const streamFile = async (params: StreamFileParams) => {
+  const { stream, storagePath, options } = params;
+
+  if (!stream) {
+    throw new Error('Invalid input stream');
+  }
+
+  if (typeof stream.pipe !== 'function' || typeof stream.on !== 'function') {
+    throw new Error('Invalid stream provided');
+  }
+
+  if (!storagePath?.trim()) {
+    throw new Error('Storage path is required');
+  }
+  if (!options) {
+    throw new Error('Write stream options are required');
+  }
+
+  const bucket = getDefaultBucket();
+  const file = bucket.file(storagePath);
+  const writeStream = file.createWriteStream(options);
+  const { timeout = systemConfig.defaultExternalRequestTimeout } = options;
+
+  return new Promise((resolve, reject) => {
+    let timeoutId: NodeJS.Timeout;
+    // Flag to track if we've already handled an error
+    let errorHandled = false;
+
+    // Helper function to handle errors and cleanup
+    const handleError = async (errorMessage: string, originalError?: Error) => {
+      if (errorHandled) return;
+      errorHandled = true;
+      clearTimeout(timeoutId);
+
+      try {
+        // Delete the partially uploaded file
+        await file.delete();
+      } catch (deleteError) {
+        // Log deletion error, but don't override the original error
+        logger.error(
+          {
+            storagePath,
+            deleteError:
+              deleteError instanceof Error
+                ? deleteError.message
+                : String(deleteError),
+            originalError: originalError?.message,
+          },
+          'Failed to delete partial file after upload error'
+        );
+      }
+
+      // Reject with a descriptive error
+      reject(new Error(errorMessage, { cause: originalError }));
+    };
+
+    if (timeout > 0) {
+      timeoutId = setTimeout(() => {
+        const errorMessage = `Upload timed out after ${timeout}ms`;
+        handleError(errorMessage, new Error(errorMessage));
+      }, timeout);
+    }
+
+    // Handle stream read errors
+    stream.on('error', readError => {
+      handleError(`Stream read error: ${readError.message}`, readError);
+    });
+
+    // Handle write stream errors
+    writeStream.on('error', writeError => {
+      handleError(
+        `Cloud storage write error: ${writeError.message}`,
+        writeError
+      );
+    });
+
+    // Successful completion
+    writeStream.on('finish', () => {
+      clearTimeout(timeoutId);
+      resolve(undefined);
+    });
+
+    // Pipe the stream and handle potential immediate piping errors
+    try {
+      stream.pipe(writeStream).on('error', reject).on('finish', resolve);
+    } catch (pipeError) {
+      handleError(
+        `Stream piping error: ${pipeError instanceof Error ? pipeError.message : String(pipeError)}`,
+        pipeError instanceof Error ? pipeError : undefined
+      );
+    }
+  });
+};
+
+export {
+  DEFAULT_UPLOAD_OPTIONS,
+  getDownloadUrl,
+  uploadFile,
+  uploadDirectory,
+  uploadFolderParallel,
+  streamFile,
+};

@@ -7,6 +7,7 @@ import { validateRequest } from 'src/utils/validator';
 import { ConvertRequest, convert } from './convert';
 import { logger } from 'src/utils/logger';
 import { ConvertSchema } from './convert/schema';
+import { streamM3U8 } from './helpers/m3u8';
 
 initializeApp({
   storageBucket: envConfig.storageBucket,

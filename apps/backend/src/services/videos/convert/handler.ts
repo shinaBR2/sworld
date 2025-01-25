@@ -1,7 +1,6 @@
-import * as os from 'os';
 import * as path from 'path';
 import {
-  generateTempDirName,
+  generateTempDir,
   downloadFile,
   createDirectory,
   cleanupDirectory,
@@ -30,8 +29,7 @@ export interface ConversionVideo {
  */
 export const convertVideo = async (data: ConversionVideo) => {
   const { id, videoUrl, userId } = data;
-  const uniqueDir = generateTempDirName();
-  const workingDir = path.join(os.tmpdir(), uniqueDir);
+  const workingDir = generateTempDir();
   const outputDir = path.join(workingDir, 'output');
   const thumbnailFilename = `${id}--${Date.now()}.jpg`;
   const thumbnailPath = path.join(workingDir, thumbnailFilename);

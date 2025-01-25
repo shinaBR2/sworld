@@ -29,23 +29,21 @@ describe('convertVideo', () => {
     userId: 'user-123',
   };
 
-  const tempDir = 'test-dir';
+  const tempDir = '/temp/test-dir';
   const mockPaths = {
-    workingDir: path.join(os.tmpdir(), tempDir),
-    outputDir: path.join(os.tmpdir(), tempDir, 'output'),
-    inputPath: path.join(os.tmpdir(), tempDir, 'input.mp4'),
+    workingDir: tempDir,
+    outputDir: path.join(tempDir, 'output'),
+    inputPath: path.join(tempDir, 'input.mp4'),
     thumbnailPathPattern: new RegExp(
-      path
-        .join(os.tmpdir(), tempDir, 'test-video-123--\\d+\\.jpg')
-        .replace(/\\/g, '\\\\')
+      path.join(tempDir, 'test-video-123--\\d+\\.jpg').replace(/\\/g, '\\\\')
     ),
   };
 
   beforeEach(() => {
     vi.resetAllMocks();
 
-    // Mock generateTempDirName to return consistent path
-    vi.mocked(fileHelpers.generateTempDirName).mockReturnValue(tempDir);
+    // Mock generateTempDir to return consistent path
+    vi.mocked(fileHelpers.generateTempDir).mockReturnValue(tempDir);
 
     // Mock file existence checks
     vi.mocked(existsSync).mockReturnValue(true);

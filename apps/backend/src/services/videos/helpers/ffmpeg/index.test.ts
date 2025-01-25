@@ -22,7 +22,7 @@ vi.mock('fs', () => ({
 vi.mock('./file-helpers', () => ({
   downloadFile: vi.fn(),
   uploadDirectory: vi.fn(),
-  generateTempDirName: vi.fn(),
+  generateTempDir: vi.fn(),
   getDownloadUrl: vi.fn(),
 }));
 
