@@ -112,6 +112,15 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live
+      - name: Run Playwright Tests
+        working-directory: apps/listen
+        if: success()
+        run: |
+          pnpm exec playwright install --with-deps
+          pnpm run e2e
+        env:
+          VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
