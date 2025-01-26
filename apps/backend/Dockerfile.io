@@ -8,4 +8,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 4000
-CMD ["npm", "start", "--listen", "0.0.0.0"]
+CMD ["npm", "start-io", "--listen", "0.0.0.0"]

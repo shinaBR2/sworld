@@ -7,12 +7,16 @@
   "main": "index.ts",
   "type": "module",
   "engines": {
-    "node": "20.10.0"
+    "node": "^20.10.0"
   },
   "scripts": {
     "build": "tsc",
-    "start": "tsx src/index.ts",
-    "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
+    "start-gateway": "tsx src/gateway.ts",
+    "dev-gateway": "tsx watch --clear-screen=false src/gateway.ts | pino-pretty",
+    "start-compute": "tsx src/compute.ts",
+    "dev-compute": "tsx watch --clear-screen=false src/compute.ts | pino-pretty",
+    "start-io": "tsx src/io.ts",
+    "dev-io": "tsx watch --clear-screen=false src/io.ts | pino-pretty",
     "test": "vitest",
     "test:ci": "vitest run --coverage",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sworld-dc --project node-express ./dist && sentry-cli sourcemaps upload --org sworld-dc --project node-express ./dist",
