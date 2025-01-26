@@ -210,7 +210,6 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
     denied: [
       {
         name: "All",
-        key: "audios",
         mutation: `
           mutation {
             # This is a placeholder and won't match any real schema
