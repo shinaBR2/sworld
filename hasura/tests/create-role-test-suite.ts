@@ -12,6 +12,15 @@ type QueryTestCase = {
   additionalTest?: (response: any, roleName: string) => void;
 };
 
+type MutationTestCase = {
+  name: string;
+  mutation: string;
+  headers?: Record<string, string>;
+  variables?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  additionalTest?: (response: any, roleName: string) => void;
+};
+
 const ROLE_ANONYMOUS = "anonymous";
 const ROLE_USER = "user";
 
@@ -58,7 +67,10 @@ const createRoleTestSuite = async (
       denied: [] as QueryTestCase[],
       empty: [] as QueryTestCase[],
     },
-    mutations = { allowed: [], denied: [] },
+    mutations = {
+      allowed: [] as MutationTestCase[],
+      denied: [] as MutationTestCase[],
+    },
   }
 ) => {
   const requireToken = roleName == ROLE_USER;
@@ -135,4 +147,10 @@ const createRoleTestSuite = async (
   });
 };
 
-export { ROLE_ANONYMOUS, ROLE_USER, QueryTestCase, createRoleTestSuite };
+export {
+  ROLE_ANONYMOUS,
+  ROLE_USER,
+  QueryTestCase,
+  MutationTestCase,
+  createRoleTestSuite,
+};

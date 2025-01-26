@@ -82,7 +82,6 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
     denied: [
       {
         name: "All",
-        key: "feature_flag",
         mutation: `
           mutation {
             # This is a placeholder and won't match any real schema
@@ -106,7 +105,6 @@ await createRoleTestSuite(ROLE_USER, {
     denied: [
       {
         name: "All",
-        key: "feature_flag",
         mutation: `
           mutation {
             insert_feature_flag_one(object: {

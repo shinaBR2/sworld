@@ -1,0 +1,3 @@
+table:
+  name: tasks
+  schema: public
