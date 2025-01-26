@@ -1,3 +1,4 @@
+import { argosScreenshot } from '@argos-ci/playwright';
 import { test, expect } from '@playwright/test';
 
 test.describe('playing list', () => {
@@ -34,10 +35,9 @@ test.describe('music widget', () => {
   test('visual', async ({ page }) => {
     const widget = page.getByRole('region', { name: 'music widget' });
     await expect(widget).toBeVisible();
+    await argosScreenshot(page, 'homepage');
 
-    await expect(
-      widget.getByRole('button', { name: 'list audio' })
-    ).toBeHidden();
+    await expect(widget.getByRole('button', { name: 'list audio' })).toBeHidden();
   });
 
   test.describe('actions', () => {
@@ -59,16 +59,10 @@ test.describe('music widget', () => {
       const nextButton = controls.getByRole('button', { name: 'next audio' });
 
       await expect(widget).toBeVisible();
-      await expect(playingList.getByRole('button').first()).toContainText(
-        'Now Playing'
-      );
+      await expect(playingList.getByRole('button').first()).toContainText('Now Playing');
       await nextButton.click();
-      await expect(playingList.getByRole('button').first()).not.toContainText(
-        'Now Playing'
-      );
-      await expect(playingList.getByRole('button').nth(1)).toContainText(
-        'Now Playing'
-      );
+      await expect(playingList.getByRole('button').first()).not.toContainText('Now Playing');
+      await expect(playingList.getByRole('button').nth(1)).toContainText('Now Playing');
     });
 
     test('previous audio', async ({ page }) => {
@@ -84,16 +78,10 @@ test.describe('music widget', () => {
       });
 
       await expect(widget).toBeVisible();
-      await expect(playingList.getByRole('button').first()).toContainText(
-        'Now Playing'
-      );
+      await expect(playingList.getByRole('button').first()).toContainText('Now Playing');
       await prevButton.click();
-      await expect(playingList.getByRole('button').first()).not.toContainText(
-        'Now Playing'
-      );
-      await expect(playingList.getByRole('button').nth(1)).toContainText(
-        'Now Playing'
-      );
+      await expect(playingList.getByRole('button').first()).not.toContainText('Now Playing');
+      await expect(playingList.getByRole('button').nth(1)).toContainText('Now Playing');
     });
   });
 });

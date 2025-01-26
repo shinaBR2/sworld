@@ -2,6 +2,7 @@
   "name": "listen",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "vite build",
     "serve": "vite preview",
@@ -19,17 +20,18 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
+    "@argos-ci/playwright": "^4.1.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@playwright/test": "^1.49.1",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "eslint-config-custom": "workspace:*",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
     "typescript": "^5.6.2",
-    "vite": "^3.1.0",
+    "vite": "^6.0.0",
     "vite-plugin-pwa": "^0.13.3"
   }
 }
