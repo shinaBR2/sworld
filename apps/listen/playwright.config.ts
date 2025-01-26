@@ -32,6 +32,7 @@ export default defineConfig({
       '@argos-ci/playwright/reporter',
       {
         uploadToArgos: isCI,
+        buildName: 'Listen E2E',
       },
     ],
   ],
