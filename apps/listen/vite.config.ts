@@ -72,11 +72,7 @@ export default defineConfig({
     // }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: [
-        'favicon.ico',
-        'apple-icon-180x180.png',
-        'masked-icon.svg',
-      ],
+      includeAssets: ['favicon.ico', 'apple-icon-180x180.png', 'masked-icon.svg'],
       manifest: {
         name: 'Listen',
         short_name: 'Listen',
