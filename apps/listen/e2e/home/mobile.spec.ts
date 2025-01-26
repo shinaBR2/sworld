@@ -1,3 +1,4 @@
+import { argosScreenshot } from '@argos-ci/playwright';
 import { test, expect } from '@playwright/test';
 
 test.describe('playing list', () => {
@@ -18,6 +19,7 @@ test.describe('music widget', () => {
   test('visual', async ({ page }) => {
     const widget = page.getByRole('region', { name: 'music widget' });
     await expect(widget).toBeVisible();
+    await argosScreenshot(page, 'homepage');
 
     await expect(widget.getByRole('button', { name: 'toggle playing list' })).toBeVisible();
   });

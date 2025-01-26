@@ -1,13 +1,6 @@
 import { argosScreenshot } from '@argos-ci/playwright';
 import { test, expect } from '@playwright/test';
 
-test.describe('Screenshot homepage', () => {
-  test('take a screenshot', async ({ page }) => {
-    await page.goto('/');
-    await argosScreenshot(page, 'homepage');
-  });
-});
-
 test.describe('home visual', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
