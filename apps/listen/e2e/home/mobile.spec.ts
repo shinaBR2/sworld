@@ -19,9 +19,7 @@ test.describe('music widget', () => {
     const widget = page.getByRole('region', { name: 'music widget' });
     await expect(widget).toBeVisible();
 
-    await expect(
-      widget.getByRole('button', { name: 'toggle playing list' })
-    ).toBeVisible();
+    await expect(widget.getByRole('button', { name: 'toggle playing list' })).toBeVisible();
   });
 
   test.describe('actions', () => {
@@ -36,9 +34,7 @@ test.describe('music widget', () => {
       const playingList = widget.getByRole('listbox', { name: 'audio tracks' });
       await expect(playingList).toBeVisible();
 
-      const playingAudio = playingList
-        .getByRole('option', { name: 'audio track' })
-        .first();
+      const playingAudio = playingList.getByRole('option', { name: 'audio track' }).first();
       await expect(playingAudio).toBeVisible();
       await expect(playingAudio).toHaveAttribute('aria-selected', 'true');
 
@@ -83,14 +79,8 @@ test.describe('music widget', () => {
       await nextButton.click();
       await togglePlayingListbutton.click();
 
-      await expect(playingList.getByRole('option').first()).toHaveAttribute(
-        'aria-selected',
-        'false'
-      );
-      await expect(playingList.getByRole('option').nth(1)).toHaveAttribute(
-        'aria-selected',
-        'true'
-      );
+      await expect(playingList.getByRole('option').first()).toHaveAttribute('aria-selected', 'false');
+      await expect(playingList.getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'true');
     });
 
     test('previous audio', async ({ page }) => {
@@ -113,14 +103,8 @@ test.describe('music widget', () => {
       await prevButton.click();
       await togglePlayingListbutton.click();
 
-      await expect(playingList.getByRole('option').first()).toHaveAttribute(
-        'aria-selected',
-        'false'
-      );
-      await expect(playingList.getByRole('option').last()).toHaveAttribute(
-        'aria-selected',
-        'true'
-      );
+      await expect(playingList.getByRole('option').first()).toHaveAttribute('aria-selected', 'false');
+      await expect(playingList.getByRole('option').last()).toHaveAttribute('aria-selected', 'true');
     });
   });
 });

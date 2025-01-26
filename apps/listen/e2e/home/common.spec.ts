@@ -1,4 +1,12 @@
+import { argosScreenshot } from '@argos-ci/playwright';
 import { test, expect } from '@playwright/test';
+
+test.describe('Screenshot homepage', () => {
+  test('take a screenshot', async ({ page }) => {
+    await page.goto('/');
+    await argosScreenshot(page, 'homepage');
+  });
+});
 
 test.describe('home visual', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,30 +22,22 @@ test.describe('home visual', () => {
   });
 
   test('has site choices', async ({ page }) => {
-    await expect(
-      page.getByRole('button', { name: 'site choices' })
-    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'site choices' })).toBeVisible();
   });
 
   test('has profile button', async ({ page }) => {
-    await expect(
-      page.getByRole('button', { name: 'account options' })
-    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'account options' })).toBeVisible();
   });
 
   test('has feeling list', async ({ page }) => {
-    await expect(
-      page.getByRole('radiogroup', { name: 'feeling list' })
-    ).toBeVisible();
+    await expect(page.getByRole('radiogroup', { name: 'feeling list' })).toBeVisible();
   });
 
   test('music widget visual', async ({ page }) => {
     const widget = page.getByRole('region', { name: 'music widget' });
     await expect(widget).toBeVisible();
 
-    await expect(
-      widget.getByRole('img', { name: 'audio thumbnail' })
-    ).toBeVisible();
+    await expect(widget.getByRole('img', { name: 'audio thumbnail' })).toBeVisible();
 
     const nowPlaying = widget.getByLabel('now playing');
     await expect(nowPlaying).toBeVisible();
@@ -47,25 +47,15 @@ test.describe('home visual', () => {
     await expect(widget.getByLabel('audio artist')).toBeVisible();
 
     const seeker = widget.getByLabel('audio time seeker');
-    await expect(
-      seeker.getByRole('slider', { name: 'time indicator' })
-    ).toBeVisible();
+    await expect(seeker.getByRole('slider', { name: 'time indicator' })).toBeVisible();
     await expect(seeker.getByLabel('start')).toBeVisible();
     await expect(seeker.getByLabel('end')).toBeVisible();
 
     const controls = widget.getByRole('group', { name: 'playback controls' });
-    await expect(
-      controls.getByRole('button', { name: 'toggle loop mode' })
-    ).toBeVisible();
-    await expect(
-      controls.getByRole('button', { name: 'shuffle' })
-    ).toBeVisible();
-    await expect(
-      controls.getByRole('button', { name: 'next audio' })
-    ).toBeVisible();
-    await expect(
-      controls.getByRole('button', { name: 'previous audio' })
-    ).toBeVisible();
+    await expect(controls.getByRole('button', { name: 'toggle loop mode' })).toBeVisible();
+    await expect(controls.getByRole('button', { name: 'shuffle' })).toBeVisible();
+    await expect(controls.getByRole('button', { name: 'next audio' })).toBeVisible();
+    await expect(controls.getByRole('button', { name: 'previous audio' })).toBeVisible();
   });
 
   test.describe('music widget actions', () => {
