@@ -11,7 +11,7 @@ import { defineConfig, devices } from '@playwright/test';
 const desktopTestMatch = ['**/common.spec.ts', '**/desktop.spec.ts'];
 const mobileTestMatch = ['**/common.spec.ts', '**/mobile.spec.ts'];
 const isCI = !!process.env.CI;
-const baseUrl = process.env.PLAYWRIGHT_LISTEN_URL || 'http://localhost:3001';
+const baseUrl = process.env.VITE_LISTEN_SITE_URL || 'http://localhost:3001';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
