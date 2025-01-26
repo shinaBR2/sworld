@@ -86,6 +86,7 @@ jobs:
           pnpm run e2e
         env:
           PLAYWRIGHT_LISTEN_URL: ${{ steps.deploy.outputs.details_url }}
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
