@@ -182,10 +182,10 @@ jobs:
 
             | Metric | Score |
             |--------|-------|
-            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance }}% |
-            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility }}% |
-            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] }}% |
-            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo }}% |
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance }} |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility }} |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] }} |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo }} |
 
             ### 📊 Full Report
             [📊 View Full Report](${{ fromJSON(steps.lighthouse.outputs.links)[fromJSON(steps.lighthouse.outputs.manifest)[0].url] }})
@@ -196,24 +196,24 @@ jobs:
             #### Run 1
             | Metric | Score |
             |--------|-------|
-            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.performance }}% |
-            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.accessibility }}% |
-            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary['best-practices'] }}% |
-            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo }}% |
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.performance }} |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.accessibility }} |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary['best-practices'] }} |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo }} |
 
             #### Run 2
             | Metric | Score |
             |--------|-------|
-            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.performance }}% |
-            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.accessibility }}% |
-            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary['best-practices'] }}% |
-            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.seo }}% |
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.performance }} |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.accessibility }} |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary['best-practices'] }} |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[1].summary.seo }} |
 
             #### Run 3 (Representative)
             | Metric | Score |
             |--------|-------|
-            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance }}% |
-            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility }}% |
-            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] }}% |
-            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo }}% |
+            | Performance | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.performance }} |
+            | Accessibility | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.accessibility }} |
+            | Best Practices | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary['best-practices'] }} |
+            | SEO | ${{ fromJSON(steps.lighthouse.outputs.manifest)[2].summary.seo }} |
             </details>
