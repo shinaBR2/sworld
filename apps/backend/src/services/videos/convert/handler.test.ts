@@ -199,6 +199,21 @@ describe('convertVideo', () => {
     expect(logger.error).toHaveBeenCalled();
   });
 
+  it('should throw error if screenshot file is not created', async () => {
+    vi.mocked(ffmpegHelpers.takeScreenshot).mockResolvedValue(undefined);
+    vi.mocked(existsSync)
+      .mockReturnValueOnce(true) // for input file check
+      .mockReturnValueOnce(false); // for screenshot file check
+
+    await expect(convertVideo(mockData)).rejects.toThrow(
+      'Video conversion failed: Screenshot file not created'
+    );
+    expect(fileHelpers.cleanupDirectory).toHaveBeenCalledWith(
+      mockPaths.workingDir
+    );
+    expect(logger.error).toHaveBeenCalled();
+  });
+
   it('should throw error if cloudinary upload fails', async () => {
     const error = new Error('Upload failed');
     vi.mocked(cloudinaryHelpers.uploadFromLocalFilePath).mockRejectedValueOnce(

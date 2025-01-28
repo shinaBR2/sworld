@@ -86,13 +86,13 @@ const convertToHLS = async (
 const getDuration = async (videoPath: string): Promise<number> => {
   const DEFAULT_DURATION = 1;
 
+  if (!path.isAbsolute(videoPath)) {
+    throw new Error('videoPath must be absolute');
+  }
+
   try {
     if (!existsSync(videoPath)) {
       throw new Error(`Video file does not exist at path: ${videoPath}`);
-    }
-
-    if (!path.isAbsolute(videoPath)) {
-      throw new Error('videoPath must be absolute');
     }
 
     const metadata = await new Promise<FfprobeData>((resolve, reject) => {

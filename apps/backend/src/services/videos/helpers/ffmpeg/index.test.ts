@@ -72,6 +72,22 @@ describe('FFmpeg Helpers', () => {
       expect(logger.error).toHaveBeenCalled();
     });
 
+    it('should throw error if inputPath is not absolute', async () => {
+      await expect(
+        convertToHLS('relative/path.mp4', outputDir)
+      ).rejects.toThrow('inputPath must be absolute');
+      expect(ffmpeg).not.toHaveBeenCalled();
+      expect(logger.error).toHaveBeenCalled();
+    });
+
+    it('should throw error if outputDir is not absolute', async () => {
+      await expect(convertToHLS(inputPath, 'relative/path')).rejects.toThrow(
+        'outputDir must be absolute'
+      );
+      expect(ffmpeg).not.toHaveBeenCalled();
+      expect(logger.error).toHaveBeenCalled();
+    });
+
     it('should convert video successfully', async () => {
       // Mock successful conversion
       mockFFmpeg.on.mockImplementation((event, callback) => {
@@ -139,6 +155,14 @@ describe('FFmpeg Helpers', () => {
 
   describe('getDuration', () => {
     const videoPath = '/path/to/video.mp4';
+
+    it('should throw error if videoPath is not absolute', async () => {
+      const relativePath = 'videos/video.mp4';
+      await expect(getDuration(relativePath)).rejects.toThrow(
+        'videoPath must be absolute'
+      );
+      expect(ffmpeg.ffprobe).not.toHaveBeenCalled();
+    });
 
     it('should return duration for valid video', async () => {
       const mockDuration = 123.456;

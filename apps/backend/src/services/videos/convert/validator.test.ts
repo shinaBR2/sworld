@@ -14,6 +14,11 @@ describe('verifySignature', () => {
     vi.clearAllMocks();
   });
 
+  it('should return false when signature empty', () => {
+    expect(verifySignature('')).toBe(false);
+    expect(verifySignature(null)).toBe(false);
+  });
+
   it('should return true when signature matches webhook secret', () => {
     expect(verifySignature(mockWebhookSecret)).toBe(true);
   });

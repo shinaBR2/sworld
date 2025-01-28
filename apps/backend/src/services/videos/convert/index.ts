@@ -5,6 +5,10 @@ import { convertVideo } from './handler';
 import { logger } from 'src/utils/logger';
 import { type ConvertRequest } from './schema';
 
+/**
+ * TODO this is only used for legacy monolith architecture
+ * Should be removed as soon as microservices ready
+ */
 const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   const { validatedData } = request;
   const { signatureHeader, event } = validatedData;

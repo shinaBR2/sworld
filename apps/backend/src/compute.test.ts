@@ -1,15 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Sentry from '@sentry/node';
-import { app } from '../src/apps/gateway';
+import { app } from '../src/apps/compute';
 import { logger } from '../src/utils/logger';
-import rateLimit from 'express-rate-limit';
 
 vi.mock('@sentry/node');
-vi.mock('express-rate-limit', () => ({
-  default: vi.fn(() => 'mock-limiter'),
-}));
 vi.mock('../src/utils/logger');
-vi.mock('../src/apps/gateway', () => ({
+vi.mock('../src/apps/compute', () => ({
   app: {
     listen: vi.fn((port, cb) => {
       cb();
@@ -17,7 +13,6 @@ vi.mock('../src/apps/gateway', () => ({
         close: vi.fn(cb => cb()),
       };
     }),
-    use: vi.fn(),
   },
 }));
 vi.mock('../src/utils/envConfig', () => ({
@@ -26,7 +21,7 @@ vi.mock('../src/utils/envConfig', () => ({
   },
 }));
 
-describe('Gateway Server', () => {
+describe('Compute Server', () => {
   beforeEach(() => {
     vi.resetModules();
   });
@@ -35,16 +30,13 @@ describe('Gateway Server', () => {
     vi.clearAllMocks();
   });
 
-  it('should start server and setup middlewares', async () => {
-    await import('../src/gateway');
+  it('should start server with Sentry error handler', async () => {
+    await import('../src/compute');
 
     expect(Sentry.setupExpressErrorHandler).toHaveBeenCalledWith(app);
-    expect(rateLimit).toHaveBeenCalledWith({
-      windowMs: 60 * 1000,
-      max: 100,
-    });
-    expect(app.use).toHaveBeenCalledWith('mock-limiter');
-    expect(logger.info).toHaveBeenCalledWith('Gateway is running on port 4000');
+    expect(logger.info).toHaveBeenCalledWith(
+      'Compute service is running on port 4000'
+    );
   });
 
   it('should handle shutdown signals gracefully', async () => {
@@ -55,7 +47,7 @@ describe('Gateway Server', () => {
       .spyOn(global, 'setTimeout')
       .mockImplementation(() => ({ unref: vi.fn() }) as any);
 
-    await import('../src/gateway');
+    await import('../src/compute');
 
     process.emit('SIGINT', 'SIGINT');
     expect(processExitSpy).toHaveBeenCalled();
