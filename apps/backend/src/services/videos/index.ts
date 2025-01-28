@@ -4,9 +4,9 @@ import { envConfig } from 'src/utils/envConfig';
 import { testUsers } from './test-users';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { validateRequest } from 'src/utils/validator';
-import { ConvertRequest, convert } from './convert';
+import { convert } from './convert';
 import { logger } from 'src/utils/logger';
-import { ConvertSchema } from './convert/schema';
+import { ConvertRequest, ConvertSchema } from './convert/schema';
 
 initializeApp({
   storageBucket: envConfig.storageBucket,

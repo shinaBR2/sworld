@@ -11,7 +11,32 @@ jobs:
     environment:
       name: prod
 
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
+      # Unit test with codecov
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Vitest
+        run: npm run test:ci
+        env:
+          CI: true
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       # Step 1: Log in to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3

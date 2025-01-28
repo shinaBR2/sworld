@@ -16,7 +16,7 @@ type ValidateRequest = <T>(
 ) => (req: Request, res: Response, next: NextFunction) => void;
 
 const validateRequest: ValidateRequest =
-  <T>(schema: ZodSchema) =>
+  <T>(schema: ZodSchema<T>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
       const validated = schema.parse({
@@ -25,7 +25,7 @@ const validateRequest: ValidateRequest =
         body: req.body,
         headers: req.headers,
       });
-      (req as ValidatedRequest<T>).validatedData = validated as T;
+      (req as ValidatedRequest<T>).validatedData = validated;
       next();
     } catch (err) {
       const errorMessage = `Invalid input: ${(err as ZodError).errors
