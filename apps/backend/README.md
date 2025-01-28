@@ -1,5 +1,7 @@
 # Go live
 
+[![codecov](https://codecov.io/gh/shinaBR2/sworld-backend/branch/main/graph/badge.svg?token=XZMBJ9JQF5)](https://codecov.io/gh/shinaBR2/sworld-backend)
+
 ## Environment variables
 
 These only capable for private repository in Github

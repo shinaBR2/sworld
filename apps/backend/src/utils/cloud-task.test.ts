@@ -1,9 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CloudTasksClient } from '@google-cloud/tasks';
+import { logger } from './logger';
 
 // Mock modules
 const mockCreateTask = vi.fn();
 const mockQueuePath = vi.fn();
+vi.mock('./logger', () => ({
+  logger: {
+    error: vi.fn(),
+  },
+}));
 
 vi.mock('@google-cloud/tasks', () => ({
   CloudTasksClient: vi.fn().mockImplementation(() => ({
@@ -190,8 +195,17 @@ describe('createCloudTasks', () => {
     };
 
     const { createCloudTasks } = await import('./cloud-task');
+    const originalError = new Error('Task creation failed');
     mockCreateTask.mockRejectedValue(new Error('Task creation failed'));
     await expect(createCloudTasks(params)).rejects.toThrow(
+      'Failed to init Cloud Tasks'
+    );
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({
+        err: originalError,
+        queue: 'test-queue',
+        url: 'https://test.com',
+      }),
       'Failed to init Cloud Tasks'
     );
   });

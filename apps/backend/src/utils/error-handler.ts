@@ -16,7 +16,7 @@ export const errorHandler = (logger: Logger): ErrorRequestHandler => {
       stack: isProduction ? undefined : err.stack,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       error: isProduction ? 'Internal Server Error' : err.message,
     });
   };

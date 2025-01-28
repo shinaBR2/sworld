@@ -2,6 +2,7 @@ import { CloudTasksClient, protos } from '@google-cloud/tasks';
 import { envConfig } from './envConfig';
 import { v5 as uuidv5 } from 'uuid';
 import { uuidNamespaces } from './systemConfig';
+import { logger } from './logger';
 
 let client: CloudTasksClient | null = null;
 
@@ -97,6 +98,17 @@ const createCloudTasks = async (
     const [response] = await client.createTask(request);
     return response;
   } catch (error) {
+    logger.error(
+      {
+        err: error,
+        projectId,
+        queue,
+        url,
+        taskId: task.name,
+      },
+      'Failed to init Cloud Tasks'
+    );
+    logger.error(error, 'Failed to init Cloud Tasks');
     throw new Error('Failed to init Cloud Tasks');
   }
 };
