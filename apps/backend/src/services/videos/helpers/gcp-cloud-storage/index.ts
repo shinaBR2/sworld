@@ -1,11 +1,12 @@
 import {
+  Storage,
   TransferManager,
   CreateWriteStreamOptions,
 } from '@google-cloud/storage';
-import { getStorage } from 'firebase-admin/storage';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
+import { envConfig } from 'src/utils/envConfig';
 import { logger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
 
@@ -21,11 +22,13 @@ const DEFAULT_UPLOAD_OPTIONS: UploadOptions = {
   batchSize: 3,
 };
 
-// TODO
-// Consider migrate from firebase-admin to @google-cloud/storage
+let storageInstance: Storage | null = null;
+
 const getDefaultBucket = () => {
-  const storage = getStorage();
-  const bucket = storage.bucket();
+  if (!storageInstance) {
+    storageInstance = new Storage();
+  }
+  const bucket = storageInstance.bucket(envConfig.storageBucket as string);
 
   return bucket;
 };
@@ -36,7 +39,7 @@ const getDefaultBucket = () => {
  * @returns Full public URL to the file
  */
 const getDownloadUrl = (outputPath: string) => {
-  const bucket = getStorage().bucket();
+  const bucket = getDefaultBucket();
   return `https://storage.googleapis.com/${bucket.name}/${outputPath}`;
 };
 

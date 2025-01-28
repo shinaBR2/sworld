@@ -1,4 +1,3 @@
-// src/services/videos/helpers/__tests__/gcp-cloud-storage-helpers.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { readdir } from 'fs/promises';
 import path from 'path';
@@ -28,29 +27,34 @@ vi.mock('src/utils/logger', () => ({
 
 // Create mock functions
 const uploadMock = vi.fn().mockResolvedValue([{}]);
-const bucketMock = vi.fn(() => ({
-  name: 'test-bucket',
-  upload: uploadMock,
-  file: vi.fn(() => ({
-    createWriteStream: vi.fn(() => new PassThrough()),
-    delete: vi.fn(),
-  })),
-}));
-
-// Mock firebase-admin/storage
-vi.mock('firebase-admin/storage', () => ({
-  getStorage: vi.fn(() => ({
-    bucket: bucketMock,
-  })),
-}));
-
+const bucketMock = vi.fn();
+const storageMock = vi.fn();
 const mockTransferManager = {
   uploadManyFiles: vi.fn().mockResolvedValue(undefined),
 };
-
-vi.mock('@google-cloud/storage', () => ({
-  TransferManager: vi.fn(() => mockTransferManager),
-}));
+vi.mock('@google-cloud/storage', () => {
+  return {
+    Storage: function () {
+      storageMock(); // Track when Storage constructor is called
+      return {
+        bucket: function (name: string) {
+          bucketMock(name); // Track bucket calls
+          return {
+            name: 'test-bucket',
+            upload: uploadMock, // Use the same uploadMock we defined above
+            file: vi.fn(() => ({
+              createWriteStream: vi.fn(() => new PassThrough()),
+              delete: vi.fn(),
+            })),
+          };
+        },
+      };
+    },
+    TransferManager: function () {
+      return mockTransferManager; // Use the same mockTransferManager we defined above
+    },
+  };
+});
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -78,7 +82,7 @@ describe('gcp-cloud-storage-helpers', () => {
         'https://storage.googleapis.com/test-bucket/videos/test-123/playlist.m3u8';
 
       expect(getDownloadUrl(outputPath)).toBe(expected);
-      expect(bucketMock).toHaveBeenCalled();
+      expect(storageMock).toHaveBeenCalled();
     });
   });
 

@@ -1,3 +1,7 @@
+/**
+ * TODO this is only used for legacy monolith architecture
+ * Should be removed as soon as microservices ready
+ */
 import express, { Router } from 'express';
 import { initializeApp } from 'firebase-admin/app';
 import { envConfig } from 'src/utils/envConfig';
@@ -8,6 +12,7 @@ import { convert } from './convert';
 import { logger } from 'src/utils/logger';
 import { ConvertRequest, ConvertSchema } from './convert/schema';
 
+// TODO migrate this to gcloud client SDK
 initializeApp({
   storageBucket: envConfig.storageBucket,
 });
