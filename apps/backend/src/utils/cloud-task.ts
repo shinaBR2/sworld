@@ -45,11 +45,10 @@ type Task = protos.google.cloud.tasks.v2.ITask;
 const createCloudTasks = async (
   params: CreateCloudTasksParams
 ): Promise<protos.google.cloud.tasks.v2.ITask> => {
-  const projectId = envConfig.projectId;
-  const location = envConfig.location;
+  const { projectId, location, cloudTaskServiceAccount } = envConfig;
 
-  if (!projectId || !location) {
-    throw new Error('Missing projectId or location');
+  if (!projectId || !location || !cloudTaskServiceAccount) {
+    throw new Error('Missing cloud tasks configuration');
   }
 
   const { queue, headers, url, payload, inSeconds } = params;
@@ -78,6 +77,10 @@ const createCloudTasks = async (
       },
       httpMethod: 'POST',
       url,
+      oidcToken: {
+        serviceAccountEmail: cloudTaskServiceAccount,
+        audience: url,
+      },
     },
   };
 

@@ -11,6 +11,7 @@ const envConfig = {
   location: 'asia-southeast1',
   computeServiceUrl: process.env.COMPUTE_SERVICE_URL,
   ioServiceUrl: process.env.IO_SERVICE_URL,
+  cloudTaskServiceAccount: process.env.CLOUD_TASKS_SERVICE_ACCOUNT,
 };
 
 export { envConfig };

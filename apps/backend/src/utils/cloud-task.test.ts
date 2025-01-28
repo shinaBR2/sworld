@@ -17,9 +17,14 @@ vi.mock('@google-cloud/tasks', () => ({
   })),
 }));
 
-const mockConfig: { projectId: string | null; location: string } = {
+const mockConfig: {
+  projectId: string | null;
+  location: string;
+  cloudTaskServiceAccount: string;
+} = {
   projectId: 'test-project',
   location: 'us-central1',
+  cloudTaskServiceAccount: 'cloud-task@email.com',
 };
 
 vi.mock('./envConfig', () => ({
@@ -52,6 +57,7 @@ describe('createCloudTasks', () => {
     // Reset configuration to default state
     mockConfig.projectId = 'test-project';
     mockConfig.location = 'us-central1';
+    mockConfig.cloudTaskServiceAccount = 'cloud-task@email.com';
   });
 
   it('should create a basic task successfully', async () => {
@@ -78,6 +84,10 @@ describe('createCloudTasks', () => {
           },
           httpMethod: 'POST',
           url: 'https://test.com',
+          oidcToken: {
+            serviceAccountEmail: mockConfig.cloudTaskServiceAccount,
+            audience: 'https://test.com',
+          },
         },
       },
     });
@@ -161,7 +171,7 @@ describe('createCloudTasks', () => {
     );
   });
 
-  it('should throw error when missing projectId or location', async () => {
+  it('should throw error when missing projectId', async () => {
     // Modify the mock configuration
     mockConfig.projectId = null;
 
@@ -172,7 +182,35 @@ describe('createCloudTasks', () => {
 
     const { createCloudTasks } = await import('./cloud-task');
     await expect(createCloudTasks(params)).rejects.toThrow(
-      'Missing projectId or location'
+      'Missing cloud tasks configuration'
+    );
+  });
+  it('should throw error when missing location', async () => {
+    // Modify the mock configuration
+    mockConfig.location = '';
+
+    const params = {
+      queue: 'test-queue',
+      url: 'https://test.com',
+    };
+
+    const { createCloudTasks } = await import('./cloud-task');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing cloud tasks configuration'
+    );
+  });
+  it('should throw error when missing cloud tasks service account', async () => {
+    // Modify the mock configuration
+    mockConfig.cloudTaskServiceAccount = '';
+
+    const params = {
+      queue: 'test-queue',
+      url: 'https://test.com',
+    };
+
+    const { createCloudTasks } = await import('./cloud-task');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing cloud tasks configuration'
     );
   });
 

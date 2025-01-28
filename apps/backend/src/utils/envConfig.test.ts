@@ -20,6 +20,7 @@ describe('envConfig', () => {
       'computeServiceUrl',
       'ioServiceUrl',
       'location',
+      'cloudTaskServiceAccount',
     ];
 
     expectedKeys.forEach(key => {
