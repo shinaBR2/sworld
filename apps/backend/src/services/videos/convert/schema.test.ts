@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
 import { ConvertSchema } from './schema';
 
 describe('ConvertSchema', () => {
@@ -119,6 +118,8 @@ describe('ConvertSchema', () => {
             id: '550e8400-e29b-41d4-a716-446655440000',
             userId: '550e8400-e29b-41d4-a716-446655440001',
             videoUrl: 'https://example.com/video.mp4',
+            fileType: 'video',
+            platform: null,
           },
           metadata: {
             id: 'event-123',
@@ -155,6 +156,54 @@ describe('ConvertSchema', () => {
           issue => issue.path.includes('id') || issue.path.includes('user_id')
         )
       ).toBe(true);
+    }
+  });
+
+  it('should transform payload with platform correctly', () => {
+    const youtubePayload = {
+      ...validPayload,
+      body: {
+        ...validPayload.body,
+        event: {
+          ...validPayload.body.event,
+          data: {
+            ...validPayload.body.event.data,
+            video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          },
+        },
+      },
+    };
+    const result = ConvertSchema.safeParse(youtubePayload);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.event.data).toMatchObject({
+        fileType: null,
+        platform: 'youtube',
+      });
+    }
+  });
+
+  it('should transform payload with HLS fileType correctly', () => {
+    const hlsPayload = {
+      ...validPayload,
+      body: {
+        ...validPayload.body,
+        event: {
+          ...validPayload.body.event,
+          data: {
+            ...validPayload.body.event.data,
+            video_url: 'https://example.com/stream.m3u8',
+          },
+        },
+      },
+    };
+    const result = ConvertSchema.safeParse(hlsPayload);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.event.data).toMatchObject({
+        fileType: 'hls',
+        platform: null,
+      });
     }
   });
 });

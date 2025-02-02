@@ -79,7 +79,7 @@ describe('convertVideo', () => {
   });
 
   it('should successfully convert a video', async () => {
-    await convertVideo(mockData);
+    const playableUrl = await convertVideo(mockData);
 
     // Verify directories were created
     expect(fileHelpers.createDirectory).toHaveBeenCalledWith(
@@ -133,6 +133,7 @@ describe('convertVideo', () => {
     expect(fileHelpers.cleanupDirectory).toHaveBeenCalledWith(
       mockPaths.workingDir
     );
+    expect(playableUrl).toBe('https://storage.googleapis.com/playlist.m3u8');
   });
 
   it('should throw error if directory creation fails', async () => {

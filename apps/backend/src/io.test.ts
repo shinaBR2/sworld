@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Sentry from '@sentry/node';
-import { app } from '../src/apps/io';
+import { app } from './apps/io';
 import { logger } from '../src/utils/logger';
 
 vi.mock('@sentry/node');

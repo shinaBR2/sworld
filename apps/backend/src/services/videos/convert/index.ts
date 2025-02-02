@@ -3,7 +3,7 @@ import { verifySignature } from './validator';
 import { AppError } from 'src/utils/schema';
 import { convertVideo } from './handler';
 import { logger } from 'src/utils/logger';
-import { type ConvertRequest } from './schema';
+import { ConvertRequest } from './schema';
 
 /**
  * TODO this is only used for legacy monolith architecture
@@ -37,4 +37,4 @@ const convert = async (request: ValidatedRequest<ConvertRequest>) => {
   return video;
 };
 
-export { ConvertRequest, convert };
+export { convert };

@@ -80,12 +80,12 @@ export const convertVideo = async (data: ConversionVideo) => {
     logger.debug(`Uploaded converted files to cloud storage: ${playlistUrl}`);
 
     // Step 6: Update database with new video information
-    const video = await finalizeVideo({
+    await finalizeVideo({
       id,
       source: playlistUrl,
       thumbnailUrl,
     });
-    return video;
+    return playlistUrl;
   } catch (error) {
     logger.error(error, `Video conversion failed for ID ${id}`);
     throw new Error(`Video conversion failed: ${(error as Error).message}`);

@@ -40,8 +40,8 @@ describe('convertHandler', () => {
   });
 
   it('should successfully convert video and return response', async () => {
-    const mockVideo = { id: 'video-123', status: 'converted' };
-    vi.mocked(convertVideo).mockResolvedValue(mockVideo);
+    const mockPlayableUrl = 'https://gsapi.com/index.m3u8';
+    vi.mocked(convertVideo).mockResolvedValue(mockPlayableUrl);
 
     await convertHandler(mockRequest, mockResponse);
 
@@ -50,7 +50,9 @@ describe('convertHandler', () => {
       expect.stringContaining('start processing event')
     );
     expect(convertVideo).toHaveBeenCalledWith(mockRequest.body.data);
-    expect(mockResponse.json).toHaveBeenCalledWith(mockVideo);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      playableVideoUrl: mockPlayableUrl,
+    });
   });
 
   it('should throw AppError when video conversion fails', async () => {

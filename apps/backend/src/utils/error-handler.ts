@@ -10,6 +10,7 @@ export const errorHandler = (logger: Logger): ErrorRequestHandler => {
       req: {
         method: req.method,
         url: req.url,
+        body: req.body,
         eventType: req.headers['ce-type'],
       },
       // Include stack in non-production
