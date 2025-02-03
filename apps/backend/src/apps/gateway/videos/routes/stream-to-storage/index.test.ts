@@ -5,14 +5,7 @@ import { createCloudTasks } from 'src/utils/cloud-task';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { streamToStorage } from './index';
 import { queues } from 'src/utils/systemConfig';
-
-// Mock dependencies
-vi.mock('src/utils/envConfig', () => ({
-  envConfig: {
-    computeServiceUrl: 'http://test-compute-service',
-    ioServiceUrl: 'http://test-io-service',
-  },
-}));
+import { TaskEntityType, TaskType } from 'src/database/models/task';
 
 vi.mock('src/utils/schema', () => ({
   AppError: vi.fn((message, details) => {
@@ -54,7 +47,7 @@ describe('streamToStorage', () => {
       validatedData: {
         signatureHeader: 'test-signature',
         event: {
-          data: { videoId: 'test-video' },
+          data: { id: 'test-video' },
           metadata: { id: 'test-event' },
         },
       },
@@ -71,7 +64,7 @@ describe('streamToStorage', () => {
       ...mockReq.validatedData,
       event: {
         ...mockReq.validatedData.event,
-        data: { ...data },
+        data: { ...mockReq.validatedData.event.data, ...data },
       },
     },
   });
@@ -85,6 +78,9 @@ describe('streamToStorage', () => {
       url: 'http://test-io-service/videos/stream-hls-handler',
       queue: queues.streamVideoQueue,
       payload: hlsReq.validatedData.event,
+      entityId: 'test-video',
+      entityType: TaskEntityType.VIDEO,
+      type: TaskType.STREAM_HLS,
     });
 
     expect(mockRes.json).toHaveBeenCalledWith(
@@ -104,6 +100,9 @@ describe('streamToStorage', () => {
       url: 'http://test-compute-service/videos/convert-handler',
       queue: queues.convertVideoQueue,
       payload: videoReq.validatedData.event,
+      entityId: 'test-video',
+      entityType: TaskEntityType.VIDEO,
+      type: TaskType.CONVERT,
     });
   });
 
@@ -116,6 +115,9 @@ describe('streamToStorage', () => {
       url: 'http://test-io-service/videos/import-platform-handler',
       queue: queues.streamVideoQueue,
       payload: platformReq.validatedData.event,
+      entityId: 'test-video',
+      entityType: TaskEntityType.VIDEO,
+      type: TaskType.IMPORT_PLATFORM,
     });
   });
 

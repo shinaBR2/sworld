@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import '../__mocks__/sequelize';
 import { Video } from './video';
 import { DataTypes } from 'sequelize';
 

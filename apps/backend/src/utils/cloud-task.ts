@@ -4,7 +4,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { uuidNamespaces } from './systemConfig';
 import { logger } from './logger';
 import { sequelize } from 'src/database';
-import { Task, TaskStatus } from 'src/database/models/task';
+import { TaskEntityType, TaskStatus, TaskType } from 'src/database/models/task';
 import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
 
 let client: CloudTasksClient | null = null;
@@ -28,6 +28,9 @@ const getCloudTasksClient = (): CloudTasksClient => {
  * @property {Record<string, any>} [payload] - Optional payload to send with the task
  * @property {number} [inSeconds] - Optional delay in seconds before executing the task
  * @property {Record<string, string>} [headers] - Optional HTTP headers to include with the request
+ * @property {TaskEntityType} entityType - The type of entity associated with the task
+ * @property {string} entityId - The ID of the entity associated with the task
+ * @property {TaskType} type - The type of task to be executed
  */
 interface CreateCloudTasksParams {
   queue: string;
@@ -35,9 +38,9 @@ interface CreateCloudTasksParams {
   payload?: Record<string, any>;
   inSeconds?: number;
   headers?: Record<string, string>;
-  entityType: string;
+  entityType: TaskEntityType;
   entityId: string;
-  type: string;
+  type: TaskType;
 }
 
 type CloudTask = protos.google.cloud.tasks.v2.ITask;
@@ -100,7 +103,14 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
     };
 
     if (payload) {
-      cloudTask.httpRequest!.body = Buffer.from(JSON.stringify(payload)).toString('base64');
+      // cloudTask.httpRequest!.body = JSON.stringify(payload);
+
+      try {
+        cloudTask.httpRequest!.body = JSON.stringify(payload);
+      } catch (error) {
+        logger.error({ error, payload }, 'Failed to serialize payload');
+        throw new Error('Invalid payload: Failed to serialize to JSON');
+      }
     }
 
     if (inSeconds) {
@@ -139,4 +149,4 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
   }
 };
 
-export { createCloudTasks };
+export { CreateCloudTasksParams, createCloudTasks };

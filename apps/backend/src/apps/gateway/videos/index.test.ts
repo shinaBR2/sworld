@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Request, Response, NextFunction } from 'express';
 import { validateRequest } from 'src/utils/validator';
 import { streamToStorage } from './routes/stream-to-storage';
-import { ConvertSchema } from '../../../services/videos/convert/schema';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];

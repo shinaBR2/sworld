@@ -1,5 +1,4 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import 'src/database/__mocks__/sequelize';
 import { convertVideo, type ConversionVideo } from './handler';
 import * as fileHelpers from '../helpers/file';
 import * as gcpHelpers from '../helpers/gcp-cloud-storage';

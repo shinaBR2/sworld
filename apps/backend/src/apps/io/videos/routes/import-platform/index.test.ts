@@ -1,10 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { Response } from 'express';
 import { importPlatformHandler } from './index';
 import { logger } from 'src/utils/logger';
 import { AppError } from 'src/utils/schema';
 import { ImportHandlerRequest } from './schema';
+import { finalizeVideo } from 'src/database/queries/videos';
 
+// Mock the dependencies
 vi.mock('src/utils/logger', () => ({
   logger: {
     info: vi.fn(),
@@ -18,8 +20,12 @@ vi.mock('src/utils/schema', () => ({
   })),
 }));
 
+vi.mock('src/database/queries/videos', () => ({
+  finalizeVideo: vi.fn(),
+}));
+
 interface MockResponse extends Response {
-  json: vi.Mock;
+  json: Mock;
 }
 
 const createMockResponse = (): MockResponse =>
@@ -27,10 +33,7 @@ const createMockResponse = (): MockResponse =>
     json: vi.fn(),
   }) as unknown as MockResponse;
 
-const createMockRequest = (
-  data: any = {},
-  metadata: any = {}
-): ImportHandlerRequest =>
+const createMockRequest = (data: any = {}, metadata: any = {}): ImportHandlerRequest =>
   ({
     body: {
       data,
@@ -56,10 +59,19 @@ describe('importPlatformHandler', () => {
     vi.clearAllMocks();
     mockRequest = createMockRequest(defaultData, defaultMetadata);
     mockResponse = createMockResponse();
+
+    // Reset the mock implementation
+    (finalizeVideo as Mock).mockResolvedValue(undefined);
   });
 
   it('should successfully process import request and return video URL', async () => {
     await importPlatformHandler(mockRequest, mockResponse);
+
+    expect(finalizeVideo).toHaveBeenCalledWith({
+      id: defaultData.id,
+      source: defaultData.videoUrl,
+      thumbnailUrl: '',
+    });
 
     expect(logger.info).toHaveBeenCalledWith(
       defaultMetadata,
@@ -70,15 +82,11 @@ describe('importPlatformHandler', () => {
     });
   });
 
-  it('should throw AppError when processing fails', async () => {
+  it('should throw AppError when finalizeVideo fails', async () => {
     const errorMessage = 'Database error';
-    mockResponse.json.mockImplementationOnce(() => {
-      throw new Error(errorMessage);
-    });
+    (finalizeVideo as Mock).mockRejectedValue(new Error(errorMessage));
 
-    await expect(
-      importPlatformHandler(mockRequest, mockResponse)
-    ).rejects.toMatchObject({
+    await expect(importPlatformHandler(mockRequest, mockResponse)).rejects.toMatchObject({
       message: 'Video conversion failed',
       details: {
         videoId: defaultData.id,
@@ -90,14 +98,8 @@ describe('importPlatformHandler', () => {
   it('should log event start with correct metadata', async () => {
     await importPlatformHandler(mockRequest, mockResponse);
 
-    expect(logger.info).toHaveBeenCalledWith(
-      defaultMetadata,
-      expect.stringContaining(defaultData.id)
-    );
-    expect(logger.info).toHaveBeenCalledWith(
-      defaultMetadata,
-      expect.stringContaining(defaultMetadata.id)
-    );
+    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(defaultData.id));
+    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(defaultMetadata.id));
   });
 
   it('should handle requests with different data values', async () => {
@@ -110,13 +112,16 @@ describe('importPlatformHandler', () => {
 
     await importPlatformHandler(customRequest, mockResponse);
 
+    expect(finalizeVideo).toHaveBeenCalledWith({
+      id: customData.id,
+      source: customData.videoUrl,
+      thumbnailUrl: '',
+    });
+
     expect(mockResponse.json).toHaveBeenCalledWith({
       playableVideoUrl: customData.videoUrl,
     });
-    expect(logger.info).toHaveBeenCalledWith(
-      defaultMetadata,
-      expect.stringContaining(customData.id)
-    );
+    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(customData.id));
   });
 });
 

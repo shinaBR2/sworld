@@ -12,9 +12,7 @@ interface ValidatedRequest<T> extends Request {
   validatedData: T;
 }
 
-type ValidateRequest = <T>(
-  schema: ZodSchema<T, any, any>
-) => (req: Request, res: Response, next: NextFunction) => void;
+type ValidateRequest = <T>(schema: ZodSchema<T, any, any>) => (req: Request, res: Response, next: NextFunction) => void;
 
 const formatZodError = (error: ZodError): string => {
   return error.errors
@@ -42,17 +40,6 @@ const validateRequest: ValidateRequest =
   <T>(schema: ZodSchema<T>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
-      logger.info('Body type:', typeof req.body);
-      logger.info('Body keys:', Object.keys(req.body));
-      for (const key of Object.keys(req.body)) {
-        logger.info(`Key: ${key}`);
-        logger.info(`Value type:`, typeof req.body[key]);
-        try {
-          logger.info(`Value:`, JSON.stringify(req.body[key]));
-        } catch (e) {
-          logger.info(`Cannot stringify ${key}:`, e);
-        }
-      }
       const validated = schema.parse({
         params: req.params,
         query: req.query,

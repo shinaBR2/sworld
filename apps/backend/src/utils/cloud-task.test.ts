@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { logger } from './logger';
-import '../database/__mocks__/sequelize';
+import { TaskEntityType, TaskType } from 'src/database/models/task';
 
 // Mock modules
 const mockCreateTask = vi.fn();
@@ -67,9 +67,9 @@ describe('createCloudTasks', () => {
   const baseParams = {
     queue: 'test-queue',
     url: 'https://test.com',
-    entityType: 'video',
+    entityType: TaskEntityType.VIDEO,
     entityId: '123',
-    type: 'process',
+    type: TaskType.CONVERT,
     payload: basePayload,
   };
 
@@ -118,7 +118,7 @@ describe('createCloudTasks', () => {
 
     expect(dbCreateTask).toHaveBeenCalledWith({
       taskId: 'mock-uuid',
-      type: 'process',
+      type: TaskType.CONVERT,
       metadata: testPayload,
       entityType: 'video',
       entityId: '123',
@@ -141,7 +141,7 @@ describe('createCloudTasks', () => {
             serviceAccountEmail: mockConfig.cloudTaskServiceAccount,
             audience: 'https://test.com',
           },
-          body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
+          body: JSON.stringify(testPayload),
         },
       },
     });
@@ -233,7 +233,7 @@ describe('createCloudTasks', () => {
       expect.objectContaining({
         task: expect.objectContaining({
           httpRequest: expect.objectContaining({
-            body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
+            body: JSON.stringify(testPayload),
           }),
         }),
       })
@@ -364,6 +364,23 @@ describe('createCloudTasks', () => {
     const { createCloudTasks } = await import('./cloud-task');
     // @ts-expect-error
     await expect(createCloudTasks(params)).rejects.toThrow('Missing url or queue');
+  });
+
+  it('should throw error when failed to stringify payload', async () => {
+    const transaction = { commit: vi.fn(), rollback: vi.fn() };
+    sequelize.transaction.mockResolvedValue(transaction);
+    dbCreateTask.mockResolvedValue({ completed: false });
+    dbUpdateStatus.mockResolvedValue({});
+
+    const payload: any = { key: 'value' };
+    payload.circular = payload;
+    const params = {
+      ...baseParams,
+      payload,
+    };
+
+    const { createCloudTasks } = await import('./cloud-task');
+    await expect(createCloudTasks(params)).rejects.toThrow('Invalid payload: Failed to serialize to JSON');
   });
 
   it('should throw error when failed to init task', async () => {

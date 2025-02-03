@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
+import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { ConvertRequest } from 'src/services/videos/convert/schema';
 import { verifySignature } from 'src/services/videos/convert/validator';
-import { createCloudTasks } from 'src/utils/cloud-task';
+import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
 import { logger } from 'src/utils/logger';
 import { Platform, urlPatterns } from 'src/utils/patterns';
@@ -15,13 +16,7 @@ const VIDEO_HANDLERS = {
   PLATFORM_IMPORT: '/videos/import-platform-handler',
 } as const;
 
-interface TaskConfig {
-  url: string;
-  queue: string;
-  payload: Record<string, any>;
-}
-
-const createVideoTask = async (config: TaskConfig) => {
+const createVideoTask = async (config: CreateCloudTasksParams) => {
   return await createCloudTasks(config);
 };
 
@@ -52,13 +47,16 @@ const streamToStorage = async (req: Request, res: Response) => {
     );
   }
 
-  const { platform, fileType } = data;
+  const { id: entityId, platform, fileType } = data;
   const { streamVideoQueue, convertVideoQueue } = queues;
 
-  const taskConfig: TaskConfig = {
+  const taskConfig: CreateCloudTasksParams = {
     queue: streamVideoQueue,
     payload: event,
     url: '',
+    entityId,
+    entityType: TaskEntityType.VIDEO,
+    type: TaskType.IMPORT_PLATFORM,
   };
   const allowedPlatforms = Object.keys(urlPatterns) as Platform[];
 
@@ -66,21 +64,18 @@ const streamToStorage = async (req: Request, res: Response) => {
     switch (fileType) {
       case 'hls':
         taskConfig.url = buildHandlerUrl(ioServiceUrl, VIDEO_HANDLERS.HLS);
+        taskConfig.type = TaskType.STREAM_HLS;
         break;
       case 'video':
-        taskConfig.url = buildHandlerUrl(
-          computeServiceUrl,
-          VIDEO_HANDLERS.CONVERT
-        );
+        taskConfig.url = buildHandlerUrl(computeServiceUrl, VIDEO_HANDLERS.CONVERT);
         taskConfig.queue = convertVideoQueue;
+        taskConfig.type = TaskType.CONVERT;
         break;
       default:
         // TODO enhance list of allowed platform in the future
         if (platform && allowedPlatforms.includes(platform)) {
-          taskConfig.url = buildHandlerUrl(
-            ioServiceUrl,
-            VIDEO_HANDLERS.PLATFORM_IMPORT
-          );
+          taskConfig.url = buildHandlerUrl(ioServiceUrl, VIDEO_HANDLERS.PLATFORM_IMPORT);
+          taskConfig.type = TaskType.IMPORT_PLATFORM;
         } else {
           logger.error({ metadata }, 'Invalid source');
           return res.json(AppError('Invalid source'));

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { sequelize, initialize } from './index';
-import './__mocks__/sequelize';
 
 // Mock the envConfig
 vi.mock('src/utils/envConfig', () => ({

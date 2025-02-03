@@ -1,16 +1,24 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../index';
 
-export enum TaskStatus {
+enum TaskStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
   FAILED = 'failed',
 }
 
-// TODO
-// Make enum for type and entityType
-export const Task = sequelize.define(
+enum TaskType {
+  CONVERT = 'convert',
+  IMPORT_PLATFORM = 'import_platform',
+  STREAM_HLS = 'stream_hls',
+}
+
+enum TaskEntityType {
+  VIDEO = 'video',
+}
+
+const Task = sequelize.define(
   'tasks',
   {
     entityId: {
@@ -53,3 +61,5 @@ export const Task = sequelize.define(
     updatedAt: 'updated_at',
   }
 );
+
+export { TaskStatus, TaskType, TaskEntityType, Task };
