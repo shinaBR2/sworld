@@ -1,17 +1,11 @@
 import * as path from 'path';
-import {
-  generateTempDir,
-  downloadFile,
-  createDirectory,
-  cleanupDirectory,
-  verifyFileSize,
-} from '../helpers/file';
+import { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize } from '../helpers/file';
 import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
 import { convertToHLS, takeScreenshot } from '../helpers/ffmpeg';
-import { finalizeVideo } from 'src/database';
 import { logger } from 'src/utils/logger';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { existsSync, statSync } from 'fs';
+import { finalizeVideo } from 'src/database/queries/videos';
 
 export interface ConversionVideo {
   id: string;
@@ -54,9 +48,7 @@ export const convertVideo = async (data: ConversionVideo) => {
       throw new Error('Input file missing after HLS conversion');
     }
     const stats = statSync(inputPath);
-    logger.debug(
-      `HLS conversion complete. Input file size: ${stats.size} bytes`
-    );
+    logger.debug(`HLS conversion complete. Input file size: ${stats.size} bytes`);
 
     // Step 4: Generate and upload thumbnail
     await takeScreenshot(inputPath, workingDir, thumbnailFilename);
@@ -69,11 +61,7 @@ export const convertVideo = async (data: ConversionVideo) => {
     logger.debug(`Generated and uploaded thumbnail: ${thumbnailUrl}`);
 
     // Step 5: Upload converted video files to cloud storage
-    const outputPath = path
-      .join('videos', userId, id)
-      .split(path.sep)
-      .filter(Boolean)
-      .join('/');
+    const outputPath = path.join('videos', userId, id).split(path.sep).filter(Boolean).join('/');
 
     await uploadDirectory(outputDir, outputPath);
     const playlistUrl = getDownloadUrl(`${outputPath}/playlist.m3u8`);
@@ -94,10 +82,7 @@ export const convertVideo = async (data: ConversionVideo) => {
       await cleanupDirectory(workingDir);
       logger.debug(`Cleaned up working directory: ${workingDir}`);
     } catch (cleanupError) {
-      logger.error(
-        cleanupError,
-        `Failed to clean up working directory: ${workingDir}`
-      );
+      logger.error(cleanupError, `Failed to clean up working directory: ${workingDir}`);
     }
   }
 };

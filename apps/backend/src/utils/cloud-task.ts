@@ -3,6 +3,9 @@ import { envConfig } from './envConfig';
 import { v5 as uuidv5 } from 'uuid';
 import { uuidNamespaces } from './systemConfig';
 import { logger } from './logger';
+import { sequelize } from 'src/database';
+import { Task, TaskStatus } from 'src/database/models/task';
+import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
 
 let client: CloudTasksClient | null = null;
 
@@ -32,9 +35,12 @@ interface CreateCloudTasksParams {
   payload?: Record<string, any>;
   inSeconds?: number;
   headers?: Record<string, string>;
+  entityType: string;
+  entityId: string;
+  type: string;
 }
 
-type Task = protos.google.cloud.tasks.v2.ITask;
+type CloudTask = protos.google.cloud.tasks.v2.ITask;
 
 /**
  * Creates a new Cloud Task with the specified parameters
@@ -42,16 +48,14 @@ type Task = protos.google.cloud.tasks.v2.ITask;
  * @returns {Promise<protos.google.cloud.tasks.v2.ITask>} The created task
  * @throws {Error} If required parameters are missing
  */
-const createCloudTasks = async (
-  params: CreateCloudTasksParams
-): Promise<protos.google.cloud.tasks.v2.ITask> => {
+const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTask | null> => {
   const { projectId, location, cloudTaskServiceAccount } = envConfig;
 
   if (!projectId || !location || !cloudTaskServiceAccount) {
     throw new Error('Missing cloud tasks configuration');
   }
 
-  const { queue, headers, url, payload, inSeconds } = params;
+  const { queue, headers, url, payload, inSeconds, entityType, entityId, type } = params;
 
   if (!url || !queue) {
     throw new Error('Missing url or queue');
@@ -59,60 +63,79 @@ const createCloudTasks = async (
 
   const client = getCloudTasksClient();
   const parent = client.queuePath(projectId, location, queue);
-  const taskId = uuidv5(
-    JSON.stringify({
-      url,
-      payload,
-      queue,
-    }),
-    uuidNamespaces.cloudTask
-  );
+  const taskId = uuidv5(JSON.stringify({ entityType, entityId, type }), uuidNamespaces.cloudTask);
 
-  const task: Task = {
-    name: `${parent}/tasks/${taskId}`,
-    httpRequest: {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      httpMethod: 'POST',
-      url,
-      oidcToken: {
-        serviceAccountEmail: cloudTaskServiceAccount,
-        audience: url,
-      },
-    },
-  };
+  const transaction = await sequelize.transaction();
 
-  if (payload) {
-    task.httpRequest!.body = Buffer.from(JSON.stringify(payload)).toString(
-      'base64'
-    );
-  }
-
-  if (inSeconds) {
-    task.scheduleTime = {
-      seconds: Math.floor(inSeconds + Date.now() / 1000),
-    };
-  }
-
-  const request = { parent, task };
   try {
+    const dbTask = await createTask({
+      taskId,
+      type,
+      metadata: payload || {},
+      entityType,
+      entityId,
+      transaction,
+    });
+
+    if (dbTask.completed) {
+      await transaction.commit();
+      return null;
+    }
+
+    const cloudTask: CloudTask = {
+      name: `${parent}/tasks/${taskId}`,
+      httpRequest: {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Task-ID': taskId,
+          ...headers,
+        },
+        httpMethod: 'POST',
+        url,
+        oidcToken: {
+          serviceAccountEmail: cloudTaskServiceAccount,
+          audience: url,
+        },
+      },
+    };
+
+    if (payload) {
+      cloudTask.httpRequest!.body = Buffer.from(JSON.stringify(payload)).toString('base64');
+    }
+
+    if (inSeconds) {
+      cloudTask.scheduleTime = {
+        seconds: Math.floor(inSeconds + Date.now() / 1000),
+      };
+    }
+
+    const request = { parent, task: cloudTask };
     const [response] = await client.createTask(request);
+
+    await updateTaskStatus({
+      taskId,
+      status: TaskStatus.IN_PROGRESS,
+      transaction,
+    });
+    await transaction.commit();
+
     return response;
   } catch (error) {
+    await transaction.rollback();
+
     logger.error(
       {
         err: error,
         projectId,
         queue,
         url,
-        taskId: task.name,
+        taskId,
+        entityType,
+        entityId,
       },
-      'Failed to init Cloud Tasks'
+      'Task creation failed'
     );
-    logger.error(error, 'Failed to init Cloud Tasks');
-    throw new Error('Failed to init Cloud Tasks');
+    throw error;
   }
 };
 
