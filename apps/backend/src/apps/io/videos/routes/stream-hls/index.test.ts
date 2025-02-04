@@ -37,7 +37,7 @@ const createMockRequest = (data: any = {}, metadata: any = {}): Request => {
   };
 
   const mockRequest = {
-    body: Buffer.from(JSON.stringify(originalPayload)).toString('base64'),
+    body: originalPayload,
   } as Request;
 
   return mockRequest;

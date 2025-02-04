@@ -4,8 +4,10 @@ import { logger } from 'src/utils/logger';
 import { AppError } from 'src/utils/schema';
 
 const streamHLSHandler = async (req: Request, res: Response) => {
-  const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
-  const { data, metadata } = payload;
+  // const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
+  logger.info(req.body, 'request body');
+  logger.info(typeof req.body, 'type of request body');
+  const { data, metadata } = req.body;
   const { id, videoUrl, userId } = data;
 
   try {
