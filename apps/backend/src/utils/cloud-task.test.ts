@@ -66,6 +66,7 @@ describe('createCloudTasks', () => {
   };
   const baseParams = {
     queue: 'test-queue',
+    audience: 'https://test.com',
     url: 'https://test.com',
     entityType: TaskEntityType.VIDEO,
     entityId: '123',
@@ -359,11 +360,12 @@ describe('createCloudTasks', () => {
     const params = {
       queue: '',
       url: '',
+      audience: '',
     };
 
     const { createCloudTasks } = await import('./cloud-task');
     // @ts-expect-error
-    await expect(createCloudTasks(params)).rejects.toThrow('Missing url or queue');
+    await expect(createCloudTasks(params)).rejects.toThrow('Missing url or queue or target handler');
   });
 
   it('should throw error when failed to stringify payload', async () => {

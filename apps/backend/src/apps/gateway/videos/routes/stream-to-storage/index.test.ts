@@ -76,6 +76,7 @@ describe('streamToStorage', () => {
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/stream-hls-handler',
+      audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
       payload: hlsReq.validatedData.event,
       entityId: 'test-video',
@@ -98,6 +99,7 @@ describe('streamToStorage', () => {
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-compute-service/videos/convert-handler',
+      audience: 'http://test-compute-service',
       queue: queues.convertVideoQueue,
       payload: videoReq.validatedData.event,
       entityId: 'test-video',
@@ -113,6 +115,7 @@ describe('streamToStorage', () => {
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/import-platform-handler',
+      audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
       payload: platformReq.validatedData.event,
       entityId: 'test-video',

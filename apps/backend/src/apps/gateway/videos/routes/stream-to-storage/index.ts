@@ -51,6 +51,7 @@ const streamToStorage = async (req: Request, res: Response) => {
   const { streamVideoQueue, convertVideoQueue } = queues;
 
   const taskConfig: CreateCloudTasksParams = {
+    audience: '',
     queue: streamVideoQueue,
     payload: event,
     url: '',
@@ -63,10 +64,12 @@ const streamToStorage = async (req: Request, res: Response) => {
   try {
     switch (fileType) {
       case 'hls':
+        taskConfig.audience = ioServiceUrl;
         taskConfig.url = buildHandlerUrl(ioServiceUrl, VIDEO_HANDLERS.HLS);
         taskConfig.type = TaskType.STREAM_HLS;
         break;
       case 'video':
+        taskConfig.audience = computeServiceUrl;
         taskConfig.url = buildHandlerUrl(computeServiceUrl, VIDEO_HANDLERS.CONVERT);
         taskConfig.queue = convertVideoQueue;
         taskConfig.type = TaskType.CONVERT;
@@ -74,6 +77,7 @@ const streamToStorage = async (req: Request, res: Response) => {
       default:
         // TODO enhance list of allowed platform in the future
         if (platform && allowedPlatforms.includes(platform)) {
+          taskConfig.audience = ioServiceUrl;
           taskConfig.url = buildHandlerUrl(ioServiceUrl, VIDEO_HANDLERS.PLATFORM_IMPORT);
           taskConfig.type = TaskType.IMPORT_PLATFORM;
         } else {

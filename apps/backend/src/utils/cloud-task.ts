@@ -24,6 +24,7 @@ const getCloudTasksClient = (): CloudTasksClient => {
  * Parameters for creating a Cloud Task
  * @interface CreateCloudTasksParams
  * @property {string} queue - The name of the queue to create the task in
+ * @property {string} audience - The HTTP target handler base URL
  * @property {string} url - The URL to send the task request to
  * @property {Record<string, any>} [payload] - Optional payload to send with the task
  * @property {number} [inSeconds] - Optional delay in seconds before executing the task
@@ -34,6 +35,7 @@ const getCloudTasksClient = (): CloudTasksClient => {
  */
 interface CreateCloudTasksParams {
   queue: string;
+  audience: string;
   url: string;
   payload?: Record<string, any>;
   inSeconds?: number;
@@ -58,10 +60,10 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
     throw new Error('Missing cloud tasks configuration');
   }
 
-  const { queue, headers, url, payload, inSeconds, entityType, entityId, type } = params;
+  const { queue, audience, headers, url, payload, inSeconds, entityType, entityId, type } = params;
 
-  if (!url || !queue) {
-    throw new Error('Missing url or queue');
+  if (!url || !queue || !audience) {
+    throw new Error('Missing url or queue or target handler');
   }
 
   const client = getCloudTasksClient();
@@ -97,7 +99,7 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
         url,
         oidcToken: {
           serviceAccountEmail: cloudTaskServiceAccount,
-          audience: url,
+          audience,
         },
       },
     };
