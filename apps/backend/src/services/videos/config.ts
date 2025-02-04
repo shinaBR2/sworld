@@ -7,6 +7,7 @@ const videoConfig = {
     '#EXT-X-MEDIA-SEQUENCE',
     '#EXT-X-ENDLIST',
   ]),
+  excludePatterns: [/\/adjump\//, /\/ads\//, /\/commercial\//],
 };
 
 export { videoConfig };

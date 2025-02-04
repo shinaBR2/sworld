@@ -1,14 +1,10 @@
 import path from 'path';
 import { getDownloadUrl } from '../gcp-cloud-storage';
 import { logger } from 'src/utils/logger';
-import {
-  parseM3U8Content,
-  streamPlaylistFile,
-  streamSegments,
-} from './helpers';
+import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
 
 interface ProcessOptions {
-  excludePattern?: RegExp;
+  excludePatterns?: RegExp[];
   maxSegmentSize?: number;
   concurrencyLimit?: number;
 }
@@ -25,7 +21,7 @@ interface ProcessOptions {
  * - Parses the M3U8 playlist to extract video segments
  * - Streams the modified playlist file to cloud storage
  * - Streams all included video segments in parallel
- * - Supports optional segment exclusion via excludePattern
+ * - Supports optional segment exclusion via excludePatterns
  *
  * @example
  * ```typescript
@@ -38,19 +34,12 @@ interface ProcessOptions {
  * @throws {Error} Propagates any errors encountered during streaming process
  * - Logs detailed error information before throwing
  */
-const streamM3U8 = async (
-  m3u8Url: string,
-  storagePath: string,
-  options: ProcessOptions = {}
-): Promise<string> => {
+const streamM3U8 = async (m3u8Url: string, storagePath: string, options: ProcessOptions = {}): Promise<string> => {
   try {
     logger.info({ m3u8Url, storagePath }, 'Starting M3U8 streaming');
 
     // Parse m3u8 and get segments
-    const { modifiedContent, segments } = await parseM3U8Content(
-      m3u8Url,
-      options.excludePattern
-    );
+    const { modifiedContent, segments } = await parseM3U8Content(m3u8Url, options.excludePatterns);
 
     logger.info(
       {
@@ -76,10 +65,7 @@ const streamM3U8 = async (
       segments,
     };
 
-    logger.info(
-      { playlistUrl: result.playlistUrl },
-      'M3U8 streaming completed'
-    );
+    logger.info({ playlistUrl: result.playlistUrl }, 'M3U8 streaming completed');
     return result.playlistUrl;
   } catch (error) {
     logger.error(

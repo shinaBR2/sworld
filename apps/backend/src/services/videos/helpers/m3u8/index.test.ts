@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { streamM3U8 } from './index';
-import {
-  parseM3U8Content,
-  streamPlaylistFile,
-  streamSegments,
-} from './helpers';
+import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
 import { getDownloadUrl } from '../gcp-cloud-storage';
 import { logger } from 'src/utils/logger';
 
@@ -23,8 +19,7 @@ vi.mock('path', async () => {
 describe('streamM3U8', () => {
   const mockM3u8Url = 'https://example.com/video.m3u8';
   const mockStoragePath = 'videos/test-video';
-  const mockPlaylistUrl =
-    'https://storage.googleapis.com/bucket/videos/test-video/playlist.m3u8';
+  const mockPlaylistUrl = 'https://storage.googleapis.com/bucket/videos/test-video/playlist.m3u8';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -48,10 +43,7 @@ describe('streamM3U8', () => {
 
     expect(result).toBe(mockPlaylistUrl);
     expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, undefined);
-    expect(streamPlaylistFile).toHaveBeenCalledWith(
-      '#EXTM3U\n#EXT-X-VERSION:3',
-      'videos/test-video/playlist.m3u8'
-    );
+    expect(streamPlaylistFile).toHaveBeenCalledWith('#EXTM3U\n#EXT-X-VERSION:3', 'videos/test-video/playlist.m3u8');
     expect(streamSegments).toHaveBeenCalledWith({
       segmentUrls: ['segment1.ts', 'segment2.ts'],
       baseStoragePath: mockStoragePath,
@@ -61,10 +53,10 @@ describe('streamM3U8', () => {
   });
 
   it('should pass excludePattern to parseM3U8Content', async () => {
-    const excludePattern = /test/;
-    await streamM3U8(mockM3u8Url, mockStoragePath, { excludePattern });
+    const excludePatterns = [/test/];
+    await streamM3U8(mockM3u8Url, mockStoragePath, { excludePatterns });
 
-    expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, excludePattern);
+    expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, excludePatterns);
   });
 
   it('should pass process options to streamSegments', async () => {
@@ -85,9 +77,7 @@ describe('streamM3U8', () => {
     const error = new Error('Stream failed');
     vi.mocked(parseM3U8Content).mockRejectedValue(error);
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(
-      error
-    );
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(error);
 
     expect(logger.error).toHaveBeenCalledWith(
       {
@@ -103,9 +93,7 @@ describe('streamM3U8', () => {
     const errorString = 'Unknown error';
     vi.mocked(parseM3U8Content).mockRejectedValue(errorString);
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toBe(
-      errorString
-    );
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toBe(errorString);
 
     expect(logger.error).toHaveBeenCalledWith(
       {

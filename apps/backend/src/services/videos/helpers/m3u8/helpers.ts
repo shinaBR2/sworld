@@ -13,10 +13,14 @@ interface ParsedResult {
   segments: { included: string[]; excluded: string[] };
 }
 
+const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
+  return excludePatterns.some(pattern => pattern.test(segmentUrl));
+};
+
 /**
  * Parse M3U8 playlist and filter out ad segments
  * @param m3u8Url - URL of the M3U8 playlist
- * @param excludePattern - RegExp to match ad segment URLs (e.g., /\/adjump\//)
+ * @param excludePatterns - Array of RegExp to match ad segment URLs (e.g., /\/adjump\//)
  * @returns {
  *   modifiedContent: Clean M3U8 content without ads,
  *   segments: {
@@ -45,10 +49,7 @@ interface ParsedResult {
  * #EXTINF:3,
  * segment2.ts
  */
-const parseM3U8Content = async (
-  m3u8Url: string,
-  excludePattern?: RegExp
-): Promise<ParsedResult> => {
+const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = []): Promise<ParsedResult> => {
   const response = await fetch(m3u8Url);
   if (!response.ok) {
     throw new Error(`Failed to fetch m3u8: ${response.statusText}`);
@@ -87,7 +88,9 @@ const parseM3U8Content = async (
   manifest.segments?.forEach(segment => {
     const segmentUrl = new URL(segment.uri, m3u8Url).toString();
 
-    if (!excludePattern || !excludePattern.test(segmentUrl)) {
+    if (isAds(segmentUrl, excludePatterns)) {
+      segments.excluded.push(segmentUrl);
+    } else {
       // Include non-ad segment
       if (segment.duration) {
         modifiedContent += `#EXTINF:${segment.duration},\n`;
@@ -95,8 +98,6 @@ const parseM3U8Content = async (
 
       modifiedContent += `${segment.uri}\n`;
       segments.included.push(segmentUrl);
-    } else {
-      segments.excluded.push(segmentUrl);
     }
   });
 
@@ -143,11 +144,7 @@ const chunks = <T>(array: T[], size: number): T[][] => {
  * ], '/tmp/123', 1024 * 1024);
  * ```
  */
-const downloadSegments = async (
-  segments: string[],
-  tempDir: string,
-  maxSegmentSize?: number
-) => {
+const downloadSegments = async (segments: string[], tempDir: string, maxSegmentSize?: number) => {
   const batches = chunks(segments, BATCH_SIZE);
 
   for (const batch of batches) {
@@ -192,21 +189,13 @@ const downloadSegments = async (
 const streamPlaylistFile = async (content: string, storagePath: string) => {
   const playlistStream = Readable.from(content);
 
-  try {
-    return streamFile({
-      stream: playlistStream,
-      storagePath,
-      options: {
-        contentType: 'application/vnd.apple.mpegurl',
-      },
-    });
-  } catch (error) {
-    throw new Error(
-      `Failed to stream playlist to ${storagePath}: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    );
-  }
+  return streamFile({
+    stream: playlistStream,
+    storagePath,
+    options: {
+      contentType: 'application/vnd.apple.mpegurl',
+    },
+  });
 };
 
 /**
@@ -221,9 +210,7 @@ const streamSegmentFile = async (segmentUrl: string, storagePath: string) => {
     size: 32 * 1024 * 1024, // 32MB as safe maximum for high quality segments
   });
   if (!response.ok || !response.body) {
-    throw new Error(
-      `Failed to fetch segment: ${response.status} ${response.statusText}`
-    );
+    throw new Error(`Failed to fetch segment: ${response.status} ${response.statusText}`);
   }
 
   return streamFile({
@@ -257,10 +244,7 @@ const streamSegments = async (params: StreamSegmentsParams) => {
     await Promise.all(
       batch.map(async segmentUrl => {
         const segmentFileName = segmentUrl.split('/').pop();
-        const segmentStoragePath = path.join(
-          baseStoragePath,
-          segmentFileName as string
-        );
+        const segmentStoragePath = path.join(baseStoragePath, segmentFileName as string);
 
         try {
           await streamSegmentFile(segmentUrl, segmentStoragePath);
@@ -268,22 +252,15 @@ const streamSegments = async (params: StreamSegmentsParams) => {
           logger.error(
             {
               segmentUrl,
-              error: error instanceof Error ? error.message : String(error),
+              error,
             },
             'Failed to stream segment'
           );
-          // Optionally, you can choose to throw or continue
-          // throw error;
+          throw error;
         }
       })
     );
   }
 };
 
-export {
-  parseM3U8Content,
-  downloadSegments,
-  streamPlaylistFile,
-  streamSegmentFile,
-  streamSegments,
-};
+export { parseM3U8Content, downloadSegments, streamPlaylistFile, streamSegmentFile, streamSegments };
