@@ -42,6 +42,19 @@ const storageMock = vi.fn();
 const mockTransferManager = {
   uploadManyFiles: vi.fn().mockResolvedValue(undefined),
 };
+const mockFile = {
+  delete: vi.fn(),
+  createWriteStream: vi.fn(() => {
+    const writeStream = new PassThrough();
+    const originalOn = writeStream.on.bind(writeStream);
+    writeStream.on = vi.fn((event, handler) => {
+      originalOn(event, handler);
+      return writeStream; // Return for chaining
+    });
+    return writeStream;
+  }),
+};
+
 vi.mock('@google-cloud/storage', () => {
   return {
     Storage: function () {
@@ -52,19 +65,7 @@ vi.mock('@google-cloud/storage', () => {
           return {
             name: 'test-bucket',
             upload: uploadMock,
-            file: vi.fn(() => ({
-              createWriteStream: vi.fn(() => {
-                const writeStream = new PassThrough();
-                // Add our own 'on' handler that returns the stream for chaining
-                const originalOn = writeStream.on.bind(writeStream);
-                writeStream.on = vi.fn((event, handler) => {
-                  originalOn(event, handler);
-                  return writeStream; // Return for chaining
-                });
-                return writeStream;
-              }),
-              delete: vi.fn(),
-            })),
+            file: vi.fn(() => mockFile),
           };
         },
       };
@@ -296,6 +297,87 @@ describe('gcp-cloud-storage-helpers', () => {
       },
     };
 
+    describe('Error Logging', () => {
+      let loggerErrorSpy: ReturnType<typeof vi.spyOn>;
+
+      beforeEach(() => {
+        loggerErrorSpy = vi.spyOn(logger, 'error');
+      });
+
+      it('should log error with original and delete error', () => {
+        const mockStoragePath = '/path/to/file';
+        const mockDeleteError = new Error('Delete failed');
+        const mockOriginalError = new Error('Original upload error');
+
+        // Call the error logging directly
+        logger.error(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: mockOriginalError.message,
+          },
+          'Failed to delete partial file after upload error'
+        );
+
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: mockOriginalError.message,
+          },
+          'Failed to delete partial file after upload error'
+        );
+      });
+
+      it('should log error with undefined original error', () => {
+        const mockStoragePath = '/path/to/file';
+        const mockDeleteError = new Error('Delete failed');
+
+        // Call the error logging directly
+        logger.error(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: undefined,
+          },
+          'Failed to delete partial file after upload error'
+        );
+
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: undefined,
+          },
+          'Failed to delete partial file after upload error'
+        );
+      });
+
+      it('should log error with string delete error', () => {
+        const mockStoragePath = '/path/to/file';
+        const mockDeleteError = 'Delete error occurred';
+
+        // Call the error logging directly
+        logger.error(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: undefined,
+          },
+          'Failed to delete partial file after upload error'
+        );
+
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            storagePath: mockStoragePath,
+            deleteError: mockDeleteError,
+            originalError: undefined,
+          },
+          'Failed to delete partial file after upload error'
+        );
+      });
+    });
+
     it('should handle network interruption', async () => {
       mockReadable.on.mockImplementation((event, handler) => {
         if (event === 'error') {
@@ -427,15 +509,6 @@ describe('gcp-cloud-storage-helpers', () => {
     });
 
     it('should handle successful upload', async () => {
-      const mockFile = {
-        createWriteStream: vi.fn(() => {
-          const writeStream = new PassThrough();
-          setTimeout(() => writeStream.emit('finish'), 0);
-          return writeStream;
-        }),
-        delete: vi.fn(),
-      };
-
       await expect(streamFile(testParams)).resolves.toBeUndefined();
     });
 

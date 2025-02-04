@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { completeTask } from 'src/database/queries/tasks';
 import { finalizeVideo } from 'src/database/queries/videos';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
@@ -7,6 +8,7 @@ import { AppError } from 'src/utils/schema';
 
 const streamHLSHandler = async (req: Request, res: Response) => {
   const { data, metadata } = req.body;
+  const taskId = req.headers['x-task-id'] as string;
   const { id, videoUrl, userId } = data;
 
   try {
@@ -19,6 +21,10 @@ const streamHLSHandler = async (req: Request, res: Response) => {
       id,
       source: playableVideoUrl,
       thumbnailUrl: '',
+    });
+
+    await completeTask({
+      taskId,
     });
 
     return res.json({ playableVideoUrl });

@@ -4,6 +4,7 @@ import { streamHLSHandler } from './index';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
 import { finalizeVideo } from 'src/database/queries/videos';
 import { logger } from 'src/utils/logger';
+import { completeTask } from 'src/database/queries/tasks';
 
 // Add finalizeVideo to mocks
 vi.mock('src/database/queries/videos', () => ({
@@ -12,6 +13,10 @@ vi.mock('src/database/queries/videos', () => ({
 
 vi.mock('src/services/videos/helpers/m3u8', () => ({
   streamM3U8: vi.fn(),
+}));
+
+vi.mock('src/database/queries/tasks', () => ({
+  completeTask: vi.fn(),
 }));
 
 vi.mock('src/utils/logger', () => ({
@@ -42,7 +47,7 @@ const createMockResponse = (): MockResponse =>
     json: vi.fn(),
   }) as unknown as MockResponse;
 
-const createMockRequest = (data: any = {}, metadata: any = {}): Request => {
+const createMockRequest = (data: any = {}, metadata: any = {}, taskId: string = 'task-123'): Request => {
   const originalPayload = {
     data,
     metadata,
@@ -50,7 +55,10 @@ const createMockRequest = (data: any = {}, metadata: any = {}): Request => {
 
   const mockRequest = {
     body: originalPayload,
-  } as Request;
+    headers: {
+      'x-task-id': taskId,
+    },
+  } as unknown as Request;
 
   return mockRequest;
 };
@@ -72,9 +80,11 @@ describe('streamHLSHandler', () => {
     id: 'event123',
   };
 
+  const defaultTaskId = 'task-123';
+
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequest = createMockRequest(defaultData, defaultMetadata);
+    mockRequest = createMockRequest(defaultData, defaultMetadata, defaultTaskId);
     mockResponse = createMockResponse();
   });
 
@@ -94,6 +104,9 @@ describe('streamHLSHandler', () => {
       id: defaultData.id,
       source: expectedPlayableUrl,
       thumbnailUrl: '',
+    });
+    expect(completeTask).toHaveBeenCalledWith({
+      taskId: defaultTaskId,
     });
     expect(logger.info).toHaveBeenCalledWith(
       defaultMetadata,
@@ -117,6 +130,7 @@ describe('streamHLSHandler', () => {
     });
 
     expect(finalizeVideo).not.toHaveBeenCalled();
+    expect(completeTask).not.toHaveBeenCalled();
     expect(mockResponse.json).not.toHaveBeenCalled();
   });
 
@@ -126,6 +140,26 @@ describe('streamHLSHandler', () => {
 
     vi.mocked(streamM3U8).mockResolvedValueOnce(expectedPlayableUrl);
     vi.mocked(finalizeVideo).mockRejectedValueOnce(new Error(errorMessage));
+
+    await expect(streamHLSHandler(mockRequest, mockResponse)).rejects.toMatchObject({
+      message: 'Video conversion failed',
+      details: {
+        videoId: defaultData.id,
+        error: errorMessage,
+      },
+    });
+
+    expect(completeTask).not.toHaveBeenCalled();
+    expect(mockResponse.json).not.toHaveBeenCalled();
+  });
+
+  it('should throw AppError when completeTask fails', async () => {
+    const expectedPlayableUrl = 'https://example.com/video.m3u8';
+    const errorMessage = 'Failed to complete task';
+
+    vi.mocked(streamM3U8).mockResolvedValueOnce(expectedPlayableUrl);
+    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
+    vi.mocked(completeTask).mockRejectedValueOnce(new Error(errorMessage));
 
     await expect(streamHLSHandler(mockRequest, mockResponse)).rejects.toMatchObject({
       message: 'Video conversion failed',
@@ -158,6 +192,7 @@ describe('streamHLSHandler', () => {
 
     vi.mocked(streamM3U8).mockResolvedValueOnce('some-url');
     vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
+    vi.mocked(completeTask).mockResolvedValueOnce(undefined);
 
     await streamHLSHandler(customRequest, mockResponse);
 
@@ -168,10 +203,3 @@ describe('streamHLSHandler', () => {
     );
   });
 });
-
-interface TestHelpers {
-  createMockRequest: typeof createMockRequest;
-  createMockResponse: typeof createMockResponse;
-}
-
-export { TestHelpers };

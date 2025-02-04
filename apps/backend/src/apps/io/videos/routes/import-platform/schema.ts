@@ -1,8 +1,6 @@
 import { z } from 'zod';
-import {
-  EventMetadataSchema,
-  VideoDataSchema,
-} from 'src/services/videos/convert/schema';
+import { EventMetadataSchema, VideoDataSchema } from 'src/services/videos/convert/schema';
+import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 
 const ImportHandlerSchema = z.object({
   body: z.object({
@@ -17,6 +15,7 @@ const ImportHandlerSchema = z.object({
       traceId: EventMetadataSchema.shape.trace_id,
     }),
   }),
+  headers: taskHandlerHeaderSchema.passthrough(),
 });
 
 export type ImportHandlerRequest = z.infer<typeof ImportHandlerSchema>;

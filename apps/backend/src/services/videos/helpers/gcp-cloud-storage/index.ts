@@ -176,7 +176,7 @@ const streamFile = async (params: StreamFileParams) => {
         logger.error(
           {
             storagePath,
-            deleteError: deleteError instanceof Error ? deleteError.message : String(deleteError),
+            deleteError,
             originalError: originalError?.message,
           },
           'Failed to delete partial file after upload error'

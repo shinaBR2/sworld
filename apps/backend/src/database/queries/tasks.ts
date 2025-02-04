@@ -53,8 +53,13 @@ const updateTaskStatus = async ({ taskId, status, transaction }: UpdateTaskParam
   return updatedCount;
 };
 
-const completeTask = async (taskId: string, transaction?: Transaction) => {
-  return await Task.update(
+interface CompleteTaskParams {
+  taskId: string;
+  transaction?: Transaction;
+}
+
+const completeTask = async ({ taskId, transaction }: CompleteTaskParams) => {
+  const [updatedCount] = await Task.update(
     {
       status: TaskStatus.COMPLETED,
       completed: true,
@@ -64,6 +69,11 @@ const completeTask = async (taskId: string, transaction?: Transaction) => {
       transaction,
     }
   );
+
+  if (updatedCount === 0) {
+    throw new Error(`Task with ID ${taskId} not found`);
+  }
+  return updatedCount;
 };
 
 export { createTask, updateTaskStatus, completeTask };

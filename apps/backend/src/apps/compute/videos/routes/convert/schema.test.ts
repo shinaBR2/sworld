@@ -2,122 +2,82 @@ import { describe, it, expect } from 'vitest';
 import { ConvertHandlerSchema } from './schema';
 
 describe('ConvertHandlerSchema', () => {
-  it('should reject request with missing required fields', () => {
-    const invalidRequest = {
-      body: {
-        data: {
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'https://storage.example.com/video.mp4',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
+  const validHeaders = {
+    'content-type': 'application/json',
+    'x-task-id': '223e4567-e89b-12d3-a456-426614174001',
+  };
 
-    const result = ConvertHandlerSchema.safeParse(invalidRequest);
+  const validMetadata = {
+    id: 'event-789',
+    spanId: 'span-abc',
+    traceId: 'trace-def',
+  };
+
+  const validData = {
+    id: '123e4567-e89b-12d3-a456-426614174000',
+    userId: '123e4567-e89b-12d3-a456-426614174001',
+    videoUrl: 'https://storage.example.com/video.mp4',
+  };
+
+  const createRequest = ({ data = validData, metadata = validMetadata, headers = validHeaders } = {}) => ({
+    body: { data, metadata },
+    headers,
+  });
+
+  describe('headers validation', () => {
+    it('should reject request with missing x-task-id headers', () => {
+      const { 'x-task-id': _, ...headersWithoutTaskId } = validHeaders;
+      // @ts-expect-error
+      const result = ConvertHandlerSchema.safeParse(createRequest({ headers: headersWithoutTaskId }));
+      expect(result.success).toBe(false);
+    });
+
+    it('should reject request with missing content-type headers', () => {
+      const { 'content-type': _, ...headersWithoutContentType } = validHeaders;
+      // @ts-expect-error
+      const result = ConvertHandlerSchema.safeParse(createRequest({ headers: headersWithoutContentType }));
+      expect(result.success).toBe(false);
+    });
+  });
+
+  it('should reject request with missing required fields', () => {
+    const { id: _, ...dataWithoutId } = validData;
+    // @ts-expect-error
+    const result = ConvertHandlerSchema.safeParse(createRequest({ data: dataWithoutId }));
     expect(result.success).toBe(false);
   });
 
   it('should reject empty string values', () => {
-    const invalidRequest = {
-      body: {
-        data: {
-          id: '',
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'https://storage.example.com/video.mp4',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
-
-    const result = ConvertHandlerSchema.safeParse(invalidRequest);
+    const result = ConvertHandlerSchema.safeParse(createRequest({ data: { ...validData, id: '' } }));
     expect(result.success).toBe(false);
   });
 
   it('should validate correct request structure', () => {
-    const validRequest = {
-      body: {
-        data: {
-          id: '123e4567-e89b-12d3-a456-426614174000',
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'https://storage.example.com/video.mp4',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
-
+    const validRequest = createRequest();
     const result = ConvertHandlerSchema.safeParse(validRequest);
     expect(result.success).toBe(true);
   });
 
   it('should reject non-UUID id', () => {
-    const invalidRequest = {
-      body: {
-        data: {
-          id: 'invalid-id',
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'https://storage.example.com/video.mp4',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
-
-    const result = ConvertHandlerSchema.safeParse(invalidRequest);
+    const result = ConvertHandlerSchema.safeParse(createRequest({ data: { ...validData, id: 'invalid-id' } }));
     expect(result.success).toBe(false);
   });
 
   it('should reject non-HTTPS video URL', () => {
-    const invalidRequest = {
-      body: {
-        data: {
-          id: '123e4567-e89b-12d3-a456-426614174000',
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'http://storage.example.com/video.mp4',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
-
-    const result = ConvertHandlerSchema.safeParse(invalidRequest);
+    const result = ConvertHandlerSchema.safeParse(
+      createRequest({
+        data: { ...validData, videoUrl: 'http://storage.example.com/video.mp4' },
+      })
+    );
     expect(result.success).toBe(false);
   });
 
   it('should reject non-video file URL', () => {
-    const invalidRequest = {
-      body: {
-        data: {
-          id: '123e4567-e89b-12d3-a456-426614174000',
-          userId: '123e4567-e89b-12d3-a456-426614174001',
-          videoUrl: 'https://storage.example.com/image.jpg',
-        },
-        metadata: {
-          id: 'event-789',
-          spanId: 'span-abc',
-          traceId: 'trace-def',
-        },
-      },
-    };
-
-    const result = ConvertHandlerSchema.safeParse(invalidRequest);
+    const result = ConvertHandlerSchema.safeParse(
+      createRequest({
+        data: { ...validData, videoUrl: 'https://storage.example.com/image.jpg' },
+      })
+    );
     expect(result.success).toBe(false);
   });
 });

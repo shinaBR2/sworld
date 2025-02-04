@@ -294,6 +294,41 @@ describe('M3U8 parser', () => {
       expect(segments.excluded).toHaveLength(0);
     });
 
+    test('should handle m3u8 with playlist type', async () => {
+      const content = `
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-PLAYLIST-TYPE:VOD
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:3,
+        segment1.ts
+        #EXT-X-ENDLIST
+      `;
+
+      const expected = normalizeContent(`
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-PLAYLIST-TYPE:VOD
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:3,
+        segment1.ts
+        #EXT-X-ENDLIST
+      `);
+
+      const mockResponse = {
+        ok: true,
+        statusText: 'OK',
+        text: () => Promise.resolve(content),
+      };
+      (fetch as any).mockResolvedValue(mockResponse);
+
+      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      expect(normalizeContent(modifiedContent)).toBe(expected);
+      expect(modifiedContent).toContain('#EXT-X-PLAYLIST-TYPE:VOD');
+      expect(segments.included).toEqual(['https://example.com/segment1.ts']);
+      expect(segments.excluded).toHaveLength(0);
+    });
+
     test('should handle malformed m3u8', async () => {
       const content = `
         #EXTM3U

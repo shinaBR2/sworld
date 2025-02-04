@@ -4,7 +4,6 @@ import type { Request, Response, NextFunction } from 'express';
 import { validateRequest } from './validator';
 
 describe('validateRequest', () => {
-  // Mock Express request, response, and next function
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -26,7 +25,6 @@ describe('validateRequest', () => {
   });
 
   it('should call next() when validation passes', () => {
-    // Create a simple schema
     const schema = z.object({
       body: z.object({
         name: z.string(),
@@ -37,19 +35,14 @@ describe('validateRequest', () => {
       headers: z.object({}),
     });
 
-    // Set valid request data
     mockReq.body = {
       name: 'John',
       age: 25,
     };
 
-    // Create middleware with schema
     const middleware = validateRequest(schema);
-
-    // Execute middleware
     middleware(mockReq as Request, mockRes as Response, mockNext);
 
-    // Verify next was called
     expect(mockNext).toHaveBeenCalled();
     expect(mockRes.status).not.toHaveBeenCalled();
     expect(mockRes.json).not.toHaveBeenCalled();
@@ -81,11 +74,15 @@ describe('validateRequest', () => {
     });
   });
 
-  it('should return error response when validation fails', () => {
+  it('should handle array path errors', () => {
     const schema = z.object({
       body: z.object({
-        name: z.string(),
-        age: z.number(),
+        items: z.array(
+          z.object({
+            id: z.string(),
+            value: z.number(),
+          })
+        ),
       }),
       params: z.object({}),
       query: z.object({}),
@@ -93,8 +90,9 @@ describe('validateRequest', () => {
     });
 
     mockReq.body = {
-      name: 123, // Invalid type for name
-      age: 'invalid', // Invalid type for age
+      items: [
+        { id: '1', value: 'invalid' }, // invalid value type at index 0
+      ],
     };
 
     const middleware = validateRequest(schema);
@@ -104,7 +102,31 @@ describe('validateRequest', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       success: false,
-      message: expect.stringContaining('Invalid input:'),
+      message: expect.stringContaining('body items [0] value'),
+      dataObject: null,
+    });
+  });
+
+  it('should handle required field errors', () => {
+    const schema = z.object({
+      body: z.object({
+        requiredField: z.string(),
+      }),
+      params: z.object({}),
+      query: z.object({}),
+      headers: z.object({}),
+    });
+
+    mockReq.body = {};
+
+    const middleware = validateRequest(schema);
+    middleware(mockReq as Request, mockRes as Response, mockNext);
+
+    expect(mockNext).not.toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      success: false,
+      message: expect.stringContaining('body requiredField is required'),
       dataObject: null,
     });
   });
@@ -135,27 +157,22 @@ describe('validateRequest', () => {
       message: expect.stringContaining('Invalid input:'),
       dataObject: null,
     });
-    // Verify that the error message contains both validation errors
     const errorMessage = mockRes.json.mock.calls[0][0].message;
     expect(errorMessage).toMatch(/email/);
     expect(errorMessage).toMatch(/18/);
   });
 
-  it('should validate query parameters', () => {
+  it('should handle header validation path', () => {
     const schema = z.object({
       body: z.object({}),
       params: z.object({}),
-      query: z.object({
-        page: z.string().regex(/^\d+$/),
-        limit: z.string().regex(/^\d+$/),
+      query: z.object({}),
+      headers: z.object({
+        required: z.string(),
       }),
-      headers: z.object({}),
     });
 
-    mockReq.query = {
-      page: 'abc', // Invalid
-      limit: '10', // Valid
-    };
+    mockReq.headers = {};
 
     const middleware = validateRequest(schema);
     middleware(mockReq as Request, mockRes as Response, mockNext);
@@ -164,23 +181,23 @@ describe('validateRequest', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       success: false,
-      message: expect.stringContaining('Invalid input:'),
+      message: expect.stringContaining('Header required is required'),
       dataObject: null,
     });
   });
 
-  it('should validate request headers', () => {
+  it('should validate query parameters', () => {
     const schema = z.object({
       body: z.object({}),
       params: z.object({}),
-      query: z.object({}),
-      headers: z.object({
-        'x-api-key': z.string().min(1),
+      query: z.object({
+        page: z.string().regex(/^\d+$/),
       }),
+      headers: z.object({}),
     });
 
-    mockReq.headers = {
-      'x-api-key': '', // Invalid - empty string
+    mockReq.query = {
+      page: 'abc',
     };
 
     const middleware = validateRequest(schema);

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { type ZodError, type ZodSchema } from 'zod';
 import { ServiceResponse } from './schema';
-import { logger } from './logger';
 
 type Header<T extends string> = {
   value: string;

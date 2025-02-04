@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { importPlatformHandler } from './index';
 import { logger } from 'src/utils/logger';
 import { finalizeVideo } from 'src/database/queries/videos';
+import { completeTask } from 'src/database/queries/tasks';
 
-// Mock the dependencies
 vi.mock('src/utils/logger', () => ({
   logger: {
     info: vi.fn(),
@@ -22,8 +22,26 @@ vi.mock('src/database/queries/videos', () => ({
   finalizeVideo: vi.fn(),
 }));
 
+vi.mock('src/database/queries/tasks', () => ({
+  completeTask: vi.fn(),
+}));
+
 interface MockResponse extends Response {
   json: Mock;
+}
+
+interface TestContext {
+  mockRequest: Request;
+  mockResponse: MockResponse;
+  defaultData: {
+    id: string;
+    videoUrl: string;
+    userId: string;
+  };
+  defaultMetadata: {
+    id: string;
+  };
+  defaultTaskId: string;
 }
 
 const createMockResponse = (): MockResponse =>
@@ -31,78 +49,124 @@ const createMockResponse = (): MockResponse =>
     json: vi.fn(),
   }) as unknown as MockResponse;
 
-const createMockRequest = (data: any = {}, metadata: any = {}): Request => {
+const createMockRequest = (data: any = {}, metadata: any = {}, taskId: string = 'task-123'): Request => {
   const originalPayload = {
     data,
     metadata,
   };
 
-  const mockRequest = {
+  return {
     body: originalPayload,
-  } as Request;
+    headers: {
+      'x-task-id': taskId,
+    },
+  } as unknown as Request;
+};
 
-  return mockRequest;
+const setupSuccessfulMocks = () => {
+  vi.mocked(finalizeVideo).mockResolvedValueOnce(undefined);
+  vi.mocked(completeTask).mockResolvedValueOnce(undefined);
 };
 
 describe('importPlatformHandler', () => {
-  let mockRequest: Request;
-  let mockResponse: MockResponse;
-
-  const defaultData = {
-    id: 'video123',
-    videoUrl: 'https://example.com/video.mp4',
-    userId: 'user123',
-  };
-
-  const defaultMetadata = {
-    id: 'event123',
-  };
+  let context: TestContext;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockRequest = createMockRequest(defaultData, defaultMetadata);
-    mockResponse = createMockResponse();
+    context = {
+      defaultData: {
+        id: 'video123',
+        videoUrl: 'https://example.com/video.mp4',
+        userId: 'user123',
+      },
+      defaultMetadata: {
+        id: 'event123',
+      },
+      defaultTaskId: 'task-123',
+    } as TestContext;
 
-    // Reset the mock implementation
-    (finalizeVideo as Mock).mockResolvedValue(undefined);
+    context.mockResponse = createMockResponse();
+    context.mockRequest = createMockRequest(context.defaultData, context.defaultMetadata, context.defaultTaskId);
+
+    vi.clearAllMocks();
   });
 
-  it('should successfully process import request and return video URL', async () => {
-    await importPlatformHandler(mockRequest, mockResponse);
+  const testSuccessfulImport = async (request = context.mockRequest) => {
+    setupSuccessfulMocks();
+
+    await importPlatformHandler(request, context.mockResponse);
+
+    const requestData = request.body.data;
 
     expect(finalizeVideo).toHaveBeenCalledWith({
-      id: defaultData.id,
-      source: defaultData.videoUrl,
+      id: requestData.id,
+      source: requestData.videoUrl,
       thumbnailUrl: '',
     });
 
-    expect(logger.info).toHaveBeenCalledWith(
-      defaultMetadata,
-      `[/videos/import-platform-handler] start processing event "${defaultMetadata.id}", video "${defaultData.id}"`
-    );
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      playableVideoUrl: defaultData.videoUrl,
+    expect(completeTask).toHaveBeenCalledWith({
+      taskId: context.defaultTaskId,
     });
+
+    expect(logger.info).toHaveBeenCalledWith(
+      context.defaultMetadata,
+      `[/videos/import-platform-handler] start processing event "${context.defaultMetadata.id}", video "${requestData.id}"`
+    );
+
+    expect(context.mockResponse.json).toHaveBeenCalledWith({
+      playableVideoUrl: requestData.videoUrl,
+    });
+  };
+
+  it('should successfully process import request and return video URL', async () => {
+    await testSuccessfulImport();
   });
 
-  it('should throw AppError when finalizeVideo fails', async () => {
-    const errorMessage = 'Database error';
-    (finalizeVideo as Mock).mockRejectedValue(new Error(errorMessage));
+  const testErrorScenario = async (setupMocks: () => void, errorMessage: string, checksAfterError?: () => void) => {
+    setupMocks();
 
-    await expect(importPlatformHandler(mockRequest, mockResponse)).rejects.toMatchObject({
+    await expect(importPlatformHandler(context.mockRequest, context.mockResponse)).rejects.toMatchObject({
       message: 'Video conversion failed',
       details: {
-        videoId: defaultData.id,
+        videoId: context.defaultData.id,
         error: errorMessage,
       },
     });
+
+    checksAfterError?.();
+    expect(context.mockResponse.json).not.toHaveBeenCalled();
+  };
+
+  it('should throw AppError when finalizeVideo fails', async () => {
+    const errorMessage = 'Database error';
+    await testErrorScenario(
+      () => {
+        vi.mocked(finalizeVideo).mockRejectedValueOnce(new Error(errorMessage));
+      },
+      errorMessage,
+      () => {
+        expect(completeTask).not.toHaveBeenCalled();
+      }
+    );
+  });
+
+  it('should throw AppError when completeTask fails', async () => {
+    const errorMessage = 'Failed to complete task';
+    await testErrorScenario(() => {
+      vi.mocked(finalizeVideo).mockResolvedValueOnce(undefined);
+      vi.mocked(completeTask).mockRejectedValueOnce(new Error(errorMessage));
+    }, errorMessage);
   });
 
   it('should log event start with correct metadata', async () => {
-    await importPlatformHandler(mockRequest, mockResponse);
+    setupSuccessfulMocks();
 
-    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(defaultData.id));
-    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(defaultMetadata.id));
+    await importPlatformHandler(context.mockRequest, context.mockResponse);
+
+    expect(logger.info).toHaveBeenCalledWith(context.defaultMetadata, expect.stringContaining(context.defaultData.id));
+    expect(logger.info).toHaveBeenCalledWith(
+      context.defaultMetadata,
+      expect.stringContaining(context.defaultMetadata.id)
+    );
   });
 
   it('should handle requests with different data values', async () => {
@@ -111,26 +175,8 @@ describe('importPlatformHandler', () => {
       videoUrl: 'https://example.com/custom.mp4',
       userId: 'custom-user',
     };
-    const customRequest = createMockRequest(customData, defaultMetadata);
+    const customRequest = createMockRequest(customData, context.defaultMetadata);
 
-    await importPlatformHandler(customRequest, mockResponse);
-
-    expect(finalizeVideo).toHaveBeenCalledWith({
-      id: customData.id,
-      source: customData.videoUrl,
-      thumbnailUrl: '',
-    });
-
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      playableVideoUrl: customData.videoUrl,
-    });
-    expect(logger.info).toHaveBeenCalledWith(defaultMetadata, expect.stringContaining(customData.id));
+    await testSuccessfulImport(customRequest);
   });
 });
-
-interface TestHelpers {
-  createMockRequest: typeof createMockRequest;
-  createMockResponse: typeof createMockResponse;
-}
-
-export { TestHelpers };
