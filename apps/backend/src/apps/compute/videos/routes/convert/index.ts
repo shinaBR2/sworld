@@ -1,18 +1,15 @@
 import { logger } from 'src/utils/logger';
-import { ConvertHandlerRequest } from './schema';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { AppError } from 'src/utils/schema';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
-const convertHandler = async (req: ConvertHandlerRequest, res: Response) => {
-  const { data, metadata } = req.body;
+const convertHandler = async (req: Request, res: Response) => {
+  const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
+  const { data, metadata } = payload;
 
   let playableVideoUrl;
   try {
-    logger.info(
-      metadata,
-      `[/videos/convert-handler] start processing event "${metadata.id}", video "${data.id}"`
-    );
+    logger.info(metadata, `[/videos/convert-handler] start processing event "${metadata.id}", video "${data.id}"`);
     playableVideoUrl = await convertVideo(data);
     return res.json({ playableVideoUrl });
   } catch (error) {

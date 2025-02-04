@@ -1,12 +1,12 @@
-import { Response } from 'express';
-import { ImportHandlerRequest } from './schema';
+import { Request, Response } from 'express';
 import { logger } from 'src/utils/logger';
 import { AppError } from 'src/utils/schema';
 import { finalizeVideo } from 'src/database/queries/videos';
 
-const importPlatformHandler = async (req: ImportHandlerRequest, res: Response) => {
-  const { data, metadata } = req.body;
-  const { id, videoUrl, userId } = data;
+const importPlatformHandler = async (req: Request, res: Response) => {
+  const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
+  const { data, metadata } = payload;
+  const { id, videoUrl } = data;
 
   try {
     logger.info(

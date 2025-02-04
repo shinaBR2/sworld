@@ -103,10 +103,8 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
     };
 
     if (payload) {
-      // cloudTask.httpRequest!.body = JSON.stringify(payload);
-
       try {
-        cloudTask.httpRequest!.body = JSON.stringify(payload);
+        cloudTask.httpRequest!.body = Buffer.from(JSON.stringify(payload)).toString('base64');
       } catch (error) {
         logger.error({ error, payload }, 'Failed to serialize payload');
         throw new Error('Invalid payload: Failed to serialize to JSON');

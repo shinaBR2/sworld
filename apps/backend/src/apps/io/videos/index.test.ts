@@ -41,6 +41,7 @@ vi.mock('src/utils/validator', () => ({
   validateRequest: () => vi.fn(),
 }));
 
+// TODO verify this test again
 describe('videosRouter', () => {
   it('should register all POST routes', () => {
     const routes = videosRouter.stack
@@ -69,9 +70,7 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler for stream-hls-handler', () => {
-    const streamHandlerRoute = videosRouter.stack.find(
-      layer => layer.route?.path === '/stream-hls-handler'
-    );
+    const streamHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/stream-hls-handler');
 
     const middlewares = streamHandlerRoute?.route.stack || [];
 
@@ -81,9 +80,7 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler for import-platform-handler', () => {
-    const importHandlerRoute = videosRouter.stack.find(
-      layer => layer.route?.path === '/import-platform-handler'
-    );
+    const importHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/import-platform-handler');
 
     const middlewares = importHandlerRoute?.route.stack || [];
 

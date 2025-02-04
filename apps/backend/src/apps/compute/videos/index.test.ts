@@ -30,6 +30,7 @@ vi.mock('src/utils/validator', () => ({
   validateRequest: () => vi.fn(),
 }));
 
+// TODO verify this test again
 describe('videosRouter', () => {
   it('should register POST /convert-handler route', () => {
     const routes = videosRouter.stack
@@ -46,9 +47,7 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler', () => {
-    const convertHandlerRoute = videosRouter.stack.find(
-      layer => layer.route?.path === '/convert-handler'
-    );
+    const convertHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/convert-handler');
 
     const middlewares = convertHandlerRoute?.route.stack || [];
 

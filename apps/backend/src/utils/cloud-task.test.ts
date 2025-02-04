@@ -141,7 +141,7 @@ describe('createCloudTasks', () => {
             serviceAccountEmail: mockConfig.cloudTaskServiceAccount,
             audience: 'https://test.com',
           },
-          body: JSON.stringify(testPayload),
+          body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
         },
       },
     });
@@ -233,7 +233,7 @@ describe('createCloudTasks', () => {
       expect.objectContaining({
         task: expect.objectContaining({
           httpRequest: expect.objectContaining({
-            body: JSON.stringify(testPayload),
+            body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
           }),
         }),
       })

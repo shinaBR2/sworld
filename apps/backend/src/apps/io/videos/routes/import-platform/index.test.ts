@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { importPlatformHandler } from './index';
 import { logger } from 'src/utils/logger';
-import { AppError } from 'src/utils/schema';
-import { ImportHandlerRequest } from './schema';
 import { finalizeVideo } from 'src/database/queries/videos';
 
 // Mock the dependencies
@@ -33,16 +31,21 @@ const createMockResponse = (): MockResponse =>
     json: vi.fn(),
   }) as unknown as MockResponse;
 
-const createMockRequest = (data: any = {}, metadata: any = {}): ImportHandlerRequest =>
-  ({
-    body: {
-      data,
-      metadata,
-    },
-  }) as ImportHandlerRequest;
+const createMockRequest = (data: any = {}, metadata: any = {}): Request => {
+  const originalPayload = {
+    data,
+    metadata,
+  };
+
+  const mockRequest = {
+    body: Buffer.from(JSON.stringify(originalPayload)).toString('base64'),
+  } as Request;
+
+  return mockRequest;
+};
 
 describe('importPlatformHandler', () => {
-  let mockRequest: ImportHandlerRequest;
+  let mockRequest: Request;
   let mockResponse: MockResponse;
 
   const defaultData = {
