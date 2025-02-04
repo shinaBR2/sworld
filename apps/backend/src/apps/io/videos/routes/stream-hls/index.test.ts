@@ -2,7 +2,13 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { Request, Response } from 'express';
 import { streamHLSHandler } from './index';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
+import { finalizeVideo } from 'src/database/queries/videos';
 import { logger } from 'src/utils/logger';
+
+// Add finalizeVideo to mocks
+vi.mock('src/database/queries/videos', () => ({
+  finalizeVideo: vi.fn(),
+}));
 
 vi.mock('src/services/videos/helpers/m3u8', () => ({
   streamM3U8: vi.fn(),
@@ -63,13 +69,19 @@ describe('streamHLSHandler', () => {
     mockResponse = createMockResponse();
   });
 
-  it('should successfully process video and return playable URL', async () => {
+  it('should successfully process video and finalize it', async () => {
     const expectedPlayableUrl = 'https://example.com/video.m3u8';
     vi.mocked(streamM3U8).mockResolvedValueOnce(expectedPlayableUrl);
+    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
 
     await streamHLSHandler(mockRequest, mockResponse);
 
     expect(streamM3U8).toHaveBeenCalledWith(defaultData.videoUrl, `videos/${defaultData.userId}/${defaultData.id}`);
+    expect(finalizeVideo).toHaveBeenCalledWith({
+      id: defaultData.id,
+      source: expectedPlayableUrl,
+      thumbnailUrl: '',
+    });
     expect(logger.info).toHaveBeenCalledWith(
       defaultMetadata,
       `[/videos/stream-hls-handler] start processing event "${defaultMetadata.id}", video "${defaultData.id}"`
@@ -91,11 +103,31 @@ describe('streamHLSHandler', () => {
       },
     });
 
+    expect(finalizeVideo).not.toHaveBeenCalled();
+    expect(mockResponse.json).not.toHaveBeenCalled();
+  });
+
+  it('should throw AppError when finalizeVideo fails', async () => {
+    const expectedPlayableUrl = 'https://example.com/video.m3u8';
+    const errorMessage = 'Database update failed';
+
+    vi.mocked(streamM3U8).mockResolvedValueOnce(expectedPlayableUrl);
+    vi.mocked(finalizeVideo).mockRejectedValueOnce(new Error(errorMessage));
+
+    await expect(streamHLSHandler(mockRequest, mockResponse)).rejects.toMatchObject({
+      message: 'Video conversion failed',
+      details: {
+        videoId: defaultData.id,
+        error: errorMessage,
+      },
+    });
+
     expect(mockResponse.json).not.toHaveBeenCalled();
   });
 
   it('should log event start with correct metadata', async () => {
     vi.mocked(streamM3U8).mockResolvedValueOnce('some-url');
+    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
 
     await streamHLSHandler(mockRequest, mockResponse);
 
@@ -112,6 +144,7 @@ describe('streamHLSHandler', () => {
     const customRequest = createMockRequest(customData, defaultMetadata);
 
     vi.mocked(streamM3U8).mockResolvedValueOnce('some-url');
+    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
 
     await streamHLSHandler(customRequest, mockResponse);
 

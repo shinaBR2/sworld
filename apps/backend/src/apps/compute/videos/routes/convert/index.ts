@@ -6,11 +6,13 @@ import { Request, Response } from 'express';
 const convertHandler = async (req: Request, res: Response) => {
   const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
   const { data, metadata } = payload;
+  const { id } = data;
 
   let playableVideoUrl;
   try {
-    logger.info(metadata, `[/videos/convert-handler] start processing event "${metadata.id}", video "${data.id}"`);
+    logger.info(metadata, `[/videos/convert-handler] start processing event "${metadata.id}", video "${id}"`);
     playableVideoUrl = await convertVideo(data);
+
     return res.json({ playableVideoUrl });
   } catch (error) {
     throw AppError('Video conversion failed', {

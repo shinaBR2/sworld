@@ -4,8 +4,7 @@ import { AppError } from 'src/utils/schema';
 import { finalizeVideo } from 'src/database/queries/videos';
 
 const importPlatformHandler = async (req: Request, res: Response) => {
-  const payload = JSON.parse(Buffer.from(req.body, 'base64').toString('utf-8'));
-  const { data, metadata } = payload;
+  const { data, metadata } = req.body;
   const { id, videoUrl } = data;
 
   try {
