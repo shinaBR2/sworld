@@ -3,22 +3,18 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Skeleton from '@mui/material/Skeleton';
-import { Auth, Query, watchMutationHooks } from 'core';
+import { Query } from 'core';
 import { lazy, Suspense, useState } from 'react';
 
-const VideoUploadDialog = lazy(() => import('../../../dialogs/upload'));
-const { useBulkConvertVideos } = watchMutationHooks;
+const VideoUploadDialog = lazy(() =>
+  import('../../../dialogs/upload').then(module => ({
+    default: module.VideoUploadDialog,
+  }))
+);
 
 const UploadButton = () => {
   const [open, setOpen] = useState(false);
-  const { user, getAccessToken } = Auth.useAuthContext();
   const { featureFlags } = Query.useQueryContext();
-  const { mutate: bulkConvert } = useBulkConvertVideos({
-    getAccessToken,
-    onSuccess: data => {
-      console.log('Videos converted:', data.insert_videos.returning);
-    },
-  });
 
   const { data, isLoading } = featureFlags;
 
@@ -58,29 +54,7 @@ const UploadButton = () => {
 
       {open && (
         <Suspense fallback={null}>
-          <VideoUploadDialog
-            open={open}
-            onOpenChange={setOpen}
-            onSubmit={async urls => {
-              if (!enabled) {
-                return;
-              }
-
-              console.log(`submit url`, urls);
-              bulkConvert({
-                objects: urls.map((url, index) => {
-                  const now = Date.now();
-
-                  return {
-                    title: `untitled-${now}`,
-                    description: `description-${now} for url ${url}`,
-                    slug: `untitled-${user?.id}-${index}-${now}`,
-                    video_url: url,
-                  };
-                }),
-              });
-            }}
-          />
+          <VideoUploadDialog open={open} onOpenChange={setOpen} />
         </Suspense>
       )}
     </>
