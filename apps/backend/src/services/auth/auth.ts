@@ -2,7 +2,6 @@
 import * as registrationHelpers from './registrationPasskeyHelpers';
 import * as authenticationHelpers from './authenticationPasskeyHelpers';
 import { saveNewPasskey } from './userHelpers';
-// import { AppError } from '../singleton/request';
 
 // const generatePasskeyRegistrationOptions = onCall(async ({ data }) => {
 //   try {
@@ -10,13 +9,13 @@ import { saveNewPasskey } from './userHelpers';
 //     const options = await registrationHelpers.generateOptions(userId);
 
 //     if (!options) {
-//       throw AppError("Failed to generate options");
+//       throw new Error("Failed to generate options");
 //     }
 
 //     return options;
 //   } catch (error) {
 //     logger.error("Error generating registration options:", error);
-//     throw AppError("Internal server error");
+//     throw new Error("Internal server error");
 //   }
 // });
 
@@ -29,7 +28,7 @@ import { saveNewPasskey } from './userHelpers';
 //     );
 
 //     if (!isVerified || !verification) {
-//       throw AppError("Verification failed");
+//       throw new Error("Verification failed");
 //     }
 
 //     await saveNewPasskey(firebaseUserId, user, verification);
@@ -40,7 +39,7 @@ import { saveNewPasskey } from './userHelpers';
 //     };
 //   } catch (error) {
 //     logger.error("Error in registration verification:", error);
-//     throw AppError("Internal server error");
+//     throw new Error("Internal server error");
 //   }
 // });
 
@@ -51,13 +50,13 @@ import { saveNewPasskey } from './userHelpers';
 
 //     if (!options) {
 //       logger.error("Failed to generate options:");
-//       throw AppError("Failed to generate options");
+//       throw new Error("Failed to generate options");
 //     }
 
 //     return options;
 //   } catch (error) {
 //     logger.error("Error generating authentication options:", error);
-//     throw AppError("Internal server error");
+//     throw new Error("Internal server error");
 //   }
 // });
 
@@ -70,7 +69,7 @@ import { saveNewPasskey } from './userHelpers';
 //     );
 
 //     if (!isVerified) {
-//       throw AppError("Verification failed");
+//       throw new Error("Verification failed");
 //     }
 
 //     return {
@@ -79,7 +78,7 @@ import { saveNewPasskey } from './userHelpers';
 //     };
 //   } catch (error) {
 //     logger.error("Error in authentication verification:", error);
-//     throw AppError("Internal server error");
+//     throw new Error("Internal server error");
 //   }
 // });
 

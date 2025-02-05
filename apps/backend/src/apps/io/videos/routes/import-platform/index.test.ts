@@ -4,18 +4,13 @@ import { importPlatformHandler } from './index';
 import { logger } from 'src/utils/logger';
 import { finalizeVideo } from 'src/database/queries/videos';
 import { completeTask } from 'src/database/queries/tasks';
+import { CustomError } from 'src/utils/custom-error';
+import { VIDEO_ERRORS } from 'src/utils/error-codes';
 
 vi.mock('src/utils/logger', () => ({
   logger: {
     info: vi.fn(),
   },
-}));
-
-vi.mock('src/utils/schema', () => ({
-  AppError: vi.fn((message: string, details: object) => ({
-    message,
-    details,
-  })),
 }));
 
 vi.mock('src/database/queries/videos', () => ({
@@ -24,6 +19,12 @@ vi.mock('src/database/queries/videos', () => ({
 
 vi.mock('src/database/queries/tasks', () => ({
   completeTask: vi.fn(),
+}));
+
+vi.mock('src/utils/custom-error', () => ({
+  CustomError: {
+    critical: vi.fn(),
+  },
 }));
 
 interface MockResponse extends Response {
@@ -124,19 +125,31 @@ describe('importPlatformHandler', () => {
   const testErrorScenario = async (setupMocks: () => void, errorMessage: string, checksAfterError?: () => void) => {
     setupMocks();
 
-    await expect(importPlatformHandler(context.mockRequest, context.mockResponse)).rejects.toMatchObject({
-      message: 'Video conversion failed',
-      details: {
-        videoId: context.defaultData.id,
-        error: errorMessage,
-      },
-    });
+    await expect(importPlatformHandler(context.mockRequest, context.mockResponse)).rejects.toThrow(
+      'Import from platform failed'
+    );
+
+    expect(CustomError.critical).toHaveBeenCalledWith(
+      'Import from platform failed',
+      expect.objectContaining({
+        originalError: expect.objectContaining({
+          message: errorMessage,
+        }),
+        errorCode: VIDEO_ERRORS.CONVERSION_FAILED,
+        context: {
+          data: context.defaultData,
+          metadata: context.defaultMetadata,
+          taskId: context.defaultTaskId,
+        },
+        source: 'apps/io/videos/routes/import-platform/index.ts',
+      })
+    );
 
     checksAfterError?.();
     expect(context.mockResponse.json).not.toHaveBeenCalled();
   };
 
-  it('should throw AppError when finalizeVideo fails', async () => {
+  it('should throw error when finalizeVideo fails', async () => {
     const errorMessage = 'Database error';
     await testErrorScenario(
       () => {
@@ -149,7 +162,7 @@ describe('importPlatformHandler', () => {
     );
   });
 
-  it('should throw AppError when completeTask fails', async () => {
+  it('should throw error when completeTask fails', async () => {
     const errorMessage = 'Failed to complete task';
     await testErrorScenario(() => {
       vi.mocked(finalizeVideo).mockResolvedValueOnce(undefined);

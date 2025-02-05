@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import 'express-async-errors';
 import { httpLogger } from './logger';
 import helmet from 'helmet';
 

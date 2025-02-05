@@ -3,8 +3,9 @@ import { completeTask } from 'src/database/queries/tasks';
 import { finalizeVideo } from 'src/database/queries/videos';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
+import { CustomError } from 'src/utils/custom-error';
+import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
-import { AppError } from 'src/utils/schema';
 
 const streamHLSHandler = async (req: Request, res: Response) => {
   const { data, metadata } = req.body;
@@ -29,9 +30,15 @@ const streamHLSHandler = async (req: Request, res: Response) => {
 
     return res.json({ playableVideoUrl });
   } catch (error) {
-    throw AppError('Video conversion failed', {
-      videoId: data.id,
-      error: (error as Error).message,
+    throw CustomError.critical('Stream HLS failed', {
+      originalError: error,
+      errorCode: VIDEO_ERRORS.CONVERSION_FAILED,
+      context: {
+        data,
+        metadata,
+        taskId,
+      },
+      source: 'apps/io/videos/routes/stream-hls/index.ts',
     });
   }
 };
