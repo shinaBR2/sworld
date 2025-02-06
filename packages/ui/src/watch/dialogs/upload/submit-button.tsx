@@ -11,16 +11,18 @@ interface SubmitButtonProps {
   onClick: (e: React.FormEvent) => void;
 }
 
-const LoadingState = ({ text }: { text: string }) => (
+const LoadingState = React.memo(({ text }: { text: string }) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
     <CircularProgress size={20} color="inherit" />
     {text}
   </Box>
-);
+));
+LoadingState.displayName = 'LoadingState';
 
 const SubmitButton = (props: SubmitButtonProps) => {
   const { isBusy, isSubmitting, validating, showSubmitButton, urls, onClick } = props;
   const { submitButton } = texts.form;
+  const isDisabled = isBusy || !urls.trim();
 
   const renderContent = () => {
     if (isSubmitting) return <LoadingState text={submitButton.submitting} />;
@@ -34,7 +36,7 @@ const SubmitButton = (props: SubmitButtonProps) => {
       type="submit"
       variant="contained"
       fullWidth
-      disabled={isBusy || !urls.trim()}
+      disabled={isDisabled}
       sx={{ mb: 2 }}
       aria-busy={isBusy}
       onClick={onClick}
