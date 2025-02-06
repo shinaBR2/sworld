@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DialogComponent } from './index';
-import { userEvent, within } from '@storybook/testing-library';
+import { action } from '@storybook/addon-actions';
 
 const description = `
 # DialogComponent
@@ -89,12 +89,12 @@ const mockHandlers = {
   handleClose: () => console.log('Dialog closed'),
   validateUrls: async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Validating URLs');
+    action('Validating URLs')(e);
   },
-  onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => console.log('URLs changed:', e.target.value),
+  onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => action('URLs changed')(e.target.value),
   handleSubmit: async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted');
+    action('Form submitted')(e);
   },
 };
 

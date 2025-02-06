@@ -41,6 +41,7 @@ describe('useMutationRequest', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should execute mutation without authentication', async () => {
@@ -216,6 +217,18 @@ describe('useMutationRequest', () => {
       const [result1, result2] = await Promise.all([promise1, promise2]);
       expect(result1).toEqual(mockResponse1);
       expect(result2).toEqual(mockResponse2);
+    });
+  });
+
+  it('should handle empty variables object', async () => {
+    const mockResponse = { updateUser: null };
+    vi.mocked(request).mockResolvedValueOnce(mockResponse);
+
+    const { result } = renderHook(() => useMutationRequest({ document: mockDocument }), { wrapper: createWrapper() });
+
+    const mutatePromise = result.current.mutateAsync({});
+    await waitFor(async () => {
+      await expect(mutatePromise).resolves.toEqual(mockResponse);
     });
   });
 });

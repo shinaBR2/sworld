@@ -25,6 +25,7 @@ describe('ValidationResults', () => {
 
     const resultsList = screen.getByRole('list', { name: 'Validation results' });
     expect(resultsList).toBeInTheDocument();
+    expect(resultsList).toHaveAttribute('aria-label', 'Validation results');
 
     const resultItems = screen.getAllByRole('listitem');
     expect(resultItems).toHaveLength(4);
@@ -65,6 +66,7 @@ describe('ValidationResults', () => {
     const results = [
       { url: 'http://invalid1.com', isValid: false },
       { url: 'http://invalid2.com', isValid: false },
+      { url: '', isValid: false },
     ];
 
     act(() => {
