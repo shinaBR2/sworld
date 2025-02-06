@@ -8,6 +8,7 @@ export const StyledDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
   '& .MuiDialog-paper': {
     width: '100%',
     maxWidth: theme.breakpoints.values.sm,
+    overflowX: 'hidden',
   },
 })) as typeof Dialog;
 
