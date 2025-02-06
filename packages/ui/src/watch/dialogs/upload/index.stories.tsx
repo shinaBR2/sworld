@@ -1,198 +1,263 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { VideoUploadDialog } from './index';
+import { DialogComponent } from './index';
 import { userEvent, within } from '@storybook/testing-library';
 
-const meta: Meta<typeof VideoUploadDialog> = {
-  title: 'Components/VideoUploadDialog',
-  component: VideoUploadDialog,
+const description = `
+# DialogComponent
+
+A stateless dialog component for video URL input and validation. This component handles the presentation layer only, 
+with all state management and business logic handled by its parent.
+
+## Props
+- \`state\`: Current state of the dialog (urls, validation results, etc.)
+- \`open\`: Controls dialog visibility
+- \`handleClose\`: Handler for closing the dialog
+- \`isBusy\`: Whether the dialog is processing something
+- \`isSubmitting\`: Whether a submission is in progress
+- \`validateUrls\`: Handler for URL validation
+- \`onUrlsChange\`: Handler for URL input changes
+- \`handleSubmit\`: Handler for form submission
+- \`showSubmitButton\`: Whether to show the submit button`;
+
+const meta: Meta<typeof DialogComponent> = {
+  title: 'Components/DialogComponent',
+  component: DialogComponent,
   parameters: {
     layout: 'centered',
     docs: {
+      description: {
+        component: description,
+      },
       story: {
         inline: false,
         height: '500px',
       },
-      description: {
-        component: `
-# VideoUploadDialog Component
-
-The VideoUploadDialog component provides a modal interface for users to input and validate video URLs. It supports batch URL validation and submission with a clean, user-friendly interface.
-
-## Key Features
-
-- **URL Validation**: Validates multiple video URLs using ReactPlayer
-- **Batch Processing**: Handles multiple URLs input via comma separation
-- **Real-time Feedback**: Shows validation status for each URL
-- **Accessibility**: Fully accessible with proper ARIA labels and roles
-- **Loading States**: Clear visual feedback during validation and submission
-- **Error Handling**: Proper error display and management
-
-## Component Structure
-
-The dialog consists of:
-- Title with close button
-- Multi-line text input for URLs
-- Validation/Submit button
-- Results section showing status for each URL
-- Loading indicators for both validation and submission states
-
-## Usage Notes
-
-- URLs should be comma-separated
-- The dialog handles its own validation logic
-- Supports custom submission handling via onSubmit prop
-- Maintains state during validation process
-
-## Example Implementation
-
-\`\`\`tsx
-<VideoUploadDialog
-  open={isOpen}
-  onOpenChange={setIsOpen}
-  onSubmit={async (urls) => {
-    // Handle valid URLs
-    await saveVideos(urls);
-  }}
-/>
-\`\`\`
-`,
-      },
     },
   },
+  decorators: [
+    Story => (
+      <div style={{ width: '600px', margin: '0 auto' }}>
+        <Story />
+      </div>
+    ),
+  ],
   tags: ['autodocs'],
   argTypes: {
+    state: {
+      description: 'Current state of the dialog',
+    },
     open: {
-      description: 'Controls the visibility of the dialog',
+      description: 'Controls dialog visibility',
       control: 'boolean',
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
-    onOpenChange: {
-      description: 'Callback function when dialog open state changes',
-      control: 'function',
-      table: {
-        type: { summary: '(open: boolean) => void' },
-      },
+    handleClose: {
+      description: 'Handler for closing the dialog',
+      control: null,
     },
-    onSubmit: {
-      description: 'Optional callback for handling validated URLs',
-      control: 'function',
-      table: {
-        type: { summary: '(urls: string[]) => Promise<void>' },
-      },
+    isBusy: {
+      description: 'Whether the dialog is processing',
+      control: 'boolean',
+    },
+    isSubmitting: {
+      description: 'Whether a submission is in progress',
+      control: 'boolean',
+    },
+    validateUrls: {
+      description: 'Handler for URL validation',
+      control: null,
+    },
+    onUrlsChange: {
+      description: 'Handler for URL input changes',
+      control: null,
+    },
+    handleSubmit: {
+      description: 'Handler for form submission',
+      control: null,
+    },
+    showSubmitButton: {
+      description: 'Whether to show the submit button',
+      control: 'boolean',
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof VideoUploadDialog>;
+type Story = StoryObj<typeof DialogComponent>;
 
-const defaultArgs = {
-  open: true,
-  onOpenChange: (open: boolean) => {
-    console.log('Dialog open state:', open);
+// Mock handlers
+const mockHandlers = {
+  handleClose: () => console.log('Dialog closed'),
+  validateUrls: async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Validating URLs');
+  },
+  onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => console.log('URLs changed:', e.target.value),
+  handleSubmit: async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submitted');
   },
 };
 
-// Basic story showing the dialog
-export const Default: Story = {
-  args: { ...defaultArgs },
-  parameters: {
-    docs: {
-      story: {
-        inline: false,
-        height: '500px',
-      },
-    },
-  },
+// Initial state
+const baseState = {
+  urls: '',
+  validating: false,
+  results: [],
+  error: null,
+  success: null,
+  closeDialogCountdown: 3,
 };
 
-// Story with submit handler
-export const WithSubmitHandler: Story = {
+// Basic empty state
+export const Initial: Story = {
   args: {
-    ...defaultArgs,
-    onSubmit: async (urls: string[]) => {
-      console.log('Submitted URLs:', urls);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Dialog with a submit handler that processes the validated URLs.',
-      },
-      story: {
-        inline: false,
-        height: '500px',
-      },
-    },
+    state: baseState,
+    open: true,
+    isBusy: false,
+    isSubmitting: false,
+    showSubmitButton: false,
+    ...mockHandlers,
   },
 };
 
-// Story showing loading state
-export const Loading: Story = {
+// Validating state
+export const Validating: Story = {
   args: {
-    ...defaultArgs,
-    onSubmit: async () => {
-      await new Promise(resolve => setTimeout(resolve, 5000)); // Long delay to show loading state
+    ...Initial.args,
+    state: {
+      ...baseState,
+      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      validating: true,
     },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Dialog in loading state while processing URLs.',
-      },
-    },
+    isBusy: true,
   },
 };
 
-// Story with pre-filled URLs
-export const MixedUrlValidation: Story = {
+// State with validation results
+export const WithValidationResults: Story = {
   args: {
-    ...defaultArgs,
-  },
-  parameters: {
-    docs: {
-      story: {
-        inline: false,
-        height: '500px',
-      },
-      description: {
-        story: 'Shows validation of both valid and invalid video URLs.',
-      },
+    ...Initial.args,
+    state: {
+      ...baseState,
+      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ,https://vimeo.com/123456',
+      results: [
+        { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true },
+        { url: 'https://vimeo.com/123456', isValid: false },
+      ],
     },
-  },
-  play: async ({ step }) => {
-    const utils = within(document.body);
-    const user = userEvent.setup();
-
-    await step('Enter mixed URLs', async () => {
-      const dialog = await utils.findByRole('dialog');
-
-      // Now search within the dialog instead of the canvas
-      const dialogElement = within(dialog);
-
-      const urlInput = dialogElement.getByPlaceholderText(
-        'Paste video URLs, separated by commas'
-      );
-
-      const urls = [
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        'invalid-url',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        'https://vimeo.com/148751763',
-      ].join(',\n');
-
-      await user.type(urlInput, urls);
-    });
-
-    await step('Validate URLs', async () => {
-      const validateButton = await utils.findByRole('button', {
-        name: /Validate URLs/,
-      });
-      await user.click(validateButton);
-    });
+    showSubmitButton: true,
   },
 };
+
+export const ValidateUrlsValid: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
+    },
+    showSubmitButton: true,
+  },
+};
+
+// Submitting state
+export const Submitting: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
+    },
+    isBusy: true,
+    isSubmitting: true,
+    showSubmitButton: true,
+  },
+};
+
+export const SubmitSuccessAutoClose: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      success: {
+        insert_videos: {
+          returning: [
+            {
+              id: '1',
+              title: 'video 1',
+              description: 'description 1',
+            },
+            {
+              id: '2',
+              title: 'video 2',
+              description: 'description 1',
+            },
+          ],
+        },
+      },
+      urls: '',
+      results: [],
+    },
+    showSubmitButton: true,
+    handleSubmit: async (e: React.FormEvent) => {
+      e.preventDefault();
+      console.log('Simulating successful submission');
+      // Simulate successful upload
+      await new Promise(resolve => setTimeout(resolve, 2500));
+    },
+  },
+};
+
+export const SubmitFailed: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      error: 'Failed to upload videos',
+      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
+    },
+    showSubmitButton: true,
+    handleSubmit: async (e: React.FormEvent) => {
+      e.preventDefault();
+      console.log('Simulating successful submission');
+      // Simulate successful upload
+      await new Promise(resolve => setTimeout(resolve, 2500));
+    },
+  },
+};
+
+// Interactive story
+// export const Interactive: Story = {
+//   args: {
+//     ...Empty.args,
+//   },
+//   play: async ({ canvasElement, step }) => {
+//     const canvas = within(canvasElement);
+//     const user = userEvent.setup();
+
+//     await step('Locate dialog elements', async () => {
+//       const dialog = await canvas.findByRole('dialog');
+//       expect(dialog).toBeInTheDocument();
+
+//       const urlInput = await canvas.findByTestId('url-input-textarea');
+//       expect(urlInput).toBeInTheDocument();
+
+//       const validateButton = await canvas.findByRole('button', { name: /Validate URLs/i });
+//       expect(validateButton).toBeInTheDocument();
+//     });
+
+//     await step('Verify input is enabled', async () => {
+//       const urlInput = await canvas.findByTestId('url-input-textarea');
+//       expect(urlInput).toBeEnabled();
+//     });
+
+//     await step('Verify close button', async () => {
+//       const closeButton = await canvas.findByLabelText(/close/i);
+//       expect(closeButton).toBeInTheDocument();
+//       expect(closeButton).toBeEnabled();
+//     });
+//   },
+// };

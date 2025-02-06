@@ -52,7 +52,7 @@ const UploadButton = () => {
         <ListItemText primary="Upload" />
       </ListItemButton>
 
-      {open && (
+      {open && enabled && (
         <Suspense fallback={null}>
           <VideoUploadDialog open={open} onOpenChange={setOpen} />
         </Suspense>
