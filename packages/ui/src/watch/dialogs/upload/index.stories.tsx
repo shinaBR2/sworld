@@ -228,36 +228,3 @@ export const SubmitFailed: Story = {
     },
   },
 };
-
-// Interactive story
-// export const Interactive: Story = {
-//   args: {
-//     ...Empty.args,
-//   },
-//   play: async ({ canvasElement, step }) => {
-//     const canvas = within(canvasElement);
-//     const user = userEvent.setup();
-
-//     await step('Locate dialog elements', async () => {
-//       const dialog = await canvas.findByRole('dialog');
-//       expect(dialog).toBeInTheDocument();
-
-//       const urlInput = await canvas.findByTestId('url-input-textarea');
-//       expect(urlInput).toBeInTheDocument();
-
-//       const validateButton = await canvas.findByRole('button', { name: /Validate URLs/i });
-//       expect(validateButton).toBeInTheDocument();
-//     });
-
-//     await step('Verify input is enabled', async () => {
-//       const urlInput = await canvas.findByTestId('url-input-textarea');
-//       expect(urlInput).toBeEnabled();
-//     });
-
-//     await step('Verify close button', async () => {
-//       const closeButton = await canvas.findByLabelText(/close/i);
-//       expect(closeButton).toBeInTheDocument();
-//       expect(closeButton).toBeEnabled();
-//     });
-//   },
-// };

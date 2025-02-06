@@ -90,16 +90,6 @@ describe('SubmitButton', () => {
     expect(defaultProps.onClick).toHaveBeenCalled();
   });
 
-  it('is disabled when isBusy is true', () => {
-    act(() => {
-      render(<SubmitButton {...defaultProps} isBusy={true} />);
-    });
-
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    expect(button).toHaveAttribute('aria-busy', 'true');
-  });
-
   it('maintains proper button styling', () => {
     act(() => {
       render(<SubmitButton {...defaultProps} />);

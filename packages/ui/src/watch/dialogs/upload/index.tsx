@@ -119,23 +119,6 @@ const DialogComponent = (props: DialogComponentProps) => {
   );
 };
 
-// const mockSuccessSubmit = async (urls: string[]) => {
-//   await new Promise(resolve => setTimeout(resolve, 2500));
-//   return {
-//     insert_videos: {
-//       returning: urls.map((_, index) => ({
-//         id: `test-${index}`,
-//         title: 'adas',
-//         description: 'adsad',
-//       })),
-//     },
-//   };
-// };
-
-// const mockFailedSubmit = async () => {
-//   await new Promise((_resolve, reject) => setTimeout(() => reject(new Error('Failed to upload videos')), 2500));
-// };
-
 /**
  * Stateful component holding state and hooks
  * @param param0
@@ -152,26 +135,9 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   });
 
   const { user, getAccessToken } = Auth.useAuthContext();
-  // const { user } = Auth.useAuthContext();
   const { mutateAsync: bulkConvert, isPending: isSubmitting } = watchMutationHooks.useBulkConvertVideos({
     getAccessToken,
   });
-
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-  // const bulkConvert = async (_data: { objects: any[] }) => {
-  //   setIsSubmitting(true);
-  //   try {
-  //     // Use mockSuccessSubmit for testing success case
-  //     // Or mockFailedSubmit for testing error case
-  //     // const response = await mockFailedSubmit(sdata.objects.map(obj => obj.video_url));
-  //     const response = await mockFailedSubmit();
-  //     setIsSubmitting(false);
-  //     return response;
-  //   } catch (error) {
-  //     setIsSubmitting(false);
-  //     throw error;
-  //   }
-  // };
 
   const handleClose = () => {
     setState({
