@@ -4,7 +4,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Auth, watchMutationHooks } from 'core';
 import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';
-import { type BulkConvertResponse } from 'core/src/watch/mutation-hooks/bulk-convert';
 import { SubmitButton } from './submit-button';
 import { ValidationResult, ValidationResults } from './validation-results';
 import { canPlayUrls } from './utils';
@@ -19,7 +18,7 @@ interface DialogState {
   validating: boolean;
   results: ValidationResult[];
   error: string | null;
-  success: BulkConvertResponse | null;
+  success: watchMutationHooks.BulkConvertResponse | null;
   closeDialogCountdown: number;
 }
 
@@ -220,12 +219,16 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const validUrls = state.results.filter(result => result.isValid).map(result => result.url);
+      const timestamp = Date.now();
 
+      // TODO
+      // This is temporary
+      // consider this later
       const response = await bulkConvert({
         objects: validUrls.map((url, index) => ({
-          title: `untitled-${Date.now()}`,
-          description: `description-${Date.now()} for url ${url}`,
-          slug: `untitled-${user?.id}-${index}-${Date.now()}`,
+          title: `untitled-${timestamp}`,
+          description: `description-${timestamp} for url ${url}`,
+          slug: `untitled-${user?.id}-${index}-${timestamp}`,
           video_url: url,
         })),
       });
@@ -249,7 +252,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const isBusy = state.validating || isSubmitting;
 
   useEffect(() => {
-    let timer: any;
+    let timer: ReturnType<typeof setInterval>;
 
     if (state.success) {
       timer = setInterval(() => {

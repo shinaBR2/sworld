@@ -21,7 +21,7 @@ const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
       .filter(Boolean)
       .map(async url => ({
         url,
-        isValid: await Promise.resolve(canPlay(url)),
+        isValid: canPlay(url),
       }))
   );
 };

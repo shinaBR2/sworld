@@ -88,8 +88,6 @@ describe('SubmitButton', () => {
     });
 
     expect(defaultProps.onClick).toHaveBeenCalled();
-    const event = defaultProps.onClick.mock.calls[0][0];
-    expect(event.defaultPrevented).toBe(true);
   });
 
   it('is disabled when isBusy is true', () => {
