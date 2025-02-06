@@ -30,6 +30,21 @@ array_relationships:
         table:
           name: video_views
           schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - public
+        - slug
+        - title
+        - video_url
+    comment: ""
 select_permissions:
   - role: user
     permission:
