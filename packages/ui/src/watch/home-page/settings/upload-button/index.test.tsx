@@ -44,12 +44,8 @@ describe('UploadButton', () => {
     expect(loadingButton).toHaveAttribute('aria-disabled', 'true');
 
     // Verify skeleton elements are present
-    expect(
-      screen.getByTestId('upload-button-skeleton-icon')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId('upload-button-skeleton-text')
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('upload-button-skeleton-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('upload-button-skeleton-text')).toBeInTheDocument();
   });
 
   it('should render enabled state correctly', () => {
