@@ -11,17 +11,19 @@ const loadReactPlayerCanPlay = async () => {
   return cachedCanPlay;
 };
 
-const validateUrls = async (urls: string[]): Promise<ValidationResult[]> => {
+const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
   const canPlay = await loadReactPlayerCanPlay();
 
-  return urls
-    .filter(url => url != null)
-    .map(url => url.trim())
-    .filter(Boolean)
-    .map(url => ({
-      url,
-      isValid: canPlay(url),
-    }));
+  return Promise.all(
+    urls
+      .filter(url => url != null)
+      .map(url => url!.trim())
+      .filter(Boolean)
+      .map(async url => ({
+        url,
+        isValid: await Promise.resolve(canPlay(url)),
+      }))
+  );
 };
 
-export { validateUrls };
+export { canPlayUrls };

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { validateUrls } from './utils';
+import { canPlayUrls } from './utils';
 
 // Mock react-player
 vi.mock('react-player', () => ({
@@ -11,7 +11,7 @@ vi.mock('react-player', () => ({
   },
 }));
 
-describe('validateUrls', () => {
+describe('canPlayUrls', () => {
   it('should validate URLs correctly', async () => {
     const urls = [
       'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
@@ -20,7 +20,7 @@ describe('validateUrls', () => {
       '  https://www.youtube.com/watch?v=abc123  ',
     ];
 
-    const results = await validateUrls(urls);
+    const results = await canPlayUrls(urls);
 
     expect(results).toHaveLength(4);
     expect(results[0]).toEqual({
@@ -44,7 +44,7 @@ describe('validateUrls', () => {
   it('should handle empty and whitespace-only inputs', async () => {
     const urls = ['', '   ', null, undefined];
 
-    const results = await validateUrls(urls as string[]);
+    const results = await canPlayUrls(urls as string[]);
 
     expect(results).toHaveLength(0);
   });
@@ -52,7 +52,7 @@ describe('validateUrls', () => {
   it('should trim whitespace from URLs', async () => {
     const urls = ['  https://www.youtube.com/watch?v=dQw4w9WgXcQ  '];
 
-    const results = await validateUrls(urls);
+    const results = await canPlayUrls(urls);
 
     expect(results[0].url).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
   });
