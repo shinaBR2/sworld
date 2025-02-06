@@ -47,9 +47,7 @@ const useMutationRequest = <TData = unknown, TVariables extends object | undefin
         return request<TData>({
           url: hasuraUrl,
           document,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          requestHeaders: headers,
+          requestHeaders: headers as RequestInit['headers'],
           variables,
         });
       } catch (error) {
