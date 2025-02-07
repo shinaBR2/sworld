@@ -1,5 +1,3 @@
-import { watchMutationHooks } from 'core';
-
 interface ValidationResult {
   url: string;
   isValid: boolean;
@@ -7,13 +5,11 @@ interface ValidationResult {
 
 interface DialogState {
   title: string;
-  urls: string;
+  url: string;
   description?: string;
-  validating: boolean;
-  results: ValidationResult[];
+  isSubmitting: boolean;
   error: string | null;
-  success: watchMutationHooks.BulkConvertResponse | null;
-  closeDialogCountdown: number;
+  closeDialogCountdown: number | null;
 }
 
 export { type ValidationResult, type DialogState };

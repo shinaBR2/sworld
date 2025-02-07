@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Auth, watchMutationHooks } from 'core';
 import { canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import hooks, { commonHelpers } from 'core';
 import { BulkConvertResponse } from 'core/watch/mutation-hooks';
+import { texts } from './texts';
 
 const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
@@ -15,13 +15,11 @@ interface VideoUploadDialogProps {
 const CLOSE_DELAY_MS = 3000;
 const defaultState: DialogState = {
   title: '',
-  urls: '',
+  url: '',
   description: '',
-  validating: false,
-  results: [],
+  isSubmitting: false,
   error: null,
-  success: null,
-  closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+  closeDialogCountdown: null,
 };
 
 /**
@@ -35,64 +33,45 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   });
 
   const { getAccessToken } = Auth.useAuthContext();
-  const { mutateAsync: bulkConvert, isPending: isSubmitting } = watchMutationHooks.useBulkConvertVideos({
+  const { mutateAsync: bulkConvert } = watchMutationHooks.useBulkConvertVideos({
     getAccessToken,
   });
 
   /**
    * Uncomment these lines for testing
    */
-  // const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   // const bulkConvert = async _data => {
-  //   setIsSubmitting(true);
+  //   setState(prev => ({
+  //     ...prev,
+  //     isSubmitting: true,
+  //   }));
 
-  //   return new Promise(resolve => {
+  //   return new Promise((_resolve, reject) => {
   //     setTimeout(() => {
-  //       setIsSubmitting(false);
-  //       const response = {
-  //         success: {
-  //           insert_videos: {
-  //             returning: [
-  //               {
-  //                 id: '123',
-  //                 title: 'asad',
-  //                 description: '1333',
-  //               },
-  //             ],
-  //           },
-  //         },
-  //       };
-  //       setState(prev => {
-  //         return {
-  //           ...prev,
-  //           ...response,
-  //         };
-  //       });
-  //       resolve(response);
+  //       // const response = {
+  //       //   insert_videos: {
+  //       //     returning: [
+  //       //       {
+  //       //         id: '123',
+  //       //         title: 'asad',
+  //       //         description: '1333',
+  //       //       },
+  //       //     ],
+  //       //   },
+  //       // };
+  //       // resolve(response);
+  //       reject();
   //     }, 2500);
   //   });
   // };
 
   const handleClose = () => {
-    setState({
-      ...defaultState,
-    });
+    // setState({
+    //   ...defaultState,
+    // });
     onOpenChange(false);
-  };
-
-  const validateUrls = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setState(prev => ({ ...prev, validating: true, error: null }));
-
-    const urlList = state.urls
-      .split(',')
-      .map(url => url.trim())
-      .filter(Boolean);
-    const validationResults = await canPlayUrls(urlList);
-
-    setState(prev => ({ ...prev, results: validationResults, validating: false }));
   };
 
   const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,59 +88,69 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       description: newValue,
     }));
   };
-  const onUrlsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+  const onUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.trim();
     setState(prev => ({
       ...prev,
-      urls: newValue,
-      // Only clear results and error if there's no success message
-      ...(!newValue.trim() && !prev.success
-        ? {
-            results: [],
-            error: null,
-          }
-        : {}),
+      url: newValue,
+      error: null,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, error: null, success: null }));
+    setState(prev => ({ ...prev, isSubmitting: true, error: null }));
+
+    const validationResults = await canPlayUrls([state.url]);
+    const isValid = validationResults.length === 1 && validationResults[0].isValid;
+
+    if (!isValid) {
+      return setState(prev => ({
+        ...prev,
+        isSubmitting: false,
+        error: texts.errors.invalidUrl,
+      }));
+    }
 
     try {
-      const { title, description = '', results } = state;
-      const validUrls = results.filter(result => result.isValid).map(result => result.url);
-
+      const { title, description = '', url } = state;
       const response = (await bulkConvert({
-        objects: validUrls.map(url => ({
-          title,
-          description,
-          slug: commonHelpers.slugify(title),
-          video_url: url,
-        })),
+        objects: [
+          {
+            title,
+            description,
+            slug: commonHelpers.slugify(title),
+            video_url: url,
+          },
+        ],
       })) as BulkConvertResponse;
 
-      setState(prev => ({
-        ...prev,
-        success: response,
-        urls: '', // Reset input on success
-        results: [], // Reset results
+      if (response.insert_videos.returning.length !== 1) {
+        // Unknown error
+        return setState(prev => ({
+          ...prev,
+          isSubmitting: false,
+          error: texts.errors.failedToSave,
+        }));
+      }
+
+      setState({
+        ...defaultState,
+        error: '', // Trigger cooldown
         closeDialogCountdown: CLOSE_DELAY_MS / 1000,
-      }));
+      });
     } catch (error) {
+      // TODO
+      // Determine retry ability
       const errorMessage =
         error instanceof Error ? error.message : 'An unexpected error occurred while uploading videos.';
-      setState(prev => ({ ...prev, error: errorMessage }));
+      setState(prev => ({ ...prev, isSubmitting: false, error: errorMessage }));
     }
   };
 
-  const allResultsValid = state.results.length > 0 && state.results.every(result => result.isValid);
-  const showSubmitButton = allResultsValid;
-  const isBusy = state.validating || isSubmitting;
-
   useCountdown({
     duration: CLOSE_DELAY_MS / 1000,
-    enabled: !!state.success,
+    enabled: state.error === '' && !!state.closeDialogCountdown,
     onTick: (remaining: number) => {
       setState(prev => ({
         ...prev,
@@ -176,14 +165,13 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       open={open}
       state={state}
       handleClose={handleClose}
-      validateUrls={validateUrls}
-      onTitleChange={onTitleChange}
-      onUrlsChange={onUrlsChange}
-      onDescriptionChange={onDescriptionChange}
+      formProps={{
+        onTitleChange,
+        onUrlChange,
+        onDescriptionChange,
+      }}
       handleSubmit={handleSubmit}
-      isBusy={isBusy}
-      isSubmitting={isSubmitting}
-      showSubmitButton={showSubmitButton}
+      isSubmitting={state.isSubmitting}
     />
   );
 };

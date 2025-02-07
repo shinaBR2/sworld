@@ -26,6 +26,10 @@ export const texts = {
       submitting: 'Uploading...',
     },
   },
+  errors: {
+    invalidUrl: '✗ Invalid video URL',
+    failedToSave: 'Failed to upload',
+  },
   validation: {
     valid: {
       status: '✓ Valid video URL',

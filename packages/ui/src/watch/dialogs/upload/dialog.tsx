@@ -4,17 +4,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';
 import { SubmitButton } from './submit-button';
-import { ValidationResults } from './validation-results';
 import { DialogState } from './types';
 
 interface UploadErrorResultProps {
-  isBusy: boolean;
+  isSubmitting: boolean;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   errorMessage: string;
 }
 
 const UploadErrorResult = (props: UploadErrorResultProps) => {
-  const { isBusy, handleSubmit, errorMessage } = props;
+  const { isSubmitting, handleSubmit, errorMessage } = props;
 
   return (
     <Fade in>
@@ -22,7 +21,7 @@ const UploadErrorResult = (props: UploadErrorResultProps) => {
         severity="error"
         sx={{ mb: 2 }}
         action={
-          <Button color="inherit" size="small" onClick={handleSubmit} disabled={isBusy}>
+          <Button color="inherit" size="small" onClick={handleSubmit} disabled={isSubmitting}>
             Retry
           </Button>
         }
@@ -32,6 +31,12 @@ const UploadErrorResult = (props: UploadErrorResultProps) => {
     </Fade>
   );
 };
+
+interface FormProps {
+  onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 interface UploadSuccessResultProps {
   message: string;
@@ -53,14 +58,9 @@ interface DialogComponentProps {
   state: DialogState;
   open: boolean;
   handleClose: () => void;
-  isBusy: boolean;
   isSubmitting: boolean;
-  validateUrls: (e: React.FormEvent) => Promise<void>;
-  onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formProps: FormProps;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
-  showSubmitButton: boolean;
 }
 
 /**
@@ -69,34 +69,15 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const {
-    state,
-    open,
-    handleClose,
-    isBusy,
-    isSubmitting,
-    validateUrls,
-    onTitleChange,
-    onUrlsChange,
-    onDescriptionChange,
-    handleSubmit,
-    showSubmitButton,
-  } = props;
+  const { state, open, handleClose, isSubmitting, formProps, handleSubmit } = props;
+  const { onTitleChange, onUrlChange, onDescriptionChange } = formProps;
 
   const onClose = () => {
-    if (isBusy) {
+    if (isSubmitting) {
       return;
     }
 
     handleClose();
-  };
-  const onSubmit = (e: React.FormEvent) => {
-    if (showSubmitButton) {
-      handleSubmit(e);
-      return;
-    }
-
-    validateUrls(e);
   };
 
   const dialogProps = {
@@ -144,43 +125,37 @@ const DialogComponent = (props: DialogComponentProps) => {
     disabled: isSubmitting,
   };
   const submitButtonProps = {
-    isBusy: isBusy,
-    isSubmitting: isSubmitting,
-    validating: state.validating,
-    showSubmitButton: showSubmitButton,
-    urls: state.urls,
-    onClick: onSubmit,
+    isSubmitting,
+    onClick: handleSubmit,
   };
   const uploadErrorResultProps = {
-    handleSubmit: handleSubmit,
-    isBusy: isBusy,
+    handleSubmit,
+    isSubmitting,
     errorMessage: state.error as string,
   };
   const uploadSuccessResultProps = {
-    message: `Successfully uploaded ${state.success?.insert_videos?.returning?.length} video(s). Dialog will close in ${state.closeDialogCountdown} seconds.`,
+    message: `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
 
   return (
     <StyledDialog {...dialogProps}>
       <DialogTitle id="video-upload-dialog-title">
         {texts.dialog.title}
-        <StyledCloseButton onClick={onClose} aria-label={texts.dialog.closeButton} disabled={isBusy}>
+        <StyledCloseButton onClick={onClose} aria-label={texts.dialog.closeButton} disabled={isSubmitting}>
           <CloseIcon />
         </StyledCloseButton>
       </DialogTitle>
 
       <DialogContent>
-        <Box component="form" onSubmit={validateUrls} noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
+        <Box component="form" noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
           <TextField value={state.title} onChange={onTitleChange} {...titleTextFieldProps} />
-          <TextField value={state.urls} onChange={onUrlsChange} {...urlTextFieldProps} />
+          <TextField value={state.url} onChange={onUrlChange} {...urlTextFieldProps} />
           <TextField value={state.description} onChange={onDescriptionChange} {...descriptionTextFieldProps} />
 
           {state.error && <UploadErrorResult {...uploadErrorResultProps} />}
-          {state.success && <UploadSuccessResult {...uploadSuccessResultProps} />}
+          {state.error === '' && <UploadSuccessResult {...uploadSuccessResultProps} />}
 
           <SubmitButton {...submitButtonProps} />
-
-          {state.results.length > 0 && !isSubmitting && <ValidationResults results={state.results} />}
         </Box>
       </DialogContent>
     </StyledDialog>
