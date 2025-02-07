@@ -147,7 +147,13 @@ const charMap: Record<string, string> = {
 
 // https://gist.github.com/codeguy/6684588
 const slugify = (str: string): string => {
-  str = str.replace(/^\s+|\s+$/g, ''); // trim
+  const TRIM_REGEX = /^\s+|\s+$/g;
+  const INVALID_CHARS_REGEX = /[^a-z0-9 -]/g;
+  const WHITESPACE_REGEX = /\s+/g;
+  const DASHES_REGEX = /-+/g;
+  const TRIM_DASHES_REGEX = /^-+|-+$/g;
+
+  str = str.replace(TRIM_REGEX, ''); // trim
   str = str.toLowerCase();
 
   for (const [key, value] of Object.entries(charMap)) {
@@ -161,12 +167,9 @@ const slugify = (str: string): string => {
     str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
   }
 
-  str = str
-    .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-    .replace(/\s+/g, '-') // collapse whitespace and replace by -
-    .replace(/-+/g, '-'); // collapse dashes
+  str = str.replace(INVALID_CHARS_REGEX, '').replace(WHITESPACE_REGEX, '-').replace(DASHES_REGEX, '-');
 
-  str = str.replace(new RegExp(`^-+|-+$`, 'g'), '');
+  str = str.replace(TRIM_DASHES_REGEX, '');
   return str;
 };
 

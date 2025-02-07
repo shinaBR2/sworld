@@ -84,7 +84,7 @@ const DialogComponent = (props: DialogComponentProps) => {
     open,
     onClose,
     'aria-labelledby': 'video-upload-dialog-title',
-    disableEscapeKeyDown: true,
+    disableEscapeKeyDown: isSubmitting,
     'data-testid': 'upload-video-dialog',
   };
   const titleTextFieldProps = {
