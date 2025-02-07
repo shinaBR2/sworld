@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
-import hooks, { commonHelpers } from 'core';
+import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
 import { BulkConvertResponse } from 'core/watch/mutation-hooks';
 import { texts } from './texts';
 
@@ -68,9 +68,6 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   // };
 
   const handleClose = () => {
-    // setState({
-    //   ...defaultState,
-    // });
     onOpenChange(false);
   };
 
