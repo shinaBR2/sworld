@@ -12,12 +12,9 @@ with all state management and business logic handled by its parent.
 - \`state\`: Current state of the dialog (urls, validation results, etc.)
 - \`open\`: Controls dialog visibility
 - \`handleClose\`: Handler for closing the dialog
-- \`isBusy\`: Whether the dialog is processing something
 - \`isSubmitting\`: Whether a submission is in progress
-- \`validateUrls\`: Handler for URL validation
-- \`onUrlsChange\`: Handler for URL input changes
-- \`handleSubmit\`: Handler for form submission
-- \`showSubmitButton\`: Whether to show the submit button`;
+- \`formProps\`: OnChange event handlers for inputs changes
+- \`handleSubmit\`: Handler for form submission`;
 
 const meta: Meta<typeof DialogComponent> = {
   title: 'Watch/Dialogs/Upload',
@@ -54,29 +51,17 @@ const meta: Meta<typeof DialogComponent> = {
       description: 'Handler for closing the dialog',
       control: null,
     },
-    isBusy: {
-      description: 'Whether the dialog is processing',
-      control: 'boolean',
-    },
     isSubmitting: {
       description: 'Whether a submission is in progress',
       control: 'boolean',
     },
-    validateUrls: {
-      description: 'Handler for URL validation',
-      control: null,
-    },
-    onUrlsChange: {
-      description: 'Handler for URL input changes',
+    formProps: {
+      description: 'OnChange handlers for form input elements',
       control: null,
     },
     handleSubmit: {
       description: 'Handler for form submission',
       control: null,
-    },
-    showSubmitButton: {
-      description: 'Whether to show the submit button',
-      control: 'boolean',
     },
   },
 };
@@ -87,11 +72,11 @@ type Story = StoryObj<typeof DialogComponent>;
 // Mock handlers
 const mockHandlers = {
   handleClose: () => console.log('Dialog closed'),
-  validateUrls: async (e: React.FormEvent) => {
-    e.preventDefault();
-    action('Validating URLs')(e);
+  formProps: {
+    onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => action('Title changed')(e.target.value),
+    onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => action('URL changed')(e.target.value),
+    onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => action('Description changed')(e.target.value),
   },
-  onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => action('URLs changed')(e.target.value),
   handleSubmit: async (e: React.FormEvent) => {
     e.preventDefault();
     action('Form submitted')(e);
@@ -100,12 +85,12 @@ const mockHandlers = {
 
 // Initial state
 const baseState = {
-  urls: '',
-  validating: false,
-  results: [],
+  title: 'Video title',
+  url: '',
+  description: 'Video long description',
+  isSubmitting: false,
   error: null,
-  success: null,
-  closeDialogCountdown: 3,
+  closeDialogCountdown: null,
 };
 
 // Basic empty state
@@ -113,51 +98,8 @@ export const Initial: Story = {
   args: {
     state: baseState,
     open: true,
-    isBusy: false,
     isSubmitting: false,
-    showSubmitButton: false,
     ...mockHandlers,
-  },
-};
-
-// Validating state
-export const Validating: Story = {
-  args: {
-    ...Initial.args,
-    state: {
-      ...baseState,
-      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      validating: true,
-    },
-    isBusy: true,
-  },
-};
-
-// State with validation results
-export const WithValidationResults: Story = {
-  args: {
-    ...Initial.args,
-    state: {
-      ...baseState,
-      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ,https://vimeo.com/123456',
-      results: [
-        { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true },
-        { url: 'https://vimeo.com/123456', isValid: false },
-      ],
-    },
-    showSubmitButton: true,
-  },
-};
-
-export const ValidateUrlsValid: Story = {
-  args: {
-    ...Initial.args,
-    state: {
-      ...baseState,
-      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
-    },
-    showSubmitButton: true,
   },
 };
 
@@ -167,12 +109,20 @@ export const Submitting: Story = {
     ...Initial.args,
     state: {
       ...baseState,
-      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      isSubmitting: true,
     },
-    isBusy: true,
-    isSubmitting: true,
-    showSubmitButton: true,
+  },
+};
+
+export const InvalidUrl: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      error: '✗ Invalid video URL',
+      url: 'invalid-url',
+    },
   },
 };
 
@@ -181,31 +131,11 @@ export const SubmitSuccessAutoClose: Story = {
     ...Initial.args,
     state: {
       ...baseState,
-      success: {
-        insert_videos: {
-          returning: [
-            {
-              id: '1',
-              title: 'video 1',
-              description: 'description 1',
-            },
-            {
-              id: '2',
-              title: 'video 2',
-              description: 'description 1',
-            },
-          ],
-        },
-      },
-      urls: '',
-      results: [],
-    },
-    showSubmitButton: true,
-    handleSubmit: async (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log('Simulating successful submission');
-      // Simulate successful upload
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      title: '',
+      url: '',
+      error: '',
+      description: '',
+      closeDialogCountdown: 3,
     },
   },
 };
@@ -216,15 +146,7 @@ export const SubmitFailed: Story = {
     state: {
       ...baseState,
       error: 'Failed to upload videos',
-      urls: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      results: [{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isValid: true }],
-    },
-    showSubmitButton: true,
-    handleSubmit: async (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log('Simulating successful submission');
-      // Simulate successful upload
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     },
   },
 };

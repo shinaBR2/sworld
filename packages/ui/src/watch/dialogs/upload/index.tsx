@@ -142,8 +142,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     } catch (error) {
       // TODO
       // Determine retry ability
-      const errorMessage =
-        error instanceof Error ? error.message : 'An unexpected error occurred while uploading videos.';
+      const errorMessage = error instanceof Error ? error.message : texts.errors.unexpected;
       setState(prev => ({ ...prev, isSubmitting: false, error: errorMessage }));
     }
   };
@@ -171,7 +170,6 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
         onDescriptionChange,
       }}
       handleSubmit={handleSubmit}
-      isSubmitting={state.isSubmitting}
     />
   );
 };

@@ -29,6 +29,7 @@ export const texts = {
   errors: {
     invalidUrl: '✗ Invalid video URL',
     failedToSave: 'Failed to upload',
+    unexpected: 'An unexpected error occurred while upload',
   },
   validation: {
     valid: {

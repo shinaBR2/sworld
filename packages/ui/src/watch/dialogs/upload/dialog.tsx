@@ -58,7 +58,6 @@ interface DialogComponentProps {
   state: DialogState;
   open: boolean;
   handleClose: () => void;
-  isSubmitting: boolean;
   formProps: FormProps;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
 }
@@ -69,8 +68,9 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const { state, open, handleClose, isSubmitting, formProps, handleSubmit } = props;
+  const { state, open, handleClose, formProps, handleSubmit } = props;
   const { onTitleChange, onUrlChange, onDescriptionChange } = formProps;
+  const { isSubmitting } = state;
 
   const onClose = () => {
     if (isSubmitting) {
