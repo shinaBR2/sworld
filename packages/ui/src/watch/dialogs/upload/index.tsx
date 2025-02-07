@@ -1,15 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Auth, watchMutationHooks } from 'core';
 import { canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
+import hooks, { commonHelpers } from 'core';
+import { BulkConvertResponse } from 'core/watch/mutation-hooks';
 
+const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const CLOSE_DELAY_MS = 3000;
+const defaultState: DialogState = {
+  title: '',
+  urls: '',
+  description: '',
+  validating: false,
+  results: [],
+  error: null,
+  success: null,
+  closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+};
 
 /**
  * Stateful component holding state and hooks
@@ -18,27 +31,53 @@ const CLOSE_DELAY_MS = 3000;
  */
 const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const [state, setState] = useState<DialogState>({
-    urls: '',
-    validating: false,
-    results: [],
-    error: null,
-    success: null,
-    closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+    ...defaultState,
   });
 
-  const { user, getAccessToken } = Auth.useAuthContext();
+  const { getAccessToken } = Auth.useAuthContext();
   const { mutateAsync: bulkConvert, isPending: isSubmitting } = watchMutationHooks.useBulkConvertVideos({
     getAccessToken,
   });
 
+  /**
+   * Uncomment these lines for testing
+   */
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  // const bulkConvert = async _data => {
+  //   setIsSubmitting(true);
+
+  //   return new Promise(resolve => {
+  //     setTimeout(() => {
+  //       setIsSubmitting(false);
+  //       const response = {
+  //         success: {
+  //           insert_videos: {
+  //             returning: [
+  //               {
+  //                 id: '123',
+  //                 title: 'asad',
+  //                 description: '1333',
+  //               },
+  //             ],
+  //           },
+  //         },
+  //       };
+  //       setState(prev => {
+  //         return {
+  //           ...prev,
+  //           ...response,
+  //         };
+  //       });
+  //       resolve(response);
+  //     }, 2500);
+  //   });
+  // };
+
   const handleClose = () => {
     setState({
-      urls: '',
-      validating: false,
-      results: [],
-      error: null,
-      success: null,
-      closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+      ...defaultState,
     });
     onOpenChange(false);
   };
@@ -56,6 +95,20 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     setState(prev => ({ ...prev, results: validationResults, validating: false }));
   };
 
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setState(prev => ({
+      ...prev,
+      title: newValue,
+    }));
+  };
+  const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setState(prev => ({
+      ...prev,
+      description: newValue,
+    }));
+  };
   const onUrlsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setState(prev => ({
@@ -76,20 +129,17 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     setState(prev => ({ ...prev, error: null, success: null }));
 
     try {
-      const validUrls = state.results.filter(result => result.isValid).map(result => result.url);
-      const timestamp = Date.now();
+      const { title, description = '', results } = state;
+      const validUrls = results.filter(result => result.isValid).map(result => result.url);
 
-      // TODO
-      // This is temporary
-      // consider this later
-      const response = await bulkConvert({
-        objects: validUrls.map((url, index) => ({
-          title: `untitled-${timestamp}`,
-          description: `description-${timestamp} for url ${url}`,
-          slug: `untitled-${user?.id}-${index}-${timestamp}`,
+      const response = (await bulkConvert({
+        objects: validUrls.map(url => ({
+          title,
+          description,
+          slug: commonHelpers.slugify(title),
           video_url: url,
         })),
-      });
+      })) as BulkConvertResponse;
 
       setState(prev => ({
         ...prev,
@@ -109,42 +159,17 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const showSubmitButton = allResultsValid;
   const isBusy = state.validating || isSubmitting;
 
-  useEffect(() => {
-    let timer: ReturnType<typeof setInterval>;
-
-    if (state.success) {
-      timer = setInterval(() => {
-        setState(prev => {
-          if (prev.closeDialogCountdown <= 1) {
-            clearInterval(timer);
-            handleClose();
-            return {
-              ...prev,
-              closeDialogCountdown: 0,
-            };
-          }
-
-          return {
-            ...prev,
-            closeDialogCountdown: prev.closeDialogCountdown - 1,
-          };
-        });
-      }, 1000);
-
-      // Clear the timer when dialog closes
-      setTimeout(() => {
-        clearInterval(timer);
-        setState(prev => ({
-          ...prev,
-          closeDialogCountdown: CLOSE_DELAY_MS / 1000,
-        }));
-      }, CLOSE_DELAY_MS);
-    }
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [state.success]);
+  useCountdown({
+    duration: CLOSE_DELAY_MS / 1000,
+    enabled: !!state.success,
+    onTick: (remaining: number) => {
+      setState(prev => ({
+        ...prev,
+        closeDialogCountdown: remaining,
+      }));
+    },
+    onComplete: handleClose,
+  });
 
   return (
     <DialogComponent
@@ -152,7 +177,9 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       state={state}
       handleClose={handleClose}
       validateUrls={validateUrls}
+      onTitleChange={onTitleChange}
       onUrlsChange={onUrlsChange}
+      onDescriptionChange={onDescriptionChange}
       handleSubmit={handleSubmit}
       isBusy={isBusy}
       isSubmitting={isSubmitting}

@@ -157,8 +157,7 @@ const DialogComponent = (props: DialogComponentProps) => {
     errorMessage: state.error as string,
   };
   const uploadSuccessResultProps = {
-    message: `Successfully uploaded ${state.success?.insert_videos.returning.length} video(s). Dialog will close in{' '}
-                ${state.closeDialogCountdown} seconds.`,
+    message: `Successfully uploaded ${state.success?.insert_videos?.returning?.length} video(s). Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
 
   return (
