@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DialogComponent } from './index';
+import { DialogComponent } from './dialog';
 import { action } from '@storybook/addon-actions';
 
 const description = `
@@ -20,7 +20,7 @@ with all state management and business logic handled by its parent.
 - \`showSubmitButton\`: Whether to show the submit button`;
 
 const meta: Meta<typeof DialogComponent> = {
-  title: 'Components/DialogComponent',
+  title: 'Watch/Dialogs/Upload',
   component: DialogComponent,
   parameters: {
     layout: 'centered',
