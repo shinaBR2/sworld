@@ -6,7 +6,9 @@ interface ValidationResult {
 }
 
 interface DialogState {
+  title: string;
   urls: string;
+  description?: string;
   validating: boolean;
   results: ValidationResult[];
   error: string | null;

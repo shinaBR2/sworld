@@ -56,7 +56,9 @@ interface DialogComponentProps {
   isBusy: boolean;
   isSubmitting: boolean;
   validateUrls: (e: React.FormEvent) => Promise<void>;
+  onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUrlsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   showSubmitButton: boolean;
 }
@@ -67,8 +69,19 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const { state, open, handleClose, isBusy, isSubmitting, validateUrls, onUrlsChange, handleSubmit, showSubmitButton } =
-    props;
+  const {
+    state,
+    open,
+    handleClose,
+    isBusy,
+    isSubmitting,
+    validateUrls,
+    onTitleChange,
+    onUrlsChange,
+    onDescriptionChange,
+    handleSubmit,
+    showSubmitButton,
+  } = props;
 
   const onClose = () => {
     if (isBusy) {
@@ -93,10 +106,20 @@ const DialogComponent = (props: DialogComponentProps) => {
     disableEscapeKeyDown: true,
     'data-testid': 'upload-video-dialog',
   };
-  const urlsTextFieldProps = {
+  const titleTextFieldProps = {
     fullWidth: true,
-    multiline: true,
-    rows: 4,
+    placeholder: texts.form.titleInput.placeholder,
+    label: texts.form.titleInput.label,
+    helperText: texts.form.titleInput.helperText,
+    variant: 'outlined' as TextFieldVariants,
+    sx: { mb: 2 },
+    'aria-label': texts.form.titleInput.label,
+    inputProps: { 'data-testid': 'title-input-text' },
+    required: true,
+    disabled: isSubmitting,
+  };
+  const urlTextFieldProps = {
+    fullWidth: true,
     placeholder: texts.form.urlInput.placeholder,
     label: texts.form.urlInput.label,
     helperText: texts.form.urlInput.helperText,
@@ -104,6 +127,20 @@ const DialogComponent = (props: DialogComponentProps) => {
     sx: { mb: 2 },
     'aria-label': texts.form.urlInput.label,
     inputProps: { 'data-testid': 'url-input-textarea' },
+    required: true,
+    disabled: isSubmitting,
+  };
+  const descriptionTextFieldProps = {
+    fullWidth: true,
+    multiline: true,
+    rows: 4,
+    placeholder: texts.form.descriptionInput.placeholder,
+    label: texts.form.descriptionInput.label,
+    helperText: texts.form.descriptionInput.helperText,
+    variant: 'outlined' as TextFieldVariants,
+    sx: { mb: 2 },
+    'aria-label': texts.form.descriptionInput.label,
+    inputProps: { 'data-testid': 'description-input-textarea' },
     disabled: isSubmitting,
   };
   const submitButtonProps = {
@@ -135,7 +172,9 @@ const DialogComponent = (props: DialogComponentProps) => {
 
       <DialogContent>
         <Box component="form" onSubmit={validateUrls} noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
-          <TextField value={state.urls} onChange={onUrlsChange} {...urlsTextFieldProps} />
+          <TextField value={state.title} onChange={onTitleChange} {...titleTextFieldProps} />
+          <TextField value={state.urls} onChange={onUrlsChange} {...urlTextFieldProps} />
+          <TextField value={state.description} onChange={onDescriptionChange} {...descriptionTextFieldProps} />
 
           {state.error && <UploadErrorResult {...uploadErrorResultProps} />}
           {state.success && <UploadSuccessResult {...uploadSuccessResultProps} />}
