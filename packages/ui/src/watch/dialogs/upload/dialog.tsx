@@ -1,11 +1,53 @@
 import React from 'react';
-import { Alert, Box, Button, DialogContent, DialogTitle, Fade, TextField } from '@mui/material';
+import { Alert, Box, Button, DialogContent, DialogTitle, Fade, TextField, TextFieldVariants } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';
 import { SubmitButton } from './submit-button';
 import { ValidationResults } from './validation-results';
 import { DialogState } from './types';
+
+interface UploadErrorResultProps {
+  isBusy: boolean;
+  handleSubmit: (e: React.FormEvent) => Promise<void>;
+  errorMessage: string;
+}
+
+const UploadErrorResult = (props: UploadErrorResultProps) => {
+  const { isBusy, handleSubmit, errorMessage } = props;
+
+  return (
+    <Fade in>
+      <Alert
+        severity="error"
+        sx={{ mb: 2 }}
+        action={
+          <Button color="inherit" size="small" onClick={handleSubmit} disabled={isBusy}>
+            Retry
+          </Button>
+        }
+      >
+        {errorMessage}
+      </Alert>
+    </Fade>
+  );
+};
+
+interface UploadSuccessResultProps {
+  message: string;
+}
+
+const UploadSuccessResult = (props: UploadSuccessResultProps) => {
+  const { message } = props;
+
+  return (
+    <Fade in>
+      <Alert severity="success" sx={{ mb: 2 }}>
+        {message}
+      </Alert>
+    </Fade>
+  );
+};
 
 interface DialogComponentProps {
   state: DialogState;
@@ -28,72 +70,77 @@ const DialogComponent = (props: DialogComponentProps) => {
   const { state, open, handleClose, isBusy, isSubmitting, validateUrls, onUrlsChange, handleSubmit, showSubmitButton } =
     props;
 
+  const onClose = () => {
+    if (isBusy) {
+      return;
+    }
+
+    handleClose();
+  };
+  const onSubmit = (e: React.FormEvent) => {
+    if (showSubmitButton) {
+      handleSubmit(e);
+      return;
+    }
+
+    validateUrls(e);
+  };
+
+  const dialogProps = {
+    open,
+    onClose,
+    'aria-labelledby': 'video-upload-dialog-title',
+    disableEscapeKeyDown: true,
+    'data-testid': 'upload-video-dialog',
+  };
+  const urlsTextFieldProps = {
+    fullWidth: true,
+    multiline: true,
+    rows: 4,
+    placeholder: texts.form.urlInput.placeholder,
+    label: texts.form.urlInput.label,
+    helperText: texts.form.urlInput.helperText,
+    variant: 'outlined' as TextFieldVariants,
+    sx: { mb: 2 },
+    'aria-label': texts.form.urlInput.label,
+    inputProps: { 'data-testid': 'url-input-textarea' },
+    disabled: isSubmitting,
+  };
+  const submitButtonProps = {
+    isBusy: isBusy,
+    isSubmitting: isSubmitting,
+    validating: state.validating,
+    showSubmitButton: showSubmitButton,
+    urls: state.urls,
+    onClick: onSubmit,
+  };
+  const uploadErrorResultProps = {
+    handleSubmit: handleSubmit,
+    isBusy: isBusy,
+    errorMessage: state.error as string,
+  };
+  const uploadSuccessResultProps = {
+    message: `Successfully uploaded ${state.success?.insert_videos.returning.length} video(s). Dialog will close in{' '}
+                ${state.closeDialogCountdown} seconds.`,
+  };
+
   return (
-    <StyledDialog
-      open={open}
-      onClose={isBusy ? undefined : handleClose}
-      aria-labelledby="video-upload-dialog-title"
-      disableEscapeKeyDown
-      data-testid="upload-video-dialog"
-    >
+    <StyledDialog {...dialogProps}>
       <DialogTitle id="video-upload-dialog-title">
         {texts.dialog.title}
-        <StyledCloseButton onClick={handleClose} aria-label={texts.dialog.closeButton} disabled={isBusy}>
+        <StyledCloseButton onClick={onClose} aria-label={texts.dialog.closeButton} disabled={isBusy}>
           <CloseIcon />
         </StyledCloseButton>
       </DialogTitle>
 
       <DialogContent>
         <Box component="form" onSubmit={validateUrls} noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            value={state.urls}
-            onChange={onUrlsChange}
-            placeholder={texts.form.urlInput.placeholder}
-            label={texts.form.urlInput.label}
-            helperText={texts.form.urlInput.helperText}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            aria-label={texts.form.urlInput.label}
-            inputProps={{ 'data-testid': 'url-input-textarea' }}
-            disabled={isSubmitting}
-          />
+          <TextField value={state.urls} onChange={onUrlsChange} {...urlsTextFieldProps} />
 
-          {state.error && (
-            <Fade in>
-              <Alert
-                severity="error"
-                sx={{ mb: 2 }}
-                action={
-                  <Button color="inherit" size="small" onClick={handleSubmit} disabled={isBusy}>
-                    Retry
-                  </Button>
-                }
-              >
-                {state.error}
-              </Alert>
-            </Fade>
-          )}
+          {state.error && <UploadErrorResult {...uploadErrorResultProps} />}
+          {state.success && <UploadSuccessResult {...uploadSuccessResultProps} />}
 
-          {state.success && (
-            <Fade in>
-              <Alert severity="success" sx={{ mb: 2 }}>
-                Successfully uploaded {state.success.insert_videos.returning.length} video(s). Dialog will close in{' '}
-                {state.closeDialogCountdown} seconds.
-              </Alert>
-            </Fade>
-          )}
-
-          <SubmitButton
-            isBusy={isBusy}
-            isSubmitting={isSubmitting}
-            validating={state.validating}
-            showSubmitButton={showSubmitButton}
-            urls={state.urls}
-            onClick={showSubmitButton ? handleSubmit : validateUrls}
-          />
+          <SubmitButton {...submitButtonProps} />
 
           {state.results.length > 0 && !isSubmitting && <ValidationResults results={state.results} />}
         </Box>
