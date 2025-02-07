@@ -78,4 +78,11 @@ describe('slugify', () => {
     expect(slugify('hello123!@#world')).toBe('hello123world');
     expect(slugify('test-123-!@#')).toBe('test-123');
   });
+
+  it('should handle Vietnamese characters', () => {
+    expect(slugify('một khúc hồng trần quyết')).toBe('mot-khuc-hong-tran-quyet');
+    expect(slugify('Đà Nẵng')).toBe('da-nang');
+    expect(slugify('Hà Nội')).toBe('ha-noi');
+    expect(slugify('Hồ Chí Minh')).toBe('ho-chi-minh');
+  });
 });
