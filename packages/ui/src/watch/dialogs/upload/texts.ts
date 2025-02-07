@@ -7,7 +7,7 @@ export const texts = {
     titleInput: {
       placeholder: 'Video title',
       label: 'Video title',
-      helperText: 'e.g., short for the best visual',
+      helperText: 'short for the best visual',
     },
     urlInput: {
       placeholder: 'Can be either direct video url or platform like youtube url',
