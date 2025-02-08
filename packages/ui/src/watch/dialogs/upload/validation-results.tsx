@@ -2,11 +2,7 @@ import React from 'react';
 import { Alert, Box, Fade } from '@mui/material';
 import { texts } from './texts';
 import { StyledResultsStack } from './styled';
-
-interface ValidationResult {
-  url: string;
-  isValid: boolean;
-}
+import { ValidationResult } from './types';
 
 const ValidationResults: React.FC<{ results: ValidationResult[] }> = ({ results }) => {
   if (results.length === 0) {
