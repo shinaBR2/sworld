@@ -32,7 +32,7 @@ const VideoPlayerSkeleton = () => (
     }}
     aria-label="Loading video player"
   >
-    <Skeleton variant="rectangular" width="100%" height="100%" />
+    <Skeleton variant="rounded" width="100%" height="100%" />
   </Box>
 );
 
@@ -41,13 +41,7 @@ const SKELETON_ITEMS_COUNT = 6;
 const RelatedListSkeleton = () => (
   <Box sx={{ p: 2 }}>
     {/* Title skeleton */}
-    <Skeleton
-      aria-label="Loading related videos"
-      variant="text"
-      width={120}
-      height={32}
-      sx={{ mb: 2 }}
-    />
+    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mb: 2 }} />
 
     {/* Related videos list */}
     {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
@@ -59,27 +53,11 @@ const RelatedListSkeleton = () => (
 const DesktopViewSkeleton = () => {
   return (
     <Grid container spacing={2} sx={styles.container}>
-      <Grid
-        container
-        item
-        alignItems="center"
-        xs={12}
-        md={8}
-        lg={9}
-        sx={styles.videoContainer}
-      >
+      <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
         <VideoPlayerSkeleton />
       </Grid>
 
-      <Grid
-        container
-        direction="column"
-        item
-        xs={12}
-        md={4}
-        lg={3}
-        sx={styles.scrollableList}
-      >
+      <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
         <RelatedListSkeleton />
       </Grid>
     </Grid>
@@ -96,33 +74,13 @@ const DesktopView = (props: VideoDetailContainerProps) => {
 
   return (
     <Grid container spacing={2} sx={styles.container}>
-      <Grid
-        container
-        item
-        alignItems="center"
-        xs={12}
-        md={8}
-        lg={9}
-        sx={styles.videoContainer}
-      >
+      <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
         {/* @ts-ignore */}
         <VideoPlayer video={videoDetail} />
       </Grid>
 
-      <Grid
-        container
-        direction="column"
-        item
-        xs={12}
-        md={4}
-        lg={3}
-        sx={styles.scrollableList}
-      >
-        <RelatedList
-          videos={videos}
-          title="other videos"
-          LinkComponent={LinkComponent}
-        />
+      <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
+        <RelatedList videos={videos} title="other videos" LinkComponent={LinkComponent} />
       </Grid>
     </Grid>
   );
