@@ -18,6 +18,7 @@ coverage:
 
 ignore:
   - 'apps/docs/**/*' # Ignore documentation app
+  - '**/types.ts' # Ignore TypeScript interfaces
   - '**/test/**/*' # Ignore test files
   - '**/*.test.*' # Ignore test files
   - '**/*.spec.*' # Ignore spec files
