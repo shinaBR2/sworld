@@ -1,0 +1,33 @@
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  status:
+    project:
+      default:
+        target: 55%
+      ui:
+        paths: ['packages/ui/**']
+        target: 20%
+      core:
+        paths: ['packages/core/**']
+        target: 55%
+    patch:
+      default:
+        target: 50%
+
+ignore:
+  - 'apps/docs/**/*' # Ignore documentation app
+  - '**/types.ts' # Ignore TypeScript interfaces
+  - '**/test/**/*' # Ignore test files
+  - '**/*.test.*' # Ignore test files
+  - '**/*.spec.*' # Ignore spec files
+
+parsers:
+  javascript:
+    enable_partials: yes
+
+comment:
+  layout: 'reach,diff,flags,files,footer'
+  behavior: default
+  require_changes: false
