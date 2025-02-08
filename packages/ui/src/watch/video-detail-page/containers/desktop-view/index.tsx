@@ -1,11 +1,12 @@
 import Grid from '@mui/material/Grid';
-import { VideoDetailContainerProps } from '../../../videos/interface';
+import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import { VideoPlayer } from '../../../videos/video-player';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
+import { Typography } from '@mui/material';
 
 const styles = {
   container: {
@@ -20,6 +21,14 @@ const styles = {
   scrollableList: {
     height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
     overflow: 'auto',
+  },
+  title: {
+    my: 2,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 } as const;
 
@@ -54,7 +63,18 @@ const DesktopViewSkeleton = () => {
   return (
     <Grid container spacing={2} sx={styles.container}>
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
-        <VideoPlayerSkeleton />
+        <Box sx={{ width: '100%' }}>
+          <VideoPlayerSkeleton />
+          <Skeleton
+            variant="text"
+            width="50%"
+            sx={theme => ({
+              ...theme.typography.h4,
+              my: 2, // px doesn't work
+            })}
+            animation="wave"
+          />
+        </Box>
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
@@ -75,8 +95,12 @@ const DesktopView = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={styles.container}>
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
-        {/* @ts-ignore */}
-        <VideoPlayer video={videoDetail} />
+        <Box sx={{ width: '100%' }}>
+          {videoDetail && <VideoPlayer video={videoDetail as Video} />}
+          <Typography component="h1" variant="h4" sx={styles.title}>
+            {videoDetail.title}
+          </Typography>
+        </Box>
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
