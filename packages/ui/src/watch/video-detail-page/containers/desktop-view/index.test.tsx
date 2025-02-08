@@ -23,13 +23,9 @@ const mockVideo = {
   },
 };
 
-const mockLinkComponent = ({
-  children,
-}: {
-  to: string;
-  params: Record<string, string>;
-  children: React.ReactNode;
-}) => <div data-testid="link-component">{children}</div>;
+const mockLinkComponent = ({ children }: { to: string; params: Record<string, string>; children: React.ReactNode }) => (
+  <div data-testid="link-component">{children}</div>
+);
 
 describe('DesktopView', () => {
   afterEach(() => {
@@ -63,6 +59,7 @@ describe('DesktopView', () => {
         queryRs={{
           videos: [mockVideo],
           isLoading: false,
+          videoDetail: mockVideo,
         }}
         LinkComponent={mockLinkComponent}
       />
@@ -79,6 +76,7 @@ describe('DesktopView', () => {
         queryRs={{
           videos: [mockVideo],
           isLoading: false,
+          videoDetail: mockVideo,
         }}
         LinkComponent={mockLinkComponent}
       />
@@ -89,9 +87,7 @@ describe('DesktopView', () => {
     expect(gridContainers.length).toBeGreaterThan(0);
 
     // Check spacing
-    const mainGrid = container.querySelector(
-      '.MuiGrid-container'
-    ) as HTMLElement;
+    const mainGrid = container.querySelector('.MuiGrid-container') as HTMLElement;
     expect(mainGrid).toBeInTheDocument();
   });
 });

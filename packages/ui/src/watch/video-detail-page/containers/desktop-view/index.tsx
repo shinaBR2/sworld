@@ -86,9 +86,10 @@ const DesktopViewSkeleton = () => {
 
 const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
-  const { videoDetail, videos, isLoading } = queryRs;
+  const { videos, isLoading } = queryRs;
+  const videoDetail = queryRs.videoDetail as Video;
 
-  if (isLoading) {
+  if (isLoading || !videoDetail.id) {
     return <DesktopViewSkeleton />;
   }
 
@@ -97,9 +98,9 @@ const DesktopView = (props: VideoDetailContainerProps) => {
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
         {videoDetail && (
           <Box sx={{ width: '100%' }}>
-            <VideoPlayer video={videoDetail as Video} />
+            <VideoPlayer video={videoDetail} />
             <Typography component="h1" variant="h4" sx={styles.title}>
-              {(videoDetail as Video).title}
+              {videoDetail.title}
             </Typography>
           </Box>
         )}
