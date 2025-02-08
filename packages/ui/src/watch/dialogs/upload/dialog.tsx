@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  DialogContent,
-  DialogTitle,
-  Fade,
-  TextField,
-  TextFieldVariants,
-} from '@mui/material';
+import { Alert, Box, Button, CircularProgress, DialogContent, DialogTitle, Fade, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';

@@ -117,12 +117,12 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   useCountdown({
     duration: CLOSE_DELAY_MS / 1000,
     enabled: state.error === '' && !!state.closeDialogCountdown,
-    onTick: React.useCallback((remaining: number) => {
+    onTick: (remaining: number) => {
       setState(prev => ({
         ...prev,
         closeDialogCountdown: remaining,
       }));
-    }, []),
+    },
     onComplete: handleClose,
   });
 
