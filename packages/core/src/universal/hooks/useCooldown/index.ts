@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface CountdownConfig {
   duration: number;
@@ -11,19 +11,29 @@ interface CountdownConfig {
 const useCountdown = ({ duration, onComplete, onTick, enabled = true, interval = 1000 }: CountdownConfig) => {
   const [remaining, setRemaining] = useState(duration);
 
+  const handleTick = useCallback(
+    (prev: number) => {
+      const next = prev - 1;
+      if (next <= 0) {
+        onComplete?.();
+        return 0;
+      }
+      onTick?.(next);
+      return next;
+    },
+    [onComplete, onTick]
+  );
+
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
 
     if (enabled && remaining > 0) {
       timer = setInterval(() => {
         setRemaining(prev => {
-          const next = prev - 1;
+          const next = handleTick(prev);
           if (next <= 0) {
             clearInterval(timer);
-            onComplete?.();
-            return 0;
           }
-          onTick?.(next);
           return next;
         });
       }, interval);
