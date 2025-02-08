@@ -3,16 +3,13 @@
  */
 
 import hooks from './hooks';
-import {
-  SAudioPlayerInputs,
-  SAudioPlayerAudioItem,
-  SAudioPlayerLoopMode,
-} from './hooks';
-import { compareString } from './common';
+import { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode } from './hooks';
+import { compareString, slugify } from './common';
 import { ErrorBoundary } from './error-boundary';
 
 const commonHelpers = {
   compareString,
+  slugify,
 };
 const requestHelpers = {
   // callable,
