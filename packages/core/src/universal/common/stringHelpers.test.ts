@@ -85,4 +85,15 @@ describe('slugify', () => {
     expect(slugify('Hà Nội')).toBe('ha-noi');
     expect(slugify('Hồ Chí Minh')).toBe('ho-chi-minh');
   });
+
+  it('should handle very long strings', () => {
+    const longString = 'a'.repeat(1000);
+    expect(slugify(longString)).toBe('a'.repeat(1000));
+  });
+
+  it('should handle strings with maximum URL length', () => {
+    const longString = 'a'.repeat(2048);
+    const result = slugify(longString);
+    expect(result.length).toBeLessThanOrEqual(2048);
+  });
 });
