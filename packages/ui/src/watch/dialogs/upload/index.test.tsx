@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/components/upload-dialog/index.test.tsx
+// packages/ui/src/watch/dialogs/upload/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { VideoUploadDialog, CLOSE_DELAY_MS } from './index';
