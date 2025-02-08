@@ -72,13 +72,6 @@ describe('VideoListItem', () => {
   it('handles active state with aria-current attribute', () => {
     const { rerender, container } = render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
 
-    // Check default (inactive) state
-    // const defaultLink = screen.getByTestId('link-component');
-    // const link = screen.getByRole('link', { current: true });
-    // console.log(link);
-    // expect(link).not.toHaveAttribute('aria-current');
-    // expect(defaultLink).not.toHaveAttribute('aria-current');
-
     const initialCurrentItems = document.querySelectorAll('[aria-current]');
     expect(initialCurrentItems).toHaveLength(0);
 

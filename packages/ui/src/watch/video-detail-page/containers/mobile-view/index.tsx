@@ -82,16 +82,15 @@ const MobileView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
   const videoDetail = queryRs.videoDetail as Video;
-  const debug = false;
 
-  if (isLoading || debug) {
+  if (isLoading) {
     return <LoadingSkeleton />;
   }
 
   return (
     <Grid container direction="row" sx={styles.container}>
       <Grid sx={styles.videoContainer}>
-        <VideoPlayer video={videoDetail as Video} />
+        <VideoPlayer video={videoDetail} />
       </Grid>
       <Grid item xs={12}>
         <Typography component="h1" variant="h4" sx={styles.title}>
@@ -100,7 +99,7 @@ const MobileView = (props: VideoDetailContainerProps) => {
       </Grid>
 
       <Grid item xs={12} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" LinkComponent={LinkComponent} />
+        <RelatedList videos={videos} title="other videos" activeId={videoDetail?.id} LinkComponent={LinkComponent} />
       </Grid>
     </Grid>
   );

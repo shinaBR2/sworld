@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MobileView } from './index';
 import { Video } from '../../../videos/interface';
+import { RelatedList } from '../../related-list';
 
 // Mock components
 vi.mock('../../../videos/video-player', () => ({
@@ -9,13 +10,13 @@ vi.mock('../../../videos/video-player', () => ({
 }));
 
 vi.mock('../../related-list', () => ({
-  RelatedList: ({ videos, title }: { videos: Video[]; title: string; LinkComponent: unknown }) => (
+  RelatedList: vi.fn(({ videos, title }: { videos: Video[]; title: string; LinkComponent: unknown }) => (
     <div data-testid="related-list" data-title={title}>
       {videos.map(v => (
         <div key={v.id}>{v.id}</div>
       ))}
     </div>
-  ),
+  )),
 }));
 
 vi.mock('../../../videos/list-item-skeleton', () => ({
@@ -88,5 +89,20 @@ describe('MobileView', () => {
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
     expect(screen.queryByTestId('video-list-item-skeleton')).not.toBeInTheDocument();
+  });
+
+  it('passes correct props to RelatedList', () => {
+    render(<MobileView {...mockProps} />);
+
+    // Verify RelatedList is called with correct props
+    const relatedListMock = vi.mocked(RelatedList);
+    expect(relatedListMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        videos: mockVideos,
+        title: 'other videos',
+        activeId: mockVideoDetail.id,
+      }),
+      {}
+    );
   });
 });

@@ -107,7 +107,7 @@ const DesktopView = (props: VideoDetailContainerProps) => {
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" activeId={videoDetail.id} LinkComponent={LinkComponent} />
+        <RelatedList videos={videos} title="other videos" activeId={videoDetail?.id} LinkComponent={LinkComponent} />
       </Grid>
     </Grid>
   );
