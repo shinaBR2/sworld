@@ -2,14 +2,15 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DesktopView } from './index';
+import { RelatedList } from '../../related-list';
 
 // Mocks must be defined before any imports
 vi.mock('../../../videos/video-player', () => ({
-  VideoPlayer: () => <div data-testid="video-player">Video Player</div>,
+  VideoPlayer: vi.fn(() => <div data-testid="video-player">Video Player</div>),
 }));
 
 vi.mock('../../related-list', () => ({
-  RelatedList: () => <div data-testid="related-list">Related List</div>,
+  RelatedList: vi.fn(() => <div data-testid="related-list">Related List</div>),
 }));
 
 // Mock data
@@ -33,27 +34,28 @@ describe('DesktopView', () => {
     vi.clearAllMocks();
   });
 
-  it('should render skeleton when loading', () => {
+  it('renders loading skeleton when isLoading is true', () => {
     const { container } = render(
       <DesktopView
         queryRs={{
           videos: [],
           isLoading: true,
+          videoDetail: null,
         }}
         LinkComponent={mockLinkComponent}
       />
     );
 
-    // Check if skeletons are rendered
+    // Check for skeleton elements
     const skeletons = container.querySelectorAll('.MuiSkeleton-root');
     expect(skeletons.length).toBeGreaterThan(0);
 
-    // Video player should not be rendered
+    // Ensure no actual content is rendered
     expect(screen.queryByTestId('video-player')).not.toBeInTheDocument();
     expect(screen.queryByTestId('related-list')).not.toBeInTheDocument();
   });
 
-  it('should render content when not loading', () => {
+  it('renders video content when not loading', () => {
     render(
       <DesktopView
         queryRs={{
@@ -65,16 +67,22 @@ describe('DesktopView', () => {
       />
     );
 
-    // Check if main components are rendered
+    // Check for main components
     expect(screen.getByTestId('video-player')).toBeInTheDocument();
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
+
+    // Check video title
+    const titleElement = screen.getByText('Test Video');
+    expect(titleElement).toBeInTheDocument();
   });
 
-  it('should maintain correct grid layout', () => {
-    const { container } = render(
+  it('passes correct props to RelatedList', () => {
+    const mockVideos = [mockVideo];
+
+    render(
       <DesktopView
         queryRs={{
-          videos: [mockVideo],
+          videos: mockVideos,
           isLoading: false,
           videoDetail: mockVideo,
         }}
@@ -82,12 +90,15 @@ describe('DesktopView', () => {
       />
     );
 
-    // Check grid containers
-    const gridContainers = container.querySelectorAll('.MuiGrid-container');
-    expect(gridContainers.length).toBeGreaterThan(0);
-
-    // Check spacing
-    const mainGrid = container.querySelector('.MuiGrid-container') as HTMLElement;
-    expect(mainGrid).toBeInTheDocument();
+    // Verify RelatedList is called with correct props
+    const relatedListMock = vi.mocked(RelatedList);
+    expect(relatedListMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        videos: mockVideos,
+        title: 'other videos',
+        activeId: mockVideo.id,
+      }),
+      {}
+    );
   });
 });
