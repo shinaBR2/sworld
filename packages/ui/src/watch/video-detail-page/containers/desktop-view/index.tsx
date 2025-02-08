@@ -1,11 +1,12 @@
 import Grid from '@mui/material/Grid';
-import { VideoDetailContainerProps } from '../../../videos/interface';
+import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import { VideoPlayer } from '../../../videos/video-player';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
+import { Typography } from '@mui/material';
 
 const styles = {
   container: {
@@ -21,6 +22,14 @@ const styles = {
     height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
     overflow: 'auto',
   },
+  title: {
+    my: 2,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
 } as const;
 
 const VideoPlayerSkeleton = () => (
@@ -32,7 +41,7 @@ const VideoPlayerSkeleton = () => (
     }}
     aria-label="Loading video player"
   >
-    <Skeleton variant="rectangular" width="100%" height="100%" />
+    <Skeleton variant="rounded" width="100%" height="100%" />
   </Box>
 );
 
@@ -41,13 +50,7 @@ const SKELETON_ITEMS_COUNT = 6;
 const RelatedListSkeleton = () => (
   <Box sx={{ p: 2 }}>
     {/* Title skeleton */}
-    <Skeleton
-      aria-label="Loading related videos"
-      variant="text"
-      width={120}
-      height={32}
-      sx={{ mb: 2 }}
-    />
+    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mb: 2 }} />
 
     {/* Related videos list */}
     {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
@@ -59,27 +62,22 @@ const RelatedListSkeleton = () => (
 const DesktopViewSkeleton = () => {
   return (
     <Grid container spacing={2} sx={styles.container}>
-      <Grid
-        container
-        item
-        alignItems="center"
-        xs={12}
-        md={8}
-        lg={9}
-        sx={styles.videoContainer}
-      >
-        <VideoPlayerSkeleton />
+      <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
+        <Box sx={{ width: '100%' }}>
+          <VideoPlayerSkeleton />
+          <Skeleton
+            variant="text"
+            width="50%"
+            sx={theme => ({
+              ...theme.typography.h4,
+              my: 2, // px doesn't work
+            })}
+            animation="wave"
+          />
+        </Box>
       </Grid>
 
-      <Grid
-        container
-        direction="column"
-        item
-        xs={12}
-        md={4}
-        lg={3}
-        sx={styles.scrollableList}
-      >
+      <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
         <RelatedListSkeleton />
       </Grid>
     </Grid>
@@ -88,7 +86,8 @@ const DesktopViewSkeleton = () => {
 
 const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
-  const { videoDetail, videos, isLoading } = queryRs;
+  const { videos, isLoading } = queryRs;
+  const videoDetail = queryRs.videoDetail as Video;
 
   if (isLoading) {
     return <DesktopViewSkeleton />;
@@ -96,33 +95,19 @@ const DesktopView = (props: VideoDetailContainerProps) => {
 
   return (
     <Grid container spacing={2} sx={styles.container}>
-      <Grid
-        container
-        item
-        alignItems="center"
-        xs={12}
-        md={8}
-        lg={9}
-        sx={styles.videoContainer}
-      >
-        {/* @ts-ignore */}
-        <VideoPlayer video={videoDetail} />
+      <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
+        {videoDetail && (
+          <Box sx={{ width: '100%' }}>
+            <VideoPlayer video={videoDetail} />
+            <Typography component="h1" variant="h4" sx={styles.title}>
+              {videoDetail.title}
+            </Typography>
+          </Box>
+        )}
       </Grid>
 
-      <Grid
-        container
-        direction="column"
-        item
-        xs={12}
-        md={4}
-        lg={3}
-        sx={styles.scrollableList}
-      >
-        <RelatedList
-          videos={videos}
-          title="other videos"
-          LinkComponent={LinkComponent}
-        />
+      <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
+        <RelatedList videos={videos} title="other videos" activeId={videoDetail?.id} LinkComponent={LinkComponent} />
       </Grid>
     </Grid>
   );
