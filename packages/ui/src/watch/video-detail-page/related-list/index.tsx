@@ -7,13 +7,10 @@ import { VideoListItem } from '../../videos/list-item';
 interface RelatedListProps extends RequiredLinkComponent {
   videos: Video[];
   title?: string;
+  activeId?: string;
 }
 
-const RelatedList = ({
-  videos,
-  title = 'Related videos',
-  LinkComponent,
-}: RelatedListProps) => {
+const RelatedList = ({ videos, title = 'Related videos', activeId, LinkComponent }: RelatedListProps) => {
   return (
     <Box>
       <Typography
@@ -33,6 +30,7 @@ const RelatedList = ({
             <VideoListItem
               key={video.id}
               video={video}
+              isActive={activeId === video.id}
               LinkComponent={LinkComponent}
             />
           </Box>

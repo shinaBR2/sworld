@@ -95,16 +95,18 @@ const DesktopView = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={styles.container}>
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
-        <Box sx={{ width: '100%' }}>
-          {videoDetail && <VideoPlayer video={videoDetail as Video} />}
-          <Typography component="h1" variant="h4" sx={styles.title}>
-            {videoDetail.title}
-          </Typography>
-        </Box>
+        {videoDetail && (
+          <Box sx={{ width: '100%' }}>
+            <VideoPlayer video={videoDetail as Video} />
+            <Typography component="h1" variant="h4" sx={styles.title}>
+              {(videoDetail as Video).title}
+            </Typography>
+          </Box>
+        )}
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" LinkComponent={LinkComponent} />
+        <RelatedList videos={videos} title="other videos" activeId={videoDetail.id} LinkComponent={LinkComponent} />
       </Grid>
     </Grid>
   );

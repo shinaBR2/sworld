@@ -13,6 +13,7 @@ interface ThumbnailProps {
 
 interface VideoListItemProps extends RequiredLinkComponent {
   video: Video;
+  isActive?: boolean;
 }
 
 const thumbnailImgStyle: CSSProperties = {
@@ -25,14 +26,7 @@ const Thumbnail = (props: ThumbnailProps) => {
   const { src, title } = props;
 
   if (!src) {
-    return (
-      <Box
-        component="img"
-        src={defaultThumbnailUrl}
-        alt={title}
-        sx={thumbnailImgStyle}
-      />
-    );
+    return <Box component="img" src={defaultThumbnailUrl} alt={title} sx={thumbnailImgStyle} />;
   }
 
   return (
@@ -49,21 +43,20 @@ const Thumbnail = (props: ThumbnailProps) => {
 };
 
 const VideoListItem = (props: VideoListItemProps) => {
-  const { video, LinkComponent } = props;
+  const { video, isActive = false, LinkComponent } = props;
   const { id, title, thumbnailUrl, duration, user } = video;
 
   return (
-    <LinkComponent
-      to="/$videoId"
-      params={{ videoId: id }}
-      style={{ textDecoration: 'none' }}
-    >
+    <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           gap: 2,
           py: 1,
+          bgcolor: isActive ? theme => theme.palette.action.selected : 'transparent',
+          borderLeft: theme => (isActive ? `4px solid ${theme.palette.primary.main}` : '4px solid transparent'),
+          px: 1, // Add some padding to accommodate the border
           '&:hover': {
             bgcolor: 'action.hover',
             '& .play-icon': {
