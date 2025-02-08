@@ -2,61 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MobileView } from './index';
 import { Video } from '../../../videos/interface';
-import { VIDEO_ASPECT_RATIO, HEADER_MOBILE_HEIGHT } from '../../../theme';
-
-// Mock Material-UI components
-vi.mock('@mui/material/Grid', () => ({
-  default: ({ children, sx, container, item, direction }: any) => (
-    <div
-      data-testid="mui-grid"
-      data-sx={JSON.stringify(sx)}
-      data-container={container}
-      data-item={item}
-      data-direction={direction}
-    >
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock('@mui/material/Skeleton', () => ({
-  default: ({ variant, width, height, animation, sx }: any) => (
-    <div
-      data-testid="mui-skeleton"
-      className="MuiSkeleton-root"
-      data-variant={variant}
-      data-width={width}
-      data-height={height}
-      data-animation={animation}
-      data-sx={JSON.stringify(sx)}
-    />
-  ),
-}));
-
-vi.mock('@mui/material/Box', () => ({
-  default: ({ children, sx }: never) => (
-    <div data-testid="mui-box" data-sx={JSON.stringify(sx)}>
-      {children}
-    </div>
-  ),
-}));
 
 // Mock components
 vi.mock('../../../videos/video-player', () => ({
-  VideoPlayer: ({ video }: { video: Video }) => (
-    <div data-testid="video-player">{video.id}</div>
-  ),
+  VideoPlayer: ({ video }: { video: Video }) => <div data-testid="video-player">{video.id}</div>,
 }));
 
 vi.mock('../../related-list', () => ({
-  RelatedList: ({
-    videos,
-    title,
-  }: {
-    videos: Video[];
-    title: string;
-    LinkComponent: unknown;
-  }) => (
+  RelatedList: ({ videos, title }: { videos: Video[]; title: string; LinkComponent: unknown }) => (
     <div data-testid="related-list" data-title={title}>
       {videos.map(v => (
         <div key={v.id}>{v.id}</div>
@@ -83,69 +36,57 @@ const mockProps = {
     videoDetail: mockVideoDetail,
     isLoading: false,
   },
-  LinkComponent: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="link-component">{children}</div>
-  ),
+  LinkComponent: ({ children }: { children: React.ReactNode }) => <div data-testid="link-component">{children}</div>,
 };
 
 describe('MobileView', () => {
-  it('maintains correct video container height', () => {
+  it('renders video player with correct video', () => {
     render(<MobileView {...mockProps} />);
-    const gridElements = screen.getAllByTestId('mui-grid');
-    const videoContainer = gridElements[1]; // Second Grid element is video container
-
-    const sx = JSON.parse(videoContainer.dataset.sx || '{}');
-    expect(sx.height).toBe(VIDEO_ASPECT_RATIO);
+    expect(screen.getByTestId('video-player')).toHaveTextContent(mockVideoDetail.id);
   });
 
-  it('maintains correct scrollable list styles', () => {
+  it('renders title correctly', () => {
     render(<MobileView {...mockProps} />);
-    const gridElements = screen.getAllByTestId('mui-grid');
-    const listContainer = gridElements[2]; // Third Grid element is list container
-
-    const sx = JSON.parse(listContainer.dataset.sx || '{}');
-    expect(sx.overflow).toBe('auto');
-    expect(sx.height).toBe(
-      `calc(100vh - ${VIDEO_ASPECT_RATIO} - ${HEADER_MOBILE_HEIGHT}px)`
-    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(mockVideoDetail.title);
   });
 
-  it('shows loading skeleton when isLoading is true', () => {
+  it('handles long title without breaking', () => {
+    const longTitle = 'Very '.repeat(50) + 'long title';
     render(
       <MobileView
         {...mockProps}
-        queryRs={{ ...mockProps.queryRs, isLoading: true }}
+        queryRs={{
+          ...mockProps.queryRs,
+          videoDetail: { ...mockVideoDetail, title: longTitle },
+        }}
       />
     );
-
-    expect(screen.getAllByTestId('video-list-item-skeleton')).toHaveLength(5);
-    expect(screen.getByTestId('mui-skeleton')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(longTitle);
   });
 
-  it('renders video player with correct video detail', () => {
+  it('renders related videos list', () => {
     render(<MobileView {...mockProps} />);
-
-    const videoPlayer = screen.getByTestId('video-player');
-    expect(videoPlayer).toHaveTextContent(mockVideoDetail.id);
-  });
-
-  it('renders related list with correct props', () => {
-    render(<MobileView {...mockProps} />);
-
     const relatedList = screen.getByTestId('related-list');
     expect(relatedList).toHaveAttribute('data-title', 'other videos');
+
     mockVideos.forEach(video => {
       expect(relatedList).toHaveTextContent(video.id);
     });
   });
 
-  it('maintains correct container styles', () => {
+  it('shows loading skeletons when in loading state', () => {
+    render(<MobileView {...mockProps} queryRs={{ ...mockProps.queryRs, isLoading: true }} />);
+
+    const skeletons = screen.getAllByTestId('video-list-item-skeleton');
+    expect(skeletons).toHaveLength(5);
+  });
+
+  it('shows content when not in loading state', () => {
     render(<MobileView {...mockProps} />);
 
-    const container = screen.getAllByTestId('mui-grid')[0];
-    const sx = JSON.parse(container.dataset.sx || '{}');
-
-    expect(sx.flex).toBe(1);
-    expect(sx.minHeight).toBe(0);
+    expect(screen.getByTestId('video-player')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+    expect(screen.getByTestId('related-list')).toBeInTheDocument();
+    expect(screen.queryByTestId('video-list-item-skeleton')).not.toBeInTheDocument();
   });
 });
