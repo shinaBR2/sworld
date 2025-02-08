@@ -20,8 +20,6 @@ export const texts = {
       helperText: '',
     },
     submitButton: {
-      default: 'Validate URLs',
-      validating: 'Validating...',
       submit: 'Upload Videos',
       submitting: 'Uploading...',
     },

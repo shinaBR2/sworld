@@ -37,36 +37,6 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     getAccessToken,
   });
 
-  /**
-   * Uncomment these lines for testing
-   */
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // const bulkConvert = async _data => {
-  //   setState(prev => ({
-  //     ...prev,
-  //     isSubmitting: true,
-  //   }));
-
-  //   return new Promise((resolve, _reject) => {
-  //     setTimeout(() => {
-  //       const response = {
-  //         insert_videos: {
-  //           returning: [
-  //             {
-  //               id: '123',
-  //               title: 'asad',
-  //               description: '1333',
-  //             },
-  //           ],
-  //         },
-  //       };
-  //       resolve(response);
-  //       // reject();
-  //     }, 2500);
-  //   });
-  // };
-
   const handleClose = () => {
     onOpenChange(false);
   };
