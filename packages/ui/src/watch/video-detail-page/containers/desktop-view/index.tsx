@@ -89,7 +89,7 @@ const DesktopView = (props: VideoDetailContainerProps) => {
   const { videos, isLoading } = queryRs;
   const videoDetail = queryRs.videoDetail as Video;
 
-  if (isLoading || !videoDetail.id) {
+  if (isLoading) {
     return <DesktopViewSkeleton />;
   }
 
