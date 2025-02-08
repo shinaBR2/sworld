@@ -16,6 +16,7 @@ import { StyledDialog, StyledCloseButton } from './styled';
 import { SubmitButton } from './submit-button';
 import { DialogState } from './types';
 import { CLOSE_DELAY_MS } from '.';
+import { getFormFieldStaticConfigs } from './fields-config';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
@@ -104,41 +105,17 @@ const DialogComponent = (props: DialogComponentProps) => {
     disableEscapeKeyDown: isSubmitting,
     'data-testid': 'upload-video-dialog',
   };
+  const fieldConfigs = getFormFieldStaticConfigs();
   const titleTextFieldProps = {
-    fullWidth: true,
-    placeholder: texts.form.titleInput.placeholder,
-    label: texts.form.titleInput.label,
-    helperText: texts.form.titleInput.helperText,
-    variant: 'outlined' as TextFieldVariants,
-    sx: { mb: 2 },
-    'aria-label': texts.form.titleInput.label,
-    inputProps: { 'data-testid': 'title-input-text' },
-    required: true,
+    ...fieldConfigs.title,
     disabled: isSubmitting,
   };
   const urlTextFieldProps = {
-    fullWidth: true,
-    placeholder: texts.form.urlInput.placeholder,
-    label: texts.form.urlInput.label,
-    helperText: texts.form.urlInput.helperText,
-    variant: 'outlined' as TextFieldVariants,
-    sx: { mb: 2 },
-    'aria-label': texts.form.urlInput.label,
-    inputProps: { 'data-testid': 'url-input-textarea' },
-    required: true,
+    ...fieldConfigs.url,
     disabled: isSubmitting,
   };
   const descriptionTextFieldProps = {
-    fullWidth: true,
-    multiline: true,
-    rows: 4,
-    placeholder: texts.form.descriptionInput.placeholder,
-    label: texts.form.descriptionInput.label,
-    helperText: texts.form.descriptionInput.helperText,
-    variant: 'outlined' as TextFieldVariants,
-    sx: { mb: 2 },
-    'aria-label': texts.form.descriptionInput.label,
-    inputProps: { 'data-testid': 'description-input-textarea' },
+    ...fieldConfigs.description,
     disabled: isSubmitting,
   };
   const submitButtonProps = {
