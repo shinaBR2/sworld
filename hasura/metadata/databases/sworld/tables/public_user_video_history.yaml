@@ -1,5 +1,5 @@
 table:
-  name: video_views
+  name: user_video_history
   schema: public
 object_relationships:
   - name: user
@@ -17,19 +17,19 @@ insert_permissions:
       set:
         user_id: x-hasura-User-Id
       columns:
-        - id
+        - last_watched_at
+        - progress_seconds
         - video_id
-        - viewed_at
     comment: ""
 select_permissions:
   - role: user
     permission:
       columns:
         - id
+        - last_watched_at
+        - progress_seconds
         - video_id
-        - viewed_at
       filter:
         user_id:
           _eq: X-Hasura-User-Id
-      allow_aggregations: true
     comment: ""

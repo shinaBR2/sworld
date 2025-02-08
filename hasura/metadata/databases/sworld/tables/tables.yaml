@@ -4,6 +4,7 @@
 - "!include public_tags.yaml"
 - "!include public_tasks.yaml"
 - "!include public_test.yaml"
+- "!include public_user_video_history.yaml"
 - "!include public_users.yaml"
 - "!include public_video_tags.yaml"
 - "!include public_video_views.yaml"
