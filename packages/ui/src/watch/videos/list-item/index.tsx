@@ -49,6 +49,7 @@ const VideoListItem = (props: VideoListItemProps) => {
   return (
     <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
       <Box
+        aria-current={isActive ? 'page' : undefined}
         sx={{
           display: 'flex',
           alignItems: 'center',
