@@ -33,3 +33,16 @@ select_permissions:
         user_id:
           _eq: X-Hasura-User-Id
     comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - last_watched_at
+        - progress_seconds
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
