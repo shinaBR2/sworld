@@ -48,21 +48,21 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   //     isSubmitting: true,
   //   }));
 
-  //   return new Promise((_resolve, reject) => {
+  //   return new Promise((resolve, _reject) => {
   //     setTimeout(() => {
-  //       // const response = {
-  //       //   insert_videos: {
-  //       //     returning: [
-  //       //       {
-  //       //         id: '123',
-  //       //         title: 'asad',
-  //       //         description: '1333',
-  //       //       },
-  //       //     ],
-  //       //   },
-  //       // };
-  //       // resolve(response);
-  //       reject();
+  //       const response = {
+  //         insert_videos: {
+  //           returning: [
+  //             {
+  //               id: '123',
+  //               title: 'asad',
+  //               description: '1333',
+  //             },
+  //           ],
+  //         },
+  //       };
+  //       resolve(response);
+  //       // reject();
   //     }, 2500);
   //   });
   // };
@@ -171,4 +171,4 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   );
 };
 
-export { VideoUploadDialog };
+export { VideoUploadDialog, CLOSE_DELAY_MS };

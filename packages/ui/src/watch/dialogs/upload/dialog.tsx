@@ -1,10 +1,21 @@
 import React from 'react';
-import { Alert, Box, Button, DialogContent, DialogTitle, Fade, TextField, TextFieldVariants } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  DialogContent,
+  DialogTitle,
+  Fade,
+  TextField,
+  TextFieldVariants,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';
 import { SubmitButton } from './submit-button';
 import { DialogState } from './types';
+import { CLOSE_DELAY_MS } from '.';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
@@ -39,15 +50,21 @@ interface FormProps {
 }
 
 interface UploadSuccessResultProps {
+  countdown: number;
   message: string;
 }
 
 const UploadSuccessResult = (props: UploadSuccessResultProps) => {
-  const { message } = props;
+  const { message, countdown } = props;
+  const totalTime = CLOSE_DELAY_MS / 1000;
 
   return (
     <Fade in>
-      <Alert severity="success" sx={{ mb: 2 }}>
+      <Alert
+        severity="success"
+        sx={{ mb: 2 }}
+        action={<CircularProgress variant="determinate" value={(countdown / totalTime) * 100} size={20} />}
+      >
         {message}
       </Alert>
     </Fade>
@@ -134,6 +151,7 @@ const DialogComponent = (props: DialogComponentProps) => {
     errorMessage: state.error as string,
   };
   const uploadSuccessResultProps = {
+    countdown: state.closeDialogCountdown as number,
     message: `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
 

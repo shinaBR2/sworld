@@ -10,9 +10,9 @@ export const texts = {
       helperText: 'short for the best visual',
     },
     urlInput: {
-      placeholder: 'Can be either direct video url or platform like youtube url',
+      placeholder: 'Enter video URL',
       label: 'Video URL',
-      helperText: 'e.g., https://example.com/video1.mp4',
+      helperText: 'Can be either direct video url or platform like youtube url',
     },
     descriptionInput: {
       placeholder: 'Description for the video, optional',
