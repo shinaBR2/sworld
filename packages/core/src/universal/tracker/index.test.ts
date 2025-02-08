@@ -11,7 +11,7 @@ vi.mock('@sentry/react', () => {
     captureException: vi.fn(),
     addIntegration: vi.fn(),
     replayIntegration: vi.fn(() => ({ name: 'Replay' })),
-    feedbackIntegration: vi.fn(() => ({ name: 'Feedback' })),
+    // feedbackIntegration: vi.fn(() => ({ name: 'Feedback' })),
   };
 });
 
