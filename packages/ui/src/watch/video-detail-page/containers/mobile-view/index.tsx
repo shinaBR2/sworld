@@ -17,6 +17,8 @@ const styles = {
   videoContainer: {
     width: '100%',
     height: VIDEO_ASPECT_RATIO,
+    px: 2,
+    py: 2,
   },
   scrollableList: {
     overflow: 'auto',
@@ -42,7 +44,7 @@ const SKELETON_ITEMS_COUNT = 5;
 const LoadingSkeleton = () => (
   <Grid container direction="row" sx={styles.container} aria-busy="true">
     <Grid sx={styles.videoContainer}>
-      <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" />
+      <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" sx={{ borderRadius: 1 }} />
     </Grid>
     <Grid item xs={12}>
       <Skeleton
