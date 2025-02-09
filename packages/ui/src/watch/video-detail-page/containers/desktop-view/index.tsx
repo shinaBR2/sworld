@@ -90,9 +90,8 @@ const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
   const videoDetail = queryRs.videoDetail as Video;
-  const debug = false;
 
-  if (isLoading || debug) {
+  if (isLoading) {
     return <DesktopViewSkeleton />;
   }
 
