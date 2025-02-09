@@ -105,7 +105,6 @@ const DesktopView = (props: VideoDetailContainerProps) => {
                 console.log(err);
               }}
             />
-            {/* <VideoPlayer video={videoDetail} /> */}
             <Typography component="h1" variant="h4" sx={styles.title}>
               {videoDetail.title}
             </Typography>

@@ -17,7 +17,7 @@ interface VideoCardProps extends WithLinkComponent {
 }
 
 // Helper components
-const DurationBadge = ({ duration }: { duration?: string }) => {
+const DurationBadge = ({ duration }: { duration?: Video['duration'] }) => {
   if (!duration) return null;
 
   return <StyledDuration variant="caption">{duration}</StyledDuration>;
@@ -64,14 +64,16 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
-  const { progressSeconds = 0 } = video;
+  // TODO
+  // duration is not available in database yet
+  const { progressSeconds = 0, duration } = video;
 
   return (
     <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
       {asLink ? (
         <Box sx={{ position: 'relative' }}>
           <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-          {progressSeconds > 0 && (
+          {progressSeconds > 0 && duration && (
             <Box
               sx={{
                 position: 'absolute',

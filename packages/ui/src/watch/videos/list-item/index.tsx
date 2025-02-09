@@ -79,8 +79,13 @@ const VideoListItem = (props: VideoListItemProps) => {
             }}
           >
             <Thumbnail src={thumbnailUrl} title={title} />
-            {progressSeconds > 0 && (
+            {progressSeconds > 0 && duration && (
               <Box
+                role="progressbar"
+                aria-label="Video progress"
+                aria-valuenow={55} // Calculate actual percentage
+                aria-valuemin={0}
+                aria-valuemax={100}
                 sx={{
                   position: 'absolute',
                   bottom: 0,
