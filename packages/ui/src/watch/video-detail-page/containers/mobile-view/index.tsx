@@ -70,7 +70,7 @@ const LoadingSkeleton = () => (
         })}
         animation="wave"
       />
-      <Box px={2}>
+      <Box>
         {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
           <VideoListItemSkeleton key={index} />
         ))}

@@ -22,6 +22,7 @@ const styles = {
     height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
     overflow: 'auto',
     px: 2,
+    pb: 2,
   },
   title: {
     my: 2,
