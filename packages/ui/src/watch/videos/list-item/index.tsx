@@ -79,6 +79,8 @@ const VideoListItem = (props: VideoListItemProps) => {
             }}
           >
             <Thumbnail src={thumbnailUrl} title={title} />
+            {/* TODO */}
+            {/* duration is not available yet */}
             {progressSeconds > 0 && duration && (
               <Box
                 role="progressbar"
