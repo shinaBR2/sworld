@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
 import { Typography } from '@mui/material';
+import { VideoContainer } from '../../../videos/video-container';
 
 const styles = {
   container: {
@@ -98,7 +99,13 @@ const DesktopView = (props: VideoDetailContainerProps) => {
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
         {videoDetail && (
           <Box sx={{ width: '100%' }}>
-            <VideoPlayer video={videoDetail} />
+            <VideoContainer
+              video={videoDetail}
+              onError={(err: unknown) => {
+                console.log(err);
+              }}
+            />
+            {/* <VideoPlayer video={videoDetail} /> */}
             <Typography component="h1" variant="h4" sx={styles.title}>
               {videoDetail.title}
             </Typography>

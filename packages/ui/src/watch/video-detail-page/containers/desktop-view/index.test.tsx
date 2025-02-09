@@ -4,16 +4,14 @@ import '@testing-library/jest-dom';
 import { DesktopView } from './index';
 import { RelatedList } from '../../related-list';
 
-// Mocks must be defined before any imports
-vi.mock('../../../videos/video-player', () => ({
-  VideoPlayer: vi.fn(() => <div data-testid="video-player">Video Player</div>),
+vi.mock('../../../videos/video-container', () => ({
+  VideoContainer: vi.fn(() => <div data-testid="video-container">Video Container</div>),
 }));
 
 vi.mock('../../related-list', () => ({
   RelatedList: vi.fn(() => <div data-testid="related-list">Related List</div>),
 }));
 
-// Mock data
 const mockVideo = {
   id: '1',
   title: 'Test Video',
@@ -35,7 +33,7 @@ describe('DesktopView', () => {
   });
 
   it('renders loading skeleton when isLoading is true', () => {
-    const { container } = render(
+    render(
       <DesktopView
         queryRs={{
           videos: [],
@@ -46,13 +44,9 @@ describe('DesktopView', () => {
       />
     );
 
-    // Check for skeleton elements
-    const skeletons = container.querySelectorAll('.MuiSkeleton-root');
-    expect(skeletons.length).toBeGreaterThan(0);
-
-    // Ensure no actual content is rendered
-    expect(screen.queryByTestId('video-player')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('related-list')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Loading video player')).toBeInTheDocument();
+    expect(screen.getByLabelText('Loading related videos')).toBeInTheDocument();
+    expect(screen.queryByTestId('video-container')).not.toBeInTheDocument();
   });
 
   it('renders video content when not loading', () => {
@@ -67,13 +61,9 @@ describe('DesktopView', () => {
       />
     );
 
-    // Check for main components
-    expect(screen.getByTestId('video-player')).toBeInTheDocument();
+    expect(screen.getByTestId('video-container')).toBeInTheDocument();
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
-
-    // Check video title
-    const titleElement = screen.getByText('Test Video');
-    expect(titleElement).toBeInTheDocument();
+    expect(screen.getByText('Test Video')).toBeInTheDocument();
   });
 
   it('passes correct props to RelatedList', () => {
@@ -90,14 +80,13 @@ describe('DesktopView', () => {
       />
     );
 
-    // Verify RelatedList is called with correct props
-    const relatedListMock = vi.mocked(RelatedList);
-    expect(relatedListMock).toHaveBeenCalledWith(
-      expect.objectContaining({
+    expect(vi.mocked(RelatedList)).toHaveBeenCalledWith(
+      {
         videos: mockVideos,
         title: 'other videos',
         activeId: mockVideo.id,
-      }),
+        LinkComponent: mockLinkComponent,
+      },
       {}
     );
   });
