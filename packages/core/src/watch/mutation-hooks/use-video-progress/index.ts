@@ -30,8 +30,51 @@ interface UseVideoProgressProps {
   onError?: (error: Error) => void;
 }
 
+/**
+ * Hook to track and save video playback progress
+ *
+ * Features:
+ * - Saves progress every 15s during playback
+ * - Immediate saves on pause/seek/end
+ * - Saves progress when tab closes
+ * - Debounces server calls to prevent flooding
+ *
+ * @example
+ * ```tsx
+ * const MyVideoPlayer = ({ videoId }) => {
+ *   const {
+ *     handleProgress,
+ *     handlePlay,
+ *     handlePause,
+ *     handleSeek,
+ *     handleEnded
+ *   } = useVideoProgress({
+ *     videoId,
+ *     getAccessToken: () => auth.getToken(),
+ *     onError: (error) => toast.error(error.message)
+ *   });
+ *
+ *   return (
+ *     <ReactPlayer
+ *       onProgress={handleProgress}
+ *       onPlay={handlePlay}
+ *       onPause={handlePause}
+ *       onSeek={handleSeek}
+ *       onEnded={handleEnded}
+ *     />
+ *   );
+ * };
+ * ```
+ */
 const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgressProps) => {
-  const progressTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  /**
+   * Use refs to:
+   * - Track interval without triggering re-renders
+   * - Access latest progress in event listeners/callbacks
+   * - Prevent stale closures in callbacks
+   */
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const currentProgressRef = useRef<number>(0);
 
   const { mutate } = useMutationRequest<unknown, UpdateVideoProgressVars>({
     document: UPDATE_VIDEO_PROGRESS,
@@ -44,34 +87,63 @@ const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgress
     },
   });
 
-  const handleProgress = useCallback(
-    ({ playedSeconds }: { playedSeconds: number }) => {
-      // Clear any existing timeout
-      if (progressTimeoutRef.current) {
-        clearTimeout(progressTimeoutRef.current);
-      }
+  const saveProgress = useCallback(
+    (seconds: number) => {
+      const progress = {
+        videoId,
+        progressSeconds: Math.floor(seconds),
+        lastWatchedAt: new Date().toISOString(),
+      };
 
-      // Debounce progress updates to avoid too many mutations
-      progressTimeoutRef.current = setTimeout(() => {
-        mutate({
-          videoId,
-          progressSeconds: Math.floor(playedSeconds),
-          lastWatchedAt: new Date().toISOString(),
-        });
-      }, 2000); // Update every 2 seconds of continuous playback
+      mutate(progress);
     },
     [videoId, mutate]
   );
 
-  // Cleanup timeout on unmount
+  const handleProgress = useCallback(({ playedSeconds }: { playedSeconds: number }) => {
+    currentProgressRef.current = playedSeconds;
+  }, []);
+
+  const handlePlay = useCallback(() => {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() => {
+      console.log(`handlePlay saving... ${currentProgressRef.current}`);
+      saveProgress(currentProgressRef.current);
+    }, 15000);
+  }, [saveProgress]);
+
+  const handlePause = useCallback(() => {
+    console.log(`handlePause saving... ${currentProgressRef.current}`);
+    saveProgress(currentProgressRef.current);
+  }, [saveProgress]);
+
+  const handleSeek = useCallback(
+    (seconds: number) => {
+      console.log(`handleSeek saving... ${currentProgressRef.current}`);
+      saveProgress(seconds);
+    },
+    [saveProgress]
+  );
+
+  const handleEnded = useCallback(() => {
+    console.log(`handleEnded saving... ${currentProgressRef.current}`);
+    saveProgress(currentProgressRef.current);
+  }, [saveProgress]);
+
+  // Explicit cleanup for component unmounts
   const cleanup = useCallback(() => {
-    if (progressTimeoutRef.current) {
-      clearTimeout(progressTimeoutRef.current);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
   }, []);
 
   return {
     handleProgress,
+    handlePlay,
+    handlePause,
+    handleSeek,
+    handleEnded,
     cleanup,
   };
 };

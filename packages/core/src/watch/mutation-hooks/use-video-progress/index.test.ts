@@ -3,7 +3,6 @@ import { renderHook } from '@testing-library/react';
 import { useVideoProgress } from './index';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 
-// Mock dependencies
 vi.mock('../../../universal/hooks/useMutation', () => ({
   useMutationRequest: vi.fn(),
 }));
@@ -17,15 +16,12 @@ describe('useVideoProgress', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-
-    // Setup default mock implementation
     vi.mocked(useMutationRequest).mockReturnValue({
       mutate: mockMutate,
       isLoading: false,
     });
-
-    // Mock console.error
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -43,7 +39,6 @@ describe('useVideoProgress', () => {
 
   it('should initialize with correct mutation config', () => {
     renderVideoProgressHook();
-
     expect(useMutationRequest).toHaveBeenCalledWith({
       document: expect.any(String),
       getAccessToken: mockGetAccessToken,
@@ -53,113 +48,92 @@ describe('useVideoProgress', () => {
     });
   });
 
-  it('should debounce progress updates', () => {
+  it('should handle periodic progress updates during playback', () => {
     const { result } = renderVideoProgressHook();
 
-    // Call handleProgress multiple times
-    result.current.handleProgress({ playedSeconds: 1 });
-    result.current.handleProgress({ playedSeconds: 2 });
-    result.current.handleProgress({ playedSeconds: 3 });
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
 
-    // Fast-forward by 1 second
-    vi.advanceTimersByTime(1000);
+    vi.advanceTimersByTime(14000);
     expect(mockMutate).not.toHaveBeenCalled();
 
-    // Fast-forward to trigger the debounced call
     vi.advanceTimersByTime(1000);
-    expect(mockMutate).toHaveBeenCalledTimes(1);
     expect(mockMutate).toHaveBeenCalledWith({
       videoId: mockVideoId,
-      progressSeconds: 3,
+      progressSeconds: 5,
       lastWatchedAt: expect.any(String),
     });
   });
 
-  it('should cleanup timeout on unmount', () => {
-    const { result, unmount } = renderVideoProgressHook();
-
-    result.current.handleProgress({ playedSeconds: 10 });
-
-    // Run pending timers before unmounting
-    vi.runOnlyPendingTimers();
-
-    unmount();
-
-    // Clear mock state after unmount
-    mockMutate.mockClear();
-
-    vi.advanceTimersByTime(2000);
-
-    expect(mockMutate).not.toHaveBeenCalled();
-  });
-
-  it('should floor played seconds in mutation', () => {
+  it('should save progress immediately on pause', () => {
     const { result } = renderVideoProgressHook();
 
-    result.current.handleProgress({ playedSeconds: 10.7 });
-    vi.advanceTimersByTime(2000);
+    result.current.handleProgress({ playedSeconds: 7.8 });
+    result.current.handlePause();
 
-    expect(mockMutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        progressSeconds: 10,
-      })
-    );
-  });
-
-  it('should clear existing timeout when new progress update comes in', () => {
-    const { result } = renderVideoProgressHook();
-
-    // Start first progress update
-    result.current.handleProgress({ playedSeconds: 5 });
-
-    // Advance timer partially
-    vi.advanceTimersByTime(1000);
-
-    // Start second progress update
-    result.current.handleProgress({ playedSeconds: 10 });
-
-    // Advance timer to when first update would have happened
-    vi.advanceTimersByTime(1000);
-
-    // First update should not have fired
-    expect(mockMutate).not.toHaveBeenCalled();
-
-    // Advance timer to when second update should happen
-    vi.advanceTimersByTime(1000);
-
-    // Only second update should have fired
-    expect(mockMutate).toHaveBeenCalledTimes(1);
     expect(mockMutate).toHaveBeenCalledWith({
       videoId: mockVideoId,
-      progressSeconds: 10,
+      progressSeconds: 7,
       lastWatchedAt: expect.any(String),
     });
   });
 
-  it('should handle cleanup explicitly', () => {
+  it('should save progress immediately on seek', () => {
     const { result } = renderVideoProgressHook();
 
-    // Start a progress update
-    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handleSeek(15.7);
 
-    // Call cleanup explicitly
+    expect(mockMutate).toHaveBeenCalledWith({
+      videoId: mockVideoId,
+      progressSeconds: 15,
+      lastWatchedAt: expect.any(String),
+    });
+  });
+
+  it('should save progress on video end', () => {
+    const { result } = renderVideoProgressHook();
+
+    result.current.handleProgress({ playedSeconds: 100 });
+    result.current.handleEnded();
+
+    expect(mockMutate).toHaveBeenCalledWith({
+      videoId: mockVideoId,
+      progressSeconds: 100,
+      lastWatchedAt: expect.any(String),
+    });
+  });
+
+  it('should clear interval on cleanup', () => {
+    const { result } = renderVideoProgressHook();
+
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
     result.current.cleanup();
 
-    // Advance timer
-    vi.advanceTimersByTime(2000);
-
-    // Mutation should not be called after cleanup
+    vi.advanceTimersByTime(15000);
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
-  it('should handle multiple cleanups safely', () => {
+  it('should handle error in mutation', () => {
+    const error = new Error('Update failed');
+    vi.mocked(useMutationRequest).mockReturnValue({
+      mutate: vi.fn().mockRejectedValue(error),
+      isLoading: false,
+    });
+
+    renderVideoProgressHook();
+
+    expect(mockOnError).not.toHaveBeenCalled();
+  });
+
+  it('should not start multiple intervals on repeated play calls', () => {
     const { result } = renderVideoProgressHook();
 
-    // Call cleanup multiple times
-    result.current.cleanup();
-    result.current.cleanup();
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+    result.current.handlePlay(); // Second call should be ignored
 
-    // Should not throw
-    expect(() => result.current.cleanup()).not.toThrow();
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
   });
 });
