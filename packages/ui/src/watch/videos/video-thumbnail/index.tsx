@@ -18,6 +18,7 @@ const VideoThumbnail = (props: VideoThumnailProps) => {
         aspectRatio: '16/9',
         objectFit: 'cover',
         bgcolor: '#e0e0e0',
+        borderRadius: '8px',
       }}
     />
   );

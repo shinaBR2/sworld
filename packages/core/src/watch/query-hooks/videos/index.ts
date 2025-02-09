@@ -86,7 +86,7 @@ const useLoadVideos = (props: LoadVideosProps) => {
   });
 
   return {
-    videos: data?.videos.map(transformVideoData),
+    videos: data?.videos.map(transformVideoData) || [],
     isLoading,
   };
 };

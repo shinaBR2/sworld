@@ -33,7 +33,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
   const { title, creator, createdTime } = props;
 
   return (
-    <CardContent sx={{ p: 1.5, pt: 2, '&:last-child': { pb: 1 } }}>
+    <CardContent sx={{ px: 0, pt: 2, '&:last-child': { pb: 1 } }}>
       <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
       </StyledTitle>
@@ -64,11 +64,34 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
+  const { progressSeconds = 0 } = video;
 
   return (
-    <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden' }}>
+    <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
       {asLink ? (
-        <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+        <Box sx={{ position: 'relative' }}>
+          <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+          {progressSeconds > 0 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box
+                sx={{
+                  width: `55%`,
+                  height: '100%',
+                  bgcolor: 'error.main',
+                }}
+              />
+            </Box>
+          )}
+        </Box>
       ) : (
         <Suspense fallback={<VideoPlayerFallback title={video.title} />}>
           <ReactPlayer
@@ -106,11 +129,7 @@ const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
 
   if (asLink && LinkComponent) {
     return (
-      <LinkComponent
-        to="/$videoId"
-        params={{ videoId: video.id }}
-        style={{ textDecoration: 'none' }}
-      >
+      <LinkComponent to="/$videoId" params={{ videoId: video.id }} style={{ textDecoration: 'none' }}>
         {cardContent}
       </LinkComponent>
     );
