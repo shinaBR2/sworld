@@ -9,6 +9,13 @@ array_relationships:
         table:
           name: audios
           schema: public
+  - name: user_video_histories
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: user_video_history
+          schema: public
   - name: video_views
     using:
       foreign_key_constraint_on:
