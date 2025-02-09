@@ -22,6 +22,7 @@ const styles = {
   },
   scrollableList: {
     overflow: 'auto',
+    pb: 2,
     height: (theme: Theme) => {
       const titleHeight = `calc(${theme.typography.h4.fontSize} * ${theme.typography.h4.lineHeight} * 2)`;
       return `calc(100vh - ${VIDEO_ASPECT_RATIO} - ${HEADER_MOBILE_HEIGHT}px - ${titleHeight} - ${theme.spacing(4)})`; // spacing(2) = 16px for margin-top
