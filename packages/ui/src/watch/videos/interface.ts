@@ -35,6 +35,7 @@ export interface Video {
   duration?: string;
   user: Uploader;
   progressSeconds?: number;
+  lastWatchedAt?: string | null;
 }
 
 export interface HomeContainerProps extends RequiredLinkComponent {

@@ -60,7 +60,8 @@ interface VideoDetailResponse {
   videos_by_pk: VideoDetail | null;
 }
 
-const transformVideoData = video => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const transformVideoData = (video: any) => {
   const history = video.user_video_histories[0];
 
   return {

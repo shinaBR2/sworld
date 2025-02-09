@@ -1,8 +1,9 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { VideoSkeleton } from '../../videos/video-card-skeleton';
-import { Video, HomeContainerProps } from '../../videos/interface';
+import { Video } from '../../videos/interface';
 import { VideoCard } from '../../videos/video-card';
+import { HistoryContainerProps } from '../types';
 
 const Loading = () => {
   return (
@@ -18,10 +19,8 @@ const Loading = () => {
   );
 };
 
-// TODO refactor
-const HomeContainer = (props: HomeContainerProps) => {
-  const { queryRs, LinkComponent } = props;
-  const { videos, isLoading } = queryRs;
+const HistoryContainer = (props: HistoryContainerProps) => {
+  const { videos, isLoading, LinkComponent } = props;
 
   return (
     <Container maxWidth={false} sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}>
@@ -38,4 +37,4 @@ const HomeContainer = (props: HomeContainerProps) => {
   );
 };
 
-export { HomeContainer };
+export { HistoryContainer };

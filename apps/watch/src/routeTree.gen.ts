@@ -16,10 +16,17 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const HistoryLazyImport = createFileRoute('/history')()
 const VideoIdLazyImport = createFileRoute('/$videoId')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const HistoryLazyRoute = HistoryLazyImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route))
 
 const VideoIdLazyRoute = VideoIdLazyImport.update({
   id: '/$videoId',
@@ -51,6 +58,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VideoIdLazyImport
       parentRoute: typeof rootRoute
     }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -59,36 +73,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/$videoId': typeof VideoIdLazyRoute
+  '/history': typeof HistoryLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/$videoId': typeof VideoIdLazyRoute
+  '/history': typeof HistoryLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/$videoId': typeof VideoIdLazyRoute
+  '/history': typeof HistoryLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$videoId'
+  fullPaths: '/' | '/$videoId' | '/history'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$videoId'
-  id: '__root__' | '/' | '/$videoId'
+  to: '/' | '/$videoId' | '/history'
+  id: '__root__' | '/' | '/$videoId' | '/history'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   VideoIdLazyRoute: typeof VideoIdLazyRoute
+  HistoryLazyRoute: typeof HistoryLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   VideoIdLazyRoute: VideoIdLazyRoute,
+  HistoryLazyRoute: HistoryLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +121,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$videoId"
+        "/$videoId",
+        "/history"
       ]
     },
     "/": {
@@ -110,6 +130,9 @@ export const routeTree = rootRoute
     },
     "/$videoId": {
       "filePath": "$videoId.lazy.tsx"
+    },
+    "/history": {
+      "filePath": "history.lazy.tsx"
     }
   }
 }
