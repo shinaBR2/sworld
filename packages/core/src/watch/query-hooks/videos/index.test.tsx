@@ -1,121 +1,128 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useLoadVideos } from '.';
-import React from 'react';
-import { QueryProvider } from '../../../providers/query';
+import { useRequest } from '../../../universal/hooks/use-request';
 
-const mockConfig = {
-  hasuraUrl: 'https://test-hasura.url',
-};
-
-const queryContextValue = {
-  hasuraUrl: 'https://test-hasura.url',
-};
-
-const mockUseQuery = vi.fn();
-
-vi.mock('graphql-request', () => ({
-  default: vi.fn(),
+vi.mock('../../../universal/hooks/use-request', () => ({
+  useRequest: vi.fn().mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    error: undefined,
+  }),
 }));
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: (...args: any) => mockUseQuery(...args),
-}));
-vi.mock('../../../providers/query', () => ({
-  QueryProvider: ({ children }: { children: React.ReactNode }) => children,
-  useQueryContext: () => queryContextValue,
-}));
-
-function Wrapper({ children }: { children: React.ReactNode }) {
-  return <QueryProvider config={mockConfig}>{children}</QueryProvider>;
-}
 
 describe('useLoadVideos', () => {
-  const mockGetAccessToken = vi.fn<() => Promise<string>>();
+  const mockGetAccessToken = vi.fn();
+
+  const mockVideos = [
+    {
+      id: '1',
+      title: 'Video 1',
+      description: 'Description 1',
+      thumbnailUrl: 'thumb1.jpg',
+      source: 'source1',
+      slug: 'video-1',
+      createdAt: '2024-01-01',
+      user: { username: 'user1' },
+      user_video_histories: [{ last_watched_at: '2024-01-02', progress_seconds: 30 }],
+    },
+    {
+      id: '2',
+      title: 'Video 2',
+      description: 'Description 2',
+      thumbnailUrl: 'thumb2.jpg',
+      source: 'source2',
+      slug: 'video-2',
+      createdAt: '2024-01-01',
+      user: { username: 'user2' },
+      user_video_histories: [],
+    },
+  ];
+
+  const expectedTransformedVideos = [
+    {
+      id: '1',
+      title: 'Video 1',
+      description: 'Description 1',
+      thumbnailUrl: 'thumb1.jpg',
+      source: 'source1',
+      slug: 'video-1',
+      createdAt: '2024-01-01',
+      user: { username: 'user1' },
+      lastWatchedAt: '2024-01-02',
+      progressSeconds: 30,
+    },
+    {
+      id: '2',
+      title: 'Video 2',
+      description: 'Description 2',
+      thumbnailUrl: 'thumb2.jpg',
+      source: 'source2',
+      slug: 'video-2',
+      createdAt: '2024-01-01',
+      user: { username: 'user2' },
+      lastWatchedAt: null,
+      progressSeconds: 0,
+    },
+  ];
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetAccessToken.mockResolvedValue('test-token');
+  });
 
-    mockUseQuery.mockReturnValue({
+  it('should set up useRequest with correct params', () => {
+    renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
+
+    expect(useRequest).toHaveBeenCalledWith({
+      queryKey: ['videos'],
+      getAccessToken: mockGetAccessToken,
+      document: expect.stringContaining('query AllVideos'),
+    });
+  });
+
+  it('should return loading state', () => {
+    vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: true,
     });
 
-    mockGetAccessToken.mockResolvedValue('test-token');
+    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
+
+    expect(result.current).toEqual({
+      videos: [],
+      isLoading: true,
+    });
   });
 
-  it('should fetch videos successfully', async () => {
-    const mockVideos = [
-      { id: '1', title: 'Video 1' },
-      { id: '2', title: 'Video 2' },
-    ];
-
-    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
-      wrapper: Wrapper,
-    });
-
-    expect(result.current.isLoading).toBe(true);
-
-    mockUseQuery.mockReturnValue({
+  it('should return transformed data when loaded', () => {
+    vi.mocked(useRequest).mockReturnValue({
       data: { videos: mockVideos },
       isLoading: false,
     });
 
-    rerender();
+    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.videos).toEqual(mockVideos);
+    expect(result.current).toEqual({
+      videos: expectedTransformedVideos,
+      isLoading: false,
     });
   });
 
-  it('should handle API error', async () => {
+  it('should handle error', () => {
     const mockError = new Error('API Error');
-
-    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
-      wrapper: Wrapper,
-    });
-
-    mockUseQuery.mockReturnValue({
+    vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: false,
       error: mockError,
     });
 
-    rerender();
+    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.videos).toBeUndefined();
-    });
-  });
-
-  it('should handle loading state', () => {
-    mockUseQuery.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-    });
-
-    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), { wrapper: Wrapper });
-
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.videos).toBeUndefined();
-  });
-
-  it('should handle empty video list', async () => {
-    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
-      wrapper: Wrapper,
-    });
-
-    mockUseQuery.mockReturnValue({
-      data: { videos: [] },
+    expect(result.current).toEqual({
+      videos: [],
       isLoading: false,
-    });
-
-    rerender();
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.videos).toEqual([]);
+      error: mockError,
     });
   });
 });

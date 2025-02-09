@@ -79,7 +79,7 @@ const transformVideoData = (video: VideoResponse): TransformedVideo => {
 const useLoadVideos = (props: LoadVideosProps) => {
   const { getAccessToken } = props;
 
-  const { data, isLoading } = useRequest<{ videos: VideoResponse[] }>({
+  const { data, isLoading, error } = useRequest<{ videos: VideoResponse[] }>({
     queryKey: ['videos'],
     getAccessToken,
     document: videosQuery,
@@ -88,6 +88,7 @@ const useLoadVideos = (props: LoadVideosProps) => {
   return {
     videos: data?.videos.map(transformVideoData) || [],
     isLoading,
+    error,
   };
 };
 
