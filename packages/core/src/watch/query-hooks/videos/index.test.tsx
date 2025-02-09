@@ -4,11 +4,7 @@ import { useLoadVideos } from '.';
 import { useRequest } from '../../../universal/hooks/use-request';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
-  useRequest: vi.fn().mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    error: undefined,
-  }),
+  useRequest: vi.fn(),
 }));
 
 describe('useLoadVideos', () => {
@@ -72,6 +68,10 @@ describe('useLoadVideos', () => {
   });
 
   it('should set up useRequest with correct params', () => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
     renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
     expect(useRequest).toHaveBeenCalledWith({
@@ -85,7 +85,7 @@ describe('useLoadVideos', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: true,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
@@ -99,7 +99,7 @@ describe('useLoadVideos', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: { videos: mockVideos },
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
@@ -115,7 +115,7 @@ describe('useLoadVideos', () => {
       data: undefined,
       isLoading: false,
       error: mockError,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
