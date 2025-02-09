@@ -20,17 +20,41 @@ describe('useLoadVideoDetail', () => {
     source: 'test-source',
     slug: 'test-slug',
     createdAt: '2024-01-01',
+    thumbnailUrl: 'test-thumbnail',
     user: {
       username: 'testuser',
     },
+    user_video_histories: [
+      {
+        last_watched_at: '2024-01-02',
+        progress_seconds: 30,
+      },
+    ],
   };
 
   const mockVideoDetail = {
     id: 'test-id',
-    source: 'test-source',
-    thumbnailUrl: 'test-thumbnail',
     title: 'Test Video',
     description: 'Test Description',
+    source: 'test-source',
+    slug: 'test-slug',
+    createdAt: '2024-01-01',
+    thumbnailUrl: 'test-thumbnail',
+  };
+
+  const expectedTransformedVideo = {
+    id: 'test-id',
+    title: 'Test Video',
+    description: 'Test Description',
+    source: 'test-source',
+    slug: 'test-slug',
+    createdAt: '2024-01-01',
+    thumbnailUrl: 'test-thumbnail',
+    user: {
+      username: 'testuser',
+    },
+    lastWatchedAt: '2024-01-02',
+    progressSeconds: 30,
   };
 
   beforeEach(() => {
@@ -63,6 +87,7 @@ describe('useLoadVideoDetail', () => {
       videos: [],
       videoDetail: {},
       isLoading: true,
+      error: undefined,
     });
   });
 
@@ -78,9 +103,10 @@ describe('useLoadVideoDetail', () => {
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
     expect(result.current).toEqual({
-      videos: [mockVideo],
+      videos: [expectedTransformedVideo],
       videoDetail: mockVideoDetail,
       isLoading: false,
+      error: undefined,
     });
   });
 
@@ -96,6 +122,24 @@ describe('useLoadVideoDetail', () => {
       videos: [],
       videoDetail: {},
       isLoading: false,
+    });
+  });
+
+  it('should handle error from useRequest', () => {
+    const mockError = new Error('API Error');
+    vi.mocked(useRequest).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: mockError,
+    });
+
+    const { result } = renderHook(() => useLoadVideoDetail(mockProps));
+
+    expect(result.current).toEqual({
+      videos: [],
+      videoDetail: {},
+      isLoading: false,
+      error: mockError,
     });
   });
 });

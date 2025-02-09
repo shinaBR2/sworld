@@ -80,7 +80,7 @@ const transformVideoData = video => {
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading } = useRequest<VideoDetailResponse>({
+  const { data, isLoading, error } = useRequest<VideoDetailResponse>({
     queryKey: ['video-detail', id],
     getAccessToken,
     document: videoDetailQuery,
@@ -90,9 +90,10 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   });
 
   return {
-    videos: data?.videos.map(transformVideoData),
+    videos: data?.videos.map(transformVideoData) || [],
     videoDetail: data?.videos_by_pk ?? {},
     isLoading,
+    error,
   };
 };
 
