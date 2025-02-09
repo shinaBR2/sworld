@@ -1,4 +1,4 @@
-import { useRequest } from '../../universal/hooks/use-request';
+import { useRequest } from '../../../universal/hooks/use-request';
 
 const videoDetailQuery = `
   query VideoDetail ($id: uuid!) @cached {

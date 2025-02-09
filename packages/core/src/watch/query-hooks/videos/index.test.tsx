@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useLoadVideos } from './videos';
+import { useLoadVideos } from '.';
 import React from 'react';
-import { QueryProvider } from '../../providers/query';
+import { QueryProvider } from '../../../providers/query';
 
 const mockConfig = {
   hasuraUrl: 'https://test-hasura.url',
@@ -20,7 +20,7 @@ vi.mock('graphql-request', () => ({
 vi.mock('@tanstack/react-query', () => ({
   useQuery: (...args: any) => mockUseQuery(...args),
 }));
-vi.mock('../../providers/query', () => ({
+vi.mock('../../../providers/query', () => ({
   QueryProvider: ({ children }: { children: React.ReactNode }) => children,
   useQueryContext: () => queryContextValue,
 }));
@@ -49,10 +49,9 @@ describe('useLoadVideos', () => {
       { id: '2', title: 'Video 2' },
     ];
 
-    const { result, rerender } = renderHook(
-      () => useLoadVideos({ getAccessToken: mockGetAccessToken }),
-      { wrapper: Wrapper }
-    );
+    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
+      wrapper: Wrapper,
+    });
 
     expect(result.current.isLoading).toBe(true);
 
@@ -72,10 +71,9 @@ describe('useLoadVideos', () => {
   it('should handle API error', async () => {
     const mockError = new Error('API Error');
 
-    const { result, rerender } = renderHook(
-      () => useLoadVideos({ getAccessToken: mockGetAccessToken }),
-      { wrapper: Wrapper }
-    );
+    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
+      wrapper: Wrapper,
+    });
 
     mockUseQuery.mockReturnValue({
       data: undefined,
@@ -97,20 +95,16 @@ describe('useLoadVideos', () => {
       isLoading: true,
     });
 
-    const { result } = renderHook(
-      () => useLoadVideos({ getAccessToken: mockGetAccessToken }),
-      { wrapper: Wrapper }
-    );
+    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), { wrapper: Wrapper });
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.videos).toBeUndefined();
   });
 
   it('should handle empty video list', async () => {
-    const { result, rerender } = renderHook(
-      () => useLoadVideos({ getAccessToken: mockGetAccessToken }),
-      { wrapper: Wrapper }
-    );
+    const { result, rerender } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }), {
+      wrapper: Wrapper,
+    });
 
     mockUseQuery.mockReturnValue({
       data: { videos: [] },

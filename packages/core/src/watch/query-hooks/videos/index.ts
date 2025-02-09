@@ -1,8 +1,12 @@
-import { useRequest } from '../../universal/hooks/use-request';
+import { useRequest } from '../../../universal/hooks/use-request';
 
 const videosQuery = `
   query AllVideos @cached {
     videos {
+      user_video_histories {
+        last_watched_at
+        progress_seconds
+      }
       id
       title
       description
