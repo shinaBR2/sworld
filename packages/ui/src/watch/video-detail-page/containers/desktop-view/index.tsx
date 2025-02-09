@@ -1,7 +1,6 @@
 import Grid from '@mui/material/Grid';
 import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
-import { VideoPlayer } from '../../../videos/video-player';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
@@ -22,6 +21,7 @@ const styles = {
   scrollableList: {
     height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
     overflow: 'auto',
+    px: 2,
   },
   title: {
     my: 2,

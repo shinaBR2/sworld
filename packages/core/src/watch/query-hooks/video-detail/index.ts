@@ -13,6 +13,10 @@ const videoDetailQuery = `
       user {
         username
       }
+      user_video_histories {
+        last_watched_at
+        progress_seconds
+      }
     }
     videos_by_pk(id: $id) {
       id
@@ -56,6 +60,23 @@ interface VideoDetailResponse {
   videos_by_pk: VideoDetail | null;
 }
 
+const transformVideoData = video => {
+  const history = video.user_video_histories[0];
+
+  return {
+    id: video.id,
+    title: video.title,
+    description: video.description,
+    thumbnailUrl: video.thumbnailUrl,
+    source: video.source,
+    slug: video.slug,
+    createdAt: video.createdAt,
+    user: video.user,
+    lastWatchedAt: history?.last_watched_at ?? null,
+    progressSeconds: history?.progress_seconds ?? 0,
+  };
+};
+
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
@@ -69,7 +90,7 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   });
 
   return {
-    videos: data?.videos ?? [],
+    videos: data?.videos.map(transformVideoData),
     videoDetail: data?.videos_by_pk ?? {},
     isLoading,
   };

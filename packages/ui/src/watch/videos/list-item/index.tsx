@@ -19,7 +19,7 @@ interface VideoListItemProps extends RequiredLinkComponent {
 const thumbnailImgStyle: CSSProperties = {
   width: '100%',
   height: '100%',
-  objectFit: 'contain',
+  objectFit: 'cover',
 };
 
 const Thumbnail = (props: ThumbnailProps) => {
@@ -44,7 +44,7 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, isActive = false, LinkComponent } = props;
-  const { id, title, thumbnailUrl, duration, user } = video;
+  const { id, title, thumbnailUrl, duration, user, progressSeconds = 0 } = video;
 
   return (
     <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
@@ -55,9 +55,9 @@ const VideoListItem = (props: VideoListItemProps) => {
           alignItems: 'center',
           gap: 2,
           py: 1,
+          px: 0,
           bgcolor: isActive ? theme => theme.palette.action.selected : 'transparent',
           borderLeft: theme => (isActive ? `4px solid ${theme.palette.primary.main}` : '4px solid transparent'),
-          px: 1, // Add some padding to accommodate the border
           '&:hover': {
             bgcolor: 'action.hover',
             '& .play-icon': {
@@ -70,13 +70,35 @@ const VideoListItem = (props: VideoListItemProps) => {
         <Box sx={{ position: 'relative', flexShrink: 0 }}>
           <Box
             sx={{
-              width: 64,
+              width: (64 / 9) * 16,
               height: 64,
               objectFit: 'cover',
-              borderRadius: 1,
+              borderRadius: 2 / 3,
+              overflow: 'hidden',
+              position: 'relative',
             }}
           >
             <Thumbnail src={thumbnailUrl} title={title} />
+            {progressSeconds > 0 && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: `55%`,
+                    height: '100%',
+                    bgcolor: 'error.main',
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <Box
             className="play-icon"
