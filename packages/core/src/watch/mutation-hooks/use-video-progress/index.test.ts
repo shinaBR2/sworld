@@ -92,28 +92,6 @@ describe('useVideoProgress', () => {
 
     expect(mockMutate).not.toHaveBeenCalled();
   });
-  //   const mockError = new Error('Mutation failed');
-  //   const errorMutate = vi.fn().mockImplementation(() => Promise.reject(mockError));
-
-  //   vi.mocked(useMutationRequest).mockReturnValue({
-  //     mutate: errorMutate,
-  //     isLoading: false,
-  //   });
-
-  //   const { result } = renderVideoProgressHook();
-
-  //   result.current.handleProgress({ playedSeconds: 5 });
-
-  //   // Complete the debounce
-  //   await vi.runAllTimersAsync();
-
-  //   // Wait for promise rejection
-  //   await Promise.resolve();
-
-  //   expect(errorMutate).toHaveBeenCalled();
-  //   expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', mockError);
-  //   expect(mockOnError).toHaveBeenCalledWith(mockError);
-  // });
 
   it('should floor played seconds in mutation', () => {
     const { result } = renderVideoProgressHook();
