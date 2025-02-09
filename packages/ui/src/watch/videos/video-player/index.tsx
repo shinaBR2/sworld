@@ -10,6 +10,7 @@ interface VideoPlayerProps {
   onProgress?: (state: { played: number; playedSeconds: number; loaded: number; loadedSeconds: number }) => void;
   onPause?: () => void;
   onPlay?: () => void;
+  onSeek?: (seconds: number) => void;
   onEnded?: () => void;
   onError?: (error: unknown) => void;
   onReady?: () => void;
@@ -31,6 +32,7 @@ const VideoPlayer = ({
   onProgress,
   onPause,
   onPlay,
+  onSeek,
   onEnded,
   onError,
   onReady,
@@ -76,6 +78,7 @@ const VideoPlayer = ({
           onProgress={onProgress}
           onPause={onPause}
           onPlay={onPlay}
+          onSeek={onSeek}
           onEnded={onEnded}
           onReady={onReady}
           progressInterval={1000} // Update progress every second

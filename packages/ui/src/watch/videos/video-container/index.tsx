@@ -13,7 +13,7 @@ const { useVideoProgress } = watchMutationHooks;
 const VideoContainer = (props: VideoContainerInterface) => {
   const { video, onError } = props;
   const { getAccessToken } = Auth.useAuthContext();
-  const { handleProgress, cleanup } = useVideoProgress({
+  const { handleProgress, handlePlay, handlePause, handleSeek, cleanup } = useVideoProgress({
     videoId: video.id,
     getAccessToken,
     onError,
@@ -29,6 +29,9 @@ const VideoContainer = (props: VideoContainerInterface) => {
     <VideoPlayer
       video={video}
       onProgress={handleProgress}
+      onPlay={handlePlay}
+      onPause={handlePause}
+      onSeek={handleSeek}
       onError={error => {
         console.error('Player error:', error);
         onError?.(error as Error);
