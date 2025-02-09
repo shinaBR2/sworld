@@ -45,7 +45,6 @@ const loadSentryIntegrations = async () => {
   try {
     import('@sentry/react').then(lazyLoadedSentry => {
       Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
-      // Sentry.addIntegration(lazyLoadedSentry.feedbackIntegration());
     });
   } catch (error) {
     console.error('Failed to load Sentry integrations:', error);
