@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton';
 import { Auth } from 'core';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
-import SearchBar from '../../universal/search-bar';
 import SiteChoices from '../../universal/site-choices';
 import { RequiredLinkComponent } from '../videos/interface';
 

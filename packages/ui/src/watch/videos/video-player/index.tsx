@@ -47,7 +47,6 @@ const VideoPlayer = ({
 
   const handleError = useCallback(
     (error: unknown) => {
-      console.error('ReactPlayer Error:', error);
       onError?.(error);
     },
     [onError]
@@ -81,11 +80,11 @@ const VideoPlayer = ({
           onSeek={onSeek}
           onEnded={onEnded}
           onReady={onReady}
-          progressInterval={1000} // Update progress every second
+          progressInterval={1000} // Update progress every second TODO: configurable
         />
       </Box>
     </Suspense>
   );
 };
 
-export { VideoPlayer, type VideoPlayerProps, type PlayerRef };
+export { VideoPlayer, type VideoPlayerProps };
