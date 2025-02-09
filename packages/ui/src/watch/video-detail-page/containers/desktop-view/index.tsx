@@ -49,9 +49,9 @@ const VideoPlayerSkeleton = () => (
 const SKELETON_ITEMS_COUNT = 6;
 
 const RelatedListSkeleton = () => (
-  <Box sx={{ p: 2 }}>
+  <Box>
     {/* Title skeleton */}
-    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mb: 2 }} />
+    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mx: 2, mb: 2 }} />
 
     {/* Related videos list */}
     {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
@@ -89,8 +89,9 @@ const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
   const videoDetail = queryRs.videoDetail as Video;
+  const debug = false;
 
-  if (isLoading) {
+  if (isLoading || debug) {
     return <DesktopViewSkeleton />;
   }
 

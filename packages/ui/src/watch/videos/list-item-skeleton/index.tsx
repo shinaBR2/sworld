@@ -13,11 +13,12 @@ const VideoListItemSkeleton = () => {
         alignItems: 'center',
         gap: 2,
         py: 1,
+        mx: 2,
       }}
     >
       {/* Thumbnail skeleton */}
       <Box aria-label="Loading thumbnail" sx={{ position: 'relative', flexShrink: 0 }}>
-        <Skeleton variant="rectangular" width={64} height={64} sx={{ borderRadius: 1 }} animation="wave" />
+        <Skeleton variant="rectangular" width={(64 / 9) * 16} height={64} sx={{ borderRadius: 1 }} animation="wave" />
       </Box>
 
       {/* Text content skeletons */}
