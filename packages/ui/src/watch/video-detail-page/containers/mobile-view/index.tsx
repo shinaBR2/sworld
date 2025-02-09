@@ -1,12 +1,12 @@
 import Grid from '@mui/material/Grid';
 import { Video, VideoDetailContainerProps } from '../../../videos/interface';
-import { VideoPlayer } from '../../../videos/video-player';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
 import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
 import Box from '@mui/material/Box';
 import { HEADER_MOBILE_HEIGHT, VIDEO_ASPECT_RATIO } from '../../../theme';
 import { Theme, Typography } from '@mui/material';
+import { VideoContainer } from '../../../videos/video-container';
 
 // TODO: check orientation events
 const styles = {
@@ -90,7 +90,12 @@ const MobileView = (props: VideoDetailContainerProps) => {
   return (
     <Grid container direction="row" sx={styles.container}>
       <Grid sx={styles.videoContainer}>
-        <VideoPlayer video={videoDetail} />
+        <VideoContainer
+          video={videoDetail}
+          onError={(err: unknown) => {
+            console.log(err);
+          }}
+        />
       </Grid>
       <Grid item xs={12}>
         <Typography component="h1" variant="h4" sx={styles.title}>
