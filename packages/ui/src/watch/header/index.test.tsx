@@ -9,10 +9,6 @@ vi.mock('../../universal/logo', () => ({
   default: () => <div data-testid="mock-logo">Logo</div>,
 }));
 
-vi.mock('../../universal/search-bar', () => ({
-  default: () => <div data-testid="mock-search-bar">SearchBar</div>,
-}));
-
 vi.mock('../../universal/site-choices', () => ({
   default: () => <div data-testid="mock-site-choices">SiteChoices</div>,
 }));
@@ -34,22 +30,18 @@ describe('Header', () => {
 
     // Check if all components are rendered
     expect(screen.getByTestId('mock-logo')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-search-bar')).toBeInTheDocument();
+    // expect(screen.getByTestId('mock-search-bar')).toBeInTheDocument();
     expect(screen.getByTestId('mock-site-choices')).toBeInTheDocument();
 
     // Check if account button is rendered
-    const accountButton = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('button');
+    const accountButton = screen.getByTestId('AccountCircleIcon').closest('button');
     expect(accountButton).toBeInTheDocument();
   });
 
   it('renders account circle button for anonymous visitors', () => {
     render(<Header {...defaultProps} />);
 
-    const accountButton = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('button');
+    const accountButton = screen.getByTestId('AccountCircleIcon').closest('button');
     expect(accountButton).toBeInTheDocument();
   });
 
@@ -74,9 +66,7 @@ describe('Header', () => {
     render(<Header {...defaultProps} />);
 
     // Find and click the account button
-    const accountButton = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('button');
+    const accountButton = screen.getByTestId('AccountCircleIcon').closest('button');
     fireEvent.click(accountButton as Element);
 
     // Check if toggleSetting was called with true
@@ -97,11 +87,7 @@ describe('Header', () => {
 
     // Check if the three main sections are rendered with correct layout
     const boxes = document.querySelectorAll('.MuiBox-root');
-    expect(boxes).toHaveLength(3);
-
-    // Check if middle box (search bar container) has flex: 1
-    const searchBarContainer = boxes[1];
-    expect(searchBarContainer).toHaveStyle({ flex: '1' });
+    expect(boxes).toHaveLength(2);
   });
 
   it('renders without elevation', () => {

@@ -26,7 +26,7 @@ const Header = (props: HeaderProps) => {
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
-      <Toolbar sx={{ display: 'flex', gap: 2 }}>
+      <Toolbar sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
         <Box
           sx={{
             display: 'flex',
@@ -41,7 +41,7 @@ const Header = (props: HeaderProps) => {
           <SiteChoices activeSite="watch" sites={sites} />
         </Box>
 
-        <Box
+        {/* <Box
           sx={{
             flex: 1,
             display: 'flex',
@@ -49,16 +49,12 @@ const Header = (props: HeaderProps) => {
           }}
         >
           <SearchBar />
-        </Box>
+        </Box> */}
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
           <IconButton onClick={() => toggleSetting(true)}>
             {avatarUrl ? (
-              <ResponsiveAvatar
-                src={avatarUrl}
-                alt={user.name}
-                data-testid="user-avatar"
-              />
+              <ResponsiveAvatar src={avatarUrl} alt={user.name} data-testid="user-avatar" />
             ) : (
               <AccountCircle />
             )}
