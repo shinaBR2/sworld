@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { VideoListItemSkeleton } from './index';
+import { VideoListItemSkeleton } from './skeleton';
 
 const meta: Meta<typeof VideoListItemSkeleton> = {
   title: 'Watch/VideoListItemSkeleton',

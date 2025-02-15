@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid';
 import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
-import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
+import { VideoListItemSkeleton } from '../../../videos/list-item/skeleton';
 import Box from '@mui/material/Box';
 import { HEADER_MOBILE_HEIGHT, VIDEO_ASPECT_RATIO } from '../../../theme';
 import { Theme, Typography } from '@mui/material';

@@ -3,7 +3,7 @@ import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
-import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
+import { VideoListItemSkeleton } from '../../../videos/list-item/skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
 import { Typography } from '@mui/material';
 import { VideoContainer } from '../../../videos/video-container';

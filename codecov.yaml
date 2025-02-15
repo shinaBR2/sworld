@@ -23,6 +23,7 @@ ignore:
   - '**/test/**/*' # Ignore test files
   - '**/*.test.*' # Ignore test files
   - '**/*.spec.*' # Ignore spec files
+  - '**/[Ss]tyled*.{ts,tsx}' # Ignore files starting with Styled/styled
 
 parsers:
   javascript:

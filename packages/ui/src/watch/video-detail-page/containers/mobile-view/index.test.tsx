@@ -23,7 +23,7 @@ vi.mock('../../related-list', () => ({
   )),
 }));
 
-vi.mock('../../../videos/list-item-skeleton', () => ({
+vi.mock('../../../videos/list-item/skeleton', () => ({
   VideoListItemSkeleton: () => <div data-testid="video-list-item-skeleton" />,
 }));
 
