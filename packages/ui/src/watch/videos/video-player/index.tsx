@@ -3,7 +3,6 @@ import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail
 import { Video } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import Box from '@mui/material/Box';
-// import type ReactPlayerType from 'react-player';
 
 interface VideoPlayerProps {
   video: Video;
