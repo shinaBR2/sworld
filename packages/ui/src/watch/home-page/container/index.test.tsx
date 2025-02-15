@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { HomeContainer } from './index';
-import { VideoSkeleton } from '../../videos/video-card-skeleton';
+import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { VideoCard } from '../../videos/video-card';
 
-vi.mock('../../videos/video-card-skeleton', () => ({
+vi.mock('../../videos/video-card/skeleton', () => ({
   VideoSkeleton: vi.fn(() => <div>VideoSkeleton</div>),
 }));
 
