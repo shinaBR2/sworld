@@ -114,26 +114,22 @@ const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgress
     if (intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
-      console.log(`handlePlay saving... ${currentProgressRef.current}`);
       saveProgress(currentProgressRef.current);
     }, 15000);
   }, [saveProgress]);
 
   const handlePause = useCallback(() => {
-    console.log(`handlePause saving... ${currentProgressRef.current}`);
     saveProgress(currentProgressRef.current);
   }, [saveProgress]);
 
   const handleSeek = useCallback(
     (seconds: number) => {
-      console.log(`handleSeek saving... ${currentProgressRef.current}`);
       saveProgress(seconds);
     },
     [saveProgress]
   );
 
   const handleEnded = useCallback(() => {
-    console.log(`handleEnded saving... ${currentProgressRef.current}`);
     saveProgress(currentProgressRef.current);
   }, [saveProgress]);
 

@@ -113,7 +113,7 @@ describe('VideoContainer', () => {
     vi.mocked(watchMutationHooks.useVideoProgress).mockReturnValue({
       handleProgress: mockHandleProgress,
       cleanup: newMockCleanup,
-    });
+    } as unknown as ReturnType<typeof watchMutationHooks.useVideoProgress>);
 
     // Rerender should trigger first cleanup
     rerender(<VideoContainer video={mockVideo} onError={mockOnError} />);
