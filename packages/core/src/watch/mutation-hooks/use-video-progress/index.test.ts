@@ -185,4 +185,70 @@ describe('useVideoProgress', () => {
     vi.advanceTimersByTime(15000);
     expect(mockMutate).toHaveBeenCalledTimes(1);
   });
+
+  it('should clear interval when pausing during playback', () => {
+    const { result } = renderVideoProgressHook();
+
+    // Start playback with interval
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+
+    // Verify interval is running
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+
+    // Pause during playback
+    result.current.handlePause();
+
+    // Verify interval was cleared by checking no more mutations occur
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(2); // Only the immediate save from pause
+  });
+
+  it('should clear interval when seeking during playback', () => {
+    const { result } = renderVideoProgressHook();
+
+    // Start playback with interval
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+
+    // Verify interval is running
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+
+    // Seek during playback
+    result.current.handleSeek(10);
+
+    // Verify interval was cleared by checking no more mutations occur
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(2); // Only the immediate save from seek
+  });
+
+  it('should handle seek-play sequence correctly', () => {
+    const { result } = renderVideoProgressHook();
+
+    // Start initial playback
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+
+    // Verify initial interval is running
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+
+    // Simulate seek sequence:
+    // 1. Seek occurs
+    result.current.handleSeek(10);
+    expect(mockMutate).toHaveBeenCalledTimes(2); // Immediate save from seek
+
+    // 2. React Player automatically plays after seek
+    result.current.handlePlay();
+
+    // 3. Verify new interval is working
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(3); // New interval save
+
+    // 4. Verify subsequent interval calls continue
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(4);
+  });
 });
