@@ -58,11 +58,19 @@ select_permissions:
       columns:
         - created_at
         - description
+        - duration
         - id
         - slug
         - source
         - thumbnail_url
         - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+delete_permissions:
+  - role: user
+    permission:
       filter:
         user_id:
           _eq: X-Hasura-User-Id
