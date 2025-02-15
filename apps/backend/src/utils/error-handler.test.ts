@@ -117,7 +117,6 @@ describe('errorHandler', () => {
       req: {
         method: 'POST',
         url: '/webhook',
-        eventType: 'hasura:event',
       },
       stack: expect.stringContaining('Test error'),
     });
@@ -140,7 +139,6 @@ describe('errorHandler', () => {
       req: {
         method: 'POST',
         url: '/webhook',
-        eventType: 'hasura:event',
       },
       stack: undefined,
     });
@@ -170,25 +168,6 @@ describe('errorHandler', () => {
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.objectContaining({
         stack: expect.not.stringContaining('node_modules'),
-      })
-    );
-  });
-
-  it('should handle missing ce-type header', () => {
-    const error = new Error('Test error');
-    const reqWithoutEventType = {
-      ...mockRequest,
-      headers: {},
-    };
-
-    const handler = errorHandler(mockLogger);
-    handler(error, reqWithoutEventType, mockResponse, vi.fn());
-
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.objectContaining({
-        req: expect.objectContaining({
-          eventType: undefined,
-        }),
       })
     );
   });
