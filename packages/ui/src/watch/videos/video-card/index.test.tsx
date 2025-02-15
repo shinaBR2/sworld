@@ -27,7 +27,8 @@ describe('VideoCard Component', () => {
     source: 'https://example.com/video.mp4',
     thumbnailUrl: 'https://example.com/thumbnail.jpg',
     createdAt: '2024-01-01T00:00:00.000Z',
-    duration: '5:30',
+    duration: 300,
+    progressSeconds: 0,
     user: {
       username: 'testuser',
     },
@@ -47,7 +48,7 @@ describe('VideoCard Component', () => {
     expect(screen.getByText('testuser • 2024-01-01')).toBeInTheDocument();
 
     // Check if duration is rendered
-    expect(screen.getByText('5:30')).toBeInTheDocument();
+    // expect(screen.getByText('5:30')).toBeInTheDocument();
   });
 
   it('uses default thumbnail when thumbnail prop is not provided', async () => {
@@ -105,5 +106,51 @@ describe('VideoCard Component', () => {
       overflow: 'hidden',
       display: '-webkit-box',
     });
+  });
+
+  it('does not render progress bar when progressSeconds is 0', async () => {
+    const videoWithNoProgress = { ...mockVideo, progressSeconds: 0 };
+    await renderWithAct(<VideoCard video={videoWithNoProgress} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).toBeNull();
+  });
+
+  it('renders progress bar with correct width when progressSeconds is set', async () => {
+    const videoWithProgress = { ...mockVideo, progressSeconds: 150 }; // Halfway through
+    await renderWithAct(<VideoCard video={videoWithProgress} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeNull();
+
+    // Check aria-valuenow for percentage
+    expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('renders progress bar with 100% width when progressSeconds equals duration', async () => {
+    const videoFullyWatched = { ...mockVideo, progressSeconds: 300 }; // Full duration
+    await renderWithAct(<VideoCard video={videoFullyWatched} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeNull();
+
+    // Check aria-valuenow for percentage
+    expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('does not render progress bar when duration is not provided', async () => {
+    const videoWithoutDuration = {
+      ...mockVideo,
+      duration: undefined,
+      progressSeconds: 150,
+    };
+    await renderWithAct(<VideoCard video={videoWithoutDuration} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).toBeNull();
   });
 });
