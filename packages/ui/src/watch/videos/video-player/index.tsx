@@ -41,6 +41,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playbackRate = 1,
   } = props;
   const { title, source, thumbnailUrl } = video;
+  // TODO implement in the future if needed
   // const playerRef = useRef<ReactPlayerType>(null);
 
   const handleError = useCallback(

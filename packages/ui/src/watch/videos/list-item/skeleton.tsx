@@ -17,8 +17,15 @@ const VideoListItemSkeleton = () => {
 
       {/* Text content skeletons */}
       <SkeletonContent role="presentation" sx={{ minWidth: 0, flex: 1 }}>
-        <Skeleton variant="text" width="85%" height={20} sx={{ marginBottom: 0.5 }} animation="wave" />
-        <Skeleton variant="text" width="40%" height={16} animation="wave" />
+        <Skeleton
+          variant="text"
+          width="85%"
+          height={20}
+          sx={{ marginBottom: 0.5 }}
+          animation="wave"
+          aria-label="Loading title"
+        />
+        <Skeleton variant="text" width="40%" height={16} animation="wave" aria-label="Loading metadata" />
       </SkeletonContent>
     </SkeletonContainer>
   );
