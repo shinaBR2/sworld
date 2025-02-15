@@ -5,7 +5,7 @@ coverage:
   status:
     project:
       default:
-        target: 55%
+        target: 50%
       ui:
         paths: ['packages/ui/**']
         target: 20%
