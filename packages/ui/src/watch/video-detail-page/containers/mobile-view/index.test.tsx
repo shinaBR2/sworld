@@ -5,8 +5,12 @@ import { Video } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 
 // Mock components
-vi.mock('../../../videos/video-player', () => ({
-  VideoPlayer: ({ video }: { video: Video }) => <div data-testid="video-player">{video.id}</div>,
+vi.mock('../../../videos/video-container', () => ({
+  VideoContainer: ({ video, onError }: { video: Video; onError: (err: unknown) => void }) => (
+    <div data-testid="video-container" onClick={() => onError(new Error('test error'))}>
+      {video.id}
+    </div>
+  ),
 }));
 
 vi.mock('../../related-list', () => ({
@@ -19,7 +23,7 @@ vi.mock('../../related-list', () => ({
   )),
 }));
 
-vi.mock('../../../videos/list-item-skeleton', () => ({
+vi.mock('../../../videos/list-item/skeleton', () => ({
   VideoListItemSkeleton: () => <div data-testid="video-list-item-skeleton" />,
 }));
 
@@ -41,9 +45,9 @@ const mockProps = {
 };
 
 describe('MobileView', () => {
-  it('renders video player with correct video', () => {
+  it('renders video container with correct video', () => {
     render(<MobileView {...mockProps} />);
-    expect(screen.getByTestId('video-player')).toHaveTextContent(mockVideoDetail.id);
+    expect(screen.getByTestId('video-container')).toHaveTextContent(mockVideoDetail.id);
   });
 
   it('renders title correctly', () => {
@@ -85,7 +89,7 @@ describe('MobileView', () => {
   it('shows content when not in loading state', () => {
     render(<MobileView {...mockProps} />);
 
-    expect(screen.getByTestId('video-player')).toBeInTheDocument();
+    expect(screen.getByTestId('video-container')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
     expect(screen.queryByTestId('video-list-item-skeleton')).not.toBeInTheDocument();

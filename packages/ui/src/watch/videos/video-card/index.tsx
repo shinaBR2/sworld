@@ -6,7 +6,7 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-import { StyledCard, StyledDuration, StyledTitle } from './styles';
+import { StyledCard, StyledDuration, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
@@ -17,7 +17,7 @@ interface VideoCardProps extends WithLinkComponent {
 }
 
 // Helper components
-const DurationBadge = ({ duration }: { duration?: string }) => {
+const DurationBadge = ({ duration }: { duration?: Video['duration'] }) => {
   if (!duration) return null;
 
   return <StyledDuration variant="caption">{duration}</StyledDuration>;
@@ -33,7 +33,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
   const { title, creator, createdTime } = props;
 
   return (
-    <CardContent sx={{ p: 1.5, pt: 2, '&:last-child': { pb: 1 } }}>
+    <CardContent sx={{ px: 0, pt: 2, '&:last-child': { pb: 1 } }}>
       <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
       </StyledTitle>
@@ -64,11 +64,41 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
+  // TODO
+  // duration is not available in database yet
+  const { progressSeconds = 0, duration } = video;
 
   return (
-    <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden' }}>
+    <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
       {asLink ? (
-        <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+        <Box sx={{ position: 'relative' }}>
+          <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+          {progressSeconds > 0 && duration && (
+            <Box
+              role="progressbar"
+              aria-label="Video progress"
+              aria-valuenow={(progressSeconds / duration) * 100} // Calculate actual percentage
+              aria-valuemin={0}
+              aria-valuemax={100}
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${(progressSeconds / duration) * 100}%`,
+                  height: '100%',
+                  bgcolor: 'error.main',
+                }}
+              />
+            </Box>
+          )}
+        </Box>
       ) : (
         <Suspense fallback={<VideoPlayerFallback title={video.title} />}>
           <ReactPlayer
@@ -106,11 +136,7 @@ const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
 
   if (asLink && LinkComponent) {
     return (
-      <LinkComponent
-        to="/$videoId"
-        params={{ videoId: video.id }}
-        style={{ textDecoration: 'none' }}
-      >
+      <LinkComponent to="/$videoId" params={{ videoId: video.id }} style={{ textDecoration: 'none' }}>
         {cardContent}
       </LinkComponent>
     );
