@@ -63,7 +63,7 @@ const VideoListItem = (props: VideoListItemProps) => {
               <ProgressBar
                 role="progressbar"
                 aria-label="Video progress"
-                aria-valuenow={55} // Calculate actual percentage
+                aria-valuenow={(progressSeconds / duration) * 100} // Calculate actual percentage
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
