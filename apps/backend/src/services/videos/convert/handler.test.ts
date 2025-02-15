@@ -35,6 +35,7 @@ describe('convertVideo', () => {
     inputPath: path.join(tempDir, 'input.mp4'),
     thumbnailPathPattern: new RegExp(path.join(tempDir, 'test-video-123--\\d+\\.jpg').replace(/\\/g, '\\\\')),
   };
+  const mockVideoDuration = 100;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -54,6 +55,7 @@ describe('convertVideo', () => {
 
     // Mock successful conversions
     vi.mocked(ffmpegHelpers.convertToHLS).mockResolvedValue(undefined);
+    vi.mocked(ffmpegHelpers.getDuration).mockResolvedValue(mockVideoDuration);
     vi.mocked(ffmpegHelpers.takeScreenshot).mockResolvedValue(undefined);
 
     // Mock successful uploads
@@ -83,11 +85,13 @@ describe('convertVideo', () => {
     expect(fileHelpers.verifyFileSize).toHaveBeenCalledWith(mockPaths.inputPath, 400 * 1024 * 1024);
 
     // Verify video conversion
+    expect(ffmpegHelpers.getDuration).toHaveBeenCalledWith(mockPaths.inputPath);
     expect(ffmpegHelpers.convertToHLS).toHaveBeenCalledWith(mockPaths.inputPath, mockPaths.outputDir);
     expect(ffmpegHelpers.takeScreenshot).toHaveBeenCalledWith(
       mockPaths.inputPath,
       mockPaths.workingDir,
-      expect.stringMatching(/test-video-123--\d+\.jpg/)
+      expect.stringMatching(/test-video-123--\d+\.jpg/),
+      mockVideoDuration
     );
 
     // Verify uploads
@@ -107,6 +111,7 @@ describe('convertVideo', () => {
       id: mockData.id,
       source: 'https://storage.googleapis.com/playlist.m3u8',
       thumbnailUrl: 'https://cloudinary.com/thumbnail.jpg',
+      duration: mockVideoDuration,
     });
 
     // Verify cleanup

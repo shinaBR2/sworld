@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize } from '../helpers/file';
 import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
-import { convertToHLS, takeScreenshot } from '../helpers/ffmpeg';
+import { convertToHLS, getDuration, takeScreenshot } from '../helpers/ffmpeg';
 import { logger } from 'src/utils/logger';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { existsSync, statSync } from 'fs';
@@ -51,7 +51,8 @@ export const convertVideo = async (data: ConversionVideo) => {
     logger.debug(`HLS conversion complete. Input file size: ${stats.size} bytes`);
 
     // Step 4: Generate and upload thumbnail
-    await takeScreenshot(inputPath, workingDir, thumbnailFilename);
+    const videoDuration = await getDuration(inputPath);
+    await takeScreenshot(inputPath, workingDir, thumbnailFilename, videoDuration);
     if (!existsSync(thumbnailPath)) {
       throw new Error('Screenshot file not created');
     }
@@ -72,6 +73,7 @@ export const convertVideo = async (data: ConversionVideo) => {
       id,
       source: playlistUrl,
       thumbnailUrl,
+      duration: videoDuration,
     });
     return playlistUrl;
   } catch (error) {

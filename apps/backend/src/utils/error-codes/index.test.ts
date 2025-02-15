@@ -13,6 +13,7 @@ describe('error-codes', () => {
       'VIDEO_INVALID_RESOLUTION',
       'STORAGE_UPLOAD_FAILED',
       'STORAGE_DOWNLOAD_FAILED',
+      'FIX_DURATION_ERROR',
     ];
 
     const actualCodes = Object.values(VIDEO_ERRORS);

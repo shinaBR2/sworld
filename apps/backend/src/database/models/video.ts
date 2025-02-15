@@ -1,7 +1,13 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../index';
 
-const Video = sequelize.define(
+interface VideoTS extends Model {
+  id: string;
+  source: string;
+  duration: number | null;
+}
+
+const Video = sequelize.define<VideoTS>(
   'videos',
   {
     id: {
@@ -20,6 +26,11 @@ const Video = sequelize.define(
     status: {
       type: DataTypes.STRING,
     },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     underscored: true,
@@ -29,4 +40,4 @@ const Video = sequelize.define(
   }
 );
 
-export { Video };
+export { Video, type VideoTS };

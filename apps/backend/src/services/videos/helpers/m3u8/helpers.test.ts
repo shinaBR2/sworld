@@ -360,6 +360,108 @@ describe('M3U8 parser', () => {
       `);
       expect(normalizeContent(modifiedContent)).toBe(expectedContent);
     });
+
+    test('should handle m3u8 with duration calculation', async () => {
+      const content = `
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:9.009,
+        segment1.ts
+        #EXTINF:8.008,
+        segment2.ts
+        #EXTINF:7.007,
+        /path/to/segment3.ts
+        #EXTINF:6.006,
+        https://example.com/ads/commercial.ts
+        #EXTINF:5.005,
+        segment4.ts
+        #EXT-X-ENDLIST
+      `;
+
+      const mockResponse = {
+        ok: true,
+        statusText: 'OK',
+        text: () => Promise.resolve(content),
+      };
+      (fetch as any).mockResolvedValue(mockResponse);
+
+      const { duration } = await parseM3U8Content(baseUrl, excludePatterns);
+
+      expect(duration).toBe(29);
+    });
+
+    test('should handle m3u8 with multiple ad patterns', async () => {
+      const content = `
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:3,
+        segment1.ts
+        #EXT-X-DISCONTINUITY
+        #EXTINF:5.96,
+        /adjump/ad1.ts
+        #EXTINF:1.96,
+        /ads/ad2.ts
+        #EXTINF:2.5,
+        /commercial/ad3.ts
+        #EXT-X-DISCONTINUITY
+        #EXTINF:3,
+        segment2.ts
+        #EXT-X-ENDLIST
+      `;
+
+      const expected = normalizeContent(`
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:3,
+        segment1.ts
+        #EXTINF:3,
+        segment2.ts
+        #EXT-X-ENDLIST
+      `);
+
+      const mockResponse = {
+        ok: true,
+        statusText: 'OK',
+        text: () => Promise.resolve(content),
+      };
+      (fetch as any).mockResolvedValue(mockResponse);
+
+      const { modifiedContent, segments, duration } = await parseM3U8Content(baseUrl, excludePatterns);
+
+      // Verify modified content
+      expect(normalizeContent(modifiedContent)).toBe(expected);
+
+      // Verify duration calculation
+      expect(duration).toBe(6);
+    });
+
+    test('should handle m3u8 with no valid segments', async () => {
+      const content = `
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:6.006,
+        https://example.com/ads/commercial1.ts
+        #EXTINF:7.007,
+        https://example.com/ads/commercial2.ts
+        #EXT-X-ENDLIST
+      `;
+
+      const mockResponse = {
+        ok: true,
+        statusText: 'OK',
+        text: () => Promise.resolve(content),
+      };
+      (fetch as any).mockResolvedValue(mockResponse);
+
+      const { duration } = await parseM3U8Content(baseUrl, excludePatterns);
+
+      // Verify duration
+      expect(duration).toBe(0);
+    });
   });
 });
 

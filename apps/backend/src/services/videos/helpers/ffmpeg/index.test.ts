@@ -1,12 +1,4 @@
-import {
-  describe,
-  expect,
-  it,
-  vi,
-  beforeEach,
-  afterEach,
-  type Mock,
-} from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import * as path from 'path';
 import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import { convertToHLS, getDuration, takeScreenshot } from '.';
@@ -65,25 +57,19 @@ describe('FFmpeg Helpers', () => {
     it('should throw error if input file does not exist', async () => {
       vi.mocked(existsSync).mockReturnValueOnce(false);
 
-      await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(
-        'Input file does not exist'
-      );
+      await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow('Input file does not exist');
       expect(ffmpeg).not.toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalled();
     });
 
     it('should throw error if inputPath is not absolute', async () => {
-      await expect(
-        convertToHLS('relative/path.mp4', outputDir)
-      ).rejects.toThrow('inputPath must be absolute');
+      await expect(convertToHLS('relative/path.mp4', outputDir)).rejects.toThrow('inputPath must be absolute');
       expect(ffmpeg).not.toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalled();
     });
 
     it('should throw error if outputDir is not absolute', async () => {
-      await expect(convertToHLS(inputPath, 'relative/path')).rejects.toThrow(
-        'outputDir must be absolute'
-      );
+      await expect(convertToHLS(inputPath, 'relative/path')).rejects.toThrow('outputDir must be absolute');
       expect(ffmpeg).not.toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalled();
     });
@@ -107,13 +93,9 @@ describe('FFmpeg Helpers', () => {
         '-hls_list_size 0',
         '-f hls',
       ]);
-      expect(mockFFmpeg.output).toHaveBeenCalledWith(
-        path.join(outputDir, 'playlist.m3u8')
-      );
+      expect(mockFFmpeg.output).toHaveBeenCalledWith(path.join(outputDir, 'playlist.m3u8'));
       expect(mockFFmpeg.run).toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith(
-        '[convertToHLS] HLS conversion completed successfully'
-      );
+      expect(logger.info).toHaveBeenCalledWith('[convertToHLS] HLS conversion completed successfully');
     });
 
     it('should handle conversion errors', async () => {
@@ -125,9 +107,7 @@ describe('FFmpeg Helpers', () => {
         return mockFFmpeg;
       });
 
-      await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(
-        'Conversion failed'
-      );
+      await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow('Conversion failed');
       expect(ffmpeg).toHaveBeenCalled();
       expect(mockFFmpeg.run).toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalled();
@@ -146,10 +126,7 @@ describe('FFmpeg Helpers', () => {
       });
 
       await convertToHLS(inputPath, outputDir);
-      expect(logger.debug).toHaveBeenCalledWith(
-        progress,
-        '[convertToHLS] Conversion progress:'
-      );
+      expect(logger.debug).toHaveBeenCalledWith(progress, '[convertToHLS] Conversion progress:');
     });
   });
 
@@ -158,9 +135,7 @@ describe('FFmpeg Helpers', () => {
 
     it('should throw error if videoPath is not absolute', async () => {
       const relativePath = 'videos/video.mp4';
-      await expect(getDuration(relativePath)).rejects.toThrow(
-        'videoPath must be absolute'
-      );
+      await expect(getDuration(relativePath)).rejects.toThrow('videoPath must be absolute');
       expect(ffmpeg.ffprobe).not.toHaveBeenCalled();
     });
 
@@ -211,25 +186,15 @@ describe('FFmpeg Helpers', () => {
     const videoPath = '/path/to/video.mp4';
     const outputDir = '/path/to/output';
     const filename = 'thumbnail.jpg';
-
-    beforeEach(() => {
-      // Reset ffprobe mock for each test
-      vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: 30 } } as FfprobeData);
-      });
-    });
+    const videoDuration = 100;
 
     it('should take screenshot at correct timestamp for short video', async () => {
-      vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: 1.5 } } as FfprobeData);
-      });
-
       mockFFmpeg.on.mockImplementation((event, callback) => {
         if (event === 'end') callback();
         return mockFFmpeg;
       });
 
-      await takeScreenshot(videoPath, outputDir, filename);
+      await takeScreenshot(videoPath, outputDir, filename, 1);
 
       expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
         timestamps: [0], // duration/3 = 0.5
@@ -239,16 +204,12 @@ describe('FFmpeg Helpers', () => {
     });
 
     it('should take screenshot at correct timestamp for medium length video', async () => {
-      vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: 15 } } as FfprobeData);
-      });
-
       mockFFmpeg.on.mockImplementation((event, callback) => {
         if (event === 'end') callback();
         return mockFFmpeg;
       });
 
-      await takeScreenshot(videoPath, outputDir, filename);
+      await takeScreenshot(videoPath, outputDir, filename, 15);
 
       expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
         timestamps: [5], // 15/3 = 5
@@ -258,16 +219,12 @@ describe('FFmpeg Helpers', () => {
     });
 
     it('should cap screenshot timestamp at 10 seconds for long video', async () => {
-      vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: 60 } } as FfprobeData);
-      });
-
       mockFFmpeg.on.mockImplementation((event, callback) => {
         if (event === 'end') callback();
         return mockFFmpeg;
       });
 
-      await takeScreenshot(videoPath, outputDir, filename);
+      await takeScreenshot(videoPath, outputDir, filename, 60);
 
       expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
         timestamps: [10], // duration/3 = 20, capped at 10
@@ -283,29 +240,10 @@ describe('FFmpeg Helpers', () => {
         return mockFFmpeg;
       });
 
-      await expect(
-        takeScreenshot(videoPath, outputDir, filename)
-      ).rejects.toThrow('FFmpeg error: Screenshot failed');
+      await expect(takeScreenshot(videoPath, outputDir, filename, videoDuration)).rejects.toThrow(
+        'FFmpeg error: Screenshot failed'
+      );
       expect(logger.error).toHaveBeenCalled();
-    });
-
-    it('should use default duration if getting duration fails', async () => {
-      vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(new Error('ffprobe failed'), null);
-      });
-
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
-
-      await takeScreenshot(videoPath, outputDir, filename);
-
-      expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
-        timestamps: [0], // Default duration = 1, so timestamp = 0
-        folder: outputDir,
-        filename: filename,
-      });
     });
   });
 });

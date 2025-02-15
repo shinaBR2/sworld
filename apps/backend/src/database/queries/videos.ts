@@ -1,4 +1,5 @@
-import { Video } from '../models/video';
+import { Op, Transaction } from 'sequelize';
+import { Video, VideoTS } from '../models/video';
 
 /**
  * Properties required to finalize a video
@@ -10,13 +11,15 @@ interface FinalizeVideoProps {
   source: string;
   /** Generated thumbnail URL */
   thumbnailUrl: string;
+  /** Calculated video duration */
+  duration?: number;
 }
 
 const finalizeVideo = async (props: FinalizeVideoProps) => {
-  const { id, source, thumbnailUrl } = props;
+  const { id, source, thumbnailUrl, duration = null } = props;
 
   const [updatedCount] = await Video.update(
-    { source, status: 'ready', thumbnail_url: thumbnailUrl },
+    { source, status: 'ready', thumbnail_url: thumbnailUrl, duration },
     {
       where: {
         id,
@@ -31,4 +34,46 @@ const finalizeVideo = async (props: FinalizeVideoProps) => {
   return updatedCount;
 };
 
-export { finalizeVideo };
+const getVideoMissingDuration = async () => {
+  const query = {
+    where: {
+      [Op.or]: [{ duration: null }, { duration: 0 }],
+    },
+  };
+
+  const videosWithoutDuration = await Video.findAll(query);
+
+  return videosWithoutDuration as unknown as VideoTS[];
+};
+
+const getVideoById = async (id: string) => {
+  const record = await Video.findByPk(id);
+  return record;
+};
+
+interface UpdateVideoDurationProps {
+  id: string;
+  duration: number;
+  transaction?: Transaction;
+}
+
+const updateVideoDuration = async (props: UpdateVideoDurationProps) => {
+  const { id, duration, transaction } = props;
+  const [updatedCount] = await Video.update(
+    { duration },
+    {
+      where: {
+        id,
+      },
+      transaction,
+    }
+  );
+
+  if (updatedCount === 0) {
+    throw new Error(`Video with ID ${id} not found`);
+  }
+
+  return updatedCount;
+};
+
+export { finalizeVideo, getVideoMissingDuration, getVideoById, updateVideoDuration };

@@ -19,6 +19,13 @@ vi.mock('express', () => {
           stack: [{ name: 'middleware' }, { name: 'importPlatformHandler' }],
         },
       },
+      {
+        route: {
+          path: '/fix-duration',
+          methods: { post: true },
+          stack: [{ name: 'middleware' }, { name: 'fixDurationHandler' }],
+        },
+      },
     ],
   };
 
@@ -35,6 +42,10 @@ vi.mock('./routes/stream-hls', () => ({
 
 vi.mock('./routes/import-platform', () => ({
   importPlatformHandler: vi.fn(),
+}));
+
+vi.mock('./routes/fix-duration', () => ({
+  fixDurationHandler: vi.fn(),
 }));
 
 vi.mock('src/utils/validator', () => ({
@@ -58,6 +69,10 @@ describe('videosRouter', () => {
       },
       {
         path: '/import-platform-handler',
+        method: 'post',
+      },
+      {
+        path: '/fix-duration',
         method: 'post',
       },
     ];
@@ -87,5 +102,15 @@ describe('videosRouter', () => {
     expect(middlewares).toHaveLength(2);
     expect(middlewares[0].name).toBe('middleware');
     expect(middlewares[1].name).toBe('importPlatformHandler');
+  });
+
+  it('should have validation middleware and handler for fix-duration', () => {
+    const fixDurationHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/fix-duration');
+
+    const middlewares = fixDurationHandlerRoute?.route.stack || [];
+
+    expect(middlewares).toHaveLength(2);
+    expect(middlewares[0].name).toBe('middleware');
+    expect(middlewares[1].name).toBe('fixDurationHandler');
   });
 });

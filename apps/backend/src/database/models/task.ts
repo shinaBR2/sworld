@@ -12,6 +12,8 @@ enum TaskType {
   CONVERT = 'convert',
   IMPORT_PLATFORM = 'import_platform',
   STREAM_HLS = 'stream_hls',
+  /** ONE TIME JOB TO FIX VIDEO HAS MISSING DURATION  */
+  FIX_DURATION = 'fix_duration',
 }
 
 enum TaskEntityType {

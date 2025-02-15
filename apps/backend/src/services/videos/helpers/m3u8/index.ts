@@ -15,7 +15,10 @@ interface ProcessOptions {
  * @param m3u8Url - The URL of the source M3U8 playlist
  * @param storagePath - The base path in cloud storage where files will be uploaded
  * @param options - Optional configuration for streaming process
- * @returns A promise resolving to the cloud storage URL of the streamed playlist
+ * @returns A promise resolving to an object containing:
+ *   - playlistUrl: The cloud storage URL of the streamed playlist
+ *   - segments: Information about included and excluded segments
+ *   - duration: The total duration of the video
  *
  * @remarks
  * - Parses the M3U8 playlist to extract video segments
@@ -34,12 +37,12 @@ interface ProcessOptions {
  * @throws {Error} Propagates any errors encountered during streaming process
  * - Logs detailed error information before throwing
  */
-const streamM3U8 = async (m3u8Url: string, storagePath: string, options: ProcessOptions = {}): Promise<string> => {
+const streamM3U8 = async (m3u8Url: string, storagePath: string, options: ProcessOptions = {}) => {
   try {
     logger.info({ m3u8Url, storagePath }, 'Starting M3U8 streaming');
 
     // Parse m3u8 and get segments
-    const { modifiedContent, segments } = await parseM3U8Content(m3u8Url, options.excludePatterns);
+    const { modifiedContent, segments, duration } = await parseM3U8Content(m3u8Url, options.excludePatterns);
 
     logger.info(
       {
@@ -63,10 +66,11 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
     const result = {
       playlistUrl: getDownloadUrl(playlistStoragePath),
       segments,
+      duration,
     };
 
     logger.info({ playlistUrl: result.playlistUrl }, 'M3U8 streaming completed');
-    return result.playlistUrl;
+    return result;
   } catch (error) {
     logger.error(
       {

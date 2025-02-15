@@ -11,6 +11,7 @@ import { Parser } from 'm3u8-parser';
 interface ParsedResult {
   modifiedContent: string;
   segments: { included: string[]; excluded: string[] };
+  duration: number;
 }
 
 const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
@@ -67,6 +68,7 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
   };
 
   let modifiedContent = '';
+  let totalDuration = 0;
 
   // Add header tags
   if (manifest.version) {
@@ -94,6 +96,7 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
       // Include non-ad segment
       if (segment.duration) {
         modifiedContent += `#EXTINF:${segment.duration},\n`;
+        totalDuration += segment.duration;
       }
 
       modifiedContent += `${segment.uri}\n`;
@@ -106,7 +109,7 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
     modifiedContent += '#EXT-X-ENDLIST\n';
   }
 
-  return { modifiedContent, segments };
+  return { modifiedContent, segments, duration: Math.round(totalDuration) };
 };
 
 // TODO - remove if downloadSegments is unused

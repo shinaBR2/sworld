@@ -11,6 +11,7 @@ describe('Video Model', () => {
     expect(attributes).toHaveProperty('source');
     expect(attributes).toHaveProperty('thumbnail_url');
     expect(attributes).toHaveProperty('status');
+    expect(attributes).toHaveProperty('duration');
   });
 
   describe('Field Configurations', () => {
@@ -39,6 +40,13 @@ describe('Video Model', () => {
       const field = attributes.status;
       expect(field.type).toBe(DataTypes.STRING);
     });
+
+    it('should configure duration correctly', () => {
+      const field = attributes.duration;
+      expect(field.type).toBe(DataTypes.INTEGER);
+      expect(field.allowNull).toBe(true);
+      expect(field.defaultValue).toBe(null);
+    });
   });
 
   describe('Model Configuration', () => {
@@ -60,6 +68,7 @@ describe('Video Model', () => {
       source: 'youtube',
       thumbnail_url: 'https://example.com/thumbnail.jpg',
       status: 'ready',
+      duration: 100,
     };
 
     const video = Video.build(videoData);
@@ -70,5 +79,6 @@ describe('Video Model', () => {
     expect(video).toHaveProperty('source', videoData.source);
     expect(video).toHaveProperty('thumbnail_url', videoData.thumbnail_url);
     expect(video).toHaveProperty('status', videoData.status);
+    expect(video).toHaveProperty('duration', videoData.duration);
   });
 });
