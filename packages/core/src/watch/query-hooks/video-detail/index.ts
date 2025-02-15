@@ -32,14 +32,21 @@ interface User {
   username: string;
 }
 
+interface VideoHistory {
+  last_watched_at: string;
+  progress_seconds: number;
+}
+
 interface Video {
   id: string;
   title: string;
   description: string;
+  thumbnailUrl: string;
   source: string;
   slug: string;
   createdAt: string;
   user: User;
+  user_video_histories?: VideoHistory[];
 }
 
 interface VideoDetail {
@@ -60,9 +67,8 @@ interface VideoDetailResponse {
   videos_by_pk: VideoDetail | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const transformVideoData = (video: any) => {
-  const history = video.user_video_histories[0];
+const transformVideoData = (video: Video) => {
+  const history = video?.user_video_histories?.[0];
 
   return {
     id: video.id,

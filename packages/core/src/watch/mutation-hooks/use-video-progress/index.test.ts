@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useVideoProgress } from './index';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 
@@ -12,14 +12,25 @@ describe('useVideoProgress', () => {
   const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
   const mockOnError = vi.fn();
   const mockMutate = vi.fn();
+  let mockUseMutationOptions: { onError?: (error: unknown) => void };
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-    vi.mocked(useMutationRequest).mockReturnValue({
-      mutate: mockMutate,
-      isLoading: false,
+
+    mockUseMutationOptions = {};
+    vi.mocked(useMutationRequest).mockImplementation(params => {
+      mockUseMutationOptions = params.options || {};
+      return {
+        mutate: mockMutate,
+        isLoading: false,
+      };
     });
+
+    // vi.mocked(useMutationRequest).mockReturnValue({
+    //   mutate: mockMutate,
+    //   isLoading: false,
+    // });
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
   });
@@ -114,16 +125,54 @@ describe('useVideoProgress', () => {
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
-  it('should handle error in mutation', () => {
+  it('should handle error in mutation correctly', () => {
     const error = new Error('Update failed');
-    vi.mocked(useMutationRequest).mockReturnValue({
-      mutate: vi.fn().mockRejectedValue(error),
-      isLoading: false,
-    });
-
     renderVideoProgressHook();
 
-    expect(mockOnError).not.toHaveBeenCalled();
+    // Verify the onError callback was registered
+    expect(mockUseMutationOptions.onError).toBeDefined();
+
+    // Trigger the error callback
+    act(() => {
+      mockUseMutationOptions.onError?.(error);
+    });
+
+    // Verify error was logged and callback was called
+    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', error);
+    expect(mockOnError).toHaveBeenCalledWith(error);
+  });
+
+  it('should handle non-Error objects in error callback', () => {
+    const nonErrorObject = { message: 'Custom error object' };
+    renderVideoProgressHook();
+
+    act(() => {
+      mockUseMutationOptions.onError?.(nonErrorObject);
+    });
+
+    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', nonErrorObject);
+    expect(mockOnError).toHaveBeenCalledWith(nonErrorObject);
+  });
+
+  it('should not throw if onError prop is not provided', () => {
+    // Render hook without onError prop
+    renderHook(() =>
+      useVideoProgress({
+        videoId: mockVideoId,
+        getAccessToken: mockGetAccessToken,
+      })
+    );
+
+    const error = new Error('Update failed');
+
+    // Should not throw when calling error callback without onError prop
+    expect(() => {
+      act(() => {
+        mockUseMutationOptions.onError?.(error);
+      });
+    }).not.toThrow();
+
+    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', error);
   });
 
   it('should not start multiple intervals on repeated play calls', () => {

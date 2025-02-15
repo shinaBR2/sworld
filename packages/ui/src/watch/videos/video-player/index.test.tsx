@@ -47,9 +47,14 @@ vi.mock('react', async importOriginal => {
 const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 const mockVideo = {
+  id: 'video-123',
   title: 'Test Video',
   source: 'https://example.com/video.mp4',
   thumbnailUrl: 'https://example.com/thumbnail.jpg',
+  createdAt: '2024-01-01T00:00:00Z',
+  user: {
+    username: 'master',
+  },
 };
 
 describe('VideoPlayer', () => {
@@ -76,6 +81,7 @@ describe('VideoPlayer', () => {
       thumbnailUrl: null,
     };
 
+    // @ts-expect-error: thumbnailUrl can be null for this test case
     render(<VideoPlayer video={videoWithoutThumbnail} />);
 
     await act(async () => {

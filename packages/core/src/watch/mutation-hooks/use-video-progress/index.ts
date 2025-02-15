@@ -104,6 +104,12 @@ const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgress
     currentProgressRef.current = playedSeconds;
   }, []);
 
+  // TODO
+  // From coderabbitai
+  // 107-115: Interval not cleared on pause/seek/end.
+  // You’re clearing it only on component unmount, so it continues saving progress every 15s.
+  // Consider clearing the interval in handlePause, handleEnded, etc., if you only want periodic saving when actively playing.
+
   const handlePlay = useCallback(() => {
     if (intervalRef.current) return;
 

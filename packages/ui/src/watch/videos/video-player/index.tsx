@@ -27,21 +27,24 @@ interface PlayerRef {
   seekTo: (amount: number, type?: 'seconds' | 'fraction') => void;
 }
 
-const VideoPlayer = ({
-  video,
-  onProgress,
-  onPause,
-  onPlay,
-  onSeek,
-  onEnded,
-  onError,
-  onReady,
-  controls = true,
-  playing = false,
-  muted = false,
-  volume = 1,
-  playbackRate = 1,
-}: VideoPlayerProps) => {
+const PROGRESS_INTERVAL = 1000;
+
+const VideoPlayer = (props: VideoPlayerProps) => {
+  const {
+    video,
+    onProgress,
+    onPause,
+    onPlay,
+    onSeek,
+    onEnded,
+    onError,
+    onReady,
+    controls = true,
+    playing = false,
+    muted = false,
+    volume = 1,
+    playbackRate = 1,
+  } = props;
   const { title, source, thumbnailUrl } = video;
   const playerRef = useRef<PlayerRef>(null);
 
@@ -80,7 +83,7 @@ const VideoPlayer = ({
           onSeek={onSeek}
           onEnded={onEnded}
           onReady={onReady}
-          progressInterval={1000} // Update progress every second TODO: configurable
+          progressInterval={PROGRESS_INTERVAL}
         />
       </Box>
     </Suspense>
