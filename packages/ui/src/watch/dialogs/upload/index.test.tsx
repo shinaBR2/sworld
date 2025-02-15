@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // packages/ui/src/watch/dialogs/upload/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { VideoUploadDialog, CLOSE_DELAY_MS } from './index';
 import hooks, { Auth, watchMutationHooks } from 'core';
 import { canPlayUrls } from './utils';
@@ -80,8 +80,10 @@ describe('VideoUploadDialog', () => {
 
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    fillForm();
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      fillForm();
+      fireEvent.click(elements.submitButton());
+    });
 
     // Check loading state
     expect(elements.progressBar()).toBeInTheDocument();
@@ -101,8 +103,10 @@ describe('VideoUploadDialog', () => {
 
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    fillForm();
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      fillForm();
+      fireEvent.click(elements.submitButton());
+    });
 
     await waitFor(() => {
       expect(screen.getByText(texts.errors.invalidUrl)).toBeInTheDocument();
@@ -115,8 +119,10 @@ describe('VideoUploadDialog', () => {
 
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    fillForm();
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      fillForm();
+      fireEvent.click(elements.submitButton());
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Upload failed')).toBeInTheDocument();
@@ -126,8 +132,10 @@ describe('VideoUploadDialog', () => {
   it('should handle successful submission with countdown', async () => {
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    fillForm();
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      fillForm();
+      fireEvent.click(elements.submitButton());
+    });
 
     await waitFor(() => {
       expect(mockUseCountdown).toHaveBeenCalledWith(
@@ -160,21 +168,25 @@ describe('VideoUploadDialog', () => {
 
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    fillForm();
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      fillForm();
+      fireEvent.click(elements.submitButton());
+    });
 
     await waitFor(() => {
       expect(screen.getByText(texts.errors.failedToSave)).toBeInTheDocument();
     });
   });
 
-  it('should clear error when URL is changed', () => {
+  it('should clear error when URL is changed', async () => {
     render(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
-    // First trigger an error
-    fillForm();
-    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'invalid-url', isValid: false }]);
-    fireEvent.click(elements.submitButton());
+    await act(async () => {
+      // First trigger an error
+      fillForm();
+      vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'invalid-url', isValid: false }]);
+      fireEvent.click(elements.submitButton());
+    });
 
     // Then change URL
     fireEvent.change(elements.urlInput(), {

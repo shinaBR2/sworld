@@ -13,9 +13,7 @@ interface GenericLinkProps<T = any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type LinkComponentType<T = any> = React.ComponentType<
-  GenericLinkProps<T>
->;
+export type LinkComponentType<T = any> = React.ComponentType<GenericLinkProps<T>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RequiredLinkComponent<T = any> = {
@@ -34,8 +32,10 @@ export interface Video {
   source: string;
   thumbnailUrl?: string;
   createdAt: string;
-  duration?: string;
+  duration?: number;
   user: Uploader;
+  progressSeconds?: number;
+  lastWatchedAt?: string | null;
 }
 
 export interface HomeContainerProps extends RequiredLinkComponent {

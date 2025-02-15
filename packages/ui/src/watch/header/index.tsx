@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton';
 import { Auth } from 'core';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
-import SearchBar from '../../universal/search-bar';
 import SiteChoices from '../../universal/site-choices';
 import { RequiredLinkComponent } from '../videos/interface';
 
@@ -26,7 +25,7 @@ const Header = (props: HeaderProps) => {
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
-      <Toolbar sx={{ display: 'flex', gap: 2 }}>
+      <Toolbar sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
         <Box
           sx={{
             display: 'flex',
@@ -34,31 +33,14 @@ const Header = (props: HeaderProps) => {
             minWidth: 'fit-content',
           }}
         >
-          {/* <IconButton>
-            <Menu open={false} />
-          </IconButton> */}
           <Logo LinkComponent={LinkComponent} />
           <SiteChoices activeSite="watch" sites={sites} />
-        </Box>
-
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <SearchBar />
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
           <IconButton onClick={() => toggleSetting(true)}>
             {avatarUrl ? (
-              <ResponsiveAvatar
-                src={avatarUrl}
-                alt={user.name}
-                data-testid="user-avatar"
-              />
+              <ResponsiveAvatar src={avatarUrl} alt={user.name} data-testid="user-avatar" />
             ) : (
               <AccountCircle />
             )}
