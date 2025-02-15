@@ -15,7 +15,8 @@ export const errorHandler = (logger: Logger): ErrorRequestHandler => {
       .join('\n');
   };
 
-  return (err, req, res) => {
+  // next is required for nextjs
+  return (err, req, res, next) => {
     if (err instanceof CustomError) {
       Sentry.withScope(scope => {
         scope.setTags({
