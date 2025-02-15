@@ -224,6 +224,25 @@ describe('useVideoProgress', () => {
     expect(mockMutate).toHaveBeenCalledTimes(2); // Only the immediate save from seek
   });
 
+  it('should clear interval when ended', () => {
+    const { result } = renderVideoProgressHook();
+
+    // Start playback with interval
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+
+    // Verify interval is running
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+
+    // Seek during playback
+    result.current.handleEnded();
+
+    // Verify interval was cleared by checking no more mutations occur
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).toHaveBeenCalledTimes(2); // Only the immediate save from ended
+  });
+
   it('should handle seek-play sequence correctly', () => {
     const { result } = renderVideoProgressHook();
 
