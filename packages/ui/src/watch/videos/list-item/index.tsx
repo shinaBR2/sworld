@@ -1,10 +1,20 @@
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent, Video } from '../interface';
 import PlayCircle from '@mui/icons-material/PlayCircle';
 import { ResponsiveImage } from '../../../universal/images/image';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
-import { CSSProperties } from 'react';
+import {
+  DurationLabel,
+  ListItemContainer,
+  PlayIconOverlay,
+  Progress,
+  ProgressBar,
+  ThumbnailContainer,
+  thumbnailImgStyle,
+  ThumbnailWrapper,
+  TitleText,
+  UsernameText,
+} from './styled';
 
 interface ThumbnailProps {
   src?: string;
@@ -15,12 +25,6 @@ interface VideoListItemProps extends RequiredLinkComponent {
   video: Video;
   isActive?: boolean;
 }
-
-const thumbnailImgStyle: CSSProperties = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'contain',
-};
 
 const Thumbnail = (props: ThumbnailProps) => {
   const { src, title } = props;
@@ -44,61 +48,39 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, isActive = false, LinkComponent } = props;
-  const { id, title, thumbnailUrl, duration, user } = video;
+  const { id, title, thumbnailUrl, duration, user, progressSeconds = 0 } = video;
 
   return (
     <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
-      <Box
-        aria-current={isActive ? 'page' : undefined}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          py: 1,
-          bgcolor: isActive ? theme => theme.palette.action.selected : 'transparent',
-          borderLeft: theme => (isActive ? `4px solid ${theme.palette.primary.main}` : '4px solid transparent'),
-          px: 1, // Add some padding to accommodate the border
-          '&:hover': {
-            bgcolor: 'action.hover',
-            '& .play-icon': {
-              opacity: 1,
-            },
-          },
-        }}
-      >
+      <ListItemContainer isActive={isActive} aria-current={isActive ? 'page' : undefined}>
         {/* Thumbnail with play overlay */}
-        <Box sx={{ position: 'relative', flexShrink: 0 }}>
-          <Box
-            sx={{
-              width: 64,
-              height: 64,
-              objectFit: 'cover',
-              borderRadius: 1,
-            }}
-          >
+        <ThumbnailContainer>
+          <ThumbnailWrapper>
             <Thumbnail src={thumbnailUrl} title={title} />
-          </Box>
-          <Box
-            className="play-icon"
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'rgba(0, 0, 0, 0.5)',
-              opacity: 0,
-              transition: 'opacity 0.2s',
-              borderRadius: 1,
-            }}
-          >
+            {/* TODO */}
+            {/* duration is not available yet */}
+            {progressSeconds > 0 && duration && (
+              <ProgressBar
+                role="progressbar"
+                aria-label="Video progress"
+                aria-valuenow={(progressSeconds / duration) * 100} // Calculate actual percentage
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <Progress
+                  sx={{
+                    width: `${(progressSeconds / duration) * 100}%`,
+                    bgcolor: 'error.main',
+                  }}
+                />
+              </ProgressBar>
+            )}
+          </ThumbnailWrapper>
+          <PlayIconOverlay className="play-icon">
             <PlayCircle fontSize={'medium'} />
-          </Box>
+          </PlayIconOverlay>
           {duration && (
-            <Typography
+            <DurationLabel
               variant="caption"
               sx={{
                 position: 'absolute',
@@ -112,13 +94,13 @@ const VideoListItem = (props: VideoListItemProps) => {
               }}
             >
               {duration}
-            </Typography>
+            </DurationLabel>
           )}
-        </Box>
+        </ThumbnailContainer>
 
         {/* Text content */}
         <Box sx={{ minWidth: 0 }}>
-          <Typography
+          <TitleText
             variant="body2"
             sx={{
               fontWeight: 500,
@@ -130,8 +112,8 @@ const VideoListItem = (props: VideoListItemProps) => {
             }}
           >
             {title}
-          </Typography>
-          <Typography
+          </TitleText>
+          <UsernameText
             variant="caption"
             color="text.secondary"
             sx={{
@@ -142,9 +124,9 @@ const VideoListItem = (props: VideoListItemProps) => {
             }}
           >
             {user.username}
-          </Typography>
+          </UsernameText>
         </Box>
-      </Box>
+      </ListItemContainer>
     </LinkComponent>
   );
 };

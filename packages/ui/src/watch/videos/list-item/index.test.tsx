@@ -89,4 +89,71 @@ describe('VideoListItem', () => {
     const playIcon = screen.getByTestId('PlayCircleIcon');
     expect(playIcon).toBeInTheDocument();
   });
+
+  it('renders progress bar when progressSeconds and duration are provided', () => {
+    const videoWithProgress = {
+      ...mockVideo,
+      progressSeconds: 100,
+      duration: 200, // 50% progress
+    };
+
+    render(<VideoListItem video={videoWithProgress} LinkComponent={mockLinkComponent} />);
+
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toBeInTheDocument();
+    expect(progressBar).toHaveAttribute('aria-label', 'Video progress');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('does not render progress bar when progressSeconds is 0', () => {
+    const videoWithZeroProgress = {
+      ...mockVideo,
+      progressSeconds: 0,
+      duration: 200,
+    };
+
+    render(<VideoListItem video={videoWithZeroProgress} LinkComponent={mockLinkComponent} />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeInTheDocument();
+  });
+
+  it('does not render progress bar when duration is missing', () => {
+    const videoWithoutDuration = {
+      ...mockVideo,
+      progressSeconds: 100,
+      duration: undefined,
+    };
+
+    render(<VideoListItem video={videoWithoutDuration} LinkComponent={mockLinkComponent} />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeInTheDocument();
+  });
+
+  it('calculates and displays correct progress percentage', () => {
+    const testCases = [
+      { progressSeconds: 25, duration: 100, expected: 25 }, // 25%
+      { progressSeconds: 75, duration: 100, expected: 75 }, // 75%
+      { progressSeconds: 100, duration: 100, expected: 100 }, // 100%
+    ];
+
+    testCases.forEach(({ progressSeconds, duration, expected }) => {
+      const videoWithProgress = {
+        ...mockVideo,
+        progressSeconds,
+        duration,
+      };
+
+      const { rerender } = render(<VideoListItem video={videoWithProgress} LinkComponent={mockLinkComponent} />);
+
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-valuenow', expected.toString());
+
+      // Cleanup for next test case
+      rerender(<div />);
+    });
+  });
 });

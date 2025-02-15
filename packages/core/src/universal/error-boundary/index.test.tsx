@@ -1,12 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
 import { ErrorBoundary } from './index';
 import { render } from '@testing-library/react';
 import sentryTestkit from 'sentry-testkit';

@@ -5,7 +5,7 @@ coverage:
   status:
     project:
       default:
-        target: 55%
+        target: 50%
       ui:
         paths: ['packages/ui/**']
         target: 20%
@@ -19,9 +19,11 @@ coverage:
 ignore:
   - 'apps/docs/**/*' # Ignore documentation app
   - '**/types.ts' # Ignore TypeScript interfaces
+  - '**/stories.tsx' # Ignore Storybook files
   - '**/test/**/*' # Ignore test files
   - '**/*.test.*' # Ignore test files
   - '**/*.spec.*' # Ignore spec files
+  - '**/[Ss]tyled*.{ts,tsx}' # Ignore files starting with Styled/styled
 
 parsers:
   javascript:

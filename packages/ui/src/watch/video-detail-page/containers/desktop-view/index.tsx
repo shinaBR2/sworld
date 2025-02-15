@@ -1,12 +1,12 @@
 import Grid from '@mui/material/Grid';
 import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
-import { VideoPlayer } from '../../../videos/video-player';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
-import { VideoListItemSkeleton } from '../../../videos/list-item-skeleton';
+import { VideoListItemSkeleton } from '../../../videos/list-item/skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
 import { Typography } from '@mui/material';
+import { VideoContainer } from '../../../videos/video-container';
 
 const styles = {
   container: {
@@ -21,6 +21,8 @@ const styles = {
   scrollableList: {
     height: `calc(100vh - ${HEADER_DESKTOP_HEIGHT}px)`,
     overflow: 'auto',
+    px: 2,
+    pb: 2,
   },
   title: {
     my: 2,
@@ -48,9 +50,9 @@ const VideoPlayerSkeleton = () => (
 const SKELETON_ITEMS_COUNT = 6;
 
 const RelatedListSkeleton = () => (
-  <Box sx={{ p: 2 }}>
+  <Box>
     {/* Title skeleton */}
-    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mb: 2 }} />
+    <Skeleton aria-label="Loading related videos" variant="text" width={120} height={32} sx={{ mx: 2, mb: 2 }} />
 
     {/* Related videos list */}
     {Array.from(new Array(SKELETON_ITEMS_COUNT)).map((_, index) => (
@@ -98,7 +100,12 @@ const DesktopView = (props: VideoDetailContainerProps) => {
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
         {videoDetail && (
           <Box sx={{ width: '100%' }}>
-            <VideoPlayer video={videoDetail} />
+            <VideoContainer
+              video={videoDetail}
+              onError={(err: unknown) => {
+                console.log(err);
+              }}
+            />
             <Typography component="h1" variant="h4" sx={styles.title}>
               {videoDetail.title}
             </Typography>

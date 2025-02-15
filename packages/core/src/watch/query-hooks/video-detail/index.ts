@@ -1,4 +1,4 @@
-import { useRequest } from '../../universal/hooks/use-request';
+import { useRequest } from '../../../universal/hooks/use-request';
 
 const videoDetailQuery = `
   query VideoDetail ($id: uuid!) @cached {
@@ -12,6 +12,10 @@ const videoDetailQuery = `
       createdAt
       user {
         username
+      }
+      user_video_histories {
+        last_watched_at
+        progress_seconds
       }
     }
     videos_by_pk(id: $id) {
@@ -28,14 +32,21 @@ interface User {
   username: string;
 }
 
+interface VideoHistory {
+  last_watched_at: string;
+  progress_seconds: number;
+}
+
 interface Video {
   id: string;
   title: string;
   description: string;
+  thumbnailUrl: string;
   source: string;
   slug: string;
   createdAt: string;
   user: User;
+  user_video_histories?: VideoHistory[];
 }
 
 interface VideoDetail {
@@ -56,10 +67,27 @@ interface VideoDetailResponse {
   videos_by_pk: VideoDetail | null;
 }
 
+const transformVideoData = (video: Video) => {
+  const history = video?.user_video_histories?.[0];
+
+  return {
+    id: video.id,
+    title: video.title,
+    description: video.description,
+    thumbnailUrl: video.thumbnailUrl,
+    source: video.source,
+    slug: video.slug,
+    createdAt: video.createdAt,
+    user: video.user,
+    lastWatchedAt: history?.last_watched_at ?? null,
+    progressSeconds: history?.progress_seconds ?? 0,
+  };
+};
+
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading } = useRequest<VideoDetailResponse>({
+  const { data, isLoading, error } = useRequest<VideoDetailResponse>({
     queryKey: ['video-detail', id],
     getAccessToken,
     document: videoDetailQuery,
@@ -69,9 +97,10 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   });
 
   return {
-    videos: data?.videos ?? [],
+    videos: data?.videos.map(transformVideoData) || [],
     videoDetail: data?.videos_by_pk ?? {},
     isLoading,
+    error,
   };
 };
 

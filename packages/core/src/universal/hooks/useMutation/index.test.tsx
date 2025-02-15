@@ -42,6 +42,7 @@ describe('useMutationRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it('should execute mutation without authentication', async () => {
