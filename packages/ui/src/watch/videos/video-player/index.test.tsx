@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { VideoPlayer } from './index';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 
@@ -12,39 +12,18 @@ vi.mock('../video-thumbnail', () => ({
   ),
 }));
 
-// Create a promise to control React.lazy loading
-let resolveReactPlayer: (value: unknown) => void;
-const reactPlayerPromise = new Promise(resolve => {
-  resolveReactPlayer = resolve;
-});
+const MockReactPlayer = vi.fn(({ url, light }) => (
+  <div data-testid="mock-react-player" data-url={url} data-thumbnail={light}>
+    Mock Player Content
+  </div>
+));
 
-// Mock react-player with controlled lazy loading
 vi.mock('react-player', () => {
   return {
     __esModule: true,
-    default: ({ url, light, onError }: { url: string; light: string; onError: (error: unknown) => void }) => (
-      <div
-        data-testid="mock-react-player"
-        data-url={url}
-        data-thumbnail={light}
-        onClick={() => onError && onError(new Error('Player error'))}
-      >
-        Mock Player Content
-      </div>
-    ),
+    default: (props: any) => MockReactPlayer(props),
   };
 });
-
-// Mock React.lazy to use our controlled promise
-vi.mock('react', async importOriginal => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    lazy: () => reactPlayerPromise,
-  };
-});
-
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 const mockVideo = {
   id: 'video-123',
@@ -65,12 +44,11 @@ describe('VideoPlayer', () => {
   it('should render player with correct props', async () => {
     render(<VideoPlayer video={mockVideo} />);
 
-    // Resolve the lazy load
-    await act(async () => {
-      resolveReactPlayer({ default: await import('react-player').then(m => m.default) });
-    });
+    // Initially should show loading state (VideoThumbnail)
+    expect(screen.getByTestId('video-thumbnail')).toBeInTheDocument();
 
-    const player = screen.getByTestId('mock-react-player');
+    // Wait for player to load
+    const player = await screen.findByTestId('mock-react-player');
     expect(player).toHaveAttribute('data-url', mockVideo.source);
     expect(player).toHaveAttribute('data-thumbnail', mockVideo.thumbnailUrl);
   });
@@ -78,34 +56,50 @@ describe('VideoPlayer', () => {
   it('should use default thumbnail when thumbnailUrl is not provided', async () => {
     const videoWithoutThumbnail = {
       ...mockVideo,
-      thumbnailUrl: null,
+      thumbnailUrl: undefined,
     };
 
-    // @ts-expect-error: thumbnailUrl can be null for this test case
     render(<VideoPlayer video={videoWithoutThumbnail} />);
 
-    await act(async () => {
-      resolveReactPlayer({ default: await import('react-player').then(m => m.default) });
-    });
-
-    const player = screen.getByTestId('mock-react-player');
+    const player = await screen.findByTestId('mock-react-player');
     expect(player).toHaveAttribute('data-thumbnail', defaultThumbnailUrl);
   });
 
   it('should handle player errors', async () => {
-    render(<VideoPlayer video={mockVideo} />);
+    const mockError = new Error('Playback failed');
+    const onError = vi.fn();
 
-    await act(async () => {
-      resolveReactPlayer({ default: await import('react-player').then(m => m.default) });
+    // Reset mock to capture onError prop
+    MockReactPlayer.mockImplementationOnce(props => {
+      // Immediately call onError to simulate error
+      props.onError?.(mockError);
+
+      return <div data-testid="mock-react-player">Mock Player Content</div>;
     });
 
-    const player = screen.getByTestId('mock-react-player');
+    render(<VideoPlayer video={mockVideo} onError={onError} />);
 
-    // Trigger error by clicking (as defined in our mock)
-    await act(async () => {
-      player.click();
+    // Wait for player to load and error to be handled
+    await screen.findByTestId('mock-react-player');
+    expect(onError).toHaveBeenCalledWith(mockError);
+  });
+
+  it('should not crash when onError is not provided', async () => {
+    const mockError = new Error('Playback failed');
+
+    // Reset mock to simulate error without onError prop
+    MockReactPlayer.mockImplementationOnce(props => {
+      // This should not throw
+      props.onError?.(mockError);
+
+      return <div data-testid="mock-react-player">Mock Player Content</div>;
     });
 
-    expect(mockConsoleError).toHaveBeenCalledWith('ReactPlayer Error:', expect.any(Error));
+    // Should not throw when rendered without onError prop
+    expect(() => {
+      render(<VideoPlayer video={mockVideo} />);
+    }).not.toThrow();
+
+    await screen.findByTestId('mock-react-player');
   });
 });

@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { Auth, watchMutationHooks } from 'core';
 import { VideoContainer } from './index';
 import { VideoPlayer } from '../video-player';
+import { AuthContextValue } from 'core/providers/auth';
 
 // Mock dependencies
 vi.mock('core', () => ({
@@ -42,11 +43,12 @@ describe('VideoContainer', () => {
     mockGetAccessToken.mockResolvedValue('mock-token');
     vi.mocked(Auth.useAuthContext).mockReturnValue({
       getAccessToken: mockGetAccessToken,
-    });
+    } as unknown as AuthContextValue);
     vi.mocked(watchMutationHooks.useVideoProgress).mockReturnValue({
       handleProgress: mockHandleProgress,
       cleanup: mockCleanup,
-    });
+    } as any);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it('should render VideoPlayer with correct props', () => {

@@ -1,9 +1,9 @@
-import { Suspense, useRef, useCallback } from 'react';
+import { Suspense, useCallback, lazy } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import Box from '@mui/material/Box';
-import ReactPlayer from 'react-player';
+// import type ReactPlayerType from 'react-player';
 
 interface VideoPlayerProps {
   video: Video;
@@ -21,13 +21,9 @@ interface VideoPlayerProps {
   playbackRate?: number;
 }
 
-interface PlayerRef {
-  getCurrentTime: () => number;
-  getDuration: () => number;
-  seekTo: (amount: number, type?: 'seconds' | 'fraction') => void;
-}
-
 const PROGRESS_INTERVAL = 1000;
+
+const ReactPlayer = lazy(() => import('react-player'));
 
 const VideoPlayer = (props: VideoPlayerProps) => {
   const {
@@ -46,7 +42,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playbackRate = 1,
   } = props;
   const { title, source, thumbnailUrl } = video;
-  const playerRef = useRef<PlayerRef>(null);
+  // const playerRef = useRef<ReactPlayerType>(null);
 
   const handleError = useCallback(
     (error: unknown) => {
@@ -66,7 +62,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         })}
       >
         <ReactPlayer
-          ref={playerRef}
+          // ref={playerRef}
           url={source}
           controls={controls}
           width="100%"
