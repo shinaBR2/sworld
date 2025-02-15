@@ -33,22 +33,9 @@ const Header = (props: HeaderProps) => {
             minWidth: 'fit-content',
           }}
         >
-          {/* <IconButton>
-            <Menu open={false} />
-          </IconButton> */}
           <Logo LinkComponent={LinkComponent} />
           <SiteChoices activeSite="watch" sites={sites} />
         </Box>
-
-        {/* <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <SearchBar />
-        </Box> */}
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
           <IconButton onClick={() => toggleSetting(true)}>

@@ -14,8 +14,20 @@ vi.mock('../../videos/video-card', () => ({
 }));
 
 const mockVideos = [
-  { id: '1', title: 'Video 1' },
-  { id: '2', title: 'Video 2' },
+  {
+    id: '1',
+    title: 'Video 1',
+    source: 'source1',
+    createdAt: '2024-02-20',
+    user: { username: 'user1' },
+  },
+  {
+    id: '2',
+    title: 'Video 2',
+    source: 'source2',
+    createdAt: '2024-02-21',
+    user: { username: 'user2' },
+  },
 ];
 
 const MockLink = vi.fn();

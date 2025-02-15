@@ -69,7 +69,7 @@ const VideoListItem = (props: VideoListItemProps) => {
               >
                 <Progress
                   sx={{
-                    width: `55%`,
+                    width: `${(progressSeconds / duration) * 100}%`,
                     bgcolor: 'error.main',
                   }}
                 />

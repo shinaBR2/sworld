@@ -86,7 +86,7 @@ const VideoContent = (props: VideoContentProps) => {
             >
               <Box
                 sx={{
-                  width: `55%`,
+                  width: `${(progressSeconds / duration) * 100}%`,
                   height: '100%',
                   bgcolor: 'error.main',
                 }}

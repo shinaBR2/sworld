@@ -30,7 +30,6 @@ describe('Header', () => {
 
     // Check if all components are rendered
     expect(screen.getByTestId('mock-logo')).toBeInTheDocument();
-    // expect(screen.getByTestId('mock-search-bar')).toBeInTheDocument();
     expect(screen.getByTestId('mock-site-choices')).toBeInTheDocument();
 
     // Check if account button is rendered

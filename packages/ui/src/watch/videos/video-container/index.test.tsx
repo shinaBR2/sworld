@@ -121,7 +121,7 @@ describe('VideoContainer', () => {
     expect(newMockCleanup).not.toHaveBeenCalled();
 
     // Unmounting should trigger latest cleanup
-    rerender(<></>);
+    rerender(null);
     expect(newMockCleanup).toHaveBeenCalledTimes(1);
   });
 });

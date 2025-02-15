@@ -18,12 +18,12 @@ const Content = () => {
 
     return videos
       .filter(video => {
-        return Boolean(video.lastWatchedAt && video.progressSeconds);
+        const { lastWatchedAt, progressSeconds } = video;
+
+        return lastWatchedAt != null && progressSeconds != null && progressSeconds > 0;
       })
       .sort((a, b) => {
-        const dateA = new Date(a.lastWatchedAt as string).getTime();
-        const dateB = new Date(b.lastWatchedAt as string).getTime();
-        return dateB - dateA;
+        return (b.lastWatchedAt as string).localeCompare(a.lastWatchedAt as string);
       });
   }, [videos]);
 

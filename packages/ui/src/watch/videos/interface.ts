@@ -32,7 +32,7 @@ export interface Video {
   source: string;
   thumbnailUrl?: string;
   createdAt: string;
-  duration?: string;
+  duration?: number;
   user: Uploader;
   progressSeconds?: number;
   lastWatchedAt?: string | null;
