@@ -1,4 +1,5 @@
-import Box from '@mui/material/Box';
+import { StyledComponent } from '@emotion/styled';
+import Box, { BoxProps } from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { CSSProperties } from 'react';
@@ -15,9 +16,9 @@ export const thumbnailImgStyle: CSSProperties = {
 };
 
 // Styled components
-const ListItemContainer = styled(Box, {
+const ListItemContainer: StyledComponent<BoxProps & { isActive?: boolean }> = styled(Box, {
   shouldForwardProp: prop => prop !== 'isActive',
-})<{ isActive?: boolean }>(({ theme, isActive }) => ({
+})<BoxProps & { isActive?: boolean }>(({ theme, isActive }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(2),
@@ -33,7 +34,7 @@ const ListItemContainer = styled(Box, {
       opacity: 1,
     },
   },
-})) as typeof Box;
+}));
 
 const ThumbnailContainer = styled(Box)({
   position: 'relative',
