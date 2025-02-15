@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { VideoCard } from '.';
 import '@testing-library/jest-dom';
 
@@ -11,6 +11,14 @@ vi.mock('react-player', () => ({
     </div>
   )),
 }));
+
+const renderWithAct = async (component: React.ReactElement) => {
+  let result: ReturnType<typeof render>;
+  await act(async () => {
+    result = render(component);
+  });
+  return result!;
+};
 
 describe('VideoCard Component', () => {
   const mockVideo = {
@@ -29,8 +37,8 @@ describe('VideoCard Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders video information correctly', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders video information correctly', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     // Check if title is rendered
     expect(screen.getByText('Test Video')).toBeInTheDocument();
@@ -42,58 +50,54 @@ describe('VideoCard Component', () => {
     expect(screen.getByText('5:30')).toBeInTheDocument();
   });
 
-  it('uses default thumbnail when thumbnail prop is not provided', () => {
+  it('uses default thumbnail when thumbnail prop is not provided', async () => {
     const videoWithoutThumbnail = {
       ...mockVideo,
       thumbnailUrl: undefined,
     };
 
-    render(<VideoCard video={videoWithoutThumbnail} />);
+    await renderWithAct(<VideoCard video={videoWithoutThumbnail} />);
 
     const player = screen.getByTestId('mock-react-player');
     expect(player.getAttribute('data-light')).toContain('data:image/svg+xml');
   });
 
-  it('renders with provided thumbnail', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders with provided thumbnail', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     const player = screen.getByTestId('mock-react-player');
-    expect(player.getAttribute('data-light')).toBe(
-      'https://example.com/thumbnail.jpg'
-    );
+    expect(player.getAttribute('data-light')).toBe('https://example.com/thumbnail.jpg');
   });
 
-  it('handles video without duration', () => {
+  it('handles video without duration', async () => {
     const videoWithoutDuration = {
       ...mockVideo,
       duration: undefined,
     };
 
-    render(<VideoCard video={videoWithoutDuration} />);
+    await renderWithAct(<VideoCard video={videoWithoutDuration} />);
 
     // Duration element should not be present
     const durationElements = screen.queryByText(/^\d+:\d+$/);
     expect(durationElements).not.toBeInTheDocument();
   });
 
-  it('renders ReactPlayer with correct props', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders ReactPlayer with correct props', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     const player = screen.getByTestId('mock-react-player');
     expect(player).toBeInTheDocument();
-    expect(player.getAttribute('data-url')).toBe(
-      'https://example.com/video.mp4'
-    );
+    expect(player.getAttribute('data-url')).toBe('https://example.com/video.mp4');
   });
 
-  it('truncates long titles properly', () => {
+  it('truncates long titles properly', async () => {
     const videoWithLongTitle = {
       ...mockVideo,
       title:
         'This is a very long title that should be truncated because it exceeds the maximum length allowed for the card title display area',
     };
 
-    render(<VideoCard video={videoWithLongTitle} />);
+    await renderWithAct(<VideoCard video={videoWithLongTitle} />);
 
     const titleElement = screen.getByText(videoWithLongTitle.title);
     expect(titleElement).toHaveStyle({
