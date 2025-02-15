@@ -35,7 +35,7 @@ const fixVideosDuration = async (req: Request, res: Response) => {
           payload: {
             id: video.id,
           },
-          url: `${ioServiceUrl}/fix-duration`,
+          url: `${ioServiceUrl}/videos/fix-duration`,
           entityId: video.id,
           entityType: TaskEntityType.VIDEO,
           type: TaskType.FIX_DURATION,

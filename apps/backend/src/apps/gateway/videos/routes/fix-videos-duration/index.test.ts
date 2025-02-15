@@ -59,7 +59,7 @@ describe('fixVideosDuration', () => {
           audience: 'http://test-service.com',
           queue: queues.streamVideoQueue,
           entityId: video.id,
-          url: 'http://test-service.com/fix-duration',
+          url: 'http://test-service.com/videos/fix-duration',
         })
       );
     });
