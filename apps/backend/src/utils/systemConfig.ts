@@ -1,5 +1,5 @@
 const systemConfig = {
-  defaultExternalRequestTimeout: 5000,
+  defaultExternalRequestTimeout: 15000,
 };
 
 const uuidNamespaces = {

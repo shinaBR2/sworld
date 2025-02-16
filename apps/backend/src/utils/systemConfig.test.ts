@@ -3,15 +3,13 @@ import { systemConfig, uuidNamespaces, queues } from './systemConfig';
 
 describe('systemConfig', () => {
   it('has correct default external request timeout', () => {
-    expect(systemConfig.defaultExternalRequestTimeout).toBe(5000);
+    expect(systemConfig.defaultExternalRequestTimeout).toBe(15000);
   });
 });
 
 describe('uuidNamespaces', () => {
   it('has correct queue names defined', () => {
-    expect(uuidNamespaces.cloudTask).toBe(
-      'abd32375-5036-44a1-bc75-c7bb33051b99'
-    );
+    expect(uuidNamespaces.cloudTask).toBe('abd32375-5036-44a1-bc75-c7bb33051b99');
   });
 });
 
