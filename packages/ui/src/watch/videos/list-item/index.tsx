@@ -4,7 +4,6 @@ import PlayCircle from '@mui/icons-material/PlayCircle';
 import { ResponsiveImage } from '../../../universal/images/image';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import {
-  DurationLabel,
   ListItemContainer,
   PlayIconOverlay,
   Progress,
@@ -48,7 +47,7 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, isActive = false, LinkComponent } = props;
-  const { id, title, thumbnailUrl, duration, user, progressSeconds = 0 } = video;
+  const { id, title, thumbnailUrl, duration = 0, user, progressSeconds = 0 } = video;
 
   return (
     <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
@@ -57,9 +56,7 @@ const VideoListItem = (props: VideoListItemProps) => {
         <ThumbnailContainer>
           <ThumbnailWrapper>
             <Thumbnail src={thumbnailUrl} title={title} />
-            {/* TODO */}
-            {/* duration is not available yet */}
-            {progressSeconds > 0 && duration && (
+            {progressSeconds > 0 && duration > 0 && (
               <ProgressBar
                 role="progressbar"
                 aria-label="Video progress"
@@ -79,23 +76,6 @@ const VideoListItem = (props: VideoListItemProps) => {
           <PlayIconOverlay className="play-icon">
             <PlayCircle fontSize={'medium'} />
           </PlayIconOverlay>
-          {duration && (
-            <DurationLabel
-              variant="caption"
-              sx={{
-                position: 'absolute',
-                bottom: 4,
-                right: 4,
-                bgcolor: 'rgba(0, 0, 0, 0.8)',
-                color: 'white',
-                px: 0.5,
-                borderRadius: 0.5,
-                fontSize: '0.75rem',
-              }}
-            >
-              {duration}
-            </DurationLabel>
-          )}
         </ThumbnailContainer>
 
         {/* Text content */}

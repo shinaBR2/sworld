@@ -46,9 +46,6 @@ describe('VideoCard Component', () => {
 
     // Check if username and date are rendered
     expect(screen.getByText('testuser • 2024-01-01')).toBeInTheDocument();
-
-    // Check if duration is rendered
-    // expect(screen.getByText('5:30')).toBeInTheDocument();
   });
 
   it('uses default thumbnail when thumbnail prop is not provided', async () => {
