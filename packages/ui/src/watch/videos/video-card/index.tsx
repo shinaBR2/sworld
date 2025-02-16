@@ -6,7 +6,7 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-import { StyledCard, StyledDuration, StyledTitle } from './styled';
+import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
