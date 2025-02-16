@@ -78,17 +78,6 @@ const Progress = styled(Box)({
   height: '100%', // bgColor
 }) as typeof Box;
 
-const DurationLabel = styled(Typography)(({ theme }) => ({
-  position: 'absolute',
-  bottom: theme.spacing(0.5),
-  right: theme.spacing(0.5),
-  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  color: 'white',
-  padding: theme.spacing(0, 0.5),
-  borderRadius: 4,
-  fontSize: '0.75rem',
-})) as typeof Typography;
-
 const TitleText = styled(Typography)({
   fontWeight: 500,
   overflow: 'hidden',
@@ -133,7 +122,6 @@ export {
   PlayIconOverlay,
   ProgressBar,
   Progress,
-  DurationLabel,
   TitleText,
   UsernameText,
   SkeletonContainer,

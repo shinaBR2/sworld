@@ -2,13 +2,14 @@ import { useRequest } from '../../../universal/hooks/use-request';
 
 const videoDetailQuery = `
   query VideoDetail ($id: uuid!) @cached {
-    videos {
+    videos(order_by: {createdAt: desc})  {
       id
       title
       description
       thumbnailUrl
       source
       slug
+      duration
       createdAt
       user {
         username
@@ -44,6 +45,7 @@ interface Video {
   thumbnailUrl: string;
   source: string;
   slug: string;
+  duration: number;
   createdAt: string;
   user: User;
   user_video_histories?: VideoHistory[];
@@ -55,6 +57,7 @@ interface VideoDetail {
   thumbnailUrl: string;
   title: string;
   description: string;
+  duration: number;
 }
 
 interface LoadVideoDetailProps {
@@ -77,6 +80,7 @@ const transformVideoData = (video: Video) => {
     thumbnailUrl: video.thumbnailUrl,
     source: video.source,
     slug: video.slug,
+    duration: video.duration,
     createdAt: video.createdAt,
     user: video.user,
     lastWatchedAt: history?.last_watched_at ?? null,

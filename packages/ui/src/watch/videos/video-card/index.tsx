@@ -6,7 +6,7 @@ import React, { Suspense } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
-import { StyledCard, StyledDuration, StyledTitle } from './styled';
+import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 
 const ReactPlayer = React.lazy(() => import('react-player'));
@@ -15,13 +15,6 @@ interface VideoCardProps extends WithLinkComponent {
   video: Video;
   asLink?: boolean;
 }
-
-// Helper components
-const DurationBadge = ({ duration }: { duration?: Video['duration'] }) => {
-  if (!duration) return null;
-
-  return <StyledDuration variant="caption">{duration}</StyledDuration>;
-};
 
 interface VideoCardContentProps {
   title: string;
@@ -64,16 +57,14 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
-  // TODO
-  // duration is not available in database yet
-  const { progressSeconds = 0, duration } = video;
+  const { progressSeconds = 0, duration = 0 } = video;
 
   return (
     <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
       {asLink ? (
         <Box sx={{ position: 'relative' }}>
           <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-          {progressSeconds > 0 && duration && (
+          {progressSeconds > 0 && duration > 0 && (
             <Box
               role="progressbar"
               aria-label="Video progress"
@@ -117,7 +108,6 @@ const VideoContent = (props: VideoContentProps) => {
           />
         </Suspense>
       )}
-      <DurationBadge duration={video.duration} />
     </Box>
   );
 };

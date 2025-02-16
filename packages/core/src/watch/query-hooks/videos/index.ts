@@ -2,7 +2,7 @@ import { useRequest } from '../../../universal/hooks/use-request';
 
 const videosQuery = `
   query AllVideos @cached {
-    videos {
+    videos(order_by: {createdAt: desc}) {
       user_video_histories {
         last_watched_at
         progress_seconds
@@ -10,6 +10,7 @@ const videosQuery = `
       id
       title
       description
+      duration
       thumbnailUrl
       source
       slug
@@ -41,6 +42,7 @@ interface VideoResponse {
   thumbnailUrl: string;
   source: string;
   slug: string;
+  duration: number;
   createdAt: string;
   user: User;
   user_video_histories: VideoHistory[];
@@ -53,6 +55,7 @@ interface TransformedVideo {
   thumbnailUrl: string;
   source: string;
   slug: string;
+  duration: number;
   createdAt: string;
   user: User;
   lastWatchedAt: string | null;
@@ -69,6 +72,7 @@ const transformVideoData = (video: VideoResponse): TransformedVideo => {
     thumbnailUrl: video.thumbnailUrl,
     source: video.source,
     slug: video.slug,
+    duration: video.duration,
     createdAt: video.createdAt,
     user: video.user,
     lastWatchedAt: history?.last_watched_at ?? null,

@@ -38,10 +38,6 @@ describe('VideoListItem', () => {
     // Check username
     const usernameElement = screen.getByText('testuser');
     expect(usernameElement).toBeInTheDocument();
-
-    // Check duration
-    const durationElement = screen.getByText('3:45');
-    expect(durationElement).toBeInTheDocument();
   });
 
   it('passes correct link navigation props', () => {
