@@ -64,8 +64,6 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
-  // TODO
-  // duration is not available in database yet
   const { progressSeconds = 0, duration = 0 } = video;
 
   return (
