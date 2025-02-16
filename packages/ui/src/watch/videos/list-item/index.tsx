@@ -4,7 +4,6 @@ import PlayCircle from '@mui/icons-material/PlayCircle';
 import { ResponsiveImage } from '../../../universal/images/image';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import {
-  DurationLabel,
   ListItemContainer,
   PlayIconOverlay,
   Progress,
@@ -77,23 +76,6 @@ const VideoListItem = (props: VideoListItemProps) => {
           <PlayIconOverlay className="play-icon">
             <PlayCircle fontSize={'medium'} />
           </PlayIconOverlay>
-          {duration && (
-            <DurationLabel
-              variant="caption"
-              sx={{
-                position: 'absolute',
-                bottom: 4,
-                right: 4,
-                bgcolor: 'rgba(0, 0, 0, 0.8)',
-                color: 'white',
-                px: 0.5,
-                borderRadius: 0.5,
-                fontSize: '0.75rem',
-              }}
-            >
-              {duration}
-            </DurationLabel>
-          )}
         </ThumbnailContainer>
 
         {/* Text content */}
