@@ -21,6 +21,7 @@ interface ErrorOptions {
   context?: Record<string, unknown>;
   source?: string;
   originalError?: Error | CustomError;
+  shouldRetry?: boolean;
 }
 
 /**
@@ -60,6 +61,12 @@ class CustomError extends Error {
   public readonly severity: ErrorSeverity;
 
   /**
+   * Determine the ability to retry the request or not
+   * @type {boolean}
+   */
+  public readonly shouldRetry: boolean;
+
+  /**
    * Array of error contexts providing additional information about the error.
    * @type {ErrorContext[]}
    */
@@ -85,12 +92,14 @@ class CustomError extends Error {
       context = {},
       source = 'Unknown',
       originalError,
+      shouldRetry = false,
     } = options;
 
     this.name = 'CustomError';
     this.timestamp = Date.now();
     this.errorCode = errorCode;
     this.severity = severity;
+    this.shouldRetry = shouldRetry;
     this.contexts = [];
 
     // If wrapping a CustomError
@@ -106,6 +115,10 @@ class CustomError extends Error {
       this.originalError = originalError.originalError;
       if (originalError.stack) {
         this.stack = originalError.stack;
+      }
+
+      if (originalError.shouldRetry) {
+        this.shouldRetry = originalError.shouldRetry;
       }
     }
     // If wrapping a regular Error

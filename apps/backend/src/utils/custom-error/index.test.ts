@@ -9,6 +9,7 @@ describe('CustomError', () => {
     expect(error.name).toBe('CustomError');
     expect(error.errorCode).toBe('UNKNOWN_ERROR');
     expect(error.severity).toBe('medium');
+    expect(error.shouldRetry).toBe(false);
     expect(error.contexts).toHaveLength(1);
     expect(error.contexts[0].source).toBe('Unknown');
     expect(error.timestamp).toBeDefined();
@@ -26,11 +27,13 @@ describe('CustomError', () => {
       context,
       source: 'UserService',
       originalError,
+      shouldRetry: true,
     });
 
     expect(error.message).toBe('Specific error');
     expect(error.errorCode).toBe('USER_ERROR');
     expect(error.severity).toBe('high');
+    expect(error.shouldRetry).toBe(true);
     expect(error.contexts).toHaveLength(2);
     expect(error.contexts[0].source).toBe('UserService');
     expect(error.contexts[0].data).toEqual({ userId: 123 });
@@ -188,6 +191,14 @@ describe('CustomError', () => {
         expect(error.originalError).not.toBeInstanceOf(CustomError);
         expect(error.originalError).toBeInstanceOf(Error);
       }
+    });
+
+    it('should preserve shouldRetry through error propagation', () => {
+      const lowLevelError = new CustomError('Low level error', { shouldRetry: true });
+      const midLevelError = new CustomError('Mid level error', { originalError: lowLevelError });
+      const highLevelError = new CustomError('High level error', { originalError: midLevelError });
+
+      expect(highLevelError.shouldRetry).toBe(true);
     });
   });
 });

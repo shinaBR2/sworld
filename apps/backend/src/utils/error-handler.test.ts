@@ -98,7 +98,7 @@ describe('errorHandler', () => {
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     // Check response
     expect(mockResponse.json).toHaveBeenCalledWith({
-      error: 'Custom test error',
+      error: 'Internal Server Error',
     });
   });
 
@@ -123,27 +123,6 @@ describe('errorHandler', () => {
 
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     // Check response
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      error: 'Test error',
-    });
-  });
-
-  it('should handle errors in production mode', () => {
-    process.env.NODE_ENV = 'production';
-    const error = new Error('Test error');
-    const handler = errorHandler(mockLogger);
-
-    handler(error, mockRequest, mockResponse, vi.fn());
-
-    expect(mockLogger.error).toHaveBeenCalledWith({
-      req: {
-        method: 'POST',
-        url: '/webhook',
-      },
-      stack: undefined,
-    });
-
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith({
       error: 'Internal Server Error',
     });
@@ -170,5 +149,45 @@ describe('errorHandler', () => {
         stack: expect.not.stringContaining('node_modules'),
       })
     );
+  });
+
+  it('should return 500 status code for errors marked as retriable', () => {
+    const retriableError = new CustomError('Retriable error', {
+      shouldRetry: true,
+    });
+
+    const handler = errorHandler(mockLogger);
+    handler(retriableError, mockRequest, mockResponse, vi.fn());
+
+    expect(mockResponse.status).toHaveBeenCalledWith(500);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: 'Internal Server Error',
+    });
+  });
+
+  it('should return 200 status code for errors not marked as retriable', () => {
+    const nonRetriableError = new CustomError('Non-retriable error', {
+      shouldRetry: false,
+    });
+
+    const handler = errorHandler(mockLogger);
+    handler(nonRetriableError, mockRequest, mockResponse, vi.fn());
+
+    expect(mockResponse.status).toHaveBeenCalledWith(200);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: 'Internal Server Error',
+    });
+  });
+
+  it('should return 200 status code by default', () => {
+    const nonRetriableError = new Error('Any error');
+
+    const handler = errorHandler(mockLogger);
+    handler(nonRetriableError, mockRequest, mockResponse, vi.fn());
+
+    expect(mockResponse.status).toHaveBeenCalledWith(200);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: 'Internal Server Error',
+    });
   });
 });
