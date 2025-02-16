@@ -48,7 +48,7 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, isActive = false, LinkComponent } = props;
-  const { id, title, thumbnailUrl, duration, user, progressSeconds = 0 } = video;
+  const { id, title, thumbnailUrl, duration = 0, user, progressSeconds = 0 } = video;
 
   return (
     <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
@@ -59,7 +59,7 @@ const VideoListItem = (props: VideoListItemProps) => {
             <Thumbnail src={thumbnailUrl} title={title} />
             {/* TODO */}
             {/* duration is not available yet */}
-            {progressSeconds > 0 && duration && (
+            {progressSeconds > 0 && duration > 0 && (
               <ProgressBar
                 role="progressbar"
                 aria-label="Video progress"

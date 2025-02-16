@@ -66,14 +66,14 @@ const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
   // TODO
   // duration is not available in database yet
-  const { progressSeconds = 0, duration } = video;
+  const { progressSeconds = 0, duration = 0 } = video;
 
   return (
     <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
       {asLink ? (
         <Box sx={{ position: 'relative' }}>
           <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-          {progressSeconds > 0 && duration && (
+          {progressSeconds > 0 && duration > 0 && (
             <Box
               role="progressbar"
               aria-label="Video progress"
