@@ -122,7 +122,6 @@ export {
   PlayIconOverlay,
   ProgressBar,
   Progress,
-  DurationLabel,
   TitleText,
   UsernameText,
   SkeletonContainer,
