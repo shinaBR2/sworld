@@ -8,9 +8,16 @@ import { videoConfig } from '../../config';
 import { systemConfig } from 'src/utils/systemConfig';
 import { Parser } from 'm3u8-parser';
 
+interface HLSSegment {
+  url: string;
+  duration?: number;
+}
 interface ParsedResult {
   modifiedContent: string;
-  segments: { included: string[]; excluded: string[] };
+  segments: {
+    included: HLSSegment[];
+    excluded: HLSSegment[];
+  };
   duration: number;
 }
 
@@ -63,8 +70,8 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
 
   const manifest = parser.manifest;
   const segments = {
-    included: [] as string[],
-    excluded: [] as string[],
+    included: [] as HLSSegment[],
+    excluded: [] as HLSSegment[],
   };
 
   let modifiedContent = '';
@@ -91,16 +98,21 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
     const segmentUrl = new URL(segment.uri, m3u8Url).toString();
 
     if (isAds(segmentUrl, excludePatterns)) {
-      segments.excluded.push(segmentUrl);
+      segments.excluded.push({
+        url: segmentUrl,
+      });
     } else {
       // Include non-ad segment
       if (segment.duration) {
         modifiedContent += `#EXTINF:${segment.duration},\n`;
         totalDuration += segment.duration;
-      }
 
-      modifiedContent += `${segment.uri}\n`;
-      segments.included.push(segmentUrl);
+        modifiedContent += `${segment.uri}\n`;
+        segments.included.push({
+          url: segmentUrl,
+          duration: segment.duration,
+        });
+      }
     }
   });
 

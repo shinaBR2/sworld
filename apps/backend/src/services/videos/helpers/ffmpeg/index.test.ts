@@ -245,5 +245,56 @@ describe('FFmpeg Helpers', () => {
       );
       expect(logger.error).toHaveBeenCalled();
     });
+
+    describe('path handling', () => {
+      beforeEach(() => {
+        mockFFmpeg.on.mockImplementation((event, callback) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        });
+      });
+
+      it('should work with absolute paths', async () => {
+        const absoluteVideoPath = '/absolute/path/to/video.ts';
+        const absoluteOutputDir = '/absolute/path/to/output';
+
+        await takeScreenshot(absoluteVideoPath, absoluteOutputDir, filename, videoDuration);
+
+        expect(vi.mocked(ffmpeg)).toHaveBeenCalledWith(absoluteVideoPath);
+        expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
+          timestamps: [expect.any(Number)],
+          folder: absoluteOutputDir,
+          filename: filename,
+        });
+      });
+
+      it('should work with relative paths', async () => {
+        const relativeVideoPath = 'workspace/123/input.ts';
+        const relativeOutputDir = 'workspace/123/output';
+
+        await takeScreenshot(relativeVideoPath, relativeOutputDir, filename, videoDuration);
+
+        expect(vi.mocked(ffmpeg)).toHaveBeenCalledWith(relativeVideoPath);
+        expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
+          timestamps: [expect.any(Number)],
+          folder: relativeOutputDir,
+          filename: filename,
+        });
+      });
+
+      it('should work with mixed path types', async () => {
+        const absoluteVideoPath = '/absolute/path/to/video.ts';
+        const relativeOutputDir = 'workspace/123/output';
+
+        await takeScreenshot(absoluteVideoPath, relativeOutputDir, filename, videoDuration);
+
+        expect(vi.mocked(ffmpeg)).toHaveBeenCalledWith(absoluteVideoPath);
+        expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
+          timestamps: [expect.any(Number)],
+          folder: relativeOutputDir,
+          filename: filename,
+        });
+      });
+    });
   });
 });

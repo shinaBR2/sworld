@@ -12,6 +12,7 @@ describe('Video Model', () => {
     expect(attributes).toHaveProperty('thumbnail_url');
     expect(attributes).toHaveProperty('status');
     expect(attributes).toHaveProperty('duration');
+    expect(attributes).toHaveProperty('user_id');
   });
 
   describe('Field Configurations', () => {
@@ -34,6 +35,7 @@ describe('Video Model', () => {
     it('should configure thumbnail_url correctly', () => {
       const field = attributes.thumbnail_url;
       expect(field.type).toBe(DataTypes.STRING);
+      expect(field.allowNull).toBe(true);
     });
 
     it('should configure status correctly', () => {
@@ -46,6 +48,11 @@ describe('Video Model', () => {
       expect(field.type).toBe(DataTypes.INTEGER);
       expect(field.allowNull).toBe(true);
       expect(field.defaultValue).toBe(null);
+    });
+
+    it('should configure user_id correctly', () => {
+      const field = attributes.user_id;
+      expect(field.type).toBe(DataTypes.STRING);
     });
   });
 
@@ -69,6 +76,7 @@ describe('Video Model', () => {
       thumbnail_url: 'https://example.com/thumbnail.jpg',
       status: 'ready',
       duration: 100,
+      user_id: '223e4567-13dd-12d3-a456-426614174000',
     };
 
     const video = Video.build(videoData);
@@ -80,5 +88,6 @@ describe('Video Model', () => {
     expect(video).toHaveProperty('thumbnail_url', videoData.thumbnail_url);
     expect(video).toHaveProperty('status', videoData.status);
     expect(video).toHaveProperty('duration', videoData.duration);
+    expect(video).toHaveProperty('user_id', videoData.user_id);
   });
 });

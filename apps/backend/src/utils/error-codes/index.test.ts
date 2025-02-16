@@ -11,9 +11,11 @@ describe('error-codes', () => {
       'VIDEO_CONVERSION_FAILED',
       'VIDEO_CONVERSION_TIMEOUT',
       'VIDEO_INVALID_RESOLUTION',
+      'VIDEO_INVALID_LENGTH',
       'STORAGE_UPLOAD_FAILED',
       'STORAGE_DOWNLOAD_FAILED',
       'FIX_DURATION_ERROR',
+      'FIX_THUMBNAIL_ERROR',
     ];
 
     const actualCodes = Object.values(VIDEO_ERRORS);

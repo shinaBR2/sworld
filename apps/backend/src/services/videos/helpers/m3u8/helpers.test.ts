@@ -91,11 +91,26 @@ describe('M3U8 parser', () => {
       const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
-      expect(segments.included).toEqual(['https://example.com/segment1.ts', 'https://example.com/segment2.ts']);
+      expect(segments.included).toEqual([
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment2.ts',
+          duration: 3,
+        },
+      ]);
       expect(segments.excluded).toEqual([
-        'https://example.com/adjump/ad1.ts',
-        'https://example.com/ads/ad2.ts',
-        'https://example.com/commercial/ad3.ts',
+        {
+          url: 'https://example.com/adjump/ad1.ts',
+        },
+        {
+          url: 'https://example.com/ads/ad2.ts',
+        },
+        {
+          url: 'https://example.com/commercial/ad3.ts',
+        },
       ]);
     });
 
@@ -142,13 +157,29 @@ describe('M3U8 parser', () => {
       expect(normalizeContent(modifiedContent)).toBe(expected);
       // Check included segments in order
       expect(segments.included).toEqual([
-        'https://example.com/segment1.ts',
-        'https://example.com/segment2.ts',
-        'https://example.com/segment3.ts',
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment2.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment3.ts',
+          duration: 3,
+        },
       ]);
 
       // Check excluded segments in order
-      expect(segments.excluded).toEqual(['https://example.com/ads/ad1.ts', 'https://example.com/commercial/ad2.ts']);
+      expect(segments.excluded).toEqual([
+        {
+          url: 'https://example.com/ads/ad1.ts',
+        },
+        {
+          url: 'https://example.com/commercial/ad2.ts',
+        },
+      ]);
 
       // Check content contains all required HLS tags
       expect(modifiedContent).toContain('#EXTM3U');
@@ -203,10 +234,24 @@ describe('M3U8 parser', () => {
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       // Check included segments in order
-      expect(segments.included).toEqual(['https://example.com/segment1.ts', 'https://example.com/segment2.ts']);
+      expect(segments.included).toEqual([
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment2.ts',
+          duration: 3,
+        },
+      ]);
 
       // Check excluded segments in order
-      expect(segments.excluded).toEqual(['https://example.com/adjump/ad1.ts', 'https://example.com/adjump/ad2.ts']);
+      expect(segments.excluded).toEqual([
+        {
+          url: 'https://example.com/adjump/ad1.ts',
+        },
+        { url: 'https://example.com/adjump/ad2.ts' },
+      ]);
 
       // Check content contains all required HLS tags
       expect(modifiedContent).toContain('#EXTM3U');
@@ -256,7 +301,16 @@ describe('M3U8 parser', () => {
       const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
-      expect(segments.included).toEqual(['https://example.com/segment1.ts', 'https://example.com/segment2.ts']);
+      expect(segments.included).toEqual([
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment2.ts',
+          duration: 3,
+        },
+      ]);
       expect(segments.excluded).toHaveLength(1);
     });
 
@@ -287,9 +341,18 @@ describe('M3U8 parser', () => {
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(segments.included).toEqual([
-        'https://example.com/segment1.ts',
-        'https://example.com/segment2.ts',
-        'https://example.com/segment3.ts',
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment2.ts',
+          duration: 3,
+        },
+        {
+          url: 'https://example.com/segment3.ts',
+          duration: 3,
+        },
       ]);
       expect(segments.excluded).toHaveLength(0);
     });
@@ -325,7 +388,7 @@ describe('M3U8 parser', () => {
       const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(modifiedContent).toContain('#EXT-X-PLAYLIST-TYPE:VOD');
-      expect(segments.included).toEqual(['https://example.com/segment1.ts']);
+      expect(segments.included).toEqual([{ url: 'https://example.com/segment1.ts', duration: 3 }]);
       expect(segments.excluded).toHaveLength(0);
     });
 
@@ -349,14 +412,22 @@ describe('M3U8 parser', () => {
 
       const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
 
-      expect(segments.included).toEqual(['https://example.com/segment1.ts', 'https://example.com/segment2.ts']);
-      expect(segments.excluded).toEqual(['https://example.com/adjump/ad1.ts']);
+      expect(segments.included).toEqual([
+        {
+          url: 'https://example.com/segment1.ts',
+          duration: 3,
+        },
+      ]);
+      expect(segments.excluded).toEqual([
+        {
+          url: 'https://example.com/adjump/ad1.ts',
+        },
+      ]);
       const expectedContent = normalizeContent(`
         #EXTM3U
         #EXT-X-VERSION:3
         #EXTINF:3,
         segment1.ts
-        segment2.ts
       `);
       expect(normalizeContent(modifiedContent)).toBe(expectedContent);
     });

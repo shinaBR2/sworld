@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { TaskEntityType, TaskType } from 'src/database/models/task';
-import { getVideoMissingDuration } from 'src/database/queries/videos';
-import { verifySignature } from 'src/services/videos/convert/validator';
-import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
-import { AppError, AppResponse } from 'src/utils/schema';
-import { queues } from 'src/utils/systemConfig';
 import { ValidatedRequest } from 'src/utils/validator';
 import { WebhookRequest } from '../../schema';
+import { verifySignature } from 'src/services/videos/convert/validator';
+import { AppError, AppResponse } from 'src/utils/schema';
+import { queues } from 'src/utils/systemConfig';
+import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
+import { TaskEntityType, TaskType } from 'src/database/models/task';
+import { getVideoMissingThumbnail } from 'src/database/queries/videos';
 
-const fixVideosDuration = async (req: Request, res: Response) => {
+const fixVideosThumbnail = async (req: Request, res: Response) => {
   const { ioServiceUrl } = envConfig;
   const { validatedData } = req as ValidatedRequest<WebhookRequest>;
   const { signatureHeader } = validatedData;
@@ -18,7 +18,6 @@ const fixVideosDuration = async (req: Request, res: Response) => {
     return res.json(AppError('Invalid webhook signature for event'));
   }
 
-  // TODO remove this for simplicity
   if (!ioServiceUrl) {
     return res.json(AppError('Missing environment variable'));
   }
@@ -26,7 +25,7 @@ const fixVideosDuration = async (req: Request, res: Response) => {
   const { streamVideoQueue } = queues;
 
   try {
-    const videos = await getVideoMissingDuration();
+    const videos = await getVideoMissingThumbnail();
     await Promise.all(
       videos.map(async video => {
         const taskConfig: CreateCloudTasksParams = {
@@ -35,10 +34,10 @@ const fixVideosDuration = async (req: Request, res: Response) => {
           payload: {
             id: video.id,
           },
-          url: `${ioServiceUrl}/videos/fix-duration`,
+          url: `${ioServiceUrl}/videos/fix-thumbnail`,
           entityId: video.id,
           entityType: TaskEntityType.VIDEO,
-          type: TaskType.FIX_DURATION,
+          type: TaskType.FIX_THUMBNAIL,
         };
 
         await createCloudTasks(taskConfig);
@@ -51,4 +50,4 @@ const fixVideosDuration = async (req: Request, res: Response) => {
   }
 };
 
-export { fixVideosDuration };
+export { fixVideosThumbnail };

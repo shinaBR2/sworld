@@ -12,7 +12,7 @@ const transformer = (req: any) => ({
   signatureHeader: req.headers['x-webhook-signature'] as string,
 });
 
-const fixVideosDurationSchema = z.object(schema).transform(transformer);
+const webhookSchema = z.object(schema).transform(transformer);
 
-export type FixVideosDurationRequest = z.infer<typeof fixVideosDurationSchema>;
-export { fixVideosDurationSchema };
+export type WebhookRequest = z.infer<typeof webhookSchema>;
+export { webhookSchema };

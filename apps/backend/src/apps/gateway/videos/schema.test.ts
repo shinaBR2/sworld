@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { fixVideosDurationSchema } from './schema';
+import { webhookSchema } from './schema';
 import { ZodError } from 'zod';
 
-describe('fixVideosDurationSchema', () => {
+describe('webhookSchema', () => {
   const validRequest = {
     headers: {
       'content-type': 'application/json',
@@ -12,7 +12,7 @@ describe('fixVideosDurationSchema', () => {
   };
 
   it('should successfully transform valid request', () => {
-    const result = fixVideosDurationSchema.parse(validRequest);
+    const result = webhookSchema.parse(validRequest);
 
     expect(result).toEqual({
       contentTypeHeader: 'application/json',
@@ -30,7 +30,7 @@ describe('fixVideosDurationSchema', () => {
       },
     };
 
-    const result = fixVideosDurationSchema.parse(requestWithExtraHeaders);
+    const result = webhookSchema.parse(requestWithExtraHeaders);
 
     expect(result).toEqual({
       contentTypeHeader: 'application/json',
@@ -45,7 +45,7 @@ describe('fixVideosDurationSchema', () => {
       },
     };
 
-    expect(() => fixVideosDurationSchema.parse(requestWithoutContentType)).toThrow(ZodError);
+    expect(() => webhookSchema.parse(requestWithoutContentType)).toThrow(ZodError);
   });
 
   it('should fail when x-webhook-signature header is missing', () => {
@@ -55,13 +55,13 @@ describe('fixVideosDurationSchema', () => {
       },
     };
 
-    expect(() => fixVideosDurationSchema.parse(requestWithoutSignature)).toThrow(ZodError);
+    expect(() => webhookSchema.parse(requestWithoutSignature)).toThrow(ZodError);
   });
 
   it('should fail when headers property is missing', () => {
     const requestWithoutHeaders = {};
 
-    expect(() => fixVideosDurationSchema.parse(requestWithoutHeaders)).toThrow(ZodError);
+    expect(() => webhookSchema.parse(requestWithoutHeaders)).toThrow(ZodError);
   });
 
   it('should handle null or undefined values appropriately', () => {
@@ -72,7 +72,7 @@ describe('fixVideosDurationSchema', () => {
       },
     };
 
-    expect(() => fixVideosDurationSchema.parse(requestWithNullValues)).toThrow(ZodError);
+    expect(() => webhookSchema.parse(requestWithNullValues)).toThrow(ZodError);
   });
 
   it('should fail when headers is null', () => {
@@ -80,11 +80,11 @@ describe('fixVideosDurationSchema', () => {
       headers: null,
     };
 
-    expect(() => fixVideosDurationSchema.parse(requestWithNullHeaders)).toThrow(ZodError);
+    expect(() => webhookSchema.parse(requestWithNullHeaders)).toThrow(ZodError);
   });
 
   it('should validate transformed output types', () => {
-    const result = fixVideosDurationSchema.parse(validRequest);
+    const result = webhookSchema.parse(validRequest);
 
     expect(typeof result.contentTypeHeader).toBe('string');
     expect(typeof result.signatureHeader).toBe('string');

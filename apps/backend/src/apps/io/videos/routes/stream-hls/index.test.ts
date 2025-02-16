@@ -130,6 +130,7 @@ describe('streamHLSHandler', () => {
     vi.mocked(streamM3U8).mockResolvedValueOnce({
       playlistUrl: expectedPlayableUrl,
       duration: 100,
+      thumbnailUrl: 'cloud-storage-url',
     } as any);
     vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
 
@@ -143,7 +144,7 @@ describe('streamHLSHandler', () => {
     expect(finalizeVideo).toHaveBeenCalledWith({
       id: context.defaultData.id,
       source: expectedPlayableUrl,
-      thumbnailUrl: '',
+      thumbnailUrl: 'cloud-storage-url',
       duration: 100,
     });
     expect(completeTask).toHaveBeenCalledWith({

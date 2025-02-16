@@ -30,7 +30,6 @@ vi.mock('src/utils/validator', () => ({
   validateRequest: () => vi.fn(),
 }));
 
-// TODO verify this test again
 describe('videosRouter', () => {
   it('should register POST /convert-handler route', () => {
     const routes = videosRouter.stack

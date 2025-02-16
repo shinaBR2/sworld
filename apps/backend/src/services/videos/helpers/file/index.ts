@@ -12,7 +12,18 @@ const generateTempDir = () => {
   return path.join(os.tmpdir(), uniqueName);
 };
 
-// Improved file download with stream handling and cleanup
+/**
+ * Downloads a file from a URL to a local path with error handling and size limits.
+ * This method includes automatic cleanup of partially downloaded files on error.
+ *
+ * @param url - Remote URL to download from (e.g., 'https://example.com/video.mp4')
+ * @param localPath - File path to save to. Can be absolute (e.g., '/tmp/workspace/video.mp4')
+ *                   or relative to current working directory (e.g., 'workspace/video.mp4')
+ * @throws {Error} If file is larger than 400MB
+ * @throws {Error} If network request fails
+ * @throws {Error} If response body is missing
+ * @throws {Error} If stream encounters an error
+ */
 const downloadFile = async (url: string, localPath: string) => {
   const response = await fetch(url);
 
@@ -91,10 +102,7 @@ const cleanupDirectory = async (dirPath: string): Promise<void> => {
   }
 };
 
-const verifyFileSize = async (
-  filePath: string,
-  maxSize: number
-): Promise<void> => {
+const verifyFileSize = async (filePath: string, maxSize: number): Promise<void> => {
   const statAsync = promisify(stat);
   const stats = await statAsync(filePath);
   if (stats.size > maxSize) {
@@ -102,10 +110,4 @@ const verifyFileSize = async (
   }
 };
 
-export {
-  generateTempDir,
-  downloadFile,
-  createDirectory,
-  cleanupDirectory,
-  verifyFileSize,
-};
+export { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize };

@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validateRequest } from 'src/utils/validator';
 import { streamToStorage } from './routes/stream-to-storage';
 import { fixVideosDuration } from './routes/fix-videos-duration';
+import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];
@@ -41,6 +42,10 @@ vi.mock('./routes/fix-videos-duration', () => ({
   fixVideosDuration: vi.fn(),
 }));
 
+vi.mock('./routes/fix-videos-thumbnail', () => ({
+  fixVideosThumbnail: vi.fn(),
+}));
+
 describe('videosRouter', () => {
   beforeEach(() => {
     routeHandlers = [];
@@ -51,7 +56,7 @@ describe('videosRouter', () => {
   it('should validate all requests', async () => {
     await import('./index');
     // Check validation middleware was called
-    expect(validateRequest).toHaveBeenCalledTimes(2);
+    expect(validateRequest).toHaveBeenCalledTimes(3);
     const calls = (validateRequest as any).mock.calls;
     expect(calls[0][0]).toBeDefined(); // Check convert route schema
     expect(calls[1][0]).toBeDefined(); // Check fix-videos-duration route schema
@@ -85,5 +90,19 @@ describe('videosRouter', () => {
 
     // Verify the fixVideosDuration handler is set
     expect(durationRoute?.middlewares[1]).toBe(fixVideosDuration);
+  });
+
+  it('should set up /fix-videos-thumbnail route with correct middleware and handler', async () => {
+    const { videosRouter } = await import('./index');
+    expect(videosRouter).toBeDefined();
+
+    const durationRoute = routeHandlers.find(h => h.path === '/fix-videos-thumbnail');
+    expect(durationRoute).toBeDefined();
+
+    // Should have 2 middlewares: validation and handler
+    expect(durationRoute?.middlewares).toHaveLength(2);
+
+    // Verify the fixVideosDuration handler is set
+    expect(durationRoute?.middlewares[1]).toBe(fixVideosThumbnail);
   });
 });

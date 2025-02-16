@@ -26,6 +26,13 @@ vi.mock('express', () => {
           stack: [{ name: 'middleware' }, { name: 'fixDurationHandler' }],
         },
       },
+      {
+        route: {
+          path: '/fix-thumbnail',
+          methods: { post: true },
+          stack: [{ name: 'middleware' }, { name: 'fixThumbnailHandler' }],
+        },
+      },
     ],
   };
 
@@ -47,12 +54,14 @@ vi.mock('./routes/import-platform', () => ({
 vi.mock('./routes/fix-duration', () => ({
   fixDurationHandler: vi.fn(),
 }));
+vi.mock('./routes/fix-thumbnail', () => ({
+  fixThumbnailHandler: vi.fn(),
+}));
 
 vi.mock('src/utils/validator', () => ({
   validateRequest: () => vi.fn(),
 }));
 
-// TODO verify this test again
 describe('videosRouter', () => {
   it('should register all POST routes', () => {
     const routes = videosRouter.stack
@@ -73,6 +82,10 @@ describe('videosRouter', () => {
       },
       {
         path: '/fix-duration',
+        method: 'post',
+      },
+      {
+        path: '/fix-thumbnail',
         method: 'post',
       },
     ];
@@ -112,5 +125,15 @@ describe('videosRouter', () => {
     expect(middlewares).toHaveLength(2);
     expect(middlewares[0].name).toBe('middleware');
     expect(middlewares[1].name).toBe('fixDurationHandler');
+  });
+
+  it('should have validation middleware and handler for fix-thumbnail', () => {
+    const fixThumbnailHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/fix-thumbnail');
+
+    const middlewares = fixThumbnailHandlerRoute?.route.stack || [];
+
+    expect(middlewares).toHaveLength(2);
+    expect(middlewares[0].name).toBe('middleware');
+    expect(middlewares[1].name).toBe('fixThumbnailHandler');
   });
 });

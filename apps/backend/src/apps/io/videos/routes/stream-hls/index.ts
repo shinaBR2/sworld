@@ -14,14 +14,18 @@ const streamHLSHandler = async (req: Request, res: Response) => {
 
   try {
     logger.info(metadata, `[/videos/stream-hls-handler] start processing event "${metadata.id}", video "${id}"`);
-    const { playlistUrl: playableVideoUrl, duration } = await streamM3U8(videoUrl, `videos/${userId}/${id}`, {
+    const {
+      playlistUrl: playableVideoUrl,
+      duration,
+      thumbnailUrl = '',
+    } = await streamM3U8(videoUrl, `videos/${userId}/${id}`, {
       excludePatterns: videoConfig.excludePatterns,
     });
 
     await finalizeVideo({
       id,
       source: playableVideoUrl,
-      thumbnailUrl: '',
+      thumbnailUrl,
       duration,
     });
 

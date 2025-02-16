@@ -117,13 +117,12 @@ const getDuration = async (videoPath: string): Promise<number> => {
 /**
  * Takes a screenshot from a video file at a specified timestamp
  *
- * @param videoPath - Absolute path to the input video file
- *                   (e.g., '/tmp/123456/input.mp4')
- * @param outputDir - Absolute path to the output directory where screenshots will be saved
- *                   (e.g., '/tmp/123456/')
- * @param filename - Name of the output file without path
- *                  (e.g., 'abc123--1705042800000.jpg')
- * @param options - Optional configuration object for screenshot settings
+ * @param videoPath - Path to the input video file. Can be absolute (e.g., '/tmp/123456/input.ts')
+ *                   or relative to current working directory (e.g., 'workspace/input.ts')
+ * @param outputDir - Path to the output directory. Can be absolute (e.g., '/tmp/123456/')
+ *                   or relative to current working directory (e.g., 'workspace/')
+ * @param filename - Name of the output file without path (e.g., 'abc123--1705042800000.jpg')
+ * @param videoDuration - Duration of video in seconds
  * @returns Promise<void> - Resolves when screenshot is taken, rejects on error
  */
 const takeScreenshot = async (

@@ -60,6 +60,8 @@ export const errorHandler = (logger: Logger): ErrorRequestHandler => {
       stack: isProduction ? undefined : cleanStack(err.stack),
     });
 
+    // TODO
+    // Handle retry from error
     return res.status(200).json({
       error: isProduction ? 'Internal Server Error' : err.message,
     });
