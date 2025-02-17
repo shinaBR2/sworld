@@ -68,6 +68,7 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
   let thumbnailUrl;
   try {
     const firstSegment = segments.included[0];
+    logger.info(firstSegment, 'first segment');
     const thumbnailPath = await processThumbnail({
       url: firstSegment.url,
       duration: firstSegment.duration as number,
@@ -75,13 +76,22 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
     });
     thumbnailUrl = getDownloadUrl(thumbnailPath);
   } catch (screenshotError) {
-    throw CustomError.medium('Failed to generate screenshot', {
-      originalError: screenshotError,
-      errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
-      shouldRetry: true,
-      context,
-      source: 'services/videos/helpers/m3u8/index.ts',
-    });
+    logger.error(
+      {
+        originalError: screenshotError,
+        errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
+        shouldRetry: true,
+        context,
+      },
+      'Failed to generate thumbnail'
+    );
+    // throw CustomError.medium('Failed to generate screenshot', {
+    //   originalError: screenshotError,
+    //   errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
+    //   shouldRetry: true,
+    //   context,
+    //   source: 'services/videos/helpers/m3u8/index.ts',
+    // });
   }
 
   try {
