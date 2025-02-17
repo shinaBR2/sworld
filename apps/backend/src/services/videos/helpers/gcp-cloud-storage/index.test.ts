@@ -83,12 +83,6 @@ vi.mock('fs/promises', () => ({
   readdir: vi.fn(),
 }));
 
-vi.mock('node-fetch', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
 describe('gcp-cloud-storage-helpers', () => {
   beforeEach(() => {
     vi.clearAllMocks();

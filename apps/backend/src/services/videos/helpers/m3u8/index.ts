@@ -41,51 +41,50 @@ interface ProcessOptions {
  * - Logs detailed error information before throwing
  */
 const streamM3U8 = async (m3u8Url: string, storagePath: string, options: ProcessOptions = {}) => {
+  const context = {
+    m3u8Url,
+    storagePath,
+  };
+  logger.info({ m3u8Url, storagePath }, 'Starting M3U8 streaming');
+
+  const { modifiedContent, segments, duration } = await parseM3U8Content(m3u8Url, options.excludePatterns);
+
+  logger.info(
+    {
+      includedCount: segments.included.length,
+      excludedCount: segments.excluded.length,
+    },
+    'Parsed M3U8 content'
+  );
+
+  if (!segments.included.length) {
+    throw CustomError.medium('Empty HLS content', {
+      errorCode: VIDEO_ERRORS.INVALID_LENGTH,
+      context,
+      source: 'services/videos/helpers/m3u8/index.ts',
+    });
+  }
+
+  let thumbnailUrl;
   try {
-    logger.info({ m3u8Url, storagePath }, 'Starting M3U8 streaming');
+    const firstSegment = segments.included[0];
+    const thumbnailPath = await processThumbnail({
+      url: firstSegment.url,
+      duration: firstSegment.duration as number,
+      storagePath,
+    });
+    thumbnailUrl = getDownloadUrl(thumbnailPath);
+  } catch (screenshotError) {
+    throw CustomError.medium('Failed to generate screenshot', {
+      originalError: screenshotError,
+      errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
+      shouldRetry: true,
+      context,
+      source: 'services/videos/helpers/m3u8/index.ts',
+    });
+  }
 
-    // Parse m3u8 and get segments
-    const { modifiedContent, segments, duration } = await parseM3U8Content(m3u8Url, options.excludePatterns);
-
-    logger.info(
-      {
-        includedCount: segments.included.length,
-        excludedCount: segments.excluded.length,
-      },
-      'Parsed M3U8 content'
-    );
-
-    if (!segments.included.length) {
-      throw CustomError.medium('Empty HLS content', {
-        errorCode: VIDEO_ERRORS.INVALID_LENGTH,
-        context: {
-          m3u8Url,
-        },
-        source: 'services/videos/helpers/m3u8/index.ts',
-      });
-    }
-
-    let thumbnailUrl;
-    try {
-      const firstSegment = segments.included[0];
-      const thumbnailPath = await processThumbnail({
-        url: firstSegment.url,
-        duration: firstSegment.duration as number,
-        storagePath,
-      });
-      thumbnailUrl = getDownloadUrl(thumbnailPath);
-      // logger.info('Screenshot taken from first segment');
-    } catch (screenshotError) {
-      // Non-blocking error - log but continue with streaming
-      logger.error(
-        {
-          error: screenshotError instanceof Error ? screenshotError.message : String(screenshotError),
-          segmentUrl: segments.included[0]?.url,
-        },
-        'Failed to take screenshot but continuing with streaming'
-      );
-    }
-
+  try {
     // Stream playlist file
     const playlistStoragePath = path.join(storagePath, 'playlist.m3u8');
     await streamPlaylistFile(modifiedContent, playlistStoragePath);
@@ -107,15 +106,13 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
     logger.info({ playlistUrl: result.playlistUrl }, 'M3U8 streaming completed');
     return result;
   } catch (error) {
-    logger.error(
-      {
-        error: error instanceof Error ? error.message : String(error),
-        m3u8Url,
-        storagePath,
-      },
-      'M3U8 streaming failed'
-    );
-    throw error;
+    throw CustomError.medium('Failed to stream file to storage', {
+      originalError: error,
+      errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
+      shouldRetry: true,
+      context,
+      source: 'services/videos/helpers/m3u8/index.ts',
+    });
   }
 };
 

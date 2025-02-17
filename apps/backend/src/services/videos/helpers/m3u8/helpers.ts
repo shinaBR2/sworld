@@ -1,5 +1,4 @@
 import path from 'path';
-import fetch from 'node-fetch';
 import { logger } from 'src/utils/logger';
 import { downloadFile, verifyFileSize } from '../file';
 import { streamFile } from '../gcp-cloud-storage';
@@ -7,6 +6,9 @@ import { Readable } from 'node:stream';
 import { videoConfig } from '../../config';
 import { systemConfig } from 'src/utils/systemConfig';
 import { Parser } from 'm3u8-parser';
+import { fetchWithError } from 'src/utils/fetch';
+import { CustomError } from 'src/utils/custom-error';
+import { HTTP_ERRORS } from 'src/utils/error-codes';
 
 interface HLSSegment {
   url: string;
@@ -58,11 +60,7 @@ const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
  * segment2.ts
  */
 const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = []): Promise<ParsedResult> => {
-  const response = await fetch(m3u8Url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch m3u8: ${response.statusText}`);
-  }
-
+  const response = await fetchWithError(m3u8Url);
   const content = await response.text();
   const parser = new Parser();
   parser.push(content);
@@ -220,16 +218,19 @@ const streamPlaylistFile = async (content: string, storagePath: string) => {
  * @returns Promise that resolves when upload is complete
  */
 const streamSegmentFile = async (segmentUrl: string, storagePath: string) => {
-  const response = await fetch(segmentUrl, {
+  const response = await fetchWithError(segmentUrl, {
     timeout: systemConfig.defaultExternalRequestTimeout,
-    size: 32 * 1024 * 1024, // 32MB as safe maximum for high quality segments
   });
-  if (!response.ok || !response.body) {
-    throw new Error(`Failed to fetch segment: ${response.status} ${response.statusText}`);
+  if (!response.body) {
+    throw new CustomError('Failed to fetch segment', {
+      errorCode: HTTP_ERRORS.EMPTY_RESPONSE,
+      shouldRetry: false,
+      context: { segmentUrl, storagePath, responseStatus: response.statusText, statusCode: response.status },
+    });
   }
 
   return streamFile({
-    stream: response.body,
+    stream: Readable.fromWeb(response.body as any),
     storagePath,
     options: {
       contentType: 'video/MP2T', // Standard MIME type for .ts segment files
@@ -261,18 +262,7 @@ const streamSegments = async (params: StreamSegmentsParams) => {
         const segmentFileName = segmentUrl.split('/').pop();
         const segmentStoragePath = path.join(baseStoragePath, segmentFileName as string);
 
-        try {
-          await streamSegmentFile(segmentUrl, segmentStoragePath);
-        } catch (error) {
-          logger.error(
-            {
-              segmentUrl,
-              error,
-            },
-            'Failed to stream segment'
-          );
-          throw error;
-        }
+        await streamSegmentFile(segmentUrl, segmentStoragePath);
       })
     );
   }

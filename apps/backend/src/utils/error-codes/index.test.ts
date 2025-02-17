@@ -1,12 +1,33 @@
 import { describe, it, expect } from 'vitest';
-import { VIDEO_ERRORS, type VideoErrorCode, type ErrorCode } from './index';
+import { VIDEO_ERRORS, type VideoErrorCode, type ErrorCode, HTTP_ERRORS, DATABASE_ERRORS } from './index';
 
 describe('error-codes', () => {
+  it('should contain all expected http error codes', () => {
+    const expectedCodes = ['NETWORK_ERROR', 'NETWORK_TIMEOUT', 'SERVER_ERROR', 'CLIENT_ERROR', 'EMPTY_RESPONSE'];
+
+    const actualCodes = Object.values(HTTP_ERRORS);
+    expect(actualCodes).toHaveLength(expectedCodes.length);
+    expectedCodes.forEach(code => {
+      expect(actualCodes).toContain(code);
+    });
+  });
+
+  it('should contain all expected database codes', () => {
+    const expectedCodes = ['DB_ERROR'];
+
+    const actualCodes = Object.values(DATABASE_ERRORS);
+    expect(actualCodes).toHaveLength(expectedCodes.length);
+    expectedCodes.forEach(code => {
+      expect(actualCodes).toContain(code);
+    });
+  });
+
   it('should contain all expected video error codes', () => {
     const expectedCodes = [
       'VIDEO_INVALID_FORMAT',
       'VIDEO_TOO_LARGE',
       'VIDEO_PROCESSING_FAILED',
+      'VIDEO_TAKE_SCREENSHOT_FAILED',
       'VIDEO_NOT_FOUND',
       'VIDEO_CONVERSION_FAILED',
       'VIDEO_CONVERSION_TIMEOUT',
@@ -51,8 +72,6 @@ describe('error-codes', () => {
 
     // @ts-expect-error - Invalid error code
     testVideoErrorCode('INVALID_CODE');
-
-    // @ts-expect-error - Invalid error code
     testErrorCode('RANDOM_ERROR');
   });
 });
