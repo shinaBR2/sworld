@@ -19,63 +19,64 @@ const fixThumbnailHandler = async (req: Request, res: Response) => {
   };
   let transaction;
 
-  try {
-    logger.info(metadata, `[/videos/fix-thumbnail] start processing`);
-    const video = await getVideoById(id);
+  logger.info(metadata, `[/videos/fix-thumbnail] start processing`);
+  const video = await getVideoById(id);
 
-    if (!video) {
-      throw CustomError.medium('Video not found', {
-        errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
-        context: {
-          ...metadata,
-        },
-        source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
-      });
-    }
-
-    const { source, user_id: userId } = video;
-    const { segments } = await parseM3U8Content(source, videoConfig.excludePatterns);
-
-    if (!segments.included.length) {
-      throw CustomError.medium('Empty HLS content', {
-        errorCode: VIDEO_ERRORS.INVALID_LENGTH,
-        context: {
-          id,
-        },
-        source: 'services/videos/helpers/m3u8/index.ts',
-      });
-    }
-
-    let thumbnailUrl;
-
-    const firstSegment = segments.included[0];
-    const thumbnailPath = await processThumbnail({
-      url: firstSegment.url,
-      duration: firstSegment.duration as number,
-      storagePath: `videos/${userId}/${id}`, // TODO refactor to an util
-      isSegment: true,
+  if (!video) {
+    throw CustomError.medium('Video not found', {
+      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+      context: {
+        ...metadata,
+      },
+      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
     });
-    thumbnailUrl = getDownloadUrl(thumbnailPath);
+  }
 
-    if (!thumbnailUrl) {
-      logger.error(
-        {
-          id,
-          source,
-        },
-        'Thumbnail is empty'
-      );
+  const { source, user_id: userId } = video;
+  const { segments } = await parseM3U8Content(source, videoConfig.excludePatterns);
 
-      throw CustomError.medium('Invalid generated thumbnail', {
-        errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
-        context: {
-          ...metadata,
-          source,
-        },
-        source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
-      });
-    }
+  if (!segments.included.length) {
+    throw CustomError.medium('Empty HLS content', {
+      errorCode: VIDEO_ERRORS.INVALID_LENGTH,
+      context: {
+        id,
+      },
+      source: 'services/videos/helpers/m3u8/index.ts',
+    });
+  }
 
+  let thumbnailUrl;
+
+  const firstSegment = segments.included[0];
+  const thumbnailPath = await processThumbnail({
+    url: firstSegment.url,
+    duration: firstSegment.duration as number,
+    storagePath: `videos/${userId}/${id}`, // TODO refactor to an util
+    isSegment: true,
+  });
+  thumbnailUrl = getDownloadUrl(thumbnailPath);
+
+  if (!thumbnailUrl) {
+    logger.error(
+      {
+        id,
+        source,
+      },
+      'Thumbnail is empty'
+    );
+
+    throw CustomError.medium('Invalid generated thumbnail', {
+      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+      context: {
+        ...metadata,
+        source,
+      },
+      shouldRetry: true,
+      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
+    });
+  }
+
+  try {
     transaction = await sequelize.transaction();
     await updateVideoThumbnail({
       id,
@@ -96,6 +97,7 @@ const fixThumbnailHandler = async (req: Request, res: Response) => {
       context: {
         ...metadata,
       },
+      shouldRetry: true,
       source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
     });
   }

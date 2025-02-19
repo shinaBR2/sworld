@@ -58,7 +58,7 @@ describe('fixThumbnailHandler', () => {
   const mockReq = {
     body: { id: 'video-123' },
     headers: { 'x-task-id': 'task-456' },
-  } as Request;
+  } as unknown as Request;
 
   const mockRes = {
     json: vi.fn(),
@@ -178,6 +178,7 @@ describe('fixThumbnailHandler', () => {
         taskId: 'task-456',
         source: 'video-source',
       },
+      shouldRetry: true,
       source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
     });
   });
@@ -215,6 +216,7 @@ describe('fixThumbnailHandler', () => {
         id: 'video-123',
         taskId: 'task-456',
       },
+      shouldRetry: true,
       source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
     });
 
