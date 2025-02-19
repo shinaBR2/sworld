@@ -123,6 +123,8 @@ const getDuration = async (videoPath: string): Promise<number> => {
  *                   or relative to current working directory (e.g., 'workspace/')
  * @param filename - Name of the output file without path (e.g., 'abc123--1705042800000.jpg')
  * @param videoDuration - Duration of video in seconds
+ * @param isSegment - Whether the input is a video segment (defaults to false)
+ *                    When true, sets input format to 'mpegts' for segment processing
  * @returns Promise<void> - Resolves when screenshot is taken, rejects on error
  */
 const takeScreenshot = async (

@@ -99,6 +99,7 @@ describe('fixThumbnailHandler', () => {
       url: 'segment1.ts',
       duration: 10,
       storagePath: 'videos/user-789/video-123',
+      isSegment: true,
     });
     expect(updateVideoThumbnail).toHaveBeenCalledWith({
       id: 'video-123',

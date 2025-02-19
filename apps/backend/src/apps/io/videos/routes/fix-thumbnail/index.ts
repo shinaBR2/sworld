@@ -53,6 +53,7 @@ const fixThumbnailHandler = async (req: Request, res: Response) => {
       url: firstSegment.url,
       duration: firstSegment.duration as number,
       storagePath: `videos/${userId}/${id}`, // TODO refactor to an util
+      isSegment: true,
     });
     thumbnailUrl = getDownloadUrl(thumbnailPath);
 
