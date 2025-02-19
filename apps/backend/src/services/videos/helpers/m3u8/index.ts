@@ -73,6 +73,7 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
       url: firstSegment.url,
       duration: firstSegment.duration as number,
       storagePath,
+      isSegment: true,
     });
     thumbnailUrl = getDownloadUrl(thumbnailPath);
   } catch (screenshotError) {
@@ -85,13 +86,6 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
       },
       'Failed to generate thumbnail'
     );
-    // throw CustomError.medium('Failed to generate screenshot', {
-    //   originalError: screenshotError,
-    //   errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
-    //   shouldRetry: true,
-    //   context,
-    //   source: 'services/videos/helpers/m3u8/index.ts',
-    // });
   }
 
   try {

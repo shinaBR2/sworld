@@ -246,6 +246,32 @@ describe('FFmpeg Helpers', () => {
       expect(logger.error).toHaveBeenCalled();
     });
 
+    it('should set inputFormat to mpegts when isSegment is true', async () => {
+      // Setup test
+      const inputFormatMock = vi.fn().mockReturnThis();
+      mockFFmpeg.inputFormat = inputFormatMock;
+
+      // Set up the on method to trigger the 'end' event immediately
+      mockFFmpeg.on.mockImplementation((event, callback) => {
+        if (event === 'end') {
+          // Execute callback immediately
+          setTimeout(callback, 0);
+        }
+        return mockFFmpeg;
+      });
+
+      // Execute function with isSegment = true
+      await takeScreenshot(videoPath, outputDir, filename, videoDuration, true);
+
+      // Verify inputFormat was called with 'mpegts'
+      expect(inputFormatMock).toHaveBeenCalledWith('mpegts');
+      expect(mockFFmpeg.screenshot).toHaveBeenCalledWith({
+        timestamps: [10], // Min between 100/3 and 10 is 10
+        folder: outputDir,
+        filename: filename,
+      });
+    });
+
     describe('path handling', () => {
       beforeEach(() => {
         mockFFmpeg.on.mockImplementation((event, callback) => {

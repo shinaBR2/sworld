@@ -129,12 +129,18 @@ const takeScreenshot = async (
   videoPath: string,
   outputDir: string,
   filename: string,
-  videoDuration: number
+  videoDuration: number,
+  isSegment: boolean = false
 ): Promise<void> => {
   const timestamp = Math.min(Math.floor(videoDuration / 3), 10);
 
   return new Promise((resolve, reject) => {
-    ffmpeg(videoPath)
+    const command = ffmpeg(videoPath);
+    if (isSegment) {
+      command.inputFormat('mpegts');
+    }
+
+    command
       .screenshot({
         timestamps: [timestamp],
         folder: outputDir,

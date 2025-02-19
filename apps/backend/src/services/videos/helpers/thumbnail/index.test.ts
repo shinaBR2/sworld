@@ -62,7 +62,8 @@ describe('processThumbnail', () => {
       'temp/123456/input_video_file',
       mockWorkingDir,
       expect.stringMatching(/^thumbnail--\d+\.jpg$/),
-      mockProps.duration
+      mockProps.duration,
+      false
     );
 
     // Verify thumbnail upload
@@ -112,5 +113,22 @@ describe('processThumbnail', () => {
 
     // Restore Date.now
     Date.now = realDateNow;
+  });
+
+  it('should handle segment thumbnail', async () => {
+    const segmentProps = {
+      ...mockProps,
+      isSegment: true,
+    };
+
+    await processThumbnail(segmentProps);
+
+    expect(takeScreenshot).toHaveBeenCalledWith(
+      'temp/123456/input_video_file',
+      mockWorkingDir,
+      expect.stringMatching(/^thumbnail--\d+\.jpg$/),
+      mockProps.duration,
+      true
+    );
   });
 });

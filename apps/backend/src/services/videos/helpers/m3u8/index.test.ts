@@ -142,11 +142,12 @@ describe('streamM3U8', () => {
       url: 'segment1.ts',
       duration: 3,
       storagePath: mockStoragePath,
+      isSegment: true,
     });
     expect(getDownloadUrl).toHaveBeenCalledWith(mockThumbnailPath);
   });
 
-  it('should throw error when failed to take screenshot and NOT retry', async () => {
+  it('should log error when failed to take screenshot and continue', async () => {
     // Reset the getDownloadUrl from the beforeEach
     vi.mocked(getDownloadUrl).mockReset();
     vi.mocked(getDownloadUrl).mockReturnValue(mockPlaylistUrl); // Only return playlist URL
@@ -154,18 +155,22 @@ describe('streamM3U8', () => {
     const screenshotError = new Error('Screenshot failed');
     vi.mocked(processThumbnail).mockRejectedValue(screenshotError);
 
-    // await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow('Failed to generate screenshot');
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).resolves.toEqual({
+      ...expectedResult,
+      thumbnailUrl: undefined,
+    });
+    expect(logger.error).toHaveBeenCalledWith(
+      {
+        originalError: screenshotError,
+        errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
+        shouldRetry: true,
+        context: expectedContext,
+      },
+      'Failed to generate thumbnail'
+    );
 
-    // expect(CustomError.medium).toHaveBeenCalledWith('Failed to generate screenshot', {
-    //   originalError: screenshotError,
-    //   errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
-    //   shouldRetry: true,
-    //   context: expectedContext,
-    //   source: 'services/videos/helpers/m3u8/index.ts',
-    // });
-
-    expect(streamPlaylistFile).not.toHaveBeenCalled();
-    expect(streamSegments).not.toHaveBeenCalled();
+    expect(streamPlaylistFile).toHaveBeenCalled();
+    expect(streamSegments).toHaveBeenCalled();
   });
 
   it('should throw error when failed to stream playlist file and SHOULD retry', async () => {

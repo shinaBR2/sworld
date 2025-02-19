@@ -10,6 +10,8 @@ interface ProcessThumbnailProps {
   duration: number;
   /** Destination GCP Cloud Storage path e.g 'videos/video-123' */
   storagePath: string;
+  /** Optional flag to indicate if the video is a segment */
+  isSegment?: boolean;
 }
 
 /**
@@ -27,7 +29,7 @@ interface ProcessThumbnailProps {
  * @throws {Error} If any step in the pipeline fails (download, FFmpeg, upload)
  */
 const processThumbnail = async (props: ProcessThumbnailProps) => {
-  const { url, duration, storagePath } = props;
+  const { url, duration, storagePath, isSegment = false } = props;
   const workingDir = generateTempDir();
   const thumbnailFilename = `thumbnail--${Date.now()}.jpg`;
   const localThumbnailPath = path.join(workingDir, thumbnailFilename);
@@ -41,7 +43,7 @@ const processThumbnail = async (props: ProcessThumbnailProps) => {
   await downloadFile(url, inputPath);
 
   // Take screenshot and save to working directory
-  await takeScreenshot(inputPath, workingDir, thumbnailFilename, duration);
+  await takeScreenshot(inputPath, workingDir, thumbnailFilename, duration, isSegment);
 
   // Upload to storage and construct final path
   const finalStoragePath = `${storagePath}/${thumbnailFilename}`;
