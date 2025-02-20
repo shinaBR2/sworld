@@ -7,15 +7,25 @@ configuration:
       custom_name: createdAt
     thumbnail_url:
       custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
   custom_column_names:
     created_at: createdAt
     thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
   custom_root_fields: {}
 object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
 array_relationships:
+  - name: playlist_videos
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: playlist_videos
+          schema: public
   - name: user_video_histories
     using:
       foreign_key_constraint_on:
@@ -56,6 +66,7 @@ select_permissions:
   - role: anonymous
     permission:
       columns:
+        - created_at
         - description
         - id
         - slug
@@ -73,6 +84,7 @@ select_permissions:
         - description
         - duration
         - id
+        - public
         - slug
         - source
         - thumbnail_url
