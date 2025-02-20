@@ -1,0 +1,46 @@
+table:
+  name: playlist
+  schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - is_public
+        - slug
+        - thumbnail_url
+        - title
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - description
+        - id
+        - is_public
+        - slug
+        - thumbnail_url
+        - title
+      filter:
+        is_public:
+          _eq: true
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - created_at
+        - description
+        - id
+        - is_public
+        - slug
+        - thumbnail_url
+        - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""

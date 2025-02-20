@@ -53,6 +53,19 @@ insert_permissions:
         - video_url
     comment: ""
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - description
+        - id
+        - slug
+        - source
+        - thumbnail_url
+        - title
+      filter:
+        public:
+          _eq: true
+    comment: ""
   - role: user
     permission:
       columns:

@@ -7,24 +7,38 @@ import {
   ROLE_USER,
 } from "../create-role-test-suite";
 
-// Queries that should be denied for anonymous users
-const deniedQueries: QueryTestCase[] = [
+// Queries that should be allowed for anonymous users
+const allowedQueries: QueryTestCase[] = [
   {
-    name: "Get user videos",
+    name: "Get public videos",
     query: `
-      query GetUserVideos {
+      query GetPublicVideos {
         videos {
           id
           title
           description
           slug
-          thumbnail_url
-          duration
+          thumbnailUrl
           source
-          created_at
         }
       }
     `,
+    additionalTest: (response) => {
+      // Check if response has the expected structure
+      expect(response).toHaveProperty("videos");
+      expect(Array.isArray(response.videos)).toBe(true);
+
+      // Check if each video has all the permitted columns
+      if (response.videos.length > 0) {
+        const video = response.videos[0];
+        expect(video).toHaveProperty("id");
+        expect(video).toHaveProperty("title");
+        expect(video).toHaveProperty("description");
+        expect(video).toHaveProperty("slug");
+        expect(video).toHaveProperty("thumbnailUrl");
+        expect(video).toHaveProperty("source");
+      }
+    },
   },
   {
     name: "Get video by id",
@@ -34,6 +48,48 @@ const deniedQueries: QueryTestCase[] = [
           id
           title
           description
+        }
+      }
+    `,
+    variables: {
+      id: "123e4567-e89b-12d3-a456-426614174000",
+    },
+    additionalTest: (response) => {
+      // Check if response has the expected structure
+      expect(response).toHaveProperty("videos_by_pk");
+
+      // Check if video has all the permitted columns
+      const video = response.videos_by_pk;
+      if (video) {
+        expect(video).toHaveProperty("id");
+        expect(video).toHaveProperty("title");
+        expect(video).toHaveProperty("description");
+      }
+    },
+  },
+];
+
+// Queries that should be denied for anonymous users
+const deniedQueries: QueryTestCase[] = [
+  {
+    name: "Get user videos",
+    // This query should be denied because it returns the createdAt column
+    query: `
+      query GetUserVideos {
+        videos {
+          createdAt
+        }
+      }
+    `,
+  },
+  {
+    name: "Get video by id",
+    // This query should be denied because it returns the createdAt column
+    query: `
+      query GetVideoById($id: uuid!) {
+        videos_by_pk(id: $id) {
+          id
+          createdAt
         }
       }
     `,
@@ -149,7 +205,7 @@ const allowedUserQueries: QueryTestCase[] = [
 // Test suite for anonymous role
 await createRoleTestSuite(ROLE_ANONYMOUS, {
   queries: {
-    allowed: [],
+    allowed: [...allowedQueries],
     denied: deniedQueries,
     empty: [],
   },
