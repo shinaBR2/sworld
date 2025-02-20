@@ -13,13 +13,14 @@ const allowedQueries: QueryTestCase[] = [
     name: "Get public playlists",
     query: `
       query GetPublicPlaylists {
-        playlist {
+        playlist(where: {playlist_videos: {}}) {
           id
           title
           description
           slug
-          thumbnail_url
-          is_public
+          thumbnailUrl
+          public
+          createdAt
         }
       }
     `,
@@ -35,9 +36,10 @@ const allowedQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("title");
         expect(playlist).toHaveProperty("description");
         expect(playlist).toHaveProperty("slug");
-        expect(playlist).toHaveProperty("thumbnail_url");
-        expect(playlist).toHaveProperty("is_public");
-        expect(playlist.is_public).toBe(true);
+        expect(playlist).toHaveProperty("thumbnailUrl");
+        expect(playlist).toHaveProperty("public");
+        expect(playlist).toHaveProperty("createdAt");
+        expect(playlist.public).toBe(true);
       }
     },
   },
@@ -50,8 +52,8 @@ const allowedQueries: QueryTestCase[] = [
           title
           description
           slug
-          thumbnail_url
-          is_public
+          thumbnailUrl
+          public
         }
       }
     `,
@@ -69,9 +71,9 @@ const allowedQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("title");
         expect(playlist).toHaveProperty("description");
         expect(playlist).toHaveProperty("slug");
-        expect(playlist).toHaveProperty("thumbnail_url");
-        expect(playlist).toHaveProperty("is_public");
-        expect(playlist.is_public).toBe(true);
+        expect(playlist).toHaveProperty("thumbnailUrl");
+        expect(playlist).toHaveProperty("public");
+        expect(playlist.public).toBe(true);
       }
     },
   },
@@ -80,31 +82,41 @@ const allowedQueries: QueryTestCase[] = [
 // Queries that should be denied for anonymous users
 const deniedQueries: QueryTestCase[] = [
   {
-    name: "Get playlists with created_at",
-    // This query should be denied because it returns the created_at column
+    name: "Get playlists with updatedAt",
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetPlaylistsWithCreatedAt {
         playlist {
           id
-          created_at
+          updatedAt
         }
       }
     `,
   },
   {
-    name: "Get playlist by id with created_at",
-    // This query should be denied because it returns the created_at column
+    name: "Get playlist by id with updatedAt",
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetPlaylistByIdWithCreatedAt($id: uuid!) {
         playlist_by_pk(id: $id) {
           id
-          created_at
+          updatedAt
         }
       }
     `,
     variables: {
       id: "123e4567-e89b-12d3-a456-426614174000",
     },
+  },
+  {
+    name: "Get playlist_videos junction table",
+    query: `
+      query GetPlaylistVideos {
+        playlist_videos {
+          id
+        }
+      }
+    `,
   },
 ];
 
@@ -118,8 +130,8 @@ const deniedMutations: MutationTestCase[] = [
           title: "Test Playlist",
           description: "A test playlist",
           slug: "test-playlist",
-          thumbnail_url: "https://example.com/thumbnail.jpg",
-          is_public: true
+          thumbnailUrl: "https://example.com/thumbnail.jpg",
+          public: true
         }) {
           id
           title
@@ -165,14 +177,14 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get own playlists",
     query: `
       query GetOwnPlaylists {
-        playlist {
+        playlist(where: {playlist_videos: {}}) {
           id
           title
           description
           slug
-          thumbnail_url
-          is_public
-          created_at
+          thumbnailUrl
+          public
+          createdAt
         }
       }
     `,
@@ -188,11 +200,24 @@ const allowedUserQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("title");
         expect(playlist).toHaveProperty("description");
         expect(playlist).toHaveProperty("slug");
-        expect(playlist).toHaveProperty("thumbnail_url");
-        expect(playlist).toHaveProperty("is_public");
-        expect(playlist).toHaveProperty("created_at");
+        expect(playlist).toHaveProperty("thumbnailUrl");
+        expect(playlist).toHaveProperty("public");
+        expect(playlist).toHaveProperty("createdAt");
       }
     },
+  },
+];
+
+const deniedUserQueries: QueryTestCase[] = [
+  {
+    name: "Get playlist_videos junction table",
+    query: `
+      query GetPlaylistVideos {
+        playlist_videos {
+          id
+        }
+      }
+    `,
   },
 ];
 
@@ -208,14 +233,14 @@ const allowedUserQueries: QueryTestCase[] = [
 //           title: "My Test Playlist",
 //           description: "My test playlist description",
 //           slug: "my-test-playlist",
-//           thumbnail_url: "https://example.com/my-thumbnail.jpg",
-//           is_public: false
+//           thumbnailUrl: "https://example.com/my-thumbnail.jpg",
+//           public: false
 //         }) {
 //           id
 //           title
 //           description
 //           slug
-//           is_public
+//           public
 //         }
 //       }
 //     `,
@@ -227,7 +252,7 @@ const allowedUserQueries: QueryTestCase[] = [
 //       expect(playlist.title).toBe("My Test Playlist");
 //       expect(playlist.description).toBe("My test playlist description");
 //       expect(playlist.slug).toBe("my-test-playlist");
-//       expect(playlist.is_public).toBe(false);
+//       expect(playlist.public).toBe(false);
 //     },
 //   },
 // ];
@@ -249,7 +274,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
 await createRoleTestSuite(ROLE_USER, {
   queries: {
     allowed: allowedUserQueries,
-    denied: [],
+    denied: [...deniedUserQueries],
     empty: [],
   },
   mutations: {

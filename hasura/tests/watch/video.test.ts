@@ -13,7 +13,7 @@ const allowedQueries: QueryTestCase[] = [
     name: "Get public videos",
     query: `
       query GetPublicVideos {
-        videos {
+        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
           id
           title
           description
@@ -25,12 +25,12 @@ const allowedQueries: QueryTestCase[] = [
     `,
     additionalTest: (response) => {
       // Check if response has the expected structure
-      expect(response).toHaveProperty("videos");
-      expect(Array.isArray(response.videos)).toBe(true);
+      expect(response).toHaveProperty("standalone_videos");
+      expect(Array.isArray(response.standalone_videos)).toBe(true);
 
       // Check if each video has all the permitted columns
-      if (response.videos.length > 0) {
-        const video = response.videos[0];
+      if (response.standalone_videos.length > 0) {
+        const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
@@ -73,23 +73,23 @@ const allowedQueries: QueryTestCase[] = [
 const deniedQueries: QueryTestCase[] = [
   {
     name: "Get user videos",
-    // This query should be denied because it returns the createdAt column
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetUserVideos {
         videos {
-          createdAt
+          updatedAt
         }
       }
     `,
   },
   {
     name: "Get video by id",
-    // This query should be denied because it returns the createdAt column
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetVideoById($id: uuid!) {
         videos_by_pk(id: $id) {
           id
-          createdAt
+          updatedAt
         }
       }
     `,
@@ -124,13 +124,17 @@ const deniedMutations: MutationTestCase[] = [
   },
 ];
 
+// TODO
+// 2 cases
+// - Video own
+// - Video NOT own but public
 // Queries that should be allowed for authenticated users
 const allowedUserQueries: QueryTestCase[] = [
   {
     name: "Get own videos",
     query: `
       query GetOwnVideos {
-        videos {
+        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
           id
           title
           description
@@ -144,12 +148,12 @@ const allowedUserQueries: QueryTestCase[] = [
     `,
     additionalTest: (response) => {
       // Check if response has the expected structure
-      expect(response).toHaveProperty("videos");
-      expect(Array.isArray(response.videos)).toBe(true);
+      expect(response).toHaveProperty("standalone_videos");
+      expect(Array.isArray(response.standalone_videos)).toBe(true);
 
       // Check if each video has all the permitted columns
-      if (response.videos.length > 0) {
-        const video = response.videos[0];
+      if (response.standalone_videos.length > 0) {
+        const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");

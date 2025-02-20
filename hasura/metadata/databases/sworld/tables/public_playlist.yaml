@@ -1,6 +1,31 @@
 table:
   name: playlist
   schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    thumbnail_url:
+      custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+array_relationships:
+  - name: playlist_videos
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: playlist_videos
+          schema: public
 insert_permissions:
   - role: user
     permission:
@@ -11,7 +36,7 @@ insert_permissions:
         user_id: x-hasura-User-Id
       columns:
         - description
-        - is_public
+        - public
         - slug
         - thumbnail_url
         - title
@@ -20,14 +45,15 @@ select_permissions:
   - role: anonymous
     permission:
       columns:
+        - created_at
         - description
         - id
-        - is_public
+        - public
         - slug
         - thumbnail_url
         - title
       filter:
-        is_public:
+        public:
           _eq: true
     comment: ""
   - role: user
@@ -36,7 +62,7 @@ select_permissions:
         - created_at
         - description
         - id
-        - is_public
+        - public
         - slug
         - thumbnail_url
         - title

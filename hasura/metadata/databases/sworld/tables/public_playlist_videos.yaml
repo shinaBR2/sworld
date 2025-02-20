@@ -1,0 +1,73 @@
+table:
+  name: playlist_videos
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: playlist
+    using:
+      foreign_key_constraint_on: playlist_id
+  - name: video
+    using:
+      foreign_key_constraint_on: video_id
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - position
+      filter:
+        _and:
+          - playlist:
+              public:
+                _eq: true
+          - video:
+              public:
+                _eq: true
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - position
+      filter:
+        _or:
+          - _and:
+              - playlist:
+                  public:
+                    _eq: true
+              - video:
+                  public:
+                    _eq: true
+          - _and:
+              - playlist:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+              - video:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+          - _and:
+              - playlist:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+              - video:
+                  public:
+                    _eq: true
+          - _and:
+              - playlist:
+                  public:
+                    _eq: true
+              - video:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
