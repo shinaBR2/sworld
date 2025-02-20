@@ -91,7 +91,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
         ],
       });
 
-      if (response.insert_videos.returning.length !== 1) {
+      if (response.insert_videos?.returning.length !== 1) {
         // Unknown error
         return setState(prev => ({
           ...prev,
