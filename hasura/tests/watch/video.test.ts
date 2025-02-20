@@ -125,7 +125,9 @@ const deniedMutations: MutationTestCase[] = [
 ];
 
 // TODO
-// Add case NOT owned but public video
+// 2 cases
+// - Video own
+// - Video NOT own but public
 // Queries that should be allowed for authenticated users
 const allowedUserQueries: QueryTestCase[] = [
   {

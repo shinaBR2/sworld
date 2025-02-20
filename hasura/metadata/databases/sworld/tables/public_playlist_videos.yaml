@@ -54,4 +54,20 @@ select_permissions:
               - video:
                   user_id:
                     _eq: X-Hasura-User-Id
+          - _and:
+              - playlist:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+              - video:
+                  public:
+                    _eq: true
+          - _and:
+              - playlist:
+                  public:
+                    _eq: true
+              - video:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields: []
     comment: ""

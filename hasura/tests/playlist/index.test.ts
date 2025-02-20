@@ -208,6 +208,19 @@ const allowedUserQueries: QueryTestCase[] = [
   },
 ];
 
+const deniedUserQueries: QueryTestCase[] = [
+  {
+    name: "Get playlist_videos junction table",
+    query: `
+      query GetPlaylistVideos {
+        playlist_videos {
+          id
+        }
+      }
+    `,
+  },
+];
+
 // TODO
 // Handle whole life cycle for case insert then delete
 // Mutations that should be allowed for authenticated users
@@ -261,7 +274,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
 await createRoleTestSuite(ROLE_USER, {
   queries: {
     allowed: allowedUserQueries,
-    denied: [],
+    denied: [...deniedUserQueries],
     empty: [],
   },
   mutations: {
