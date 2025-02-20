@@ -73,23 +73,23 @@ const allowedQueries: QueryTestCase[] = [
 const deniedQueries: QueryTestCase[] = [
   {
     name: "Get user videos",
-    // This query should be denied because it returns the createdAt column
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetUserVideos {
         videos {
-          createdAt
+          updatedAt
         }
       }
     `,
   },
   {
     name: "Get video by id",
-    // This query should be denied because it returns the createdAt column
+    // This query should be denied because it returns the updatedAt column
     query: `
       query GetVideoById($id: uuid!) {
         videos_by_pk(id: $id) {
           id
-          createdAt
+          updatedAt
         }
       }
     `,

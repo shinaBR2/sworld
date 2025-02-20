@@ -5,10 +5,13 @@ configuration:
   column_config:
     created_at:
       custom_name: createdAt
+    thumbnail_url:
+      custom_name: thumbnailUrl
     updated_at:
       custom_name: updatedAt
   custom_column_names:
     created_at: createdAt
+    thumbnail_url: thumbnailUrl
     updated_at: updatedAt
   custom_root_fields: {}
 object_relationships:
