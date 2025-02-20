@@ -13,7 +13,7 @@ const allowedQueries: QueryTestCase[] = [
     name: "Get public playlists",
     query: `
       query GetPublicPlaylists {
-        playlist {
+        playlist(where: {playlist_videos: {}}) {
           id
           title
           description
@@ -177,7 +177,7 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get own playlists",
     query: `
       query GetOwnPlaylists {
-        playlist {
+        playlist(where: {playlist_videos: {}}) {
           id
           title
           description

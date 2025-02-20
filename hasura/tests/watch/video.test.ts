@@ -13,7 +13,7 @@ const allowedQueries: QueryTestCase[] = [
     name: "Get public videos",
     query: `
       query GetPublicVideos {
-        videos {
+        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
           id
           title
           description
@@ -25,12 +25,12 @@ const allowedQueries: QueryTestCase[] = [
     `,
     additionalTest: (response) => {
       // Check if response has the expected structure
-      expect(response).toHaveProperty("videos");
-      expect(Array.isArray(response.videos)).toBe(true);
+      expect(response).toHaveProperty("standalone_videos");
+      expect(Array.isArray(response.standalone_videos)).toBe(true);
 
       // Check if each video has all the permitted columns
-      if (response.videos.length > 0) {
-        const video = response.videos[0];
+      if (response.standalone_videos.length > 0) {
+        const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
@@ -132,7 +132,7 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get own videos",
     query: `
       query GetOwnVideos {
-        videos {
+        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
           id
           title
           description
@@ -146,12 +146,12 @@ const allowedUserQueries: QueryTestCase[] = [
     `,
     additionalTest: (response) => {
       // Check if response has the expected structure
-      expect(response).toHaveProperty("videos");
-      expect(Array.isArray(response.videos)).toBe(true);
+      expect(response).toHaveProperty("standalone_videos");
+      expect(Array.isArray(response.standalone_videos)).toBe(true);
 
       // Check if each video has all the permitted columns
-      if (response.videos.length > 0) {
-        const video = response.videos[0];
+      if (response.standalone_videos.length > 0) {
+        const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
