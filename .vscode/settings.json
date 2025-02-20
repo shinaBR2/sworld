@@ -6,7 +6,7 @@
       "pattern": "apps/docs/docs/how-to-guide/admin/add-a-new-page.md"
     }
   ],
-  // "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   // https://github.com/microsoft/vscode/issues/11963#issuecomment-317830768
   "files.exclude": {

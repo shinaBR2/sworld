@@ -1,16 +1,6 @@
+import { graphql } from '../../../graphql';
+import { InsertVideosMutation } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-}
-
-interface BulkConvertResponse {
-  insert_videos: {
-    returning: Video[];
-  };
-}
 
 interface BulkConvertVariables {
   objects: {
@@ -21,7 +11,7 @@ interface BulkConvertVariables {
   }[];
 }
 
-const bulkConvertMutation = `
+const bulkConvertMutation = graphql(/* GraphQL */ `
   mutation InsertVideos($objects: [videos_insert_input!]!) {
     insert_videos(objects: $objects) {
       returning {
@@ -31,11 +21,11 @@ const bulkConvertMutation = `
       }
     }
   }
-`;
+`);
 
 interface UseBulkConvertVideosProps {
   getAccessToken: () => Promise<string>;
-  onSuccess?: (data: BulkConvertResponse) => void;
+  onSuccess?: (data: InsertVideosMutation) => void;
   onError?: (error: unknown) => void;
 }
 
@@ -50,7 +40,7 @@ interface UseBulkConvertVideosProps {
 const useBulkConvertVideos = (props: UseBulkConvertVideosProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  return useMutationRequest<BulkConvertResponse, BulkConvertVariables>({
+  return useMutationRequest<InsertVideosMutation, BulkConvertVariables>({
     document: bulkConvertMutation,
     getAccessToken,
     options: {
@@ -63,4 +53,4 @@ const useBulkConvertVideos = (props: UseBulkConvertVideosProps) => {
   });
 };
 
-export { useBulkConvertVideos, type BulkConvertResponse, type BulkConvertVariables };
+export { useBulkConvertVideos, type BulkConvertVariables };

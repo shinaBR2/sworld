@@ -1,8 +1,10 @@
+import { graphql } from '../../../graphql';
+import { VideoDetailQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 
-const videoDetailQuery = `
-  query VideoDetail ($id: uuid!) @cached {
-    videos(order_by: {createdAt: desc})  {
+const videoDetailQuery = graphql(`
+  query VideoDetail($id: uuid!) @cached {
+    videos(order_by: { createdAt: desc }) {
       id
       title
       description
@@ -27,50 +29,16 @@ const videoDetailQuery = `
       description
     }
   }
-`;
-
-interface User {
-  username: string;
-}
-
-interface VideoHistory {
-  last_watched_at: string;
-  progress_seconds: number;
-}
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  source: string;
-  slug: string;
-  duration: number;
-  createdAt: string;
-  user: User;
-  user_video_histories?: VideoHistory[];
-}
-
-interface VideoDetail {
-  id: string;
-  source: string;
-  thumbnailUrl: string;
-  title: string;
-  description: string;
-  duration: number;
-}
+`);
 
 interface LoadVideoDetailProps {
   id: string;
   getAccessToken: () => Promise<string>;
 }
 
-interface VideoDetailResponse {
-  videos: Video[];
-  videos_by_pk: VideoDetail | null;
-}
+type VideoItem = VideoDetailQuery['videos'][0];
 
-const transformVideoData = (video: Video) => {
+const transformVideoData = (video: VideoItem) => {
   const history = video?.user_video_histories?.[0];
 
   return {
@@ -79,7 +47,7 @@ const transformVideoData = (video: Video) => {
     description: video.description,
     thumbnailUrl: video.thumbnailUrl,
     source: video.source,
-    slug: video.slug,
+    slug: video.slug || '',
     duration: video.duration,
     createdAt: video.createdAt,
     user: video.user,
@@ -91,7 +59,7 @@ const transformVideoData = (video: Video) => {
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<VideoDetailResponse>({
+  const { data, isLoading, error } = useRequest<VideoDetailQuery, { id: string }>({
     queryKey: ['video-detail', id],
     getAccessToken,
     document: videoDetailQuery,
