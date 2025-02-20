@@ -20,6 +20,7 @@ const allowedQueries: QueryTestCase[] = [
           slug
           thumbnailUrl
           public
+          createdAt
         }
       }
     `,
@@ -37,6 +38,7 @@ const allowedQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("slug");
         expect(playlist).toHaveProperty("thumbnailUrl");
         expect(playlist).toHaveProperty("public");
+        expect(playlist).toHaveProperty("createdAt");
         expect(playlist.public).toBe(true);
       }
     },
@@ -105,6 +107,16 @@ const deniedQueries: QueryTestCase[] = [
     variables: {
       id: "123e4567-e89b-12d3-a456-426614174000",
     },
+  },
+  {
+    name: "Get playlist_videos junction table",
+    query: `
+      query GetPlaylistVideos {
+        playlist_videos {
+          id
+        }
+      }
+    `,
   },
 ];
 
