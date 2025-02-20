@@ -1,6 +1,7 @@
+import { graphql } from '../../graphql';
 import { useRequest } from '../../universal/hooks/use-request';
 
-const audiosAndFeelingsQuery = `
+const audiosAndFeelingsQuery = graphql(`
   query GetAudiosAndFeelings @cached {
     audios {
       id
@@ -19,11 +20,11 @@ const audiosAndFeelingsQuery = `
       name
     }
   }
-`;
+`);
 
-const publicAudiosAndFeelingsQuery = `
+const publicAudiosAndFeelingsQuery = graphql(`
   query GetPublicAudiosAndFeelings @cached {
-    audios(where: {public: {_eq: true}}) {
+    audios(where: { public: { _eq: true } }) {
       id
       name
       source
@@ -33,12 +34,12 @@ const publicAudiosAndFeelingsQuery = `
         tag_id
       }
     }
-    tags(where: {site: {_eq: "listen"}, audio_tags: {audio: {public: {_eq: true}}}}) {
+    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {
       id
       name
     }
   }
-`;
+`);
 
 interface LoadAudiosProps {
   getAccessToken: () => Promise<string>;

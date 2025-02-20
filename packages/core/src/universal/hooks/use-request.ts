@@ -1,40 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
-import request, { Variables } from 'graphql-request';
+import request from 'graphql-request';
 import { useQueryContext } from '../../providers/query';
+import { TypedDocumentString } from '../../graphql/graphql';
 
-interface UseRequestProps {
+interface UseRequestProps<TData, TVariables> {
   queryKey: unknown[];
-  document: string;
-  variables?: Variables;
+  document: TypedDocumentString<TData, TVariables>;
+  variables?: TVariables;
   getAccessToken?: () => Promise<string>;
   staleTime?: number;
 }
 
-interface Headers {
-  'content-type': string;
-  Authorization?: string;
-}
-
-const useRequest = <TData = unknown>(props: UseRequestProps) => {
-  const {
-    queryKey,
-    getAccessToken,
-    document,
-    variables,
-    staleTime = 5 * 60 * 1000,
-  } = props;
+const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseRequestProps<TData, TVariables>) => {
+  const { queryKey, getAccessToken, document, variables, staleTime = 5 * 60 * 1000 } = props;
 
   const { hasuraUrl } = useQueryContext();
-  const rs = useQuery<TData>({
+
+  return useQuery<TData>({
     queryKey,
     queryFn: async () => {
-      let headers: Headers = {
+      let headers: Record<string, string> = {
         'content-type': 'application/json',
       };
+
       if (typeof getAccessToken !== 'undefined') {
-        let token: string;
         try {
-          token = await getAccessToken();
+          const token = await getAccessToken();
 
           if (!token) {
             throw new Error('Invalid access token');
@@ -51,12 +42,10 @@ const useRequest = <TData = unknown>(props: UseRequestProps) => {
       }
 
       try {
-        return request<TData>({
+        return request({
           url: hasuraUrl,
-          document,
-          requestHeaders: {
-            ...headers,
-          },
+          document: document.toString(),
+          requestHeaders: headers,
           variables,
         });
       } catch (error) {
@@ -66,8 +55,6 @@ const useRequest = <TData = unknown>(props: UseRequestProps) => {
     },
     staleTime,
   });
-
-  return rs;
 };
 
 export { useRequest };

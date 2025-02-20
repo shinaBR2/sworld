@@ -3,7 +3,6 @@ import { canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
-import { BulkConvertResponse } from 'core/watch/mutation-hooks';
 import { texts } from './texts';
 
 const { useCountdown } = hooks;
@@ -81,7 +80,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const { title, description = '', url } = state;
-      const response = (await bulkConvert({
+      const response = await bulkConvert({
         objects: [
           {
             title,
@@ -90,7 +89,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
             video_url: url,
           },
         ],
-      })) as BulkConvertResponse;
+      });
 
       if (response.insert_videos.returning.length !== 1) {
         // Unknown error

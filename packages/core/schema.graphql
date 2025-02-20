@@ -1,0 +1,6208 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+  """measured in seconds"""
+  ttl: Int! = 60
+) on QUERY
+
+"""
+Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
+"""
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+  """does the column NOT match the given pattern"""
+  _nlike: String
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""Junction table between audios and tags, many to many relationship"""
+type audio_tags {
+  """An object relationship"""
+  audio: audios!
+  audio_id: uuid!
+  created_at: timestamptz!
+  """An object relationship"""
+  tag: tags!
+  tag_id: uuid!
+  updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "audio_tags"
+"""
+type audio_tags_aggregate {
+  aggregate: audio_tags_aggregate_fields
+  nodes: [audio_tags!]!
+}
+
+input audio_tags_aggregate_bool_exp {
+  count: audio_tags_aggregate_bool_exp_count
+}
+
+input audio_tags_aggregate_bool_exp_count {
+  arguments: [audio_tags_select_column!]
+  distinct: Boolean
+  filter: audio_tags_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "audio_tags"
+"""
+type audio_tags_aggregate_fields {
+  count(columns: [audio_tags_select_column!], distinct: Boolean): Int!
+  max: audio_tags_max_fields
+  min: audio_tags_min_fields
+}
+
+"""
+order by aggregate values of table "audio_tags"
+"""
+input audio_tags_aggregate_order_by {
+  count: order_by
+  max: audio_tags_max_order_by
+  min: audio_tags_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "audio_tags"
+"""
+input audio_tags_arr_rel_insert_input {
+  data: [audio_tags_insert_input!]!
+  """upsert condition"""
+  on_conflict: audio_tags_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "audio_tags". All fields are combined with a logical 'AND'.
+"""
+input audio_tags_bool_exp {
+  _and: [audio_tags_bool_exp!]
+  _not: audio_tags_bool_exp
+  _or: [audio_tags_bool_exp!]
+  audio: audios_bool_exp
+  audio_id: uuid_comparison_exp
+  created_at: timestamptz_comparison_exp
+  tag: tags_bool_exp
+  tag_id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "audio_tags"
+"""
+enum audio_tags_constraint {
+  """
+  unique or primary key constraint on columns "tag_id", "audio_id"
+  """
+  audio_tags_pkey
+}
+
+"""
+input type for inserting data into table "audio_tags"
+"""
+input audio_tags_insert_input {
+  audio: audios_obj_rel_insert_input
+  audio_id: uuid
+  created_at: timestamptz
+  tag: tags_obj_rel_insert_input
+  tag_id: uuid
+  updated_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type audio_tags_max_fields {
+  audio_id: uuid
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "audio_tags"
+"""
+input audio_tags_max_order_by {
+  audio_id: order_by
+  created_at: order_by
+  tag_id: order_by
+  updated_at: order_by
+}
+
+"""aggregate min on columns"""
+type audio_tags_min_fields {
+  audio_id: uuid
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "audio_tags"
+"""
+input audio_tags_min_order_by {
+  audio_id: order_by
+  created_at: order_by
+  tag_id: order_by
+  updated_at: order_by
+}
+
+"""
+response of any mutation on the table "audio_tags"
+"""
+type audio_tags_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [audio_tags!]!
+}
+
+"""
+on_conflict condition type for table "audio_tags"
+"""
+input audio_tags_on_conflict {
+  constraint: audio_tags_constraint!
+  update_columns: [audio_tags_update_column!]! = []
+  where: audio_tags_bool_exp
+}
+
+"""Ordering options when selecting data from "audio_tags"."""
+input audio_tags_order_by {
+  audio: audios_order_by
+  audio_id: order_by
+  created_at: order_by
+  tag: tags_order_by
+  tag_id: order_by
+  updated_at: order_by
+}
+
+"""primary key columns input for table: audio_tags"""
+input audio_tags_pk_columns_input {
+  audio_id: uuid!
+  tag_id: uuid!
+}
+
+"""
+select columns of table "audio_tags"
+"""
+enum audio_tags_select_column {
+  """column name"""
+  audio_id
+  """column name"""
+  created_at
+  """column name"""
+  tag_id
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "audio_tags"
+"""
+input audio_tags_set_input {
+  audio_id: uuid
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+}
+
+"""
+Streaming cursor of the table "audio_tags"
+"""
+input audio_tags_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: audio_tags_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input audio_tags_stream_cursor_value_input {
+  audio_id: uuid
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+}
+
+"""
+update columns of table "audio_tags"
+"""
+enum audio_tags_update_column {
+  """column name"""
+  audio_id
+  """column name"""
+  created_at
+  """column name"""
+  tag_id
+  """column name"""
+  updated_at
+}
+
+input audio_tags_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: audio_tags_set_input
+  """filter the rows which have to be updated"""
+  where: audio_tags_bool_exp!
+}
+
+"""Audios for listen site"""
+type audios {
+  artistName: String!
+  """An array relationship"""
+  audio_tags(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): [audio_tags!]!
+  """An aggregate relationship"""
+  audio_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): audio_tags_aggregate!
+  createdAt: timestamptz!
+  id: uuid!
+  name: String!
+  public: Boolean!
+  source: String!
+  thumbnailUrl: String
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "audios"
+"""
+type audios_aggregate {
+  aggregate: audios_aggregate_fields
+  nodes: [audios!]!
+}
+
+input audios_aggregate_bool_exp {
+  bool_and: audios_aggregate_bool_exp_bool_and
+  bool_or: audios_aggregate_bool_exp_bool_or
+  count: audios_aggregate_bool_exp_count
+}
+
+input audios_aggregate_bool_exp_bool_and {
+  arguments: audios_select_column_audios_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: audios_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input audios_aggregate_bool_exp_bool_or {
+  arguments: audios_select_column_audios_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: audios_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input audios_aggregate_bool_exp_count {
+  arguments: [audios_select_column!]
+  distinct: Boolean
+  filter: audios_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "audios"
+"""
+type audios_aggregate_fields {
+  count(columns: [audios_select_column!], distinct: Boolean): Int!
+  max: audios_max_fields
+  min: audios_min_fields
+}
+
+"""
+order by aggregate values of table "audios"
+"""
+input audios_aggregate_order_by {
+  count: order_by
+  max: audios_max_order_by
+  min: audios_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "audios"
+"""
+input audios_arr_rel_insert_input {
+  data: [audios_insert_input!]!
+  """upsert condition"""
+  on_conflict: audios_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "audios". All fields are combined with a logical 'AND'.
+"""
+input audios_bool_exp {
+  _and: [audios_bool_exp!]
+  _not: audios_bool_exp
+  _or: [audios_bool_exp!]
+  artistName: String_comparison_exp
+  audio_tags: audio_tags_bool_exp
+  audio_tags_aggregate: audio_tags_aggregate_bool_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  public: Boolean_comparison_exp
+  source: String_comparison_exp
+  thumbnailUrl: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "audios"
+"""
+enum audios_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  audios_pkey
+}
+
+"""
+input type for inserting data into table "audios"
+"""
+input audios_insert_input {
+  artistName: String
+  audio_tags: audio_tags_arr_rel_insert_input
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  public: Boolean
+  source: String
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type audios_max_fields {
+  artistName: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  source: String
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "audios"
+"""
+input audios_max_order_by {
+  artistName: order_by
+  createdAt: order_by
+  id: order_by
+  name: order_by
+  source: order_by
+  thumbnailUrl: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type audios_min_fields {
+  artistName: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  source: String
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "audios"
+"""
+input audios_min_order_by {
+  artistName: order_by
+  createdAt: order_by
+  id: order_by
+  name: order_by
+  source: order_by
+  thumbnailUrl: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "audios"
+"""
+type audios_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [audios!]!
+}
+
+"""
+input type for inserting object relation for remote table "audios"
+"""
+input audios_obj_rel_insert_input {
+  data: audios_insert_input!
+  """upsert condition"""
+  on_conflict: audios_on_conflict
+}
+
+"""
+on_conflict condition type for table "audios"
+"""
+input audios_on_conflict {
+  constraint: audios_constraint!
+  update_columns: [audios_update_column!]! = []
+  where: audios_bool_exp
+}
+
+"""Ordering options when selecting data from "audios"."""
+input audios_order_by {
+  artistName: order_by
+  audio_tags_aggregate: audio_tags_aggregate_order_by
+  createdAt: order_by
+  id: order_by
+  name: order_by
+  public: order_by
+  source: order_by
+  thumbnailUrl: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: audios"""
+input audios_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "audios"
+"""
+enum audios_select_column {
+  """column name"""
+  artistName
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  public
+  """column name"""
+  source
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+select "audios_aggregate_bool_exp_bool_and_arguments_columns" columns of table "audios"
+"""
+enum audios_select_column_audios_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+select "audios_aggregate_bool_exp_bool_or_arguments_columns" columns of table "audios"
+"""
+enum audios_select_column_audios_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+input type for updating data in table "audios"
+"""
+input audios_set_input {
+  artistName: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  public: Boolean
+  source: String
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "audios"
+"""
+input audios_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: audios_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input audios_stream_cursor_value_input {
+  artistName: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  public: Boolean
+  source: String
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+update columns of table "audios"
+"""
+enum audios_update_column {
+  """column name"""
+  artistName
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  public
+  """column name"""
+  source
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input audios_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: audios_set_input
+  """filter the rows which have to be updated"""
+  where: audios_bool_exp!
+}
+
+"""ordering argument of a cursor"""
+enum cursor_ordering {
+  """ascending ordering of the cursor"""
+  ASC
+  """descending ordering of the cursor"""
+  DESC
+}
+
+"""
+Feature flag system and we must leverage Hasura subscription to watch this
+"""
+type feature_flag {
+  conditions(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  created_at: timestamptz!
+  description: String!
+  id: uuid!
+  name: String!
+  require_auth: Boolean!
+  site: String!
+  updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "feature_flag"
+"""
+type feature_flag_aggregate {
+  aggregate: feature_flag_aggregate_fields
+  nodes: [feature_flag!]!
+}
+
+"""
+aggregate fields of "feature_flag"
+"""
+type feature_flag_aggregate_fields {
+  count(columns: [feature_flag_select_column!], distinct: Boolean): Int!
+  max: feature_flag_max_fields
+  min: feature_flag_min_fields
+}
+
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input feature_flag_append_input {
+  conditions: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "feature_flag". All fields are combined with a logical 'AND'.
+"""
+input feature_flag_bool_exp {
+  _and: [feature_flag_bool_exp!]
+  _not: feature_flag_bool_exp
+  _or: [feature_flag_bool_exp!]
+  conditions: jsonb_comparison_exp
+  created_at: timestamptz_comparison_exp
+  description: String_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  require_auth: Boolean_comparison_exp
+  site: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "feature_flag"
+"""
+enum feature_flag_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  feature_flag_pkey
+  """
+  unique or primary key constraint on columns "name", "site"
+  """
+  feature_flag_site_name_key
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input feature_flag_delete_at_path_input {
+  conditions: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input feature_flag_delete_elem_input {
+  conditions: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input feature_flag_delete_key_input {
+  conditions: String
+}
+
+"""
+input type for inserting data into table "feature_flag"
+"""
+input feature_flag_insert_input {
+  conditions: jsonb
+  created_at: timestamptz
+  description: String
+  id: uuid
+  name: String
+  require_auth: Boolean
+  site: String
+  updated_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type feature_flag_max_fields {
+  created_at: timestamptz
+  description: String
+  id: uuid
+  name: String
+  site: String
+  updated_at: timestamptz
+}
+
+"""aggregate min on columns"""
+type feature_flag_min_fields {
+  created_at: timestamptz
+  description: String
+  id: uuid
+  name: String
+  site: String
+  updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "feature_flag"
+"""
+type feature_flag_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [feature_flag!]!
+}
+
+"""
+on_conflict condition type for table "feature_flag"
+"""
+input feature_flag_on_conflict {
+  constraint: feature_flag_constraint!
+  update_columns: [feature_flag_update_column!]! = []
+  where: feature_flag_bool_exp
+}
+
+"""Ordering options when selecting data from "feature_flag"."""
+input feature_flag_order_by {
+  conditions: order_by
+  created_at: order_by
+  description: order_by
+  id: order_by
+  name: order_by
+  require_auth: order_by
+  site: order_by
+  updated_at: order_by
+}
+
+"""primary key columns input for table: feature_flag"""
+input feature_flag_pk_columns_input {
+  id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input feature_flag_prepend_input {
+  conditions: jsonb
+}
+
+"""
+select columns of table "feature_flag"
+"""
+enum feature_flag_select_column {
+  """column name"""
+  conditions
+  """column name"""
+  created_at
+  """column name"""
+  description
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  require_auth
+  """column name"""
+  site
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "feature_flag"
+"""
+input feature_flag_set_input {
+  conditions: jsonb
+  created_at: timestamptz
+  description: String
+  id: uuid
+  name: String
+  require_auth: Boolean
+  site: String
+  updated_at: timestamptz
+}
+
+"""
+Streaming cursor of the table "feature_flag"
+"""
+input feature_flag_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: feature_flag_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input feature_flag_stream_cursor_value_input {
+  conditions: jsonb
+  created_at: timestamptz
+  description: String
+  id: uuid
+  name: String
+  require_auth: Boolean
+  site: String
+  updated_at: timestamptz
+}
+
+"""
+update columns of table "feature_flag"
+"""
+enum feature_flag_update_column {
+  """column name"""
+  conditions
+  """column name"""
+  created_at
+  """column name"""
+  description
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  require_auth
+  """column name"""
+  site
+  """column name"""
+  updated_at
+}
+
+input feature_flag_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: feature_flag_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: feature_flag_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: feature_flag_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: feature_flag_delete_key_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: feature_flag_prepend_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: feature_flag_set_input
+  """filter the rows which have to be updated"""
+  where: feature_flag_bool_exp!
+}
+
+scalar jsonb
+
+input jsonb_cast_exp {
+  String: String_comparison_exp
+}
+
+"""
+Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
+"""
+input jsonb_comparison_exp {
+  _cast: jsonb_cast_exp
+  """is the column contained in the given json value"""
+  _contained_in: jsonb
+  """does the column contain the given json value at the top level"""
+  _contains: jsonb
+  _eq: jsonb
+  _gt: jsonb
+  _gte: jsonb
+  """does the string exist as a top-level key in the column"""
+  _has_key: String
+  """do all of these strings exist as top-level keys in the column"""
+  _has_keys_all: [String!]
+  """do any of these strings exist as top-level keys in the column"""
+  _has_keys_any: [String!]
+  _in: [jsonb!]
+  _is_null: Boolean
+  _lt: jsonb
+  _lte: jsonb
+  _neq: jsonb
+  _nin: [jsonb!]
+}
+
+"""mutation root"""
+type mutation_root {
+  """
+  delete data from the table: "audio_tags"
+  """
+  delete_audio_tags(
+    """filter the rows which have to be deleted"""
+    where: audio_tags_bool_exp!
+  ): audio_tags_mutation_response
+  """
+  delete single row from the table: "audio_tags"
+  """
+  delete_audio_tags_by_pk(audio_id: uuid!, tag_id: uuid!): audio_tags
+  """
+  delete data from the table: "audios"
+  """
+  delete_audios(
+    """filter the rows which have to be deleted"""
+    where: audios_bool_exp!
+  ): audios_mutation_response
+  """
+  delete single row from the table: "audios"
+  """
+  delete_audios_by_pk(id: uuid!): audios
+  """
+  delete data from the table: "feature_flag"
+  """
+  delete_feature_flag(
+    """filter the rows which have to be deleted"""
+    where: feature_flag_bool_exp!
+  ): feature_flag_mutation_response
+  """
+  delete single row from the table: "feature_flag"
+  """
+  delete_feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  delete data from the table: "playlist"
+  """
+  delete_playlist(
+    """filter the rows which have to be deleted"""
+    where: playlist_bool_exp!
+  ): playlist_mutation_response
+  """
+  delete single row from the table: "playlist"
+  """
+  delete_playlist_by_pk(id: uuid!): playlist
+  """
+  delete data from the table: "playlist_videos"
+  """
+  delete_playlist_videos(
+    """filter the rows which have to be deleted"""
+    where: playlist_videos_bool_exp!
+  ): playlist_videos_mutation_response
+  """
+  delete single row from the table: "playlist_videos"
+  """
+  delete_playlist_videos_by_pk(playlist_id: uuid!, video_id: uuid!): playlist_videos
+  """
+  delete data from the table: "tags"
+  """
+  delete_tags(
+    """filter the rows which have to be deleted"""
+    where: tags_bool_exp!
+  ): tags_mutation_response
+  """
+  delete single row from the table: "tags"
+  """
+  delete_tags_by_pk(id: uuid!): tags
+  """
+  delete data from the table: "tasks"
+  """
+  delete_tasks(
+    """filter the rows which have to be deleted"""
+    where: tasks_bool_exp!
+  ): tasks_mutation_response
+  """
+  delete single row from the table: "tasks"
+  """
+  delete_tasks_by_pk(id: uuid!): tasks
+  """
+  delete data from the table: "test"
+  """
+  delete_test(
+    """filter the rows which have to be deleted"""
+    where: test_bool_exp!
+  ): test_mutation_response
+  """
+  delete single row from the table: "test"
+  """
+  delete_test_by_pk(id: Int!): test
+  """
+  delete data from the table: "user_video_history"
+  """
+  delete_user_video_history(
+    """filter the rows which have to be deleted"""
+    where: user_video_history_bool_exp!
+  ): user_video_history_mutation_response
+  """
+  delete single row from the table: "user_video_history"
+  """
+  delete_user_video_history_by_pk(id: uuid!): user_video_history
+  """
+  delete data from the table: "users"
+  """
+  delete_users(
+    """filter the rows which have to be deleted"""
+    where: users_bool_exp!
+  ): users_mutation_response
+  """
+  delete single row from the table: "users"
+  """
+  delete_users_by_pk(id: uuid!): users
+  """
+  delete data from the table: "video_tags"
+  """
+  delete_video_tags(
+    """filter the rows which have to be deleted"""
+    where: video_tags_bool_exp!
+  ): video_tags_mutation_response
+  """
+  delete single row from the table: "video_tags"
+  """
+  delete_video_tags_by_pk(tag_id: uuid!, video_id: uuid!): video_tags
+  """
+  delete data from the table: "video_views"
+  """
+  delete_video_views(
+    """filter the rows which have to be deleted"""
+    where: video_views_bool_exp!
+  ): video_views_mutation_response
+  """
+  delete single row from the table: "video_views"
+  """
+  delete_video_views_by_pk(id: uuid!): video_views
+  """
+  delete data from the table: "videos"
+  """
+  delete_videos(
+    """filter the rows which have to be deleted"""
+    where: videos_bool_exp!
+  ): videos_mutation_response
+  """
+  delete single row from the table: "videos"
+  """
+  delete_videos_by_pk(id: uuid!): videos
+  """
+  insert data into the table: "audio_tags"
+  """
+  insert_audio_tags(
+    """the rows to be inserted"""
+    objects: [audio_tags_insert_input!]!
+    """upsert condition"""
+    on_conflict: audio_tags_on_conflict
+  ): audio_tags_mutation_response
+  """
+  insert a single row into the table: "audio_tags"
+  """
+  insert_audio_tags_one(
+    """the row to be inserted"""
+    object: audio_tags_insert_input!
+    """upsert condition"""
+    on_conflict: audio_tags_on_conflict
+  ): audio_tags
+  """
+  insert data into the table: "audios"
+  """
+  insert_audios(
+    """the rows to be inserted"""
+    objects: [audios_insert_input!]!
+    """upsert condition"""
+    on_conflict: audios_on_conflict
+  ): audios_mutation_response
+  """
+  insert a single row into the table: "audios"
+  """
+  insert_audios_one(
+    """the row to be inserted"""
+    object: audios_insert_input!
+    """upsert condition"""
+    on_conflict: audios_on_conflict
+  ): audios
+  """
+  insert data into the table: "feature_flag"
+  """
+  insert_feature_flag(
+    """the rows to be inserted"""
+    objects: [feature_flag_insert_input!]!
+    """upsert condition"""
+    on_conflict: feature_flag_on_conflict
+  ): feature_flag_mutation_response
+  """
+  insert a single row into the table: "feature_flag"
+  """
+  insert_feature_flag_one(
+    """the row to be inserted"""
+    object: feature_flag_insert_input!
+    """upsert condition"""
+    on_conflict: feature_flag_on_conflict
+  ): feature_flag
+  """
+  insert data into the table: "playlist"
+  """
+  insert_playlist(
+    """the rows to be inserted"""
+    objects: [playlist_insert_input!]!
+    """upsert condition"""
+    on_conflict: playlist_on_conflict
+  ): playlist_mutation_response
+  """
+  insert a single row into the table: "playlist"
+  """
+  insert_playlist_one(
+    """the row to be inserted"""
+    object: playlist_insert_input!
+    """upsert condition"""
+    on_conflict: playlist_on_conflict
+  ): playlist
+  """
+  insert data into the table: "playlist_videos"
+  """
+  insert_playlist_videos(
+    """the rows to be inserted"""
+    objects: [playlist_videos_insert_input!]!
+    """upsert condition"""
+    on_conflict: playlist_videos_on_conflict
+  ): playlist_videos_mutation_response
+  """
+  insert a single row into the table: "playlist_videos"
+  """
+  insert_playlist_videos_one(
+    """the row to be inserted"""
+    object: playlist_videos_insert_input!
+    """upsert condition"""
+    on_conflict: playlist_videos_on_conflict
+  ): playlist_videos
+  """
+  insert data into the table: "tags"
+  """
+  insert_tags(
+    """the rows to be inserted"""
+    objects: [tags_insert_input!]!
+    """upsert condition"""
+    on_conflict: tags_on_conflict
+  ): tags_mutation_response
+  """
+  insert a single row into the table: "tags"
+  """
+  insert_tags_one(
+    """the row to be inserted"""
+    object: tags_insert_input!
+    """upsert condition"""
+    on_conflict: tags_on_conflict
+  ): tags
+  """
+  insert data into the table: "tasks"
+  """
+  insert_tasks(
+    """the rows to be inserted"""
+    objects: [tasks_insert_input!]!
+    """upsert condition"""
+    on_conflict: tasks_on_conflict
+  ): tasks_mutation_response
+  """
+  insert a single row into the table: "tasks"
+  """
+  insert_tasks_one(
+    """the row to be inserted"""
+    object: tasks_insert_input!
+    """upsert condition"""
+    on_conflict: tasks_on_conflict
+  ): tasks
+  """
+  insert data into the table: "test"
+  """
+  insert_test(
+    """the rows to be inserted"""
+    objects: [test_insert_input!]!
+    """upsert condition"""
+    on_conflict: test_on_conflict
+  ): test_mutation_response
+  """
+  insert a single row into the table: "test"
+  """
+  insert_test_one(
+    """the row to be inserted"""
+    object: test_insert_input!
+    """upsert condition"""
+    on_conflict: test_on_conflict
+  ): test
+  """
+  insert data into the table: "user_video_history"
+  """
+  insert_user_video_history(
+    """the rows to be inserted"""
+    objects: [user_video_history_insert_input!]!
+    """upsert condition"""
+    on_conflict: user_video_history_on_conflict
+  ): user_video_history_mutation_response
+  """
+  insert a single row into the table: "user_video_history"
+  """
+  insert_user_video_history_one(
+    """the row to be inserted"""
+    object: user_video_history_insert_input!
+    """upsert condition"""
+    on_conflict: user_video_history_on_conflict
+  ): user_video_history
+  """
+  insert data into the table: "users"
+  """
+  insert_users(
+    """the rows to be inserted"""
+    objects: [users_insert_input!]!
+    """upsert condition"""
+    on_conflict: users_on_conflict
+  ): users_mutation_response
+  """
+  insert a single row into the table: "users"
+  """
+  insert_users_one(
+    """the row to be inserted"""
+    object: users_insert_input!
+    """upsert condition"""
+    on_conflict: users_on_conflict
+  ): users
+  """
+  insert data into the table: "video_tags"
+  """
+  insert_video_tags(
+    """the rows to be inserted"""
+    objects: [video_tags_insert_input!]!
+    """upsert condition"""
+    on_conflict: video_tags_on_conflict
+  ): video_tags_mutation_response
+  """
+  insert a single row into the table: "video_tags"
+  """
+  insert_video_tags_one(
+    """the row to be inserted"""
+    object: video_tags_insert_input!
+    """upsert condition"""
+    on_conflict: video_tags_on_conflict
+  ): video_tags
+  """
+  insert data into the table: "video_views"
+  """
+  insert_video_views(
+    """the rows to be inserted"""
+    objects: [video_views_insert_input!]!
+    """upsert condition"""
+    on_conflict: video_views_on_conflict
+  ): video_views_mutation_response
+  """
+  insert a single row into the table: "video_views"
+  """
+  insert_video_views_one(
+    """the row to be inserted"""
+    object: video_views_insert_input!
+    """upsert condition"""
+    on_conflict: video_views_on_conflict
+  ): video_views
+  """
+  insert data into the table: "videos"
+  """
+  insert_videos(
+    """the rows to be inserted"""
+    objects: [videos_insert_input!]!
+    """upsert condition"""
+    on_conflict: videos_on_conflict
+  ): videos_mutation_response
+  """
+  insert a single row into the table: "videos"
+  """
+  insert_videos_one(
+    """the row to be inserted"""
+    object: videos_insert_input!
+    """upsert condition"""
+    on_conflict: videos_on_conflict
+  ): videos
+  """
+  update data of the table: "audio_tags"
+  """
+  update_audio_tags(
+    """sets the columns of the filtered rows to the given values"""
+    _set: audio_tags_set_input
+    """filter the rows which have to be updated"""
+    where: audio_tags_bool_exp!
+  ): audio_tags_mutation_response
+  """
+  update single row of the table: "audio_tags"
+  """
+  update_audio_tags_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: audio_tags_set_input
+    pk_columns: audio_tags_pk_columns_input!
+  ): audio_tags
+  """
+  update multiples rows of table: "audio_tags"
+  """
+  update_audio_tags_many(
+    """updates to execute, in order"""
+    updates: [audio_tags_updates!]!
+  ): [audio_tags_mutation_response]
+  """
+  update data of the table: "audios"
+  """
+  update_audios(
+    """sets the columns of the filtered rows to the given values"""
+    _set: audios_set_input
+    """filter the rows which have to be updated"""
+    where: audios_bool_exp!
+  ): audios_mutation_response
+  """
+  update single row of the table: "audios"
+  """
+  update_audios_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: audios_set_input
+    pk_columns: audios_pk_columns_input!
+  ): audios
+  """
+  update multiples rows of table: "audios"
+  """
+  update_audios_many(
+    """updates to execute, in order"""
+    updates: [audios_updates!]!
+  ): [audios_mutation_response]
+  """
+  update data of the table: "feature_flag"
+  """
+  update_feature_flag(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: feature_flag_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: feature_flag_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: feature_flag_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: feature_flag_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: feature_flag_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: feature_flag_set_input
+    """filter the rows which have to be updated"""
+    where: feature_flag_bool_exp!
+  ): feature_flag_mutation_response
+  """
+  update single row of the table: "feature_flag"
+  """
+  update_feature_flag_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: feature_flag_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: feature_flag_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: feature_flag_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: feature_flag_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: feature_flag_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: feature_flag_set_input
+    pk_columns: feature_flag_pk_columns_input!
+  ): feature_flag
+  """
+  update multiples rows of table: "feature_flag"
+  """
+  update_feature_flag_many(
+    """updates to execute, in order"""
+    updates: [feature_flag_updates!]!
+  ): [feature_flag_mutation_response]
+  """
+  update data of the table: "playlist"
+  """
+  update_playlist(
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_set_input
+    """filter the rows which have to be updated"""
+    where: playlist_bool_exp!
+  ): playlist_mutation_response
+  """
+  update single row of the table: "playlist"
+  """
+  update_playlist_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_set_input
+    pk_columns: playlist_pk_columns_input!
+  ): playlist
+  """
+  update multiples rows of table: "playlist"
+  """
+  update_playlist_many(
+    """updates to execute, in order"""
+    updates: [playlist_updates!]!
+  ): [playlist_mutation_response]
+  """
+  update data of the table: "playlist_videos"
+  """
+  update_playlist_videos(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: playlist_videos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_videos_set_input
+    """filter the rows which have to be updated"""
+    where: playlist_videos_bool_exp!
+  ): playlist_videos_mutation_response
+  """
+  update single row of the table: "playlist_videos"
+  """
+  update_playlist_videos_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: playlist_videos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_videos_set_input
+    pk_columns: playlist_videos_pk_columns_input!
+  ): playlist_videos
+  """
+  update multiples rows of table: "playlist_videos"
+  """
+  update_playlist_videos_many(
+    """updates to execute, in order"""
+    updates: [playlist_videos_updates!]!
+  ): [playlist_videos_mutation_response]
+  """
+  update data of the table: "tags"
+  """
+  update_tags(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: tags_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: tags_set_input
+    """filter the rows which have to be updated"""
+    where: tags_bool_exp!
+  ): tags_mutation_response
+  """
+  update single row of the table: "tags"
+  """
+  update_tags_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: tags_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: tags_set_input
+    pk_columns: tags_pk_columns_input!
+  ): tags
+  """
+  update multiples rows of table: "tags"
+  """
+  update_tags_many(
+    """updates to execute, in order"""
+    updates: [tags_updates!]!
+  ): [tags_mutation_response]
+  """
+  update data of the table: "tasks"
+  """
+  update_tasks(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: tasks_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: tasks_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: tasks_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: tasks_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: tasks_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: tasks_set_input
+    """filter the rows which have to be updated"""
+    where: tasks_bool_exp!
+  ): tasks_mutation_response
+  """
+  update single row of the table: "tasks"
+  """
+  update_tasks_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: tasks_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: tasks_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: tasks_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: tasks_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: tasks_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: tasks_set_input
+    pk_columns: tasks_pk_columns_input!
+  ): tasks
+  """
+  update multiples rows of table: "tasks"
+  """
+  update_tasks_many(
+    """updates to execute, in order"""
+    updates: [tasks_updates!]!
+  ): [tasks_mutation_response]
+  """
+  update data of the table: "test"
+  """
+  update_test(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: test_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: test_set_input
+    """filter the rows which have to be updated"""
+    where: test_bool_exp!
+  ): test_mutation_response
+  """
+  update single row of the table: "test"
+  """
+  update_test_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: test_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: test_set_input
+    pk_columns: test_pk_columns_input!
+  ): test
+  """
+  update multiples rows of table: "test"
+  """
+  update_test_many(
+    """updates to execute, in order"""
+    updates: [test_updates!]!
+  ): [test_mutation_response]
+  """
+  update data of the table: "user_video_history"
+  """
+  update_user_video_history(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: user_video_history_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_video_history_set_input
+    """filter the rows which have to be updated"""
+    where: user_video_history_bool_exp!
+  ): user_video_history_mutation_response
+  """
+  update single row of the table: "user_video_history"
+  """
+  update_user_video_history_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: user_video_history_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_video_history_set_input
+    pk_columns: user_video_history_pk_columns_input!
+  ): user_video_history
+  """
+  update multiples rows of table: "user_video_history"
+  """
+  update_user_video_history_many(
+    """updates to execute, in order"""
+    updates: [user_video_history_updates!]!
+  ): [user_video_history_mutation_response]
+  """
+  update data of the table: "users"
+  """
+  update_users(
+    """sets the columns of the filtered rows to the given values"""
+    _set: users_set_input
+    """filter the rows which have to be updated"""
+    where: users_bool_exp!
+  ): users_mutation_response
+  """
+  update single row of the table: "users"
+  """
+  update_users_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: users_set_input
+    pk_columns: users_pk_columns_input!
+  ): users
+  """
+  update multiples rows of table: "users"
+  """
+  update_users_many(
+    """updates to execute, in order"""
+    updates: [users_updates!]!
+  ): [users_mutation_response]
+  """
+  update data of the table: "video_tags"
+  """
+  update_video_tags(
+    """sets the columns of the filtered rows to the given values"""
+    _set: video_tags_set_input
+    """filter the rows which have to be updated"""
+    where: video_tags_bool_exp!
+  ): video_tags_mutation_response
+  """
+  update single row of the table: "video_tags"
+  """
+  update_video_tags_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: video_tags_set_input
+    pk_columns: video_tags_pk_columns_input!
+  ): video_tags
+  """
+  update multiples rows of table: "video_tags"
+  """
+  update_video_tags_many(
+    """updates to execute, in order"""
+    updates: [video_tags_updates!]!
+  ): [video_tags_mutation_response]
+  """
+  update data of the table: "video_views"
+  """
+  update_video_views(
+    """sets the columns of the filtered rows to the given values"""
+    _set: video_views_set_input
+    """filter the rows which have to be updated"""
+    where: video_views_bool_exp!
+  ): video_views_mutation_response
+  """
+  update single row of the table: "video_views"
+  """
+  update_video_views_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: video_views_set_input
+    pk_columns: video_views_pk_columns_input!
+  ): video_views
+  """
+  update multiples rows of table: "video_views"
+  """
+  update_video_views_many(
+    """updates to execute, in order"""
+    updates: [video_views_updates!]!
+  ): [video_views_mutation_response]
+  """
+  update data of the table: "videos"
+  """
+  update_videos(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: videos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: videos_set_input
+    """filter the rows which have to be updated"""
+    where: videos_bool_exp!
+  ): videos_mutation_response
+  """
+  update single row of the table: "videos"
+  """
+  update_videos_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: videos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: videos_set_input
+    pk_columns: videos_pk_columns_input!
+  ): videos
+  """
+  update multiples rows of table: "videos"
+  """
+  update_videos_many(
+    """updates to execute, in order"""
+    updates: [videos_updates!]!
+  ): [videos_mutation_response]
+}
+
+"""column ordering options"""
+enum order_by {
+  """in ascending order, nulls last"""
+  asc
+  """in ascending order, nulls first"""
+  asc_nulls_first
+  """in ascending order, nulls last"""
+  asc_nulls_last
+  """in descending order, nulls first"""
+  desc
+  """in descending order, nulls first"""
+  desc_nulls_first
+  """in descending order, nulls last"""
+  desc_nulls_last
+}
+
+"""Playlist contain set of videos or audios"""
+type playlist {
+  createdAt: timestamptz!
+  description: String
+  id: uuid!
+  """An array relationship"""
+  playlist_videos(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): [playlist_videos!]!
+  """An aggregate relationship"""
+  playlist_videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): playlist_videos_aggregate!
+  public: Boolean!
+  slug: String!
+  thumbnailUrl: String!
+  title: String!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "playlist"
+"""
+type playlist_aggregate {
+  aggregate: playlist_aggregate_fields
+  nodes: [playlist!]!
+}
+
+input playlist_aggregate_bool_exp {
+  bool_and: playlist_aggregate_bool_exp_bool_and
+  bool_or: playlist_aggregate_bool_exp_bool_or
+  count: playlist_aggregate_bool_exp_count
+}
+
+input playlist_aggregate_bool_exp_bool_and {
+  arguments: playlist_select_column_playlist_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: playlist_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input playlist_aggregate_bool_exp_bool_or {
+  arguments: playlist_select_column_playlist_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: playlist_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input playlist_aggregate_bool_exp_count {
+  arguments: [playlist_select_column!]
+  distinct: Boolean
+  filter: playlist_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "playlist"
+"""
+type playlist_aggregate_fields {
+  count(columns: [playlist_select_column!], distinct: Boolean): Int!
+  max: playlist_max_fields
+  min: playlist_min_fields
+}
+
+"""
+order by aggregate values of table "playlist"
+"""
+input playlist_aggregate_order_by {
+  count: order_by
+  max: playlist_max_order_by
+  min: playlist_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "playlist"
+"""
+input playlist_arr_rel_insert_input {
+  data: [playlist_insert_input!]!
+  """upsert condition"""
+  on_conflict: playlist_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "playlist". All fields are combined with a logical 'AND'.
+"""
+input playlist_bool_exp {
+  _and: [playlist_bool_exp!]
+  _not: playlist_bool_exp
+  _or: [playlist_bool_exp!]
+  createdAt: timestamptz_comparison_exp
+  description: String_comparison_exp
+  id: uuid_comparison_exp
+  playlist_videos: playlist_videos_bool_exp
+  playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
+  public: Boolean_comparison_exp
+  slug: String_comparison_exp
+  thumbnailUrl: String_comparison_exp
+  title: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "playlist"
+"""
+enum playlist_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  playlist_pkey
+}
+
+"""
+input type for inserting data into table "playlist"
+"""
+input playlist_insert_input {
+  createdAt: timestamptz
+  description: String
+  id: uuid
+  playlist_videos: playlist_videos_arr_rel_insert_input
+  public: Boolean
+  slug: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type playlist_max_fields {
+  createdAt: timestamptz
+  description: String
+  id: uuid
+  slug: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "playlist"
+"""
+input playlist_max_order_by {
+  createdAt: order_by
+  description: order_by
+  id: order_by
+  slug: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type playlist_min_fields {
+  createdAt: timestamptz
+  description: String
+  id: uuid
+  slug: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "playlist"
+"""
+input playlist_min_order_by {
+  createdAt: order_by
+  description: order_by
+  id: order_by
+  slug: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "playlist"
+"""
+type playlist_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [playlist!]!
+}
+
+"""
+input type for inserting object relation for remote table "playlist"
+"""
+input playlist_obj_rel_insert_input {
+  data: playlist_insert_input!
+  """upsert condition"""
+  on_conflict: playlist_on_conflict
+}
+
+"""
+on_conflict condition type for table "playlist"
+"""
+input playlist_on_conflict {
+  constraint: playlist_constraint!
+  update_columns: [playlist_update_column!]! = []
+  where: playlist_bool_exp
+}
+
+"""Ordering options when selecting data from "playlist"."""
+input playlist_order_by {
+  createdAt: order_by
+  description: order_by
+  id: order_by
+  playlist_videos_aggregate: playlist_videos_aggregate_order_by
+  public: order_by
+  slug: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: playlist"""
+input playlist_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "playlist"
+"""
+enum playlist_select_column {
+  """column name"""
+  createdAt
+  """column name"""
+  description
+  """column name"""
+  id
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+select "playlist_aggregate_bool_exp_bool_and_arguments_columns" columns of table "playlist"
+"""
+enum playlist_select_column_playlist_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+select "playlist_aggregate_bool_exp_bool_or_arguments_columns" columns of table "playlist"
+"""
+enum playlist_select_column_playlist_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+input type for updating data in table "playlist"
+"""
+input playlist_set_input {
+  createdAt: timestamptz
+  description: String
+  id: uuid
+  public: Boolean
+  slug: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "playlist"
+"""
+input playlist_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: playlist_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input playlist_stream_cursor_value_input {
+  createdAt: timestamptz
+  description: String
+  id: uuid
+  public: Boolean
+  slug: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+update columns of table "playlist"
+"""
+enum playlist_update_column {
+  """column name"""
+  createdAt
+  """column name"""
+  description
+  """column name"""
+  id
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input playlist_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: playlist_set_input
+  """filter the rows which have to be updated"""
+  where: playlist_bool_exp!
+}
+
+"""Junction table between videos and playlist"""
+type playlist_videos {
+  createdAt: timestamptz!
+  """An object relationship"""
+  playlist: playlist!
+  playlist_id: uuid!
+  position: Int!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  video: videos!
+  video_id: uuid!
+}
+
+"""
+aggregated selection of "playlist_videos"
+"""
+type playlist_videos_aggregate {
+  aggregate: playlist_videos_aggregate_fields
+  nodes: [playlist_videos!]!
+}
+
+input playlist_videos_aggregate_bool_exp {
+  count: playlist_videos_aggregate_bool_exp_count
+}
+
+input playlist_videos_aggregate_bool_exp_count {
+  arguments: [playlist_videos_select_column!]
+  distinct: Boolean
+  filter: playlist_videos_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "playlist_videos"
+"""
+type playlist_videos_aggregate_fields {
+  avg: playlist_videos_avg_fields
+  count(columns: [playlist_videos_select_column!], distinct: Boolean): Int!
+  max: playlist_videos_max_fields
+  min: playlist_videos_min_fields
+  stddev: playlist_videos_stddev_fields
+  stddev_pop: playlist_videos_stddev_pop_fields
+  stddev_samp: playlist_videos_stddev_samp_fields
+  sum: playlist_videos_sum_fields
+  var_pop: playlist_videos_var_pop_fields
+  var_samp: playlist_videos_var_samp_fields
+  variance: playlist_videos_variance_fields
+}
+
+"""
+order by aggregate values of table "playlist_videos"
+"""
+input playlist_videos_aggregate_order_by {
+  avg: playlist_videos_avg_order_by
+  count: order_by
+  max: playlist_videos_max_order_by
+  min: playlist_videos_min_order_by
+  stddev: playlist_videos_stddev_order_by
+  stddev_pop: playlist_videos_stddev_pop_order_by
+  stddev_samp: playlist_videos_stddev_samp_order_by
+  sum: playlist_videos_sum_order_by
+  var_pop: playlist_videos_var_pop_order_by
+  var_samp: playlist_videos_var_samp_order_by
+  variance: playlist_videos_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "playlist_videos"
+"""
+input playlist_videos_arr_rel_insert_input {
+  data: [playlist_videos_insert_input!]!
+  """upsert condition"""
+  on_conflict: playlist_videos_on_conflict
+}
+
+"""aggregate avg on columns"""
+type playlist_videos_avg_fields {
+  position: Float
+}
+
+"""
+order by avg() on columns of table "playlist_videos"
+"""
+input playlist_videos_avg_order_by {
+  position: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "playlist_videos". All fields are combined with a logical 'AND'.
+"""
+input playlist_videos_bool_exp {
+  _and: [playlist_videos_bool_exp!]
+  _not: playlist_videos_bool_exp
+  _or: [playlist_videos_bool_exp!]
+  createdAt: timestamptz_comparison_exp
+  playlist: playlist_bool_exp
+  playlist_id: uuid_comparison_exp
+  position: Int_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  video: videos_bool_exp
+  video_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "playlist_videos"
+"""
+enum playlist_videos_constraint {
+  """
+  unique or primary key constraint on columns "video_id", "playlist_id"
+  """
+  playlist_videos_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "playlist_videos"
+"""
+input playlist_videos_inc_input {
+  position: Int
+}
+
+"""
+input type for inserting data into table "playlist_videos"
+"""
+input playlist_videos_insert_input {
+  createdAt: timestamptz
+  playlist: playlist_obj_rel_insert_input
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+  video: videos_obj_rel_insert_input
+  video_id: uuid
+}
+
+"""aggregate max on columns"""
+type playlist_videos_max_fields {
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+  video_id: uuid
+}
+
+"""
+order by max() on columns of table "playlist_videos"
+"""
+input playlist_videos_max_order_by {
+  createdAt: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+  video_id: order_by
+}
+
+"""aggregate min on columns"""
+type playlist_videos_min_fields {
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+  video_id: uuid
+}
+
+"""
+order by min() on columns of table "playlist_videos"
+"""
+input playlist_videos_min_order_by {
+  createdAt: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+  video_id: order_by
+}
+
+"""
+response of any mutation on the table "playlist_videos"
+"""
+type playlist_videos_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [playlist_videos!]!
+}
+
+"""
+on_conflict condition type for table "playlist_videos"
+"""
+input playlist_videos_on_conflict {
+  constraint: playlist_videos_constraint!
+  update_columns: [playlist_videos_update_column!]! = []
+  where: playlist_videos_bool_exp
+}
+
+"""Ordering options when selecting data from "playlist_videos"."""
+input playlist_videos_order_by {
+  createdAt: order_by
+  playlist: playlist_order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+  video: videos_order_by
+  video_id: order_by
+}
+
+"""primary key columns input for table: playlist_videos"""
+input playlist_videos_pk_columns_input {
+  playlist_id: uuid!
+  video_id: uuid!
+}
+
+"""
+select columns of table "playlist_videos"
+"""
+enum playlist_videos_select_column {
+  """column name"""
+  createdAt
+  """column name"""
+  playlist_id
+  """column name"""
+  position
+  """column name"""
+  updatedAt
+  """column name"""
+  video_id
+}
+
+"""
+input type for updating data in table "playlist_videos"
+"""
+input playlist_videos_set_input {
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+  video_id: uuid
+}
+
+"""aggregate stddev on columns"""
+type playlist_videos_stddev_fields {
+  position: Float
+}
+
+"""
+order by stddev() on columns of table "playlist_videos"
+"""
+input playlist_videos_stddev_order_by {
+  position: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type playlist_videos_stddev_pop_fields {
+  position: Float
+}
+
+"""
+order by stddev_pop() on columns of table "playlist_videos"
+"""
+input playlist_videos_stddev_pop_order_by {
+  position: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type playlist_videos_stddev_samp_fields {
+  position: Float
+}
+
+"""
+order by stddev_samp() on columns of table "playlist_videos"
+"""
+input playlist_videos_stddev_samp_order_by {
+  position: order_by
+}
+
+"""
+Streaming cursor of the table "playlist_videos"
+"""
+input playlist_videos_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: playlist_videos_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input playlist_videos_stream_cursor_value_input {
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+  video_id: uuid
+}
+
+"""aggregate sum on columns"""
+type playlist_videos_sum_fields {
+  position: Int
+}
+
+"""
+order by sum() on columns of table "playlist_videos"
+"""
+input playlist_videos_sum_order_by {
+  position: order_by
+}
+
+"""
+update columns of table "playlist_videos"
+"""
+enum playlist_videos_update_column {
+  """column name"""
+  createdAt
+  """column name"""
+  playlist_id
+  """column name"""
+  position
+  """column name"""
+  updatedAt
+  """column name"""
+  video_id
+}
+
+input playlist_videos_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: playlist_videos_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: playlist_videos_set_input
+  """filter the rows which have to be updated"""
+  where: playlist_videos_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type playlist_videos_var_pop_fields {
+  position: Float
+}
+
+"""
+order by var_pop() on columns of table "playlist_videos"
+"""
+input playlist_videos_var_pop_order_by {
+  position: order_by
+}
+
+"""aggregate var_samp on columns"""
+type playlist_videos_var_samp_fields {
+  position: Float
+}
+
+"""
+order by var_samp() on columns of table "playlist_videos"
+"""
+input playlist_videos_var_samp_order_by {
+  position: order_by
+}
+
+"""aggregate variance on columns"""
+type playlist_videos_variance_fields {
+  position: Float
+}
+
+"""
+order by variance() on columns of table "playlist_videos"
+"""
+input playlist_videos_variance_order_by {
+  position: order_by
+}
+
+type query_root {
+  """An array relationship"""
+  audio_tags(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): [audio_tags!]!
+  """An aggregate relationship"""
+  audio_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): audio_tags_aggregate!
+  """fetch data from the table: "audio_tags" using primary key columns"""
+  audio_tags_by_pk(audio_id: uuid!, tag_id: uuid!): audio_tags
+  """An array relationship"""
+  audios(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): [audios!]!
+  """An aggregate relationship"""
+  audios_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): audios_aggregate!
+  """fetch data from the table: "audios" using primary key columns"""
+  audios_by_pk(id: uuid!): audios
+  """
+  fetch data from the table: "feature_flag"
+  """
+  feature_flag(
+    """distinct select on columns"""
+    distinct_on: [feature_flag_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [feature_flag_order_by!]
+    """filter the rows returned"""
+    where: feature_flag_bool_exp
+  ): [feature_flag!]!
+  """
+  fetch aggregated fields from the table: "feature_flag"
+  """
+  feature_flag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [feature_flag_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [feature_flag_order_by!]
+    """filter the rows returned"""
+    where: feature_flag_bool_exp
+  ): feature_flag_aggregate!
+  """fetch data from the table: "feature_flag" using primary key columns"""
+  feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  fetch data from the table: "playlist"
+  """
+  playlist(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): [playlist!]!
+  """
+  fetch aggregated fields from the table: "playlist"
+  """
+  playlist_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): playlist_aggregate!
+  """fetch data from the table: "playlist" using primary key columns"""
+  playlist_by_pk(id: uuid!): playlist
+  """An array relationship"""
+  playlist_videos(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): [playlist_videos!]!
+  """An aggregate relationship"""
+  playlist_videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): playlist_videos_aggregate!
+  """fetch data from the table: "playlist_videos" using primary key columns"""
+  playlist_videos_by_pk(playlist_id: uuid!, video_id: uuid!): playlist_videos
+  """
+  fetch data from the table: "tags"
+  """
+  tags(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): [tags!]!
+  """
+  fetch aggregated fields from the table: "tags"
+  """
+  tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): tags_aggregate!
+  """fetch data from the table: "tags" using primary key columns"""
+  tags_by_pk(id: uuid!): tags
+  """
+  fetch data from the table: "tasks"
+  """
+  tasks(
+    """distinct select on columns"""
+    distinct_on: [tasks_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tasks_order_by!]
+    """filter the rows returned"""
+    where: tasks_bool_exp
+  ): [tasks!]!
+  """
+  fetch aggregated fields from the table: "tasks"
+  """
+  tasks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tasks_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tasks_order_by!]
+    """filter the rows returned"""
+    where: tasks_bool_exp
+  ): tasks_aggregate!
+  """fetch data from the table: "tasks" using primary key columns"""
+  tasks_by_pk(id: uuid!): tasks
+  """
+  fetch data from the table: "test"
+  """
+  test(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): [test!]!
+  """
+  fetch aggregated fields from the table: "test"
+  """
+  test_aggregate(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): test_aggregate!
+  """fetch data from the table: "test" using primary key columns"""
+  test_by_pk(id: Int!): test
+  """
+  fetch data from the table: "user_video_history"
+  """
+  user_video_history(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): [user_video_history!]!
+  """
+  fetch aggregated fields from the table: "user_video_history"
+  """
+  user_video_history_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): user_video_history_aggregate!
+  """
+  fetch data from the table: "user_video_history" using primary key columns
+  """
+  user_video_history_by_pk(id: uuid!): user_video_history
+  """
+  fetch data from the table: "users"
+  """
+  users(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): [users!]!
+  """
+  fetch aggregated fields from the table: "users"
+  """
+  users_aggregate(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): users_aggregate!
+  """fetch data from the table: "users" using primary key columns"""
+  users_by_pk(id: uuid!): users
+  """An array relationship"""
+  video_tags(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): [video_tags!]!
+  """An aggregate relationship"""
+  video_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): video_tags_aggregate!
+  """fetch data from the table: "video_tags" using primary key columns"""
+  video_tags_by_pk(tag_id: uuid!, video_id: uuid!): video_tags
+  """An array relationship"""
+  video_views(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): [video_views!]!
+  """An aggregate relationship"""
+  video_views_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): video_views_aggregate!
+  """fetch data from the table: "video_views" using primary key columns"""
+  video_views_by_pk(id: uuid!): video_views
+  """An array relationship"""
+  videos(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): [videos!]!
+  """An aggregate relationship"""
+  videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): videos_aggregate!
+  """fetch data from the table: "videos" using primary key columns"""
+  videos_by_pk(id: uuid!): videos
+}
+
+type subscription_root {
+  """An array relationship"""
+  audio_tags(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): [audio_tags!]!
+  """An aggregate relationship"""
+  audio_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): audio_tags_aggregate!
+  """fetch data from the table: "audio_tags" using primary key columns"""
+  audio_tags_by_pk(audio_id: uuid!, tag_id: uuid!): audio_tags
+  """
+  fetch data from the table in a streaming manner: "audio_tags"
+  """
+  audio_tags_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [audio_tags_stream_cursor_input]!
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): [audio_tags!]!
+  """An array relationship"""
+  audios(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): [audios!]!
+  """An aggregate relationship"""
+  audios_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): audios_aggregate!
+  """fetch data from the table: "audios" using primary key columns"""
+  audios_by_pk(id: uuid!): audios
+  """
+  fetch data from the table in a streaming manner: "audios"
+  """
+  audios_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [audios_stream_cursor_input]!
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): [audios!]!
+  """
+  fetch data from the table: "feature_flag"
+  """
+  feature_flag(
+    """distinct select on columns"""
+    distinct_on: [feature_flag_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [feature_flag_order_by!]
+    """filter the rows returned"""
+    where: feature_flag_bool_exp
+  ): [feature_flag!]!
+  """
+  fetch aggregated fields from the table: "feature_flag"
+  """
+  feature_flag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [feature_flag_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [feature_flag_order_by!]
+    """filter the rows returned"""
+    where: feature_flag_bool_exp
+  ): feature_flag_aggregate!
+  """fetch data from the table: "feature_flag" using primary key columns"""
+  feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  fetch data from the table in a streaming manner: "feature_flag"
+  """
+  feature_flag_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [feature_flag_stream_cursor_input]!
+    """filter the rows returned"""
+    where: feature_flag_bool_exp
+  ): [feature_flag!]!
+  """
+  fetch data from the table: "playlist"
+  """
+  playlist(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): [playlist!]!
+  """
+  fetch aggregated fields from the table: "playlist"
+  """
+  playlist_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): playlist_aggregate!
+  """fetch data from the table: "playlist" using primary key columns"""
+  playlist_by_pk(id: uuid!): playlist
+  """
+  fetch data from the table in a streaming manner: "playlist"
+  """
+  playlist_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [playlist_stream_cursor_input]!
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): [playlist!]!
+  """An array relationship"""
+  playlist_videos(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): [playlist_videos!]!
+  """An aggregate relationship"""
+  playlist_videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): playlist_videos_aggregate!
+  """fetch data from the table: "playlist_videos" using primary key columns"""
+  playlist_videos_by_pk(playlist_id: uuid!, video_id: uuid!): playlist_videos
+  """
+  fetch data from the table in a streaming manner: "playlist_videos"
+  """
+  playlist_videos_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [playlist_videos_stream_cursor_input]!
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): [playlist_videos!]!
+  """
+  fetch data from the table: "tags"
+  """
+  tags(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): [tags!]!
+  """
+  fetch aggregated fields from the table: "tags"
+  """
+  tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): tags_aggregate!
+  """fetch data from the table: "tags" using primary key columns"""
+  tags_by_pk(id: uuid!): tags
+  """
+  fetch data from the table in a streaming manner: "tags"
+  """
+  tags_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [tags_stream_cursor_input]!
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): [tags!]!
+  """
+  fetch data from the table: "tasks"
+  """
+  tasks(
+    """distinct select on columns"""
+    distinct_on: [tasks_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tasks_order_by!]
+    """filter the rows returned"""
+    where: tasks_bool_exp
+  ): [tasks!]!
+  """
+  fetch aggregated fields from the table: "tasks"
+  """
+  tasks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tasks_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [tasks_order_by!]
+    """filter the rows returned"""
+    where: tasks_bool_exp
+  ): tasks_aggregate!
+  """fetch data from the table: "tasks" using primary key columns"""
+  tasks_by_pk(id: uuid!): tasks
+  """
+  fetch data from the table in a streaming manner: "tasks"
+  """
+  tasks_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [tasks_stream_cursor_input]!
+    """filter the rows returned"""
+    where: tasks_bool_exp
+  ): [tasks!]!
+  """
+  fetch data from the table: "test"
+  """
+  test(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): [test!]!
+  """
+  fetch aggregated fields from the table: "test"
+  """
+  test_aggregate(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): test_aggregate!
+  """fetch data from the table: "test" using primary key columns"""
+  test_by_pk(id: Int!): test
+  """
+  fetch data from the table in a streaming manner: "test"
+  """
+  test_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [test_stream_cursor_input]!
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): [test!]!
+  """
+  fetch data from the table: "user_video_history"
+  """
+  user_video_history(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): [user_video_history!]!
+  """
+  fetch aggregated fields from the table: "user_video_history"
+  """
+  user_video_history_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): user_video_history_aggregate!
+  """
+  fetch data from the table: "user_video_history" using primary key columns
+  """
+  user_video_history_by_pk(id: uuid!): user_video_history
+  """
+  fetch data from the table in a streaming manner: "user_video_history"
+  """
+  user_video_history_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [user_video_history_stream_cursor_input]!
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): [user_video_history!]!
+  """
+  fetch data from the table: "users"
+  """
+  users(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): [users!]!
+  """
+  fetch aggregated fields from the table: "users"
+  """
+  users_aggregate(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): users_aggregate!
+  """fetch data from the table: "users" using primary key columns"""
+  users_by_pk(id: uuid!): users
+  """
+  fetch data from the table in a streaming manner: "users"
+  """
+  users_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [users_stream_cursor_input]!
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): [users!]!
+  """An array relationship"""
+  video_tags(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): [video_tags!]!
+  """An aggregate relationship"""
+  video_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): video_tags_aggregate!
+  """fetch data from the table: "video_tags" using primary key columns"""
+  video_tags_by_pk(tag_id: uuid!, video_id: uuid!): video_tags
+  """
+  fetch data from the table in a streaming manner: "video_tags"
+  """
+  video_tags_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [video_tags_stream_cursor_input]!
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): [video_tags!]!
+  """An array relationship"""
+  video_views(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): [video_views!]!
+  """An aggregate relationship"""
+  video_views_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): video_views_aggregate!
+  """fetch data from the table: "video_views" using primary key columns"""
+  video_views_by_pk(id: uuid!): video_views
+  """
+  fetch data from the table in a streaming manner: "video_views"
+  """
+  video_views_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [video_views_stream_cursor_input]!
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): [video_views!]!
+  """An array relationship"""
+  videos(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): [videos!]!
+  """An aggregate relationship"""
+  videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): videos_aggregate!
+  """fetch data from the table: "videos" using primary key columns"""
+  videos_by_pk(id: uuid!): videos
+  """
+  fetch data from the table in a streaming manner: "videos"
+  """
+  videos_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [videos_stream_cursor_input]!
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): [videos!]!
+}
+
+"""
+Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique
+"""
+type tags {
+  """An array relationship"""
+  audio_tags(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): [audio_tags!]!
+  """An aggregate relationship"""
+  audio_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audio_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audio_tags_order_by!]
+    """filter the rows returned"""
+    where: audio_tags_bool_exp
+  ): audio_tags_aggregate!
+  created_at: timestamptz!
+  description: String
+  display_order: Int!
+  id: uuid!
+  name: String!
+  site: String!
+  slug: String!
+  updated_at: timestamptz!
+  """An array relationship"""
+  video_tags(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): [video_tags!]!
+  """An aggregate relationship"""
+  video_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): video_tags_aggregate!
+}
+
+"""
+aggregated selection of "tags"
+"""
+type tags_aggregate {
+  aggregate: tags_aggregate_fields
+  nodes: [tags!]!
+}
+
+"""
+aggregate fields of "tags"
+"""
+type tags_aggregate_fields {
+  avg: tags_avg_fields
+  count(columns: [tags_select_column!], distinct: Boolean): Int!
+  max: tags_max_fields
+  min: tags_min_fields
+  stddev: tags_stddev_fields
+  stddev_pop: tags_stddev_pop_fields
+  stddev_samp: tags_stddev_samp_fields
+  sum: tags_sum_fields
+  var_pop: tags_var_pop_fields
+  var_samp: tags_var_samp_fields
+  variance: tags_variance_fields
+}
+
+"""aggregate avg on columns"""
+type tags_avg_fields {
+  display_order: Float
+}
+
+"""
+Boolean expression to filter rows from the table "tags". All fields are combined with a logical 'AND'.
+"""
+input tags_bool_exp {
+  _and: [tags_bool_exp!]
+  _not: tags_bool_exp
+  _or: [tags_bool_exp!]
+  audio_tags: audio_tags_bool_exp
+  audio_tags_aggregate: audio_tags_aggregate_bool_exp
+  created_at: timestamptz_comparison_exp
+  description: String_comparison_exp
+  display_order: Int_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  site: String_comparison_exp
+  slug: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  video_tags: video_tags_bool_exp
+  video_tags_aggregate: video_tags_aggregate_bool_exp
+}
+
+"""
+unique or primary key constraints on table "tags"
+"""
+enum tags_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  tags_pkey
+  """
+  unique or primary key constraint on columns "slug", "site"
+  """
+  tags_slug_site_key
+}
+
+"""
+input type for incrementing numeric columns in table "tags"
+"""
+input tags_inc_input {
+  display_order: Int
+}
+
+"""
+input type for inserting data into table "tags"
+"""
+input tags_insert_input {
+  audio_tags: audio_tags_arr_rel_insert_input
+  created_at: timestamptz
+  description: String
+  display_order: Int
+  id: uuid
+  name: String
+  site: String
+  slug: String
+  updated_at: timestamptz
+  video_tags: video_tags_arr_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type tags_max_fields {
+  created_at: timestamptz
+  description: String
+  display_order: Int
+  id: uuid
+  name: String
+  site: String
+  slug: String
+  updated_at: timestamptz
+}
+
+"""aggregate min on columns"""
+type tags_min_fields {
+  created_at: timestamptz
+  description: String
+  display_order: Int
+  id: uuid
+  name: String
+  site: String
+  slug: String
+  updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "tags"
+"""
+type tags_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [tags!]!
+}
+
+"""
+input type for inserting object relation for remote table "tags"
+"""
+input tags_obj_rel_insert_input {
+  data: tags_insert_input!
+  """upsert condition"""
+  on_conflict: tags_on_conflict
+}
+
+"""
+on_conflict condition type for table "tags"
+"""
+input tags_on_conflict {
+  constraint: tags_constraint!
+  update_columns: [tags_update_column!]! = []
+  where: tags_bool_exp
+}
+
+"""Ordering options when selecting data from "tags"."""
+input tags_order_by {
+  audio_tags_aggregate: audio_tags_aggregate_order_by
+  created_at: order_by
+  description: order_by
+  display_order: order_by
+  id: order_by
+  name: order_by
+  site: order_by
+  slug: order_by
+  updated_at: order_by
+  video_tags_aggregate: video_tags_aggregate_order_by
+}
+
+"""primary key columns input for table: tags"""
+input tags_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "tags"
+"""
+enum tags_select_column {
+  """column name"""
+  created_at
+  """column name"""
+  description
+  """column name"""
+  display_order
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  site
+  """column name"""
+  slug
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "tags"
+"""
+input tags_set_input {
+  created_at: timestamptz
+  description: String
+  display_order: Int
+  id: uuid
+  name: String
+  site: String
+  slug: String
+  updated_at: timestamptz
+}
+
+"""aggregate stddev on columns"""
+type tags_stddev_fields {
+  display_order: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type tags_stddev_pop_fields {
+  display_order: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type tags_stddev_samp_fields {
+  display_order: Float
+}
+
+"""
+Streaming cursor of the table "tags"
+"""
+input tags_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: tags_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input tags_stream_cursor_value_input {
+  created_at: timestamptz
+  description: String
+  display_order: Int
+  id: uuid
+  name: String
+  site: String
+  slug: String
+  updated_at: timestamptz
+}
+
+"""aggregate sum on columns"""
+type tags_sum_fields {
+  display_order: Int
+}
+
+"""
+update columns of table "tags"
+"""
+enum tags_update_column {
+  """column name"""
+  created_at
+  """column name"""
+  description
+  """column name"""
+  display_order
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  site
+  """column name"""
+  slug
+  """column name"""
+  updated_at
+}
+
+input tags_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: tags_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: tags_set_input
+  """filter the rows which have to be updated"""
+  where: tags_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type tags_var_pop_fields {
+  display_order: Float
+}
+
+"""aggregate var_samp on columns"""
+type tags_var_samp_fields {
+  display_order: Float
+}
+
+"""aggregate variance on columns"""
+type tags_variance_fields {
+  display_order: Float
+}
+
+"""Reference for Cloud Tasks, the goal is idempotent for Cloud Tasks"""
+type tasks {
+  completed: Boolean!
+  created_at: timestamptz!
+  entity_id: uuid!
+  entity_type: String!
+  id: uuid!
+  metadata(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  status: String!
+  task_id: uuid!
+  type: String!
+  updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "tasks"
+"""
+type tasks_aggregate {
+  aggregate: tasks_aggregate_fields
+  nodes: [tasks!]!
+}
+
+"""
+aggregate fields of "tasks"
+"""
+type tasks_aggregate_fields {
+  count(columns: [tasks_select_column!], distinct: Boolean): Int!
+  max: tasks_max_fields
+  min: tasks_min_fields
+}
+
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input tasks_append_input {
+  metadata: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "tasks". All fields are combined with a logical 'AND'.
+"""
+input tasks_bool_exp {
+  _and: [tasks_bool_exp!]
+  _not: tasks_bool_exp
+  _or: [tasks_bool_exp!]
+  completed: Boolean_comparison_exp
+  created_at: timestamptz_comparison_exp
+  entity_id: uuid_comparison_exp
+  entity_type: String_comparison_exp
+  id: uuid_comparison_exp
+  metadata: jsonb_comparison_exp
+  status: String_comparison_exp
+  task_id: uuid_comparison_exp
+  type: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "tasks"
+"""
+enum tasks_constraint {
+  """
+  unique or primary key constraint on columns "entity_type", "type", "entity_id"
+  """
+  tasks_entity_type_entity_id_type_key
+  """
+  unique or primary key constraint on columns "id"
+  """
+  tasks_pkey
+  """
+  unique or primary key constraint on columns "task_id"
+  """
+  tasks_task_id_key
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input tasks_delete_at_path_input {
+  metadata: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input tasks_delete_elem_input {
+  metadata: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input tasks_delete_key_input {
+  metadata: String
+}
+
+"""
+input type for inserting data into table "tasks"
+"""
+input tasks_insert_input {
+  completed: Boolean
+  created_at: timestamptz
+  entity_id: uuid
+  entity_type: String
+  id: uuid
+  metadata: jsonb
+  status: String
+  task_id: uuid
+  type: String
+  updated_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type tasks_max_fields {
+  created_at: timestamptz
+  entity_id: uuid
+  entity_type: String
+  id: uuid
+  status: String
+  task_id: uuid
+  type: String
+  updated_at: timestamptz
+}
+
+"""aggregate min on columns"""
+type tasks_min_fields {
+  created_at: timestamptz
+  entity_id: uuid
+  entity_type: String
+  id: uuid
+  status: String
+  task_id: uuid
+  type: String
+  updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "tasks"
+"""
+type tasks_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [tasks!]!
+}
+
+"""
+on_conflict condition type for table "tasks"
+"""
+input tasks_on_conflict {
+  constraint: tasks_constraint!
+  update_columns: [tasks_update_column!]! = []
+  where: tasks_bool_exp
+}
+
+"""Ordering options when selecting data from "tasks"."""
+input tasks_order_by {
+  completed: order_by
+  created_at: order_by
+  entity_id: order_by
+  entity_type: order_by
+  id: order_by
+  metadata: order_by
+  status: order_by
+  task_id: order_by
+  type: order_by
+  updated_at: order_by
+}
+
+"""primary key columns input for table: tasks"""
+input tasks_pk_columns_input {
+  id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input tasks_prepend_input {
+  metadata: jsonb
+}
+
+"""
+select columns of table "tasks"
+"""
+enum tasks_select_column {
+  """column name"""
+  completed
+  """column name"""
+  created_at
+  """column name"""
+  entity_id
+  """column name"""
+  entity_type
+  """column name"""
+  id
+  """column name"""
+  metadata
+  """column name"""
+  status
+  """column name"""
+  task_id
+  """column name"""
+  type
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "tasks"
+"""
+input tasks_set_input {
+  completed: Boolean
+  created_at: timestamptz
+  entity_id: uuid
+  entity_type: String
+  id: uuid
+  metadata: jsonb
+  status: String
+  task_id: uuid
+  type: String
+  updated_at: timestamptz
+}
+
+"""
+Streaming cursor of the table "tasks"
+"""
+input tasks_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: tasks_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input tasks_stream_cursor_value_input {
+  completed: Boolean
+  created_at: timestamptz
+  entity_id: uuid
+  entity_type: String
+  id: uuid
+  metadata: jsonb
+  status: String
+  task_id: uuid
+  type: String
+  updated_at: timestamptz
+}
+
+"""
+update columns of table "tasks"
+"""
+enum tasks_update_column {
+  """column name"""
+  completed
+  """column name"""
+  created_at
+  """column name"""
+  entity_id
+  """column name"""
+  entity_type
+  """column name"""
+  id
+  """column name"""
+  metadata
+  """column name"""
+  status
+  """column name"""
+  task_id
+  """column name"""
+  type
+  """column name"""
+  updated_at
+}
+
+input tasks_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: tasks_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: tasks_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: tasks_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: tasks_delete_key_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: tasks_prepend_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: tasks_set_input
+  """filter the rows which have to be updated"""
+  where: tasks_bool_exp!
+}
+
+"""
+This is a workaround when running CLI to dump from Hasura Cloud does not work, so I tried to use CLI run console to connect to db, create this table to make changes to generata migration files
+"""
+type test {
+  description: String!
+  id: Int!
+}
+
+"""
+aggregated selection of "test"
+"""
+type test_aggregate {
+  aggregate: test_aggregate_fields
+  nodes: [test!]!
+}
+
+"""
+aggregate fields of "test"
+"""
+type test_aggregate_fields {
+  avg: test_avg_fields
+  count(columns: [test_select_column!], distinct: Boolean): Int!
+  max: test_max_fields
+  min: test_min_fields
+  stddev: test_stddev_fields
+  stddev_pop: test_stddev_pop_fields
+  stddev_samp: test_stddev_samp_fields
+  sum: test_sum_fields
+  var_pop: test_var_pop_fields
+  var_samp: test_var_samp_fields
+  variance: test_variance_fields
+}
+
+"""aggregate avg on columns"""
+type test_avg_fields {
+  id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "test". All fields are combined with a logical 'AND'.
+"""
+input test_bool_exp {
+  _and: [test_bool_exp!]
+  _not: test_bool_exp
+  _or: [test_bool_exp!]
+  description: String_comparison_exp
+  id: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "test"
+"""
+enum test_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  test_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "test"
+"""
+input test_inc_input {
+  id: Int
+}
+
+"""
+input type for inserting data into table "test"
+"""
+input test_insert_input {
+  description: String
+  id: Int
+}
+
+"""aggregate max on columns"""
+type test_max_fields {
+  description: String
+  id: Int
+}
+
+"""aggregate min on columns"""
+type test_min_fields {
+  description: String
+  id: Int
+}
+
+"""
+response of any mutation on the table "test"
+"""
+type test_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [test!]!
+}
+
+"""
+on_conflict condition type for table "test"
+"""
+input test_on_conflict {
+  constraint: test_constraint!
+  update_columns: [test_update_column!]! = []
+  where: test_bool_exp
+}
+
+"""Ordering options when selecting data from "test"."""
+input test_order_by {
+  description: order_by
+  id: order_by
+}
+
+"""primary key columns input for table: test"""
+input test_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "test"
+"""
+enum test_select_column {
+  """column name"""
+  description
+  """column name"""
+  id
+}
+
+"""
+input type for updating data in table "test"
+"""
+input test_set_input {
+  description: String
+  id: Int
+}
+
+"""aggregate stddev on columns"""
+type test_stddev_fields {
+  id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type test_stddev_pop_fields {
+  id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type test_stddev_samp_fields {
+  id: Float
+}
+
+"""
+Streaming cursor of the table "test"
+"""
+input test_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: test_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input test_stream_cursor_value_input {
+  description: String
+  id: Int
+}
+
+"""aggregate sum on columns"""
+type test_sum_fields {
+  id: Int
+}
+
+"""
+update columns of table "test"
+"""
+enum test_update_column {
+  """column name"""
+  description
+  """column name"""
+  id
+}
+
+input test_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: test_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: test_set_input
+  """filter the rows which have to be updated"""
+  where: test_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type test_var_pop_fields {
+  id: Float
+}
+
+"""aggregate var_samp on columns"""
+type test_var_samp_fields {
+  id: Float
+}
+
+"""aggregate variance on columns"""
+type test_variance_fields {
+  id: Float
+}
+
+scalar timestamptz
+
+"""
+Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'.
+"""
+input timestamptz_comparison_exp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _is_null: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}
+
+"""
+Pivot table between user and video, let we know how do end user interact with video
+"""
+type user_video_history {
+  created_at: timestamptz!
+  id: uuid!
+  last_watched_at: timestamptz!
+  progress_seconds: Int!
+  updated_at: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+  """An object relationship"""
+  video: videos!
+  video_id: uuid!
+}
+
+"""
+aggregated selection of "user_video_history"
+"""
+type user_video_history_aggregate {
+  aggregate: user_video_history_aggregate_fields
+  nodes: [user_video_history!]!
+}
+
+input user_video_history_aggregate_bool_exp {
+  count: user_video_history_aggregate_bool_exp_count
+}
+
+input user_video_history_aggregate_bool_exp_count {
+  arguments: [user_video_history_select_column!]
+  distinct: Boolean
+  filter: user_video_history_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "user_video_history"
+"""
+type user_video_history_aggregate_fields {
+  avg: user_video_history_avg_fields
+  count(columns: [user_video_history_select_column!], distinct: Boolean): Int!
+  max: user_video_history_max_fields
+  min: user_video_history_min_fields
+  stddev: user_video_history_stddev_fields
+  stddev_pop: user_video_history_stddev_pop_fields
+  stddev_samp: user_video_history_stddev_samp_fields
+  sum: user_video_history_sum_fields
+  var_pop: user_video_history_var_pop_fields
+  var_samp: user_video_history_var_samp_fields
+  variance: user_video_history_variance_fields
+}
+
+"""
+order by aggregate values of table "user_video_history"
+"""
+input user_video_history_aggregate_order_by {
+  avg: user_video_history_avg_order_by
+  count: order_by
+  max: user_video_history_max_order_by
+  min: user_video_history_min_order_by
+  stddev: user_video_history_stddev_order_by
+  stddev_pop: user_video_history_stddev_pop_order_by
+  stddev_samp: user_video_history_stddev_samp_order_by
+  sum: user_video_history_sum_order_by
+  var_pop: user_video_history_var_pop_order_by
+  var_samp: user_video_history_var_samp_order_by
+  variance: user_video_history_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "user_video_history"
+"""
+input user_video_history_arr_rel_insert_input {
+  data: [user_video_history_insert_input!]!
+  """upsert condition"""
+  on_conflict: user_video_history_on_conflict
+}
+
+"""aggregate avg on columns"""
+type user_video_history_avg_fields {
+  progress_seconds: Float
+}
+
+"""
+order by avg() on columns of table "user_video_history"
+"""
+input user_video_history_avg_order_by {
+  progress_seconds: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "user_video_history". All fields are combined with a logical 'AND'.
+"""
+input user_video_history_bool_exp {
+  _and: [user_video_history_bool_exp!]
+  _not: user_video_history_bool_exp
+  _or: [user_video_history_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  last_watched_at: timestamptz_comparison_exp
+  progress_seconds: Int_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+  video: videos_bool_exp
+  video_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "user_video_history"
+"""
+enum user_video_history_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  user_video_history_pkey
+  """
+  unique or primary key constraint on columns "user_id", "video_id"
+  """
+  user_video_history_user_id_video_id_key
+}
+
+"""
+input type for incrementing numeric columns in table "user_video_history"
+"""
+input user_video_history_inc_input {
+  progress_seconds: Int
+}
+
+"""
+input type for inserting data into table "user_video_history"
+"""
+input user_video_history_insert_input {
+  created_at: timestamptz
+  id: uuid
+  last_watched_at: timestamptz
+  progress_seconds: Int
+  updated_at: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+  video: videos_obj_rel_insert_input
+  video_id: uuid
+}
+
+"""aggregate max on columns"""
+type user_video_history_max_fields {
+  created_at: timestamptz
+  id: uuid
+  last_watched_at: timestamptz
+  progress_seconds: Int
+  updated_at: timestamptz
+  user_id: uuid
+  video_id: uuid
+}
+
+"""
+order by max() on columns of table "user_video_history"
+"""
+input user_video_history_max_order_by {
+  created_at: order_by
+  id: order_by
+  last_watched_at: order_by
+  progress_seconds: order_by
+  updated_at: order_by
+  user_id: order_by
+  video_id: order_by
+}
+
+"""aggregate min on columns"""
+type user_video_history_min_fields {
+  created_at: timestamptz
+  id: uuid
+  last_watched_at: timestamptz
+  progress_seconds: Int
+  updated_at: timestamptz
+  user_id: uuid
+  video_id: uuid
+}
+
+"""
+order by min() on columns of table "user_video_history"
+"""
+input user_video_history_min_order_by {
+  created_at: order_by
+  id: order_by
+  last_watched_at: order_by
+  progress_seconds: order_by
+  updated_at: order_by
+  user_id: order_by
+  video_id: order_by
+}
+
+"""
+response of any mutation on the table "user_video_history"
+"""
+type user_video_history_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [user_video_history!]!
+}
+
+"""
+on_conflict condition type for table "user_video_history"
+"""
+input user_video_history_on_conflict {
+  constraint: user_video_history_constraint!
+  update_columns: [user_video_history_update_column!]! = []
+  where: user_video_history_bool_exp
+}
+
+"""Ordering options when selecting data from "user_video_history"."""
+input user_video_history_order_by {
+  created_at: order_by
+  id: order_by
+  last_watched_at: order_by
+  progress_seconds: order_by
+  updated_at: order_by
+  user: users_order_by
+  user_id: order_by
+  video: videos_order_by
+  video_id: order_by
+}
+
+"""primary key columns input for table: user_video_history"""
+input user_video_history_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "user_video_history"
+"""
+enum user_video_history_select_column {
+  """column name"""
+  created_at
+  """column name"""
+  id
+  """column name"""
+  last_watched_at
+  """column name"""
+  progress_seconds
+  """column name"""
+  updated_at
+  """column name"""
+  user_id
+  """column name"""
+  video_id
+}
+
+"""
+input type for updating data in table "user_video_history"
+"""
+input user_video_history_set_input {
+  created_at: timestamptz
+  id: uuid
+  last_watched_at: timestamptz
+  progress_seconds: Int
+  updated_at: timestamptz
+  user_id: uuid
+  video_id: uuid
+}
+
+"""aggregate stddev on columns"""
+type user_video_history_stddev_fields {
+  progress_seconds: Float
+}
+
+"""
+order by stddev() on columns of table "user_video_history"
+"""
+input user_video_history_stddev_order_by {
+  progress_seconds: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type user_video_history_stddev_pop_fields {
+  progress_seconds: Float
+}
+
+"""
+order by stddev_pop() on columns of table "user_video_history"
+"""
+input user_video_history_stddev_pop_order_by {
+  progress_seconds: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type user_video_history_stddev_samp_fields {
+  progress_seconds: Float
+}
+
+"""
+order by stddev_samp() on columns of table "user_video_history"
+"""
+input user_video_history_stddev_samp_order_by {
+  progress_seconds: order_by
+}
+
+"""
+Streaming cursor of the table "user_video_history"
+"""
+input user_video_history_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: user_video_history_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input user_video_history_stream_cursor_value_input {
+  created_at: timestamptz
+  id: uuid
+  last_watched_at: timestamptz
+  progress_seconds: Int
+  updated_at: timestamptz
+  user_id: uuid
+  video_id: uuid
+}
+
+"""aggregate sum on columns"""
+type user_video_history_sum_fields {
+  progress_seconds: Int
+}
+
+"""
+order by sum() on columns of table "user_video_history"
+"""
+input user_video_history_sum_order_by {
+  progress_seconds: order_by
+}
+
+"""
+update columns of table "user_video_history"
+"""
+enum user_video_history_update_column {
+  """column name"""
+  created_at
+  """column name"""
+  id
+  """column name"""
+  last_watched_at
+  """column name"""
+  progress_seconds
+  """column name"""
+  updated_at
+  """column name"""
+  user_id
+  """column name"""
+  video_id
+}
+
+input user_video_history_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: user_video_history_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: user_video_history_set_input
+  """filter the rows which have to be updated"""
+  where: user_video_history_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type user_video_history_var_pop_fields {
+  progress_seconds: Float
+}
+
+"""
+order by var_pop() on columns of table "user_video_history"
+"""
+input user_video_history_var_pop_order_by {
+  progress_seconds: order_by
+}
+
+"""aggregate var_samp on columns"""
+type user_video_history_var_samp_fields {
+  progress_seconds: Float
+}
+
+"""
+order by var_samp() on columns of table "user_video_history"
+"""
+input user_video_history_var_samp_order_by {
+  progress_seconds: order_by
+}
+
+"""aggregate variance on columns"""
+type user_video_history_variance_fields {
+  progress_seconds: Float
+}
+
+"""
+order by variance() on columns of table "user_video_history"
+"""
+input user_video_history_variance_order_by {
+  progress_seconds: order_by
+}
+
+"""
+columns and relationships of "users"
+"""
+type users {
+  """An array relationship"""
+  audios(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): [audios!]!
+  """An aggregate relationship"""
+  audios_aggregate(
+    """distinct select on columns"""
+    distinct_on: [audios_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [audios_order_by!]
+    """filter the rows returned"""
+    where: audios_bool_exp
+  ): audios_aggregate!
+  auth0_id: String!
+  created_at: timestamptz
+  email: String!
+  id: uuid!
+  """An array relationship"""
+  playlists(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): [playlist!]!
+  """An aggregate relationship"""
+  playlists_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_order_by!]
+    """filter the rows returned"""
+    where: playlist_bool_exp
+  ): playlist_aggregate!
+  updated_at: timestamptz
+  """An array relationship"""
+  user_video_histories(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): [user_video_history!]!
+  """An aggregate relationship"""
+  user_video_histories_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): user_video_history_aggregate!
+  username: String
+  """An array relationship"""
+  video_views(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): [video_views!]!
+  """An aggregate relationship"""
+  video_views_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): video_views_aggregate!
+  """An array relationship"""
+  videos(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): [videos!]!
+  """An aggregate relationship"""
+  videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [videos_order_by!]
+    """filter the rows returned"""
+    where: videos_bool_exp
+  ): videos_aggregate!
+}
+
+"""
+aggregated selection of "users"
+"""
+type users_aggregate {
+  aggregate: users_aggregate_fields
+  nodes: [users!]!
+}
+
+"""
+aggregate fields of "users"
+"""
+type users_aggregate_fields {
+  count(columns: [users_select_column!], distinct: Boolean): Int!
+  max: users_max_fields
+  min: users_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'.
+"""
+input users_bool_exp {
+  _and: [users_bool_exp!]
+  _not: users_bool_exp
+  _or: [users_bool_exp!]
+  audios: audios_bool_exp
+  audios_aggregate: audios_aggregate_bool_exp
+  auth0_id: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  email: String_comparison_exp
+  id: uuid_comparison_exp
+  playlists: playlist_bool_exp
+  playlists_aggregate: playlist_aggregate_bool_exp
+  updated_at: timestamptz_comparison_exp
+  user_video_histories: user_video_history_bool_exp
+  user_video_histories_aggregate: user_video_history_aggregate_bool_exp
+  username: String_comparison_exp
+  video_views: video_views_bool_exp
+  video_views_aggregate: video_views_aggregate_bool_exp
+  videos: videos_bool_exp
+  videos_aggregate: videos_aggregate_bool_exp
+}
+
+"""
+unique or primary key constraints on table "users"
+"""
+enum users_constraint {
+  """
+  unique or primary key constraint on columns "auth0_id"
+  """
+  users_auth0_id_key
+  """
+  unique or primary key constraint on columns "email"
+  """
+  users_email_key
+  """
+  unique or primary key constraint on columns "id"
+  """
+  users_pkey
+  """
+  unique or primary key constraint on columns "username"
+  """
+  users_username_key
+}
+
+"""
+input type for inserting data into table "users"
+"""
+input users_insert_input {
+  audios: audios_arr_rel_insert_input
+  auth0_id: String
+  created_at: timestamptz
+  email: String
+  id: uuid
+  playlists: playlist_arr_rel_insert_input
+  updated_at: timestamptz
+  user_video_histories: user_video_history_arr_rel_insert_input
+  username: String
+  video_views: video_views_arr_rel_insert_input
+  videos: videos_arr_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type users_max_fields {
+  auth0_id: String
+  created_at: timestamptz
+  email: String
+  id: uuid
+  updated_at: timestamptz
+  username: String
+}
+
+"""aggregate min on columns"""
+type users_min_fields {
+  auth0_id: String
+  created_at: timestamptz
+  email: String
+  id: uuid
+  updated_at: timestamptz
+  username: String
+}
+
+"""
+response of any mutation on the table "users"
+"""
+type users_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [users!]!
+}
+
+"""
+input type for inserting object relation for remote table "users"
+"""
+input users_obj_rel_insert_input {
+  data: users_insert_input!
+  """upsert condition"""
+  on_conflict: users_on_conflict
+}
+
+"""
+on_conflict condition type for table "users"
+"""
+input users_on_conflict {
+  constraint: users_constraint!
+  update_columns: [users_update_column!]! = []
+  where: users_bool_exp
+}
+
+"""Ordering options when selecting data from "users"."""
+input users_order_by {
+  audios_aggregate: audios_aggregate_order_by
+  auth0_id: order_by
+  created_at: order_by
+  email: order_by
+  id: order_by
+  playlists_aggregate: playlist_aggregate_order_by
+  updated_at: order_by
+  user_video_histories_aggregate: user_video_history_aggregate_order_by
+  username: order_by
+  video_views_aggregate: video_views_aggregate_order_by
+  videos_aggregate: videos_aggregate_order_by
+}
+
+"""primary key columns input for table: users"""
+input users_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "users"
+"""
+enum users_select_column {
+  """column name"""
+  auth0_id
+  """column name"""
+  created_at
+  """column name"""
+  email
+  """column name"""
+  id
+  """column name"""
+  updated_at
+  """column name"""
+  username
+}
+
+"""
+input type for updating data in table "users"
+"""
+input users_set_input {
+  auth0_id: String
+  created_at: timestamptz
+  email: String
+  id: uuid
+  updated_at: timestamptz
+  username: String
+}
+
+"""
+Streaming cursor of the table "users"
+"""
+input users_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: users_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input users_stream_cursor_value_input {
+  auth0_id: String
+  created_at: timestamptz
+  email: String
+  id: uuid
+  updated_at: timestamptz
+  username: String
+}
+
+"""
+update columns of table "users"
+"""
+enum users_update_column {
+  """column name"""
+  auth0_id
+  """column name"""
+  created_at
+  """column name"""
+  email
+  """column name"""
+  id
+  """column name"""
+  updated_at
+  """column name"""
+  username
+}
+
+input users_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: users_set_input
+  """filter the rows which have to be updated"""
+  where: users_bool_exp!
+}
+
+scalar uuid
+
+"""
+Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'.
+"""
+input uuid_comparison_exp {
+  _eq: uuid
+  _gt: uuid
+  _gte: uuid
+  _in: [uuid!]
+  _is_null: Boolean
+  _lt: uuid
+  _lte: uuid
+  _neq: uuid
+  _nin: [uuid!]
+}
+
+"""
+Junction table between videos and tags which showing many to many relationship between 2 tables
+"""
+type video_tags {
+  created_at: timestamptz!
+  """An object relationship"""
+  tag: tags!
+  tag_id: uuid!
+  updated_at: timestamptz!
+  """An object relationship"""
+  video: videos!
+  video_id: uuid!
+}
+
+"""
+aggregated selection of "video_tags"
+"""
+type video_tags_aggregate {
+  aggregate: video_tags_aggregate_fields
+  nodes: [video_tags!]!
+}
+
+input video_tags_aggregate_bool_exp {
+  count: video_tags_aggregate_bool_exp_count
+}
+
+input video_tags_aggregate_bool_exp_count {
+  arguments: [video_tags_select_column!]
+  distinct: Boolean
+  filter: video_tags_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "video_tags"
+"""
+type video_tags_aggregate_fields {
+  count(columns: [video_tags_select_column!], distinct: Boolean): Int!
+  max: video_tags_max_fields
+  min: video_tags_min_fields
+}
+
+"""
+order by aggregate values of table "video_tags"
+"""
+input video_tags_aggregate_order_by {
+  count: order_by
+  max: video_tags_max_order_by
+  min: video_tags_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "video_tags"
+"""
+input video_tags_arr_rel_insert_input {
+  data: [video_tags_insert_input!]!
+  """upsert condition"""
+  on_conflict: video_tags_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "video_tags". All fields are combined with a logical 'AND'.
+"""
+input video_tags_bool_exp {
+  _and: [video_tags_bool_exp!]
+  _not: video_tags_bool_exp
+  _or: [video_tags_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  tag: tags_bool_exp
+  tag_id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  video: videos_bool_exp
+  video_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "video_tags"
+"""
+enum video_tags_constraint {
+  """
+  unique or primary key constraint on columns "video_id", "tag_id"
+  """
+  video_tags_pkey
+}
+
+"""
+input type for inserting data into table "video_tags"
+"""
+input video_tags_insert_input {
+  created_at: timestamptz
+  tag: tags_obj_rel_insert_input
+  tag_id: uuid
+  updated_at: timestamptz
+  video: videos_obj_rel_insert_input
+  video_id: uuid
+}
+
+"""aggregate max on columns"""
+type video_tags_max_fields {
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+  video_id: uuid
+}
+
+"""
+order by max() on columns of table "video_tags"
+"""
+input video_tags_max_order_by {
+  created_at: order_by
+  tag_id: order_by
+  updated_at: order_by
+  video_id: order_by
+}
+
+"""aggregate min on columns"""
+type video_tags_min_fields {
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+  video_id: uuid
+}
+
+"""
+order by min() on columns of table "video_tags"
+"""
+input video_tags_min_order_by {
+  created_at: order_by
+  tag_id: order_by
+  updated_at: order_by
+  video_id: order_by
+}
+
+"""
+response of any mutation on the table "video_tags"
+"""
+type video_tags_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [video_tags!]!
+}
+
+"""
+on_conflict condition type for table "video_tags"
+"""
+input video_tags_on_conflict {
+  constraint: video_tags_constraint!
+  update_columns: [video_tags_update_column!]! = []
+  where: video_tags_bool_exp
+}
+
+"""Ordering options when selecting data from "video_tags"."""
+input video_tags_order_by {
+  created_at: order_by
+  tag: tags_order_by
+  tag_id: order_by
+  updated_at: order_by
+  video: videos_order_by
+  video_id: order_by
+}
+
+"""primary key columns input for table: video_tags"""
+input video_tags_pk_columns_input {
+  tag_id: uuid!
+  video_id: uuid!
+}
+
+"""
+select columns of table "video_tags"
+"""
+enum video_tags_select_column {
+  """column name"""
+  created_at
+  """column name"""
+  tag_id
+  """column name"""
+  updated_at
+  """column name"""
+  video_id
+}
+
+"""
+input type for updating data in table "video_tags"
+"""
+input video_tags_set_input {
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+  video_id: uuid
+}
+
+"""
+Streaming cursor of the table "video_tags"
+"""
+input video_tags_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: video_tags_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input video_tags_stream_cursor_value_input {
+  created_at: timestamptz
+  tag_id: uuid
+  updated_at: timestamptz
+  video_id: uuid
+}
+
+"""
+update columns of table "video_tags"
+"""
+enum video_tags_update_column {
+  """column name"""
+  created_at
+  """column name"""
+  tag_id
+  """column name"""
+  updated_at
+  """column name"""
+  video_id
+}
+
+input video_tags_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: video_tags_set_input
+  """filter the rows which have to be updated"""
+  where: video_tags_bool_exp!
+}
+
+"""
+columns and relationships of "video_views"
+"""
+type video_views {
+  id: uuid!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+  """An object relationship"""
+  video: videos!
+  video_id: uuid!
+  viewed_at: timestamptz
+}
+
+"""
+aggregated selection of "video_views"
+"""
+type video_views_aggregate {
+  aggregate: video_views_aggregate_fields
+  nodes: [video_views!]!
+}
+
+input video_views_aggregate_bool_exp {
+  count: video_views_aggregate_bool_exp_count
+}
+
+input video_views_aggregate_bool_exp_count {
+  arguments: [video_views_select_column!]
+  distinct: Boolean
+  filter: video_views_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "video_views"
+"""
+type video_views_aggregate_fields {
+  count(columns: [video_views_select_column!], distinct: Boolean): Int!
+  max: video_views_max_fields
+  min: video_views_min_fields
+}
+
+"""
+order by aggregate values of table "video_views"
+"""
+input video_views_aggregate_order_by {
+  count: order_by
+  max: video_views_max_order_by
+  min: video_views_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "video_views"
+"""
+input video_views_arr_rel_insert_input {
+  data: [video_views_insert_input!]!
+  """upsert condition"""
+  on_conflict: video_views_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "video_views". All fields are combined with a logical 'AND'.
+"""
+input video_views_bool_exp {
+  _and: [video_views_bool_exp!]
+  _not: video_views_bool_exp
+  _or: [video_views_bool_exp!]
+  id: uuid_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+  video: videos_bool_exp
+  video_id: uuid_comparison_exp
+  viewed_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "video_views"
+"""
+enum video_views_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  video_views_pkey
+}
+
+"""
+input type for inserting data into table "video_views"
+"""
+input video_views_insert_input {
+  id: uuid
+  user: users_obj_rel_insert_input
+  user_id: uuid
+  video: videos_obj_rel_insert_input
+  video_id: uuid
+  viewed_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type video_views_max_fields {
+  id: uuid
+  user_id: uuid
+  video_id: uuid
+  viewed_at: timestamptz
+}
+
+"""
+order by max() on columns of table "video_views"
+"""
+input video_views_max_order_by {
+  id: order_by
+  user_id: order_by
+  video_id: order_by
+  viewed_at: order_by
+}
+
+"""aggregate min on columns"""
+type video_views_min_fields {
+  id: uuid
+  user_id: uuid
+  video_id: uuid
+  viewed_at: timestamptz
+}
+
+"""
+order by min() on columns of table "video_views"
+"""
+input video_views_min_order_by {
+  id: order_by
+  user_id: order_by
+  video_id: order_by
+  viewed_at: order_by
+}
+
+"""
+response of any mutation on the table "video_views"
+"""
+type video_views_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [video_views!]!
+}
+
+"""
+on_conflict condition type for table "video_views"
+"""
+input video_views_on_conflict {
+  constraint: video_views_constraint!
+  update_columns: [video_views_update_column!]! = []
+  where: video_views_bool_exp
+}
+
+"""Ordering options when selecting data from "video_views"."""
+input video_views_order_by {
+  id: order_by
+  user: users_order_by
+  user_id: order_by
+  video: videos_order_by
+  video_id: order_by
+  viewed_at: order_by
+}
+
+"""primary key columns input for table: video_views"""
+input video_views_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "video_views"
+"""
+enum video_views_select_column {
+  """column name"""
+  id
+  """column name"""
+  user_id
+  """column name"""
+  video_id
+  """column name"""
+  viewed_at
+}
+
+"""
+input type for updating data in table "video_views"
+"""
+input video_views_set_input {
+  id: uuid
+  user_id: uuid
+  video_id: uuid
+  viewed_at: timestamptz
+}
+
+"""
+Streaming cursor of the table "video_views"
+"""
+input video_views_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: video_views_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input video_views_stream_cursor_value_input {
+  id: uuid
+  user_id: uuid
+  video_id: uuid
+  viewed_at: timestamptz
+}
+
+"""
+update columns of table "video_views"
+"""
+enum video_views_update_column {
+  """column name"""
+  id
+  """column name"""
+  user_id
+  """column name"""
+  video_id
+  """column name"""
+  viewed_at
+}
+
+input video_views_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: video_views_set_input
+  """filter the rows which have to be updated"""
+  where: video_views_bool_exp!
+}
+
+"""
+columns and relationships of "videos"
+"""
+type videos {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid!
+  """An array relationship"""
+  playlist_videos(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): [playlist_videos!]!
+  """An aggregate relationship"""
+  playlist_videos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_videos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_videos_order_by!]
+    """filter the rows returned"""
+    where: playlist_videos_bool_exp
+  ): playlist_videos_aggregate!
+  public: Boolean!
+  slug: String!
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String!
+  updatedAt: timestamptz
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+  """An array relationship"""
+  user_video_histories(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): [user_video_history!]!
+  """An aggregate relationship"""
+  user_video_histories_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_video_history_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [user_video_history_order_by!]
+    """filter the rows returned"""
+    where: user_video_history_bool_exp
+  ): user_video_history_aggregate!
+  """An array relationship"""
+  video_tags(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): [video_tags!]!
+  """An aggregate relationship"""
+  video_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_tags_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_tags_order_by!]
+    """filter the rows returned"""
+    where: video_tags_bool_exp
+  ): video_tags_aggregate!
+  video_url: String!
+  """An array relationship"""
+  video_views(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): [video_views!]!
+  """An aggregate relationship"""
+  video_views_aggregate(
+    """distinct select on columns"""
+    distinct_on: [video_views_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [video_views_order_by!]
+    """filter the rows returned"""
+    where: video_views_bool_exp
+  ): video_views_aggregate!
+  view_count: Int
+}
+
+"""
+aggregated selection of "videos"
+"""
+type videos_aggregate {
+  aggregate: videos_aggregate_fields
+  nodes: [videos!]!
+}
+
+input videos_aggregate_bool_exp {
+  bool_and: videos_aggregate_bool_exp_bool_and
+  bool_or: videos_aggregate_bool_exp_bool_or
+  count: videos_aggregate_bool_exp_count
+}
+
+input videos_aggregate_bool_exp_bool_and {
+  arguments: videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: videos_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input videos_aggregate_bool_exp_bool_or {
+  arguments: videos_select_column_videos_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: videos_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input videos_aggregate_bool_exp_count {
+  arguments: [videos_select_column!]
+  distinct: Boolean
+  filter: videos_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "videos"
+"""
+type videos_aggregate_fields {
+  avg: videos_avg_fields
+  count(columns: [videos_select_column!], distinct: Boolean): Int!
+  max: videos_max_fields
+  min: videos_min_fields
+  stddev: videos_stddev_fields
+  stddev_pop: videos_stddev_pop_fields
+  stddev_samp: videos_stddev_samp_fields
+  sum: videos_sum_fields
+  var_pop: videos_var_pop_fields
+  var_samp: videos_var_samp_fields
+  variance: videos_variance_fields
+}
+
+"""
+order by aggregate values of table "videos"
+"""
+input videos_aggregate_order_by {
+  avg: videos_avg_order_by
+  count: order_by
+  max: videos_max_order_by
+  min: videos_min_order_by
+  stddev: videos_stddev_order_by
+  stddev_pop: videos_stddev_pop_order_by
+  stddev_samp: videos_stddev_samp_order_by
+  sum: videos_sum_order_by
+  var_pop: videos_var_pop_order_by
+  var_samp: videos_var_samp_order_by
+  variance: videos_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "videos"
+"""
+input videos_arr_rel_insert_input {
+  data: [videos_insert_input!]!
+  """upsert condition"""
+  on_conflict: videos_on_conflict
+}
+
+"""aggregate avg on columns"""
+type videos_avg_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by avg() on columns of table "videos"
+"""
+input videos_avg_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "videos". All fields are combined with a logical 'AND'.
+"""
+input videos_bool_exp {
+  _and: [videos_bool_exp!]
+  _not: videos_bool_exp
+  _or: [videos_bool_exp!]
+  createdAt: timestamptz_comparison_exp
+  description: String_comparison_exp
+  duration: Int_comparison_exp
+  id: uuid_comparison_exp
+  playlist_videos: playlist_videos_bool_exp
+  playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
+  public: Boolean_comparison_exp
+  slug: String_comparison_exp
+  source: String_comparison_exp
+  status: String_comparison_exp
+  thumbnailUrl: String_comparison_exp
+  title: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+  user_video_histories: user_video_history_bool_exp
+  user_video_histories_aggregate: user_video_history_aggregate_bool_exp
+  video_tags: video_tags_bool_exp
+  video_tags_aggregate: video_tags_aggregate_bool_exp
+  video_url: String_comparison_exp
+  video_views: video_views_bool_exp
+  video_views_aggregate: video_views_aggregate_bool_exp
+  view_count: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "videos"
+"""
+enum videos_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  videos_pkey
+  """
+  unique or primary key constraint on columns "slug"
+  """
+  videos_slug_unique
+}
+
+"""
+input type for incrementing numeric columns in table "videos"
+"""
+input videos_inc_input {
+  duration: Int
+  view_count: Int
+}
+
+"""
+input type for inserting data into table "videos"
+"""
+input videos_insert_input {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid
+  playlist_videos: playlist_videos_arr_rel_insert_input
+  public: Boolean
+  slug: String
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+  user_video_histories: user_video_history_arr_rel_insert_input
+  video_tags: video_tags_arr_rel_insert_input
+  video_url: String
+  video_views: video_views_arr_rel_insert_input
+  view_count: Int
+}
+
+"""aggregate max on columns"""
+type videos_max_fields {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid
+  slug: String
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+  video_url: String
+  view_count: Int
+}
+
+"""
+order by max() on columns of table "videos"
+"""
+input videos_max_order_by {
+  createdAt: order_by
+  description: order_by
+  duration: order_by
+  id: order_by
+  slug: order_by
+  source: order_by
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user_id: order_by
+  video_url: order_by
+  view_count: order_by
+}
+
+"""aggregate min on columns"""
+type videos_min_fields {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid
+  slug: String
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+  video_url: String
+  view_count: Int
+}
+
+"""
+order by min() on columns of table "videos"
+"""
+input videos_min_order_by {
+  createdAt: order_by
+  description: order_by
+  duration: order_by
+  id: order_by
+  slug: order_by
+  source: order_by
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user_id: order_by
+  video_url: order_by
+  view_count: order_by
+}
+
+"""
+response of any mutation on the table "videos"
+"""
+type videos_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [videos!]!
+}
+
+"""
+input type for inserting object relation for remote table "videos"
+"""
+input videos_obj_rel_insert_input {
+  data: videos_insert_input!
+  """upsert condition"""
+  on_conflict: videos_on_conflict
+}
+
+"""
+on_conflict condition type for table "videos"
+"""
+input videos_on_conflict {
+  constraint: videos_constraint!
+  update_columns: [videos_update_column!]! = []
+  where: videos_bool_exp
+}
+
+"""Ordering options when selecting data from "videos"."""
+input videos_order_by {
+  createdAt: order_by
+  description: order_by
+  duration: order_by
+  id: order_by
+  playlist_videos_aggregate: playlist_videos_aggregate_order_by
+  public: order_by
+  slug: order_by
+  source: order_by
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+  user_video_histories_aggregate: user_video_history_aggregate_order_by
+  video_tags_aggregate: video_tags_aggregate_order_by
+  video_url: order_by
+  video_views_aggregate: video_views_aggregate_order_by
+  view_count: order_by
+}
+
+"""primary key columns input for table: videos"""
+input videos_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "videos"
+"""
+enum videos_select_column {
+  """column name"""
+  createdAt
+  """column name"""
+  description
+  """column name"""
+  duration
+  """column name"""
+  id
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  source
+  """column name"""
+  status
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  video_url
+  """column name"""
+  view_count
+}
+
+"""
+select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "videos"
+"""
+enum videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "videos"
+"""
+enum videos_select_column_videos_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  public
+}
+
+"""
+input type for updating data in table "videos"
+"""
+input videos_set_input {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid
+  public: Boolean
+  slug: String
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+  video_url: String
+  view_count: Int
+}
+
+"""aggregate stddev on columns"""
+type videos_stddev_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by stddev() on columns of table "videos"
+"""
+input videos_stddev_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type videos_stddev_pop_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by stddev_pop() on columns of table "videos"
+"""
+input videos_stddev_pop_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type videos_stddev_samp_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by stddev_samp() on columns of table "videos"
+"""
+input videos_stddev_samp_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""
+Streaming cursor of the table "videos"
+"""
+input videos_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: videos_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input videos_stream_cursor_value_input {
+  createdAt: timestamptz
+  description: String
+  duration: Int
+  id: uuid
+  public: Boolean
+  slug: String
+  source: String
+  status: String
+  thumbnailUrl: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+  video_url: String
+  view_count: Int
+}
+
+"""aggregate sum on columns"""
+type videos_sum_fields {
+  duration: Int
+  view_count: Int
+}
+
+"""
+order by sum() on columns of table "videos"
+"""
+input videos_sum_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""
+update columns of table "videos"
+"""
+enum videos_update_column {
+  """column name"""
+  createdAt
+  """column name"""
+  description
+  """column name"""
+  duration
+  """column name"""
+  id
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  source
+  """column name"""
+  status
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  video_url
+  """column name"""
+  view_count
+}
+
+input videos_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: videos_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: videos_set_input
+  """filter the rows which have to be updated"""
+  where: videos_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type videos_var_pop_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by var_pop() on columns of table "videos"
+"""
+input videos_var_pop_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""aggregate var_samp on columns"""
+type videos_var_samp_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by var_samp() on columns of table "videos"
+"""
+input videos_var_samp_order_by {
+  duration: order_by
+  view_count: order_by
+}
+
+"""aggregate variance on columns"""
+type videos_variance_fields {
+  duration: Float
+  view_count: Float
+}
+
+"""
+order by variance() on columns of table "videos"
+"""
+input videos_variance_order_by {
+  duration: order_by
+  view_count: order_by
+}
