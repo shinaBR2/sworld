@@ -70,7 +70,7 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
 
   return {
     videos: data?.videos.map(transformVideoData) || [],
-    videoDetail: data?.videos_by_pk ?? {},
+    videoDetail: data?.videos_by_pk ?? null,
     isLoading,
     error,
   };

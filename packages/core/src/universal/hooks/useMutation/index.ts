@@ -9,7 +9,7 @@ interface UseMutationProps<TData, TVariables> {
   options?: Omit<UseMutationOptions<TData, unknown, TVariables>, 'mutationFn'>;
 }
 
-const useMutationRequest = <TData = unknown, TVariables extends object = {}>(
+const useMutationRequest = <TData = unknown, TVariables extends Record<string, unknown> = Record<string, unknown>>(
   props: UseMutationProps<TData, TVariables>
 ) => {
   const { document, getAccessToken, options } = props;
