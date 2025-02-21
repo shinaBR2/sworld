@@ -81,4 +81,4 @@ const useLoadVideos = (props: LoadVideosProps) => {
   };
 };
 
-export { useLoadVideos };
+export { useLoadVideos, type TransformedVideo };

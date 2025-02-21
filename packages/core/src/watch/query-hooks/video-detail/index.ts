@@ -44,11 +44,11 @@ const transformVideoData = (video: VideoItem) => {
   return {
     id: video.id,
     title: video.title,
-    description: video.description,
-    thumbnailUrl: video.thumbnailUrl,
-    source: video.source,
+    description: video.description || '',
+    thumbnailUrl: video.thumbnailUrl || '',
+    source: video.source || '',
     slug: video.slug || '',
-    duration: video.duration,
+    duration: video.duration || 0,
     createdAt: video.createdAt,
     user: video.user,
     lastWatchedAt: history?.last_watched_at ?? null,
@@ -76,4 +76,4 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   };
 };
 
-export { useLoadVideoDetail };
+export { useLoadVideoDetail, type VideoItem };
