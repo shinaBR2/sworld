@@ -11,9 +11,7 @@ interface UseRequestProps<TData, TVariables> {
   staleTime?: number;
 }
 
-const useRequest = <TData = unknown, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-  props: UseRequestProps<TData, TVariables>
-) => {
+const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseRequestProps<TData, TVariables>) => {
   const { queryKey, getAccessToken, document, variables, staleTime = 5 * 60 * 1000 } = props;
 
   const { hasuraUrl } = useQueryContext();
