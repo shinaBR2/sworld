@@ -5968,7 +5968,7 @@ export const UpdateVideoProgressDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<UpdateVideoProgressMutation, UpdateVideoProgressMutationVariables>;
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
-  videos(order_by: {createdAt: desc}) {
+  videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {
     id
     title
     description
@@ -5996,7 +5996,7 @@ export const VideoDetailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<VideoDetailQuery, VideoDetailQueryVariables>;
 export const AllVideosDocument = new TypedDocumentString(`
     query AllVideos @cached {
-  videos(order_by: {createdAt: desc}) {
+  videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {
     user_video_histories {
       last_watched_at
       progress_seconds

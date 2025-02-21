@@ -5,7 +5,7 @@ import { useRequest } from '../../../universal/hooks/use-request';
 
 const videosQuery = graphql(`
   query AllVideos @cached {
-    videos(order_by: { createdAt: desc }) {
+    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {
       user_video_histories {
         last_watched_at
         progress_seconds
