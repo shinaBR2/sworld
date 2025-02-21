@@ -1,5 +1,6 @@
 import { graphql } from '../../../graphql';
 import { VideoDetailQuery } from '../../../graphql/graphql';
+import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
 
 const videoDetailQuery = graphql(`
@@ -39,6 +40,12 @@ interface LoadVideoDetailProps {
 type VideoItem = VideoDetailQuery['videos'][0];
 
 const transformVideoData = (video: VideoItem) => {
+  if (!video.id || !video.title || !video.slug || !video.source || !video.createdAt) {
+    // TODO
+    // Use error code instead of hard code strings
+    throw new AppError('Required video fields are missing', 'Video data is missing', false);
+  }
+
   const history = video?.user_video_histories?.[0];
 
   return {
@@ -46,8 +53,8 @@ const transformVideoData = (video: VideoItem) => {
     title: video.title,
     description: video.description || '',
     thumbnailUrl: video.thumbnailUrl || '',
-    source: video.source || '',
-    slug: video.slug || '',
+    source: video.source,
+    slug: video.slug,
     duration: video.duration || 0,
     createdAt: video.createdAt,
     user: video.user,
