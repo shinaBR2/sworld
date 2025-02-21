@@ -1,16 +1,12 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import React, { Suspense } from 'react';
-import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { MEDIA_TYPES, TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks/videos';
-
-const ReactPlayer = React.lazy(() => import('react-player'));
+import { VideoContainer } from '../video-container';
 
 interface VideoCardProps extends WithLinkComponent {
   video: Video;
@@ -37,19 +33,6 @@ const VideoCardContent = (props: VideoCardContentProps) => {
     </CardContent>
   );
 };
-
-const VideoPlayerFallback = ({ title }: { title: string }) => (
-  <CardMedia
-    component="img"
-    image={defaultThumbnailUrl}
-    alt={title}
-    sx={{
-      aspectRatio: '16/9',
-      objectFit: 'cover',
-      bgcolor: '#e0e0e0',
-    }}
-  />
-);
 
 interface VideoProgressProps {
   video: TransformedMediaItem;
@@ -120,22 +103,12 @@ const VideoContent = (props: VideoContentProps) => {
 
   if ('source' in video) {
     return (
-      <Suspense fallback={<VideoPlayerFallback title={video.title} />}>
-        <ReactPlayer
-          url={video.source}
-          controls={true}
-          width="100%"
-          height="100%"
-          style={{
-            aspectRatio: '16/9',
-            backgroundColor: '#e0e0e0',
-          }}
-          light={video.thumbnailUrl ?? defaultThumbnailUrl}
-          onError={(error: unknown) => {
-            console.error('ReactPlayer Error:', error);
-          }}
-        />
-      </Suspense>
+      <VideoContainer
+        video={video}
+        onError={(err: unknown) => {
+          console.log(err);
+        }}
+      />
     );
   }
 
