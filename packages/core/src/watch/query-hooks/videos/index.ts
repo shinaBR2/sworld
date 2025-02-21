@@ -1,8 +1,11 @@
+import { graphql } from '../../../graphql';
+import { AllVideosQuery } from '../../../graphql/graphql';
+import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
 
-const videosQuery = `
+const videosQuery = graphql(`
   query AllVideos @cached {
-    videos(order_by: {createdAt: desc}) {
+    videos(order_by: { createdAt: desc }) {
       user_video_histories {
         last_watched_at
         progress_seconds
@@ -20,7 +23,7 @@ const videosQuery = `
       }
     }
   }
-`;
+`);
 
 interface LoadVideosProps {
   getAccessToken: () => Promise<string>;
@@ -28,24 +31,6 @@ interface LoadVideosProps {
 
 interface User {
   username: string;
-}
-
-interface VideoHistory {
-  last_watched_at: string;
-  progress_seconds: number;
-}
-
-interface VideoResponse {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  source: string;
-  slug: string;
-  duration: number;
-  createdAt: string;
-  user: User;
-  user_video_histories: VideoHistory[];
 }
 
 interface TransformedVideo {
@@ -57,24 +42,31 @@ interface TransformedVideo {
   slug: string;
   duration: number;
   createdAt: string;
-  user: User;
+  user: User | null;
   lastWatchedAt: string | null;
   progressSeconds: number;
 }
 
-const transformVideoData = (video: VideoResponse): TransformedVideo => {
+const transformVideoData = (video: AllVideosQuery['videos'][0]): TransformedVideo => {
+  if (!video.id || !video.title || !video.slug || !video.source || !video.createdAt) {
+    // TODO
+    // Use error code instead of hard code strings
+    throw new AppError('Required video fields are missing', 'Video data is missing', false);
+  }
+
   const history = video.user_video_histories[0];
+  const user: User | null = video.user ? { username: video.user.username || '' } : null;
 
   return {
     id: video.id,
     title: video.title,
-    description: video.description,
-    thumbnailUrl: video.thumbnailUrl,
+    description: video.description || '',
+    thumbnailUrl: video.thumbnailUrl || '',
     source: video.source,
     slug: video.slug,
-    duration: video.duration,
+    duration: video.duration || 0,
     createdAt: video.createdAt,
-    user: video.user,
+    user,
     lastWatchedAt: history?.last_watched_at ?? null,
     progressSeconds: history?.progress_seconds ?? 0,
   };
@@ -83,7 +75,7 @@ const transformVideoData = (video: VideoResponse): TransformedVideo => {
 const useLoadVideos = (props: LoadVideosProps) => {
   const { getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<{ videos: VideoResponse[] }>({
+  const { data, isLoading, error } = useRequest<AllVideosQuery>({
     queryKey: ['videos'],
     getAccessToken,
     document: videosQuery,
@@ -96,4 +88,4 @@ const useLoadVideos = (props: LoadVideosProps) => {
   };
 };
 
-export { useLoadVideos };
+export { useLoadVideos, type TransformedVideo };

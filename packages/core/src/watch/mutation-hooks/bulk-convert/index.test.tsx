@@ -2,8 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type FC, type PropsWithChildren } from 'react';
-import { useBulkConvertVideos, type BulkConvertResponse } from './';
+import { useBulkConvertVideos } from './';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { InsertVideosMutation } from '../../../graphql/graphql';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -157,7 +158,7 @@ describe('useBulkConvertVideos', () => {
 
   it('should properly type the response data', async () => {
     const onSuccess = vi.fn();
-    let capturedData: BulkConvertResponse | null = null;
+    let capturedData: InsertVideosMutation | null = null;
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
       mutateAsync: vi.fn().mockImplementation(async variables => {
@@ -181,7 +182,7 @@ describe('useBulkConvertVideos', () => {
       () =>
         useBulkConvertVideos({
           getAccessToken: mockGetAccessToken,
-          onSuccess: (data: BulkConvertResponse) => {
+          onSuccess: (data: InsertVideosMutation) => {
             onSuccess(data);
           },
         }),

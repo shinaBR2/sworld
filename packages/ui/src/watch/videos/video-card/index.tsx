@@ -118,7 +118,7 @@ const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
       <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={video.title}
-        creator={video.user.username}
+        creator={video.user?.username || ''}
         createdTime={formatCreatedDate(video.createdAt)}
       />
     </StyledCard>

@@ -47,6 +47,7 @@ describe('useLoadVideos', () => {
       user: { username: 'user1' },
       lastWatchedAt: '2024-01-02',
       progressSeconds: 30,
+      duration: 0,
     },
     {
       id: '2',
@@ -59,6 +60,7 @@ describe('useLoadVideos', () => {
       user: { username: 'user2' },
       lastWatchedAt: null,
       progressSeconds: 0,
+      duration: 0,
     },
   ];
 

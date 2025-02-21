@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { RequiredLinkComponent, Video } from '../interface';
+import { RequiredLinkComponent, VideoItem } from '../interface';
 import PlayCircle from '@mui/icons-material/PlayCircle';
 import { ResponsiveImage } from '../../../universal/images/image';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
@@ -21,7 +21,7 @@ interface ThumbnailProps {
 }
 
 interface VideoListItemProps extends RequiredLinkComponent {
-  video: Video;
+  video: VideoItem;
   isActive?: boolean;
 }
 
