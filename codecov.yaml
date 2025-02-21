@@ -26,6 +26,8 @@ ignore:
   - '**/[Ss]tyled*.{ts,tsx}' # Ignore files starting with Styled/styled
   - 'packages/core/src/graphql/**' # Ignore generated GraphQL file
   - '**/storybook-static/**/*' # Ignore storybook assets
+  - '**/vite.config.ts' # ignore config files
+  - '**/interface.ts' # ignore TypeScript interfaces
 
 parsers:
   javascript:
