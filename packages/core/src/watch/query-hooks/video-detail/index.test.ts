@@ -30,6 +30,7 @@ describe('useLoadVideoDetail', () => {
         progress_seconds: 30,
       },
     ],
+    duration: 600,
   };
 
   const mockVideoDetail = {
@@ -40,6 +41,7 @@ describe('useLoadVideoDetail', () => {
     slug: 'test-slug',
     createdAt: '2024-01-01',
     thumbnailUrl: 'test-thumbnail',
+    duration: 600,
   };
 
   const expectedTransformedVideo = {
@@ -55,6 +57,7 @@ describe('useLoadVideoDetail', () => {
     },
     lastWatchedAt: '2024-01-02',
     progressSeconds: 30,
+    duration: 600,
   };
 
   beforeEach(() => {
@@ -85,7 +88,7 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: {},
+      videoDetail: null,
       isLoading: true,
       error: undefined,
     });
@@ -120,7 +123,7 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: {},
+      videoDetail: null,
       isLoading: false,
     });
   });
@@ -137,7 +140,7 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: {},
+      videoDetail: null,
       isLoading: false,
       error: mockError,
     });
