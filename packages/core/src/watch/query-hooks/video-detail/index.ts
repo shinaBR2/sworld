@@ -5,7 +5,7 @@ import { useRequest } from '../../../universal/hooks/use-request';
 
 const videoDetailQuery = graphql(`
   query VideoDetail($id: uuid!) @cached {
-    videos(order_by: { createdAt: desc }) {
+    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {
       id
       title
       description
