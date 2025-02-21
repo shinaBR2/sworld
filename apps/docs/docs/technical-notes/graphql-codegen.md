@@ -4,7 +4,7 @@ sidebar_position: 12
 
 # Using graphql codegen with Turborepo
 
-Nothing worked the first time I set up graphql codegen according to the official document: https://the-guild.dev/graphql/codegen/docs/guides/react-query#prerequisites
+Nothing worked the first time I set up graphql codegen according to [the official document](https://the-guild.dev/graphql/codegen/docs/guides/react-query#prerequisites)
 
 After a few hours of deep diving, I finally figured it out.
 
