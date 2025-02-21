@@ -7,14 +7,24 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/*/index.mjs",
+      "types": "./dist/*/index.d.ts"
+    }
+  },
   "files": [
     "dist/**"
   ],
   "scripts": {
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts",
     "watch-codegen": "dotenvx run -- graphql-codegen --config codegen.ts --watch",
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
-    "build-watch": "tsup src/index.ts --watch --format esm,cjs --dts --external react",
+    "build": "rm -rf dist && NODE_OPTIONS=--max_old_space_size=8192 tsup",
+    "build-watch": "tsup --watch --no-dts",
     "clean": "rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
