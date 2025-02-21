@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
-// import { gql } from 'graphql-request';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 import { graphql } from '../../../graphql';
+import { UpdateVideoProgressMutation } from '../../../graphql/graphql';
 
 interface UpdateVideoProgressVars {
   videoId: string;
@@ -77,8 +77,7 @@ const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgress
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const currentProgressRef = useRef<number>(0);
 
-  const { mutate } = useMutationRequest<unknown, UpdateVideoProgressVars>({
-    // @ts-ignore
+  const { mutate } = useMutationRequest<UpdateVideoProgressMutation, UpdateVideoProgressVars>({
     document: UPDATE_VIDEO_PROGRESS,
     getAccessToken,
     options: {
