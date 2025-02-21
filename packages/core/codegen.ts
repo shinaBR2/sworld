@@ -1,30 +1,33 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
-// TODO
-// Get hasura admin secret from env
+const hasuraUrl = process.env.HASURA_GRAPHQL_URL as string;
+const hasuraAdminSecret = process.env.HASURA_ADMIN_SECRET as string;
+
 const config: CodegenConfig = {
   schema: [
     {
-      'https://relieved-panther-58.hasura.app/v1/graphql': {
+      [hasuraUrl]: {
         headers: {
-          'x-hasura-admin-secret': 'REPLACE_ADMIN_SECRET',
+          'x-hasura-admin-secret': hasuraAdminSecret,
         },
       },
     },
   ],
-  documents: ['src/**/*.tsx'],
+  documents: ['src/**/*.{ts,tsx}'],
   ignoreNoDocuments: true,
   generates: {
     './src/graphql/': {
       preset: 'client',
-      plugins: [],
+      config: {
+        documentMode: 'string',
+      },
     },
-    // './schema.graphql': {
-    //   plugins: ['schema-ast'],
-    //   config: {
-    //     includeDirectives: true,
-    //   },
-    // },
+    './schema.graphql': {
+      plugins: ['schema-ast'],
+      config: {
+        includeDirectives: true,
+      },
+    },
   },
 };
 

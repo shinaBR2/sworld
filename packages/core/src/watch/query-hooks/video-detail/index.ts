@@ -1,8 +1,11 @@
+import { graphql } from '../../../graphql';
+import { VideoDetailQuery } from '../../../graphql/graphql';
+import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
 
-const videoDetailQuery = `
-  query VideoDetail ($id: uuid!) @cached {
-    videos(order_by: {createdAt: desc})  {
+const videoDetailQuery = graphql(`
+  query VideoDetail($id: uuid!) @cached {
+    videos(order_by: { createdAt: desc }) {
       id
       title
       description
@@ -27,60 +30,32 @@ const videoDetailQuery = `
       description
     }
   }
-`;
-
-interface User {
-  username: string;
-}
-
-interface VideoHistory {
-  last_watched_at: string;
-  progress_seconds: number;
-}
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  source: string;
-  slug: string;
-  duration: number;
-  createdAt: string;
-  user: User;
-  user_video_histories?: VideoHistory[];
-}
-
-interface VideoDetail {
-  id: string;
-  source: string;
-  thumbnailUrl: string;
-  title: string;
-  description: string;
-  duration: number;
-}
+`);
 
 interface LoadVideoDetailProps {
   id: string;
   getAccessToken: () => Promise<string>;
 }
 
-interface VideoDetailResponse {
-  videos: Video[];
-  videos_by_pk: VideoDetail | null;
-}
+type VideoItem = VideoDetailQuery['videos'][0];
 
-const transformVideoData = (video: Video) => {
+const transformVideoData = (video: VideoItem) => {
+  if (!video.id || !video.title || !video.slug || !video.source || !video.createdAt) {
+    // TODO
+    // Use error code instead of hard code strings
+    throw new AppError('Required video fields are missing', 'Video data is missing', false);
+  }
+
   const history = video?.user_video_histories?.[0];
 
   return {
     id: video.id,
     title: video.title,
-    description: video.description,
-    thumbnailUrl: video.thumbnailUrl,
+    description: video.description || '',
+    thumbnailUrl: video.thumbnailUrl || '',
     source: video.source,
     slug: video.slug,
-    duration: video.duration,
+    duration: video.duration || 0,
     createdAt: video.createdAt,
     user: video.user,
     lastWatchedAt: history?.last_watched_at ?? null,
@@ -91,7 +66,7 @@ const transformVideoData = (video: Video) => {
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<VideoDetailResponse>({
+  const { data, isLoading, error } = useRequest<VideoDetailQuery, { id: string }>({
     queryKey: ['video-detail', id],
     getAccessToken,
     document: videoDetailQuery,
@@ -102,10 +77,10 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
 
   return {
     videos: data?.videos.map(transformVideoData) || [],
-    videoDetail: data?.videos_by_pk ?? {},
+    videoDetail: data?.videos_by_pk ?? null,
     isLoading,
     error,
   };
 };
 
-export { useLoadVideoDetail };
+export { useLoadVideoDetail, type VideoItem };

@@ -1,9 +1,5 @@
 import { watchQueryHooks } from 'core';
 
-interface Uploader {
-  username: string;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GenericLinkProps<T = any> {
   to: string;
@@ -13,35 +9,36 @@ interface GenericLinkProps<T = any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type LinkComponentType<T = any> = React.ComponentType<GenericLinkProps<T>>;
+type LinkComponentType<T = any> = React.ComponentType<GenericLinkProps<T>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RequiredLinkComponent<T = any> = {
+type RequiredLinkComponent<T = any> = {
   LinkComponent: LinkComponentType<T>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface WithLinkComponent<T = any> {
+interface WithLinkComponent<T = any> {
   asLink?: boolean;
   LinkComponent?: LinkComponentType<T>;
 }
 
-export interface Video {
-  id: string;
-  title: string;
-  source: string;
-  thumbnailUrl?: string;
-  createdAt: string;
-  duration?: number;
-  user: Uploader;
-  progressSeconds?: number;
-  lastWatchedAt?: string | null;
-}
+type Video = ReturnType<typeof watchQueryHooks.useLoadVideos>['videos'][0];
+type VideoItem = ReturnType<typeof watchQueryHooks.useLoadVideoDetail>['videos'][0];
 
-export interface HomeContainerProps extends RequiredLinkComponent {
+interface HomeContainerProps extends RequiredLinkComponent {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
 
-export interface VideoDetailContainerProps extends RequiredLinkComponent {
+interface VideoDetailContainerProps extends RequiredLinkComponent {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideoDetail>;
 }
+
+export {
+  type LinkComponentType,
+  type RequiredLinkComponent,
+  type WithLinkComponent,
+  type Video,
+  type VideoItem,
+  type HomeContainerProps,
+  type VideoDetailContainerProps,
+};
