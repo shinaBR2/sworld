@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { VideoCard } from '.';
 import '@testing-library/jest-dom';
 
@@ -12,6 +12,14 @@ vi.mock('react-player', () => ({
   )),
 }));
 
+const renderWithAct = async (component: React.ReactElement) => {
+  let result: ReturnType<typeof render>;
+  await act(async () => {
+    result = render(component);
+  });
+  return result!;
+};
+
 describe('VideoCard Component', () => {
   const mockVideo = {
     id: '1',
@@ -19,7 +27,8 @@ describe('VideoCard Component', () => {
     source: 'https://example.com/video.mp4',
     thumbnailUrl: 'https://example.com/thumbnail.jpg',
     createdAt: '2024-01-01T00:00:00.000Z',
-    duration: '5:30',
+    duration: 300,
+    progressSeconds: 0,
     user: {
       username: 'testuser',
     },
@@ -29,71 +38,64 @@ describe('VideoCard Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders video information correctly', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders video information correctly', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     // Check if title is rendered
     expect(screen.getByText('Test Video')).toBeInTheDocument();
 
     // Check if username and date are rendered
     expect(screen.getByText('testuser • 2024-01-01')).toBeInTheDocument();
-
-    // Check if duration is rendered
-    expect(screen.getByText('5:30')).toBeInTheDocument();
   });
 
-  it('uses default thumbnail when thumbnail prop is not provided', () => {
+  it('uses default thumbnail when thumbnail prop is not provided', async () => {
     const videoWithoutThumbnail = {
       ...mockVideo,
       thumbnailUrl: undefined,
     };
 
-    render(<VideoCard video={videoWithoutThumbnail} />);
+    await renderWithAct(<VideoCard video={videoWithoutThumbnail} />);
 
     const player = screen.getByTestId('mock-react-player');
     expect(player.getAttribute('data-light')).toContain('data:image/svg+xml');
   });
 
-  it('renders with provided thumbnail', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders with provided thumbnail', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     const player = screen.getByTestId('mock-react-player');
-    expect(player.getAttribute('data-light')).toBe(
-      'https://example.com/thumbnail.jpg'
-    );
+    expect(player.getAttribute('data-light')).toBe('https://example.com/thumbnail.jpg');
   });
 
-  it('handles video without duration', () => {
+  it('handles video without duration', async () => {
     const videoWithoutDuration = {
       ...mockVideo,
       duration: undefined,
     };
 
-    render(<VideoCard video={videoWithoutDuration} />);
+    await renderWithAct(<VideoCard video={videoWithoutDuration} />);
 
     // Duration element should not be present
     const durationElements = screen.queryByText(/^\d+:\d+$/);
     expect(durationElements).not.toBeInTheDocument();
   });
 
-  it('renders ReactPlayer with correct props', () => {
-    render(<VideoCard video={mockVideo} />);
+  it('renders ReactPlayer with correct props', async () => {
+    await renderWithAct(<VideoCard video={mockVideo} />);
 
     const player = screen.getByTestId('mock-react-player');
     expect(player).toBeInTheDocument();
-    expect(player.getAttribute('data-url')).toBe(
-      'https://example.com/video.mp4'
-    );
+    expect(player.getAttribute('data-url')).toBe('https://example.com/video.mp4');
   });
 
-  it('truncates long titles properly', () => {
+  it('truncates long titles properly', async () => {
     const videoWithLongTitle = {
       ...mockVideo,
       title:
         'This is a very long title that should be truncated because it exceeds the maximum length allowed for the card title display area',
     };
 
-    render(<VideoCard video={videoWithLongTitle} />);
+    await renderWithAct(<VideoCard video={videoWithLongTitle} />);
 
     const titleElement = screen.getByText(videoWithLongTitle.title);
     expect(titleElement).toHaveStyle({
@@ -101,5 +103,51 @@ describe('VideoCard Component', () => {
       overflow: 'hidden',
       display: '-webkit-box',
     });
+  });
+
+  it('does not render progress bar when progressSeconds is 0', async () => {
+    const videoWithNoProgress = { ...mockVideo, progressSeconds: 0 };
+    await renderWithAct(<VideoCard video={videoWithNoProgress} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).toBeNull();
+  });
+
+  it('renders progress bar with correct width when progressSeconds is set', async () => {
+    const videoWithProgress = { ...mockVideo, progressSeconds: 150 }; // Halfway through
+    await renderWithAct(<VideoCard video={videoWithProgress} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeNull();
+
+    // Check aria-valuenow for percentage
+    expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('renders progress bar with 100% width when progressSeconds equals duration', async () => {
+    const videoFullyWatched = { ...mockVideo, progressSeconds: 300 }; // Full duration
+    await renderWithAct(<VideoCard video={videoFullyWatched} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).not.toBeNull();
+
+    // Check aria-valuenow for percentage
+    expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('does not render progress bar when duration is not provided', async () => {
+    const videoWithoutDuration = {
+      ...mockVideo,
+      duration: undefined,
+      progressSeconds: 150,
+    };
+    await renderWithAct(<VideoCard video={videoWithoutDuration} asLink />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).toBeNull();
   });
 });

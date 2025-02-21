@@ -1,3 +1,3 @@
-import { compareString } from './stringHelpers';
+import { compareString, slugify } from './stringHelpers';
 
-export { compareString };
+export { compareString, slugify };

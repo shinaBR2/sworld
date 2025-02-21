@@ -1,187 +1,143 @@
-import React, { useEffect, useState } from 'react';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-import CircularProgress from '@mui/material/CircularProgress';
-import CloseIcon from '@mui/icons-material/Close';
+import React, { useState } from 'react';
+import { canPlayUrls } from './utils';
+import { DialogState } from './types';
+import { DialogComponent } from './dialog';
+import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
 import { texts } from './texts';
-import { StyledDialog, StyledCloseButton, StyledResultsStack } from './styled';
-import DialogContent from '@mui/material/DialogContent';
 
+const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit?: (urls: string[]) => Promise<void>;
 }
 
-interface ValidationResult {
-  url: string;
-  isValid: boolean;
-}
+const CLOSE_DELAY_MS = 3000;
+const defaultState: DialogState = {
+  title: '',
+  url: '',
+  description: '',
+  isSubmitting: false,
+  error: null,
+  closeDialogCountdown: null,
+};
 
-export const VideoUploadDialog: React.FC<VideoUploadDialogProps> = props => {
-  const { open, onOpenChange, onSubmit } = props;
-  const [urls, setUrls] = useState('');
-  const [validating, setValidating] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [results, setResults] = useState<ValidationResult[]>([]);
+/**
+ * Stateful component holding state and hooks
+ * @param param0
+ * @returns
+ */
+const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
+  const [state, setState] = useState<DialogState>({
+    ...defaultState,
+  });
 
-  const handleClose = () => onOpenChange(false);
+  const { getAccessToken } = Auth.useAuthContext();
+  const { mutateAsync: bulkConvert } = watchMutationHooks.useBulkConvertVideos({
+    getAccessToken,
+  });
 
-  const validateUrls = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setValidating(true);
+  const handleClose = () => {
+    onOpenChange(false);
+  };
 
-    // TODO
-    // Handle case auto transform cases from services like Cloudinary
-    const urlList = urls
-      .split(',')
-      .map(url => url.trim())
-      .filter(Boolean);
-    const validationResults = await Promise.all(
-      urlList.map(async url => {
-        const canPlay = (await import('react-player')).default.canPlay;
-        return {
-          url: url.trim(),
-          isValid: canPlay(url.trim()),
-        };
-      })
-    );
-
-    setResults(validationResults);
-    setValidating(false);
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setState(prev => ({
+      ...prev,
+      title: newValue,
+    }));
+  };
+  const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setState(prev => ({
+      ...prev,
+      description: newValue,
+    }));
+  };
+  const onUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.trim();
+    setState(prev => ({
+      ...prev,
+      url: newValue,
+      error: null,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!onSubmit) return;
+    setState(prev => ({ ...prev, isSubmitting: true, error: null }));
 
-    setSubmitting(true);
+    const validationResults = await canPlayUrls([state.url]);
+    const isValid = validationResults.length === 1 && validationResults[0].isValid;
+
+    if (!isValid) {
+      return setState(prev => ({
+        ...prev,
+        isSubmitting: false,
+        error: texts.errors.invalidUrl,
+      }));
+    }
+
     try {
-      const validUrls = results
-        .filter(result => result.isValid)
-        .map(result => result.url);
+      const { title, description = '', url } = state;
+      const response = await bulkConvert({
+        objects: [
+          {
+            title,
+            description,
+            slug: commonHelpers.slugify(title),
+            video_url: url,
+          },
+        ],
+      });
 
-      await onSubmit(validUrls);
-      handleClose();
+      if (response.insert_videos?.returning.length !== 1) {
+        // Unknown error
+        return setState(prev => ({
+          ...prev,
+          isSubmitting: false,
+          error: texts.errors.failedToSave,
+        }));
+      }
+
+      setState({
+        ...defaultState,
+        error: '', // Trigger cooldown
+        closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+      });
     } catch (error) {
-      console.error('Error submitting videos:', error);
-      // You might want to show an error message to the user here
-    } finally {
-      setSubmitting(false);
+      // TODO
+      // Determine retry ability
+      const errorMessage = error instanceof Error ? error.message : texts.errors.unexpected;
+      setState(prev => ({ ...prev, isSubmitting: false, error: errorMessage }));
     }
   };
 
-  const allResultsValid =
-    results.length > 0 && results.every(result => result.isValid);
-  const showSubmitButton = allResultsValid && onSubmit;
-  const isBusy = validating || submitting;
-
-  useEffect(() => {
-    if (!urls.trim()) {
-      setResults([]);
-    }
-  }, [urls]);
+  useCountdown({
+    duration: CLOSE_DELAY_MS / 1000,
+    enabled: state.error === '' && !!state.closeDialogCountdown,
+    onTick: (remaining: number) => {
+      setState(prev => ({
+        ...prev,
+        closeDialogCountdown: remaining,
+      }));
+    },
+    onComplete: handleClose,
+  });
 
   return (
-    <StyledDialog
+    <DialogComponent
       open={open}
-      onClose={isBusy ? undefined : handleClose}
-      aria-labelledby="video-upload-dialog-title"
-      disableEscapeKeyDown
-    >
-      <DialogTitle id="video-upload-dialog-title">
-        {texts.dialog.title}
-        <StyledCloseButton
-          onClick={handleClose}
-          aria-label={texts.dialog.closeButton}
-        >
-          <CloseIcon />
-        </StyledCloseButton>
-      </DialogTitle>
-
-      <DialogContent>
-        <Box
-          component="form"
-          onSubmit={validateUrls}
-          noValidate
-          aria-label="Video URL validation form"
-          sx={{ mt: 2 }}
-        >
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            value={urls}
-            onChange={e => setUrls(e.target.value)}
-            placeholder={texts.form.urlInput.placeholder}
-            label={texts.form.urlInput.label}
-            helperText={texts.form.urlInput.helperText}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            aria-label={texts.form.urlInput.label}
-            inputProps={{ 'data-testid': 'url-input-textarea' }}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isBusy || !urls.trim()}
-            sx={{ mb: 2 }}
-            aria-busy={isBusy}
-            onClick={showSubmitButton ? handleSubmit : validateUrls}
-          >
-            {submitting ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={20} color="inherit" />
-                {texts.form.submitButton.submitting}
-              </Box>
-            ) : validating ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={20} color="inherit" />
-                {texts.form.submitButton.validating}
-              </Box>
-            ) : showSubmitButton ? (
-              texts.form.submitButton.submit
-            ) : (
-              texts.form.submitButton.default
-            )}
-          </Button>
-
-          {results.length > 0 && (
-            <StyledResultsStack
-              spacing={1}
-              role="list"
-              aria-label="Validation results"
-            >
-              {results.map((result, index) => (
-                <Alert
-                  key={index}
-                  severity={result.isValid ? 'success' : 'error'}
-                  role="listitem"
-                  aria-label={
-                    result.isValid
-                      ? texts.validation.valid.ariaLabel
-                      : texts.validation.invalid.ariaLabel
-                  }
-                >
-                  <Box sx={{ wordBreak: 'break-all' }}>{result.url}</Box>
-                  <Box sx={{ fontSize: '0.75rem', mt: 0.5 }}>
-                    {result.isValid
-                      ? texts.validation.valid.status
-                      : texts.validation.invalid.status}
-                  </Box>
-                </Alert>
-              ))}
-            </StyledResultsStack>
-          )}
-        </Box>
-      </DialogContent>
-    </StyledDialog>
+      state={state}
+      handleClose={handleClose}
+      formProps={{
+        onTitleChange,
+        onUrlChange,
+        onDescriptionChange,
+      }}
+      handleSubmit={handleSubmit}
+    />
   );
 };
 
-export default VideoUploadDialog;
+export { VideoUploadDialog, CLOSE_DELAY_MS };

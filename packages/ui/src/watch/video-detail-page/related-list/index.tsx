@@ -1,19 +1,16 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { RequiredLinkComponent, Video } from '../../videos/interface';
+import { RequiredLinkComponent, VideoItem } from '../../videos/interface';
 import { VideoListItem } from '../../videos/list-item';
 
 interface RelatedListProps extends RequiredLinkComponent {
-  videos: Video[];
+  videos: VideoItem[];
   title?: string;
+  activeId?: string;
 }
 
-const RelatedList = ({
-  videos,
-  title = 'Related videos',
-  LinkComponent,
-}: RelatedListProps) => {
+const RelatedList = ({ videos, title = 'Related videos', activeId, LinkComponent }: RelatedListProps) => {
   return (
     <Box>
       <Typography
@@ -33,6 +30,7 @@ const RelatedList = ({
             <VideoListItem
               key={video.id}
               video={video}
+              isActive={activeId === video.id}
               LinkComponent={LinkComponent}
             />
           </Box>

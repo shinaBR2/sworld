@@ -11,20 +11,22 @@
     "dist/**"
   ],
   "scripts": {
-    "codegen": "graphql-codegen --config codegen.ts",
-    "watch-codegen": "graphql-codegen --config codegen.ts --watch",
+    "codegen": "dotenvx run -- graphql-codegen --config codegen.ts",
+    "watch-codegen": "dotenvx run -- graphql-codegen --config codegen.ts --watch",
     "build": "tsup src/index.ts --format esm,cjs --dts --external react",
     "build-watch": "tsup src/index.ts --watch --format esm,cjs --dts --external react",
     "clean": "rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
-    "test": "vitest"
+    "test": "vitest --coverage"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.16",
+    "@dotenvx/dotenvx": "^1.36.0",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/schema-ast": "^4.1.0",
     "@graphql-codegen/typed-document-node": "^5.0.12",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@parcel/watcher": "^2.5.0",
     "@tanstack/eslint-plugin-query": "^5.60.1",
     "@testing-library/react": "^16.1.0",
@@ -32,6 +34,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
+    "@vitest/coverage-v8": "^2.1.8",
     "eslint-config-custom": "workspace:*",
     "jsdom": "^25.0.1",
     "react": "^18.2.0",
