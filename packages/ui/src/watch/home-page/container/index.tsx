@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { HomeContainerProps } from '../../videos/interface';
 import { VideoCard } from '../../videos/video-card';
+import { generateVideoDetailRoute } from 'core/watch/routes';
 
 const Loading = () => {
   return (
@@ -30,7 +31,12 @@ const HomeContainer = (props: HomeContainerProps) => {
         {!isLoading &&
           videos.map(video => (
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={video.id}>
-              <VideoCard video={video} asLink={true} LinkComponent={LinkComponent} />
+              <VideoCard
+                video={video}
+                asLink={true}
+                LinkComponent={LinkComponent}
+                linkProps={generateVideoDetailRoute(video)}
+              />
             </Grid>
           ))}
       </Grid>

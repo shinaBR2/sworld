@@ -20,6 +20,10 @@ type RequiredLinkComponent<T = any> = {
 interface WithLinkComponent<T = any> {
   asLink?: boolean;
   LinkComponent?: LinkComponentType<T>;
+  linkProps?: {
+    to: string;
+    params?: T;
+  };
 }
 
 type Video = ReturnType<typeof watchQueryHooks.useLoadVideos>['videos'][0];

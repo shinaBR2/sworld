@@ -5,7 +5,7 @@ import { Layout } from '../components/layout';
 import React from 'react';
 
 function VideoDetails() {
-  const { videoId } = Route.useParams();
+  const { id: videoId, slug } = Route.useParams();
   const authContext = Auth.useAuthContext();
   const videoResult = watchQueryHooks.useLoadVideoDetail({
     getAccessToken: authContext.getAccessToken,
@@ -19,6 +19,6 @@ function VideoDetails() {
   );
 }
 
-export const Route = createLazyFileRoute('/$videoId')({
+export const Route = createLazyFileRoute('/video/$slug/$id')({
   component: VideoDetails,
 });

@@ -3,7 +3,7 @@ import { MEDIA_TYPES, TransformedMediaItem } from '../query-hooks/videos';
 const generateVideoDetailRoute = (video: TransformedMediaItem) => {
   if (video.type === MEDIA_TYPES.VIDEO) {
     return {
-      to: '/video/$slug-$id',
+      to: '/video/$slug/$id',
       params: {
         slug: video.slug,
         id: video.id,
@@ -13,7 +13,7 @@ const generateVideoDetailRoute = (video: TransformedMediaItem) => {
 
   if (video.type === MEDIA_TYPES.PLAYLIST) {
     return {
-      to: '/playlist/$slug-$id',
+      to: '/playlist/$slug/$id',
       params: {
         slug: video.slug,
         id: video.id,

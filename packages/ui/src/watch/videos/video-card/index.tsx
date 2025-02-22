@@ -115,7 +115,9 @@ const VideoContent = (props: VideoContentProps) => {
   return null;
 };
 
-const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
+const VideoCard = (props: VideoCardProps) => {
+  const { video, asLink, LinkComponent, linkProps } = props;
+
   const cardContent = (
     <StyledCard>
       <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
@@ -129,9 +131,10 @@ const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
     </StyledCard>
   );
 
-  if (asLink && LinkComponent) {
+  if (asLink && LinkComponent && linkProps) {
+    console.log(`linkProps`, linkProps);
     return (
-      <LinkComponent to="/$videoId" params={{ videoId: video.id }} style={{ textDecoration: 'none' }}>
+      <LinkComponent {...linkProps} style={{ textDecoration: 'none' }}>
         {cardContent}
       </LinkComponent>
     );
