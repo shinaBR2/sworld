@@ -111,8 +111,7 @@ export const NarrowContainer: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Header component in a narrow container (600px) to demonstrate responsive behavior.',
+        story: 'Header component in a narrow container (600px) to demonstrate responsive behavior.',
       },
     },
   },

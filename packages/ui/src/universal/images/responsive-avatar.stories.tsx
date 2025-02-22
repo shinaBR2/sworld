@@ -28,8 +28,7 @@ const meta: Meta<typeof ResponsiveAvatar> = {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          'A responsive avatar component with built-in Cloudinary support.',
+        component: 'A responsive avatar component with built-in Cloudinary support.',
       },
     },
   },
@@ -44,8 +43,7 @@ const meta: Meta<typeof ResponsiveAvatar> = {
     },
     sizes: {
       control: 'text',
-      description:
-        'Sizes attribute for responsive images (especially useful for Cloudinary)',
+      description: 'Sizes attribute for responsive images (especially useful for Cloudinary)',
       defaultValue: undefined,
     },
     widths: {

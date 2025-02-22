@@ -3,13 +3,7 @@ import { GameScene } from '../scenes/game';
 export default class Dust extends Phaser.GameObjects.Sprite {
   scene: GameScene;
 
-  constructor(
-    scene: GameScene,
-    x: number,
-    y: number,
-    name = 'dust',
-    tween = false
-  ) {
+  constructor(scene: GameScene, x: number, y: number, name = 'dust', tween = false) {
     super(scene, x, y, name);
     this.scene = scene;
     this.name = name;

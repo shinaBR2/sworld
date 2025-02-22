@@ -6,11 +6,7 @@ interface FullWidthContainerProps {
 }
 
 const FullWidthContainer = (props: FullWidthContainerProps) => {
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {props.children}
-    </Box>
-  );
+  return <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>{props.children}</Box>;
 };
 
 export { FullWidthContainer };

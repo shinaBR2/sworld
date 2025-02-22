@@ -37,16 +37,14 @@ export const Loaded: Story = {
             id: 'uuid-1',
             src: 'https://example.com/song.mp3',
             name: 'Unravel',
-            image:
-              'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp',
+            image: 'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp',
             artistName: 'TK',
           },
           {
             id: 'uuid-2',
             src: 'https://example.com/song.mp3',
             name: 'Unity',
-            image:
-              'https://res.cloudinary.com/shinabr2/image/upload/v1672487897/Public/Images/GOSICK.jpg',
+            image: 'https://res.cloudinary.com/shinabr2/image/upload/v1672487897/Public/Images/GOSICK.jpg',
             artistName: 'Lisa Komine',
           },
         ]}

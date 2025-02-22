@@ -21,14 +21,7 @@ const FeelingList = (props: FeelingListProps) => {
   const { tags: feelings } = data;
 
   return (
-    <Stack
-      role="radiogroup"
-      aria-label="feeling list"
-      direction="row"
-      spacing={1}
-      my={2}
-      sx={{ overflowX: 'auto' }}
-    >
+    <Stack role="radiogroup" aria-label="feeling list" direction="row" spacing={1} my={2} sx={{ overflowX: 'auto' }}>
       <Chip
         label="Default"
         color={!activeId ? 'primary' : 'default'}

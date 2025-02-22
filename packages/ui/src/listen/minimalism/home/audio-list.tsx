@@ -75,8 +75,7 @@ const Content = (props: AudioListProps) => {
   }, [activeFeelingId]);
 
   const hasNoItem = !list.length;
-  const currentAudio =
-    list[typeof currentIndex === 'number' ? currentIndex : 0];
+  const currentAudio = list[typeof currentIndex === 'number' ? currentIndex : 0];
   const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
 
   if (hasNoItem) {
@@ -89,21 +88,13 @@ const Content = (props: AudioListProps) => {
         <Grid item md={8} sm={6} xs={0}>
           <Card sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }}>
             <Suspense fallback={<PlayingListSkeleton />}>
-              <PlayingList
-                audioList={list}
-                onItemSelect={onItemSelect}
-                currentId={currentAudio.id}
-              />
+              <PlayingList audioList={list} onItemSelect={onItemSelect} currentId={currentAudio.id} />
             </Suspense>
           </Card>
         </Grid>
       )}
       <Grid item md={4} sm={6} xs={12} container justifyContent="center">
-        <MusicWidget
-          audioList={list}
-          hookResult={hookResult}
-          onItemSelect={onItemSelect}
-        />
+        <MusicWidget audioList={list} hookResult={hookResult} onItemSelect={onItemSelect} />
       </Grid>
     </Grid>
   );

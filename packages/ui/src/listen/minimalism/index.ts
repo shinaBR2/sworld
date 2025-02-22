@@ -6,12 +6,4 @@ import { AudioList } from './home/audio-list';
 import { MainContainer } from './home/main-container';
 import { SettingsPanel } from './home/settings';
 
-export {
-  MinimalismThemeProvider,
-  MusicWidget,
-  Header,
-  SettingsPanel,
-  FeelingList,
-  AudioList,
-  MainContainer,
-};
+export { MinimalismThemeProvider, MusicWidget, Header, SettingsPanel, FeelingList, AudioList, MainContainer };

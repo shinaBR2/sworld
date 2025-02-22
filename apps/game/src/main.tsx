@@ -15,16 +15,10 @@ declare module '@tanstack/react-router' {
 }
 
 const validateEnvVars = () => {
-  const required = [
-    'VITE_AUTH0_DOMAIN',
-    'VITE_AUTH0_CLIENT_ID',
-    'VITE_HASURA_DOMAIN',
-  ];
+  const required = ['VITE_AUTH0_DOMAIN', 'VITE_AUTH0_CLIENT_ID', 'VITE_HASURA_DOMAIN'];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}`
-    );
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
 };
 

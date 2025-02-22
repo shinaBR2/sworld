@@ -6,9 +6,9 @@ interface StyledAvatarProps extends CardProps {
   isActive: boolean;
 }
 
-const StyledAvatar: StyledComponent<StyledAvatarProps> = styled(
-  ({ isActive, ...props }: StyledAvatarProps) => <Card {...props} />
-)<{ isActive: boolean }>(({ theme, isActive }) => ({
+const StyledAvatar: StyledComponent<StyledAvatarProps> = styled(({ isActive, ...props }: StyledAvatarProps) => (
+  <Card {...props} />
+))<{ isActive: boolean }>(({ theme, isActive }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -19,9 +19,7 @@ const StyledAvatar: StyledComponent<StyledAvatarProps> = styled(
   textAlign: 'center',
   cursor: 'pointer',
   border: '2px solid',
-  borderColor: isActive
-    ? theme.palette.primary.main
-    : theme.palette.grey['A200'],
+  borderColor: isActive ? theme.palette.primary.main : theme.palette.grey['A200'],
 }));
 
 export { StyledAvatar };

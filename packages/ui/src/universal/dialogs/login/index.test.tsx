@@ -56,9 +56,7 @@ describe('LoginDialog', () => {
   it('renders dialog content with correct MUI classes', () => {
     render(<LoginDialog />);
 
-    const dialogContent = screen
-      .getByTestId('dialog')
-      .querySelector('.MuiDialogContent-root');
+    const dialogContent = screen.getByTestId('dialog').querySelector('.MuiDialogContent-root');
     expect(dialogContent).toBeInTheDocument();
   });
 

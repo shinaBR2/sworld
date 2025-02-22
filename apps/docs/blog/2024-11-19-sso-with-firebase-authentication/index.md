@@ -197,9 +197,7 @@ const centralAuth = {
 // 2. Client-side implementation
 async function handleCrossDomainAuth() {
   if (hasValidSharedCookie()) {
-    const firebaseToken = await centralAuth.validateSession(
-      getCookie('SESSION_ID')
-    );
+    const firebaseToken = await centralAuth.validateSession(getCookie('SESSION_ID'));
     await signInWithCustomToken(auth, firebaseToken);
   }
 }

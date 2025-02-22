@@ -209,9 +209,7 @@ describe('useFeatureFlagSubscription', () => {
       error: null,
     });
 
-    const { result, rerender } = renderHook(() =>
-      useFeatureFlagSubscription(mockUrl)
-    );
+    const { result, rerender } = renderHook(() => useFeatureFlagSubscription(mockUrl));
     const firstResult = result.current.data;
 
     // Rerender with same data

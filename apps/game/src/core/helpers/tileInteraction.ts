@@ -11,14 +11,7 @@ interface CheckTileInteractionParams {
 }
 
 const checkTileInteraction = (params: CheckTileInteractionParams): boolean => {
-  const {
-    gridEngine,
-    layer,
-    propertyKey,
-    characterId = 'player',
-    onInteract,
-    interactKey,
-  } = params;
+  const { gridEngine, layer, propertyKey, characterId = 'player', onInteract, interactKey } = params;
 
   const position = gridEngine.getPosition(characterId);
   const facing = gridEngine.getFacingDirection(characterId);

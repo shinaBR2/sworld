@@ -22,12 +22,7 @@ const SignIn = (props: SignInProps) => {
           title="beach"
         />
         <Box mt={2}>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={onSubmit}
-            startIcon={<GoogleIcon />}
-          >
+          <Button fullWidth variant="outlined" onClick={onSubmit} startIcon={<GoogleIcon />}>
             Sign in with Google
           </Button>
         </Box>
