@@ -20,10 +20,7 @@ interface PlayingListProps {
   onSelect: (id: string) => void;
 }
 
-const PlayingList = (
-  props: PlayingListProps,
-  ref: Ref<HTMLElement> | undefined
-) => {
+const PlayingList = (props: PlayingListProps, ref: Ref<HTMLElement> | undefined) => {
   const { audioList, onSelect, currentId } = props;
 
   return (

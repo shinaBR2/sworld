@@ -29,12 +29,7 @@ export const LoginDialog = (props: LoginDialogProps) => {
           }}
         >
           <Typography variant="h5">{texts.welcome}</Typography>
-          <Button
-            variant="outlined"
-            startIcon={<GoogleIcon />}
-            sx={{ width: '100%', py: 1 }}
-            onClick={onAction}
-          >
+          <Button variant="outlined" startIcon={<GoogleIcon />} sx={{ width: '100%', py: 1 }} onClick={onAction}>
             {texts.cta}
           </Button>
         </Box>

@@ -27,6 +27,7 @@ ignore:
   - 'packages/core/src/graphql/**' # Ignore generated GraphQL file
   - '**/storybook-static/**/*' # Ignore storybook assets
   - '**/vite.config.ts' # ignore config files
+  - '**/tsup.config.ts' # ignore config files
   - '**/interface.ts' # ignore TypeScript interfaces
 
 parsers:

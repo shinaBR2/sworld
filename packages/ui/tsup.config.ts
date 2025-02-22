@@ -14,11 +14,7 @@ export default defineConfig({
   // this dts thing only work if max_old_space_size set
   dts: true,
   sourcemap: true,
-  entry: [
-    './src/**/*.ts?(x)',
-    '!./src/**/*.test.ts?(x)',
-    '!./src/**/*.stories.ts?(x)',
-  ],
+  entry: ['./src/**/*.ts?(x)', '!./src/**/*.test.ts?(x)', '!./src/**/*.stories.ts?(x)'],
   format: ['esm'],
   outDir: 'dist/',
   treeshake: true,

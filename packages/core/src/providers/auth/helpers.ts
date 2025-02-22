@@ -27,10 +27,7 @@ const getClaims = (token: string): HasuraClaims | null => {
  * @param auth0User The user object from Auth0
  * @returns CustomUser object
  */
-const transformUser = (
-  id: string,
-  auth0User: User | undefined
-): CustomUser | null => {
+const transformUser = (id: string, auth0User: User | undefined): CustomUser | null => {
   if (!id || !auth0User?.sub) return null;
 
   return {

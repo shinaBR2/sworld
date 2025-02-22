@@ -11,13 +11,7 @@ export default class Bubble extends Phaser.Physics.Matter.Sprite {
   loadedTween!: Phaser.Tweens.Tween;
   blob!: Phaser.Tweens.Tween;
 
-  constructor(
-    scene: GameScene,
-    x: any,
-    y: number,
-    offset: any,
-    options = { isStatic: true }
-  ) {
+  constructor(scene: GameScene, x: any, y: number, offset: any, options = { isStatic: true }) {
     super(scene.matter.world, x + offset, y, 'bubble', 0, options);
     this.offset = offset;
     this.setFriction(1, 0, Infinity);
@@ -34,10 +28,7 @@ export default class Bubble extends Phaser.Physics.Matter.Sprite {
   */
   load(sprite: string) {
     this.scene.playAudio('trap');
-    this.loaded = this.scene.add
-      .sprite(this.x, this.y, sprite)
-      .setOrigin(0.5)
-      .setScale(0.6);
+    this.loaded = this.scene.add.sprite(this.x, this.y, sprite).setOrigin(0.5).setScale(0.6);
     this.loaded.name = sprite;
     this.loadedTween = this.scene.tweens.add({
       targets: this.loaded,

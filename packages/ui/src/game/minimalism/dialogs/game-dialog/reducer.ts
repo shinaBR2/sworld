@@ -47,10 +47,7 @@ const splitTextIntoPages = (text: string, charsPerPage: number): string[] => {
   return pages;
 };
 
-const dialogueReducer = (
-  state: DialogueState,
-  action: DialogueAction
-): DialogueState => {
+const dialogueReducer = (state: DialogueState, action: DialogueAction): DialogueState => {
   let isLastPage;
 
   switch (action.type) {
@@ -89,10 +86,7 @@ const dialogueReducer = (
       };
 
     case 'SET_NEXT_DIALOGUE':
-      const newPages = splitTextIntoPages(
-        action.payload.dialogue.text,
-        state.charsPerPage
-      );
+      const newPages = splitTextIntoPages(action.payload.dialogue.text, state.charsPerPage);
 
       return {
         ...state,
@@ -128,10 +122,7 @@ const dialogueReducer = (
   }
 };
 
-const initialState = (
-  dialogue: DialogueContent,
-  charsPerPage: number
-): DialogueState => {
+const initialState = (dialogue: DialogueContent, charsPerPage: number): DialogueState => {
   const pages = splitTextIntoPages(dialogue.text, charsPerPage);
 
   return {

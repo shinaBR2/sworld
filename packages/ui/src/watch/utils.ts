@@ -1,7 +1,4 @@
-export const formatCreatedDate = (
-  date: string | null | undefined,
-  locale: string = 'en-CA'
-): string => {
+export const formatCreatedDate = (date: string | null | undefined, locale: string = 'en-CA'): string => {
   if (!date) {
     return '';
   }

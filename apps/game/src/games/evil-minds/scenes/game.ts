@@ -2,10 +2,7 @@ import { Tilemaps } from 'phaser';
 import { handlePlayerMovement } from '../../../core/helpers/movement';
 import { checkTileInteraction } from '../../../core/helpers/tileInteraction';
 import { EventBus } from '../../../core/EventBus';
-import {
-  PLAYER_DONE_READ_HOUSE_SIGN,
-  PLAYER_READ_HOUSE_SIGN,
-} from '../events/playerEvents';
+import { PLAYER_DONE_READ_HOUSE_SIGN, PLAYER_READ_HOUSE_SIGN } from '../events/playerEvents';
 
 const SCALE = 1.5;
 const TILE_SIZE = SCALE * 16;
@@ -122,12 +119,7 @@ class GameScene extends Phaser.Scene {
 
   setupCamera = () => {
     this.cameras.main.startFollow(this.player);
-    this.cameras.main.setBounds(
-      0,
-      0,
-      this.game.config.width as number,
-      this.game.config.height as number
-    );
+    this.cameras.main.setBounds(0, 0, this.game.config.width as number, this.game.config.height as number);
   };
 
   setupKeyboard = () => {
@@ -151,10 +143,7 @@ class GameScene extends Phaser.Scene {
      * - tileset_name: name of Tileset in Tile Map Editor
      * - imageKey: Phaser image key, first params of this.load.image()
      */
-    const tileset = map.addTilesetImage(
-      'cloud_map',
-      'map'
-    ) as Phaser.Tilemaps.Tileset;
+    const tileset = map.addTilesetImage('cloud_map', 'map') as Phaser.Tilemaps.Tileset;
 
     // Create layers (use the layer names from your Tiled map)
     this.groundLayer = map.createLayer('floor', tileset);

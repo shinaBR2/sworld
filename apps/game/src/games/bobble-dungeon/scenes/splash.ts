@@ -61,22 +61,13 @@ export default class Splash extends Phaser.Scene {
       .bitmapText(this.center_width, 250, 'default', 'BOBBLE', 85)
       .setTint(0xff787a)
       .setOrigin(0.5);
-    this.text1 = this.add
-      .bitmapText(this.center_width, 100, 'default', 'DUNGEON', 85)
-      .setTint(0x302030)
-      .setOrigin(0.5);
-    this.text2 = this.add
-      .bitmapText(this.center_width, 250, 'default', 'BOBBLE', 85)
-      .setTint(0x302030)
-      .setOrigin(0.5);
+    this.text1 = this.add.bitmapText(this.center_width, 100, 'default', 'DUNGEON', 85).setTint(0x302030).setOrigin(0.5);
+    this.text2 = this.add.bitmapText(this.center_width, 250, 'default', 'BOBBLE', 85).setTint(0x302030).setOrigin(0.5);
     this.text11 = this.add
       .bitmapText(this.center_width, 100, 'default', 'DUNGEON', 88)
       .setTint(0x00aafb)
       .setOrigin(0.5);
-    this.text22 = this.add
-      .bitmapText(this.center_width, 250, 'default', 'BOBBLE', 88)
-      .setTint(0x00aafb)
-      .setOrigin(0.5);
+    this.text22 = this.add.bitmapText(this.center_width, 250, 'default', 'BOBBLE', 88).setTint(0x00aafb).setOrigin(0.5);
     this.tweens.add({
       targets: [this.textShadow1, this.textShadow2],
       duration: 1000,

@@ -128,10 +128,7 @@ describe('useRequest', () => {
 
     expect(result.current.error).toBe(tokenError);
     expect(request).not.toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalledWith(
-      'Authentication failed:',
-      tokenError
-    );
+    expect(console.error).toHaveBeenCalledWith('Authentication failed:', tokenError);
   });
 
   it('should handle request error', async () => {
