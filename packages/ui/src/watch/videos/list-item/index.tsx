@@ -46,11 +46,11 @@ const Thumbnail = (props: ThumbnailProps) => {
 };
 
 const VideoListItem = (props: VideoListItemProps) => {
-  const { video, isActive = false, LinkComponent } = props;
-  const { id, title, thumbnailUrl, duration = 0, user, progressSeconds = 0 } = video;
+  const { video, isActive = false, LinkComponent, linkProps } = props;
+  const { title, thumbnailUrl, duration = 0, user, progressSeconds = 0 } = video;
 
   return (
-    <LinkComponent to="/$videoId" params={{ videoId: id }} style={{ textDecoration: 'none' }}>
+    <LinkComponent {...linkProps} style={{ textDecoration: 'none' }}>
       <ListItemContainer isActive={isActive} aria-current={isActive ? 'page' : undefined}>
         {/* Thumbnail with play overlay */}
         <ThumbnailContainer>

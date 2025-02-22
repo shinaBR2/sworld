@@ -2,6 +2,7 @@ import { graphql } from '../../../graphql';
 import { PlaylistDetailQuery } from '../../../graphql/graphql';
 import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { MEDIA_TYPES } from '../videos';
 
 const playlistDetailQuery = graphql(/* GraphQL */ `
   query PlaylistDetail($id: uuid!) {
@@ -65,6 +66,7 @@ const useLoadPlaylistDetail = (props: LoadPlaylistDetailProps) => {
 
         return {
           id: video.id,
+          type: MEDIA_TYPES.VIDEO,
           title: video.title,
           description: video.description || '',
           thumbnailUrl: video.thumbnailUrl || '',

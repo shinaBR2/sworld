@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent, VideoItem } from '../../videos/interface';
 import { VideoListItem } from '../../videos/list-item';
+import { generateVideoDetailRoute } from 'core/watch/routes';
 
 interface RelatedListProps extends RequiredLinkComponent {
   videos: VideoItem[];
@@ -32,6 +33,7 @@ const RelatedList = ({ videos, title = 'Related videos', activeId, LinkComponent
               video={video}
               isActive={activeId === video.id}
               LinkComponent={LinkComponent}
+              linkProps={generateVideoDetailRoute(video)}
             />
           </Box>
         ))}

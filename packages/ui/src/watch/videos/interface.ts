@@ -14,6 +14,10 @@ type LinkComponentType<T = any> = React.ComponentType<GenericLinkProps<T>>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RequiredLinkComponent<T = any> = {
   LinkComponent: LinkComponentType<T>;
+  linkProps: {
+    to: string;
+    params?: T;
+  };
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
