@@ -8,10 +8,4 @@ export * as Dialogs from './dialogs';
 import { FullWidthContainer } from './containers/full-width';
 import { ResponsiveCardMedia, ResponsiveAvatar } from './images/image';
 
-export {
-  LoadingBackdrop,
-  Logo,
-  FullWidthContainer,
-  ResponsiveCardMedia,
-  ResponsiveAvatar,
-};
+export { LoadingBackdrop, Logo, FullWidthContainer, ResponsiveCardMedia, ResponsiveAvatar };

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "ES2015"],
+    "lib": ["dom", "es2017"],
     "plugins": [
       {
         "name": "@0no-co/graphqlsp",

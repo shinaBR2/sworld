@@ -12,8 +12,7 @@ export class MatterGravityFixPlugin extends Phaser.Plugins.ScenePlugin {
   */
   applyGravityFix(Matter) {
     Matter.Engine._bodiesApplyGravity = function (bodies, gravity) {
-      var gravityScale =
-          typeof gravity.scale !== 'undefined' ? gravity.scale : 0.001,
+      var gravityScale = typeof gravity.scale !== 'undefined' ? gravity.scale : 0.001,
         bodiesLength = bodies.length;
 
       if ((gravity.x === 0 && gravity.y === 0) || gravityScale === 0) {

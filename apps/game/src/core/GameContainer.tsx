@@ -15,11 +15,7 @@ const GameContainer = (props: GameContainerProps) => {
 
   return (
     <div id="game-container">
-      <PhaserGame
-        config={config}
-        ref={phaserRef}
-        currentActiveScene={currentScene}
-      />
+      <PhaserGame config={config} ref={phaserRef} currentActiveScene={currentScene} />
     </div>
   );
 };

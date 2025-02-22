@@ -27,34 +27,13 @@ export default class Game extends Phaser.Scene {
   unsubscribePlayerCollide: any;
   // matterCollision: any;
   audios!: {
-    jump:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    bubble:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    trap:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    crash:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    fireball:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    death:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
-    coin:
-      | Phaser.Sound.NoAudioSound
-      | Phaser.Sound.HTML5AudioSound
-      | Phaser.Sound.WebAudioSound;
+    jump: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    bubble: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    trap: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    crash: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    fireball: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    death: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    coin: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
   };
 
   constructor() {
@@ -104,15 +83,8 @@ export default class Game extends Phaser.Scene {
     This method adds the scores to the scene. We add the coins, the seconds, the keys and the timer. We'll update them with other methods.
   */
   addScores() {
-    this.add
-      .sprite(62, 26, 'coin', 0)
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setScale(0.8);
-    this.scoreCoins = this.add
-      .bitmapText(100, 24, 'default', 'x0', 15)
-      .setOrigin(0.5)
-      .setScrollFactor(0);
+    this.add.sprite(62, 26, 'coin', 0).setOrigin(0.5).setScrollFactor(0).setScale(0.8);
+    this.scoreCoins = this.add.bitmapText(100, 24, 'default', 'x0', 15).setOrigin(0.5).setScrollFactor(0);
     this.scoreSeconds = this.add
       .bitmapText(this.center_width, 24, 'default', '0', 15)
       .setOrigin(0.5)
@@ -145,12 +117,7 @@ export default class Game extends Phaser.Scene {
    */
   addPlayer() {
     this.trailLayer = this.add.layer();
-    this.player = new Player(
-      this,
-      this.dungeon.map.widthInPixels / 2,
-      this.dungeon.map.heightInPixels / 2,
-      100
-    );
+    this.player = new Player(this, this.dungeon.map.widthInPixels / 2, this.dungeon.map.heightInPixels / 2, 100);
   }
 
   /*
@@ -211,12 +178,7 @@ export default class Game extends Phaser.Scene {
   */
   playerPicksKey(key) {
     this.updateKeys();
-    this.showPoints(
-      key.x,
-      key.y,
-      this.registry.get('keys') + '/' + this.dungeon.dungeon.rooms.length,
-      this.scoreKeys
-    );
+    this.showPoints(key.x, key.y, this.registry.get('keys') + '/' + this.dungeon.dungeon.rooms.length, this.scoreKeys);
     key.destroy();
   }
 
@@ -272,12 +234,7 @@ export default class Game extends Phaser.Scene {
    * It sets the bounds of the camera to the size of the map and makes it follow the player.
    */
   addCamera() {
-    this.cameras.main.setBounds(
-      0,
-      0,
-      this.dungeon.map.widthInPixels,
-      this.dungeon.map.heightInPixels
-    );
+    this.cameras.main.setBounds(0, 0, this.dungeon.map.widthInPixels, this.dungeon.map.heightInPixels);
     this.cameras.main.startFollow(this.player.sprite, false, 0.5, 0.5);
     this.cameras.main.setBackgroundColor(0x25131a);
   }

@@ -31,10 +31,7 @@ describe('handlePlayerMovement', () => {
     handlePlayerMovement({ cursors: mockCursors, gridEngine: mockGridEngine });
 
     // Assert
-    expect(mockGridEngine.move).toHaveBeenCalledWith(
-      'player',
-      Direction.UP_LEFT
-    );
+    expect(mockGridEngine.move).toHaveBeenCalledWith('player', Direction.UP_LEFT);
   });
 
   it('should move DOWN_LEFT when left and down are pressed', () => {
@@ -43,10 +40,7 @@ describe('handlePlayerMovement', () => {
 
     handlePlayerMovement({ cursors: mockCursors, gridEngine: mockGridEngine });
 
-    expect(mockGridEngine.move).toHaveBeenCalledWith(
-      'player',
-      Direction.DOWN_LEFT
-    );
+    expect(mockGridEngine.move).toHaveBeenCalledWith('player', Direction.DOWN_LEFT);
   });
 
   it('should move UP_RIGHT when right and up are pressed', () => {
@@ -55,10 +49,7 @@ describe('handlePlayerMovement', () => {
 
     handlePlayerMovement({ cursors: mockCursors, gridEngine: mockGridEngine });
 
-    expect(mockGridEngine.move).toHaveBeenCalledWith(
-      'player',
-      Direction.UP_RIGHT
-    );
+    expect(mockGridEngine.move).toHaveBeenCalledWith('player', Direction.UP_RIGHT);
   });
 
   it('should move DOWN_RIGHT when right and down are pressed', () => {
@@ -67,10 +58,7 @@ describe('handlePlayerMovement', () => {
 
     handlePlayerMovement({ cursors: mockCursors, gridEngine: mockGridEngine });
 
-    expect(mockGridEngine.move).toHaveBeenCalledWith(
-      'player',
-      Direction.DOWN_RIGHT
-    );
+    expect(mockGridEngine.move).toHaveBeenCalledWith('player', Direction.DOWN_RIGHT);
   });
 
   it('should move LEFT when only left is pressed', () => {

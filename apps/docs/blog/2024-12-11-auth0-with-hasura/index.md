@@ -132,9 +132,7 @@ const AuthContextProvider = ({ children }) => {
     // Our standard auth context value
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 const AuthProvider: FC<Props> = ({ config, children }) => {

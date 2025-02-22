@@ -28,8 +28,7 @@ export interface SAudioPlayerInputs {
 
 const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const { audioList, index = 0, configs = {} } = inputs;
-  const { shuffle = false, loopMode: loop = SAudioPlayerLoopMode.All } =
-    configs;
+  const { shuffle = false, loopMode: loop = SAudioPlayerLoopMode.All } = configs;
 
   const ref = useRef<HTMLAudioElement>(null);
 

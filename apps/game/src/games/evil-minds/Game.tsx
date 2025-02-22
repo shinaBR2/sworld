@@ -4,10 +4,7 @@ import { DialogueContent } from 'ui/game/types/dialog';
 import GameContainer from '../../core/GameContainer';
 import { EventBus } from '../../core/EventBus';
 import config from './config';
-import {
-  PLAYER_DONE_READ_HOUSE_SIGN,
-  PLAYER_READ_HOUSE_SIGN,
-} from './events/playerEvents';
+import { PLAYER_DONE_READ_HOUSE_SIGN, PLAYER_READ_HOUSE_SIGN } from './events/playerEvents';
 
 const dialogue: DialogueContent = {
   speaker: 'Elder Sage',
@@ -51,11 +48,7 @@ const Game = () => {
   return (
     <>
       <GameContainer config={config} />
-      <GameDialogue
-        isOpen={showDialogue}
-        onClose={onCloseDialogue}
-        dialogue={dialogue}
-      />
+      <GameDialogue isOpen={showDialogue} onClose={onCloseDialogue} dialogue={dialogue} />
     </>
   );
 };

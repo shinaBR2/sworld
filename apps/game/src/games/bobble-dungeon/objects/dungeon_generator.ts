@@ -162,10 +162,7 @@ export default class DungeonGenerator {
   */
   addDoors(room: Room, doors: Point[], x: number, y: number) {
     for (let i = 0; i < doors.length; i++) {
-      const worldPosition = this.groundLayer.tileToWorldXY(
-        x + doors[i].x,
-        y + doors[i].y
-      );
+      const worldPosition = this.groundLayer.tileToWorldXY(x + doors[i].x, y + doors[i].y);
       new Coin(this.scene, worldPosition.x + 20, worldPosition.y + 20);
       if (doors[i].y === 0) {
         this.groundLayer.putTilesAt([[7], [7]], x + doors[i].x, y + doors[i].y);
@@ -194,29 +191,15 @@ export default class DungeonGenerator {
   */
   addSeeSaw(room: Room) {
     if (Phaser.Math.Between(0, 10) < 7) return;
-    const worldPosition = this.groundLayer.tileToWorldXY(
-      room.centerX,
-      room.centerY
-    );
-    new SeeSaw(
-      this.scene,
-      worldPosition.x + 22,
-      worldPosition.y + 22,
-      room.width
-    );
+    const worldPosition = this.groundLayer.tileToWorldXY(room.centerX, room.centerY);
+    new SeeSaw(this.scene, worldPosition.x + 22, worldPosition.y + 22, room.width);
   }
 
   /*
     Coins are randomly placed in the room. We use a random method to decide where to place the coins. It uses other helper methods to place the coins in different positions.
   */
   addCoins(room: Room) {
-    const where = Phaser.Math.RND.pick([
-      'top',
-      'bottom',
-      'left',
-      'right',
-      'none',
-    ]);
+    const where = Phaser.Math.RND.pick(['top', 'bottom', 'left', 'right', 'none']);
     const width = Math.floor(room.width / 3) - Phaser.Math.Between(1, 2);
     const height = Math.floor(room.height / 3) - Phaser.Math.Between(1, 2);
 
@@ -248,10 +231,7 @@ export default class DungeonGenerator {
         Array(height)
           .fill()
           .forEach((y, j) => {
-            const worldPosition = this.groundLayer.tileToWorldXY(
-              keyX + i,
-              keyY + j
-            );
+            const worldPosition = this.groundLayer.tileToWorldXY(keyX + i, keyY + j);
             new Coin(this.scene, worldPosition.x + 20, worldPosition.y + 20);
           });
       });
@@ -267,10 +247,7 @@ export default class DungeonGenerator {
         Array(height)
           .fill()
           .forEach((y, j) => {
-            const worldPosition = this.groundLayer.tileToWorldXY(
-              keyX + i,
-              keyY - j
-            );
+            const worldPosition = this.groundLayer.tileToWorldXY(keyX + i, keyY - j);
             new Coin(this.scene, worldPosition.x + 20, worldPosition.y + 20);
           });
       });
@@ -286,10 +263,7 @@ export default class DungeonGenerator {
         Array(height)
           .fill()
           .forEach((y, j) => {
-            const worldPosition = this.groundLayer.tileToWorldXY(
-              keyX + i,
-              keyY - j
-            );
+            const worldPosition = this.groundLayer.tileToWorldXY(keyX + i, keyY - j);
             new Coin(this.scene, worldPosition.x + 20, worldPosition.y + 20);
           });
       });
@@ -305,10 +279,7 @@ export default class DungeonGenerator {
         Array(height)
           .fill()
           .forEach((y, j) => {
-            const worldPosition = this.groundLayer.tileToWorldXY(
-              keyX - i,
-              keyY + j
-            );
+            const worldPosition = this.groundLayer.tileToWorldXY(keyX - i, keyY + j);
             new Coin(this.scene, worldPosition.x + 20, worldPosition.y + 20);
           });
       });
@@ -321,19 +292,9 @@ export default class DungeonGenerator {
     const worldPosition = this.groundLayer.tileToWorldXY(keyX, keyY);
 
     if (Phaser.Math.Between(0, 5) > 4) {
-      new Wizard(
-        this.scene,
-        worldPosition.x + 22,
-        worldPosition.y + 22,
-        this.groundLayer
-      );
+      new Wizard(this.scene, worldPosition.x + 22, worldPosition.y + 22, this.groundLayer);
     } else {
-      new Bat(
-        this.scene,
-        worldPosition.x + 22,
-        worldPosition.y + 22,
-        this.groundLayer
-      );
+      new Bat(this.scene, worldPosition.x + 22, worldPosition.y + 22, this.groundLayer);
     }
   }
 
@@ -355,8 +316,7 @@ export default class DungeonGenerator {
 
     const topTiles = tiles[0];
     topTiles.forEach((tile: number, i: number) => {
-      if (tile === 1 && i > 0 && i < right)
-        this.groundLayer.putTileAt(5, i + left, top + 1);
+      if (tile === 1 && i > 0 && i < right) this.groundLayer.putTileAt(5, i + left, top + 1);
     });
   }
 }

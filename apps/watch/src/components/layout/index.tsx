@@ -20,12 +20,7 @@ const Layout = (props: LayoutProps) => {
 
   return (
     <FullPageContainer>
-      <Header
-        LinkComponent={Link}
-        toggleSetting={toggleSetting}
-        sites={sites}
-        user={user}
-      />
+      <Header LinkComponent={Link} toggleSetting={toggleSetting} sites={sites} user={user} />
       <SettingsPanel
         open={settingOpen}
         toggle={toggleSetting}

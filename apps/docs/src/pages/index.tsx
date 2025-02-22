@@ -19,15 +19,13 @@ const techStack = [
   {
     title: 'Hasura GraphQL',
     icon: <StorageIcon fontSize="large" />,
-    description:
-      'Instant GraphQL API for rapid development and real-time data access',
+    description: 'Instant GraphQL API for rapid development and real-time data access',
     link: '/blog/tags/hasura',
   },
   {
     title: 'Firebase',
     icon: <CloudIcon fontSize="large" />,
-    description:
-      'Scalable backend infrastructure for hosting, storage, and real-time features',
+    description: 'Scalable backend infrastructure for hosting, storage, and real-time features',
     link: '/blog/tags/firebase',
   },
   {
@@ -45,16 +43,14 @@ const techStack = [
   {
     title: 'PNPM',
     icon: <AppsIcon fontSize="large" />,
-    description:
-      'Fast, disk space efficient package manager with built-in monorepo support',
+    description: 'Fast, disk space efficient package manager with built-in monorepo support',
     // Since there's no PNPM tag yet, we'll point to the docs section
     link: '/blog/tags/pnpm', // You can adjust this path as needed
   },
   {
     title: 'Monorepo',
     icon: <ArchitectureIcon fontSize="large" />,
-    description:
-      'High-performance monorepo management for optimal development workflow',
+    description: 'High-performance monorepo management for optimal development workflow',
     link: '/blog/tags/monorepo',
   },
 ];
@@ -72,9 +68,7 @@ function HomepageHeader() {
           />
         </div> */}
         <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">
-          Building Modern Web Applications with Enterprise-Grade Architecture
-        </p>
+        <p className="hero__subtitle">Building Modern Web Applications with Enterprise-Grade Architecture</p>
         <div className={styles.buttons}>
           <Link className="button button--secondary button--lg" to="/blog">
             Explore My Journey 🚀
@@ -91,11 +85,7 @@ function TechStackSection() {
       <Grid container spacing={4} padding={4}>
         {techStack.map((tech, idx) => (
           <Grid item xs={12} sm={6} md={4} key={idx}>
-            <Link
-              to={tech.link}
-              className={styles.techCardLink}
-              style={{ textDecoration: 'none' }}
-            >
+            <Link to={tech.link} className={styles.techCardLink} style={{ textDecoration: 'none' }}>
               <Paper
                 elevation={3}
                 className={styles.techCard}

@@ -15,8 +15,7 @@ describe('isCloudinaryUrl', () => {
     expect(isCloudinaryUrl(url)).toBe(false);
   });
   it('should return true for valid Cloudinary URLs', () => {
-    const validUrl =
-      'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
+    const validUrl = 'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
     expect(isCloudinaryUrl(validUrl)).toBe(true);
   });
 
@@ -36,8 +35,7 @@ describe('isCloudinaryUrl', () => {
 
 describe('generateCloudinarySrcSet', () => {
   it('should generate correct srcSet for Cloudinary URL with version', () => {
-    const url =
-      'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
+    const url = 'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
     const widths = [400, 800];
 
     const expected = [
@@ -49,8 +47,7 @@ describe('generateCloudinarySrcSet', () => {
   });
 
   it('should generate correct srcSet for Cloudinary URL without version', () => {
-    const url =
-      'https://res.cloudinary.com/shinabr2/image/upload/Public/Images/TG5-1024x576.webp';
+    const url = 'https://res.cloudinary.com/shinabr2/image/upload/Public/Images/TG5-1024x576.webp';
     const widths = [400, 800];
 
     const expected = [
@@ -65,16 +62,13 @@ describe('generateCloudinarySrcSet', () => {
     const url = 'https://res.cloudinary.com/shinabr2/image/upload/v1/test.jpg';
     expect(() => generateCloudinarySrcSet(url, [])).not.toThrow();
     expect(() => generateCloudinarySrcSet(url, [-100, 0])).not.toThrow();
-    expect(() =>
-      generateCloudinarySrcSet(url, [Number.MAX_SAFE_INTEGER])
-    ).not.toThrow();
+    expect(() => generateCloudinarySrcSet(url, [Number.MAX_SAFE_INTEGER])).not.toThrow();
   });
 });
 
 describe('ResponsiveImage Component', () => {
   it('should render with srcSet for Cloudinary URLs', () => {
-    const url =
-      'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
+    const url = 'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
     render(<ResponsiveImage src={url} alt="Test image" />);
 
     const img = screen.getByAltText('Test image');
@@ -110,13 +104,10 @@ describe('ResponsiveImage Component', () => {
   });
 
   it('should use custom widths when provided', () => {
-    const url =
-      'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
+    const url = 'https://res.cloudinary.com/shinabr2/image/upload/v1670242747/Public/Images/TG5-1024x576.webp';
     const customWidths = [300, 600];
 
-    render(
-      <ResponsiveImage src={url} alt="Test image" widths={customWidths} />
-    );
+    render(<ResponsiveImage src={url} alt="Test image" widths={customWidths} />);
 
     const img = screen.getByAltText('Test image');
     const srcSet = img.getAttribute('srcSet') || '';
@@ -128,8 +119,7 @@ describe('ResponsiveImage Component', () => {
 });
 
 describe('ResponsiveCardMedia Component', () => {
-  const cloudinaryUrl =
-    'https://res.cloudinary.com/shinabr2/image/upload/v1/test-image.jpg';
+  const cloudinaryUrl = 'https://res.cloudinary.com/shinabr2/image/upload/v1/test-image.jpg';
   const nonCloudinaryUrl = 'https://example.com/image.jpg';
 
   it('should render with srcSet for Cloudinary URLs', () => {
@@ -142,9 +132,7 @@ describe('ResponsiveCardMedia Component', () => {
   });
 
   it('should render without srcSet for non-Cloudinary URLs', () => {
-    render(
-      <ResponsiveCardMedia src={nonCloudinaryUrl} alt="Non-Cloudinary Image" />
-    );
+    render(<ResponsiveCardMedia src={nonCloudinaryUrl} alt="Non-Cloudinary Image" />);
 
     const cardMedia = screen.getByAltText('Non-Cloudinary Image');
 
@@ -157,12 +145,7 @@ describe('ResponsiveCardMedia Component', () => {
     const customWidths = [80, 160];
 
     render(
-      <ResponsiveCardMedia
-        src={cloudinaryUrl}
-        alt="Custom Card Media"
-        sizes={customSizes}
-        widths={customWidths}
-      />
+      <ResponsiveCardMedia src={cloudinaryUrl} alt="Custom Card Media" sizes={customSizes} widths={customWidths} />
     );
 
     const cardMedia = screen.getByAltText('Custom Card Media');
@@ -207,8 +190,7 @@ describe('ResponsiveCardMedia Component', () => {
 });
 
 describe('ResponsiveAvatar Component', () => {
-  const cloudinaryUrl =
-    'https://res.cloudinary.com/shinabr2/image/upload/v1/test-image.jpg';
+  const cloudinaryUrl = 'https://res.cloudinary.com/shinabr2/image/upload/v1/test-image.jpg';
   const nonCloudinaryUrl = 'https://example.com/image.jpg';
 
   it('should render with srcSet for Cloudinary URLs', () => {
@@ -224,9 +206,7 @@ describe('ResponsiveAvatar Component', () => {
   });
 
   it('should render without srcSet for non-Cloudinary URLs', () => {
-    render(
-      <ResponsiveAvatar src={nonCloudinaryUrl} alt="Non-Cloudinary Avatar" />
-    );
+    render(<ResponsiveAvatar src={nonCloudinaryUrl} alt="Non-Cloudinary Avatar" />);
 
     const avatar = screen.getByAltText('Non-Cloudinary Avatar');
 
@@ -238,14 +218,7 @@ describe('ResponsiveAvatar Component', () => {
     const customSizes = '(max-width: 768px) 80px';
     const customWidths = [80, 160];
 
-    render(
-      <ResponsiveAvatar
-        src={cloudinaryUrl}
-        alt="Custom Avatar"
-        sizes={customSizes}
-        widths={customWidths}
-      />
-    );
+    render(<ResponsiveAvatar src={cloudinaryUrl} alt="Custom Avatar" sizes={customSizes} widths={customWidths} />);
 
     const avatar = screen.getByAltText('Custom Avatar');
 

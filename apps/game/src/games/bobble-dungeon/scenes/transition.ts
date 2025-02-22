@@ -6,10 +6,7 @@ export default class Transition extends Phaser.Scene {
   center_width!: number;
   center_height!: number;
   key!: Phaser.GameObjects.Sprite;
-  theme!:
-    | Phaser.Sound.NoAudioSound
-    | Phaser.Sound.HTML5AudioSound
-    | Phaser.Sound.WebAudioSound;
+  theme!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
   constructor() {
     super({ key: 'transition' });
   }
@@ -30,24 +27,8 @@ In this short transition before the game, we show the instructions and the keys 
       .setOrigin(0.5)
       .setScale(2);
 
-    this.add
-      .bitmapText(
-        this.center_width,
-        this.center_height - 20,
-        'default',
-        'GET ALL KEYS',
-        30
-      )
-      .setOrigin(0.5);
-    this.add
-      .bitmapText(
-        this.center_width,
-        this.center_height + 40,
-        'default',
-        'from all rooms!',
-        25
-      )
-      .setOrigin(0.5);
+    this.add.bitmapText(this.center_width, this.center_height - 20, 'default', 'GET ALL KEYS', 30).setOrigin(0.5);
+    this.add.bitmapText(this.center_width, this.center_height + 40, 'default', 'from all rooms!', 25).setOrigin(0.5);
     this.input.keyboard?.on('keydown-ENTER', () => this.loadNext(), this);
     this.input.keyboard?.on('keydown-SPACE', () => this.loadNext(), this);
     this.time.delayedCall(1000, () => this.loadNext(), undefined, this);

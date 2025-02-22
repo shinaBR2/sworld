@@ -2,13 +2,14 @@ import React from 'react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { LoadingBackdrop } from 'ui/universal';
 import { LoginDialog } from 'ui/universal/dialogs';
-import { Auth, watchQueryHooks } from 'core';
 import { Layout } from '../components/layout';
 import { HomeContainer } from 'ui/watch/home-page/container';
+import { useAuthContext } from 'core/providers/auth';
+import { useLoadVideos } from 'core/watch/query-hooks/videos';
 
 const Content = () => {
-  const { getAccessToken } = Auth.useAuthContext();
-  const videoResult = watchQueryHooks.useLoadVideos({
+  const { getAccessToken } = useAuthContext();
+  const videoResult = useLoadVideos({
     getAccessToken,
   });
 
@@ -20,7 +21,7 @@ const Content = () => {
 };
 
 const Index = () => {
-  const authContext = Auth.useAuthContext();
+  const authContext = useAuthContext();
   const { isSignedIn, isLoading, signIn } = authContext;
 
   if (isLoading) {

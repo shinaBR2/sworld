@@ -15,10 +15,7 @@ interface ResponsiveImageProps {
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 
-const generateCloudinarySrcSet = (
-  url: string,
-  widths: number[] = [400, 800, 1200]
-): string => {
+const generateCloudinarySrcSet = (url: string, widths: number[] = [400, 800, 1200]): string => {
   try {
     // Find the position of /upload/ in the URL
     const uploadIndex = url.indexOf('/upload/');
@@ -31,9 +28,7 @@ const generateCloudinarySrcSet = (
     const afterUpload = url.substring(uploadIndex + '/upload/'.length);
     const versionMatch = afterUpload.match(/^v\d+\//);
     const version = versionMatch ? versionMatch[0] : ''; // includes the trailing slash
-    const imagePath = versionMatch
-      ? afterUpload.substring(versionMatch[0].length)
-      : afterUpload;
+    const imagePath = versionMatch ? afterUpload.substring(versionMatch[0].length) : afterUpload;
 
     // Generate srcSet for each width
     return widths
@@ -103,9 +98,7 @@ const ResponsiveCardMedia = ({
       alt={alt}
       className={className}
       sizes={isCloudinaryUrl(src) ? sizes : undefined}
-      srcSet={
-        isCloudinaryUrl(src) ? generateCloudinarySrcSet(src, widths) : undefined
-      }
+      srcSet={isCloudinaryUrl(src) ? generateCloudinarySrcSet(src, widths) : undefined}
       sx={{
         width: '100%',
         height: 'auto',
@@ -123,18 +116,9 @@ interface ResponsiveAvatarProps extends AvatarProps {
   widths?: number[];
 }
 
-const ResponsiveAvatar = ({
-  src,
-  alt,
-  className,
-  sizes,
-  widths = [40, 80, 120],
-  ...props
-}: ResponsiveAvatarProps) => {
+const ResponsiveAvatar = ({ src, alt, className, sizes, widths = [40, 80, 120], ...props }: ResponsiveAvatarProps) => {
   const safeSrc = src ?? '';
-  const srcSet = isCloudinaryUrl(safeSrc)
-    ? generateCloudinarySrcSet(safeSrc, widths)
-    : undefined;
+  const srcSet = isCloudinaryUrl(safeSrc) ? generateCloudinarySrcSet(safeSrc, widths) : undefined;
 
   return (
     <Avatar
@@ -148,10 +132,4 @@ const ResponsiveAvatar = ({
   );
 };
 
-export {
-  generateCloudinarySrcSet,
-  isCloudinaryUrl,
-  ResponsiveImage,
-  ResponsiveCardMedia,
-  ResponsiveAvatar,
-};
+export { generateCloudinarySrcSet, isCloudinaryUrl, ResponsiveImage, ResponsiveCardMedia, ResponsiveAvatar };

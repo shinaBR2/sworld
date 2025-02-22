@@ -10,18 +10,13 @@ const SECONDARY_TEXT_WIDTH = '60%';
 
 const PlayingListSkeleton = () => {
   return (
-    <Card
-      sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }}
-      aria-label="Loading content"
-    >
+    <Card sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }} aria-label="Loading content">
       <List>
         {Array.from({ length: SKELETON_ITEMS_COUNT }, (_, index) => (
           <ListItem key={index}>
             <ListItemText
               primary={<Skeleton variant="text" width={PRIMARY_TEXT_WIDTH} />}
-              secondary={
-                <Skeleton variant="text" width={SECONDARY_TEXT_WIDTH} />
-              }
+              secondary={<Skeleton variant="text" width={SECONDARY_TEXT_WIDTH} />}
             />
           </ListItem>
         ))}

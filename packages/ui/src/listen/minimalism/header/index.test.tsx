@@ -37,9 +37,7 @@ describe('Header', () => {
   it('renders account circle button for anonymous visitors', () => {
     render(<Header {...defaultProps} />);
 
-    const accountButton = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('button');
+    const accountButton = screen.getByTestId('AccountCircleIcon').closest('button');
     expect(accountButton).toBeInTheDocument();
   });
 
@@ -63,9 +61,7 @@ describe('Header', () => {
   it('calls onProfileClick', () => {
     render(<Header {...defaultProps} />);
 
-    const accountButton = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('button');
+    const accountButton = screen.getByTestId('AccountCircleIcon').closest('button');
     fireEvent.click(accountButton as Element);
 
     expect(defaultProps.onProfileClick).toHaveBeenCalledTimes(1);
@@ -92,9 +88,7 @@ describe('Header', () => {
     expect(leftBox).toContainElement(screen.getByTestId('mock-site-choices'));
 
     // Check account button is in a separate box
-    const rightBox = screen
-      .getByTestId('AccountCircleIcon')
-      .closest('.MuiBox-root');
+    const rightBox = screen.getByTestId('AccountCircleIcon').closest('.MuiBox-root');
     expect(rightBox).not.toBe(leftBox);
   });
 });
