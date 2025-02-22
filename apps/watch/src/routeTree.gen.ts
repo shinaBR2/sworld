@@ -19,6 +19,7 @@ import { Route as rootRoute } from './routes/__root'
 const HistoryLazyImport = createFileRoute('/history')()
 const IndexLazyImport = createFileRoute('/')()
 const VideoSlugIdLazyImport = createFileRoute('/video/$slug/$id')()
+const PlaylistSlugIdLazyImport = createFileRoute('/playlist/$slug/$id')()
 
 // Create/Update Routes
 
@@ -42,6 +43,14 @@ const VideoSlugIdLazyRoute = VideoSlugIdLazyImport.update({
   import('./routes/video.$slug.$id.lazy').then((d) => d.Route),
 )
 
+const PlaylistSlugIdLazyRoute = PlaylistSlugIdLazyImport.update({
+  id: '/playlist/$slug/$id',
+  path: '/playlist/$slug/$id',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/playlist.$slug.$id.lazy').then((d) => d.Route),
+)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -60,6 +69,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryLazyImport
       parentRoute: typeof rootRoute
     }
+    '/playlist/$slug/$id': {
+      id: '/playlist/$slug/$id'
+      path: '/playlist/$slug/$id'
+      fullPath: '/playlist/$slug/$id'
+      preLoaderRoute: typeof PlaylistSlugIdLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/video/$slug/$id': {
       id: '/video/$slug/$id'
       path: '/video/$slug/$id'
@@ -75,12 +91,14 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/playlist/$slug/$id': typeof PlaylistSlugIdLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/playlist/$slug/$id': typeof PlaylistSlugIdLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
 }
 
@@ -88,27 +106,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/playlist/$slug/$id': typeof PlaylistSlugIdLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history' | '/video/$slug/$id'
+  fullPaths: '/' | '/history' | '/playlist/$slug/$id' | '/video/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/video/$slug/$id'
-  id: '__root__' | '/' | '/history' | '/video/$slug/$id'
+  to: '/' | '/history' | '/playlist/$slug/$id' | '/video/$slug/$id'
+  id: '__root__' | '/' | '/history' | '/playlist/$slug/$id' | '/video/$slug/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   HistoryLazyRoute: typeof HistoryLazyRoute
+  PlaylistSlugIdLazyRoute: typeof PlaylistSlugIdLazyRoute
   VideoSlugIdLazyRoute: typeof VideoSlugIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   HistoryLazyRoute: HistoryLazyRoute,
+  PlaylistSlugIdLazyRoute: PlaylistSlugIdLazyRoute,
   VideoSlugIdLazyRoute: VideoSlugIdLazyRoute,
 }
 
@@ -124,6 +145,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/history",
+        "/playlist/$slug/$id",
         "/video/$slug/$id"
       ]
     },
@@ -132,6 +154,9 @@ export const routeTree = rootRoute
     },
     "/history": {
       "filePath": "history.lazy.tsx"
+    },
+    "/playlist/$slug/$id": {
+      "filePath": "playlist.$slug.$id.lazy.tsx"
     },
     "/video/$slug/$id": {
       "filePath": "video.$slug.$id.lazy.tsx"
