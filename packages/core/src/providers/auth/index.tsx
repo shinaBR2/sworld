@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  FC,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
+import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import { getClaims, transformUser } from './helpers';
 import { CustomUser } from './types';
@@ -46,14 +39,7 @@ const AuthContext = createContext<AuthContextValue>({
 const AuthContextProvider: FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const {
-    isAuthenticated,
-    isLoading,
-    loginWithRedirect,
-    logout,
-    user: auth0User,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect, logout, user: auth0User, getAccessTokenSilently } = useAuth0();
 
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -113,9 +99,7 @@ const AuthContextProvider: FC<{
     getAccessToken: getAccessTokenSilently,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 const AuthProvider: FC<Props> = ({ config, children }) => {

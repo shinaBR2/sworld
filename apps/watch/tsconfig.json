@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "paths": {
       "ui": ["../../packages/ui/src"],
-      "ui/*": ["../../packages/ui/src/*"]
+      "ui/*": ["../../packages/ui/src/*"],
+      "core": ["../../packages/core/src"],
+      "core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src"]

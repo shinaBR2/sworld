@@ -16,13 +16,7 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
   const { errorMessage = texts.message, canRetry = true } = props;
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh"
-      bgcolor="background.default"
-    >
+    <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" bgcolor="background.default">
       <Container maxWidth="sm">
         <Card elevation={12}>
           <CardContent sx={{ textAlign: 'center' }}>
@@ -42,11 +36,7 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
               </Typography>
               {canRetry && (
                 <Box mt={3}>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={() => window.location.reload()}
-                  >
+                  <Button variant="contained" fullWidth onClick={() => window.location.reload()}>
                     {texts.tryAgain}
                   </Button>
                 </Box>

@@ -16,24 +16,18 @@ const FEATURE_FLAGS_SUBSCRIPTION = `
 
 export function useFeatureFlagSubscription(url: string) {
   const { user } = useAuthContext();
-  const subscription = useSubscription<FeatureFlagsResponse>(
-    url,
-    FEATURE_FLAGS_SUBSCRIPTION
-  );
+  const subscription = useSubscription<FeatureFlagsResponse>(url, FEATURE_FLAGS_SUBSCRIPTION);
 
   const processedFlags = useMemo(() => {
     if (!subscription.data) {
       return null;
     }
 
-    return subscription.data.feature_flag.reduce<FeatureFlagsData>(
-      (acc, flag) => {
-        acc[flag.name] = checkFeatureFlag(flag.conditions, user?.id || '');
+    return subscription.data.feature_flag.reduce<FeatureFlagsData>((acc, flag) => {
+      acc[flag.name] = checkFeatureFlag(flag.conditions, user?.id || '');
 
-        return acc;
-      },
-      {}
-    );
+      return acc;
+    }, {});
   }, [subscription.data, user?.id]);
 
   return {

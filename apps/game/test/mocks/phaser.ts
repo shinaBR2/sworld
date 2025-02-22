@@ -12,8 +12,7 @@ export const mockPhaser = {
             return this;
           },
         };
-        on: (event: string, callback: MutationCallback, context: any) => this =
-          () => this;
+        on: (event: string, callback: MutationCallback, context: any) => this = () => this;
 
         constructor(world: any, _x: number, _y: number, _texture: string) {
           this.scene = world.scene;

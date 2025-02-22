@@ -23,9 +23,7 @@ describe('SiteChoices', () => {
     const buttonIcons = button.querySelectorAll('svg');
     expect(buttonIcons).toHaveLength(2); // Headphones and KeyboardArrowDown
     expect(buttonIcons[0].getAttribute('data-testid')).toBe('HeadphonesIcon');
-    expect(buttonIcons[1].getAttribute('data-testid')).toBe(
-      'KeyboardArrowDownIcon'
-    );
+    expect(buttonIcons[1].getAttribute('data-testid')).toBe('KeyboardArrowDownIcon');
   });
 
   it('shows menu when button is clicked', () => {
@@ -60,15 +58,9 @@ describe('SiteChoices', () => {
     const menuItems = screen.getAllByRole('menuitem');
 
     // Check icons within menu items
-    const watchIcon = menuItems[0].querySelector(
-      '[data-testid="OndemandVideoIcon"]'
-    );
-    const listenIcon = menuItems[1].querySelector(
-      '[data-testid="HeadphonesIcon"]'
-    );
-    const playIcon = menuItems[2].querySelector(
-      '[data-testid="PlayCircleIcon"]'
-    );
+    const watchIcon = menuItems[0].querySelector('[data-testid="OndemandVideoIcon"]');
+    const listenIcon = menuItems[1].querySelector('[data-testid="HeadphonesIcon"]');
+    const playIcon = menuItems[2].querySelector('[data-testid="PlayCircleIcon"]');
 
     expect(watchIcon).toBeInTheDocument();
     expect(listenIcon).toBeInTheDocument();
@@ -129,16 +121,12 @@ describe('SiteChoices', () => {
     const { rerender } = render(<SiteChoices {...propsWithWatch} />);
 
     const watchButton = screen.getByRole('button', { name: /site choices/i });
-    expect(
-      watchButton.querySelector('[data-testid="OndemandVideoIcon"]')
-    ).toBeInTheDocument();
+    expect(watchButton.querySelector('[data-testid="OndemandVideoIcon"]')).toBeInTheDocument();
 
     // Rerender with different active site
     rerender(<SiteChoices {...defaultProps} activeSite="play" />);
 
     const playButton = screen.getByRole('button', { name: /site choices/i });
-    expect(
-      playButton.querySelector('[data-testid="PlayCircleIcon"]')
-    ).toBeInTheDocument();
+    expect(playButton.querySelector('[data-testid="PlayCircleIcon"]')).toBeInTheDocument();
   });
 });

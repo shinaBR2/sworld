@@ -54,11 +54,7 @@ export default class Bootloader extends Phaser.Scene {
   private loadFonts(): void {
     const fontPath = `${this.assetPath}/fonts`;
 
-    this.load.bitmapFont(
-      'default',
-      `${fontPath}/pico.png`,
-      `${fontPath}/pico.xml`
-    );
+    this.load.bitmapFont('default', `${fontPath}/pico.png`, `${fontPath}/pico.xml`);
   }
 
   private loadImages(): void {

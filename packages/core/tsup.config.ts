@@ -1,13 +1,4 @@
 import { defineConfig } from 'tsup';
-import { readFileSync } from 'fs';
-
-/**
- * ui package.json does not have react as dependency
- */
-const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
-const external = [...Object.keys(pkg.dependencies || {})].filter(
-  dep => !pkg.dependencies[dep].startsWith('workspace:')
-);
 
 export default defineConfig({
   clean: true,
@@ -20,5 +11,5 @@ export default defineConfig({
   treeshake: true,
   splitting: true,
   shims: true,
-  external: ['react', ...external],
+  external: ['react'],
 });

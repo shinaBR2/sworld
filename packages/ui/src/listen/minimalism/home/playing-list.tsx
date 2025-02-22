@@ -40,20 +40,12 @@ const Item = (props: ItemProps) => {
       <ListItemText
         primary={name}
         secondary={
-          <Stack
-            component="span"
-            direction="row"
-            spacing={1}
-            alignItems="center"
-          >
+          <Stack component="span" direction="row" spacing={1} alignItems="center">
             <Typography component="span" variant="body2">
               {artistName}
             </Typography>
             {isPlaying && (
-              <Box
-                component="span"
-                sx={{ display: 'inline-flex', alignItems: 'center' }}
-              >
+              <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
                 • Now Playing
               </Box>
             )}
@@ -85,14 +77,7 @@ const PlayingList = (props: PlayingListItemProps) => {
       {audioList.map(a => {
         const { id } = a;
 
-        return (
-          <Item
-            key={id}
-            audio={a}
-            isPlaying={id === currentId}
-            onSelect={onItemSelect}
-          />
-        );
+        return <Item key={id} audio={a} isPlaying={id === currentId} onSelect={onItemSelect} />;
       })}
     </List>
   );

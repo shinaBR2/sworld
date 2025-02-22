@@ -29,11 +29,7 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     featureFlags,
   };
 
-  return (
-    <QueryContext.Provider value={contextValue}>
-      {children}
-    </QueryContext.Provider>
-  );
+  return <QueryContext.Provider value={contextValue}>{children}</QueryContext.Provider>;
 };
 
 const QueryProvider: FC<QueryContextProviderProps> = ({ config, children }) => {

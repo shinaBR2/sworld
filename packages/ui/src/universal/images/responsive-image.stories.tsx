@@ -30,8 +30,7 @@ const meta: Meta<typeof ResponsiveImage> = {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          'A flexible responsive image component with Cloudinary optimization.',
+        component: 'A flexible responsive image component with Cloudinary optimization.',
       },
     },
   },
@@ -50,8 +49,7 @@ const meta: Meta<typeof ResponsiveImage> = {
     },
     sizes: {
       control: 'text',
-      description:
-        'Sizes attribute for responsive images (especially useful for Cloudinary)',
+      description: 'Sizes attribute for responsive images (especially useful for Cloudinary)',
       defaultValue: undefined,
     },
     widths: {
@@ -89,8 +87,7 @@ export const CloudinaryImage: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Demonstrates a Cloudinary image with automatic responsive capabilities.',
+        story: 'Demonstrates a Cloudinary image with automatic responsive capabilities.',
       },
     },
   },
@@ -142,8 +139,7 @@ export const CustomSizesImage: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Illustrates how to use custom sizes and widths for more precise responsive behavior.',
+        story: 'Illustrates how to use custom sizes and widths for more precise responsive behavior.',
       },
     },
   },
@@ -170,8 +166,7 @@ export const ImageWithAdditionalProps: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Demonstrates passing additional props to the underlying img element.',
+        story: 'Demonstrates passing additional props to the underlying img element.',
       },
     },
   },
@@ -194,8 +189,7 @@ export const NoSourceImage: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Demonstrates the component's behavior when no source is provided.",
+        story: "Demonstrates the component's behavior when no source is provided.",
       },
     },
   },

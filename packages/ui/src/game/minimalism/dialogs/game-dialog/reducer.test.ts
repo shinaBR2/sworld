@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { DialogueContent, DialogueChoice } from '../../../types/dialog';
-import {
-  dialogueReducer,
-  initialState,
-  DEFAULT_CHARACTERS_PER_PAGE,
-} from './reducer';
+import { dialogueReducer, initialState, DEFAULT_CHARACTERS_PER_PAGE } from './reducer';
 
 describe('splitTextIntoPages', () => {
   const testDialogue: DialogueContent = {
@@ -78,10 +74,7 @@ describe('dialogueReducer', () => {
     });
 
     it('should show choices on last page', () => {
-      const choices: DialogueChoice[] = [
-        { text: 'Choice 1' },
-        { text: 'Choice 2' },
-      ];
+      const choices: DialogueChoice[] = [{ text: 'Choice 1' }, { text: 'Choice 2' }];
 
       const state = {
         ...baseState,
@@ -178,9 +171,7 @@ describe('dialogueReducer', () => {
       };
       const newState = dialogueReducer(baseState, action);
 
-      expect(newState).toEqual(
-        initialState(newDialogue, DEFAULT_CHARACTERS_PER_PAGE)
-      );
+      expect(newState).toEqual(initialState(newDialogue, DEFAULT_CHARACTERS_PER_PAGE));
     });
   });
 

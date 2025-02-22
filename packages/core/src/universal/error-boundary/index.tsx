@@ -16,20 +16,10 @@ const ErrorBoundary = (props: ErrorBoundaryProps) => {
     <Sentry.ErrorBoundary
       fallback={({ error }) => {
         if (error instanceof AppError) {
-          return (
-            <FallbackComponent
-              errorMessage={error.errorMessage}
-              canRetry={error.canRetry}
-            />
-          );
+          return <FallbackComponent errorMessage={error.errorMessage} canRetry={error.canRetry} />;
         }
 
-        return (
-          <FallbackComponent
-            errorMessage="Something went wrong"
-            canRetry={false}
-          />
-        );
+        return <FallbackComponent errorMessage="Something went wrong" canRetry={false} />;
       }}
     >
       {children}

@@ -82,10 +82,7 @@ export class VirtualHouse extends Scene {
     // Simple R key handler
     this.input.keyboard.addKey('R').on('down', () => {
       // If colliding and not already using headphone, sit down
-      console.log(
-        'collide?',
-        this.physics.world.overlap(this.player, this.headphone)
-      );
+      console.log('collide?', this.physics.world.overlap(this.player, this.headphone));
       if (
         // this.physics.world.overlap(this.player, this.headphone) &&
         !this.isUsingHeadphone
