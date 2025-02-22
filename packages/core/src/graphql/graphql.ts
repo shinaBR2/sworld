@@ -5878,6 +5878,13 @@ export type UpdateVideoProgressMutationVariables = Exact<{
 
 export type UpdateVideoProgressMutation = { __typename?: 'mutation_root', insert_user_video_history_one?: { __typename?: 'user_video_history', id: any, progress_seconds: number, last_watched_at: any } | null };
 
+export type PlaylistDetailQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type PlaylistDetailQuery = { __typename?: 'query_root', playlist_by_pk?: { __typename?: 'playlist', id: any, title: string, slug: string, public: boolean, playlist_videos: Array<{ __typename?: 'playlist_videos', position: number, video: { __typename?: 'videos', id: any, title: string, thumbnailUrl?: string | null, source?: string | null, slug: string, duration?: number | null, description?: string | null, createdAt?: any | null, user: { __typename?: 'users', username?: string | null }, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> } }> } | null };
+
 export type VideoDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -5966,6 +5973,36 @@ export const UpdateVideoProgressDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateVideoProgressMutation, UpdateVideoProgressMutationVariables>;
+export const PlaylistDetailDocument = new TypedDocumentString(`
+    query PlaylistDetail($id: uuid!) {
+  playlist_by_pk(id: $id) {
+    id
+    title
+    slug
+    public
+    playlist_videos(order_by: {position: asc}) {
+      position
+      video {
+        id
+        title
+        thumbnailUrl
+        source
+        slug
+        duration
+        description
+        createdAt
+        user {
+          username
+        }
+        user_video_histories {
+          last_watched_at
+          progress_seconds
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
   videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {

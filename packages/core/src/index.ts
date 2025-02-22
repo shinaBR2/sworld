@@ -21,6 +21,6 @@ export { watchQueryHooks, watchMutationHooks, listenQueryHooks };
 export { initSentry, loadSentryIntegrations, captureError };
 
 export { ErrorBoundary };
-
+export * from './watch/query-hooks/videos';
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
 export default hooks;
