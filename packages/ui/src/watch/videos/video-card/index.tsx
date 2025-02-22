@@ -1,12 +1,15 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import React, { Suspense } from 'react';
+import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
-import { MEDIA_TYPES, TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks/videos';
-import { VideoContainer } from '../video-container';
+
+const ReactPlayer = React.lazy(() => import('react-player'));
 
 interface VideoCardProps extends WithLinkComponent {
   video: Video;
@@ -34,47 +37,18 @@ const VideoCardContent = (props: VideoCardContentProps) => {
   );
 };
 
-interface VideoProgressProps {
-  video: TransformedMediaItem;
-}
-
-const VideoProgress = (props: VideoProgressProps) => {
-  const { video } = props;
-  if (video.type == MEDIA_TYPES.PLAYLIST) {
-    return null;
-  }
-
-  const { progressSeconds = 0, duration = 0 } = video as TransformedVideo;
-  if (progressSeconds > 0 && duration > 0) {
-    return (
-      <Box
-        role="progressbar"
-        aria-label="Video progress"
-        aria-valuenow={(progressSeconds / duration) * 100} // Calculate actual percentage
-        aria-valuemin={0}
-        aria-valuemax={100}
-        sx={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 2,
-          bgcolor: 'rgba(255, 255, 255, 0.2)',
-        }}
-      >
-        <Box
-          sx={{
-            width: `${(progressSeconds / duration) * 100}%`,
-            height: '100%',
-            bgcolor: 'error.main',
-          }}
-        />
-      </Box>
-    );
-  }
-
-  return null;
-};
+const VideoPlayerFallback = ({ title }: { title: string }) => (
+  <CardMedia
+    component="img"
+    image={defaultThumbnailUrl}
+    alt={title}
+    sx={{
+      aspectRatio: '16/9',
+      objectFit: 'cover',
+      bgcolor: '#e0e0e0',
+    }}
+  />
+);
 
 interface VideoContentProps {
   video: Video;
@@ -83,44 +57,65 @@ interface VideoContentProps {
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
+  const { progressSeconds = 0, duration = 0 } = video;
 
-  if (asLink) {
-    return (
-      <Box sx={{ position: 'relative' }}>
-        <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-        <VideoProgress video={video} />
-      </Box>
-    );
-  }
-
-  if (video.type == MEDIA_TYPES.PLAYLIST) {
-    return (
-      <Box sx={{ position: 'relative' }}>
-        <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-      </Box>
-    );
-  }
-
-  if ('source' in video) {
-    return (
-      <VideoContainer
-        video={video}
-        onError={(err: unknown) => {
-          console.log(err);
-        }}
-      />
-    );
-  }
-
-  return null;
+  return (
+    <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
+      {asLink ? (
+        <Box sx={{ position: 'relative' }}>
+          <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+          {progressSeconds > 0 && duration > 0 && (
+            <Box
+              role="progressbar"
+              aria-label="Video progress"
+              aria-valuenow={(progressSeconds / duration) * 100} // Calculate actual percentage
+              aria-valuemin={0}
+              aria-valuemax={100}
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${(progressSeconds / duration) * 100}%`,
+                  height: '100%',
+                  bgcolor: 'error.main',
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+      ) : (
+        <Suspense fallback={<VideoPlayerFallback title={video.title} />}>
+          <ReactPlayer
+            url={video.source}
+            controls={true}
+            width="100%"
+            height="100%"
+            style={{
+              aspectRatio: '16/9',
+              backgroundColor: '#e0e0e0',
+            }}
+            light={video.thumbnailUrl ?? defaultThumbnailUrl}
+            onError={(error: unknown) => {
+              console.error('ReactPlayer Error:', error);
+            }}
+          />
+        </Suspense>
+      )}
+    </Box>
+  );
 };
 
 const VideoCard = ({ video, asLink, LinkComponent }: VideoCardProps) => {
   const cardContent = (
     <StyledCard>
-      <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
-        <VideoContent video={video} asLink={asLink} />
-      </Box>
+      <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={video.title}
         creator={video.user?.username || ''}

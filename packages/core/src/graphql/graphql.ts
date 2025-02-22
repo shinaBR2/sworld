@@ -5888,7 +5888,7 @@ export type VideoDetailQuery = { __typename?: 'query_root', videos: Array<{ __ty
 export type AllVideosQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllVideosQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }>, user: { __typename?: 'users', username?: string | null } }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, thumbnailUrl: string, slug: string, createdAt: any, description?: string | null, user: { __typename?: 'users', username?: string | null } }> };
+export type AllVideosQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }>, user: { __typename?: 'users', username?: string | null } }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -5996,10 +5996,7 @@ export const VideoDetailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<VideoDetailQuery, VideoDetailQueryVariables>;
 export const AllVideosDocument = new TypedDocumentString(`
     query AllVideos @cached {
-  videos(
-    where: {_and: {_not: {playlist_videos: {}}, source: {_is_null: false}}}
-    order_by: {createdAt: desc}
-  ) {
+  videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {
     user_video_histories {
       last_watched_at
       progress_seconds
@@ -6012,17 +6009,6 @@ export const AllVideosDocument = new TypedDocumentString(`
     source
     slug
     createdAt
-    user {
-      username
-    }
-  }
-  playlist(where: {playlist_videos: {}}) {
-    id
-    title
-    thumbnailUrl
-    slug
-    createdAt
-    description
     user {
       username
     }
