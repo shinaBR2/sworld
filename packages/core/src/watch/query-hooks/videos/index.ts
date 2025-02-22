@@ -124,8 +124,8 @@ const transformPlaylist = (playlist: AllVideosQuery['playlist'][0]): Transformed
 
 const transform = (data: AllVideosQuery): TransformedMediaItem[] => {
   const { videos, playlist } = data;
-  const standaloneVideos = videos.map(transformVideoData);
-  const playlistVideos = playlist.map(transformPlaylist);
+  const standaloneVideos = videos?.map(transformVideoData) || [];
+  const playlistVideos = playlist?.map(transformPlaylist) || [];
   const merged = [...standaloneVideos, ...playlistVideos];
   const sorted = merged.sort((a, b) => {
     return (b.createdAt as string).localeCompare(a.createdAt as string);

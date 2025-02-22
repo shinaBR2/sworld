@@ -48,6 +48,7 @@ describe('useLoadVideos', () => {
       lastWatchedAt: '2024-01-02',
       progressSeconds: 30,
       duration: 0,
+      type: 'video',
     },
     {
       id: '2',
@@ -61,6 +62,7 @@ describe('useLoadVideos', () => {
       lastWatchedAt: null,
       progressSeconds: 0,
       duration: 0,
+      type: 'video',
     },
   ];
 
