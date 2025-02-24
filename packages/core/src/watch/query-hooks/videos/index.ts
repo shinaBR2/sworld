@@ -46,9 +46,11 @@ interface LoadVideosProps {
 //   firstVideoId: string;
 // }
 
-// type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
+type TransformedVideo = ReturnType<typeof transformVideoFragment>;
+type TransformedPlaylist = ReturnType<typeof transformPlaylistFragment>;
+type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
 
-const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFragment>) => {
+const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof PlaylistFragment>) => {
   const playlist = getFragmentData(PlaylistFragment, playlistFragmentData);
   const user = {
     username: getFragmentData(UserFragment, playlist.user).username || '',
@@ -77,7 +79,7 @@ const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFra
 const transform = (data: AllVideosQuery) => {
   const { videos, playlist } = data;
   const standaloneVideos = videos?.map(transformVideoFragment) || [];
-  const playlistVideos = playlist?.map(transformPlaylist) || [];
+  const playlistVideos = playlist?.map(transformPlaylistFragment) || [];
   const merged = [...standaloneVideos, ...playlistVideos];
   const sorted = merged.sort((a, b) => {
     return (b.createdAt as string).localeCompare(a.createdAt as string);
@@ -102,4 +104,4 @@ const useLoadVideos = (props: LoadVideosProps) => {
   };
 };
 
-export { useLoadVideos };
+export { type TransformedVideo, type TransformedPlaylist, type TransformedMediaItem, useLoadVideos };

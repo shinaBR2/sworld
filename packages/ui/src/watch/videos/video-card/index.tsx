@@ -1,15 +1,16 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Video, WithLinkComponent } from '../interface';
+import { WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
-import { MEDIA_TYPES, useLoadVideos } from 'core/watch/query-hooks';
+import { MEDIA_TYPES } from 'core/watch/query-hooks';
+import { TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks/videos';
 
 interface VideoCardProps extends WithLinkComponent {
-  video: Video;
+  video: TransformedMediaItem;
   asLink?: boolean;
 }
 
@@ -35,7 +36,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 };
 
 interface VideoProgressProps {
-  video: ReturnType<typeof useLoadVideos>['videos'][0];
+  video: TransformedMediaItem;
 }
 
 const VideoProgress = (props: VideoProgressProps) => {
@@ -76,10 +77,7 @@ const VideoProgress = (props: VideoProgressProps) => {
   return null;
 };
 
-interface VideoContentProps {
-  video: Video;
-  asLink?: boolean;
-}
+interface VideoContentProps extends VideoCardProps {}
 
 const VideoContent = (props: VideoContentProps) => {
   const { video, asLink } = props;
@@ -132,7 +130,6 @@ const VideoCard = (props: VideoCardProps) => {
   );
 
   if (asLink && LinkComponent && linkProps) {
-    console.log(`linkProps`, linkProps);
     return (
       <LinkComponent {...linkProps} style={{ textDecoration: 'none' }}>
         {cardContent}

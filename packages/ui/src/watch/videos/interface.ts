@@ -31,6 +31,7 @@ interface WithLinkComponent<T = any> {
   };
 }
 
+// TODO cleanup
 type Video = ReturnType<typeof watchQueryHooks.useLoadVideos>['videos'][0];
 type VideoItem = ReturnType<typeof watchQueryHooks.useLoadVideoDetail>['videos'][0];
 
