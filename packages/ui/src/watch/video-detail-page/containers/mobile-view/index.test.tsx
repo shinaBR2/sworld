@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MobileView } from './index';
-import { Video } from '../../../videos/interface';
+import { Video } from '../../../videos/types';
 import { RelatedList } from '../../related-list';
 
 // Mock components

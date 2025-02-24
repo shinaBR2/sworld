@@ -1,6 +1,6 @@
 import { FragmentType, getFragmentData } from '../../graphql';
 import { AppError } from '../../universal/error-boundary/app-error';
-import { UserFragment, VideoFragment } from './fragments';
+import { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment } from './fragments';
 import { MEDIA_TYPES } from './types';
 
 const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) => {
@@ -32,4 +32,30 @@ const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) =
   };
 };
 
-export { transformVideoFragment };
+const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof PlaylistFragment>) => {
+  const playlist = getFragmentData(PlaylistFragment, playlistFragmentData);
+  const user = {
+    username: getFragmentData(UserFragment, playlist.user).username || '',
+  };
+
+  if (!playlist.playlist_videos.length) {
+    throw new AppError('Playlist has no videos', 'Playlist has no videos', false);
+  }
+
+  const firstPlaylistVideo = getFragmentData(PlaylistVideoFragment, playlist.playlist_videos[0]);
+  const firstVideo = getFragmentData(VideoFragment, firstPlaylistVideo.video);
+
+  return {
+    id: playlist.id,
+    type: MEDIA_TYPES.PLAYLIST,
+    title: playlist.title,
+    thumbnailUrl: playlist.thumbnailUrl,
+    slug: playlist.slug,
+    createdAt: playlist.createdAt,
+    description: playlist.description || '',
+    user,
+    firstVideoId: firstVideo.id,
+  };
+};
+
+export { transformVideoFragment, transformPlaylistFragment };

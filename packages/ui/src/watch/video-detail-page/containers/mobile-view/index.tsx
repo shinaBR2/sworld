@@ -1,5 +1,4 @@
 import Grid from '@mui/material/Grid';
-import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
 import { VideoListItemSkeleton } from '../../../videos/list-item/skeleton';
@@ -7,6 +6,7 @@ import Box from '@mui/material/Box';
 import { HEADER_MOBILE_HEIGHT, VIDEO_ASPECT_RATIO } from '../../../theme';
 import { Theme, Typography } from '@mui/material';
 import { VideoContainer } from '../../../videos/video-container';
+import { VideoDetailContainerProps } from '../types';
 
 // TODO: check orientation events
 const styles = {
@@ -82,10 +82,15 @@ const LoadingSkeleton = () => (
 const MobileView = (props: VideoDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
-  const videoDetail = queryRs.videoDetail as Video;
+  const videoDetail = queryRs.videoDetail;
 
   if (isLoading) {
     return <LoadingSkeleton />;
+  }
+
+  if (!videoDetail) {
+    // TODO: handle error
+    return null;
   }
 
   return (

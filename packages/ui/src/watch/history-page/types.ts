@@ -1,4 +1,4 @@
-import { RequiredLinkComponent, Video } from '../videos/interface';
+import { RequiredLinkComponent, Video } from '../videos/types';
 
 interface HistoryContainerProps extends RequiredLinkComponent {
   videos: Video[];

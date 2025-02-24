@@ -1,4 +1,4 @@
-import { WithLinkComponent } from '../../watch/videos/interface';
+import { WithLinkComponent } from '../../watch/videos/types';
 import Link from '@mui/material/Link';
 import { ResponsiveImage } from '../images/image';
 

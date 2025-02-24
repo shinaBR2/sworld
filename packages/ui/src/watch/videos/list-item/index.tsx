@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { RequiredLinkComponent, VideoItem } from '../interface';
+import { RequiredLinkComponent } from '../types';
 import PlayCircle from '@mui/icons-material/PlayCircle';
 import { ResponsiveImage } from '../../../universal/images/image';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
@@ -14,6 +14,7 @@ import {
   TitleText,
   UsernameText,
 } from './styled';
+import { TransformedVideo } from 'core/watch/query-hooks';
 
 interface ThumbnailProps {
   src?: string;
@@ -21,7 +22,7 @@ interface ThumbnailProps {
 }
 
 interface VideoListItemProps extends RequiredLinkComponent {
-  video: VideoItem;
+  video: TransformedVideo;
   isActive?: boolean;
 }
 

@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { RequiredLinkComponent, VideoItem } from '../../videos/interface';
+import { RequiredLinkComponent } from '../../videos/types';
 import { VideoListItem } from '../../videos/list-item';
 import { generateVideoDetailRoute } from 'core/watch/routes';
+import { TransformedVideo } from 'core/watch/query-hooks';
 
 interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
-  videos: VideoItem[];
+  videos: TransformedVideo[];
   title?: string;
   activeId?: string;
 }

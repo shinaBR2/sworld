@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { WithLinkComponent } from '../interface';
+import { WithLinkComponent } from '../types';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
 import { MEDIA_TYPES } from 'core/watch/query-hooks';
-import { TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks/videos';
+import { TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks';
 
 interface VideoCardProps extends WithLinkComponent {
   video: TransformedMediaItem;

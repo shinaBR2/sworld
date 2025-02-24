@@ -1,5 +1,5 @@
 import { useIsMobile } from '../../../universal/responsive';
-import { VideoDetailContainerProps } from '../../videos/interface';
+import { VideoDetailContainerProps } from '../../videos/types';
 import { DesktopView } from './desktop-view';
 import { MobileView } from './mobile-view';
 
