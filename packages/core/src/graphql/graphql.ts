@@ -5878,24 +5878,56 @@ export type UpdateVideoProgressMutationVariables = Exact<{
 
 export type UpdateVideoProgressMutation = { __typename?: 'mutation_root', insert_user_video_history_one?: { __typename?: 'user_video_history', id: any, progress_seconds: number, last_watched_at: any } | null };
 
+export type UserFieldsFragment = { __typename?: 'users', username?: string | null } & { ' $fragmentName'?: 'UserFieldsFragment' };
+
+export type VideoFieldsFragment = { __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user: (
+    { __typename?: 'users' }
+    & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+  ), user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> } & { ' $fragmentName'?: 'VideoFieldsFragment' };
+
+export type PlaylistVideoFieldsFragment = { __typename?: 'playlist_videos', position: number, video: (
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  ) } & { ' $fragmentName'?: 'PlaylistVideoFieldsFragment' };
+
+export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl: string, slug: string, createdAt: any, description?: string | null, user: (
+    { __typename?: 'users' }
+    & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+  ), playlist_videos: Array<(
+    { __typename?: 'playlist_videos' }
+    & { ' $fragmentRefs'?: { 'PlaylistVideoFieldsFragment': PlaylistVideoFieldsFragment } }
+  )> } & { ' $fragmentName'?: 'PlaylistFieldsFragment' };
+
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
 
-export type PlaylistDetailQuery = { __typename?: 'query_root', playlist_by_pk?: { __typename?: 'playlist', id: any, title: string, slug: string, public: boolean, playlist_videos: Array<{ __typename?: 'playlist_videos', position: number, video: { __typename?: 'videos', id: any, title: string, thumbnailUrl?: string | null, source?: string | null, slug: string, duration?: number | null, description?: string | null, createdAt?: any | null, user: { __typename?: 'users', username?: string | null }, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> } }> } | null };
+export type PlaylistDetailQuery = { __typename?: 'query_root', playlist_by_pk?: (
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'PlaylistFieldsFragment': PlaylistFieldsFragment } }
+  ) | null };
 
 export type VideoDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
 
-export type VideoDetailQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null, thumbnailUrl?: string | null, source?: string | null, slug: string, duration?: number | null, createdAt?: any | null, user: { __typename?: 'users', username?: string | null }, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> }>, videos_by_pk?: { __typename?: 'videos', id: any, source?: string | null, thumbnailUrl?: string | null, title: string, description?: string | null } | null };
+export type VideoDetailQuery = { __typename?: 'query_root', videos: Array<(
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  )>, videos_by_pk?: { __typename?: 'videos', id: any, source?: string | null, thumbnailUrl?: string | null, title: string, description?: string | null } | null };
 
 export type AllVideosQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllVideosQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }>, user: { __typename?: 'users', username?: string | null } }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, thumbnailUrl: string, slug: string, createdAt: any, description?: string | null, user: { __typename?: 'users', username?: string | null } }> };
+export type AllVideosQuery = { __typename?: 'query_root', videos: Array<(
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  )>, playlist: Array<(
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'PlaylistFieldsFragment': PlaylistFieldsFragment } }
+  )> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -5911,7 +5943,100 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-
+export const UserFieldsFragmentDoc = new TypedDocumentString(`
+    fragment UserFields on users {
+  username
+}
+    `, {"fragmentName":"UserFields"}) as unknown as TypedDocumentString<UserFieldsFragment, unknown>;
+export const VideoFieldsFragmentDoc = new TypedDocumentString(`
+    fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}
+    fragment UserFields on users {
+  username
+}`, {"fragmentName":"VideoFields"}) as unknown as TypedDocumentString<VideoFieldsFragment, unknown>;
+export const PlaylistVideoFieldsFragmentDoc = new TypedDocumentString(`
+    fragment PlaylistVideoFields on playlist_videos {
+  position
+  video {
+    ...VideoFields
+  }
+}
+    fragment UserFields on users {
+  username
+}
+fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}`, {"fragmentName":"PlaylistVideoFields"}) as unknown as TypedDocumentString<PlaylistVideoFieldsFragment, unknown>;
+export const PlaylistFieldsFragmentDoc = new TypedDocumentString(`
+    fragment PlaylistFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  user {
+    ...UserFields
+  }
+  playlist_videos(order_by: {position: asc}) {
+    ...PlaylistVideoFields
+  }
+}
+    fragment UserFields on users {
+  username
+}
+fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}
+fragment PlaylistVideoFields on playlist_videos {
+  position
+  video {
+    ...VideoFields
+  }
+}`, {"fragmentName":"PlaylistFields"}) as unknown as TypedDocumentString<PlaylistFieldsFragment, unknown>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {
@@ -5976,51 +6101,53 @@ export const UpdateVideoProgressDocument = new TypedDocumentString(`
 export const PlaylistDetailDocument = new TypedDocumentString(`
     query PlaylistDetail($id: uuid!) {
   playlist_by_pk(id: $id) {
-    id
-    title
-    slug
-    public
-    playlist_videos(order_by: {position: asc}) {
-      position
-      video {
-        id
-        title
-        thumbnailUrl
-        source
-        slug
-        duration
-        description
-        createdAt
-        user {
-          username
-        }
-        user_video_histories {
-          last_watched_at
-          progress_seconds
-        }
-      }
-    }
+    ...PlaylistFields
   }
 }
-    `) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
+    fragment UserFields on users {
+  username
+}
+fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}
+fragment PlaylistVideoFields on playlist_videos {
+  position
+  video {
+    ...VideoFields
+  }
+}
+fragment PlaylistFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  user {
+    ...UserFields
+  }
+  playlist_videos(order_by: {position: asc}) {
+    ...PlaylistVideoFields
+  }
+}`) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
   videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {
-    id
-    title
-    description
-    thumbnailUrl
-    source
-    slug
-    duration
-    createdAt
-    user {
-      username
-    }
-    user_video_histories {
-      last_watched_at
-      progress_seconds
-    }
+    ...VideoFields
   }
   videos_by_pk(id: $id) {
     id
@@ -6030,39 +6157,75 @@ export const VideoDetailDocument = new TypedDocumentString(`
     description
   }
 }
-    `) as unknown as TypedDocumentString<VideoDetailQuery, VideoDetailQueryVariables>;
+    fragment UserFields on users {
+  username
+}
+fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}`) as unknown as TypedDocumentString<VideoDetailQuery, VideoDetailQueryVariables>;
 export const AllVideosDocument = new TypedDocumentString(`
     query AllVideos @cached {
   videos(
     where: {_and: {_not: {playlist_videos: {}}, source: {_is_null: false}}}
     order_by: {createdAt: desc}
   ) {
-    user_video_histories {
-      last_watched_at
-      progress_seconds
-    }
-    id
-    title
-    description
-    duration
-    thumbnailUrl
-    source
-    slug
-    createdAt
-    user {
-      username
-    }
+    ...VideoFields
   }
   playlist(where: {playlist_videos: {}}) {
-    id
-    title
-    thumbnailUrl
-    slug
-    createdAt
-    description
-    user {
-      username
-    }
+    ...PlaylistFields
   }
 }
-    `) as unknown as TypedDocumentString<AllVideosQuery, AllVideosQueryVariables>;
+    fragment UserFields on users {
+  username
+}
+fragment VideoFields on videos {
+  id
+  title
+  description
+  duration
+  thumbnailUrl
+  source
+  slug
+  createdAt
+  user {
+    ...UserFields
+  }
+  user_video_histories {
+    last_watched_at
+    progress_seconds
+  }
+}
+fragment PlaylistVideoFields on playlist_videos {
+  position
+  video {
+    ...VideoFields
+  }
+}
+fragment PlaylistFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  user {
+    ...UserFields
+  }
+  playlist_videos(order_by: {position: asc}) {
+    ...PlaylistVideoFields
+  }
+}`) as unknown as TypedDocumentString<AllVideosQuery, AllVideosQueryVariables>;

@@ -1,4 +1,5 @@
 import { watchQueryHooks } from 'core';
+import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GenericLinkProps<T = any> {
@@ -37,8 +38,8 @@ interface HomeContainerProps extends RequiredLinkComponent {
   queryRs: ReturnType<typeof watchQueryHooks.useLoadVideos>;
 }
 
-interface VideoDetailContainerProps extends RequiredLinkComponent {
-  queryRs: ReturnType<typeof watchQueryHooks.useLoadVideoDetail>;
+interface VideoDetailContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
+  queryRs: ReturnType<typeof useLoadPlaylistDetail>;
 }
 
 export {

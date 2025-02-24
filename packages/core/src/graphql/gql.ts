@@ -19,9 +19,13 @@ const documents = {
     "\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n": types.GetPublicAudiosAndFeelingsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": types.InsertVideosDocument,
     "\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n": types.UpdateVideoProgressDocument,
-    "\n  query PlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      id\n      title\n      slug\n      public\n      playlist_videos(order_by: { position: asc }) {\n        position\n        video {\n          id\n          title\n          thumbnailUrl\n          source\n          slug\n          duration\n          description\n          createdAt\n          user {\n            username\n          }\n          user_video_histories {\n            last_watched_at\n            progress_seconds\n          }\n        }\n      }\n    }\n  }\n": types.PlaylistDetailDocument,
-    "\n  query VideoDetail($id: uuid!) @cached {\n    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {\n      id\n      title\n      description\n      thumbnailUrl\n      source\n      slug\n      duration\n      createdAt\n      user {\n        username\n      }\n      user_video_histories {\n        last_watched_at\n        progress_seconds\n      }\n    }\n    videos_by_pk(id: $id) {\n      id\n      source\n      thumbnailUrl\n      title\n      description\n    }\n  }\n": types.VideoDetailDocument,
-    "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }\n      order_by: { createdAt: desc }\n    ) {\n      user_video_histories {\n        last_watched_at\n        progress_seconds\n      }\n      id\n      title\n      description\n      duration\n      thumbnailUrl\n      source\n      slug\n      createdAt\n      user {\n        username\n      }\n    }\n    playlist(where: { playlist_videos: {} }) {\n      id\n      title\n      thumbnailUrl\n      slug\n      createdAt\n      description\n      user {\n        username\n      }\n    }\n  }\n": types.AllVideosDocument,
+    "\n  fragment UserFields on users {\n    username\n  }\n": types.UserFieldsFragmentDoc,
+    "\n  fragment VideoFields on videos {\n    id\n    title\n    description\n    duration\n    thumbnailUrl\n    source\n    slug\n    createdAt\n    user {\n      ...UserFields\n    }\n    user_video_histories {\n      last_watched_at\n      progress_seconds\n    }\n  }\n": types.VideoFieldsFragmentDoc,
+    "\n  fragment PlaylistVideoFields on playlist_videos {\n    position\n    video {\n      ...VideoFields\n    }\n  }\n": types.PlaylistVideoFieldsFragmentDoc,
+    "\n  fragment PlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    user {\n      ...UserFields\n    }\n    playlist_videos(order_by: { position: asc }) {\n      ...PlaylistVideoFields\n    }\n  }\n": types.PlaylistFieldsFragmentDoc,
+    "\n  query PlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...PlaylistFields\n    }\n  }\n": types.PlaylistDetailDocument,
+    "\n  query VideoDetail($id: uuid!) @cached {\n    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {\n      ...VideoFields\n    }\n    videos_by_pk(id: $id) {\n      id\n      source\n      thumbnailUrl\n      title\n      description\n    }\n  }\n": types.VideoDetailDocument,
+    "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos: {} }) {\n      ...PlaylistFields\n    }\n  }\n": types.AllVideosDocument,
 };
 
 /**
@@ -43,15 +47,31 @@ export function graphql(source: "\n  mutation UpdateVideoProgress($videoId: uuid
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query PlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      id\n      title\n      slug\n      public\n      playlist_videos(order_by: { position: asc }) {\n        position\n        video {\n          id\n          title\n          thumbnailUrl\n          source\n          slug\n          duration\n          description\n          createdAt\n          user {\n            username\n          }\n          user_video_histories {\n            last_watched_at\n            progress_seconds\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').PlaylistDetailDocument;
+export function graphql(source: "\n  fragment UserFields on users {\n    username\n  }\n"): typeof import('./graphql').UserFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query VideoDetail($id: uuid!) @cached {\n    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {\n      id\n      title\n      description\n      thumbnailUrl\n      source\n      slug\n      duration\n      createdAt\n      user {\n        username\n      }\n      user_video_histories {\n        last_watched_at\n        progress_seconds\n      }\n    }\n    videos_by_pk(id: $id) {\n      id\n      source\n      thumbnailUrl\n      title\n      description\n    }\n  }\n"): typeof import('./graphql').VideoDetailDocument;
+export function graphql(source: "\n  fragment VideoFields on videos {\n    id\n    title\n    description\n    duration\n    thumbnailUrl\n    source\n    slug\n    createdAt\n    user {\n      ...UserFields\n    }\n    user_video_histories {\n      last_watched_at\n      progress_seconds\n    }\n  }\n"): typeof import('./graphql').VideoFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }\n      order_by: { createdAt: desc }\n    ) {\n      user_video_histories {\n        last_watched_at\n        progress_seconds\n      }\n      id\n      title\n      description\n      duration\n      thumbnailUrl\n      source\n      slug\n      createdAt\n      user {\n        username\n      }\n    }\n    playlist(where: { playlist_videos: {} }) {\n      id\n      title\n      thumbnailUrl\n      slug\n      createdAt\n      description\n      user {\n        username\n      }\n    }\n  }\n"): typeof import('./graphql').AllVideosDocument;
+export function graphql(source: "\n  fragment PlaylistVideoFields on playlist_videos {\n    position\n    video {\n      ...VideoFields\n    }\n  }\n"): typeof import('./graphql').PlaylistVideoFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment PlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    user {\n      ...UserFields\n    }\n    playlist_videos(order_by: { position: asc }) {\n      ...PlaylistVideoFields\n    }\n  }\n"): typeof import('./graphql').PlaylistFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query PlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...PlaylistFields\n    }\n  }\n"): typeof import('./graphql').PlaylistDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query VideoDetail($id: uuid!) @cached {\n    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {\n      ...VideoFields\n    }\n    videos_by_pk(id: $id) {\n      id\n      source\n      thumbnailUrl\n      title\n      description\n    }\n  }\n"): typeof import('./graphql').VideoDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos: {} }) {\n      ...PlaylistFields\n    }\n  }\n"): typeof import('./graphql').AllVideosDocument;
 
 
 export function graphql(source: string) {

@@ -1,27 +1,24 @@
-import { MEDIA_TYPES, TransformedMediaItem } from '../query-hooks/videos';
+import { TransformedPlaylist, TransformedVideo } from '../query-hooks/videos';
 
-const generateVideoDetailRoute = (video: TransformedMediaItem) => {
-  if (video.type === MEDIA_TYPES.VIDEO) {
-    return {
-      to: '/video/$slug/$id',
-      params: {
-        slug: video.slug,
-        id: video.id,
-      },
-    };
-  }
-
-  if (video.type === MEDIA_TYPES.PLAYLIST) {
-    return {
-      to: '/playlist/$slug/$id',
-      params: {
-        slug: video.slug,
-        id: video.id,
-      },
-    };
-  }
-
-  return { to: '', params: {} };
+const generateVideoDetailRoute = (video: TransformedVideo) => {
+  return {
+    to: '/video/$slug/$id',
+    params: {
+      slug: video.slug,
+      id: video.id,
+    },
+  };
 };
 
-export { generateVideoDetailRoute };
+const generatePlaylistDetailRoute = (playlist: TransformedPlaylist) => {
+  return {
+    to: '/playlist/$slug/$playlistId/$videoId',
+    params: {
+      slug: playlist.slug,
+      playlistId: playlist.id,
+      videoId: playlist.firstVideoId,
+    },
+  };
+};
+
+export { generateVideoDetailRoute, generatePlaylistDetailRoute };

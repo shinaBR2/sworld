@@ -1,40 +1,19 @@
-import { graphql } from '../../../graphql';
+import { FragmentType, getFragmentData, graphql } from '../../../graphql';
 import { AllVideosQuery } from '../../../graphql/graphql';
 import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment } from '../fragments';
 
-const videosQuery = graphql(`
+const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {
     videos(
       where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }
       order_by: { createdAt: desc }
     ) {
-      user_video_histories {
-        last_watched_at
-        progress_seconds
-      }
-      id
-      title
-      description
-      duration
-      thumbnailUrl
-      source
-      slug
-      createdAt
-      user {
-        username
-      }
+      ...VideoFields
     }
     playlist(where: { playlist_videos: {} }) {
-      id
-      title
-      thumbnailUrl
-      slug
-      createdAt
-      description
-      user {
-        username
-      }
+      ...PlaylistFields
     }
   }
 `);
@@ -71,19 +50,24 @@ interface TransformedVideo extends BaseVideoInfo {
   progressSeconds: number;
 }
 
-interface TransformedPlaylist extends BaseVideoInfo {}
+interface TransformedPlaylist extends BaseVideoInfo {
+  firstVideoId: string;
+}
 
 type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
 
-const transformVideoData = (video: AllVideosQuery['videos'][0]): TransformedVideo => {
-  if (!video.id || !video.title || !video.slug || !video.source || !video.createdAt) {
+const transformVideoData = (videoFragmentData: FragmentType<typeof VideoFragment>): TransformedVideo => {
+  const video = getFragmentData(VideoFragment, videoFragmentData);
+  if (!video.source) {
     // TODO
     // Use error code instead of hard code strings
     throw new AppError('Required video fields are missing', 'Video data is missing', false);
   }
 
   const history = video.user_video_histories[0];
-  const user: User | null = video.user ? { username: video.user.username || '' } : null;
+  const user: User = {
+    username: getFragmentData(UserFragment, video.user).username || '',
+  };
 
   return {
     id: video.id,
@@ -101,14 +85,18 @@ const transformVideoData = (video: AllVideosQuery['videos'][0]): TransformedVide
   };
 };
 
-const transformPlaylist = (playlist: AllVideosQuery['playlist'][0]): TransformedPlaylist => {
-  if (!playlist.id || !playlist.title || !playlist.slug || !playlist.thumbnailUrl || !playlist.createdAt) {
-    // TODO
-    // Use error code instead of hard code strings
-    throw new AppError('Required playlist fields are missing', 'Playlist data is missing', false);
+const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFragment>): TransformedPlaylist => {
+  const playlist = getFragmentData(PlaylistFragment, playlistFragmentData);
+  const user: User = {
+    username: getFragmentData(UserFragment, playlist.user).username || '',
+  };
+
+  if (!playlist.playlist_videos.length) {
+    throw new AppError('Playlist has no videos', 'Playlist has no videos', false);
   }
 
-  const user: User | null = playlist.user ? { username: playlist.user.username || '' } : null;
+  const firstPlaylistVideo = getFragmentData(PlaylistVideoFragment, playlist.playlist_videos[0]);
+  const firstVideo = getFragmentData(VideoFragment, firstPlaylistVideo.video);
 
   return {
     id: playlist.id,
@@ -119,6 +107,7 @@ const transformPlaylist = (playlist: AllVideosQuery['playlist'][0]): Transformed
     createdAt: playlist.createdAt,
     description: playlist.description || '',
     user,
+    firstVideoId: firstVideo.id,
   };
 };
 

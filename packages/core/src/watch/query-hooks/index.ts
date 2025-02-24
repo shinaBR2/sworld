@@ -1,9 +1,10 @@
 export {
-  useLoadVideos,
   MEDIA_TYPES,
-  type MediaType,
+  useLoadVideos,
   type TransformedVideo,
   type TransformedPlaylist,
   type TransformedMediaItem,
+  type MediaType,
 } from './videos';
 export { useLoadVideoDetail } from './video-detail';
+export { useLoadPlaylistDetail } from './playlist-detail';

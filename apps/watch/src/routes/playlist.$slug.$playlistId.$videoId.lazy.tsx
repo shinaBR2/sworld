@@ -6,11 +6,11 @@ import { Layout } from '../components/layout';
 import React from 'react';
 
 function VideoDetails() {
-  const { id: videoId } = Route.useParams();
+  const { playlistId } = Route.useParams();
   const authContext = Auth.useAuthContext();
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
-    id: videoId,
+    id: playlistId,
   });
 
   return (
@@ -20,6 +20,6 @@ function VideoDetails() {
   );
 }
 
-export const Route = createLazyFileRoute('/playlist/$slug/$id')({
+export const Route = createLazyFileRoute('/playlist/$slug/$playlistId/$videoId')({
   component: VideoDetails,
 });

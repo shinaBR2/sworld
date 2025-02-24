@@ -5,7 +5,7 @@ import { RequiredLinkComponent, VideoItem } from '../../videos/interface';
 import { VideoListItem } from '../../videos/list-item';
 import { generateVideoDetailRoute } from 'core/watch/routes';
 
-interface RelatedListProps extends RequiredLinkComponent {
+interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   videos: VideoItem[];
   title?: string;
   activeId?: string;
