@@ -1,9 +1,7 @@
-import { FragmentType, getFragmentData, graphql } from '../../../graphql';
+import { graphql } from '../../../graphql';
 import { VideoDetailQuery } from '../../../graphql/graphql';
-import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
-import { UserFragment, VideoFragment } from '../fragments';
-import { MEDIA_TYPES } from '../videos';
+import { transformVideoFragment } from '../transformers';
 
 const videoDetailQuery = graphql(`
   query VideoDetail($id: uuid!) @cached {
@@ -25,40 +23,6 @@ interface LoadVideoDetailProps {
   getAccessToken: () => Promise<string>;
 }
 
-type VideoItem = VideoDetailQuery['videos'][0];
-interface User {
-  username: string;
-}
-
-const transformVideoData = (videoData: FragmentType<typeof VideoFragment>) => {
-  const video = getFragmentData(VideoFragment, videoData);
-  if (!video.source) {
-    // TODO
-    // Use error code instead of hard code strings
-    throw new AppError('Required video fields are missing', 'Video data is missing', false);
-  }
-
-  const history = video?.user_video_histories?.[0];
-  const user: User = {
-    username: getFragmentData(UserFragment, video.user).username || '',
-  };
-
-  return {
-    id: video.id,
-    type: MEDIA_TYPES.VIDEO,
-    title: video.title,
-    description: video.description || '',
-    thumbnailUrl: video.thumbnailUrl || '',
-    source: video.source,
-    slug: video.slug,
-    duration: video.duration || 0,
-    createdAt: video.createdAt,
-    user,
-    lastWatchedAt: history?.last_watched_at ?? null,
-    progressSeconds: history?.progress_seconds ?? 0,
-  };
-};
-
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
@@ -72,7 +36,7 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   });
 
   return {
-    videos: data?.videos.map(transformVideoData) || [],
+    videos: data?.videos.map(transformVideoFragment) || [],
     videoDetail: data?.videos_by_pk ?? null, // TODO getFragmentData
     playlist: null,
     isLoading,
@@ -80,4 +44,4 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   };
 };
 
-export { useLoadVideoDetail, type VideoItem };
+export { useLoadVideoDetail };

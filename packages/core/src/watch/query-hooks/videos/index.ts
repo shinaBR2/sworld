@@ -3,6 +3,8 @@ import { AllVideosQuery } from '../../../graphql/graphql';
 import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment } from '../fragments';
+import { transformVideoFragment } from '../transformers';
+import { MEDIA_TYPES } from '../types';
 
 const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {
@@ -22,72 +24,33 @@ interface LoadVideosProps {
   getAccessToken: () => Promise<string>;
 }
 
-interface User {
-  username: string;
-}
+// interface BaseVideoInfo {
+//   id: string;
+//   title: string;
+//   description: string;
+//   thumbnailUrl: string;
+//   slug: string;
+//   createdAt: string;
+//   user: User | null;
+//   type: MediaType;
+// }
 
-const MEDIA_TYPES = {
-  VIDEO: 'video',
-  PLAYLIST: 'playlist',
-} as const;
+// interface TransformedVideo extends BaseVideoInfo {
+//   source: string;
+//   duration: number;
+//   lastWatchedAt: string | null;
+//   progressSeconds: number;
+// }
 
-type MediaType = (typeof MEDIA_TYPES)[keyof typeof MEDIA_TYPES];
-interface BaseVideoInfo {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  slug: string;
-  createdAt: string;
-  user: User | null;
-  type: MediaType;
-}
+// interface TransformedPlaylist extends BaseVideoInfo {
+//   firstVideoId: string;
+// }
 
-interface TransformedVideo extends BaseVideoInfo {
-  source: string;
-  duration: number;
-  lastWatchedAt: string | null;
-  progressSeconds: number;
-}
+// type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
 
-interface TransformedPlaylist extends BaseVideoInfo {
-  firstVideoId: string;
-}
-
-type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
-
-const transformVideoData = (videoFragmentData: FragmentType<typeof VideoFragment>): TransformedVideo => {
-  const video = getFragmentData(VideoFragment, videoFragmentData);
-  if (!video.source) {
-    // TODO
-    // Use error code instead of hard code strings
-    throw new AppError('Required video fields are missing', 'Video data is missing', false);
-  }
-
-  const history = video.user_video_histories[0];
-  const user: User = {
-    username: getFragmentData(UserFragment, video.user).username || '',
-  };
-
-  return {
-    id: video.id,
-    type: MEDIA_TYPES.VIDEO,
-    title: video.title,
-    description: video.description || '',
-    thumbnailUrl: video.thumbnailUrl || '',
-    source: video.source,
-    slug: video.slug,
-    duration: video.duration || 0,
-    createdAt: video.createdAt,
-    user,
-    lastWatchedAt: history?.last_watched_at ?? null,
-    progressSeconds: history?.progress_seconds ?? 0,
-  };
-};
-
-const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFragment>): TransformedPlaylist => {
+const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFragment>) => {
   const playlist = getFragmentData(PlaylistFragment, playlistFragmentData);
-  const user: User = {
+  const user = {
     username: getFragmentData(UserFragment, playlist.user).username || '',
   };
 
@@ -111,9 +74,9 @@ const transformPlaylist = (playlistFragmentData: FragmentType<typeof PlaylistFra
   };
 };
 
-const transform = (data: AllVideosQuery): TransformedMediaItem[] => {
+const transform = (data: AllVideosQuery) => {
   const { videos, playlist } = data;
-  const standaloneVideos = videos?.map(transformVideoData) || [];
+  const standaloneVideos = videos?.map(transformVideoFragment) || [];
   const playlistVideos = playlist?.map(transformPlaylist) || [];
   const merged = [...standaloneVideos, ...playlistVideos];
   const sorted = merged.sort((a, b) => {
@@ -139,11 +102,4 @@ const useLoadVideos = (props: LoadVideosProps) => {
   };
 };
 
-export {
-  useLoadVideos,
-  MEDIA_TYPES,
-  type MediaType,
-  type TransformedVideo,
-  type TransformedPlaylist,
-  type TransformedMediaItem,
-};
+export { useLoadVideos };

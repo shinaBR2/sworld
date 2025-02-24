@@ -1,6 +1,6 @@
-import { TransformedPlaylist, TransformedVideo } from '../query-hooks/videos';
+import { useLoadVideos } from '../query-hooks/videos';
 
-const generateVideoDetailRoute = (video: TransformedVideo) => {
+const generateVideoDetailRoute = (video: ReturnType<typeof useLoadVideos>['videos'][0]) => {
   return {
     to: '/video/$slug/$id',
     params: {
@@ -10,7 +10,8 @@ const generateVideoDetailRoute = (video: TransformedVideo) => {
   };
 };
 
-const generatePlaylistDetailRoute = (playlist: TransformedPlaylist) => {
+// TODO fix any
+const generatePlaylistDetailRoute = (playlist: any) => {
   return {
     to: '/playlist/$slug/$playlistId/$videoId',
     params: {

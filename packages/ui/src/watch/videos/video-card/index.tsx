@@ -5,8 +5,8 @@ import { Video, WithLinkComponent } from '../interface';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
-import { MEDIA_TYPES, TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks/videos';
 import { VideoContainer } from '../video-container';
+import { MEDIA_TYPES, useLoadVideos } from 'core/watch/query-hooks';
 
 interface VideoCardProps extends WithLinkComponent {
   video: Video;
@@ -35,7 +35,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 };
 
 interface VideoProgressProps {
-  video: TransformedMediaItem;
+  video: ReturnType<typeof useLoadVideos>['videos'][0];
 }
 
 const VideoProgress = (props: VideoProgressProps) => {
