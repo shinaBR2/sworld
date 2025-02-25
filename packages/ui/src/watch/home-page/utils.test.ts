@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { AppError } from 'core/universal';
-import { MEDIA_TYPES, TransformedMediaItem, TransformedPlaylist } from 'core/watch/query-hooks/videos';
 import { genlinkProps } from './utils';
+import { MEDIA_TYPES, TransformedPlaylist, TransformedVideo } from 'core/watch/query-hooks';
 
 // Mock the route generation functions
 vi.mock('core/watch/routes', () => ({
   generateVideoDetailRoute: vi.fn().mockReturnValue({ to: '/video/123' }),
-  generatePlaylistDetailRoute: vi.fn().mockReturnValue({ to: '/playlist/456' }),
+  generateVideoInPlaylistRoute: vi.fn().mockReturnValue({ to: '/playlist/456' }),
 }));
 
 describe('genlinkProps', () => {
@@ -15,7 +15,7 @@ describe('genlinkProps', () => {
       type: MEDIA_TYPES.VIDEO,
       id: '123',
       title: 'Test Video',
-    } as TransformedMediaItem;
+    } as TransformedVideo;
 
     const result = genlinkProps(video);
     expect(result).toEqual({ to: '/video/123' });
