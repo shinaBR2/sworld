@@ -208,4 +208,17 @@ describe('VideoCard Component', () => {
     const progressBar = screen.queryByRole('progressbar');
     expect(progressBar).toBeNull();
   });
+  it('renders nothing when video is invalid type', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const invalidVideo = {
+      ...mockVideo,
+      type: MEDIA_TYPES.VIDEO,
+      source: undefined, // This will make 'source' in video check fail
+    } as TransformedMediaItem;
+
+    await renderWithAct(<VideoCard video={invalidVideo} asLink={false} />);
+
+    expect(screen.queryByTestId('mock-video-thumbnail')).not.toBeInTheDocument();
+  });
 });

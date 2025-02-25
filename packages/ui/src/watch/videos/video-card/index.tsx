@@ -41,9 +41,6 @@ interface VideoProgressProps {
 
 const VideoProgress = (props: VideoProgressProps) => {
   const { video } = props;
-  if (video.type == MEDIA_TYPES.PLAYLIST) {
-    return null;
-  }
 
   const { progressSeconds = 0, duration = 0 } = video as TransformedVideo;
   if (progressSeconds > 0 && duration > 0) {
