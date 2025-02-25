@@ -31,6 +31,7 @@ describe('RelatedList', () => {
     {
       id: '1',
       title: 'First Video',
+      slug: 'first-video',
       thumbnailUrl: 'first.jpg',
       user: { username: 'user1' },
       duration: '3:45',
@@ -38,6 +39,7 @@ describe('RelatedList', () => {
     {
       id: '2',
       title: 'Second Video',
+      slug: 'second-video',
       thumbnailUrl: 'second.jpg',
       user: { username: 'user2' },
       duration: '2:30',
@@ -113,6 +115,11 @@ describe('RelatedList', () => {
 
     const videoItem = screen.getByTestId('video-list-item');
     expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
+    expect(generateVideoInPlaylistRoute).toHaveBeenCalledWith({
+      playlistId: mockPlaylist.id,
+      playlistSlug: mockPlaylist.slug,
+      videoId: mockVideos[0].id,
+    });
   });
 
   it('should generate video route when playlist is not provided', () => {
@@ -130,5 +137,6 @@ describe('RelatedList', () => {
 
     const videoItem = screen.getByTestId('video-list-item');
     expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
+    expect(generateVideoDetailRoute).toHaveBeenCalledWith({ id: mockVideos[0].id, slug: mockVideos[0].slug });
   });
 });
