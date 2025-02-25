@@ -29,7 +29,7 @@ const renderWithAct = async (component: React.ReactElement) => {
   return result!;
 };
 
-describe.only('VideoCard Component', () => {
+describe('VideoCard Component', () => {
   const mockVideo = {
     id: '1',
     type: MEDIA_TYPES.VIDEO,
