@@ -7,7 +7,7 @@ import { Auth } from 'core';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
-import { RequiredLinkComponent } from '../videos/interface';
+import { RequiredLinkComponent } from '../videos/types';
 
 interface HeaderProps extends RequiredLinkComponent {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;

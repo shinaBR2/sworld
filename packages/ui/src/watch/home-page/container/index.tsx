@@ -1,8 +1,10 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
-import { HomeContainerProps } from '../../videos/interface';
+import { RequiredLinkComponent } from '../../videos/types';
 import { VideoCard } from '../../videos/video-card';
+import { genlinkProps } from '../utils';
+import { useLoadVideos } from 'core/watch/query-hooks/videos';
 
 const Loading = () => {
   return (
@@ -18,6 +20,10 @@ const Loading = () => {
   );
 };
 
+interface HomeContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
+  queryRs: ReturnType<typeof useLoadVideos>;
+}
+
 // TODO refactor
 const HomeContainer = (props: HomeContainerProps) => {
   const { queryRs, LinkComponent } = props;
@@ -30,7 +36,7 @@ const HomeContainer = (props: HomeContainerProps) => {
         {!isLoading &&
           videos.map(video => (
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={video.id}>
-              <VideoCard video={video} asLink={true} LinkComponent={LinkComponent} />
+              <VideoCard video={video} asLink={true} LinkComponent={LinkComponent} linkProps={genlinkProps(video)} />
             </Grid>
           ))}
       </Grid>

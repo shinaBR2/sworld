@@ -1,7 +1,8 @@
-import { RequiredLinkComponent, Video } from '../videos/interface';
+import { TransformedMediaItem } from 'core/watch/query-hooks';
+import { RequiredLinkComponent } from '../videos/types';
 
-interface HistoryContainerProps extends RequiredLinkComponent {
-  videos: Video[];
+interface HistoryContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
+  videos: TransformedMediaItem[];
   isLoading: boolean;
   // error: Error;
 }

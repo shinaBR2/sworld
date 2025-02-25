@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DesktopView } from './index';
 import { RelatedList } from '../../related-list';
@@ -32,14 +32,29 @@ describe('DesktopView', () => {
     vi.clearAllMocks();
   });
 
+  it('renders nothing when invalid data', () => {
+    const { container } = render(
+      <DesktopView
+        queryRs={{
+          videos: [mockVideo],
+          isLoading: false,
+        }}
+        activeVideoId="2" // Not in the videos list
+        LinkComponent={mockLinkComponent}
+      />
+    );
+
+    expect(container.firstChild).toBeNull();
+  });
+
   it('renders loading skeleton when isLoading is true', () => {
     render(
       <DesktopView
         queryRs={{
           videos: [],
           isLoading: true,
-          videoDetail: null,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );
@@ -55,8 +70,8 @@ describe('DesktopView', () => {
         queryRs={{
           videos: [mockVideo],
           isLoading: false,
-          videoDetail: mockVideo,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );
@@ -74,8 +89,8 @@ describe('DesktopView', () => {
         queryRs={{
           videos: mockVideos,
           isLoading: false,
-          videoDetail: mockVideo,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );

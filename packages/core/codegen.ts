@@ -21,6 +21,9 @@ const config: CodegenConfig = {
       config: {
         documentMode: 'string',
       },
+      presetConfig: {
+        fragmentMasking: { unmaskFunctionName: 'getFragmentData' },
+      },
     },
     './schema.graphql': {
       plugins: ['schema-ast'],

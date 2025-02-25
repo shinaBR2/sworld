@@ -1,7 +1,6 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
-import { Video } from '../../videos/interface';
 import { VideoCard } from '../../videos/video-card';
 import { HistoryContainerProps } from '../types';
 
@@ -27,7 +26,7 @@ const HistoryContainer = (props: HistoryContainerProps) => {
       <Grid container spacing={3}>
         {isLoading && <Loading />}
         {!isLoading &&
-          videos.map((video: Video) => (
+          videos.map(video => (
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={video.id}>
               <VideoCard video={video} asLink={true} LinkComponent={LinkComponent} />
             </Grid>

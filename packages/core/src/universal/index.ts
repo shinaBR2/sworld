@@ -16,10 +16,12 @@ const requestHelpers = {
 };
 
 import { initSentry, loadSentryIntegrations, captureError } from './tracker';
+import { AppError } from './error-boundary/app-error';
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 
 export { initSentry, loadSentryIntegrations, captureError };
 export { ErrorBoundary };
+export { AppError };
 export { commonHelpers, requestHelpers };
 export default hooks;

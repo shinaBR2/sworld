@@ -1,26 +1,18 @@
 import { graphql } from '../../../graphql';
 import { AllVideosQuery } from '../../../graphql/graphql';
-import { AppError } from '../../../universal/error-boundary/app-error';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { transformPlaylistFragment, transformVideoFragment } from '../transformers';
 
-const videosQuery = graphql(`
+const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {
-    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {
-      user_video_histories {
-        last_watched_at
-        progress_seconds
-      }
-      id
-      title
-      description
-      duration
-      thumbnailUrl
-      source
-      slug
-      createdAt
-      user {
-        username
-      }
+    videos(
+      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }
+      order_by: { createdAt: desc }
+    ) {
+      ...VideoFields
+    }
+    playlist(where: { playlist_videos: {} }) {
+      ...PlaylistFields
     }
   }
 `);
@@ -29,47 +21,19 @@ interface LoadVideosProps {
   getAccessToken: () => Promise<string>;
 }
 
-interface User {
-  username: string;
-}
+const transform = (data: AllVideosQuery) => {
+  const { videos, playlist } = data;
+  const standaloneVideos = videos?.map(transformVideoFragment) || [];
+  const playlistVideos = playlist?.map(transformPlaylistFragment) || [];
+  const merged = [...standaloneVideos, ...playlistVideos];
+  const sorted = merged.sort((a, b) => {
+    if (!a.createdAt || !b.createdAt) {
+      return 0;
+    }
+    return b.createdAt.localeCompare(a.createdAt);
+  });
 
-interface TransformedVideo {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  source: string;
-  slug: string;
-  duration: number;
-  createdAt: string;
-  user: User | null;
-  lastWatchedAt: string | null;
-  progressSeconds: number;
-}
-
-const transformVideoData = (video: AllVideosQuery['videos'][0]): TransformedVideo => {
-  if (!video.id || !video.title || !video.slug || !video.source || !video.createdAt) {
-    // TODO
-    // Use error code instead of hard code strings
-    throw new AppError('Required video fields are missing', 'Video data is missing', false);
-  }
-
-  const history = video.user_video_histories[0];
-  const user: User | null = video.user ? { username: video.user.username || '' } : null;
-
-  return {
-    id: video.id,
-    title: video.title,
-    description: video.description || '',
-    thumbnailUrl: video.thumbnailUrl || '',
-    source: video.source,
-    slug: video.slug,
-    duration: video.duration || 0,
-    createdAt: video.createdAt,
-    user,
-    lastWatchedAt: history?.last_watched_at ?? null,
-    progressSeconds: history?.progress_seconds ?? 0,
-  };
+  return sorted;
 };
 
 const useLoadVideos = (props: LoadVideosProps) => {
@@ -82,10 +46,10 @@ const useLoadVideos = (props: LoadVideosProps) => {
   });
 
   return {
-    videos: data?.videos.map(transformVideoData) || [],
+    videos: data ? transform(data) : [],
     isLoading,
     error,
   };
 };
 
-export { useLoadVideos, type TransformedVideo };
+export { useLoadVideos };

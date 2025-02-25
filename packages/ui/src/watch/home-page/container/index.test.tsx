@@ -12,6 +12,16 @@ vi.mock('../../videos/video-card', () => ({
   VideoCard: vi.fn(() => <div>VideoCard</div>),
 }));
 
+vi.mock('../utils', () => ({
+  genlinkProps: (video: { id: string; slug: string }) => ({
+    to: '/video/$slug-$id',
+    params: {
+      slug: video.slug,
+      id: video.id,
+    },
+  }),
+}));
+
 const MockLink = vi.fn();
 
 describe('HomeContainer', () => {

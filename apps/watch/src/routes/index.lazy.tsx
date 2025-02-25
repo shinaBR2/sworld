@@ -21,8 +21,7 @@ const Content = () => {
 };
 
 const Index = () => {
-  const authContext = useAuthContext();
-  const { isSignedIn, isLoading, signIn } = authContext;
+  const { isSignedIn, isLoading, signIn } = useAuthContext();
 
   if (isLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;

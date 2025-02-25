@@ -1,15 +1,17 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { LoadingBackdrop } from 'ui/universal';
 import { LoginDialog } from 'ui/universal/dialogs';
-import { Auth, watchQueryHooks } from 'core';
 import { Layout } from '../components/layout';
 import { HistoryContainer } from 'ui/watch/history-page/container';
 import { useMemo } from 'react';
 import React from 'react';
+import { useAuthContext } from 'core/providers/auth';
+import { useLoadVideos } from 'core/watch/query-hooks/videos';
+import { MEDIA_TYPES, TransformedVideo } from 'core/watch/query-hooks';
 
 const Content = () => {
-  const { getAccessToken } = Auth.useAuthContext();
-  const videoResult = watchQueryHooks.useLoadVideos({
+  const { getAccessToken } = useAuthContext();
+  const videoResult = useLoadVideos({
     getAccessToken,
   });
   const { isLoading, videos } = videoResult;
@@ -18,12 +20,20 @@ const Content = () => {
 
     return videos
       .filter(video => {
+        // TODO
+        // Show history for video in playlist also
+        if (video.type !== MEDIA_TYPES.VIDEO) {
+          return false;
+        }
+
         const { lastWatchedAt, progressSeconds } = video;
 
         return lastWatchedAt != null && progressSeconds != null && progressSeconds > 0;
       })
       .sort((a, b) => {
-        return (b.lastWatchedAt as string).localeCompare(a.lastWatchedAt as string);
+        return ((b as TransformedVideo).lastWatchedAt as string).localeCompare(
+          (a as TransformedVideo).lastWatchedAt as string
+        );
       });
   }, [videos]);
 
@@ -35,8 +45,7 @@ const Content = () => {
 };
 
 const History = () => {
-  const authContext = Auth.useAuthContext();
-  const { isSignedIn, isLoading, signIn } = authContext;
+  const { isSignedIn, isLoading, signIn } = useAuthContext();
 
   if (isLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;
