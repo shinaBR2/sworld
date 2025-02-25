@@ -1,15 +1,26 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { RelatedList } from './index';
+import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
 
 // Mock the VideoListItem component
 vi.mock('../../videos/list-item', () => ({
-  VideoListItem: vi.fn(({ video, isActive }) => (
-    <div data-testid="video-list-item" data-video-id={video.id} data-is-active={isActive}>
+  VideoListItem: vi.fn(({ video, isActive, linkProps }) => (
+    <div
+      data-testid="video-list-item"
+      data-video-id={video.id}
+      data-is-active={isActive}
+      data-link-props={JSON.stringify(linkProps)}
+    >
       {video.title}
     </div>
   )),
+}));
+
+vi.mock('core/watch/routes', () => ({
+  generateVideoDetailRoute: vi.fn(),
+  generateVideoInPlaylistRoute: vi.fn(),
 }));
 
 // Mock Link component
@@ -32,6 +43,10 @@ describe('RelatedList', () => {
       duration: '2:30',
     },
   ];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders the default title when no title prop is provided', () => {
     render(<RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} />);
@@ -75,5 +90,45 @@ describe('RelatedList', () => {
 
     const videoItems = screen.queryAllByTestId('video-list-item');
     expect(videoItems.length).toBe(0);
+  });
+
+  it('should generate playlist route when playlist is provided', () => {
+    const mockPlaylist = {
+      id: 'playlist-1',
+      slug: 'test-playlist',
+    };
+
+    const mockLinkProps = {
+      to: '/playlist/$playlistSlug-$playlistId/video/$videoId',
+      params: {
+        playlistId: 'playlist-1',
+        videoId: 'video-1',
+        slug: 'test-playlist',
+      },
+    };
+
+    vi.mocked(generateVideoInPlaylistRoute).mockReturnValue(mockLinkProps);
+
+    render(<RelatedList videos={[mockVideos[0]]} playlist={mockPlaylist} LinkComponent={MockLinkComponent} />);
+
+    const videoItem = screen.getByTestId('video-list-item');
+    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
+  });
+
+  it('should generate video route when playlist is not provided', () => {
+    const mockLinkProps = {
+      to: '/video/$slug-$id',
+      params: {
+        id: 'video-1',
+        slug: 'test-video',
+      },
+    };
+
+    vi.mocked(generateVideoDetailRoute).mockReturnValue(mockLinkProps);
+
+    render(<RelatedList videos={[mockVideos[0]]} playlist={null} LinkComponent={MockLinkComponent} />);
+
+    const videoItem = screen.getByTestId('video-list-item');
+    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
   });
 });
