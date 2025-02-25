@@ -29,13 +29,27 @@ describe('useLoadVideos', () => {
       thumbnailUrl: 'thumb2.jpg',
       source: 'source2',
       slug: 'video-2',
-      createdAt: '2024-01-01',
+      createdAt: '2024-01-02',
       user: { username: 'user2' },
       user_video_histories: [],
     },
   ];
 
   const expectedTransformedVideos = [
+    {
+      id: '2',
+      title: 'Video 2',
+      description: 'Description 2',
+      thumbnailUrl: 'thumb2.jpg',
+      source: 'source2',
+      slug: 'video-2',
+      createdAt: '2024-01-02',
+      user: { username: 'user2' },
+      lastWatchedAt: null,
+      progressSeconds: 0,
+      duration: 0,
+      type: 'video',
+    },
     {
       id: '1',
       title: 'Video 1',
@@ -47,20 +61,6 @@ describe('useLoadVideos', () => {
       user: { username: 'user1' },
       lastWatchedAt: '2024-01-02',
       progressSeconds: 30,
-      duration: 0,
-      type: 'video',
-    },
-    {
-      id: '2',
-      title: 'Video 2',
-      description: 'Description 2',
-      thumbnailUrl: 'thumb2.jpg',
-      source: 'source2',
-      slug: 'video-2',
-      createdAt: '2024-01-01',
-      user: { username: 'user2' },
-      lastWatchedAt: null,
-      progressSeconds: 0,
       duration: 0,
       type: 'video',
     },
@@ -99,18 +99,54 @@ describe('useLoadVideos', () => {
     });
   });
 
-  it('should return transformed data when loaded', () => {
+  it('should return transformed and sorted data when loaded', () => {
     vi.mocked(useRequest).mockReturnValue({
-      data: { videos: mockVideos },
+      data: {
+        videos: mockVideos,
+        playlist: [
+          {
+            id: '3',
+            title: 'Playlist 1',
+            description: '',
+            thumbnailUrl: 'thumb3.jpg',
+            slug: 'playlist-1',
+            createdAt: '2024-01-03', // Most recent date
+            user: { username: 'user3' },
+            playlist_videos: [
+              {
+                video: mockVideos[0],
+                order: 1,
+              },
+            ],
+          },
+        ],
+      },
       isLoading: false,
     } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
 
     expect(result.current).toEqual({
-      videos: expectedTransformedVideos,
+      videos: [
+        {
+          id: '3',
+          type: 'playlist',
+          title: 'Playlist 1',
+          description: '',
+          thumbnailUrl: 'thumb3.jpg',
+          slug: 'playlist-1',
+          createdAt: '2024-01-03', // Most recent date
+          user: { username: 'user3' },
+          firstVideoId: '1',
+        },
+        ...expectedTransformedVideos,
+      ],
       isLoading: false,
     });
+
+    expect(result.current.videos[0].createdAt).toBe('2024-01-03');
+    expect(result.current.videos[1].createdAt).toBe('2024-01-02');
+    expect(result.current.videos[2].createdAt).toBe('2024-01-01');
   });
 
   it('should handle error', () => {
