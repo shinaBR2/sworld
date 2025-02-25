@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useLoadVideoDetail } from './index';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { MEDIA_TYPES } from '../types';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -46,6 +47,7 @@ describe('useLoadVideoDetail', () => {
 
   const expectedTransformedVideo = {
     id: 'test-id',
+    type: MEDIA_TYPES.VIDEO,
     title: 'Test Video',
     description: 'Test Description',
     source: 'test-source',
@@ -89,6 +91,7 @@ describe('useLoadVideoDetail', () => {
     expect(result.current).toEqual({
       videos: [],
       videoDetail: null,
+      playlist: null,
       isLoading: true,
       error: undefined,
     });
@@ -108,6 +111,7 @@ describe('useLoadVideoDetail', () => {
     expect(result.current).toEqual({
       videos: [expectedTransformedVideo],
       videoDetail: mockVideoDetail,
+      playlist: null,
       isLoading: false,
       error: undefined,
     });
@@ -124,6 +128,7 @@ describe('useLoadVideoDetail', () => {
     expect(result.current).toEqual({
       videos: [],
       videoDetail: null,
+      playlist: null,
       isLoading: false,
     });
   });
@@ -141,6 +146,7 @@ describe('useLoadVideoDetail', () => {
     expect(result.current).toEqual({
       videos: [],
       videoDetail: null,
+      playlist: null,
       isLoading: false,
       error: mockError,
     });
