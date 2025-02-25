@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { transformVideoFragment, transformPlaylistFragment } from './transformers';
 import { AppError } from '../../universal/error-boundary/app-error';
 import { MEDIA_TYPES } from './types';
+import { FragmentType } from '../../graphql';
+import { PlaylistFragment, VideoFragment } from './fragments';
 
 describe('Fragment Transformations', () => {
   describe('transformVideoFragment', () => {
@@ -24,7 +26,7 @@ describe('Fragment Transformations', () => {
     };
 
     it('should transform video fragment correctly', () => {
-      const result = transformVideoFragment(mockVideoData);
+      const result = transformVideoFragment(mockVideoData as FragmentType<typeof VideoFragment>);
 
       expect(result).toEqual({
         id: '123',
@@ -43,7 +45,7 @@ describe('Fragment Transformations', () => {
     });
 
     it('should throw AppError when source is missing', () => {
-      const invalidVideoData = { ...mockVideoData, source: undefined };
+      const invalidVideoData = { ...mockVideoData, source: undefined } as FragmentType<typeof VideoFragment>;
 
       expect(() => transformVideoFragment(invalidVideoData)).toThrow(AppError);
     });
@@ -69,7 +71,7 @@ describe('Fragment Transformations', () => {
     };
 
     it('should transform playlist fragment correctly', () => {
-      const result = transformPlaylistFragment(mockPlaylistData as any);
+      const result = transformPlaylistFragment(mockPlaylistData as FragmentType<typeof PlaylistFragment>);
 
       expect(result).toEqual({
         id: '456',
