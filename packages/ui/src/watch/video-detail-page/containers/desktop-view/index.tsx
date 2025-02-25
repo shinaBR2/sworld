@@ -1,5 +1,4 @@
 import Grid from '@mui/material/Grid';
-import { Video, VideoDetailContainerProps } from '../../../videos/interface';
 import { RelatedList } from '../../related-list';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
@@ -7,6 +6,7 @@ import { VideoListItemSkeleton } from '../../../videos/list-item/skeleton';
 import { HEADER_DESKTOP_HEIGHT } from '../../../theme';
 import { Typography } from '@mui/material';
 import { VideoContainer } from '../../../videos/video-container';
+import { VideoDetailContainerProps } from '../types';
 
 const styles = {
   container: {
@@ -87,34 +87,44 @@ const DesktopViewSkeleton = () => {
 };
 
 const DesktopView = (props: VideoDetailContainerProps) => {
-  const { queryRs, LinkComponent } = props;
-  const { videos, isLoading } = queryRs;
-  const videoDetail = queryRs.videoDetail as Video;
+  const { queryRs, activeVideoId, LinkComponent } = props;
+  const { videos, playlist, isLoading } = queryRs;
 
   if (isLoading) {
     return <DesktopViewSkeleton />;
   }
 
+  const videoDetail = queryRs.videos.find(video => video.id === activeVideoId);
+
+  if (!videoDetail) {
+    // TODO: handle error
+    return null;
+  }
+
   return (
     <Grid container spacing={2} sx={styles.container}>
       <Grid container item alignItems="center" xs={12} md={8} lg={9} sx={styles.videoContainer}>
-        {videoDetail && (
-          <Box sx={{ width: '100%' }}>
-            <VideoContainer
-              video={videoDetail}
-              onError={(err: unknown) => {
-                console.log(err);
-              }}
-            />
-            <Typography component="h1" variant="h4" sx={styles.title}>
-              {videoDetail.title}
-            </Typography>
-          </Box>
-        )}
+        <Box sx={{ width: '100%' }}>
+          <VideoContainer
+            video={videoDetail}
+            onError={(err: unknown) => {
+              console.log(err);
+            }}
+          />
+          <Typography component="h1" variant="h4" sx={styles.title}>
+            {videoDetail.title}
+          </Typography>
+        </Box>
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" activeId={videoDetail?.id} LinkComponent={LinkComponent} />
+        <RelatedList
+          videos={videos}
+          playlist={playlist}
+          title="other videos"
+          activeId={videoDetail.id}
+          LinkComponent={LinkComponent}
+        />
       </Grid>
     </Grid>
   );

@@ -1,24 +1,25 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { Auth, watchQueryHooks } from 'core';
+import { Auth } from 'core';
+import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
 import React from 'react';
 
 function VideoDetails() {
-  const { videoId } = Route.useParams();
+  const { playlistId, videoId } = Route.useParams();
   const authContext = Auth.useAuthContext();
-  const videoResult = watchQueryHooks.useLoadVideoDetail({
+  const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
-    id: videoId,
+    id: playlistId,
   });
 
   return (
     <Layout>
-      <VideoDetailContainer queryRs={videoResult} LinkComponent={Link} />
+      <VideoDetailContainer queryRs={videoResult} activeVideoId={videoId} LinkComponent={Link} />
     </Layout>
   );
 }
 
-export const Route = createLazyFileRoute('/$videoId')({
+export const Route = createLazyFileRoute('/playlist/$slug/$playlistId/$videoId')({
   component: VideoDetails,
 });

@@ -21,6 +21,5 @@ export { watchQueryHooks, watchMutationHooks, listenQueryHooks };
 export { initSentry, loadSentryIntegrations, captureError };
 
 export { ErrorBoundary };
-
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
 export default hooks;

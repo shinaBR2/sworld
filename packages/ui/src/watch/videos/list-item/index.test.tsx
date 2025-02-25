@@ -41,7 +41,13 @@ describe('VideoListItem', () => {
   });
 
   it('passes correct link navigation props', () => {
-    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
+    const linkProps = {
+      to: '/$videoId',
+      params: {
+        videoId: '1',
+      },
+    };
+    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} linkProps={linkProps} />);
 
     const linkComponent = screen.getByTestId('link-component');
     expect(linkComponent).toHaveAttribute('data-to', '/$videoId');

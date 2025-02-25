@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useLoadVideoDetail } from './index';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { MEDIA_TYPES } from '../types';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -46,6 +47,7 @@ describe('useLoadVideoDetail', () => {
 
   const expectedTransformedVideo = {
     id: 'test-id',
+    type: MEDIA_TYPES.VIDEO,
     title: 'Test Video',
     description: 'Test Description',
     source: 'test-source',
@@ -64,7 +66,7 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
   });
 
   it('should set up useRequest with correct params', () => {
@@ -82,13 +84,13 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: true,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
+      playlist: null,
       isLoading: true,
       error: undefined,
     });
@@ -101,13 +103,13 @@ describe('useLoadVideoDetail', () => {
         videos_by_pk: mockVideoDetail,
       },
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
     expect(result.current).toEqual({
       videos: [expectedTransformedVideo],
-      videoDetail: mockVideoDetail,
+      playlist: null,
       isLoading: false,
       error: undefined,
     });
@@ -117,13 +119,13 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: null,
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
+      playlist: null,
       isLoading: false,
     });
   });
@@ -134,13 +136,13 @@ describe('useLoadVideoDetail', () => {
       data: undefined,
       isLoading: false,
       error: mockError,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
+      playlist: null,
       isLoading: false,
       error: mockError,
     });

@@ -8,17 +8,20 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
+import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
-const HistoryLazyImport = createFileRoute('/history')();
-const VideoIdLazyImport = createFileRoute('/$videoId')();
-const IndexLazyImport = createFileRoute('/')();
+const HistoryLazyImport = createFileRoute('/history')()
+const IndexLazyImport = createFileRoute('/')()
+const VideoSlugIdLazyImport = createFileRoute('/video/$slug/$id')()
+const PlaylistSlugPlaylistIdVideoIdLazyImport = createFileRoute(
+  '/playlist/$slug/$playlistId/$videoId',
+)()
 
 // Create/Update Routes
 
@@ -26,91 +29,132 @@ const HistoryLazyRoute = HistoryLazyImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/history.lazy').then(d => d.Route));
-
-const VideoIdLazyRoute = VideoIdLazyImport.update({
-  id: '/$videoId',
-  path: '/$videoId',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$videoId.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const VideoSlugIdLazyRoute = VideoSlugIdLazyImport.update({
+  id: '/video/$slug/$id',
+  path: '/video/$slug/$id',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/video.$slug.$id.lazy').then((d) => d.Route),
+)
+
+const PlaylistSlugPlaylistIdVideoIdLazyRoute =
+  PlaylistSlugPlaylistIdVideoIdLazyImport.update({
+    id: '/playlist/$slug/$playlistId/$videoId',
+    path: '/playlist/$slug/$playlistId/$videoId',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/playlist.$slug.$playlistId.$videoId.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/$videoId': {
-      id: '/$videoId';
-      path: '/$videoId';
-      fullPath: '/$videoId';
-      preLoaderRoute: typeof VideoIdLazyImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/history': {
-      id: '/history';
-      path: '/history';
-      fullPath: '/history';
-      preLoaderRoute: typeof HistoryLazyImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/video/$slug/$id': {
+      id: '/video/$slug/$id'
+      path: '/video/$slug/$id'
+      fullPath: '/video/$slug/$id'
+      preLoaderRoute: typeof VideoSlugIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/playlist/$slug/$playlistId/$videoId': {
+      id: '/playlist/$slug/$playlistId/$videoId'
+      path: '/playlist/$slug/$playlistId/$videoId'
+      fullPath: '/playlist/$slug/$playlistId/$videoId'
+      preLoaderRoute: typeof PlaylistSlugPlaylistIdVideoIdLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute;
-  '/$videoId': typeof VideoIdLazyRoute;
-  '/history': typeof HistoryLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/history': typeof HistoryLazyRoute
+  '/video/$slug/$id': typeof VideoSlugIdLazyRoute
+  '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute;
-  '/$videoId': typeof VideoIdLazyRoute;
-  '/history': typeof HistoryLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/history': typeof HistoryLazyRoute
+  '/video/$slug/$id': typeof VideoSlugIdLazyRoute
+  '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  '/': typeof IndexLazyRoute;
-  '/$videoId': typeof VideoIdLazyRoute;
-  '/history': typeof HistoryLazyRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/history': typeof HistoryLazyRoute
+  '/video/$slug/$id': typeof VideoSlugIdLazyRoute
+  '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/$videoId' | '/history';
-  fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/$videoId' | '/history';
-  id: '__root__' | '/' | '/$videoId' | '/history';
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/history'
+    | '/video/$slug/$id'
+    | '/playlist/$slug/$playlistId/$videoId'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/history'
+    | '/video/$slug/$id'
+    | '/playlist/$slug/$playlistId/$videoId'
+  id:
+    | '__root__'
+    | '/'
+    | '/history'
+    | '/video/$slug/$id'
+    | '/playlist/$slug/$playlistId/$videoId'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute;
-  VideoIdLazyRoute: typeof VideoIdLazyRoute;
-  HistoryLazyRoute: typeof HistoryLazyRoute;
+  IndexLazyRoute: typeof IndexLazyRoute
+  HistoryLazyRoute: typeof HistoryLazyRoute
+  VideoSlugIdLazyRoute: typeof VideoSlugIdLazyRoute
+  PlaylistSlugPlaylistIdVideoIdLazyRoute: typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  VideoIdLazyRoute: VideoIdLazyRoute,
   HistoryLazyRoute: HistoryLazyRoute,
-};
+  VideoSlugIdLazyRoute: VideoSlugIdLazyRoute,
+  PlaylistSlugPlaylistIdVideoIdLazyRoute:
+    PlaylistSlugPlaylistIdVideoIdLazyRoute,
+}
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -119,18 +163,22 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$videoId",
-        "/history"
+        "/history",
+        "/video/$slug/$id",
+        "/playlist/$slug/$playlistId/$videoId"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/$videoId": {
-      "filePath": "$videoId.lazy.tsx"
-    },
     "/history": {
       "filePath": "history.lazy.tsx"
+    },
+    "/video/$slug/$id": {
+      "filePath": "video.$slug.$id.lazy.tsx"
+    },
+    "/playlist/$slug/$playlistId/$videoId": {
+      "filePath": "playlist.$slug.$playlistId.$videoId.lazy.tsx"
     }
   }
 }
