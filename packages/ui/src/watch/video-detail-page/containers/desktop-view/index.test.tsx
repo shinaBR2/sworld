@@ -40,6 +40,7 @@ describe('DesktopView', () => {
           isLoading: true,
           videoDetail: null,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );
@@ -57,6 +58,7 @@ describe('DesktopView', () => {
           isLoading: false,
           videoDetail: mockVideo,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );
@@ -76,6 +78,7 @@ describe('DesktopView', () => {
           isLoading: false,
           videoDetail: mockVideo,
         }}
+        activeVideoId="1"
         LinkComponent={mockLinkComponent}
       />
     );
