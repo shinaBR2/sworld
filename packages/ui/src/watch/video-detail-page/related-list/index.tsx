@@ -3,16 +3,32 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent } from '../../videos/types';
 import { VideoListItem } from '../../videos/list-item';
-import { generateVideoDetailRoute } from 'core/watch/routes';
-import { TransformedVideo } from 'core/watch/query-hooks';
+import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
+import { TransformedVideo, useLoadPlaylistDetail } from 'core/watch/query-hooks';
 
 interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   videos: TransformedVideo[];
   title?: string;
   activeId?: string;
+  playlist?: ReturnType<typeof useLoadPlaylistDetail>['playlist'] | null;
 }
 
-const RelatedList = ({ videos, title = 'Related videos', activeId, LinkComponent }: RelatedListProps) => {
+const genLinkProps = (
+  playlist: ReturnType<typeof useLoadPlaylistDetail>['playlist'] | null,
+  video: TransformedVideo
+) => {
+  if (playlist) {
+    return generateVideoInPlaylistRoute({
+      playlistId: playlist.id,
+      videoId: video.id,
+      playlistSlug: playlist.slug,
+    });
+  }
+
+  return generateVideoDetailRoute(video);
+};
+
+const RelatedList = ({ videos, title = 'Related videos', activeId, playlist, LinkComponent }: RelatedListProps) => {
   return (
     <Box>
       <Typography
@@ -34,7 +50,7 @@ const RelatedList = ({ videos, title = 'Related videos', activeId, LinkComponent
               video={video}
               isActive={activeId === video.id}
               LinkComponent={LinkComponent}
-              linkProps={generateVideoDetailRoute(video)}
+              linkProps={genLinkProps(playlist, video)}
             />
           </Box>
         ))}

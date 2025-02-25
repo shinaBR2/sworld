@@ -6,7 +6,7 @@ import { Layout } from '../components/layout';
 import React from 'react';
 
 function VideoDetails() {
-  const { playlistId } = Route.useParams();
+  const { playlistId, videoId } = Route.useParams();
   const authContext = Auth.useAuthContext();
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
@@ -15,7 +15,7 @@ function VideoDetails() {
 
   return (
     <Layout>
-      <VideoDetailContainer queryRs={videoResult} LinkComponent={Link} />
+      <VideoDetailContainer queryRs={videoResult} activeVideoId={videoId} LinkComponent={Link} />
     </Layout>
   );
 }

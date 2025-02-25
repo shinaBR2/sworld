@@ -1,7 +1,7 @@
 import { useIsMobile } from '../../../universal/responsive';
-import { VideoDetailContainerProps } from '../../videos/types';
 import { DesktopView } from './desktop-view';
 import { MobileView } from './mobile-view';
+import { VideoDetailContainerProps } from './types';
 
 const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   const isMobile = useIsMobile();

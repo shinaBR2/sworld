@@ -80,13 +80,14 @@ const LoadingSkeleton = () => (
 );
 
 const MobileView = (props: VideoDetailContainerProps) => {
-  const { queryRs, LinkComponent } = props;
+  const { queryRs, activeVideoId, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
-  const videoDetail = queryRs.videoDetail;
 
   if (isLoading) {
     return <LoadingSkeleton />;
   }
+
+  const videoDetail = queryRs.videos.find(video => video.id === activeVideoId);
 
   if (!videoDetail) {
     // TODO: handle error
@@ -110,7 +111,13 @@ const MobileView = (props: VideoDetailContainerProps) => {
       </Grid>
 
       <Grid item xs={12} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" activeId={videoDetail?.id} LinkComponent={LinkComponent} />
+        <RelatedList
+          videos={videos}
+          title="other videos"
+          activeId={videoDetail?.id}
+          playlist={queryRs.playlist}
+          LinkComponent={LinkComponent}
+        />
       </Grid>
     </Grid>
   );

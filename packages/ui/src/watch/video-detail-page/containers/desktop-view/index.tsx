@@ -87,13 +87,14 @@ const DesktopViewSkeleton = () => {
 };
 
 const DesktopView = (props: VideoDetailContainerProps) => {
-  const { queryRs, LinkComponent } = props;
+  const { queryRs, activeVideoId, LinkComponent } = props;
   const { videos, isLoading } = queryRs;
-  const videoDetail = queryRs.videoDetail;
 
   if (isLoading) {
     return <DesktopViewSkeleton />;
   }
+
+  const videoDetail = queryRs.videos.find(video => video.id === activeVideoId);
 
   if (!videoDetail) {
     // TODO: handle error

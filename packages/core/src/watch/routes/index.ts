@@ -10,7 +10,6 @@ const generateVideoDetailRoute = (video: TransformedVideo) => {
   };
 };
 
-// TODO fix any
 const generatePlaylistDetailRoute = (playlist: TransformedPlaylist) => {
   return {
     to: '/playlist/$slug/$playlistId/$videoId',
@@ -22,4 +21,23 @@ const generatePlaylistDetailRoute = (playlist: TransformedPlaylist) => {
   };
 };
 
-export { generateVideoDetailRoute, generatePlaylistDetailRoute };
+interface GenerateVideoInPlaylistRouteProps {
+  videoId: string;
+  playlistId: string;
+  playlistSlug: string;
+}
+
+const generateVideoInPlaylistRoute = (props: GenerateVideoInPlaylistRouteProps) => {
+  const { videoId, playlistId, playlistSlug } = props;
+
+  return {
+    to: '/playlist/$slug/$playlistId/$videoId',
+    params: {
+      slug: playlistSlug,
+      playlistId,
+      videoId,
+    },
+  };
+};
+
+export { generateVideoDetailRoute, generatePlaylistDetailRoute, generateVideoInPlaylistRoute };
