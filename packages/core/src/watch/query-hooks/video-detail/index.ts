@@ -37,7 +37,6 @@ const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
 
   return {
     videos: data?.videos.map(transformVideoFragment) || [],
-    videoDetail: data?.videos_by_pk ?? null, // TODO getFragmentData
     playlist: null,
     isLoading,
     error,

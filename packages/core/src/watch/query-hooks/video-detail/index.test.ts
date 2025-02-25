@@ -90,7 +90,6 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
       playlist: null,
       isLoading: true,
       error: undefined,
@@ -110,7 +109,6 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [expectedTransformedVideo],
-      videoDetail: mockVideoDetail,
       playlist: null,
       isLoading: false,
       error: undefined,
@@ -127,7 +125,6 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
       playlist: null,
       isLoading: false,
     });
@@ -145,7 +142,6 @@ describe('useLoadVideoDetail', () => {
 
     expect(result.current).toEqual({
       videos: [],
-      videoDetail: null,
       playlist: null,
       isLoading: false,
       error: mockError,
