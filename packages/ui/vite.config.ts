@@ -9,6 +9,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      exclude: ['storybook-static/**', 'dist/**', 'tsup.config.ts', 'vite.config.ts', '.eslintrc.js'],
     },
   },
   resolve: {
