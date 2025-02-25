@@ -25,7 +25,10 @@ const genLinkProps = (
     });
   }
 
-  return generateVideoDetailRoute(video);
+  return generateVideoDetailRoute({
+    id: video.id,
+    slug: video.slug,
+  });
 };
 
 const RelatedList = ({ videos, title = 'Related videos', activeId, playlist, LinkComponent }: RelatedListProps) => {

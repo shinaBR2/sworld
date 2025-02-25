@@ -1,22 +1,16 @@
-import { TransformedPlaylist, TransformedVideo } from '../query-hooks/types';
+interface GenerateVideoDetailRouteProps {
+  id: string;
+  slug: string;
+}
 
-const generateVideoDetailRoute = (video: TransformedVideo) => {
+const generateVideoDetailRoute = (props: GenerateVideoDetailRouteProps) => {
+  const { id, slug } = props;
+
   return {
     to: '/video/$slug/$id',
     params: {
-      slug: video.slug,
-      id: video.id,
-    },
-  };
-};
-
-const generatePlaylistDetailRoute = (playlist: TransformedPlaylist) => {
-  return {
-    to: '/playlist/$slug/$playlistId/$videoId',
-    params: {
-      slug: playlist.slug,
-      playlistId: playlist.id,
-      videoId: playlist.firstVideoId,
+      slug,
+      id,
     },
   };
 };
@@ -40,4 +34,4 @@ const generateVideoInPlaylistRoute = (props: GenerateVideoInPlaylistRouteProps) 
   };
 };
 
-export { generateVideoDetailRoute, generatePlaylistDetailRoute, generateVideoInPlaylistRoute };
+export { generateVideoDetailRoute, generateVideoInPlaylistRoute };
