@@ -1,4 +1,4 @@
-import { TransformedPlaylist, TransformedVideo } from '../query-hooks/videos';
+import { TransformedPlaylist, TransformedVideo } from '../query-hooks/types';
 
 const generateVideoDetailRoute = (video: TransformedVideo) => {
   return {
