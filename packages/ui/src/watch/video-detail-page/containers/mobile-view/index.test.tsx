@@ -33,14 +33,14 @@ const mockVideos = [
   { id: 'video3', title: 'Video 3' },
 ];
 
-const mockVideoDetail = { id: 'detail1', title: 'Detail Video' };
+const mockVideoDetail = mockVideos[0];
 
 const mockProps = {
   queryRs: {
     videos: mockVideos,
-    videoDetail: mockVideoDetail,
     isLoading: false,
   },
+  activeVideoId: mockVideos[0].id,
   LinkComponent: ({ children }: { children: React.ReactNode }) => <div data-testid="link-component">{children}</div>,
 };
 
@@ -62,8 +62,9 @@ describe('MobileView', () => {
         {...mockProps}
         queryRs={{
           ...mockProps.queryRs,
-          videoDetail: { ...mockVideoDetail, title: longTitle },
+          videos: [...mockVideos, { id: 'video-4', title: longTitle }],
         }}
+        activeVideoId="video-4"
       />
     );
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(longTitle);
