@@ -1,5 +1,6 @@
 import { AppError } from 'core/universal';
-import { MEDIA_TYPES, useLoadVideos } from 'core/watch/query-hooks';
+import { MEDIA_TYPES } from 'core/watch/query-hooks';
+import { useLoadVideos } from 'core/watch/query-hooks/videos';
 import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
 
 const genlinkProps = (video: ReturnType<typeof useLoadVideos>['videos'][0]) => {
