@@ -26,7 +26,6 @@ const transform = (data: PlaylistDetailQuery) => {
 
   return {
     videos,
-    videoDetail: videos[0] || null,
     playlist,
   };
 };
@@ -47,7 +46,6 @@ const useLoadPlaylistDetail = (props: LoadPlaylistDetailProps) => {
     ? transform(data)
     : {
         videos: [],
-        videoDetail: null,
         playlist: null,
       };
 
