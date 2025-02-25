@@ -99,6 +99,7 @@ const VideoContent = (props: VideoContentProps) => {
     );
   }
 
+  // Does not show progress when it's the player
   if ('source' in video) {
     return (
       <VideoContainer
