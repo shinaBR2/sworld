@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MobileView } from './index';
-import { Video } from '../../../videos/types';
 import { RelatedList } from '../../related-list';
+import { TransformedVideo } from 'core/watch/query-hooks';
 
 // Mock components
 vi.mock('../../../videos/video-container', () => ({
-  VideoContainer: ({ video, onError }: { video: Video; onError: (err: unknown) => void }) => (
+  VideoContainer: ({ video, onError }: { video: TransformedVideo; onError: (err: unknown) => void }) => (
     <div data-testid="video-container" onClick={() => onError(new Error('test error'))}>
       {video.id}
     </div>
@@ -14,7 +14,7 @@ vi.mock('../../../videos/video-container', () => ({
 }));
 
 vi.mock('../../related-list', () => ({
-  RelatedList: vi.fn(({ videos, title }: { videos: Video[]; title: string; LinkComponent: unknown }) => (
+  RelatedList: vi.fn(({ videos, title }: { videos: TransformedVideo[]; title: string; LinkComponent: unknown }) => (
     <div data-testid="related-list" data-title={title}>
       {videos.map(v => (
         <div key={v.id}>{v.id}</div>
