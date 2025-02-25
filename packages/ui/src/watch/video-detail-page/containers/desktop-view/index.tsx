@@ -88,7 +88,7 @@ const DesktopViewSkeleton = () => {
 
 const DesktopView = (props: VideoDetailContainerProps) => {
   const { queryRs, activeVideoId, LinkComponent } = props;
-  const { videos, isLoading } = queryRs;
+  const { videos, playlist, isLoading } = queryRs;
 
   if (isLoading) {
     return <DesktopViewSkeleton />;
@@ -118,7 +118,13 @@ const DesktopView = (props: VideoDetailContainerProps) => {
       </Grid>
 
       <Grid container direction="column" item xs={12} md={4} lg={3} sx={styles.scrollableList}>
-        <RelatedList videos={videos} title="other videos" activeId={videoDetail.id} LinkComponent={LinkComponent} />
+        <RelatedList
+          videos={videos}
+          playlist={playlist}
+          title="other videos"
+          activeId={videoDetail.id}
+          LinkComponent={LinkComponent}
+        />
       </Grid>
     </Grid>
   );
