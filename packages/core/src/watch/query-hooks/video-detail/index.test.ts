@@ -66,7 +66,7 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
   });
 
   it('should set up useRequest with correct params', () => {
@@ -84,7 +84,7 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: true,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
@@ -104,7 +104,7 @@ describe('useLoadVideoDetail', () => {
         videos_by_pk: mockVideoDetail,
       },
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
@@ -121,7 +121,7 @@ describe('useLoadVideoDetail', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: null,
       isLoading: false,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
@@ -139,7 +139,7 @@ describe('useLoadVideoDetail', () => {
       data: undefined,
       isLoading: false,
       error: mockError,
-    });
+    } as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useLoadVideoDetail(mockProps));
 
