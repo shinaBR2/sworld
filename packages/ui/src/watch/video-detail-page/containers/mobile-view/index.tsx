@@ -113,7 +113,7 @@ const MobileView = (props: VideoDetailContainerProps) => {
       <Grid item xs={12} sx={styles.scrollableList}>
         <RelatedList
           videos={videos}
-          title="other videos"
+          title={queryRs.playlist ? 'Same playlist' : 'other videos'}
           activeId={videoDetail?.id}
           playlist={queryRs.playlist}
           LinkComponent={LinkComponent}
