@@ -32,13 +32,27 @@ describe('DesktopView', () => {
     vi.clearAllMocks();
   });
 
+  it('renders nothing when invalid data', () => {
+    const { container } = render(
+      <DesktopView
+        queryRs={{
+          videos: [mockVideo],
+          isLoading: false,
+        }}
+        activeVideoId="2" // Not in the videos list
+        LinkComponent={mockLinkComponent}
+      />
+    );
+
+    expect(container.firstChild).toBeNull();
+  });
+
   it('renders loading skeleton when isLoading is true', () => {
     render(
       <DesktopView
         queryRs={{
           videos: [],
           isLoading: true,
-          videoDetail: null,
         }}
         activeVideoId="1"
         LinkComponent={mockLinkComponent}
@@ -56,7 +70,6 @@ describe('DesktopView', () => {
         queryRs={{
           videos: [mockVideo],
           isLoading: false,
-          videoDetail: mockVideo,
         }}
         activeVideoId="1"
         LinkComponent={mockLinkComponent}
@@ -76,7 +89,6 @@ describe('DesktopView', () => {
         queryRs={{
           videos: mockVideos,
           isLoading: false,
-          videoDetail: mockVideo,
         }}
         activeVideoId="1"
         LinkComponent={mockLinkComponent}
