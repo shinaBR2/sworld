@@ -21,6 +21,15 @@ vi.mock('../video-container', () => ({
   )),
 }));
 
+// Add this mock with the other mocks at the top
+vi.mock('../video-thumbnail', () => ({
+  VideoThumbnail: vi.fn(({ src, title }) => (
+    <div data-testid="mock-video-thumbnail" data-src={src} data-title={title}>
+      Mock Thumbnail
+    </div>
+  )),
+}));
+
 const renderWithAct = async (component: React.ReactElement) => {
   let result: ReturnType<typeof render>;
   await act(async () => {
@@ -77,6 +86,24 @@ describe('VideoCard Component', () => {
       slug: 'test-video',
       id: '1',
     });
+  });
+
+  it('renders thumbnail only for playlist type when not asLink', async () => {
+    const playlistVideo = {
+      ...mockVideo,
+      type: MEDIA_TYPES.PLAYLIST,
+    } as TransformedMediaItem;
+
+    await renderWithAct(<VideoCard video={playlistVideo} asLink={false} />);
+
+    // Should render VideoThumbnail inside a Box
+    const thumbnail = screen.getByTestId('mock-video-thumbnail');
+    expect(thumbnail).toBeInTheDocument();
+    expect(thumbnail).toHaveAttribute('data-src', 'https://example.com/thumbnail.jpg');
+    expect(thumbnail).toHaveAttribute('data-title', 'Test Video');
+
+    // Should not render VideoContainer
+    expect(screen.queryByTestId('mock-video-container')).not.toBeInTheDocument();
   });
 
   // Update existing tests to include asLink and LinkComponent where needed
@@ -160,6 +187,19 @@ describe('VideoCard Component', () => {
       ...mockVideo,
       duration: undefined,
       progressSeconds: 150,
+    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    await renderWithAct(<VideoCard video={videoWithoutDuration} />);
+
+    const progressBar = screen.queryByRole('progressbar');
+    expect(progressBar).toBeNull();
+  });
+
+  it('does not render progress bar for playlist', async () => {
+    const videoWithoutDuration = {
+      ...mockVideo,
+      type: MEDIA_TYPES.PLAYLIST,
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
