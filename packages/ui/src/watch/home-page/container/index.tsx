@@ -20,7 +20,7 @@ const Loading = () => {
   );
 };
 
-interface HomeContainerProps extends RequiredLinkComponent {
+interface HomeContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   queryRs: ReturnType<typeof useLoadVideos>;
 }
 
