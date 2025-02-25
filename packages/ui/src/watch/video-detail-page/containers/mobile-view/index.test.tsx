@@ -45,6 +45,17 @@ const mockProps = {
 };
 
 describe('MobileView', () => {
+  it('renders nothing when invalid data', () => {
+    const { container } = render(
+      <MobileView
+        {...mockProps}
+        activeVideoId="not-exist-id" // Not in the videos list
+      />
+    );
+
+    expect(container.firstChild).toBeNull();
+  });
+
   it('renders video container with correct video', () => {
     render(<MobileView {...mockProps} />);
     expect(screen.getByTestId('video-container')).toHaveTextContent(mockVideoDetail.id);
