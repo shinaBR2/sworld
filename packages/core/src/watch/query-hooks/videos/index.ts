@@ -27,7 +27,10 @@ const transform = (data: AllVideosQuery) => {
   const playlistVideos = playlist?.map(transformPlaylistFragment) || [];
   const merged = [...standaloneVideos, ...playlistVideos];
   const sorted = merged.sort((a, b) => {
-    return (b.createdAt as string).localeCompare(a.createdAt as string);
+    if (!a.createdAt || !b.createdAt) {
+      return 0;
+    }
+    return b.createdAt.localeCompare(a.createdAt);
   });
 
   return sorted;

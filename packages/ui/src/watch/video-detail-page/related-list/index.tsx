@@ -5,6 +5,7 @@ import { RequiredLinkComponent } from '../../videos/types';
 import { VideoListItem } from '../../videos/list-item';
 import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
 import { TransformedVideo, useLoadPlaylistDetail } from 'core/watch/query-hooks';
+import React from 'react';
 
 interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   videos: TransformedVideo[];
@@ -31,7 +32,9 @@ const genLinkProps = (
   });
 };
 
-const RelatedList = ({ videos, title = 'Related videos', activeId, playlist, LinkComponent }: RelatedListProps) => {
+const RelatedList = React.memo((props: RelatedListProps) => {
+  const { videos, title = 'Related videos', activeId, playlist, LinkComponent } = props;
+
   return (
     <Box>
       <Typography
@@ -60,6 +63,6 @@ const RelatedList = ({ videos, title = 'Related videos', activeId, playlist, Lin
       </Stack>
     </Box>
   );
-};
+});
 
 export { RelatedList };
