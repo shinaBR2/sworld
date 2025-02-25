@@ -29,6 +29,8 @@ ignore:
   - '**/vite.config.ts' # ignore config files
   - '**/tsup.config.ts' # ignore config files
   - '**/interface.ts' # ignore TypeScript interfaces
+  - '**/fragments.ts' # ignore GraphQL fragments
+  - '**/dist/**/*' # Ignore dist folder
 
 parsers:
   javascript:
