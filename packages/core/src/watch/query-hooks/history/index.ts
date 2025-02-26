@@ -7,7 +7,13 @@ import { BaseQueryProps, MEDIA_TYPES } from '../types';
 const historyQuery = graphql(/* GraphQL */ `
   query UserVideoHistory {
     user_video_history(
-      where: { _and: { last_watched_at: { _is_null: false }, progress_seconds: { _gt: 0 } } }
+      where: {
+        _and: {
+          last_watched_at: { _is_null: false }
+          progress_seconds: { _gt: 0 }
+          video: { source: { _is_null: false } }
+        }
+      }
       order_by: { last_watched_at: desc }
     ) {
       id

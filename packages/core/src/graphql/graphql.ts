@@ -6109,7 +6109,7 @@ export const UpdateVideoProgressDocument = new TypedDocumentString(`
 export const UserVideoHistoryDocument = new TypedDocumentString(`
     query UserVideoHistory {
   user_video_history(
-    where: {_and: {last_watched_at: {_is_null: false}, progress_seconds: {_gt: 0}}}
+    where: {_and: {last_watched_at: {_is_null: false}, progress_seconds: {_gt: 0}, video: {source: {_is_null: false}}}}
     order_by: {last_watched_at: desc}
   ) {
     id
@@ -6188,7 +6188,10 @@ fragment PlaylistFields on playlist {
 }`) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
-  videos(where: {source: {_is_null: false}}, order_by: {createdAt: desc}) {
+  videos(
+    where: {_and: {_not: {playlist_videos: {}}, source: {_is_null: false}}}
+    order_by: {createdAt: desc}
+  ) {
     ...VideoFields
   }
   videos_by_pk(id: $id) {

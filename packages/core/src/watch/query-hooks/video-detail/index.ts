@@ -5,7 +5,10 @@ import { transformVideoFragment } from '../transformers';
 
 const videoDetailQuery = graphql(`
   query VideoDetail($id: uuid!) @cached {
-    videos(where: { source: { _is_null: false } }, order_by: { createdAt: desc }) {
+    videos(
+      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }
+      order_by: { createdAt: desc }
+    ) {
       ...VideoFields
     }
     videos_by_pk(id: $id) {
