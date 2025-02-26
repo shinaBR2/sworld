@@ -6,7 +6,7 @@ import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
-import { MEDIA_TYPES, MediaType, TransformedVideo } from 'core/watch/query-hooks';
+import { MEDIA_TYPES, MediaType } from 'core/watch/query-hooks';
 
 interface Video extends PlayableVideo {
   type: MediaType;
@@ -109,7 +109,7 @@ const VideoContent = (props: VideoContentProps) => {
   if (video.type === MEDIA_TYPES.VIDEO && 'source' in video) {
     return (
       <VideoContainer
-        video={video as TransformedVideo}
+        video={video}
         onError={(err: unknown) => {
           console.log(err);
         }}
