@@ -10,4 +10,15 @@ type TransformedVideo = ReturnType<typeof transformVideoFragment>;
 type TransformedPlaylist = ReturnType<typeof transformPlaylistFragment>;
 type TransformedMediaItem = TransformedVideo | TransformedPlaylist;
 
-export { MEDIA_TYPES, type MediaType, type TransformedVideo, type TransformedPlaylist, type TransformedMediaItem };
+interface BaseQueryProps {
+  getAccessToken: () => Promise<string>;
+}
+
+export {
+  MEDIA_TYPES,
+  type MediaType,
+  type TransformedVideo,
+  type TransformedPlaylist,
+  type TransformedMediaItem,
+  type BaseQueryProps,
+};

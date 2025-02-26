@@ -1,3 +1,10 @@
+interface PlayableVideo {
+  id: string;
+  title: string;
+  source: string;
+  thumbnailUrl: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GenericLinkProps<T = any> {
   to: string;
@@ -28,4 +35,4 @@ interface WithLinkComponent<T = any> {
   };
 }
 
-export { type LinkComponentType, type RequiredLinkComponent, type WithLinkComponent };
+export { type PlayableVideo, type LinkComponentType, type RequiredLinkComponent, type WithLinkComponent };

@@ -2,10 +2,10 @@ import { Suspense, useCallback, lazy } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { VideoThumbnail } from '../video-thumbnail';
 import Box from '@mui/material/Box';
-import { TransformedVideo } from 'core/watch/query-hooks';
+import { PlayableVideo } from '../types';
 
 interface VideoPlayerProps {
-  video: TransformedVideo;
+  video: PlayableVideo;
   onProgress?: (state: { played: number; playedSeconds: number; loaded: number; loadedSeconds: number }) => void;
   onPause?: () => void;
   onPlay?: () => void;
