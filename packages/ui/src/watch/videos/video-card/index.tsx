@@ -6,11 +6,23 @@ import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
-import { MEDIA_TYPES } from 'core/watch/query-hooks';
-import { TransformedMediaItem, TransformedVideo } from 'core/watch/query-hooks';
+import { MEDIA_TYPES, MediaType, TransformedVideo } from 'core/watch/query-hooks';
+
+interface Video {
+  id: string;
+  type: MediaType;
+  title: string;
+  thumbnailUrl: string;
+  duration: number;
+  user: {
+    username: string;
+  };
+  progressSeconds?: number;
+  createdAt: string;
+}
 
 interface VideoCardProps extends WithLinkComponent {
-  video: TransformedMediaItem;
+  video: Video;
   asLink?: boolean;
 }
 
@@ -36,13 +48,13 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 };
 
 interface VideoProgressProps {
-  video: TransformedMediaItem;
+  video: Video;
 }
 
 const VideoProgress = (props: VideoProgressProps) => {
   const { video } = props;
 
-  const { progressSeconds = 0, duration = 0 } = video as TransformedVideo;
+  const { progressSeconds = 0, duration = 0 } = video;
   if (progressSeconds > 0 && duration > 0) {
     return (
       <Box
@@ -100,7 +112,7 @@ const VideoContent = (props: VideoContentProps) => {
   if (video.type === MEDIA_TYPES.VIDEO && 'source' in video) {
     return (
       <VideoContainer
-        video={video}
+        video={video as TransformedVideo}
         onError={(err: unknown) => {
           console.log(err);
         }}

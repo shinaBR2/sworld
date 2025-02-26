@@ -5898,6 +5898,14 @@ export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: 
     & { ' $fragmentRefs'?: { 'PlaylistVideoFieldsFragment': PlaylistVideoFieldsFragment } }
   )> } & { ' $fragmentName'?: 'PlaylistFieldsFragment' };
 
+export type UserVideoHistoryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_history: Array<{ __typename?: 'user_video_history', id: any, last_watched_at: any, progress_seconds: number, video: { __typename?: 'videos', id: any, title: string, slug: string, thumbnailUrl?: string | null, duration?: number | null, createdAt?: any | null, user: (
+        { __typename?: 'users' }
+        & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+      ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl: string } }> } }> };
+
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -6098,6 +6106,39 @@ export const UpdateVideoProgressDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateVideoProgressMutation, UpdateVideoProgressMutationVariables>;
+export const UserVideoHistoryDocument = new TypedDocumentString(`
+    query UserVideoHistory {
+  user_video_history(
+    where: {_and: {last_watched_at: {_is_null: false}, progress_seconds: {_gt: 0}}}
+    order_by: {last_watched_at: desc}
+  ) {
+    id
+    last_watched_at
+    progress_seconds
+    video {
+      id
+      title
+      slug
+      thumbnailUrl
+      duration
+      createdAt
+      user {
+        ...UserFields
+      }
+      playlist_videos {
+        playlist {
+          id
+          slug
+          title
+          thumbnailUrl
+        }
+      }
+    }
+  }
+}
+    fragment UserFields on users {
+  username
+}`) as unknown as TypedDocumentString<UserVideoHistoryQuery, UserVideoHistoryQueryVariables>;
 export const PlaylistDetailDocument = new TypedDocumentString(`
     query PlaylistDetail($id: uuid!) {
   playlist_by_pk(id: $id) {

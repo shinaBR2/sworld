@@ -6,35 +6,21 @@ import { HistoryContainer } from 'ui/watch/history-page/container';
 import { useMemo } from 'react';
 import React from 'react';
 import { useAuthContext } from 'core/providers/auth';
-import { useLoadVideos } from 'core/watch/query-hooks/videos';
-import { MEDIA_TYPES, TransformedVideo } from 'core/watch/query-hooks';
+import { useLoadHistory } from 'core/watch/query-hooks/history';
 
 const Content = () => {
   const { getAccessToken } = useAuthContext();
-  const videoResult = useLoadVideos({
+  const videoResult = useLoadHistory({
     getAccessToken,
   });
   const { isLoading, videos } = videoResult;
+  console.log(`videos`, videos);
   const sortedVideos = useMemo(() => {
     if (!videos) return [];
 
-    return videos
-      .filter(video => {
-        // TODO
-        // Show history for video in playlist also
-        if (video.type !== MEDIA_TYPES.VIDEO) {
-          return false;
-        }
-
-        const { lastWatchedAt, progressSeconds } = video;
-
-        return lastWatchedAt != null && progressSeconds != null && progressSeconds > 0;
-      })
-      .sort((a, b) => {
-        return ((b as TransformedVideo).lastWatchedAt as string).localeCompare(
-          (a as TransformedVideo).lastWatchedAt as string
-        );
-      });
+    return videos.sort((a, b) => {
+      return (b.lastWatchedAt as string).localeCompare(a.lastWatchedAt as string);
+    });
   }, [videos]);
 
   return (
