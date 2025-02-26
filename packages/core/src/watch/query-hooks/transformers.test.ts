@@ -1,11 +1,23 @@
 import { describe, it, expect } from 'vitest';
-import { transformVideoFragment, transformPlaylistFragment } from './transformers';
+import { transformVideoFragment, transformPlaylistFragment, transformUser } from './transformers';
 import { AppError } from '../../universal/error-boundary/app-error';
 import { MEDIA_TYPES } from './types';
 import { FragmentType } from '../../graphql';
-import { PlaylistFragment, VideoFragment } from './fragments';
+import { PlaylistFragment, UserFragment, VideoFragment } from './fragments';
 
 describe('Fragment Transformations', () => {
+  describe('transformUser', () => {
+    it('should transform user correctly', () => {
+      const mockUserData = {
+        username: 'testuser',
+      };
+      const result = transformUser(mockUserData as FragmentType<typeof UserFragment>);
+      expect(result).toEqual({
+        username: 'testuser',
+      });
+    });
+  });
+
   describe('transformVideoFragment', () => {
     const mockVideoData = {
       id: '123',
