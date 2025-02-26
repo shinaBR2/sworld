@@ -8,9 +8,11 @@ import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
 import { MEDIA_TYPES, MediaType } from 'core/watch/query-hooks';
 
-interface Video extends PlayableVideo {
+// source and duration are NOT in playlist
+interface Video extends Omit<PlayableVideo, 'source'> {
   type: MediaType;
-  duration: number;
+  duration?: number;
+  source?: string;
   user: {
     username: string;
   };
@@ -109,7 +111,7 @@ const VideoContent = (props: VideoContentProps) => {
   if (video.type === MEDIA_TYPES.VIDEO && 'source' in video) {
     return (
       <VideoContainer
-        video={video}
+        video={video as PlayableVideo}
         onError={(err: unknown) => {
           console.log(err);
         }}

@@ -3,7 +3,7 @@ import { HistoryVideo } from './types';
 
 /**
  * Generates link props based on the media type (video or playlist).
- * @param video - The video object from useLoadVideos hook
+ * @param video - The video object from useLoadHistory hook
  * @returns Link props for either video detail or playlist route
  * @throws {AppError} If the media type is invalid
  */

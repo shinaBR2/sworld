@@ -268,4 +268,31 @@ describe('useLoadHistory', () => {
 
     expect(result.current.videos[0].duration).toBe(0);
   });
+
+  it('should handle video without playlist', () => {
+    const dataWithNoPlaylist = {
+      user_video_history: [
+        {
+          ...mockHistoryData.user_video_history[0],
+          video: {
+            ...mockHistoryData.user_video_history[0].video,
+            playlist_videos: [],
+          },
+        },
+      ],
+    };
+
+    vi.mocked(useRequest).mockReturnValue({
+      data: dataWithNoPlaylist,
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadHistory({
+        getAccessToken: mockGetAccessToken,
+      })
+    );
+
+    expect(result.current.videos[0].playlist).toBeUndefined();
+  });
 });
