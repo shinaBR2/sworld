@@ -1,10 +1,12 @@
-import { TransformedMediaItem } from 'core/watch/query-hooks';
+import { useLoadHistory } from 'core/watch/query-hooks/history';
 import { RequiredLinkComponent } from '../videos/types';
 
+type HistoryVideo = ReturnType<typeof useLoadHistory>['videos'][number];
+
 interface HistoryContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
-  videos: TransformedMediaItem[];
+  videos: HistoryVideo[];
   isLoading: boolean;
   // error: Error;
 }
 
-export { type HistoryContainerProps };
+export { type HistoryVideo, type HistoryContainerProps };

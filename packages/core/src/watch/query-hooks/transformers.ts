@@ -3,6 +3,13 @@ import { AppError } from '../../universal/error-boundary/app-error';
 import { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment } from './fragments';
 import { MEDIA_TYPES } from './types';
 
+const transformUser = (userData: FragmentType<typeof UserFragment>) => {
+  const user = getFragmentData(UserFragment, userData);
+  return {
+    username: user.username || '',
+  };
+};
+
 const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) => {
   const video = getFragmentData(VideoFragment, videoData);
   if (!video.source) {
@@ -12,9 +19,7 @@ const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) =
   }
 
   const history = video?.user_video_histories?.[0];
-  const user = {
-    username: getFragmentData(UserFragment, video.user).username || '',
-  };
+  const user = transformUser(video.user);
 
   return {
     id: video.id,
@@ -34,9 +39,7 @@ const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) =
 
 const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof PlaylistFragment>) => {
   const playlist = getFragmentData(PlaylistFragment, playlistFragmentData);
-  const user = {
-    username: getFragmentData(UserFragment, playlist.user).username || '',
-  };
+  const user = transformUser(playlist.user);
 
   if (!playlist.playlist_videos.length) {
     throw new AppError('Playlist has no videos', 'Playlist has no videos', false);
@@ -58,4 +61,4 @@ const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof Pla
   };
 };
 
-export { transformVideoFragment, transformPlaylistFragment };
+export { transformUser, transformVideoFragment, transformPlaylistFragment };

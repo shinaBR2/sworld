@@ -21,7 +21,7 @@ const MockReactPlayer = vi.fn(({ url, light }) => (
 vi.mock('react-player', () => {
   return {
     __esModule: true,
-    default: (props: any) => MockReactPlayer(props),
+    default: (props: unknown) => MockReactPlayer(props),
   };
 });
 
@@ -59,6 +59,8 @@ describe('VideoPlayer', () => {
       thumbnailUrl: undefined,
     };
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     render(<VideoPlayer video={videoWithoutThumbnail} />);
 
     const player = await screen.findByTestId('mock-react-player');

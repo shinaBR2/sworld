@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { HistoryContainer } from './index';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { VideoCard } from '../../videos/video-card';
+import { HistoryVideo } from '../types';
 
 // Mock components
 vi.mock('../../videos/video-card/skeleton', () => ({
@@ -13,22 +14,32 @@ vi.mock('../../videos/video-card', () => ({
   VideoCard: vi.fn(() => <div>VideoCard</div>),
 }));
 
+vi.mock('../utils', () => ({
+  genlinkProps: (video: { id: string; slug: string }) => ({
+    to: '/video/$slug-$id',
+    params: {
+      slug: video.slug,
+      id: video.id,
+    },
+  }),
+}));
+
 const mockVideos = [
   {
     id: '1',
     title: 'Video 1',
-    source: 'source1',
+    slug: 'video-1',
     createdAt: '2024-02-20',
     user: { username: 'user1' },
   },
   {
     id: '2',
     title: 'Video 2',
-    source: 'source2',
+    slug: 'video-2',
     createdAt: '2024-02-21',
     user: { username: 'user2' },
   },
-];
+] as HistoryVideo[];
 
 const MockLink = vi.fn();
 
@@ -52,6 +63,13 @@ describe('HistoryContainer', () => {
         video: mockVideos[0],
         asLink: true,
         LinkComponent: MockLink,
+        linkProps: {
+          to: '/video/$slug-$id',
+          params: {
+            slug: 'video-1',
+            id: '1',
+          },
+        },
       },
       expect.anything()
     );

@@ -1,10 +1,10 @@
 import { Auth, watchMutationHooks } from 'core';
 import { useEffect } from 'react';
 import { VideoPlayer } from '../video-player';
-import { TransformedVideo } from 'core/watch/query-hooks';
+import { PlayableVideo } from '../types';
 
 interface VideoContainerInterface {
-  video: TransformedVideo;
+  video: PlayableVideo;
   onError: (error: unknown) => void;
 }
 
