@@ -14,7 +14,6 @@ const Content = () => {
     getAccessToken,
   });
   const { isLoading, videos } = videoResult;
-  console.log(`videos`, videos);
   const sortedVideos = useMemo(() => {
     if (!videos) return [];
 
