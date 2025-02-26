@@ -1,8 +1,9 @@
-import { Suspense, useCallback, lazy } from 'react';
+import { Suspense, useCallback, lazy, useRef, useState, useEffect } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { VideoThumbnail } from '../video-thumbnail';
 import Box from '@mui/material/Box';
 import { PlayableVideo } from '../types';
+import screenfull from 'screenfull';
 
 interface VideoPlayerProps {
   video: PlayableVideo;
@@ -41,11 +42,10 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playbackRate = 1,
   } = props;
   const { title, source, thumbnailUrl } = video;
-  // TODO implement in the future if needed
-  // const playerRef = useRef<ReactPlayerType>(null);
 
   const handleError = useCallback(
     (error: unknown) => {
+      console.log(`error happened`, error);
       onError?.(error);
     },
     [onError]
@@ -59,10 +59,10 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           borderRadius: theme.shape.borderRadius / 12,
           overflow: 'hidden',
           width: '100%',
+          height: '100%',
         })}
       >
         <ReactPlayer
-          // ref={playerRef}
           url={source}
           controls={controls}
           width="100%"
@@ -80,6 +80,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           onEnded={onEnded}
           onReady={onReady}
           progressInterval={PROGRESS_INTERVAL}
+          config={{
+            file: {
+              attributes: {
+                playsInline: true, // Important for iOS
+              },
+            },
+          }}
         />
       </Box>
     </Suspense>
