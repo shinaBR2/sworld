@@ -16,6 +16,7 @@ const historyQuery = graphql(/* GraphQL */ `
       video {
         id
         title
+        source
         slug
         thumbnailUrl
         duration
@@ -48,6 +49,7 @@ const transform = (data: UserVideoHistoryQuery) => {
       id: video.id,
       type: MEDIA_TYPES.VIDEO,
       title: video.title,
+      source: video.source || '',
       slug: video.slug,
       thumbnailUrl: video.thumbnailUrl || '',
       duration: video.duration || 0,

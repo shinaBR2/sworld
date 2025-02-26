@@ -7,6 +7,7 @@ interface HistoryVideo {
   type: MediaType;
   title: string;
   slug: string;
+  source: string;
   thumbnailUrl: string;
   duration: number;
   user: {

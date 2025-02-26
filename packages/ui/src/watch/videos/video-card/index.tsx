@@ -1,18 +1,15 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { WithLinkComponent } from '../types';
+import { PlayableVideo, WithLinkComponent } from '../types';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
 import { formatCreatedDate } from '../../utils';
 import { VideoContainer } from '../video-container';
 import { MEDIA_TYPES, MediaType, TransformedVideo } from 'core/watch/query-hooks';
 
-interface Video {
-  id: string;
+interface Video extends PlayableVideo {
   type: MediaType;
-  title: string;
-  thumbnailUrl: string;
   duration: number;
   user: {
     username: string;

@@ -1,16 +1,10 @@
 import { Auth, watchMutationHooks } from 'core';
 import { useEffect } from 'react';
 import { VideoPlayer } from '../video-player';
-
-interface Video {
-  id: string;
-  title: string;
-  source: string;
-  thumbnailUrl: string;
-}
+import { PlayableVideo } from '../types';
 
 interface VideoContainerInterface {
-  video: Video;
+  video: PlayableVideo;
   onError: (error: unknown) => void;
 }
 

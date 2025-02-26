@@ -5901,7 +5901,7 @@ export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: 
 export type UserVideoHistoryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_history: Array<{ __typename?: 'user_video_history', id: any, last_watched_at: any, progress_seconds: number, video: { __typename?: 'videos', id: any, title: string, slug: string, thumbnailUrl?: string | null, duration?: number | null, createdAt?: any | null, user: (
+export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_history: Array<{ __typename?: 'user_video_history', id: any, last_watched_at: any, progress_seconds: number, video: { __typename?: 'videos', id: any, title: string, source?: string | null, slug: string, thumbnailUrl?: string | null, duration?: number | null, createdAt?: any | null, user: (
         { __typename?: 'users' }
         & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
       ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl: string } }> } }> };
@@ -6118,6 +6118,7 @@ export const UserVideoHistoryDocument = new TypedDocumentString(`
     video {
       id
       title
+      source
       slug
       thumbnailUrl
       duration
