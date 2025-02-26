@@ -1,3 +1,4 @@
+import { useLoadHistory } from 'core/watch/query-hooks/history';
 import { MediaType } from 'core/watch/query-hooks';
 import { RequiredLinkComponent } from '../videos/types';
 
@@ -5,6 +6,7 @@ interface HistoryVideo {
   id: string;
   type: MediaType;
   title: string;
+  slug: string;
   thumbnailUrl: string;
   duration: number;
   user: {
@@ -12,6 +14,7 @@ interface HistoryVideo {
   };
   progressSeconds?: number;
   createdAt: string;
+  playlist?: ReturnType<typeof useLoadHistory>['videos'][number]['playlist'];
 }
 
 interface HistoryContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
@@ -20,4 +23,4 @@ interface HistoryContainerProps extends Omit<RequiredLinkComponent, 'linkProps'>
   // error: Error;
 }
 
-export { type HistoryContainerProps };
+export { type HistoryVideo, type HistoryContainerProps };

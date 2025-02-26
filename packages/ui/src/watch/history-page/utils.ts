@@ -1,5 +1,5 @@
 import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
-import { useLoadHistory } from 'core/watch/query-hooks/history';
+import { HistoryVideo } from './types';
 
 /**
  * Generates link props based on the media type (video or playlist).
@@ -7,7 +7,7 @@ import { useLoadHistory } from 'core/watch/query-hooks/history';
  * @returns Link props for either video detail or playlist route
  * @throws {AppError} If the media type is invalid
  */
-const genlinkProps = (video: ReturnType<typeof useLoadHistory>['videos'][0]) => {
+const genlinkProps = (video: HistoryVideo) => {
   const { playlist } = video;
 
   if (playlist) {
