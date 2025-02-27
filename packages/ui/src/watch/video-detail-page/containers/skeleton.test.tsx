@@ -1,4 +1,3 @@
-// src/components/skeleton/index.test.tsx
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';

@@ -75,12 +75,6 @@ const RelatedContent = (props: VideoDetailContainerProps) => {
   );
 };
 
-// Skeleton idea
-// Load skeleton from './skeleton
-// Check loading in each container below
-// const VideoDetailContainer = () => {}
-// const RelatedListContainer = () => {}
-
 const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
