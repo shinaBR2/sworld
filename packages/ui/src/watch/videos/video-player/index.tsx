@@ -1,9 +1,8 @@
-import { Suspense, useCallback, lazy, useRef, useState, useEffect } from 'react';
+import { Suspense, useCallback, lazy } from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { VideoThumbnail } from '../video-thumbnail';
 import Box from '@mui/material/Box';
 import { PlayableVideo } from '../types';
-import screenfull from 'screenfull';
 
 interface VideoPlayerProps {
   video: PlayableVideo;
