@@ -1748,7 +1748,7 @@ export type Playlist = {
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   public: Scalars['Boolean']['output'];
   slug: Scalars['String']['output'];
-  thumbnailUrl: Scalars['String']['output'];
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
@@ -5890,7 +5890,7 @@ export type PlaylistVideoFieldsFragment = { __typename?: 'playlist_videos', posi
     & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
   ) } & { ' $fragmentName'?: 'PlaylistVideoFieldsFragment' };
 
-export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl: string, slug: string, createdAt: any, description?: string | null, user: (
+export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl?: string | null, slug: string, createdAt: any, description?: string | null, user: (
     { __typename?: 'users' }
     & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
   ), playlist_videos: Array<(
@@ -5904,7 +5904,7 @@ export type UserVideoHistoryQueryVariables = Exact<{ [key: string]: never; }>;
 export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_history: Array<{ __typename?: 'user_video_history', id: any, last_watched_at: any, progress_seconds: number, video: { __typename?: 'videos', id: any, title: string, source?: string | null, slug: string, thumbnailUrl?: string | null, duration?: number | null, createdAt?: any | null, user: (
         { __typename?: 'users' }
         & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
-      ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl: string } }> } }> };
+      ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl?: string | null } }> } }> };
 
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];

@@ -1,14 +1,9 @@
 import { graphql } from '../../../graphql';
-import { InsertVideosMutation } from '../../../graphql/graphql';
+import { InsertVideosMutation, Videos_Insert_Input } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 
 interface BulkConvertVariables {
-  objects: {
-    title: string;
-    description: string;
-    slug: string;
-    video_url: string;
-  }[];
+  objects: Array<Videos_Insert_Input>;
 }
 
 const bulkConvertMutation = graphql(/* GraphQL */ `
