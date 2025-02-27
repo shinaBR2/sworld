@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { canPlayUrls } from './utils';
+import { buildVariables, canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
 import { texts } from './texts';
+import { BulkConvertVariables } from 'core/watch/mutation-hooks/bulk-convert';
 
 const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
@@ -79,17 +80,8 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     }
 
     try {
-      const { title, description = '', url } = state;
-      const response = await bulkConvert({
-        objects: [
-          {
-            title,
-            description,
-            slug: commonHelpers.slugify(title),
-            video_url: url,
-          },
-        ],
-      });
+      const variables = buildVariables(state);
+      const response = await bulkConvert(variables);
 
       if (response.insert_videos?.returning.length !== 1) {
         // Unknown error
