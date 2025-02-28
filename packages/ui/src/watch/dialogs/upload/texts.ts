@@ -19,6 +19,23 @@ export const texts = {
       label: 'Video description',
       helperText: '',
     },
+    playlistInput: {
+      placeholder: 'Select a playlist (optional)',
+      label: 'Playlist',
+      none: 'None',
+      createNew: '+ Create new playlist',
+      helperText: 'Select your existing playlist',
+    },
+    newPlaylistNameInput: {
+      placeholder: 'Short name for the playlist',
+      label: 'Playlist name',
+      helperText: 'short for the best visual',
+    },
+    videoPositionInPlaylistInput: {
+      placeholder: 'Position in the playlsit (optional)',
+      label: 'Position',
+      helperText: 'order of videos in the playlist',
+    },
     submitButton: {
       submit: 'Upload Videos',
       submitting: 'Uploading...',

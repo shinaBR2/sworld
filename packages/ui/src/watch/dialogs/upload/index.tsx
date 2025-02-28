@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { buildVariables, canPlayUrls } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
-import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
 import { texts } from './texts';
-import { BulkConvertVariables } from 'core/watch/mutation-hooks/bulk-convert';
+import { useAuthContext } from 'core/providers/auth';
+import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
+import { useCountdown } from 'core/universal/hooks/useCooldown';
 
-const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -32,8 +32,8 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     ...defaultState,
   });
 
-  const { getAccessToken } = Auth.useAuthContext();
-  const { mutateAsync: bulkConvert } = watchMutationHooks.useBulkConvertVideos({
+  const { getAccessToken } = useAuthContext();
+  const { mutateAsync: bulkConvert } = useBulkConvertVideos({
     getAccessToken,
   });
 
@@ -60,6 +60,30 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     setState(prev => ({
       ...prev,
       url: newValue,
+      error: null,
+    }));
+  };
+  const onPlaylistIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.trim();
+    setState(prev => ({
+      ...prev,
+      playlistId: newValue,
+      error: null,
+    }));
+  };
+  const onNewPlaylistNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.trim();
+    setState(prev => ({
+      ...prev,
+      newPlaylistName: newValue,
+      error: null,
+    }));
+  };
+  const onVideoPositionInPlaylistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.trim();
+    setState(prev => ({
+      ...prev,
+      videoPositionInPlaylist: parseInt(newValue),
       error: null,
     }));
   };
@@ -126,6 +150,9 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
         onTitleChange,
         onUrlChange,
         onDescriptionChange,
+        onPlaylistIdChange,
+        onNewPlaylistNameChange,
+        onVideoPositionInPlaylistChange,
       }}
       handleSubmit={handleSubmit}
     />
