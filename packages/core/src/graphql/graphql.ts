@@ -5916,6 +5916,11 @@ export type PlaylistDetailQuery = { __typename?: 'query_root', playlist_by_pk?: 
     & { ' $fragmentRefs'?: { 'PlaylistFieldsFragment': PlaylistFieldsFragment } }
   ) | null };
 
+export type PlaylistsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PlaylistsQuery = { __typename?: 'query_root', playlist: Array<{ __typename?: 'playlist', title: string, id: any, slug: string }> };
+
 export type VideoDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -6186,6 +6191,15 @@ fragment PlaylistFields on playlist {
     ...PlaylistVideoFields
   }
 }`) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
+export const PlaylistsDocument = new TypedDocumentString(`
+    query Playlists {
+  playlist(order_by: {createdAt: desc}) {
+    title
+    id
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<PlaylistsQuery, PlaylistsQueryVariables>;
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
   videos(

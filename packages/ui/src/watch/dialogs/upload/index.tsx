@@ -6,6 +6,7 @@ import { texts } from './texts';
 import { useAuthContext } from 'core/providers/auth';
 import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
 import { useCountdown } from 'core/universal/hooks/useCooldown';
+import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 
 interface VideoUploadDialogProps {
   open: boolean;
@@ -36,6 +37,11 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const { mutateAsync: bulkConvert } = useBulkConvertVideos({
     getAccessToken,
   });
+  const { isLoading, playlists } = useLoadPlaylists({
+    getAccessToken,
+  });
+  console.log(`fetching playlists`, isLoading);
+  // const {} = useLoadPlaylists();
 
   const handleClose = () => {
     onOpenChange(false);
@@ -146,6 +152,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       open={open}
       state={state}
       handleClose={handleClose}
+      playlists={playlists}
       formProps={{
         onTitleChange,
         onUrlChange,

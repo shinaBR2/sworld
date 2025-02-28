@@ -17,6 +17,7 @@ import { SubmitButton } from './submit-button';
 import { DialogState } from './types';
 import { CLOSE_DELAY_MS } from '.';
 import { getFormFieldStaticConfigs } from './fields-config';
+import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
@@ -79,6 +80,7 @@ interface DialogComponentProps {
   state: DialogState;
   open: boolean;
   handleClose: () => void;
+  playlists: ReturnType<typeof useLoadPlaylists>['playlists'];
   formProps: FormProps;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
 }
@@ -89,7 +91,7 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const { state, open, handleClose, formProps, handleSubmit } = props;
+  const { state, open, handleClose, formProps, playlists, handleSubmit } = props;
   const {
     onTitleChange,
     onUrlChange,
@@ -159,7 +161,6 @@ const DialogComponent = (props: DialogComponentProps) => {
     countdown: closeDialogCountdown as number,
     message: `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
-  const playlists = [];
   const CREATE_NEW_PLAYLIST = 'create-new';
 
   return (
@@ -184,8 +185,8 @@ const DialogComponent = (props: DialogComponentProps) => {
               <em>{texts.form.playlistInput.createNew}</em>
             </MenuItem>
             {playlists.map(p => (
-              <MenuItem key={p.value} value={p.value}>
-                {p.label}
+              <MenuItem key={p.id} value={p.id}>
+                {p.title}
               </MenuItem>
             ))}
           </TextField>
