@@ -78,7 +78,7 @@ vi.mock('./dialog', () => ({
           disabled={state.isSubmitting}
         />
         <button type="submit" data-testid="submit-button" disabled={state.isSubmitting}>
-          {state.isSubmitting ? 'Uploading...' : 'Upload Video'}
+          {state.isSubmitting ? 'Importing...' : 'Import Video'}
         </button>
         {state.error && <div data-testid="error-message">{state.error}</div>}
         {state.closeDialogCountdown && <div data-testid="countdown">Closing in {state.closeDialogCountdown}s</div>}
