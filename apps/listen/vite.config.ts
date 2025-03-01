@@ -38,6 +38,9 @@ export default defineConfig({
              */
             if (id.includes('react')) return 'react-vendor';
 
+            /** For error tracking, analytics */
+            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
+
             // App broken if bundle `@sentry-internal/feedback` separately
             if (
               id.includes('@sentry-internal/replay/') ||
