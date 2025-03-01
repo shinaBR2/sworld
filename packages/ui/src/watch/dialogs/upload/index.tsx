@@ -69,17 +69,6 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       }));
     }
 
-    const validationResults = await canPlayUrls([state.url]);
-    const isValid = validationResults.length === 1 && validationResults[0].isValid;
-
-    if (!isValid) {
-      return setState(prev => ({
-        ...prev,
-        isSubmitting: false,
-        error: texts.errors.invalidUrl,
-      }));
-    }
-
     try {
       const variables = buildVariables(state);
       const response = await bulkConvert(variables);

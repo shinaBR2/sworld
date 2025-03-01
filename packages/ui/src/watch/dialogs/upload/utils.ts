@@ -34,6 +34,7 @@ const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
 
 const buildVariables = (dialogState: DialogState) => {
   const { title, description = '', url, playlistId, newPlaylistName, videoPositionInPlaylist = 0 } = dialogState;
+
   const variables: BulkConvertVariables = {
     objects: [
       {
