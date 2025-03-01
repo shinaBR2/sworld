@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DialogComponent } from './dialog';
 import { action } from '@storybook/addon-actions';
+import { CREATE_NEW_PLAYLIST } from './utils';
 
 const description = `
 # DialogComponent
@@ -12,8 +13,7 @@ with all state management and business logic handled by its parent.
 - \`state\`: Current state of the dialog (urls, validation results, etc.)
 - \`open\`: Controls dialog visibility
 - \`handleClose\`: Handler for closing the dialog
-- \`isSubmitting\`: Whether a submission is in progress
-- \`formProps\`: OnChange event handlers for inputs changes
+- \`playlists\`: Available playlists
 - \`handleSubmit\`: Handler for form submission`;
 
 const meta: Meta<typeof DialogComponent> = {
@@ -51,12 +51,12 @@ const meta: Meta<typeof DialogComponent> = {
       description: 'Handler for closing the dialog',
       control: null,
     },
-    isSubmitting: {
-      description: 'Whether a submission is in progress',
-      control: 'boolean',
+    playlists: {
+      description: 'Available playlists from the system',
+      control: null,
     },
-    formProps: {
-      description: 'OnChange handlers for form input elements',
+    onFormFieldChange: {
+      description: 'Handler for form field changes',
       control: null,
     },
     handleSubmit: {
@@ -72,15 +72,17 @@ type Story = StoryObj<typeof DialogComponent>;
 // Mock handlers
 const mockHandlers = {
   handleClose: () => console.log('Dialog closed'),
-  formProps: {
-    onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => action('Title changed')(e.target.value),
-    onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => action('URL changed')(e.target.value),
-    onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => action('Description changed')(e.target.value),
-  },
+  onFormFieldChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    action(`${field} changed`)(e.target.value),
   handleSubmit: async (e: React.FormEvent) => {
     e.preventDefault();
     action('Form submitted')(e);
   },
+  playlists: [
+    { id: '1', title: 'Favorites', slug: 'favorites' },
+    { id: '2', title: 'Watch Later', slug: 'watch-later' },
+    { id: '3', title: 'Music Videos', slug: 'music-videos' },
+  ],
 };
 
 // Initial state
@@ -91,6 +93,9 @@ const baseState = {
   isSubmitting: false,
   error: null,
   closeDialogCountdown: null,
+  playlistId: '',
+  newPlaylistName: '',
+  videoPositionInPlaylist: 0,
 };
 
 // Basic empty state
@@ -98,7 +103,6 @@ export const Initial: Story = {
   args: {
     state: baseState,
     open: true,
-    isSubmitting: false,
     ...mockHandlers,
   },
 };
@@ -111,6 +115,30 @@ export const Submitting: Story = {
       ...baseState,
       url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       isSubmitting: true,
+    },
+  },
+};
+
+export const WithPlaylist: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      playlistId: '1',
+      videoPositionInPlaylist: 2,
+    },
+  },
+};
+
+export const CreatingNewPlaylist: Story = {
+  args: {
+    ...Initial.args,
+    state: {
+      ...baseState,
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      playlistId: CREATE_NEW_PLAYLIST,
+      newPlaylistName: 'My New Playlist',
     },
   },
 };

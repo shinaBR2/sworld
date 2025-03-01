@@ -1,6 +1,6 @@
 export const texts = {
   dialog: {
-    title: 'Upload Videos',
+    title: 'Import Videos',
     closeButton: 'Close dialog',
   },
   form: {
@@ -15,16 +15,35 @@ export const texts = {
       helperText: 'Can be either direct video url or platform like youtube url',
     },
     descriptionInput: {
-      placeholder: 'Description for the video, optional',
+      placeholder: 'Description for the video (optional)',
       label: 'Video description',
       helperText: '',
     },
+    playlistInput: {
+      placeholder: 'Select a playlist (optional)',
+      label: 'Playlist',
+      none: 'None',
+      createNew: '+ Create new playlist',
+      helperText: 'Select your existing playlist',
+    },
+    newPlaylistNameInput: {
+      placeholder: 'Short name for the playlist',
+      label: 'Playlist name',
+      helperText: 'short for the best visual',
+    },
+    videoPositionInPlaylistInput: {
+      placeholder: 'Position in the playlist (optional)',
+      label: 'Position',
+      helperText: 'order of videos in the playlist',
+    },
     submitButton: {
-      submit: 'Upload Videos',
-      submitting: 'Uploading...',
+      submit: 'Import',
+      submitting: 'Importing...',
     },
   },
   errors: {
+    emptyTitle: '✗ Video title is required',
+    emptyNewPlaylistName: '✗ Playlist name is required',
     invalidUrl: '✗ Invalid video URL',
     failedToSave: 'Failed to upload',
     unexpected: 'An unexpected error occurred while upload',

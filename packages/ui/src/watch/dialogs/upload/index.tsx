@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { canPlayUrls } from './utils';
+import { buildVariables, CLOSE_DELAY_MS } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
-import hooks, { Auth, commonHelpers, watchMutationHooks } from 'core';
 import { texts } from './texts';
+import { useAuthContext } from 'core/providers/auth';
+import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
+import { useCountdown } from 'core/universal/hooks/useCooldown';
+import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import { validateForm } from './validate';
 
-const { useCountdown } = hooks;
 interface VideoUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const CLOSE_DELAY_MS = 3000;
 const defaultState: DialogState = {
   title: '',
   url: '',
@@ -31,8 +33,13 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     ...defaultState,
   });
 
-  const { getAccessToken } = Auth.useAuthContext();
-  const { mutateAsync: bulkConvert } = watchMutationHooks.useBulkConvertVideos({
+  const { getAccessToken } = useAuthContext();
+  const { mutateAsync: bulkConvert } = useBulkConvertVideos({
+    getAccessToken,
+  });
+
+  // TODO: handle loading + errors
+  const { playlists } = useLoadPlaylists({
     getAccessToken,
   });
 
@@ -40,25 +47,11 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     onOpenChange(false);
   };
 
-  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setState(prev => ({
-      ...prev,
-      title: newValue,
-    }));
-  };
-  const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setState(prev => ({
-      ...prev,
-      description: newValue,
-    }));
-  };
-  const onUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.trim();
     setState(prev => ({
       ...prev,
-      url: newValue,
+      [field]: newValue,
       error: null,
     }));
   };
@@ -67,29 +60,18 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     e.preventDefault();
     setState(prev => ({ ...prev, isSubmitting: true, error: null }));
 
-    const validationResults = await canPlayUrls([state.url]);
-    const isValid = validationResults.length === 1 && validationResults[0].isValid;
-
-    if (!isValid) {
+    const error = await validateForm(state);
+    if (error) {
       return setState(prev => ({
         ...prev,
         isSubmitting: false,
-        error: texts.errors.invalidUrl,
+        error,
       }));
     }
 
     try {
-      const { title, description = '', url } = state;
-      const response = await bulkConvert({
-        objects: [
-          {
-            title,
-            description,
-            slug: commonHelpers.slugify(title),
-            video_url: url,
-          },
-        ],
-      });
+      const variables = buildVariables(state);
+      const response = await bulkConvert(variables);
 
       if (response.insert_videos?.returning.length !== 1) {
         // Unknown error
@@ -130,14 +112,11 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       open={open}
       state={state}
       handleClose={handleClose}
-      formProps={{
-        onTitleChange,
-        onUrlChange,
-        onDescriptionChange,
-      }}
+      playlists={playlists}
+      onFormFieldChange={onFormFieldChange}
       handleSubmit={handleSubmit}
     />
   );
 };
 
-export { VideoUploadDialog, CLOSE_DELAY_MS };
+export { VideoUploadDialog };
