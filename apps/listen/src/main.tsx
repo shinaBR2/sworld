@@ -8,7 +8,6 @@ import { ErrorFallback } from 'ui/universal/error-boundary';
 import { MinimalismThemeProvider } from 'ui/listen/minimalism';
 
 validateEnvVars();
-// initSentry(sentryConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 

@@ -9,7 +9,6 @@ import { ErrorFallback } from 'ui/universal/error-boundary';
 import { auth0Config, queryConfig, rollbarConfig, validateEnvVars } from './config';
 
 validateEnvVars();
-// initSentry(sentryConfig);
 
 // @ts-ignore
 const router = createRouter({

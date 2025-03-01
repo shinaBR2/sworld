@@ -14,7 +14,7 @@ vi.mock('../universal/hooks/useSubscription', () => ({
 }));
 
 // Mock the useFeatureFlagSubscription hook
-vi.mock('../universal/hooks/useFeatureFlagSubscription', () => ({
+vi.mock('../../universal/hooks/useFeatureFlagSubscription', () => ({
   useFeatureFlagSubscription: () => ({
     data: null,
     isLoading: true,

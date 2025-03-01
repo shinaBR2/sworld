@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { AppError } from '../error-boundary/app-error';
+import { useRollbar, useRollbarCaptureEvent } from '@rollbar/react';
 
 let isInitialized = false;
 
@@ -82,4 +83,19 @@ const captureError = (error: AppError, options: CaptureErrorOptions = {}): void 
   });
 };
 
-export { initSentry, loadSentryIntegrations, captureError };
+const useTracker = () => {
+  const rollbar = useRollbar();
+
+  const captureError = (error: AppError, options: CaptureErrorOptions = {}) => {
+    const { tags = [], extras = {}, fingerprint = ['{{ default }}'] } = options;
+    rollbar.error(error.errorMessage, error, {
+      tags,
+      extras,
+      fingerprint,
+    });
+  };
+
+  return { captureError };
+};
+
+export { initSentry, loadSentryIntegrations, captureError, useTracker };

@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
 import { createAuthenticationError, createConnectionError } from '../../error-boundary/errors';
-import { captureSubscriptionError, createExponentialBackoff, SubscriptionErrorType } from './helpers';
+import { createExponentialBackoff, SubscriptionErrorType } from './helpers';
+import { useTracker } from '../../tracker';
 
 interface ConnectionInfo {
   ws: WebSocket;
@@ -22,6 +23,7 @@ export function useSubscription<T>(
 
   const { getAccessToken } = useAuthContext();
   const backoff = useMemo(() => createExponentialBackoff(), []);
+  const { captureError } = useTracker();
 
   const memoizedVariables = useMemo(
     () => variables,
@@ -36,6 +38,7 @@ export function useSubscription<T>(
     }),
     [query, memoizedVariables]
   );
+  const fingerprint = ['{{ default }}', 'useSubscription'];
 
   const initializeConnection = useCallback(
     async (ws: WebSocket) => {
@@ -54,10 +57,15 @@ export function useSubscription<T>(
       } catch (err) {
         const error = createAuthenticationError(err instanceof Error ? err : new Error('Authentication failed'));
 
-        captureSubscriptionError({
-          error,
-          type: SubscriptionErrorType.AUTHENTICATION_FAILED,
-          additionalContext: errorContext,
+        captureError(error, {
+          tags: [
+            { key: 'category', value: 'websocket' },
+            { key: 'error_type', value: SubscriptionErrorType.AUTHENTICATION_FAILED },
+          ],
+          extras: {
+            ...errorContext,
+          },
+          fingerprint,
         });
 
         handleConnectionError(createWebSocketConnection);
@@ -122,10 +130,16 @@ export function useSubscription<T>(
           case 'error': {
             const errorMessage = message.payload?.message || 'Subscription error';
             const error = createConnectionError(new Error(errorMessage));
-            captureSubscriptionError({
-              error,
-              type: SubscriptionErrorType.DATA_PARSING_ERROR,
-              additionalContext: errorContext,
+
+            captureError(error, {
+              tags: [
+                { key: 'category', value: 'websocket' },
+                { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+              ],
+              extras: {
+                ...errorContext,
+              },
+              fingerprint,
             });
 
             setState({
@@ -141,10 +155,16 @@ export function useSubscription<T>(
             try {
               ws.close();
             } catch (err) {
-              captureSubscriptionError({
-                error: createConnectionError(err instanceof Error ? err : new Error('Failed to close connection')),
-                type: SubscriptionErrorType.CONNECTION_CLOSED,
-                additionalContext: errorContext,
+              const error = createConnectionError(err instanceof Error ? err : new Error('Failed to close connection'));
+              captureError(error, {
+                tags: [
+                  { key: 'category', value: 'websocket' },
+                  { key: 'error_type', value: SubscriptionErrorType.CONNECTION_CLOSED },
+                ],
+                extras: {
+                  ...errorContext,
+                },
+                fingerprint,
               });
             }
             break;
@@ -156,10 +176,15 @@ export function useSubscription<T>(
         }
       } catch (err) {
         const error = createConnectionError(err instanceof Error ? err : new Error('Parse websocket message error'));
-        captureSubscriptionError({
-          error,
-          type: SubscriptionErrorType.DATA_PARSING_ERROR,
-          additionalContext: errorContext,
+        captureError(error, {
+          tags: [
+            { key: 'category', value: 'websocket' },
+            { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+          ],
+          extras: {
+            ...errorContext,
+          },
+          fingerprint,
         });
 
         setState({
@@ -197,10 +222,16 @@ export function useSubscription<T>(
           ws.send(JSON.stringify(stopMessage));
           ws.close();
         } catch (err) {
-          captureSubscriptionError({
-            error: createConnectionError(err instanceof Error ? err : new Error('Cleanup failed')),
-            type: SubscriptionErrorType.CLEANUP_ERROR,
-            additionalContext: { query, variables },
+          const error = createConnectionError(err instanceof Error ? err : new Error('Cleanup failed'));
+          captureError(error, {
+            tags: [
+              { key: 'category', value: 'websocket' },
+              { key: 'error_type', value: SubscriptionErrorType.CLEANUP_ERROR },
+            ],
+            extras: {
+              ...errorContext,
+            },
+            fingerprint,
           });
         }
       }

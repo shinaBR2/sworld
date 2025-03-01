@@ -1,7 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AppError } from '../../error-boundary/app-error';
-import { captureError } from '../../tracker';
-import { SubscriptionErrorType, captureSubscriptionError, createExponentialBackoff } from './helpers';
+import { describe, it, expect, vi } from 'vitest';
+import { createExponentialBackoff } from './helpers';
 
 // Mock the captureError function
 vi.mock('../../tracker', () => ({
@@ -9,75 +7,6 @@ vi.mock('../../tracker', () => ({
 }));
 
 describe('Subscription Helpers', () => {
-  describe('captureSubscriptionError', () => {
-    const mockError = new AppError('Test error', 'Test error message', true);
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('should call captureError with basic error params', () => {
-      captureSubscriptionError({
-        error: mockError,
-        type: SubscriptionErrorType.AUTHENTICATION_FAILED,
-      });
-
-      expect(captureError).toHaveBeenCalledWith(mockError, {
-        tags: [
-          { key: 'category', value: 'websocket' },
-          { key: 'error_type', value: SubscriptionErrorType.AUTHENTICATION_FAILED },
-        ],
-        extras: {
-          query: undefined,
-          variables: undefined,
-        },
-        fingerprint: ['{{ default }}', 'useSubscription'],
-      });
-    });
-
-    it('should include additional context when provided', () => {
-      const additionalContext = {
-        query: 'subscription Test { field }',
-        variables: { id: 123 },
-      };
-
-      captureSubscriptionError({
-        error: mockError,
-        type: SubscriptionErrorType.DATA_PARSING_ERROR,
-        additionalContext,
-      });
-
-      expect(captureError).toHaveBeenCalledWith(mockError, {
-        tags: [
-          { key: 'category', value: 'websocket' },
-          { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
-        ],
-        extras: additionalContext,
-        fingerprint: ['{{ default }}', 'useSubscription'],
-      });
-    });
-
-    it('should handle empty additionalContext', () => {
-      captureSubscriptionError({
-        error: mockError,
-        type: SubscriptionErrorType.NETWORK_ERROR,
-        additionalContext: {},
-      });
-
-      expect(captureError).toHaveBeenCalledWith(mockError, {
-        tags: [
-          { key: 'category', value: 'websocket' },
-          { key: 'error_type', value: SubscriptionErrorType.NETWORK_ERROR },
-        ],
-        extras: {
-          query: undefined,
-          variables: undefined,
-        },
-        fingerprint: ['{{ default }}', 'useSubscription'],
-      });
-    });
-  });
-
   describe('createExponentialBackoff', () => {
     it('should use default values when no params provided', () => {
       const backoff = createExponentialBackoff();
