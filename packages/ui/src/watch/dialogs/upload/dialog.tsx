@@ -18,6 +18,7 @@ import { DialogState } from './types';
 import { CLOSE_DELAY_MS } from '.';
 import { getFormFieldStaticConfigs } from './fields-config';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import { useIsMobile } from '../../../universal/responsive';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
@@ -44,15 +45,6 @@ const UploadErrorResult = (props: UploadErrorResultProps) => {
     </Fade>
   );
 };
-
-interface FormProps {
-  onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onDescriptionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onPlaylistIdChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onNewPlaylistNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onVideoPositionInPlaylistChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
 
 interface UploadSuccessResultProps {
   countdown: number;
@@ -81,7 +73,7 @@ interface DialogComponentProps {
   open: boolean;
   handleClose: () => void;
   playlists: ReturnType<typeof useLoadPlaylists>['playlists'];
-  formProps: FormProps;
+  onFormFieldChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
 }
 
@@ -91,15 +83,7 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const { state, open, handleClose, formProps, playlists, handleSubmit } = props;
-  const {
-    onTitleChange,
-    onUrlChange,
-    onDescriptionChange,
-    onPlaylistIdChange,
-    onNewPlaylistNameChange,
-    onVideoPositionInPlaylistChange,
-  } = formProps;
+  const { state, open, handleClose, onFormFieldChange, playlists, handleSubmit } = props;
   const {
     isSubmitting,
     title,
@@ -111,6 +95,7 @@ const DialogComponent = (props: DialogComponentProps) => {
     error,
     closeDialogCountdown,
   } = state;
+  const isMobile = useIsMobile();
 
   const onClose = () => {
     if (isSubmitting) {
@@ -164,7 +149,7 @@ const DialogComponent = (props: DialogComponentProps) => {
   const CREATE_NEW_PLAYLIST = 'create-new';
 
   return (
-    <StyledDialog {...dialogProps}>
+    <StyledDialog {...dialogProps} fullScreen={isMobile}>
       <DialogTitle id="video-upload-dialog-title">
         {texts.dialog.title}
         <StyledCloseButton onClick={onClose} aria-label={texts.dialog.closeButton} disabled={isSubmitting}>
@@ -174,10 +159,10 @@ const DialogComponent = (props: DialogComponentProps) => {
 
       <DialogContent>
         <Box component="form" noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
-          <TextField value={title} onChange={onTitleChange} {...titleTextFieldProps} />
-          <TextField value={url} onChange={onUrlChange} {...urlTextFieldProps} />
-          <TextField value={description} onChange={onDescriptionChange} {...descriptionTextFieldProps} />
-          <TextField select value={playlistId} onChange={onPlaylistIdChange} {...playlistTextFieldProps}>
+          <TextField value={title} onChange={onFormFieldChange('title')} {...titleTextFieldProps} />
+          <TextField value={url} onChange={onFormFieldChange('url')} {...urlTextFieldProps} />
+          <TextField value={description} onChange={onFormFieldChange('description')} {...descriptionTextFieldProps} />
+          <TextField select value={playlistId} onChange={onFormFieldChange('playlistId')} {...playlistTextFieldProps}>
             <MenuItem value="">
               <em>{texts.form.playlistInput.none}</em>
             </MenuItem>
@@ -190,6 +175,20 @@ const DialogComponent = (props: DialogComponentProps) => {
               </MenuItem>
             ))}
           </TextField>
+
+          {playlistId === CREATE_NEW_PLAYLIST && (
+            <TextField
+              fullWidth
+              label="New Playlist Name"
+              value={newPlaylistName || ''}
+              onChange={onFormFieldChange('newPlaylistName')}
+              margin="normal"
+              required
+              disabled={isSubmitting}
+              error={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName}
+              helperText={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName ? 'Playlist name is required' : ''}
+            />
+          )}
           <TextField
             type="number"
             InputProps={{
@@ -198,23 +197,9 @@ const DialogComponent = (props: DialogComponentProps) => {
               },
             }}
             value={videoPositionInPlaylist || 0}
-            onChange={onVideoPositionInPlaylistChange}
+            onChange={onFormFieldChange('videoPositionInPlaylist')}
             {...videoPositionInPlaylistTextFieldProps}
           />
-
-          {playlistId === CREATE_NEW_PLAYLIST && (
-            <TextField
-              fullWidth
-              label="New Playlist Name"
-              value={newPlaylistName || ''}
-              onChange={onNewPlaylistNameChange}
-              margin="normal"
-              required
-              disabled={isSubmitting}
-              error={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName}
-              helperText={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName ? 'Playlist name is required' : ''}
-            />
-          )}
 
           {error && <UploadErrorResult {...uploadErrorResultProps} />}
           {error === '' && <UploadSuccessResult {...uploadSuccessResultProps} />}

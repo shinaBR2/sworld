@@ -37,59 +37,21 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const { mutateAsync: bulkConvert } = useBulkConvertVideos({
     getAccessToken,
   });
-  const { isLoading, playlists } = useLoadPlaylists({
+
+  // TODO: handle loading + errors
+  const { playlists } = useLoadPlaylists({
     getAccessToken,
   });
-  console.log(`fetching playlists`, isLoading);
-  // const {} = useLoadPlaylists();
 
   const handleClose = () => {
     onOpenChange(false);
   };
 
-  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setState(prev => ({
-      ...prev,
-      title: newValue,
-    }));
-  };
-  const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setState(prev => ({
-      ...prev,
-      description: newValue,
-    }));
-  };
-  const onUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.trim();
     setState(prev => ({
       ...prev,
-      url: newValue,
-      error: null,
-    }));
-  };
-  const onPlaylistIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.trim();
-    setState(prev => ({
-      ...prev,
-      playlistId: newValue,
-      error: null,
-    }));
-  };
-  const onNewPlaylistNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.trim();
-    setState(prev => ({
-      ...prev,
-      newPlaylistName: newValue,
-      error: null,
-    }));
-  };
-  const onVideoPositionInPlaylistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.trim();
-    setState(prev => ({
-      ...prev,
-      videoPositionInPlaylist: parseInt(newValue),
+      [field]: newValue,
       error: null,
     }));
   };
@@ -153,14 +115,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       state={state}
       handleClose={handleClose}
       playlists={playlists}
-      formProps={{
-        onTitleChange,
-        onUrlChange,
-        onDescriptionChange,
-        onPlaylistIdChange,
-        onNewPlaylistNameChange,
-        onVideoPositionInPlaylistChange,
-      }}
+      onFormFieldChange={onFormFieldChange}
       handleSubmit={handleSubmit}
     />
   );

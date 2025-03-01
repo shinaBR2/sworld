@@ -49,7 +49,7 @@ const UploadButton = () => {
         <ListItemIcon>
           <CloudUpload />
         </ListItemIcon>
-        <ListItemText primary="Upload" />
+        <ListItemText primary="Import" />
       </ListItemButton>
 
       {open && enabled && (
