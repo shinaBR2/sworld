@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DialogComponent } from './dialog';
 import { action } from '@storybook/addon-actions';
+import { CREATE_NEW_PLAYLIST } from './utils';
 
 const description = `
 # DialogComponent
@@ -136,7 +137,7 @@ export const CreatingNewPlaylist: Story = {
     state: {
       ...baseState,
       url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      playlistId: 'create-new',
+      playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: 'My New Playlist',
     },
   },
