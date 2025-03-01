@@ -19,7 +19,8 @@ coverage:
 ignore:
   - 'apps/docs/**/*' # Ignore documentation app
   - '**/types.ts' # Ignore TypeScript interfaces
-  - '**/stories.tsx' # Ignore Storybook files
+  - '**/*.stories.tsx' # Ignore Storybook files
+  - 'packages/ui/.storybook/**/*' # Ignore Storybook files
   - '**/test/**/*' # Ignore test files
   - '**/*.test.*' # Ignore test files
   - '**/*.spec.*' # Ignore spec files
