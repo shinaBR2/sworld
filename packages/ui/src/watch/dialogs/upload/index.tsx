@@ -130,4 +130,4 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   );
 };
 
-export { VideoUploadDialog, CLOSE_DELAY_MS };
+export { VideoUploadDialog };

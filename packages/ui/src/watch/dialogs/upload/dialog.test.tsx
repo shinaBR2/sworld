@@ -3,7 +3,6 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
 import { DialogState } from './types';
-import userEvent from '@testing-library/user-event';
 
 vi.mock('core/watch/query-hooks/playlists', () => ({
   useLoadPlaylists: vi.fn(() => ({

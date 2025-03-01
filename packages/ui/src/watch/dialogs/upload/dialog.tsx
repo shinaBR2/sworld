@@ -15,11 +15,10 @@ import { texts } from './texts';
 import { StyledDialog, StyledCloseButton } from './styled';
 import { SubmitButton } from './submit-button';
 import { DialogState } from './types';
-import { CLOSE_DELAY_MS } from '.';
 import { getFormFieldStaticConfigs } from './fields-config';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 import { useIsMobile } from '../../../universal/responsive';
-import { CREATE_NEW_PLAYLIST } from './utils';
+import { CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST } from './utils';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
