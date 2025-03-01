@@ -34,7 +34,7 @@ const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
 
 const buildVariables = (dialogState: DialogState) => {
   const { title, description = '', url, playlistId, newPlaylistName, videoPositionInPlaylist = 0 } = dialogState;
-  let variables: BulkConvertVariables = {
+  const variables: BulkConvertVariables = {
     objects: [
       {
         title,
@@ -45,37 +45,21 @@ const buildVariables = (dialogState: DialogState) => {
     ],
   };
 
-  if (playlistId) {
-    variables = {
-      objects: [
-        {
-          ...variables.objects[0],
-          playlist_videos: {
-            data: [{ playlist_id: playlistId, position: videoPositionInPlaylist }],
+  if (playlistId || newPlaylistName) {
+    const playlistVideoData = playlistId
+      ? { playlist_id: playlistId, position: videoPositionInPlaylist }
+      : {
+          position: videoPositionInPlaylist,
+          playlist: {
+            data: {
+              title: newPlaylistName!,
+              slug: slugify(newPlaylistName!),
+            },
           },
-        },
-      ],
-    };
-  } else if (newPlaylistName) {
-    variables = {
-      objects: [
-        {
-          ...variables.objects[0],
-          playlist_videos: {
-            data: [
-              {
-                position: videoPositionInPlaylist,
-                playlist: {
-                  data: {
-                    title: newPlaylistName,
-                    slug: slugify(newPlaylistName),
-                  },
-                },
-              },
-            ],
-          },
-        },
-      ],
+        };
+
+    variables.objects[0].playlist_videos = {
+      data: [playlistVideoData],
     };
   }
 
