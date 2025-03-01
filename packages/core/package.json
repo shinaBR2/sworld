@@ -56,9 +56,11 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
+    "@rollbar/react": "^0.12.1",
     "@sentry/react": "^8.50.0",
     "@tanstack/react-query": "^5.60.5",
     "graphql-request": "^7.1.2",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "rollbar": "^2.26.4"
   }
 }
