@@ -1809,7 +1809,7 @@ type playlist {
   ): playlist_videos_aggregate!
   public: Boolean!
   slug: String!
-  thumbnailUrl: String!
+  thumbnailUrl: String
   title: String!
   updatedAt: timestamptz!
   """An object relationship"""

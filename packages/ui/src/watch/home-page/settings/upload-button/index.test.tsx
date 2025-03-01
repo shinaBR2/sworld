@@ -66,7 +66,7 @@ describe('UploadButton', () => {
     expect(button).toHaveAttribute('aria-disabled', 'false');
 
     // Verify upload text and icon are present
-    expect(screen.getByText('Upload')).toBeInTheDocument();
+    expect(screen.getByText('Import')).toBeInTheDocument();
     expect(screen.getByTestId('CloudUploadIcon')).toBeInTheDocument();
   });
 
