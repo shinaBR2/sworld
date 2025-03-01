@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { AppError } from '../error-boundary/app-error';
-import { useRollbar, useRollbarCaptureEvent } from '@rollbar/react';
+import { useRollbar } from '@rollbar/react';
 
 let isInitialized = false;
 
