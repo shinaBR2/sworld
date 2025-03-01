@@ -52,7 +52,7 @@ const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof Pla
     id: playlist.id,
     type: MEDIA_TYPES.PLAYLIST,
     title: playlist.title,
-    thumbnailUrl: playlist.thumbnailUrl,
+    thumbnailUrl: playlist.thumbnailUrl || '',
     slug: playlist.slug,
     createdAt: playlist.createdAt,
     description: playlist.description || '',

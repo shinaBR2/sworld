@@ -238,7 +238,7 @@ describe('VideoUploadDialog', () => {
 
     // Check loading state
     expect(screen.getByTestId('submit-button')).toBeDisabled();
-    expect(screen.getByTestId('submit-button')).toHaveTextContent('Uploading...');
+    expect(screen.getByTestId('submit-button')).toHaveTextContent(`${texts.form.submitButton.submitting}`);
     expect(screen.getByTestId('title-input')).toBeDisabled();
     expect(screen.getByTestId('url-input')).toBeDisabled();
     expect(screen.getByTestId('description-input')).toBeDisabled();
@@ -313,10 +313,12 @@ describe('VideoUploadDialog', () => {
       expect(mockBulkConvert).toHaveBeenCalled();
     });
 
-    // Simulate countdown ticking
-    if (mockUseCountdown.onTick) {
-      mockUseCountdown.onTick(CLOSE_DELAY_MS / 1000);
-    }
+    await waitFor(() => {
+      // Simulate countdown ticking
+      if (mockUseCountdown.onTick) {
+        mockUseCountdown.onTick(CLOSE_DELAY_MS / 1000);
+      }
+    });
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('Closing in 2s');
   });
