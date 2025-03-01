@@ -3,6 +3,7 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
 import { DialogState } from './types';
+import { CREATE_NEW_PLAYLIST } from './utils';
 
 vi.mock('core/watch/query-hooks/playlists', () => ({
   useLoadPlaylists: vi.fn(() => ({
@@ -92,7 +93,7 @@ describe('DialogComponent', () => {
   });
 
   it('renders new playlist field when "Create New" is selected', () => {
-    renderComponent({ playlistId: 'create-new' });
+    renderComponent({ playlistId: CREATE_NEW_PLAYLIST });
     expect(screen.getByLabelText(/new playlist name/i)).toBeInTheDocument();
   });
 
@@ -150,7 +151,7 @@ describe('DialogComponent', () => {
   });
 
   it('shows validation error for new playlist name when required', () => {
-    renderComponent({ playlistId: 'create-new', newPlaylistName: '' });
+    renderComponent({ playlistId: CREATE_NEW_PLAYLIST, newPlaylistName: '' });
     expect(screen.getByText(/playlist name is required/i)).toBeInTheDocument();
   });
 

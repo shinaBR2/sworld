@@ -4,7 +4,7 @@ import { ValidationResult } from './validation-results';
 import { slugify } from 'core/universal/common';
 
 const CLOSE_DELAY_MS = 3000;
-const CREATE_NEW_PLAYLIST = 'create-new';
+const CREATE_NEW_PLAYLIST = '__create-new';
 
 let cachedCanPlay: ((url: string) => boolean) | null = null;
 
