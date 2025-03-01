@@ -1,38 +1,24 @@
-import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
-import { ErrorBoundary } from './index';
+import { vi, describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import sentryTestkit from 'sentry-testkit';
-import * as Sentry from '@sentry/react';
+import { ErrorBoundary } from './index';
+import { AppError } from './app-error';
 
-const { testkit, sentryTransport } = sentryTestkit();
-
-// Mock the fallback component
-vi.mock('@sworld/ui/ErrorFallback', () => ({
-  default: vi.fn(() => <div>Mocked Error Fallback</div>),
+// Mock the Rollbar Provider and ErrorBoundary
+vi.mock('@rollbar/react', () => ({
+  Provider: ({ children }) => children,
+  ErrorBoundary: ({ children, fallbackUI }) => {
+    // We'll use this to simulate errors in our tests
+    if (children === 'TRIGGER_ERROR') {
+      return fallbackUI({ error: new Error('Test error') });
+    }
+    if (children === 'TRIGGER_APP_ERROR') {
+      return fallbackUI({ error: new AppError('technical message', 'Custom error message', true) });
+    }
+    return children;
+  },
 }));
 
 describe('ErrorBoundary', () => {
-  const originalConsoleError = console.error;
-
-  beforeAll(() => {
-    console.error = vi.fn();
-
-    Sentry.init({
-      dsn: 'https://test@sentry.io/test',
-      transport: sentryTransport,
-      // Disable sending actual events during test
-      enabled: false,
-    });
-  });
-
-  afterAll(() => {
-    console.error = originalConsoleError;
-  });
-
-  beforeEach(() => {
-    testkit.reset();
-  });
-
   it('renders children when no error occurs', () => {
     const TestComponent = () => <div>Normal Content</div>;
 
@@ -45,20 +31,39 @@ describe('ErrorBoundary', () => {
     expect(container.textContent).toContain('Normal Content');
   });
 
-  it('renders fallback component when an error is thrown', () => {
-    const ErrorThrowingComponent = () => {
-      throw new Error('Test Error');
-    };
-
-    // Ensure no previous reports
-    expect(testkit.reports()).toHaveLength(0);
+  it('renders fallback with generic message for regular errors', () => {
+    const TestFallback = ({ errorMessage, canRetry }) => (
+      <div>
+        <span>Error: {errorMessage}</span>
+        <span>Retry: {canRetry ? 'Yes' : 'No'}</span>
+      </div>
+    );
 
     const { container } = render(
-      <ErrorBoundary FallbackComponent={() => <div>Mocked Error Fallback</div>}>
-        <ErrorThrowingComponent />
+      <ErrorBoundary FallbackComponent={TestFallback} config={{ accessToken: 'test-token', environment: 'test' }}>
+        TRIGGER_ERROR
       </ErrorBoundary>
     );
 
-    expect(container.textContent).toContain('Mocked Error Fallback');
+    expect(container.textContent).toContain('Error: Something went wrong');
+    expect(container.textContent).toContain('Retry: No');
+  });
+
+  it('renders fallback with custom message for AppError', () => {
+    const TestFallback = ({ errorMessage, canRetry }) => (
+      <div>
+        <span>Error: {errorMessage}</span>
+        <span>Retry: {canRetry ? 'Yes' : 'No'}</span>
+      </div>
+    );
+
+    const { container } = render(
+      <ErrorBoundary FallbackComponent={TestFallback} config={{ accessToken: 'test-token', environment: 'test' }}>
+        TRIGGER_APP_ERROR
+      </ErrorBoundary>
+    );
+
+    expect(container.textContent).toContain('Error: Custom error message');
+    expect(container.textContent).toContain('Retry: Yes');
   });
 });
