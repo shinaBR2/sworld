@@ -3,6 +3,9 @@ import { DialogState } from './types';
 import { ValidationResult } from './validation-results';
 import { slugify } from 'core/universal/common';
 
+const CLOSE_DELAY_MS = 3000;
+const CREATE_NEW_PLAYLIST = 'create-new';
+
 let cachedCanPlay: ((url: string) => boolean) | null = null;
 
 const loadReactPlayerCanPlay = async () => {
@@ -79,4 +82,4 @@ const buildVariables = (dialogState: DialogState) => {
   return variables;
 };
 
-export { canPlayUrls, buildVariables };
+export { CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, canPlayUrls, buildVariables };

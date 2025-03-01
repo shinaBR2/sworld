@@ -42,6 +42,8 @@ export const texts = {
     },
   },
   errors: {
+    emptyTitle: '✗ Video title is required',
+    emptyNewPlaylistName: '✗ Playlist name is required',
     invalidUrl: '✗ Invalid video URL',
     failedToSave: 'Failed to upload',
     unexpected: 'An unexpected error occurred while upload',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { buildVariables, canPlayUrls } from './utils';
+import { buildVariables, canPlayUrls, CLOSE_DELAY_MS } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
@@ -7,13 +7,13 @@ import { useAuthContext } from 'core/providers/auth';
 import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
 import { useCountdown } from 'core/universal/hooks/useCooldown';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import { validateForm } from './validate';
 
 interface VideoUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const CLOSE_DELAY_MS = 3000;
 const defaultState: DialogState = {
   title: '',
   url: '',
@@ -59,6 +59,15 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setState(prev => ({ ...prev, isSubmitting: true, error: null }));
+
+    const error = await validateForm(state);
+    if (error) {
+      return setState(prev => ({
+        ...prev,
+        isSubmitting: false,
+        error,
+      }));
+    }
 
     const validationResults = await canPlayUrls([state.url]);
     const isValid = validationResults.length === 1 && validationResults[0].isValid;

@@ -19,6 +19,7 @@ import { CLOSE_DELAY_MS } from '.';
 import { getFormFieldStaticConfigs } from './fields-config';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 import { useIsMobile } from '../../../universal/responsive';
+import { CREATE_NEW_PLAYLIST } from './utils';
 
 interface UploadErrorResultProps {
   isSubmitting: boolean;
@@ -146,7 +147,6 @@ const DialogComponent = (props: DialogComponentProps) => {
     countdown: closeDialogCountdown as number,
     message: `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
-  const CREATE_NEW_PLAYLIST = 'create-new';
 
   return (
     <StyledDialog {...dialogProps} fullScreen={isMobile}>
