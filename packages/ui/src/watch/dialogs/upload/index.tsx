@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { buildVariables, canPlayUrls, CLOSE_DELAY_MS } from './utils';
+import { buildVariables, CLOSE_DELAY_MS } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
