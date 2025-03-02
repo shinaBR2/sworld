@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSubscription } from './index';
 import { AuthContextValue, useAuthContext } from '../../../providers/auth';
-import { captureSubscriptionError, SubscriptionErrorType } from './helpers';
+import { SubscriptionErrorType } from './helpers';
+import { useTracker } from '../../tracker';
 
 // Mock the dependencies
 vi.mock('../../../providers/auth', () => ({
@@ -14,8 +15,11 @@ vi.mock('../../error-boundary/errors', () => ({
   createConnectionError: vi.fn().mockImplementation(err => err),
 }));
 
+vi.mock('../../tracker', () => ({
+  useTracker: vi.fn(),
+}));
+
 vi.mock('./helpers', () => ({
-  captureSubscriptionError: vi.fn(),
   createExponentialBackoff: vi.fn().mockReturnValue({
     shouldRetry: vi.fn().mockReturnValue(true),
     getNextDelay: vi.fn().mockReturnValue(1000),
@@ -66,12 +70,21 @@ describe('useSubscription', () => {
   const mockQuery = 'subscription { test }';
   const mockToken = 'mock-token';
   const mockVariables = { id: '123' };
+  const mockCaptureError = vi.fn();
+  const fingerprint = ['{{ default }}', 'useSubscription'];
+  const extras = {
+    query: mockQuery,
+    variables: mockVariables,
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: vi.fn().mockResolvedValue(mockToken),
     } as unknown as AuthContextValue);
+    vi.mocked(useTracker).mockReturnValue({
+      captureError: mockCaptureError,
+    });
   });
 
   it('should initialize with loading state', () => {
@@ -147,13 +160,13 @@ describe('useSubscription', () => {
       mockWsInstance.onopen?.();
     });
 
-    expect(captureSubscriptionError).toHaveBeenCalledWith({
-      error: mockError,
-      type: SubscriptionErrorType.AUTHENTICATION_FAILED,
-      additionalContext: {
-        query: mockQuery,
-        variables: mockVariables,
-      },
+    expect(mockCaptureError).toHaveBeenCalledWith(mockError, {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.AUTHENTICATION_FAILED },
+      ],
+      extras,
+      fingerprint,
     });
   });
 
@@ -170,13 +183,13 @@ describe('useSubscription', () => {
       });
     });
 
-    expect(captureSubscriptionError).toHaveBeenCalledWith({
-      error: expect.any(Error),
-      type: SubscriptionErrorType.DATA_PARSING_ERROR,
-      additionalContext: {
-        query: mockQuery,
-        variables: mockVariables,
-      },
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+      ],
+      extras,
+      fingerprint,
     });
 
     expect(result.current).toEqual({
@@ -195,13 +208,13 @@ describe('useSubscription', () => {
       });
     });
 
-    expect(captureSubscriptionError).toHaveBeenCalledWith({
-      error: expect.any(Error),
-      type: SubscriptionErrorType.DATA_PARSING_ERROR,
-      additionalContext: {
-        query: mockQuery,
-        variables: mockVariables,
-      },
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+      ],
+      extras,
+      fingerprint,
     });
 
     expect(result.current).toEqual({
@@ -259,5 +272,57 @@ describe('useSubscription', () => {
     unmount();
 
     expect(mockWsInstance.send).not.toHaveBeenCalled();
+  });
+
+  it('should handle error when closing WebSocket after complete message', async () => {
+    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+
+    // Set up close to throw an error
+    mockWsInstance.close.mockImplementationOnce(() => {
+      throw new Error('Failed to close connection');
+    });
+
+    await act(async () => {
+      mockWsInstance.onopen?.();
+      mockWsInstance.onmessage?.({
+        data: JSON.stringify({ type: 'complete' }),
+      });
+    });
+
+    expect(mockWsInstance.close).toHaveBeenCalled();
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.CONNECTION_CLOSED },
+      ],
+      extras,
+      fingerprint,
+    });
+  });
+
+  it('should handle error during cleanup on unmount', async () => {
+    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+
+    // Ensure the WebSocket is in OPEN state and properly initialized
+    await act(async () => {
+      mockWsInstance.onopen?.();
+    });
+
+    // Set up send to throw an error during cleanup
+    mockWsInstance.send.mockImplementationOnce(() => {
+      throw new Error('Cleanup failed');
+    });
+
+    // Trigger the cleanup
+    unmount();
+
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.CLEANUP_ERROR },
+      ],
+      extras,
+      fingerprint,
+    });
   });
 });

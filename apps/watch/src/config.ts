@@ -19,11 +19,9 @@ const appConfig = {
   },
 };
 
-const sentryConfig = {
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  environment: import.meta.env.VITE_ENVIRONMENT,
-  release: import.meta.env.VITE_RELEASE,
-  site: 'watch',
+const rollbarConfig = {
+  accessToken: import.meta.env.VITE_ROLLBAR_TOKEN!,
+  environment: import.meta.env.VITE_ROLLBAR_ENV!,
 };
 
 const validateEnvVars = () => {
@@ -35,9 +33,8 @@ const validateEnvVars = () => {
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
-    'VITE_SENTRY_DSN',
-    'VITE_ENVIRONMENT',
-    'VITE_RELEASE',
+    'VITE_ROLLBAR_TOKEN',
+    'VITE_ROLLBAR_ENV',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
@@ -45,4 +42,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, appConfig, sentryConfig, validateEnvVars };
+export { auth0Config, queryConfig, appConfig, rollbarConfig, validateEnvVars };

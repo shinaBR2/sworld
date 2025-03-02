@@ -1,6 +1,3 @@
-import { AppError } from '../../error-boundary/app-error';
-import { captureError } from '../../tracker';
-
 export enum SubscriptionErrorType {
   AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
   CONNECTION_INIT_FAILED = 'CONNECTION_INIT_FAILED',
@@ -11,40 +8,6 @@ export enum SubscriptionErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   SERVER_ERROR = 'SERVER_ERROR',
 }
-
-/**
- * Parameters for capturing subscription errors
- * @interface CaptureSubscriptionErrorParams
- * @property {AppError} error - The error object to capture
- * @property {string} type - The type of subscription error
- * @property {Object} [additionalContext] - Additional context for error tracking
- * @property {string} [additionalContext.query] - GraphQL query that caused the error
- * @property {Record<string, unknown>} [additionalContext.variables] - Query variables
- */
-interface CaptureSubscriptionErrorParams {
-  error: AppError;
-  type: string;
-  additionalContext?: {
-    query?: string;
-    variables?: Record<string, unknown>;
-  };
-}
-
-const captureSubscriptionError = (params: CaptureSubscriptionErrorParams) => {
-  const { error, type, additionalContext } = params;
-
-  captureError(error, {
-    tags: [
-      { key: 'category', value: 'websocket' },
-      { key: 'error_type', value: type },
-    ],
-    extras: {
-      query: additionalContext?.query,
-      variables: additionalContext?.variables,
-    },
-    fingerprint: ['{{ default }}', 'useSubscription'],
-  });
-};
 
 interface CreateExponentialBackoffParams {
   maxRetries?: number;
@@ -69,4 +32,4 @@ const createExponentialBackoff = (params?: CreateExponentialBackoffParams) => {
   };
 };
 
-export { captureSubscriptionError, createExponentialBackoff };
+export { createExponentialBackoff };
