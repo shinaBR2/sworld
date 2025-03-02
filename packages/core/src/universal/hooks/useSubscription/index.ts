@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
-import { createAuthenticationError, createConnectionError } from '../../error-boundary/errors';
+import { createConnectionError } from '../../error-boundary/errors';
 import { createExponentialBackoff, SubscriptionErrorType } from './helpers';
 import { useTracker } from '../../tracker';
 

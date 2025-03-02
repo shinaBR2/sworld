@@ -11,7 +11,6 @@ vi.mock('../../../providers/auth', () => ({
 }));
 
 vi.mock('../../error-boundary/errors', () => ({
-  createAuthenticationError: vi.fn().mockImplementation(err => err),
   createConnectionError: vi.fn().mockImplementation(err => err),
 }));
 
