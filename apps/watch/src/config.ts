@@ -40,6 +40,8 @@ const validateEnvVars = () => {
     'VITE_LISTEN_SITE_URL',
     'VITE_WATCH_SITE_URL',
     'VITE_PLAY_SITE_URL',
+    'VITE_ROLLBAR_TOKEN',
+    'VITE_ROLLBAR_ENV',
   ];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {

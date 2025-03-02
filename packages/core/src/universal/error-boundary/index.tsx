@@ -15,7 +15,6 @@ interface ErrorBoundaryProps {
 
 const ErrorBoundary = (props: ErrorBoundaryProps) => {
   const { children, config, FallbackComponent } = props;
-  console.log(`config: ${JSON.stringify(config)}`);
 
   return (
     <Provider config={config}>
