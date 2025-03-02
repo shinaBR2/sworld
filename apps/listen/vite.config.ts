@@ -38,18 +38,8 @@ export default defineConfig({
              */
             if (id.includes('react')) return 'react-vendor';
 
-            // App broken if bundle `@sentry-internal/feedback` separately
-            if (
-              id.includes('@sentry-internal/replay/') ||
-              id.includes('@sentry-internal/replay-canvas/')
-              // id.includes('@sentry-internal/feedback/')
-            ) {
-              return 'sentry-integration-vendor';
-            }
-
-            if (id.includes('@sentry') || id.includes('sentry-internal')) {
-              return 'sentry-vendor';
-            }
+            /** For error tracking, analytics */
+            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
 
             return 'vendor';
           }

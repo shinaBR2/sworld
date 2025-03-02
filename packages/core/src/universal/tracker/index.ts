@@ -1,55 +1,5 @@
-import * as Sentry from '@sentry/react';
 import { AppError } from '../error-boundary/app-error';
-
-let isInitialized = false;
-
-interface InitSentryParams {
-  environment: string;
-  release: string;
-  dsn: string;
-  site: string;
-  // traceDomains: string[];
-}
-
-const initSentry = (options: InitSentryParams) => {
-  const allowedEnv = ['development', 'production'];
-
-  if (isInitialized) return;
-  if (allowedEnv.indexOf(options.environment) == -1) return;
-
-  const { environment, dsn, site, release } = options;
-  const isProduction = environment == 'production';
-
-  Sentry.init({
-    dsn,
-    environment,
-    release,
-    initialScope: {
-      tags: {
-        site,
-      },
-    },
-    integrations: [Sentry.browserTracingIntegration()],
-    // Tracing
-    tracesSampleRate: isProduction ? 0.1 : 1.0,
-    // tracePropagationTargets: traceDomains,
-    // Session Replay
-    replaysSessionSampleRate: isProduction ? 0.1 : 1.0,
-    replaysOnErrorSampleRate: 1.0,
-  });
-
-  isInitialized = true;
-};
-
-const loadSentryIntegrations = async () => {
-  try {
-    import('@sentry/react').then(lazyLoadedSentry => {
-      Sentry.addIntegration(lazyLoadedSentry.replayIntegration());
-    });
-  } catch (error) {
-    console.error('Failed to load Sentry integrations:', error);
-  }
-};
+import { useRollbar } from '@rollbar/react';
 
 interface ErrorTag {
   key: string;
@@ -62,24 +12,19 @@ interface CaptureErrorOptions {
   fingerprint?: string[];
 }
 
-const captureError = (error: AppError, options: CaptureErrorOptions = {}): void => {
-  const { tags = [], extras = {}, fingerprint = ['{{ default }}'] } = options;
+const useTracker = () => {
+  const rollbar = useRollbar();
 
-  Sentry.withScope(scope => {
-    scope.setExtras({
-      errorMessage: error.errorMessage,
-      canRetry: error.canRetry,
-      ...extras,
+  const captureError = (error: AppError, options: CaptureErrorOptions = {}) => {
+    const { tags = [], extras = {}, fingerprint = ['{{ default }}'] } = options;
+    rollbar.error(error.errorMessage, error, {
+      tags,
+      extras,
+      fingerprint,
     });
+  };
 
-    tags.forEach(tag => {
-      scope.setTag(tag.key, String(tag.value));
-    });
-
-    scope.setFingerprint(fingerprint);
-
-    Sentry.captureException(error);
-  });
+  return { captureError };
 };
 
-export { initSentry, loadSentryIntegrations, captureError };
+export { useTracker };
