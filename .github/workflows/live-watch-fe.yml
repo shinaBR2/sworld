@@ -51,7 +51,7 @@ jobs:
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
-          VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
+          VITE_ROLLBAR_TOKEN: ${{ vars.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'development'
       - name: Notify start deploy to Rollbar
         uses: rollbar/github-deploy-action@2.1.2
@@ -122,7 +122,7 @@ jobs:
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
-          VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
+          VITE_ROLLBAR_TOKEN: ${{ vars.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'production'
       - name: Notify start deploy to Rollbar
         uses: rollbar/github-deploy-action@2.1.2
