@@ -273,4 +273,56 @@ describe('useSubscription', () => {
 
     expect(mockWsInstance.send).not.toHaveBeenCalled();
   });
+
+  it('should handle error when closing WebSocket after complete message', async () => {
+    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+
+    // Set up close to throw an error
+    mockWsInstance.close.mockImplementationOnce(() => {
+      throw new Error('Failed to close connection');
+    });
+
+    await act(async () => {
+      mockWsInstance.onopen?.();
+      mockWsInstance.onmessage?.({
+        data: JSON.stringify({ type: 'complete' }),
+      });
+    });
+
+    expect(mockWsInstance.close).toHaveBeenCalled();
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.CONNECTION_CLOSED },
+      ],
+      extras,
+      fingerprint,
+    });
+  });
+
+  it('should handle error during cleanup on unmount', async () => {
+    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+
+    // Ensure the WebSocket is in OPEN state and properly initialized
+    await act(async () => {
+      mockWsInstance.onopen?.();
+    });
+
+    // Set up send to throw an error during cleanup
+    mockWsInstance.send.mockImplementationOnce(() => {
+      throw new Error('Cleanup failed');
+    });
+
+    // Trigger the cleanup
+    unmount();
+
+    expect(mockCaptureError).toHaveBeenCalledWith(expect.any(Error), {
+      tags: [
+        { key: 'category', value: 'websocket' },
+        { key: 'error_type', value: SubscriptionErrorType.CLEANUP_ERROR },
+      ],
+      extras,
+      fingerprint,
+    });
+  });
 });
