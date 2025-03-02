@@ -53,6 +53,16 @@ jobs:
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
           VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'development'
+      - name: Notify start deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.2
+        id: rollbar_pre_deploy_dev
+        with:
+          environment: 'development'
+          version: ${{ github.sha }}
+          status: 'started'
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_TOKEN }}
+          ROLLBAR_USERNAME: ${{ github.actor }}
       - name: Deploy watch
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
@@ -62,6 +72,17 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_WORLD_DEV }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live
+      - name: Notify finish deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.2
+        id: rollbar_post_deploy
+        with:
+          environment: 'development'
+          version: ${{ github.sha }}
+          status: 'succeeded'
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_TOKEN }}
+          ROLLBAR_USERNAME: ${{ github.actor }}
+          DEPLOY_ID: ${{ steps.rollbar_pre_deploy_dev.outputs.deploy_id }}
 
   prod_deploy:
     runs-on: ubuntu-latest
@@ -103,6 +124,16 @@ jobs:
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
           VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'production'
+      - name: Notify start deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.2
+        id: rollbar_pre_deploy_prod
+        with:
+          environment: 'production'
+          version: ${{ github.sha }}
+          status: 'started'
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_TOKEN }}
+          ROLLBAR_USERNAME: ${{ github.actor }}
       - name: Deploy watch
         id: deploy
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
@@ -113,6 +144,17 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
           channelId: live
+      - name: Notify finish deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.2
+        id: rollbar_post_deploy
+        with:
+          environment: 'production'
+          version: ${{ github.sha }}
+          status: 'succeeded'
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_TOKEN }}
+          ROLLBAR_USERNAME: ${{ github.actor }}
+          DEPLOY_ID: ${{ steps.rollbar_pre_deploy_prod.outputs.deploy_id }}
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
