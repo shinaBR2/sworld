@@ -48,7 +48,6 @@
     "eslint-config-custom": "workspace:*",
     "jsdom": "^25.0.1",
     "react": "^18.2.0",
-    "sentry-testkit": "^5.0.9",
     "tsconfig": "workspace:*",
     "tsup": "^6.2.3",
     "typescript": "^5.6.2",
@@ -57,7 +56,6 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "@rollbar/react": "^0.12.1",
-    "@sentry/react": "^8.50.0",
     "@tanstack/react-query": "^5.60.5",
     "graphql-request": "^7.1.2",
     "react-dom": "^18.2.0",
