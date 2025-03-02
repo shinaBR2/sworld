@@ -46,4 +46,18 @@ describe('videoConfig', () => {
   it('has correct max file size limit', () => {
     expect(videoConfig.maxFileSize).toBe(4 * 1024 * 1024 * 1024);
   });
+
+  it('has ffmpeg commands', () => {
+    expect(videoConfig.ffmpegCommands).toEqual([
+      '-map 0:v',
+      '-map 0:a',
+      '-map 0:s:0?',
+      '-codec copy',
+      '-codec:s webvtt',
+      '-start_number 0',
+      '-hls_time 10',
+      '-hls_list_size 0',
+      '-f hls',
+    ]);
+  });
 });

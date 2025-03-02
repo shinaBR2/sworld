@@ -4,6 +4,7 @@ import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import { convertToHLS, getDuration, takeScreenshot } from '.';
 import { existsSync } from 'fs';
 import { logger } from 'src/utils/logger';
+import { videoConfig } from '../../config';
 
 // Mock all external dependencies
 vi.mock('fluent-ffmpeg');
@@ -86,13 +87,7 @@ describe('FFmpeg Helpers', () => {
       await expect(convertToHLS(inputPath, outputDir)).resolves.not.toThrow();
 
       expect(ffmpeg).toHaveBeenCalledWith(inputPath);
-      expect(mockFFmpeg.outputOptions).toHaveBeenCalledWith([
-        '-codec copy',
-        '-start_number 0',
-        '-hls_time 10',
-        '-hls_list_size 0',
-        '-f hls',
-      ]);
+      expect(mockFFmpeg.outputOptions).toHaveBeenCalledWith(videoConfig.ffmpegCommands);
       expect(mockFFmpeg.output).toHaveBeenCalledWith(path.join(outputDir, 'playlist.m3u8'));
       expect(mockFFmpeg.run).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('[convertToHLS] HLS conversion completed successfully');

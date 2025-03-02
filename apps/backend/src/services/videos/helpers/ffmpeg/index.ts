@@ -4,6 +4,7 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 import { existsSync } from 'fs';
 import { logger } from 'src/utils/logger';
+import { videoConfig } from '../../config';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -40,13 +41,7 @@ const convertToHLS = async (inputPath: string, outputDir: string): Promise<void>
 
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
-      .outputOptions([
-        '-codec copy', // Copy codec without re-encoding
-        '-start_number 0', // Start segment numbering at 0
-        '-hls_time 10', // 10 second segment duration
-        '-hls_list_size 0', // Keep all segments in playlist
-        '-f hls', // HLS output format
-      ])
+      .outputOptions(videoConfig.ffmpegCommands)
       .output(outputPath)
       .on('progress', progress => {
         logger.debug(progress, '[convertToHLS] Conversion progress:');
