@@ -1,11 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createExponentialBackoff } from './helpers';
 
-// Mock the captureError function
-vi.mock('../../tracker', () => ({
-  captureError: vi.fn(),
-}));
-
 describe('Subscription Helpers', () => {
   describe('createExponentialBackoff', () => {
     it('should use default values when no params provided', () => {
