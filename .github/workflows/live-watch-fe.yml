@@ -74,7 +74,7 @@ jobs:
           channelId: live
       - name: Notify finish deploy to Rollbar
         uses: rollbar/github-deploy-action@2.1.2
-        id: rollbar_post_deploy
+        id: rollbar_post_deploy_dev
         with:
           environment: 'development'
           version: ${{ github.sha }}
@@ -146,7 +146,7 @@ jobs:
           channelId: live
       - name: Notify finish deploy to Rollbar
         uses: rollbar/github-deploy-action@2.1.2
-        id: rollbar_post_deploy
+        id: rollbar_post_deploy_prod
         with:
           environment: 'production'
           version: ${{ github.sha }}
