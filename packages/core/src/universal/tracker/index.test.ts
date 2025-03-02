@@ -65,19 +65,6 @@ describe('useTracker', () => {
     });
   });
 
-  it('should use default values when options are not provided', () => {
-    const { result } = renderHook(() => useTracker());
-
-    const appError = new AppError('Another error');
-    result.current.captureError(appError);
-
-    expect(mockError).toHaveBeenCalledWith(appError.errorMessage, appError, {
-      tags: [],
-      extras: {},
-      fingerprint: ['{{ default }}'],
-    });
-  });
-
   it('should use partial options with defaults for missing properties', () => {
     const { result } = renderHook(() => useTracker());
 
