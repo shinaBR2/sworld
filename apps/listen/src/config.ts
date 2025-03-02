@@ -18,12 +18,6 @@ const appConfig = {
     play: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
-const sentryConfig = {
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  environment: import.meta.env.VITE_ENVIRONMENT,
-  release: import.meta.env.VITE_RELEASE,
-  site: 'listen',
-};
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR_TOKEN!,
   environment: import.meta.env.VITE_ROLLBAR_ENV!,
@@ -47,4 +41,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, appConfig, sentryConfig, rollbarConfig, validateEnvVars };
+export { auth0Config, queryConfig, appConfig, rollbarConfig, validateEnvVars };
