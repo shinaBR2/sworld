@@ -11,7 +11,6 @@ vi.mock('../../../providers/auth', () => ({
 }));
 
 vi.mock('../../error-boundary/errors', () => ({
-  createAuthenticationError: vi.fn().mockImplementation(err => err),
   createConnectionError: vi.fn().mockImplementation(err => err),
 }));
 
@@ -80,11 +79,38 @@ describe('useSubscription', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuthContext).mockReturnValue({
+      isSignedIn: true,
       getAccessToken: vi.fn().mockResolvedValue(mockToken),
     } as unknown as AuthContextValue);
     vi.mocked(useTracker).mockReturnValue({
       captureError: mockCaptureError,
     });
+  });
+
+  it('should initialize connection without token when user is not signed in', async () => {
+    // Mock user not being signed in
+    vi.mocked(useAuthContext).mockReturnValue({
+      getAccessToken: vi.fn(),
+      isSignedIn: false,
+    } as unknown as AuthContextValue);
+
+    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+
+    // Initial connection
+    await act(async () => {
+      mockWsInstance.onopen?.();
+    });
+
+    // Should send connection_init with empty headers
+    expect(mockWsInstance.send).toHaveBeenNthCalledWith(
+      1,
+      JSON.stringify({
+        type: 'connection_init',
+        payload: {
+          headers: {},
+        },
+      })
+    );
   });
 
   it('should initialize with loading state', () => {
@@ -151,6 +177,7 @@ describe('useSubscription', () => {
   it('should handle authentication error', async () => {
     const mockError = new Error('Auth failed');
     vi.mocked(useAuthContext).mockReturnValue({
+      isSignedIn: true,
       getAccessToken: vi.fn().mockRejectedValue(mockError),
     } as unknown as AuthContextValue);
 
@@ -163,7 +190,7 @@ describe('useSubscription', () => {
     expect(mockCaptureError).toHaveBeenCalledWith(mockError, {
       tags: [
         { key: 'category', value: 'websocket' },
-        { key: 'error_type', value: SubscriptionErrorType.AUTHENTICATION_FAILED },
+        { key: 'error_type', value: SubscriptionErrorType.CONNECTION_INIT_FAILED },
       ],
       extras,
       fingerprint,

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthContext } from '../../../providers/auth';
 import type { SubscriptionState, WebSocketMessage } from './types';
-import { createAuthenticationError, createConnectionError } from '../../error-boundary/errors';
+import { createConnectionError } from '../../error-boundary/errors';
 import { createExponentialBackoff, SubscriptionErrorType } from './helpers';
 import { useTracker } from '../../tracker';
 
@@ -21,7 +21,7 @@ export function useSubscription<T>(
     error: null,
   });
 
-  const { getAccessToken } = useAuthContext();
+  const { isSignedIn, getAccessToken } = useAuthContext();
   const backoff = useMemo(() => createExponentialBackoff(), []);
   const { captureError } = useTracker();
 
@@ -43,24 +43,25 @@ export function useSubscription<T>(
   const initializeConnection = useCallback(
     async (ws: WebSocket) => {
       try {
-        const token = await getAccessToken();
+        const token = isSignedIn ? await getAccessToken() : undefined;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         ws.send(
           JSON.stringify({
             type: 'connection_init',
             payload: {
-              headers: { Authorization: `Bearer ${token}` },
+              headers,
             },
           })
         );
 
         backoff.reset(); // Reset on successful connection
       } catch (err) {
-        const error = createAuthenticationError(err instanceof Error ? err : new Error('Authentication failed'));
+        const error = createConnectionError(err instanceof Error ? err : new Error('Failed to init connection'));
 
         captureError(error, {
           tags: [
             { key: 'category', value: 'websocket' },
-            { key: 'error_type', value: SubscriptionErrorType.AUTHENTICATION_FAILED },
+            { key: 'error_type', value: SubscriptionErrorType.CONNECTION_INIT_FAILED },
           ],
           extras: {
             ...errorContext,
@@ -71,7 +72,7 @@ export function useSubscription<T>(
         handleConnectionError(createWebSocketConnection);
       }
     },
-    [query, memoizedVariables, backoff]
+    [query, memoizedVariables, backoff, isSignedIn, getAccessToken]
   );
 
   const startSubscription = useCallback(
