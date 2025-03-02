@@ -56,7 +56,6 @@ export function useSubscription<T>(
 
         backoff.reset(); // Reset on successful connection
       } catch (err) {
-        console.log(`error here`, err);
         const error = createConnectionError(err instanceof Error ? err : new Error('Failed to init connection'));
 
         captureError(error, {
@@ -73,7 +72,7 @@ export function useSubscription<T>(
         handleConnectionError(createWebSocketConnection);
       }
     },
-    [query, memoizedVariables, backoff]
+    [query, memoizedVariables, backoff, isSignedIn, getAccessToken]
   );
 
   const startSubscription = useCallback(
