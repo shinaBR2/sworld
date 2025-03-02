@@ -8,6 +8,7 @@ const videoConfig = {
     '#EXT-X-ENDLIST',
   ]),
   excludePatterns: [/\/adjump\//, /\/ads\//, /\/commercial\//],
+  maxFileSize: 4 * 1024 * 1024 * 1024, // 4GiB
 };
 
 export { videoConfig };

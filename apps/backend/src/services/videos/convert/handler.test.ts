@@ -8,6 +8,7 @@ import { logger } from 'src/utils/logger';
 import { existsSync, statSync } from 'fs';
 import path from 'path';
 import { finalizeVideo } from 'src/database/queries/videos';
+import { videoConfig } from '../config';
 
 // Mock all external dependencies
 vi.mock('../helpers/file');
@@ -82,7 +83,7 @@ describe('convertVideo', () => {
 
     // Verify video download and verification
     expect(fileHelpers.downloadFile).toHaveBeenCalledWith(mockData.videoUrl, mockPaths.inputPath);
-    expect(fileHelpers.verifyFileSize).toHaveBeenCalledWith(mockPaths.inputPath, 400 * 1024 * 1024);
+    expect(fileHelpers.verifyFileSize).toHaveBeenCalledWith(mockPaths.inputPath, videoConfig.maxFileSize);
 
     // Verify video conversion
     expect(ffmpegHelpers.getDuration).toHaveBeenCalledWith(mockPaths.inputPath);

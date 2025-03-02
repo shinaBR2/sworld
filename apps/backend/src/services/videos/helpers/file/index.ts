@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import { mkdir, rm } from 'fs/promises';
 import { logger } from 'src/utils/logger';
 import path from 'path';
+import { videoConfig } from '../../config';
 
 // Helper to generate unique temporary directory names
 const generateTempDir = () => {
@@ -19,7 +20,7 @@ const generateTempDir = () => {
  * @param url - Remote URL to download from (e.g., 'https://example.com/video.mp4')
  * @param localPath - File path to save to. Can be absolute (e.g., '/tmp/workspace/video.mp4')
  *                   or relative to current working directory (e.g., 'workspace/video.mp4')
- * @throws {Error} If file is larger than 400MB
+ * @throws {Error} If file is larger than max file size from config
  * @throws {Error} If network request fails
  * @throws {Error} If response body is missing
  * @throws {Error} If stream encounters an error
@@ -36,8 +37,8 @@ const downloadFile = async (url: string, localPath: string) => {
   if (contentLength) {
     const size = parseInt(contentLength);
     // Check if we have enough space (leaving some buffer)
-    if (size > 400 * 1024 * 1024) {
-      // 400MB limit
+    if (size > videoConfig.maxFileSize) {
+      // 4GB limit
       throw new Error('File too large for temporary storage');
     }
   }

@@ -138,7 +138,7 @@ describe('File Handlers', () => {
     it('rejects large files', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        headers: new Headers({ 'content-length': '500000000' }),
+        headers: new Headers({ 'content-length': '5000000000' }),
       });
 
       await expect(downloadFile(mockUrl, mockPath)).rejects.toThrow('File too large');

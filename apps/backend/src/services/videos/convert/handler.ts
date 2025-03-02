@@ -6,6 +6,7 @@ import { logger } from 'src/utils/logger';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { existsSync, statSync } from 'fs';
 import { finalizeVideo } from 'src/database/queries/videos';
+import { videoConfig } from '../config';
 
 export interface ConversionVideo {
   id: string;
@@ -37,7 +38,7 @@ export const convertVideo = async (data: ConversionVideo) => {
 
     // Step 2: Download and verify source video
     await downloadFile(videoUrl, inputPath);
-    await verifyFileSize(inputPath, 400 * 1024 * 1024); // 400MB limit
+    await verifyFileSize(inputPath, videoConfig.maxFileSize);
     logger.debug(`Downloaded and verified source video: ${inputPath}`);
 
     // Step 3: Convert video to HLS format

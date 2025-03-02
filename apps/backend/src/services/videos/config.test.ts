@@ -42,4 +42,8 @@ describe('videoConfig', () => {
     expect(testUrls[3]).not.toMatch(patterns[1]);
     expect(testUrls[3]).not.toMatch(patterns[2]);
   });
+
+  it('has correct max file size limit', () => {
+    expect(videoConfig.maxFileSize).toBe(4 * 1024 * 1024 * 1024);
+  });
 });
