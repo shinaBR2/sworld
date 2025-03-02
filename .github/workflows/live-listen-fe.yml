@@ -50,6 +50,8 @@ jobs:
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
+          VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
+          VITE_ROLLBAR_ENV: ${{ github.VITE_ROLLBAR_ENV }}
       - name: Deploy listen
         uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
         with:
@@ -98,9 +100,8 @@ jobs:
           VITE_LISTEN_SITE_URL: ${{ vars.VITE_LISTEN_SITE_URL }}
           VITE_WATCH_SITE_URL: ${{ vars.VITE_WATCH_SITE_URL }}
           VITE_PLAY_SITE_URL: ${{ vars.VITE_PLAY_SITE_URL }}
-          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
-          VITE_ENVIRONMENT: 'production'
-          VITE_RELEASE: ${{ github.sha }}
+          VITE_ROLLBAR_TOKEN: ${{ github.VITE_ROLLBAR_TOKEN }}
+          VITE_ROLLBAR_ENV: ${{ github.VITE_ROLLBAR_ENV }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Deploy listen
         id: deploy
