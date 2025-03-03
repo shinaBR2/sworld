@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize } from '../helpers/file';
-import { getDownloadUrl, uploadDirectory } from '../helpers/gcp-cloud-storage';
+import { getDownloadUrl, uploadFolderParallel } from '../helpers/gcp-cloud-storage';
 import { convertToHLS, getDuration, takeScreenshot } from '../helpers/ffmpeg';
 import { logger } from 'src/utils/logger';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
@@ -65,7 +65,7 @@ export const convertVideo = async (data: ConversionVideo) => {
     // Step 5: Upload converted video files to cloud storage
     const outputPath = path.join('videos', userId, id).split(path.sep).filter(Boolean).join('/');
 
-    await uploadDirectory(outputDir, outputPath);
+    await uploadFolderParallel(outputDir, outputPath);
     const playlistUrl = getDownloadUrl(`${outputPath}/playlist.m3u8`);
     logger.debug(`Uploaded converted files to cloud storage: ${playlistUrl}`);
 

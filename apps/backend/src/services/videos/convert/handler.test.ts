@@ -61,7 +61,7 @@ describe('convertVideo', () => {
 
     // Mock successful uploads
     vi.mocked(cloudinaryHelpers.uploadFromLocalFilePath).mockResolvedValue('https://cloudinary.com/thumbnail.jpg');
-    vi.mocked(gcpHelpers.uploadDirectory).mockResolvedValue(undefined);
+    vi.mocked(gcpHelpers.uploadFolderParallel).mockResolvedValue(undefined);
     vi.mocked(gcpHelpers.getDownloadUrl).mockReturnValue('https://storage.googleapis.com/playlist.m3u8');
 
     // Mock logger
@@ -102,7 +102,7 @@ describe('convertVideo', () => {
         asset_folder: mockData.userId,
       }
     );
-    expect(gcpHelpers.uploadDirectory).toHaveBeenCalledWith(
+    expect(gcpHelpers.uploadFolderParallel).toHaveBeenCalledWith(
       mockPaths.outputDir,
       `videos/${mockData.userId}/${mockData.id}`
     );
@@ -188,7 +188,7 @@ describe('convertVideo', () => {
 
   it('should throw error if GCP upload fails', async () => {
     const error = new Error('GCP upload failed');
-    vi.mocked(gcpHelpers.uploadDirectory).mockRejectedValueOnce(error);
+    vi.mocked(gcpHelpers.uploadFolderParallel).mockRejectedValueOnce(error);
 
     await expect(convertVideo(mockData)).rejects.toThrow('Video conversion failed: GCP upload failed');
     expect(fileHelpers.cleanupDirectory).toHaveBeenCalledWith(mockPaths.workingDir);

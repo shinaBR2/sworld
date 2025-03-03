@@ -1,14 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { readdir } from 'fs/promises';
 import path from 'path';
-import {
-  getDownloadUrl,
-  uploadFile,
-  uploadDirectory,
-  DEFAULT_UPLOAD_OPTIONS,
-  streamFile,
-  uploadFolderParallel,
-} from '.';
+import { getDownloadUrl, uploadFile, DEFAULT_UPLOAD_OPTIONS, streamFile, uploadFolderParallel } from '.';
 import { existsSync } from 'fs';
 import { PassThrough, Readable } from 'node:stream';
 import { logger } from 'src/utils/logger';
@@ -139,109 +132,6 @@ describe('gcp-cloud-storage-helpers', () => {
       uploadMock.mockRejectedValueOnce(error);
 
       await expect(uploadFile('/tmp/test.mp4', 'videos/test.mp4')).rejects.toThrow('Upload failed');
-    });
-  });
-
-  describe('uploadDirectory', () => {
-    it('should throw error if local directory does not exist', async () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-
-      await expect(uploadDirectory('/not/exists', 'videos/test')).rejects.toThrow('Local directory does not exist');
-
-      expect(readdir).not.toHaveBeenCalled();
-      expect(uploadMock).not.toHaveBeenCalled();
-    });
-
-    it('should upload files in batches', async () => {
-      const localDir = '/tmp/videos';
-      const storagePath = 'videos/test';
-      const files = ['1.ts', '2.ts', '3.ts', '4.ts', '5.ts'];
-
-      vi.mocked(readdir).mockResolvedValue(files as any);
-      // Use uploadMock directly since it's already set up as a mock function
-      uploadMock.mockResolvedValue(undefined);
-
-      await uploadDirectory(localDir, storagePath);
-
-      expect(readdir).toHaveBeenCalledWith(localDir);
-      expect(uploadMock).toHaveBeenCalledTimes(5);
-
-      // Verify first file upload
-      expect(uploadMock).toHaveBeenCalledWith(path.join(localDir, '1.ts'), {
-        destination: path.join(storagePath, '1.ts'),
-        resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
-        metadata: {
-          cacheControl: DEFAULT_UPLOAD_OPTIONS.cacheControl,
-        },
-      });
-    });
-
-    it('should use default batch size when not specified', async () => {
-      const localDir = '/tmp/videos';
-      const storagePath = 'videos/test';
-      const files = ['1.ts', '2.ts', '3.ts'];
-
-      vi.mocked(readdir).mockResolvedValue(files as any);
-      uploadMock.mockResolvedValue(undefined);
-
-      await uploadDirectory(localDir, storagePath, {
-        ...DEFAULT_UPLOAD_OPTIONS,
-        batchSize: undefined,
-      });
-
-      expect(uploadMock).toHaveBeenCalledTimes(3);
-      expect(uploadMock).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
-          metadata: expect.any(Object),
-        })
-      );
-    });
-
-    it('should handle empty directory', async () => {
-      vi.mocked(readdir).mockResolvedValue([]);
-
-      await uploadDirectory('/tmp/videos', 'videos/test');
-
-      expect(readdir).toHaveBeenCalled();
-      expect(uploadMock).not.toHaveBeenCalled();
-    });
-
-    it('should use custom batch size', async () => {
-      const localDir = '/tmp/videos';
-      const storagePath = 'videos/test';
-      const files = ['1.ts', '2.ts', '3.ts', '4.ts'];
-      const customOptions = {
-        ...DEFAULT_UPLOAD_OPTIONS,
-        batchSize: 2,
-      };
-
-      vi.mocked(readdir).mockResolvedValue(files as any);
-      uploadMock.mockResolvedValue(undefined);
-
-      await uploadDirectory(localDir, storagePath, customOptions);
-
-      expect(uploadMock).toHaveBeenCalledTimes(4);
-      // Verify correct options are passed
-      expect(uploadMock).toHaveBeenCalledWith(path.join(localDir, '1.ts'), {
-        destination: path.join(storagePath, '1.ts'),
-        resumable: DEFAULT_UPLOAD_OPTIONS.resumable,
-        metadata: {
-          cacheControl: DEFAULT_UPLOAD_OPTIONS.cacheControl,
-        },
-      });
-    });
-
-    it('should handle file upload errors', async () => {
-      const localDir = '/tmp/videos';
-      const storagePath = 'videos/test';
-      const files = ['1.ts', '2.ts'];
-
-      vi.mocked(readdir).mockResolvedValue(files as any);
-      uploadMock.mockRejectedValue(new Error('Upload failed'));
-
-      await expect(uploadDirectory(localDir, storagePath)).rejects.toThrow('Upload failed');
     });
   });
 
