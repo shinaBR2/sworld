@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { DialogComponent } from './dialog';
 import { DialogState } from './types';
-
-interface DeveloperImportDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import { BaseDialogProps } from '../types';
 
 const defaultState: DialogState = {
   url: '',
@@ -14,7 +10,8 @@ const defaultState: DialogState = {
   closeDialogCountdown: null,
 };
 
-const DeveloperImportDialog = ({ open, onOpenChange }: DeveloperImportDialogProps) => {
+const DeveloperImportDialog = (props: BaseDialogProps) => {
+  const { open, onOpenChange } = props;
   const [state, setState] = useState<DialogState>({
     ...defaultState,
   });

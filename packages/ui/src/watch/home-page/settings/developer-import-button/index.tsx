@@ -7,9 +7,9 @@ import { Query } from 'core';
 import { lazy, Suspense, useState } from 'react';
 import { texts } from './texts';
 
-const VideoUploadDialog = lazy(() =>
-  import('../../../dialogs/upload').then(module => ({
-    default: module.VideoUploadDialog,
+const DeveloperImportDialog = lazy(() =>
+  import('../../../dialogs/developer-import').then(module => ({
+    default: module.DeveloperImportDialog,
   }))
 );
 
@@ -56,7 +56,7 @@ const DeveloperImportButton = () => {
 
       {open && enabled && (
         <Suspense fallback={null}>
-          <VideoUploadDialog open={open} onOpenChange={setOpen} />
+          <DeveloperImportDialog open={open} onOpenChange={setOpen} />
         </Suspense>
       )}
     </>

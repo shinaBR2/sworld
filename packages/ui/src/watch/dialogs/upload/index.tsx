@@ -8,11 +8,7 @@ import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
 import { useCountdown } from 'core/universal/hooks/useCooldown';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 import { validateForm } from './validate';
-
-interface VideoUploadDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import { BaseDialogProps } from '../types';
 
 const defaultState: DialogState = {
   title: '',
@@ -28,7 +24,8 @@ const defaultState: DialogState = {
  * @param param0
  * @returns
  */
-const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
+const VideoUploadDialog = (props: BaseDialogProps) => {
+  const { open, onOpenChange } = props;
   const [state, setState] = useState<DialogState>({
     ...defaultState,
   });
