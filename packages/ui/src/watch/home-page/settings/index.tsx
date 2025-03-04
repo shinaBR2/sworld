@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { UploadButton } from './upload-button';
+import { DeveloperImportButton } from './developer-import-button';
 
 interface SettingsPanelProps {
   open: boolean;
@@ -34,7 +35,10 @@ const SettingsPanel = (props: SettingsPanelProps) => {
           flexDirection: 'column',
         }}
       >
-        <List sx={{ flex: 1 }}>{<UploadButton />}</List>
+        <List sx={{ flex: 1 }}>
+          <UploadButton />
+          <DeveloperImportButton />
+        </List>
         <Divider />
         <List>
           <ListItemButton onClick={logout}>
