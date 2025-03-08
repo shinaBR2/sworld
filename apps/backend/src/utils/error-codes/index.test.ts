@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { VIDEO_ERRORS, type VideoErrorCode, type ErrorCode, HTTP_ERRORS, DATABASE_ERRORS } from './index';
+import { describe, expect, it } from 'vitest';
+import { CRAWL_ERRORS, DATABASE_ERRORS, HTTP_ERRORS, VIDEO_ERRORS, type ErrorCode, type VideoErrorCode } from './index';
 
 describe('error-codes', () => {
   it('should contain all expected http error codes', () => {
@@ -40,6 +40,16 @@ describe('error-codes', () => {
     ];
 
     const actualCodes = Object.values(VIDEO_ERRORS);
+    expect(actualCodes).toHaveLength(expectedCodes.length);
+    expectedCodes.forEach(code => {
+      expect(actualCodes).toContain(code);
+    });
+  });
+
+  it('should contain all expected crawl error codes', () => {
+    const expectedCodes = ['UNSUPPORTED_SITE', 'MISSING_URL_SELECTOR', 'INVALID_JSON'];
+
+    const actualCodes = Object.values(CRAWL_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
     expectedCodes.forEach(code => {
       expect(actualCodes).toContain(code);

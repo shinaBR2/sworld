@@ -17,4 +17,8 @@ const queues = {
 };
 type Queues = typeof queues;
 
-export { QueueName, Queues, systemConfig, uuidNamespaces, queues };
+const crawlConfig = {
+  defaultWaitForSelectorTimeout: 10000,
+};
+
+export { QueueName, Queues, systemConfig, uuidNamespaces, queues, crawlConfig };

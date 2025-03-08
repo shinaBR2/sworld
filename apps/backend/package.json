@@ -54,6 +54,7 @@
     "@simplewebauthn/types": "^12.0.0",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
+    "crawlee": "^3.13.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-async-errors": "^3.1.1",
@@ -66,6 +67,7 @@
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
     "pino-http": "^10.3.0",
+    "playwright": "^1.50.1",
     "sequelize": "^6.37.5",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
