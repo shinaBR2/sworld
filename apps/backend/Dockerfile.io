@@ -11,6 +11,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
+# Install Playwright and its dependencies with a single command
+RUN npx playwright install --with-deps chromium
+
 COPY . .
 
 EXPOSE 4000
