@@ -1,12 +1,17 @@
+import { PlaywrightCrawler } from 'crawlee';
 import { describe, expect, it, vi } from 'vitest';
 import { crawl } from './index';
 import { createRequestHandler } from './utils';
 import { validateUrlInput } from './validator';
 
+// Update the crawlee mock
 vi.mock('crawlee', () => ({
-  PlaywrightCrawler: vi.fn(() => ({
+  PlaywrightCrawler: vi.fn((options, config) => ({
     run: vi.fn().mockResolvedValue(undefined),
   })),
+  Configuration: vi.fn(function (options) {
+    return options;
+  }),
 }));
 
 vi.mock('./utils', () => ({
@@ -43,6 +48,16 @@ describe('crawl', () => {
         slugPrefix: 'test',
       },
       {}
+    );
+
+    // Update the expectation
+    expect(PlaywrightCrawler).toHaveBeenCalledWith(
+      {
+        requestHandler: mockHandler,
+      },
+      {
+        persistStorage: false,
+      }
     );
 
     expect(createRequestHandler).toHaveBeenCalledWith('test', {

@@ -1,4 +1,4 @@
-import { PlaywrightCrawler, PlaywrightCrawlerOptions } from 'crawlee';
+import { Configuration, PlaywrightCrawler, PlaywrightCrawlerOptions } from 'crawlee';
 import { CrawlInputs, SelectorConfig } from './types';
 import { createRequestHandler } from './utils';
 import { validateUrlInput } from './validator';
@@ -32,10 +32,15 @@ const crawl = async <T>(props: CrawlInputs, crawlerOptions: BaseCrawlOptions): P
     slugPrefix,
   });
 
-  const crawler = new PlaywrightCrawler({
-    ...crawlerOptions,
-    requestHandler: handler,
-  });
+  const crawler = new PlaywrightCrawler(
+    {
+      ...crawlerOptions,
+      requestHandler: handler,
+    },
+    new Configuration({
+      persistStorage: false,
+    })
+  );
 
   await crawler.run([url]);
 
