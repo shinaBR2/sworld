@@ -25,7 +25,8 @@ import { buildVariables } from './utils';
 
 const crawlHandler = async (req: Request, res: Response) => {
   const taskId = req.headers['x-task-id'] as string;
-  const { userId, getSingleVideo, url, title, slugPrefix = '' } = req.body;
+  const { data } = req.body;
+  const { userId, getSingleVideo, url, title, slugPrefix = '' } = data;
 
   const inputs = {
     getSingleVideo,

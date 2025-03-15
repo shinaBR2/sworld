@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { crawlHandlerSchema } from './schema'; // Adjust import path as needed
+import { crawlHandlerSchema } from './schema';
 
-// Mock the taskHandlerHeaderSchema if needed
 vi.mock('src/utils/cloud-task/schema', () => ({
   taskHandlerHeaderSchema: z.object({
     'x-task-id': z.string(),
@@ -18,11 +17,20 @@ describe('crawlHandlerSchema', () => {
     'content-type': 'application/json',
   };
 
+  const validMetadata = {
+    id: 'test-id',
+    spanId: 'test-span-id',
+    traceId: 'test-trace-id',
+  };
+
   const validBody = {
-    getSingleVideo: true,
-    url: 'https://example.com/video',
-    title: 'Test Video Title',
-    userId: '123e4567-e89b-12d3-a456-426614174000',
+    data: {
+      getSingleVideo: true,
+      url: 'https://example.com/video',
+      title: 'Test Video Title',
+      userId: '123e4567-e89b-12d3-a456-426614174000',
+    },
+    metadata: validMetadata,
   };
 
   it('should validate a valid input', () => {
@@ -42,7 +50,7 @@ describe('crawlHandlerSchema', () => {
     };
 
     const result = crawlHandlerSchema.parse(input);
-    expect(result.body.slugPrefix).toBe('');
+    expect(result.body.data.slugPrefix).toBe('');
   });
 
   it('should accept custom slugPrefix when provided', () => {
@@ -50,12 +58,15 @@ describe('crawlHandlerSchema', () => {
       headers: validHeaders,
       body: {
         ...validBody,
-        slugPrefix: 'custom-prefix-',
+        data: {
+          ...validBody.data,
+          slugPrefix: 'custom-prefix-',
+        },
       },
     };
 
     const result = crawlHandlerSchema.parse(input);
-    expect(result.body.slugPrefix).toBe('custom-prefix-');
+    expect(result.body.data.slugPrefix).toBe('custom-prefix-');
   });
 
   it('should reject invalid URLs', () => {
@@ -63,7 +74,10 @@ describe('crawlHandlerSchema', () => {
       headers: validHeaders,
       body: {
         ...validBody,
-        url: 'invalid-url',
+        data: {
+          ...validBody.data,
+          url: 'invalid-url',
+        },
       },
     };
 
@@ -75,7 +89,10 @@ describe('crawlHandlerSchema', () => {
       headers: validHeaders,
       body: {
         ...validBody,
-        title: '',
+        data: {
+          ...validBody.data,
+          title: '',
+        },
       },
     };
 
@@ -87,7 +104,10 @@ describe('crawlHandlerSchema', () => {
       headers: validHeaders,
       body: {
         ...validBody,
-        userId: 'not-a-uuid',
+        data: {
+          ...validBody.data,
+          userId: 'not-a-uuid',
+        },
       },
     };
 
@@ -99,7 +119,10 @@ describe('crawlHandlerSchema', () => {
       headers: validHeaders,
       body: {
         ...validBody,
-        getSingleVideo: 'yes' as any,
+        data: {
+          ...validBody.data,
+          getSingleVideo: 'yes' as any,
+        },
       },
     };
 
@@ -107,10 +130,23 @@ describe('crawlHandlerSchema', () => {
   });
 
   it('should reject when required fields are missing', () => {
-    const { getSingleVideo, ...bodyWithoutGetSingleVideo } = validBody;
+    const { getSingleVideo, ...bodyWithoutGetSingleVideo } = validBody.data;
     const input = {
       headers: validHeaders,
-      body: bodyWithoutGetSingleVideo,
+      body: {
+        ...validBody,
+        data: bodyWithoutGetSingleVideo,
+      },
+    };
+
+    expect(() => crawlHandlerSchema.parse(input)).toThrow();
+  });
+
+  it('should reject when metadata is missing', () => {
+    const { metadata, ...bodyWithoutMetadata } = validBody;
+    const input = {
+      headers: validHeaders,
+      body: bodyWithoutMetadata,
     };
 
     expect(() => crawlHandlerSchema.parse(input)).toThrow();

@@ -60,11 +60,18 @@ describe('crawlHandler', () => {
 
     mockRequest = {
       body: {
-        getSingleVideo: true,
-        url: 'http://example.com',
-        title: 'Test Title',
-        slugPrefix: 'test-',
-        userId: 'user123',
+        data: {
+          getSingleVideo: true,
+          url: 'http://example.com',
+          title: 'Test Title',
+          slugPrefix: 'test-',
+          userId: 'user123',
+        },
+        metadata: {
+          id: 'test-id',
+          spanId: 'test-span-id',
+          traceId: 'test-trace-id',
+        },
       },
       headers: {
         'x-task-id': 'test-task-id',
@@ -124,10 +131,17 @@ describe('crawlHandler', () => {
 
     mockRequest = {
       body: {
-        getSingleVideo: true,
-        url: 'http://example.com',
-        title: 'Test Title',
-        userId: 'user123',
+        data: {
+          getSingleVideo: true,
+          url: 'http://example.com',
+          title: 'Test Title',
+          userId: 'user123',
+        },
+        metadata: {
+          id: 'test-id',
+          spanId: 'test-span-id',
+          traceId: 'test-trace-id',
+        },
       },
       headers: {
         'x-task-id': 'test-task-id',
@@ -150,10 +164,17 @@ describe('crawlHandler', () => {
 
     mockRequest = {
       body: {
-        getSingleVideo: true,
-        url: 'http://example.com',
-        title: 'Test Title',
-        userId: 'user123',
+        data: {
+          getSingleVideo: true,
+          url: 'http://example.com',
+          title: 'Test Title',
+          userId: 'user123',
+        },
+        metadata: {
+          id: 'test-id',
+          spanId: 'test-span-id',
+          traceId: 'test-trace-id',
+        },
       },
       headers: {
         'x-task-id': 'test-task-id',
