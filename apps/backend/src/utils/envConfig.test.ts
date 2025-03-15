@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { envConfig } from './envConfig';
 
 describe('envConfig', () => {
@@ -21,6 +21,8 @@ describe('envConfig', () => {
       'ioServiceUrl',
       'location',
       'cloudTaskServiceAccount',
+      'hasuraEndpoint',
+      'hasuraAdminSecret',
     ];
 
     expectedKeys.forEach(key => {

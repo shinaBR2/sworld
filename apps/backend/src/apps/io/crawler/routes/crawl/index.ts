@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { crawl } from 'src/services/crawler';
+import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
 import { logger } from 'src/utils/logger';
+import { CrawlData } from './type';
+import { buildVariables } from './utils';
 
 /**
  *
@@ -20,28 +23,31 @@ import { logger } from 'src/utils/logger';
  */
 
 const crawlHandler = async (req: Request, res: Response) => {
-  const { getSingleVideo, url, title, slugPrefix = '' } = req.body;
+  const { userId, getSingleVideo, url, title, slugPrefix = '' } = req.body;
 
-  if (typeof getSingleVideo == 'undefined' || !url || !title) {
-    return res.status(400).json({
-      message: 'Invalid request body',
-    });
-  }
+  const inputs = {
+    getSingleVideo,
+    url,
+    title,
+    slugPrefix,
+    userId,
+  };
 
-  const result = await crawl(
-    {
-      getSingleVideo,
-      url,
-      title,
-      slugPrefix,
-    },
-    {
-      maxRequestsPerCrawl: 100,
-      maxConcurrency: 5,
-      maxRequestsPerMinute: 20,
-    }
-  );
-  logger.info(result, 'after crawl');
+  const result = await crawl<CrawlData>(inputs, {
+    maxRequestsPerCrawl: 100,
+    maxConcurrency: 5,
+    maxRequestsPerMinute: 20,
+  });
+  logger.info(inputs, 'crawl success, start inserting');
+
+  const videos = buildVariables(result, {
+    getSingleVideo,
+    title,
+    slugPrefix,
+    userId,
+  });
+
+  await insertVideos(videos);
 
   res.json({ result });
 };

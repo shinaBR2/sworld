@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { errorHandler } from '../../utils/error-handler';
 import { createBaseApp } from 'src/utils/base-app';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { errorHandler } from '../../utils/error-handler';
 
 // Mock dependencies
 vi.mock('../../utils/error-handler', () => ({
@@ -13,6 +13,10 @@ vi.mock('../../utils/logger', () => ({
 
 vi.mock('./videos', () => ({
   videosRouter: 'mockVideosRouter',
+}));
+
+vi.mock('./crawler', () => ({
+  crawlerRouter: 'mockCrawlerRouter',
 }));
 
 // Mock base app
@@ -30,7 +34,6 @@ vi.mock('src/utils/base-app', () => ({
 describe('app', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
-    // Clear module cache to ensure fresh import
     vi.resetModules();
   });
 
@@ -42,19 +45,21 @@ describe('app', () => {
   it('should set up videos route', async () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
-    const videoRouteCall = useCalls.find(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
-    );
+    const videoRouteCall = useCalls.find(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
     expect(videoRouteCall).toBeTruthy();
+  });
+
+  it('should set up crawler route', async () => {
+    await import('./index');
+    const useCalls = mockUse.mock.calls;
+    const crawlerRouteCall = useCalls.find(call => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter');
+    expect(crawlerRouteCall).toBeTruthy();
   });
 
   it('should set up error handler with logger', async () => {
     await import('./index');
     expect(errorHandler).toHaveBeenCalledWith('mockLogger');
-    // Find the error handler middleware registration
-    const errorHandlerCall = mockUse.mock.calls.find(
-      call => call[0] === 'mockErrorHandler'
-    );
+    const errorHandlerCall = mockUse.mock.calls.find(call => call[0] === 'mockErrorHandler');
     expect(errorHandlerCall).toBeTruthy();
   });
 
@@ -62,20 +67,16 @@ describe('app', () => {
     await import('./index');
     const calls = mockUse.mock.calls;
 
-    // Find the indexes of our middleware
-    const videosRouterCallIndex = calls.findIndex(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
-    );
-    const errorHandlerCallIndex = calls.findIndex(
-      call => call[0] === 'mockErrorHandler'
-    );
+    const videosRouterCallIndex = calls.findIndex(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
+    const crawlerRouterCallIndex = calls.findIndex(call => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter');
+    const errorHandlerCallIndex = calls.findIndex(call => call[0] === 'mockErrorHandler');
 
-    // Both middleware should be found
     expect(videosRouterCallIndex).not.toBe(-1);
+    expect(crawlerRouterCallIndex).not.toBe(-1);
     expect(errorHandlerCallIndex).not.toBe(-1);
 
-    // Error handler should be after routes
     expect(errorHandlerCallIndex).toBeGreaterThan(videosRouterCallIndex);
+    expect(errorHandlerCallIndex).toBeGreaterThan(crawlerRouterCallIndex);
   });
 
   it('should export configured app', async () => {
@@ -84,15 +85,11 @@ describe('app', () => {
   });
 
   it('should throw if createBaseApp fails', async () => {
-    // Setup error for this specific test
     const error = new Error('Base app creation failed');
     vi.mocked(createBaseApp).mockImplementationOnce(() => {
       throw error;
     });
 
-    // The import should now fail
-    await expect(() => import('./index')).rejects.toThrow(
-      'Base app creation failed'
-    );
+    await expect(() => import('./index')).rejects.toThrow('Base app creation failed');
   });
 });

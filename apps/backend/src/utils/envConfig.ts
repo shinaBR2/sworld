@@ -12,6 +12,8 @@ const envConfig = {
   computeServiceUrl: process.env.COMPUTE_SERVICE_URL,
   ioServiceUrl: process.env.IO_SERVICE_URL,
   cloudTaskServiceAccount: process.env.CLOUD_TASKS_SERVICE_ACCOUNT,
+  hasuraEndpoint: process.env.HASURA_ENDPOINT,
+  hasuraAdminSecret: process.env.HASURA_ADMIN_SECRET,
 };
 
 export { envConfig };
