@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { completeTask } from 'src/database/queries/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
 import { logger } from 'src/utils/logger';
@@ -23,6 +24,7 @@ import { buildVariables } from './utils';
  */
 
 const crawlHandler = async (req: Request, res: Response) => {
+  const taskId = req.headers['x-task-id'] as string;
   const { userId, getSingleVideo, url, title, slugPrefix = '' } = req.body;
 
   const inputs = {
@@ -48,6 +50,9 @@ const crawlHandler = async (req: Request, res: Response) => {
   });
 
   await insertVideos(videos);
+  await completeTask({
+    taskId,
+  });
 
   res.json({ result });
 };

@@ -4,7 +4,7 @@ import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
-import { CRAWL_ERRORS } from 'src/utils/error-codes';
+import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { queues } from 'src/utils/systemConfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -41,6 +41,13 @@ vi.mock('src/utils/logger', () => ({
 vi.mock('src/utils/systemConfig', () => ({
   queues: {
     streamVideoQueue: 'stream-video',
+  },
+}));
+
+// Add this mock after other mocks
+vi.mock('src/utils/error-codes', () => ({
+  VALIDATION_ERRORS: {
+    INVALID_SIGNATURE: 'INVALID_SIGNATURE',
   },
 }));
 
@@ -108,7 +115,7 @@ describe('crawl', () => {
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(CustomError.high).toHaveBeenCalledWith('Invalid signature', {
       shouldRetry: false,
-      errorCode: CRAWL_ERRORS.MISSING_URL_SELECTOR,
+      errorCode: VALIDATION_ERRORS.INVALID_SIGNATURE,
       context: {
         metadata: mockReq.validatedData.event.metadata,
         data: mockReq.validatedData.event.data,

@@ -5,7 +5,7 @@ import { verifySignature } from 'src/services/videos/convert/validator';
 import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
 import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
-import { CRAWL_ERRORS } from 'src/utils/error-codes';
+import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
@@ -20,7 +20,7 @@ const crawlHandler = async (req: Request, res: Response) => {
   if (!verifySignature(signatureHeader)) {
     throw CustomError.high('Invalid signature', {
       shouldRetry: false,
-      errorCode: CRAWL_ERRORS.MISSING_URL_SELECTOR,
+      errorCode: VALIDATION_ERRORS.INVALID_SIGNATURE,
       context: {
         metadata,
         data,

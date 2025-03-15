@@ -10,7 +10,7 @@ describe('buildVariables', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.setSystemTime(mockTimestamp);
+    vi.setSystemTime(new Date(mockTimestamp)); // Change this line to use new Date()
   });
 
   afterEach(() => {
@@ -34,13 +34,13 @@ describe('buildVariables', () => {
     expect(result).toEqual([
       {
         title: mockTitle,
-        slug: `test-1--${mockTimestamp}`,
+        slug: `${mockSlugPrefix}-${mockTimestamp}`,
         video_url: 'https://example.com/video1',
         user_id: mockUserId,
       },
       {
         title: mockTitle,
-        slug: `test-2--${mockTimestamp}`,
+        slug: `${mockSlugPrefix}-${mockTimestamp}`,
         video_url: 'https://example.com/video2',
         user_id: mockUserId,
       },
@@ -59,16 +59,52 @@ describe('buildVariables', () => {
 
     expect(result).toEqual([
       {
-        title: 'Test Video - 1',
-        slug: `test-1--${mockTimestamp}`,
+        title: `${mockTitle} - Tập 1`,
+        slug: `${mockSlugPrefix}1--${mockTimestamp}`,
         video_url: 'https://example.com/video1',
         user_id: mockUserId,
+        playlist_videos: {
+          data: [
+            {
+              position: 1,
+              playlist: {
+                data: {
+                  title: mockTitle,
+                  slug: `${mockSlugPrefix}--${mockTimestamp}`,
+                  user_id: mockUserId,
+                },
+                on_conflict: {
+                  constraint: 'playlist_user_id_slug_key',
+                  update_columns: ['updated_at'],
+                },
+              },
+            },
+          ],
+        },
       },
       {
-        title: 'Test Video - 2',
-        slug: `test-2--${mockTimestamp}`,
+        title: `${mockTitle} - Tập 2`,
+        slug: `${mockSlugPrefix}2--${mockTimestamp}`,
         video_url: 'https://example.com/video2',
         user_id: mockUserId,
+        playlist_videos: {
+          data: [
+            {
+              position: 2,
+              playlist: {
+                data: {
+                  title: mockTitle,
+                  slug: `${mockSlugPrefix}--${mockTimestamp}`,
+                  user_id: mockUserId,
+                },
+                on_conflict: {
+                  constraint: 'playlist_user_id_slug_key',
+                  update_columns: ['updated_at'],
+                },
+              },
+            },
+          ],
+        },
       },
     ]);
   });

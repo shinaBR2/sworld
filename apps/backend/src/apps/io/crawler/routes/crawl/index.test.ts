@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { completeTask } from 'src/database/queries/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
 import { logger } from 'src/utils/logger';
@@ -23,6 +24,10 @@ vi.mock('src/services/hasura/mutations/videos/bulk-insert', () => ({
 
 vi.mock('./utils', () => ({
   buildVariables: vi.fn(),
+}));
+
+vi.mock('src/database/queries/tasks', () => ({
+  completeTask: vi.fn(),
 }));
 
 describe('crawlHandler', () => {
@@ -60,6 +65,9 @@ describe('crawlHandler', () => {
         title: 'Test Title',
         slugPrefix: 'test-',
         userId: 'user123',
+      },
+      headers: {
+        'x-task-id': 'test-task-id',
       },
     };
 
@@ -99,6 +107,9 @@ describe('crawlHandler', () => {
       'crawl success, start inserting'
     );
     expect(jsonMock).toHaveBeenCalledWith({ result: mockCrawlResult });
+    expect(completeTask).toHaveBeenCalledWith({
+      taskId: 'test-task-id',
+    });
   });
 
   it('should use empty string as default slugPrefix', async () => {
@@ -117,6 +128,9 @@ describe('crawlHandler', () => {
         url: 'http://example.com',
         title: 'Test Title',
         userId: 'user123',
+      },
+      headers: {
+        'x-task-id': 'test-task-id',
       },
     };
 
@@ -140,6 +154,9 @@ describe('crawlHandler', () => {
         url: 'http://example.com',
         title: 'Test Title',
         userId: 'user123',
+      },
+      headers: {
+        'x-task-id': 'test-task-id',
       },
     };
 
