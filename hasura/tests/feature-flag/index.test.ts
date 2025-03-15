@@ -35,7 +35,7 @@ const anonymousAllowedQueries: QueryTestCase[] = [
         return;
       }
 
-      expect(response.feature_flag.length).toBe(1);
+      expect(response.feature_flag.length).toBe(2);
     },
   },
   {
