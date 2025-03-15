@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { validateRequest } from 'src/utils/validator';
-import { streamToStorage } from './routes/stream-to-storage';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { crawlHandler } from './routes/crawl';
 import { fixVideosDuration } from './routes/fix-videos-duration';
 import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
+import { streamToStorage } from './routes/stream-to-storage';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];
@@ -46,6 +47,10 @@ vi.mock('./routes/fix-videos-thumbnail', () => ({
   fixVideosThumbnail: vi.fn(),
 }));
 
+vi.mock('./routes/crawl', () => ({
+  crawlHandler: vi.fn(),
+}));
+
 describe('videosRouter', () => {
   beforeEach(() => {
     routeHandlers = [];
@@ -56,10 +61,12 @@ describe('videosRouter', () => {
   it('should validate all requests', async () => {
     await import('./index');
     // Check validation middleware was called
-    expect(validateRequest).toHaveBeenCalledTimes(3);
+    expect(validateRequest).toHaveBeenCalledTimes(4); // Updated to 4 for the new endpoint
     const calls = (validateRequest as any).mock.calls;
     expect(calls[0][0]).toBeDefined(); // Check convert route schema
     expect(calls[1][0]).toBeDefined(); // Check fix-videos-duration route schema
+    expect(calls[2][0]).toBeDefined(); // Check fix-videos-thumbnail route schema
+    expect(calls[3][0]).toBeDefined(); // Check crawl route schema
   });
 
   it('should set up /convert route with correct middleware and handler', async () => {
@@ -104,5 +111,19 @@ describe('videosRouter', () => {
 
     // Verify the fixVideosDuration handler is set
     expect(durationRoute?.middlewares[1]).toBe(fixVideosThumbnail);
+  });
+
+  it('should set up /crawl route with correct middleware and handler', async () => {
+    const { videosRouter } = await import('./index');
+    expect(videosRouter).toBeDefined();
+
+    const crawlRoute = routeHandlers.find(h => h.path === '/crawl');
+    expect(crawlRoute).toBeDefined();
+
+    // Should have 2 middlewares: validation and handler
+    expect(crawlRoute?.middlewares).toHaveLength(2);
+
+    // Verify the crawlHandler is set
+    expect(crawlRoute?.middlewares[1]).toBe(crawlHandler);
   });
 });

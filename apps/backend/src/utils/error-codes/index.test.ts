@@ -1,11 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { CRAWL_ERRORS, DATABASE_ERRORS, HTTP_ERRORS, VIDEO_ERRORS, type ErrorCode, type VideoErrorCode } from './index';
+import {
+  CRAWL_ERRORS,
+  DATABASE_ERRORS,
+  HTTP_ERRORS,
+  VALIDATION_ERRORS,
+  VIDEO_ERRORS,
+  type ErrorCode,
+  type VideoErrorCode,
+} from './index';
 
 describe('error-codes', () => {
   it('should contain all expected http error codes', () => {
     const expectedCodes = ['NETWORK_ERROR', 'NETWORK_TIMEOUT', 'SERVER_ERROR', 'CLIENT_ERROR', 'EMPTY_RESPONSE'];
 
     const actualCodes = Object.values(HTTP_ERRORS);
+    expect(actualCodes).toHaveLength(expectedCodes.length);
+    expectedCodes.forEach(code => {
+      expect(actualCodes).toContain(code);
+    });
+  });
+
+  it('should contain all expected validation error codes', () => {
+    const expectedCodes = ['INVALID_SIGNATURE'];
+
+    const actualCodes = Object.values(VALIDATION_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
     expectedCodes.forEach(code => {
       expect(actualCodes).toContain(code);

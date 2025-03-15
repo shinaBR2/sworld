@@ -16,10 +16,12 @@ enum TaskType {
   FIX_DURATION = 'fix_duration',
   /** ONE TIME JOB TO FIX VIDEO HAS MISSING THUMBNAIL  */
   FIX_THUMBNAIL = 'fix_thumbnail',
+  CRAWL = 'crawl',
 }
 
 enum TaskEntityType {
   VIDEO = 'video',
+  CRAWL_VIDEO = 'crawl_video',
 }
 
 const Task = sequelize.define(
@@ -66,4 +68,4 @@ const Task = sequelize.define(
   }
 );
 
-export { TaskStatus, TaskType, TaskEntityType, Task };
+export { Task, TaskEntityType, TaskStatus, TaskType };
