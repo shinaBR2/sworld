@@ -6475,7 +6475,10 @@ export const PlaylistFieldsFragmentDoc = new TypedDocumentString(`
   user {
     ...UserFields
   }
-  playlist_videos(order_by: {position: asc}) {
+  playlist_videos(
+    where: {video: {status: {_eq: "ready"}}}
+    order_by: {position: asc}
+  ) {
     ...PlaylistVideoFields
   }
 }
@@ -6642,7 +6645,10 @@ fragment PlaylistFields on playlist {
   user {
     ...UserFields
   }
-  playlist_videos(order_by: {position: asc}) {
+  playlist_videos(
+    where: {video: {status: {_eq: "ready"}}}
+    order_by: {position: asc}
+  ) {
     ...PlaylistVideoFields
   }
 }`) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;
@@ -6739,7 +6745,10 @@ fragment PlaylistFields on playlist {
   user {
     ...UserFields
   }
-  playlist_videos(order_by: {position: asc}) {
+  playlist_videos(
+    where: {video: {status: {_eq: "ready"}}}
+    order_by: {position: asc}
+  ) {
     ...PlaylistVideoFields
   }
 }`) as unknown as TypedDocumentString<AllVideosQuery, AllVideosQueryVariables>;
