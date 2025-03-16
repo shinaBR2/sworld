@@ -674,6 +674,327 @@ input audios_updates {
   where: audios_bool_exp!
 }
 
+"""Requests to crawl content from any sources"""
+type crawl_requests {
+  created_at: timestamptz!
+  get_single_video: Boolean
+  id: uuid!
+  site: String!
+  slug_prefix: String
+  title: String!
+  updated_at: timestamptz!
+  url: String!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "crawl_requests"
+"""
+type crawl_requests_aggregate {
+  aggregate: crawl_requests_aggregate_fields
+  nodes: [crawl_requests!]!
+}
+
+input crawl_requests_aggregate_bool_exp {
+  bool_and: crawl_requests_aggregate_bool_exp_bool_and
+  bool_or: crawl_requests_aggregate_bool_exp_bool_or
+  count: crawl_requests_aggregate_bool_exp_count
+}
+
+input crawl_requests_aggregate_bool_exp_bool_and {
+  arguments: crawl_requests_select_column_crawl_requests_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: crawl_requests_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input crawl_requests_aggregate_bool_exp_bool_or {
+  arguments: crawl_requests_select_column_crawl_requests_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: crawl_requests_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input crawl_requests_aggregate_bool_exp_count {
+  arguments: [crawl_requests_select_column!]
+  distinct: Boolean
+  filter: crawl_requests_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "crawl_requests"
+"""
+type crawl_requests_aggregate_fields {
+  count(columns: [crawl_requests_select_column!], distinct: Boolean): Int!
+  max: crawl_requests_max_fields
+  min: crawl_requests_min_fields
+}
+
+"""
+order by aggregate values of table "crawl_requests"
+"""
+input crawl_requests_aggregate_order_by {
+  count: order_by
+  max: crawl_requests_max_order_by
+  min: crawl_requests_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "crawl_requests"
+"""
+input crawl_requests_arr_rel_insert_input {
+  data: [crawl_requests_insert_input!]!
+  """upsert condition"""
+  on_conflict: crawl_requests_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "crawl_requests". All fields are combined with a logical 'AND'.
+"""
+input crawl_requests_bool_exp {
+  _and: [crawl_requests_bool_exp!]
+  _not: crawl_requests_bool_exp
+  _or: [crawl_requests_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  get_single_video: Boolean_comparison_exp
+  id: uuid_comparison_exp
+  site: String_comparison_exp
+  slug_prefix: String_comparison_exp
+  title: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  url: String_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "crawl_requests"
+"""
+enum crawl_requests_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  crawl_requests_pkey
+}
+
+"""
+input type for inserting data into table "crawl_requests"
+"""
+input crawl_requests_insert_input {
+  created_at: timestamptz
+  get_single_video: Boolean
+  id: uuid
+  site: String
+  slug_prefix: String
+  title: String
+  updated_at: timestamptz
+  url: String
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type crawl_requests_max_fields {
+  created_at: timestamptz
+  id: uuid
+  site: String
+  slug_prefix: String
+  title: String
+  updated_at: timestamptz
+  url: String
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "crawl_requests"
+"""
+input crawl_requests_max_order_by {
+  created_at: order_by
+  id: order_by
+  site: order_by
+  slug_prefix: order_by
+  title: order_by
+  updated_at: order_by
+  url: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type crawl_requests_min_fields {
+  created_at: timestamptz
+  id: uuid
+  site: String
+  slug_prefix: String
+  title: String
+  updated_at: timestamptz
+  url: String
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "crawl_requests"
+"""
+input crawl_requests_min_order_by {
+  created_at: order_by
+  id: order_by
+  site: order_by
+  slug_prefix: order_by
+  title: order_by
+  updated_at: order_by
+  url: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "crawl_requests"
+"""
+type crawl_requests_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [crawl_requests!]!
+}
+
+"""
+on_conflict condition type for table "crawl_requests"
+"""
+input crawl_requests_on_conflict {
+  constraint: crawl_requests_constraint!
+  update_columns: [crawl_requests_update_column!]! = []
+  where: crawl_requests_bool_exp
+}
+
+"""Ordering options when selecting data from "crawl_requests"."""
+input crawl_requests_order_by {
+  created_at: order_by
+  get_single_video: order_by
+  id: order_by
+  site: order_by
+  slug_prefix: order_by
+  title: order_by
+  updated_at: order_by
+  url: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: crawl_requests"""
+input crawl_requests_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "crawl_requests"
+"""
+enum crawl_requests_select_column {
+  """column name"""
+  created_at
+  """column name"""
+  get_single_video
+  """column name"""
+  id
+  """column name"""
+  site
+  """column name"""
+  slug_prefix
+  """column name"""
+  title
+  """column name"""
+  updated_at
+  """column name"""
+  url
+  """column name"""
+  user_id
+}
+
+"""
+select "crawl_requests_aggregate_bool_exp_bool_and_arguments_columns" columns of table "crawl_requests"
+"""
+enum crawl_requests_select_column_crawl_requests_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  get_single_video
+}
+
+"""
+select "crawl_requests_aggregate_bool_exp_bool_or_arguments_columns" columns of table "crawl_requests"
+"""
+enum crawl_requests_select_column_crawl_requests_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  get_single_video
+}
+
+"""
+input type for updating data in table "crawl_requests"
+"""
+input crawl_requests_set_input {
+  created_at: timestamptz
+  get_single_video: Boolean
+  id: uuid
+  site: String
+  slug_prefix: String
+  title: String
+  updated_at: timestamptz
+  url: String
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "crawl_requests"
+"""
+input crawl_requests_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: crawl_requests_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input crawl_requests_stream_cursor_value_input {
+  created_at: timestamptz
+  get_single_video: Boolean
+  id: uuid
+  site: String
+  slug_prefix: String
+  title: String
+  updated_at: timestamptz
+  url: String
+  user_id: uuid
+}
+
+"""
+update columns of table "crawl_requests"
+"""
+enum crawl_requests_update_column {
+  """column name"""
+  created_at
+  """column name"""
+  get_single_video
+  """column name"""
+  id
+  """column name"""
+  site
+  """column name"""
+  slug_prefix
+  """column name"""
+  title
+  """column name"""
+  updated_at
+  """column name"""
+  url
+  """column name"""
+  user_id
+}
+
+input crawl_requests_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: crawl_requests_set_input
+  """filter the rows which have to be updated"""
+  where: crawl_requests_bool_exp!
+}
+
 """ordering argument of a cursor"""
 enum cursor_ordering {
   """ascending ordering of the cursor"""
@@ -1008,6 +1329,17 @@ type mutation_root {
   """
   delete_audios_by_pk(id: uuid!): audios
   """
+  delete data from the table: "crawl_requests"
+  """
+  delete_crawl_requests(
+    """filter the rows which have to be deleted"""
+    where: crawl_requests_bool_exp!
+  ): crawl_requests_mutation_response
+  """
+  delete single row from the table: "crawl_requests"
+  """
+  delete_crawl_requests_by_pk(id: uuid!): crawl_requests
+  """
   delete data from the table: "feature_flag"
   """
   delete_feature_flag(
@@ -1164,6 +1496,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: audios_on_conflict
   ): audios
+  """
+  insert data into the table: "crawl_requests"
+  """
+  insert_crawl_requests(
+    """the rows to be inserted"""
+    objects: [crawl_requests_insert_input!]!
+    """upsert condition"""
+    on_conflict: crawl_requests_on_conflict
+  ): crawl_requests_mutation_response
+  """
+  insert a single row into the table: "crawl_requests"
+  """
+  insert_crawl_requests_one(
+    """the row to be inserted"""
+    object: crawl_requests_insert_input!
+    """upsert condition"""
+    on_conflict: crawl_requests_on_conflict
+  ): crawl_requests
   """
   insert data into the table: "feature_flag"
   """
@@ -1410,6 +1760,30 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [audios_updates!]!
   ): [audios_mutation_response]
+  """
+  update data of the table: "crawl_requests"
+  """
+  update_crawl_requests(
+    """sets the columns of the filtered rows to the given values"""
+    _set: crawl_requests_set_input
+    """filter the rows which have to be updated"""
+    where: crawl_requests_bool_exp!
+  ): crawl_requests_mutation_response
+  """
+  update single row of the table: "crawl_requests"
+  """
+  update_crawl_requests_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: crawl_requests_set_input
+    pk_columns: crawl_requests_pk_columns_input!
+  ): crawl_requests
+  """
+  update multiples rows of table: "crawl_requests"
+  """
+  update_crawl_requests_many(
+    """updates to execute, in order"""
+    updates: [crawl_requests_updates!]!
+  ): [crawl_requests_mutation_response]
   """
   update data of the table: "feature_flag"
   """
@@ -1908,6 +2282,10 @@ enum playlist_constraint {
   unique or primary key constraint on columns "id"
   """
   playlist_pkey
+  """
+  unique or primary key constraint on columns "user_id", "slug"
+  """
+  playlist_user_id_slug_key
 }
 
 """
@@ -2557,6 +2935,34 @@ type query_root {
   ): audios_aggregate!
   """fetch data from the table: "audios" using primary key columns"""
   audios_by_pk(id: uuid!): audios
+  """An array relationship"""
+  crawl_requests(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): [crawl_requests!]!
+  """An aggregate relationship"""
+  crawl_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): crawl_requests_aggregate!
+  """fetch data from the table: "crawl_requests" using primary key columns"""
+  crawl_requests_by_pk(id: uuid!): crawl_requests
   """
   fetch data from the table: "feature_flag"
   """
@@ -2976,6 +3382,45 @@ type subscription_root {
     """filter the rows returned"""
     where: audios_bool_exp
   ): [audios!]!
+  """An array relationship"""
+  crawl_requests(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): [crawl_requests!]!
+  """An aggregate relationship"""
+  crawl_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): crawl_requests_aggregate!
+  """fetch data from the table: "crawl_requests" using primary key columns"""
+  crawl_requests_by_pk(id: uuid!): crawl_requests
+  """
+  fetch data from the table in a streaming manner: "crawl_requests"
+  """
+  crawl_requests_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [crawl_requests_stream_cursor_input]!
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): [crawl_requests!]!
   """
   fetch data from the table: "feature_flag"
   """
@@ -4730,6 +5175,32 @@ type users {
     where: audios_bool_exp
   ): audios_aggregate!
   auth0_id: String!
+  """An array relationship"""
+  crawl_requests(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): [crawl_requests!]!
+  """An aggregate relationship"""
+  crawl_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [crawl_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [crawl_requests_order_by!]
+    """filter the rows returned"""
+    where: crawl_requests_bool_exp
+  ): crawl_requests_aggregate!
   created_at: timestamptz
   email: String!
   id: uuid!
@@ -4868,6 +5339,8 @@ input users_bool_exp {
   audios: audios_bool_exp
   audios_aggregate: audios_aggregate_bool_exp
   auth0_id: String_comparison_exp
+  crawl_requests: crawl_requests_bool_exp
+  crawl_requests_aggregate: crawl_requests_aggregate_bool_exp
   created_at: timestamptz_comparison_exp
   email: String_comparison_exp
   id: uuid_comparison_exp
@@ -4911,6 +5384,7 @@ input type for inserting data into table "users"
 input users_insert_input {
   audios: audios_arr_rel_insert_input
   auth0_id: String
+  crawl_requests: crawl_requests_arr_rel_insert_input
   created_at: timestamptz
   email: String
   id: uuid
@@ -4974,6 +5448,7 @@ input users_on_conflict {
 input users_order_by {
   audios_aggregate: audios_aggregate_order_by
   auth0_id: order_by
+  crawl_requests_aggregate: crawl_requests_aggregate_order_by
   created_at: order_by
   email: order_by
   id: order_by
