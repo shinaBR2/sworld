@@ -26,6 +26,13 @@ array_relationships:
         table:
           name: playlist_videos
           schema: public
+  - name: subtitles
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: subtitles
+          schema: public
   - name: user_video_histories
     using:
       foreign_key_constraint_on:

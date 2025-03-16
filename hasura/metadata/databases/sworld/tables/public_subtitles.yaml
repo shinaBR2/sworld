@@ -1,0 +1,38 @@
+table:
+  name: subtitles
+  schema: public
+object_relationships:
+  - name: video
+    using:
+      foreign_key_constraint_on: video_id
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - default
+        - id
+        - lang
+        - url
+        - video_id
+      filter:
+        video:
+          public:
+            _eq: true
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - default
+        - id
+        - lang
+        - url
+        - video_id
+      filter:
+        _or:
+          - video:
+              public:
+                _eq: true
+          - video:
+              user_id:
+                _eq: X-Hasura-User-Id
+    comment: ""
