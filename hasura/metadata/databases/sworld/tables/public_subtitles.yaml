@@ -25,6 +25,8 @@ select_permissions:
         video:
           public:
             _eq: true
+      query_root_fields: []
+      subscription_root_fields: []
     comment: ""
   - role: user
     permission:
@@ -42,4 +44,6 @@ select_permissions:
           - video:
               user_id:
                 _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields: []
     comment: ""
