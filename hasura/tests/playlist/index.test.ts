@@ -177,7 +177,7 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get own playlists",
     query: `
       query GetOwnPlaylists {
-        playlist(where: {playlist_videos: {}}) {
+        playlist(where: { playlist_videos_aggregate: { count: { predicate: { _gt: 0 } } } }) {
           id
           title
           description
