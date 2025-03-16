@@ -6705,7 +6705,7 @@ export const AllVideosDocument = new TypedDocumentString(`
   ) {
     ...VideoFields
   }
-  playlist(where: {playlist_videos: {}}) {
+  playlist(where: {playlist_videos_aggregate: {count: {predicate: {_gt: 0}}}}) {
     ...PlaylistFields
   }
 }

@@ -27,7 +27,7 @@ const documents = {
     "\n  query PlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...PlaylistFields\n    }\n  }\n": types.PlaylistDetailDocument,
     "\n  query Playlists {\n    playlist(order_by: { createdAt: desc }) {\n      title\n      id\n      slug\n    }\n  }\n": types.PlaylistsDocument,
     "\n  query VideoDetail($id: uuid!) @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    videos_by_pk(id: $id) {\n      id\n      source\n      thumbnailUrl\n      title\n      description\n    }\n  }\n": types.VideoDetailDocument,
-    "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos: {} }) {\n      ...PlaylistFields\n    }\n  }\n": types.AllVideosDocument,
+    "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos_aggregate: { count: { predicate: { _gt: 0 } } } }) {\n      ...PlaylistFields\n    }\n  }\n": types.AllVideosDocument,
 };
 
 /**
@@ -81,7 +81,7 @@ export function graphql(source: "\n  query VideoDetail($id: uuid!) @cached {\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos: {} }) {\n      ...PlaylistFields\n    }\n  }\n"): typeof import('./graphql').AllVideosDocument;
+export function graphql(source: "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(where: { playlist_videos_aggregate: { count: { predicate: { _gt: 0 } } } }) {\n      ...PlaylistFields\n    }\n  }\n"): typeof import('./graphql').AllVideosDocument;
 
 
 export function graphql(source: string) {
