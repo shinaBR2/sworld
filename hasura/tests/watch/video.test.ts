@@ -13,7 +13,7 @@ const allowedQueries: QueryTestCase[] = [
     name: "Get public videos",
     query: `
       query GetPublicVideos {
-        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
+        standalone_videos: videos(where: {playlist_videos_aggregate: {count: {predicate: {_eq: 0}}}}) {
           id
           title
           description
@@ -21,6 +21,12 @@ const allowedQueries: QueryTestCase[] = [
           thumbnailUrl
           source
           status
+          subtitles {
+            id
+            lang
+            url
+            default
+          }
         }
       }
     `,
@@ -38,6 +44,18 @@ const allowedQueries: QueryTestCase[] = [
         expect(video).toHaveProperty("slug");
         expect(video).toHaveProperty("thumbnailUrl");
         expect(video).toHaveProperty("source");
+
+        expect(video).toHaveProperty("subtitles");
+        expect(Array.isArray(video.subtitles)).toBe(true);
+
+        // If there are subtitles, verify their structure
+        if (video.subtitles.length > 0) {
+          const subtitle = video.subtitles[0];
+          expect(subtitle).toHaveProperty("id");
+          expect(subtitle).toHaveProperty("lang");
+          expect(subtitle).toHaveProperty("title");
+          expect(subtitle).toHaveProperty("url");
+        }
       }
     },
   },
@@ -136,7 +154,7 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get own videos",
     query: `
       query GetOwnVideos {
-        standalone_videos: videos(where: {_not: {playlist_videos: {}}}) {
+        standalone_videos: videos(where: {playlist_videos_aggregate: {count: {predicate: {_eq: 0}}}}) {
           id
           title
           description
@@ -146,6 +164,12 @@ const allowedUserQueries: QueryTestCase[] = [
           source
           status
           createdAt
+          subtitles {
+            id
+            lang
+            url
+            default
+          }
         }
       }
     `,
@@ -165,6 +189,14 @@ const allowedUserQueries: QueryTestCase[] = [
         expect(video).toHaveProperty("duration");
         expect(video).toHaveProperty("source");
         expect(video).toHaveProperty("createdAt");
+
+        if (video.subtitles.length > 0) {
+          const subtitle = video.subtitles[0];
+          expect(subtitle).toHaveProperty("id");
+          expect(subtitle).toHaveProperty("lang");
+          expect(subtitle).toHaveProperty("title");
+          expect(subtitle).toHaveProperty("url");
+        }
       }
     },
   },
