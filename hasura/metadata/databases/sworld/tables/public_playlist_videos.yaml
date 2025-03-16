@@ -106,6 +106,7 @@ select_permissions:
               - video:
                   user_id:
                     _eq: X-Hasura-User-Id
+      allow_aggregations: true
       query_root_fields: []
       subscription_root_fields: []
     comment: ""
