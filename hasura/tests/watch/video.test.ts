@@ -25,7 +25,7 @@ const allowedQueries: QueryTestCase[] = [
             id
             lang
             url
-            default
+            isDefault
           }
         }
       }
@@ -53,7 +53,7 @@ const allowedQueries: QueryTestCase[] = [
           const subtitle = video.subtitles[0];
           expect(subtitle).toHaveProperty("id");
           expect(subtitle).toHaveProperty("lang");
-          expect(subtitle).toHaveProperty("title");
+          expect(subtitle).toHaveProperty("isDefault");
           expect(subtitle).toHaveProperty("url");
         }
       }
@@ -168,7 +168,7 @@ const allowedUserQueries: QueryTestCase[] = [
             id
             lang
             url
-            default
+            isDefault
           }
         }
       }
@@ -194,7 +194,7 @@ const allowedUserQueries: QueryTestCase[] = [
           const subtitle = video.subtitles[0];
           expect(subtitle).toHaveProperty("id");
           expect(subtitle).toHaveProperty("lang");
-          expect(subtitle).toHaveProperty("title");
+          expect(subtitle).toHaveProperty("isDefault");
           expect(subtitle).toHaveProperty("url");
         }
       }

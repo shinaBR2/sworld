@@ -1,6 +1,13 @@
 table:
   name: subtitles
   schema: public
+configuration:
+  column_config:
+    is_default:
+      custom_name: isDefault
+  custom_column_names:
+    is_default: isDefault
+  custom_root_fields: {}
 object_relationships:
   - name: video
     using:
@@ -9,7 +16,7 @@ select_permissions:
   - role: anonymous
     permission:
       columns:
-        - default
+        - is_default
         - id
         - lang
         - url
@@ -22,7 +29,7 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - default
+        - is_default
         - id
         - lang
         - url
