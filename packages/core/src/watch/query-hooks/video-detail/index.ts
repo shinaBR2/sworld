@@ -6,7 +6,7 @@ import { transformVideoFragment } from '../transformers';
 const videoDetailQuery = graphql(`
   query VideoDetail($id: uuid!) @cached {
     videos(
-      where: { _and: { _not: { playlist_videos: {} }, source: { _is_null: false } } }
+      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: "ready" } } }
       order_by: { createdAt: desc }
     ) {
       ...VideoFields
