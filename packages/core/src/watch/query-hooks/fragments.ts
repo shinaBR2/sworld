@@ -46,10 +46,10 @@ const PlaylistFragment = graphql(/* GraphQL */ `
     user {
       ...UserFields
     }
-    playlist_videos(order_by: { position: asc }) {
+    playlist_videos(where: { video: { status: { _eq: "ready" } } }, order_by: { position: asc }) {
       ...PlaylistVideoFields
     }
   }
 `);
 
-export { UserFragment, VideoFragment, PlaylistVideoFragment, PlaylistFragment };
+export { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment };
