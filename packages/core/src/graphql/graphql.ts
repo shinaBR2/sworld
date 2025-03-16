@@ -9,14 +9,14 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  jsonb: { input: any; output: any };
-  timestamptz: { input: any; output: any };
-  uuid: { input: any; output: any };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  jsonb: { input: any; output: any; }
+  timestamptz: { input: any; output: any; }
+  uuid: { input: any; output: any; }
 };
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
@@ -117,6 +117,7 @@ export type Audio_Tags_Aggregate_Fields = {
   min?: Maybe<Audio_Tags_Min_Fields>;
 };
 
+
 /** aggregate fields of "audio_tags" */
 export type Audio_Tags_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Audio_Tags_Select_Column>>;
@@ -153,7 +154,7 @@ export type Audio_Tags_Bool_Exp = {
 /** unique or primary key constraints on table "audio_tags" */
 export enum Audio_Tags_Constraint {
   /** unique or primary key constraint on columns "tag_id", "audio_id" */
-  AudioTagsPkey = 'audio_tags_pkey',
+  AudioTagsPkey = 'audio_tags_pkey'
 }
 
 /** input type for inserting data into table "audio_tags" */
@@ -241,7 +242,7 @@ export enum Audio_Tags_Select_Column {
   /** column name */
   TagId = 'tag_id',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "audio_tags" */
@@ -277,7 +278,7 @@ export enum Audio_Tags_Update_Column {
   /** column name */
   TagId = 'tag_id',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 export type Audio_Tags_Updates = {
@@ -307,6 +308,7 @@ export type Audios = {
   user_id: Scalars['uuid']['output'];
 };
 
+
 /** Audios for listen site */
 export type AudiosAudio_TagsArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
@@ -315,6 +317,7 @@ export type AudiosAudio_TagsArgs = {
   order_by?: InputMaybe<Array<Audio_Tags_Order_By>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
+
 
 /** Audios for listen site */
 export type AudiosAudio_Tags_AggregateArgs = {
@@ -367,6 +370,7 @@ export type Audios_Aggregate_Fields = {
   min?: Maybe<Audios_Min_Fields>;
 };
 
+
 /** aggregate fields of "audios" */
 export type Audios_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Audios_Select_Column>>;
@@ -409,7 +413,7 @@ export type Audios_Bool_Exp = {
 /** unique or primary key constraints on table "audios" */
 export enum Audios_Constraint {
   /** unique or primary key constraint on columns "id" */
-  AudiosPkey = 'audios_pkey',
+  AudiosPkey = 'audios_pkey'
 }
 
 /** input type for inserting data into table "audios" */
@@ -539,19 +543,19 @@ export enum Audios_Select_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** select "audios_aggregate_bool_exp_bool_and_arguments_columns" columns of table "audios" */
 export enum Audios_Select_Column_Audios_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** select "audios_aggregate_bool_exp_bool_or_arguments_columns" columns of table "audios" */
 export enum Audios_Select_Column_Audios_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** input type for updating data in table "audios" */
@@ -607,7 +611,7 @@ export enum Audios_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 export type Audios_Updates = {
@@ -617,12 +621,310 @@ export type Audios_Updates = {
   where: Audios_Bool_Exp;
 };
 
+/** Requests to crawl content from any sources */
+export type Crawl_Requests = {
+  __typename?: 'crawl_requests';
+  created_at: Scalars['timestamptz']['output'];
+  get_single_video?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['uuid']['output'];
+  site: Scalars['String']['output'];
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  url: Scalars['String']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "crawl_requests" */
+export type Crawl_Requests_Aggregate = {
+  __typename?: 'crawl_requests_aggregate';
+  aggregate?: Maybe<Crawl_Requests_Aggregate_Fields>;
+  nodes: Array<Crawl_Requests>;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Count>;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "crawl_requests" */
+export type Crawl_Requests_Aggregate_Fields = {
+  __typename?: 'crawl_requests_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Crawl_Requests_Max_Fields>;
+  min?: Maybe<Crawl_Requests_Min_Fields>;
+};
+
+
+/** aggregate fields of "crawl_requests" */
+export type Crawl_Requests_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "crawl_requests" */
+export type Crawl_Requests_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Crawl_Requests_Max_Order_By>;
+  min?: InputMaybe<Crawl_Requests_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "crawl_requests" */
+export type Crawl_Requests_Arr_Rel_Insert_Input = {
+  data: Array<Crawl_Requests_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "crawl_requests". All fields are combined with a logical 'AND'. */
+export type Crawl_Requests_Bool_Exp = {
+  _and?: InputMaybe<Array<Crawl_Requests_Bool_Exp>>;
+  _not?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  _or?: InputMaybe<Array<Crawl_Requests_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  get_single_video?: InputMaybe<Boolean_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  site?: InputMaybe<String_Comparison_Exp>;
+  slug_prefix?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "crawl_requests" */
+export enum Crawl_Requests_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  CrawlRequestsPkey = 'crawl_requests_pkey'
+}
+
+/** input type for inserting data into table "crawl_requests" */
+export type Crawl_Requests_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Crawl_Requests_Max_Fields = {
+  __typename?: 'crawl_requests_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "crawl_requests" */
+export type Crawl_Requests_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Crawl_Requests_Min_Fields = {
+  __typename?: 'crawl_requests_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "crawl_requests" */
+export type Crawl_Requests_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "crawl_requests" */
+export type Crawl_Requests_Mutation_Response = {
+  __typename?: 'crawl_requests_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Crawl_Requests>;
+};
+
+/** on_conflict condition type for table "crawl_requests" */
+export type Crawl_Requests_On_Conflict = {
+  constraint: Crawl_Requests_Constraint;
+  update_columns?: Array<Crawl_Requests_Update_Column>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "crawl_requests". */
+export type Crawl_Requests_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  get_single_video?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: crawl_requests */
+export type Crawl_Requests_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Site = 'site',
+  /** column name */
+  SlugPrefix = 'slug_prefix',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** select "crawl_requests_aggregate_bool_exp_bool_and_arguments_columns" columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  GetSingleVideo = 'get_single_video'
+}
+
+/** select "crawl_requests_aggregate_bool_exp_bool_or_arguments_columns" columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  GetSingleVideo = 'get_single_video'
+}
+
+/** input type for updating data in table "crawl_requests" */
+export type Crawl_Requests_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "crawl_requests" */
+export type Crawl_Requests_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Crawl_Requests_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Crawl_Requests_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "crawl_requests" */
+export enum Crawl_Requests_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Site = 'site',
+  /** column name */
+  SlugPrefix = 'slug_prefix',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  UserId = 'user_id'
+}
+
+export type Crawl_Requests_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Crawl_Requests_Bool_Exp;
+};
+
 /** ordering argument of a cursor */
 export enum Cursor_Ordering {
   /** ascending ordering of the cursor */
   Asc = 'ASC',
   /** descending ordering of the cursor */
-  Desc = 'DESC',
+  Desc = 'DESC'
 }
 
 /** Feature flag system and we must leverage Hasura subscription to watch this */
@@ -637,6 +939,7 @@ export type Feature_Flag = {
   site: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
 };
+
 
 /** Feature flag system and we must leverage Hasura subscription to watch this */
 export type Feature_FlagConditionsArgs = {
@@ -657,6 +960,7 @@ export type Feature_Flag_Aggregate_Fields = {
   max?: Maybe<Feature_Flag_Max_Fields>;
   min?: Maybe<Feature_Flag_Min_Fields>;
 };
+
 
 /** aggregate fields of "feature_flag" */
 export type Feature_Flag_Aggregate_FieldsCountArgs = {
@@ -689,7 +993,7 @@ export enum Feature_Flag_Constraint {
   /** unique or primary key constraint on columns "id" */
   FeatureFlagPkey = 'feature_flag_pkey',
   /** unique or primary key constraint on columns "name", "site" */
-  FeatureFlagSiteNameKey = 'feature_flag_site_name_key',
+  FeatureFlagSiteNameKey = 'feature_flag_site_name_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -796,7 +1100,7 @@ export enum Feature_Flag_Select_Column {
   /** column name */
   Site = 'site',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "feature_flag" */
@@ -848,7 +1152,7 @@ export enum Feature_Flag_Update_Column {
   /** column name */
   Site = 'site',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 export type Feature_Flag_Updates = {
@@ -907,6 +1211,10 @@ export type Mutation_Root = {
   delete_audios?: Maybe<Audios_Mutation_Response>;
   /** delete single row from the table: "audios" */
   delete_audios_by_pk?: Maybe<Audios>;
+  /** delete data from the table: "crawl_requests" */
+  delete_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** delete single row from the table: "crawl_requests" */
+  delete_crawl_requests_by_pk?: Maybe<Crawl_Requests>;
   /** delete data from the table: "feature_flag" */
   delete_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** delete single row from the table: "feature_flag" */
@@ -959,6 +1267,10 @@ export type Mutation_Root = {
   insert_audios?: Maybe<Audios_Mutation_Response>;
   /** insert a single row into the table: "audios" */
   insert_audios_one?: Maybe<Audios>;
+  /** insert data into the table: "crawl_requests" */
+  insert_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** insert a single row into the table: "crawl_requests" */
+  insert_crawl_requests_one?: Maybe<Crawl_Requests>;
   /** insert data into the table: "feature_flag" */
   insert_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** insert a single row into the table: "feature_flag" */
@@ -1015,6 +1327,12 @@ export type Mutation_Root = {
   update_audios_by_pk?: Maybe<Audios>;
   /** update multiples rows of table: "audios" */
   update_audios_many?: Maybe<Array<Maybe<Audios_Mutation_Response>>>;
+  /** update data of the table: "crawl_requests" */
+  update_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** update single row of the table: "crawl_requests" */
+  update_crawl_requests_by_pk?: Maybe<Crawl_Requests>;
+  /** update multiples rows of table: "crawl_requests" */
+  update_crawl_requests_many?: Maybe<Array<Maybe<Crawl_Requests_Mutation_Response>>>;
   /** update data of the table: "feature_flag" */
   update_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** update single row of the table: "feature_flag" */
@@ -1083,10 +1401,12 @@ export type Mutation_Root = {
   update_videos_many?: Maybe<Array<Maybe<Videos_Mutation_Response>>>;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Audio_TagsArgs = {
   where: Audio_Tags_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Audio_Tags_By_PkArgs = {
@@ -1094,40 +1414,60 @@ export type Mutation_RootDelete_Audio_Tags_By_PkArgs = {
   tag_id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_AudiosArgs = {
   where: Audios_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Audios_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
+/** mutation root */
+export type Mutation_RootDelete_Crawl_RequestsArgs = {
+  where: Crawl_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Crawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
 /** mutation root */
 export type Mutation_RootDelete_Feature_FlagArgs = {
   where: Feature_Flag_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Feature_Flag_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_PlaylistArgs = {
   where: Playlist_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Playlist_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Playlist_VideosArgs = {
   where: Playlist_Videos_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Playlist_Videos_By_PkArgs = {
@@ -1135,60 +1475,72 @@ export type Mutation_RootDelete_Playlist_Videos_By_PkArgs = {
   video_id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_TagsArgs = {
   where: Tags_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Tags_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_TasksArgs = {
   where: Tasks_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Tasks_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_TestArgs = {
   where: Test_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Test_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_User_Video_HistoryArgs = {
   where: User_Video_History_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_User_Video_History_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_UsersArgs = {
   where: Users_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Users_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Video_TagsArgs = {
   where: Video_Tags_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Video_Tags_By_PkArgs = {
@@ -1196,25 +1548,30 @@ export type Mutation_RootDelete_Video_Tags_By_PkArgs = {
   video_id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Video_ViewsArgs = {
   where: Video_Views_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Video_Views_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_VideosArgs = {
   where: Videos_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Videos_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Audio_TagsArgs = {
@@ -1222,11 +1579,13 @@ export type Mutation_RootInsert_Audio_TagsArgs = {
   on_conflict?: InputMaybe<Audio_Tags_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Audio_Tags_OneArgs = {
   object: Audio_Tags_Insert_Input;
   on_conflict?: InputMaybe<Audio_Tags_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_AudiosArgs = {
@@ -1234,11 +1593,27 @@ export type Mutation_RootInsert_AudiosArgs = {
   on_conflict?: InputMaybe<Audios_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Audios_OneArgs = {
   object: Audios_Insert_Input;
   on_conflict?: InputMaybe<Audios_On_Conflict>;
 };
+
+
+/** mutation root */
+export type Mutation_RootInsert_Crawl_RequestsArgs = {
+  objects: Array<Crawl_Requests_Insert_Input>;
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Crawl_Requests_OneArgs = {
+  object: Crawl_Requests_Insert_Input;
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
 
 /** mutation root */
 export type Mutation_RootInsert_Feature_FlagArgs = {
@@ -1246,11 +1621,13 @@ export type Mutation_RootInsert_Feature_FlagArgs = {
   on_conflict?: InputMaybe<Feature_Flag_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Feature_Flag_OneArgs = {
   object: Feature_Flag_Insert_Input;
   on_conflict?: InputMaybe<Feature_Flag_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_PlaylistArgs = {
@@ -1258,11 +1635,13 @@ export type Mutation_RootInsert_PlaylistArgs = {
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Playlist_OneArgs = {
   object: Playlist_Insert_Input;
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Playlist_VideosArgs = {
@@ -1270,11 +1649,13 @@ export type Mutation_RootInsert_Playlist_VideosArgs = {
   on_conflict?: InputMaybe<Playlist_Videos_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Playlist_Videos_OneArgs = {
   object: Playlist_Videos_Insert_Input;
   on_conflict?: InputMaybe<Playlist_Videos_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_TagsArgs = {
@@ -1282,11 +1663,13 @@ export type Mutation_RootInsert_TagsArgs = {
   on_conflict?: InputMaybe<Tags_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Tags_OneArgs = {
   object: Tags_Insert_Input;
   on_conflict?: InputMaybe<Tags_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_TasksArgs = {
@@ -1294,11 +1677,13 @@ export type Mutation_RootInsert_TasksArgs = {
   on_conflict?: InputMaybe<Tasks_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Tasks_OneArgs = {
   object: Tasks_Insert_Input;
   on_conflict?: InputMaybe<Tasks_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_TestArgs = {
@@ -1306,11 +1691,13 @@ export type Mutation_RootInsert_TestArgs = {
   on_conflict?: InputMaybe<Test_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Test_OneArgs = {
   object: Test_Insert_Input;
   on_conflict?: InputMaybe<Test_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_User_Video_HistoryArgs = {
@@ -1318,11 +1705,13 @@ export type Mutation_RootInsert_User_Video_HistoryArgs = {
   on_conflict?: InputMaybe<User_Video_History_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_User_Video_History_OneArgs = {
   object: User_Video_History_Insert_Input;
   on_conflict?: InputMaybe<User_Video_History_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_UsersArgs = {
@@ -1330,11 +1719,13 @@ export type Mutation_RootInsert_UsersArgs = {
   on_conflict?: InputMaybe<Users_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Users_OneArgs = {
   object: Users_Insert_Input;
   on_conflict?: InputMaybe<Users_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Video_TagsArgs = {
@@ -1342,11 +1733,13 @@ export type Mutation_RootInsert_Video_TagsArgs = {
   on_conflict?: InputMaybe<Video_Tags_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Video_Tags_OneArgs = {
   object: Video_Tags_Insert_Input;
   on_conflict?: InputMaybe<Video_Tags_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Video_ViewsArgs = {
@@ -1354,11 +1747,13 @@ export type Mutation_RootInsert_Video_ViewsArgs = {
   on_conflict?: InputMaybe<Video_Views_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Video_Views_OneArgs = {
   object: Video_Views_Insert_Input;
   on_conflict?: InputMaybe<Video_Views_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_VideosArgs = {
@@ -1366,11 +1761,13 @@ export type Mutation_RootInsert_VideosArgs = {
   on_conflict?: InputMaybe<Videos_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Videos_OneArgs = {
   object: Videos_Insert_Input;
   on_conflict?: InputMaybe<Videos_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Audio_TagsArgs = {
@@ -1378,16 +1775,19 @@ export type Mutation_RootUpdate_Audio_TagsArgs = {
   where: Audio_Tags_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Audio_Tags_By_PkArgs = {
   _set?: InputMaybe<Audio_Tags_Set_Input>;
   pk_columns: Audio_Tags_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Audio_Tags_ManyArgs = {
   updates: Array<Audio_Tags_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_AudiosArgs = {
@@ -1395,16 +1795,39 @@ export type Mutation_RootUpdate_AudiosArgs = {
   where: Audios_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Audios_By_PkArgs = {
   _set?: InputMaybe<Audios_Set_Input>;
   pk_columns: Audios_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Audios_ManyArgs = {
   updates: Array<Audios_Updates>;
 };
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Crawl_RequestsArgs = {
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  where: Crawl_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Crawl_Requests_By_PkArgs = {
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  pk_columns: Crawl_Requests_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Crawl_Requests_ManyArgs = {
+  updates: Array<Crawl_Requests_Updates>;
+};
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Feature_FlagArgs = {
@@ -1417,6 +1840,7 @@ export type Mutation_RootUpdate_Feature_FlagArgs = {
   where: Feature_Flag_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Feature_Flag_By_PkArgs = {
   _append?: InputMaybe<Feature_Flag_Append_Input>;
@@ -1428,10 +1852,12 @@ export type Mutation_RootUpdate_Feature_Flag_By_PkArgs = {
   pk_columns: Feature_Flag_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Feature_Flag_ManyArgs = {
   updates: Array<Feature_Flag_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_PlaylistArgs = {
@@ -1439,16 +1865,19 @@ export type Mutation_RootUpdate_PlaylistArgs = {
   where: Playlist_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_By_PkArgs = {
   _set?: InputMaybe<Playlist_Set_Input>;
   pk_columns: Playlist_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_ManyArgs = {
   updates: Array<Playlist_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_VideosArgs = {
@@ -1457,6 +1886,7 @@ export type Mutation_RootUpdate_Playlist_VideosArgs = {
   where: Playlist_Videos_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_Videos_By_PkArgs = {
   _inc?: InputMaybe<Playlist_Videos_Inc_Input>;
@@ -1464,10 +1894,12 @@ export type Mutation_RootUpdate_Playlist_Videos_By_PkArgs = {
   pk_columns: Playlist_Videos_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_Videos_ManyArgs = {
   updates: Array<Playlist_Videos_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_TagsArgs = {
@@ -1476,6 +1908,7 @@ export type Mutation_RootUpdate_TagsArgs = {
   where: Tags_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Tags_By_PkArgs = {
   _inc?: InputMaybe<Tags_Inc_Input>;
@@ -1483,10 +1916,12 @@ export type Mutation_RootUpdate_Tags_By_PkArgs = {
   pk_columns: Tags_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Tags_ManyArgs = {
   updates: Array<Tags_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_TasksArgs = {
@@ -1499,6 +1934,7 @@ export type Mutation_RootUpdate_TasksArgs = {
   where: Tasks_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Tasks_By_PkArgs = {
   _append?: InputMaybe<Tasks_Append_Input>;
@@ -1510,10 +1946,12 @@ export type Mutation_RootUpdate_Tasks_By_PkArgs = {
   pk_columns: Tasks_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Tasks_ManyArgs = {
   updates: Array<Tasks_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_TestArgs = {
@@ -1522,6 +1960,7 @@ export type Mutation_RootUpdate_TestArgs = {
   where: Test_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Test_By_PkArgs = {
   _inc?: InputMaybe<Test_Inc_Input>;
@@ -1529,10 +1968,12 @@ export type Mutation_RootUpdate_Test_By_PkArgs = {
   pk_columns: Test_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Test_ManyArgs = {
   updates: Array<Test_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_User_Video_HistoryArgs = {
@@ -1541,6 +1982,7 @@ export type Mutation_RootUpdate_User_Video_HistoryArgs = {
   where: User_Video_History_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_User_Video_History_By_PkArgs = {
   _inc?: InputMaybe<User_Video_History_Inc_Input>;
@@ -1548,10 +1990,12 @@ export type Mutation_RootUpdate_User_Video_History_By_PkArgs = {
   pk_columns: User_Video_History_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_User_Video_History_ManyArgs = {
   updates: Array<User_Video_History_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_UsersArgs = {
@@ -1559,16 +2003,19 @@ export type Mutation_RootUpdate_UsersArgs = {
   where: Users_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Users_By_PkArgs = {
   _set?: InputMaybe<Users_Set_Input>;
   pk_columns: Users_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Users_ManyArgs = {
   updates: Array<Users_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Video_TagsArgs = {
@@ -1576,16 +2023,19 @@ export type Mutation_RootUpdate_Video_TagsArgs = {
   where: Video_Tags_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Video_Tags_By_PkArgs = {
   _set?: InputMaybe<Video_Tags_Set_Input>;
   pk_columns: Video_Tags_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Video_Tags_ManyArgs = {
   updates: Array<Video_Tags_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Video_ViewsArgs = {
@@ -1593,16 +2043,19 @@ export type Mutation_RootUpdate_Video_ViewsArgs = {
   where: Video_Views_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Video_Views_By_PkArgs = {
   _set?: InputMaybe<Video_Views_Set_Input>;
   pk_columns: Video_Views_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Video_Views_ManyArgs = {
   updates: Array<Video_Views_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_VideosArgs = {
@@ -1611,12 +2064,14 @@ export type Mutation_RootUpdate_VideosArgs = {
   where: Videos_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Videos_By_PkArgs = {
   _inc?: InputMaybe<Videos_Inc_Input>;
   _set?: InputMaybe<Videos_Set_Input>;
   pk_columns: Videos_Pk_Columns_Input;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Videos_ManyArgs = {
@@ -1636,7 +2091,7 @@ export enum Order_By {
   /** in descending order, nulls first */
   DescNullsFirst = 'desc_nulls_first',
   /** in descending order, nulls last */
-  DescNullsLast = 'desc_nulls_last',
+  DescNullsLast = 'desc_nulls_last'
 }
 
 /** Playlist contain set of videos or audios */
@@ -1659,6 +2114,7 @@ export type Playlist = {
   user_id: Scalars['uuid']['output'];
 };
 
+
 /** Playlist contain set of videos or audios */
 export type PlaylistPlaylist_VideosArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
@@ -1667,6 +2123,7 @@ export type PlaylistPlaylist_VideosArgs = {
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
+
 
 /** Playlist contain set of videos or audios */
 export type PlaylistPlaylist_Videos_AggregateArgs = {
@@ -1719,6 +2176,7 @@ export type Playlist_Aggregate_Fields = {
   min?: Maybe<Playlist_Min_Fields>;
 };
 
+
 /** aggregate fields of "playlist" */
 export type Playlist_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Playlist_Select_Column>>;
@@ -1762,6 +2220,8 @@ export type Playlist_Bool_Exp = {
 export enum Playlist_Constraint {
   /** unique or primary key constraint on columns "id" */
   PlaylistPkey = 'playlist_pkey',
+  /** unique or primary key constraint on columns "user_id", "slug" */
+  PlaylistUserIdSlugKey = 'playlist_user_id_slug_key'
 }
 
 /** input type for inserting data into table "playlist" */
@@ -1891,19 +2351,19 @@ export enum Playlist_Select_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** select "playlist_aggregate_bool_exp_bool_and_arguments_columns" columns of table "playlist" */
 export enum Playlist_Select_Column_Playlist_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** select "playlist_aggregate_bool_exp_bool_or_arguments_columns" columns of table "playlist" */
 export enum Playlist_Select_Column_Playlist_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** input type for updating data in table "playlist" */
@@ -1959,7 +2419,7 @@ export enum Playlist_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 export type Playlist_Updates = {
@@ -2017,6 +2477,7 @@ export type Playlist_Videos_Aggregate_Fields = {
   variance?: Maybe<Playlist_Videos_Variance_Fields>;
 };
 
+
 /** aggregate fields of "playlist_videos" */
 export type Playlist_Videos_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
@@ -2073,7 +2534,7 @@ export type Playlist_Videos_Bool_Exp = {
 /** unique or primary key constraints on table "playlist_videos" */
 export enum Playlist_Videos_Constraint {
   /** unique or primary key constraint on columns "video_id", "playlist_id" */
-  PlaylistVideosPkey = 'playlist_videos_pkey',
+  PlaylistVideosPkey = 'playlist_videos_pkey'
 }
 
 /** input type for incrementing numeric columns in table "playlist_videos" */
@@ -2174,7 +2635,7 @@ export enum Playlist_Videos_Select_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 /** input type for updating data in table "playlist_videos" */
@@ -2258,7 +2719,7 @@ export enum Playlist_Videos_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 export type Playlist_Videos_Updates = {
@@ -2317,6 +2778,12 @@ export type Query_Root = {
   audios_aggregate: Audios_Aggregate;
   /** fetch data from the table: "audios" using primary key columns */
   audios_by_pk?: Maybe<Audios>;
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
+  /** fetch data from the table: "crawl_requests" using primary key columns */
+  crawl_requests_by_pk?: Maybe<Crawl_Requests>;
   /** fetch data from the table: "feature_flag" */
   feature_flag: Array<Feature_Flag>;
   /** fetch aggregated fields from the table: "feature_flag" */
@@ -2385,6 +2852,7 @@ export type Query_Root = {
   videos_by_pk?: Maybe<Videos>;
 };
 
+
 export type Query_RootAudio_TagsArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2392,6 +2860,7 @@ export type Query_RootAudio_TagsArgs = {
   order_by?: InputMaybe<Array<Audio_Tags_Order_By>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
+
 
 export type Query_RootAudio_Tags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
@@ -2401,10 +2870,12 @@ export type Query_RootAudio_Tags_AggregateArgs = {
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
 
+
 export type Query_RootAudio_Tags_By_PkArgs = {
   audio_id: Scalars['uuid']['input'];
   tag_id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootAudiosArgs = {
   distinct_on?: InputMaybe<Array<Audios_Select_Column>>;
@@ -2414,6 +2885,7 @@ export type Query_RootAudiosArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+
 export type Query_RootAudios_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Audios_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2422,9 +2894,34 @@ export type Query_RootAudios_AggregateArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+
 export type Query_RootAudios_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
+
+export type Query_RootCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootCrawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
 
 export type Query_RootFeature_FlagArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
@@ -2434,6 +2931,7 @@ export type Query_RootFeature_FlagArgs = {
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
 
+
 export type Query_RootFeature_Flag_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2442,9 +2940,11 @@ export type Query_RootFeature_Flag_AggregateArgs = {
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
 
+
 export type Query_RootFeature_Flag_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootPlaylistArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
@@ -2454,6 +2954,7 @@ export type Query_RootPlaylistArgs = {
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
 
+
 export type Query_RootPlaylist_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2462,9 +2963,11 @@ export type Query_RootPlaylist_AggregateArgs = {
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
 
+
 export type Query_RootPlaylist_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootPlaylist_VideosArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
@@ -2474,6 +2977,7 @@ export type Query_RootPlaylist_VideosArgs = {
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
 
+
 export type Query_RootPlaylist_Videos_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2482,10 +2986,12 @@ export type Query_RootPlaylist_Videos_AggregateArgs = {
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
 
+
 export type Query_RootPlaylist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
@@ -2495,6 +3001,7 @@ export type Query_RootTagsArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Query_RootTags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2503,9 +3010,11 @@ export type Query_RootTags_AggregateArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Query_RootTags_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootTasksArgs = {
   distinct_on?: InputMaybe<Array<Tasks_Select_Column>>;
@@ -2515,6 +3024,7 @@ export type Query_RootTasksArgs = {
   where?: InputMaybe<Tasks_Bool_Exp>;
 };
 
+
 export type Query_RootTasks_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tasks_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2523,9 +3033,11 @@ export type Query_RootTasks_AggregateArgs = {
   where?: InputMaybe<Tasks_Bool_Exp>;
 };
 
+
 export type Query_RootTasks_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootTestArgs = {
   distinct_on?: InputMaybe<Array<Test_Select_Column>>;
@@ -2535,6 +3047,7 @@ export type Query_RootTestArgs = {
   where?: InputMaybe<Test_Bool_Exp>;
 };
 
+
 export type Query_RootTest_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Test_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2543,9 +3056,11 @@ export type Query_RootTest_AggregateArgs = {
   where?: InputMaybe<Test_Bool_Exp>;
 };
 
+
 export type Query_RootTest_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUser_Video_HistoryArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
@@ -2555,6 +3070,7 @@ export type Query_RootUser_Video_HistoryArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Video_History_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2563,9 +3079,11 @@ export type Query_RootUser_Video_History_AggregateArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Video_History_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -2575,6 +3093,7 @@ export type Query_RootUsersArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Query_RootUsers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2583,9 +3102,11 @@ export type Query_RootUsers_AggregateArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Query_RootUsers_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootVideo_TagsArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
@@ -2595,6 +3116,7 @@ export type Query_RootVideo_TagsArgs = {
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
 
+
 export type Query_RootVideo_Tags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2603,10 +3125,12 @@ export type Query_RootVideo_Tags_AggregateArgs = {
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
 
+
 export type Query_RootVideo_Tags_By_PkArgs = {
   tag_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootVideo_ViewsArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
@@ -2616,6 +3140,7 @@ export type Query_RootVideo_ViewsArgs = {
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
 
+
 export type Query_RootVideo_Views_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2624,9 +3149,11 @@ export type Query_RootVideo_Views_AggregateArgs = {
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
 
+
 export type Query_RootVideo_Views_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Query_RootVideosArgs = {
   distinct_on?: InputMaybe<Array<Videos_Select_Column>>;
@@ -2636,6 +3163,7 @@ export type Query_RootVideosArgs = {
   where?: InputMaybe<Videos_Bool_Exp>;
 };
 
+
 export type Query_RootVideos_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Videos_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2643,6 +3171,7 @@ export type Query_RootVideos_AggregateArgs = {
   order_by?: InputMaybe<Array<Videos_Order_By>>;
   where?: InputMaybe<Videos_Bool_Exp>;
 };
+
 
 export type Query_RootVideos_By_PkArgs = {
   id: Scalars['uuid']['input'];
@@ -2666,6 +3195,14 @@ export type Subscription_Root = {
   audios_by_pk?: Maybe<Audios>;
   /** fetch data from the table in a streaming manner: "audios" */
   audios_stream: Array<Audios>;
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
+  /** fetch data from the table: "crawl_requests" using primary key columns */
+  crawl_requests_by_pk?: Maybe<Crawl_Requests>;
+  /** fetch data from the table in a streaming manner: "crawl_requests" */
+  crawl_requests_stream: Array<Crawl_Requests>;
   /** fetch data from the table: "feature_flag" */
   feature_flag: Array<Feature_Flag>;
   /** fetch aggregated fields from the table: "feature_flag" */
@@ -2756,6 +3293,7 @@ export type Subscription_Root = {
   videos_stream: Array<Videos>;
 };
 
+
 export type Subscription_RootAudio_TagsArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2763,6 +3301,7 @@ export type Subscription_RootAudio_TagsArgs = {
   order_by?: InputMaybe<Array<Audio_Tags_Order_By>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
+
 
 export type Subscription_RootAudio_Tags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
@@ -2772,16 +3311,19 @@ export type Subscription_RootAudio_Tags_AggregateArgs = {
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootAudio_Tags_By_PkArgs = {
   audio_id: Scalars['uuid']['input'];
   tag_id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootAudio_Tags_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Audio_Tags_Stream_Cursor_Input>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
+
 
 export type Subscription_RootAudiosArgs = {
   distinct_on?: InputMaybe<Array<Audios_Select_Column>>;
@@ -2791,6 +3333,7 @@ export type Subscription_RootAudiosArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+
 export type Subscription_RootAudios_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Audios_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2799,15 +3342,48 @@ export type Subscription_RootAudios_AggregateArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+
 export type Subscription_RootAudios_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootAudios_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Audios_Stream_Cursor_Input>>;
   where?: InputMaybe<Audios_Bool_Exp>;
 };
+
+
+export type Subscription_RootCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootCrawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootCrawl_Requests_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Crawl_Requests_Stream_Cursor_Input>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
 
 export type Subscription_RootFeature_FlagArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
@@ -2817,6 +3393,7 @@ export type Subscription_RootFeature_FlagArgs = {
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
 
+
 export type Subscription_RootFeature_Flag_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2825,15 +3402,18 @@ export type Subscription_RootFeature_Flag_AggregateArgs = {
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
 
+
 export type Subscription_RootFeature_Flag_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootFeature_Flag_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Feature_Flag_Stream_Cursor_Input>>;
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
+
 
 export type Subscription_RootPlaylistArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
@@ -2843,6 +3423,7 @@ export type Subscription_RootPlaylistArgs = {
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
 
+
 export type Subscription_RootPlaylist_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2851,15 +3432,18 @@ export type Subscription_RootPlaylist_AggregateArgs = {
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
 
+
 export type Subscription_RootPlaylist_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootPlaylist_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Playlist_Stream_Cursor_Input>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
+
 
 export type Subscription_RootPlaylist_VideosArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
@@ -2869,6 +3453,7 @@ export type Subscription_RootPlaylist_VideosArgs = {
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
 
+
 export type Subscription_RootPlaylist_Videos_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2877,16 +3462,19 @@ export type Subscription_RootPlaylist_Videos_AggregateArgs = {
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
 
+
 export type Subscription_RootPlaylist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootPlaylist_Videos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Playlist_Videos_Stream_Cursor_Input>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
+
 
 export type Subscription_RootTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
@@ -2896,6 +3484,7 @@ export type Subscription_RootTagsArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootTags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2904,15 +3493,18 @@ export type Subscription_RootTags_AggregateArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootTags_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootTags_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Tags_Stream_Cursor_Input>>;
   where?: InputMaybe<Tags_Bool_Exp>;
 };
+
 
 export type Subscription_RootTasksArgs = {
   distinct_on?: InputMaybe<Array<Tasks_Select_Column>>;
@@ -2922,6 +3514,7 @@ export type Subscription_RootTasksArgs = {
   where?: InputMaybe<Tasks_Bool_Exp>;
 };
 
+
 export type Subscription_RootTasks_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tasks_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2930,15 +3523,18 @@ export type Subscription_RootTasks_AggregateArgs = {
   where?: InputMaybe<Tasks_Bool_Exp>;
 };
 
+
 export type Subscription_RootTasks_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootTasks_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Tasks_Stream_Cursor_Input>>;
   where?: InputMaybe<Tasks_Bool_Exp>;
 };
+
 
 export type Subscription_RootTestArgs = {
   distinct_on?: InputMaybe<Array<Test_Select_Column>>;
@@ -2948,6 +3544,7 @@ export type Subscription_RootTestArgs = {
   where?: InputMaybe<Test_Bool_Exp>;
 };
 
+
 export type Subscription_RootTest_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Test_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2956,15 +3553,18 @@ export type Subscription_RootTest_AggregateArgs = {
   where?: InputMaybe<Test_Bool_Exp>;
 };
 
+
 export type Subscription_RootTest_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootTest_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Test_Stream_Cursor_Input>>;
   where?: InputMaybe<Test_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_Video_HistoryArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
@@ -2974,6 +3574,7 @@ export type Subscription_RootUser_Video_HistoryArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Video_History_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2982,15 +3583,18 @@ export type Subscription_RootUser_Video_History_AggregateArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Video_History_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootUser_Video_History_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Video_History_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
+
 
 export type Subscription_RootUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -3000,6 +3604,7 @@ export type Subscription_RootUsersArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Subscription_RootUsers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3008,15 +3613,18 @@ export type Subscription_RootUsers_AggregateArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Subscription_RootUsers_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootUsers_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Users_Stream_Cursor_Input>>;
   where?: InputMaybe<Users_Bool_Exp>;
 };
+
 
 export type Subscription_RootVideo_TagsArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
@@ -3026,6 +3634,7 @@ export type Subscription_RootVideo_TagsArgs = {
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideo_Tags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3034,16 +3643,19 @@ export type Subscription_RootVideo_Tags_AggregateArgs = {
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideo_Tags_By_PkArgs = {
   tag_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootVideo_Tags_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Video_Tags_Stream_Cursor_Input>>;
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
+
 
 export type Subscription_RootVideo_ViewsArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
@@ -3053,6 +3665,7 @@ export type Subscription_RootVideo_ViewsArgs = {
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideo_Views_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3061,15 +3674,18 @@ export type Subscription_RootVideo_Views_AggregateArgs = {
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideo_Views_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootVideo_Views_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Video_Views_Stream_Cursor_Input>>;
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
+
 
 export type Subscription_RootVideosArgs = {
   distinct_on?: InputMaybe<Array<Videos_Select_Column>>;
@@ -3079,6 +3695,7 @@ export type Subscription_RootVideosArgs = {
   where?: InputMaybe<Videos_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideos_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Videos_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3087,9 +3704,11 @@ export type Subscription_RootVideos_AggregateArgs = {
   where?: InputMaybe<Videos_Bool_Exp>;
 };
 
+
 export type Subscription_RootVideos_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
+
 
 export type Subscription_RootVideos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
@@ -3118,6 +3737,7 @@ export type Tags = {
   video_tags_aggregate: Video_Tags_Aggregate;
 };
 
+
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
 export type TagsAudio_TagsArgs = {
   distinct_on?: InputMaybe<Array<Audio_Tags_Select_Column>>;
@@ -3126,6 +3746,7 @@ export type TagsAudio_TagsArgs = {
   order_by?: InputMaybe<Array<Audio_Tags_Order_By>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
+
 
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
 export type TagsAudio_Tags_AggregateArgs = {
@@ -3136,6 +3757,7 @@ export type TagsAudio_Tags_AggregateArgs = {
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
 };
 
+
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
 export type TagsVideo_TagsArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
@@ -3144,6 +3766,7 @@ export type TagsVideo_TagsArgs = {
   order_by?: InputMaybe<Array<Video_Tags_Order_By>>;
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
+
 
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
 export type TagsVideo_Tags_AggregateArgs = {
@@ -3176,6 +3799,7 @@ export type Tags_Aggregate_Fields = {
   var_samp?: Maybe<Tags_Var_Samp_Fields>;
   variance?: Maybe<Tags_Variance_Fields>;
 };
+
 
 /** aggregate fields of "tags" */
 export type Tags_Aggregate_FieldsCountArgs = {
@@ -3213,7 +3837,7 @@ export enum Tags_Constraint {
   /** unique or primary key constraint on columns "id" */
   TagsPkey = 'tags_pkey',
   /** unique or primary key constraint on columns "slug", "site" */
-  TagsSlugSiteKey = 'tags_slug_site_key',
+  TagsSlugSiteKey = 'tags_slug_site_key'
 }
 
 /** input type for incrementing numeric columns in table "tags" */
@@ -3320,7 +3944,7 @@ export enum Tags_Select_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "tags" */
@@ -3396,7 +4020,7 @@ export enum Tags_Update_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 export type Tags_Updates = {
@@ -3441,6 +4065,7 @@ export type Tasks = {
   updated_at: Scalars['timestamptz']['output'];
 };
 
+
 /** Reference for Cloud Tasks, the goal is idempotent for Cloud Tasks */
 export type TasksMetadataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
@@ -3460,6 +4085,7 @@ export type Tasks_Aggregate_Fields = {
   max?: Maybe<Tasks_Max_Fields>;
   min?: Maybe<Tasks_Min_Fields>;
 };
+
 
 /** aggregate fields of "tasks" */
 export type Tasks_Aggregate_FieldsCountArgs = {
@@ -3496,7 +4122,7 @@ export enum Tasks_Constraint {
   /** unique or primary key constraint on columns "id" */
   TasksPkey = 'tasks_pkey',
   /** unique or primary key constraint on columns "task_id" */
-  TasksTaskIdKey = 'tasks_task_id_key',
+  TasksTaskIdKey = 'tasks_task_id_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -3615,7 +4241,7 @@ export enum Tasks_Select_Column {
   /** column name */
   Type = 'type',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "tasks" */
@@ -3675,7 +4301,7 @@ export enum Tasks_Update_Column {
   /** column name */
   Type = 'type',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 export type Tasks_Updates = {
@@ -3725,6 +4351,7 @@ export type Test_Aggregate_Fields = {
   variance?: Maybe<Test_Variance_Fields>;
 };
 
+
 /** aggregate fields of "test" */
 export type Test_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Test_Select_Column>>;
@@ -3749,7 +4376,7 @@ export type Test_Bool_Exp = {
 /** unique or primary key constraints on table "test" */
 export enum Test_Constraint {
   /** unique or primary key constraint on columns "id" */
-  TestPkey = 'test_pkey',
+  TestPkey = 'test_pkey'
 }
 
 /** input type for incrementing numeric columns in table "test" */
@@ -3809,7 +4436,7 @@ export enum Test_Select_Column {
   /** column name */
   Description = 'description',
   /** column name */
-  Id = 'id',
+  Id = 'id'
 }
 
 /** input type for updating data in table "test" */
@@ -3861,7 +4488,7 @@ export enum Test_Update_Column {
   /** column name */
   Description = 'description',
   /** column name */
-  Id = 'id',
+  Id = 'id'
 }
 
 export type Test_Updates = {
@@ -3954,6 +4581,7 @@ export type User_Video_History_Aggregate_Fields = {
   variance?: Maybe<User_Video_History_Variance_Fields>;
 };
 
+
 /** aggregate fields of "user_video_history" */
 export type User_Video_History_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<User_Video_History_Select_Column>>;
@@ -4014,7 +4642,7 @@ export enum User_Video_History_Constraint {
   /** unique or primary key constraint on columns "id" */
   UserVideoHistoryPkey = 'user_video_history_pkey',
   /** unique or primary key constraint on columns "user_id", "video_id" */
-  UserVideoHistoryUserIdVideoIdKey = 'user_video_history_user_id_video_id_key',
+  UserVideoHistoryUserIdVideoIdKey = 'user_video_history_user_id_video_id_key'
 }
 
 /** input type for incrementing numeric columns in table "user_video_history" */
@@ -4130,7 +4758,7 @@ export enum User_Video_History_Select_Column {
   /** column name */
   UserId = 'user_id',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 /** input type for updating data in table "user_video_history" */
@@ -4222,7 +4850,7 @@ export enum User_Video_History_Update_Column {
   /** column name */
   UserId = 'user_id',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 export type User_Video_History_Updates = {
@@ -4275,6 +4903,10 @@ export type Users = {
   /** An aggregate relationship */
   audios_aggregate: Audios_Aggregate;
   auth0_id: Scalars['String']['output'];
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
@@ -4298,6 +4930,7 @@ export type Users = {
   videos_aggregate: Videos_Aggregate;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersAudiosArgs = {
   distinct_on?: InputMaybe<Array<Audios_Select_Column>>;
@@ -4306,6 +4939,7 @@ export type UsersAudiosArgs = {
   order_by?: InputMaybe<Array<Audios_Order_By>>;
   where?: InputMaybe<Audios_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersAudios_AggregateArgs = {
@@ -4316,6 +4950,27 @@ export type UsersAudios_AggregateArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+
+/** columns and relationships of "users" */
+export type UsersCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
 /** columns and relationships of "users" */
 export type UsersPlaylistsArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
@@ -4324,6 +4979,7 @@ export type UsersPlaylistsArgs = {
   order_by?: InputMaybe<Array<Playlist_Order_By>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersPlaylists_AggregateArgs = {
@@ -4334,6 +4990,7 @@ export type UsersPlaylists_AggregateArgs = {
   where?: InputMaybe<Playlist_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersUser_Video_HistoriesArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
@@ -4342,6 +4999,7 @@ export type UsersUser_Video_HistoriesArgs = {
   order_by?: InputMaybe<Array<User_Video_History_Order_By>>;
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersUser_Video_Histories_AggregateArgs = {
@@ -4352,6 +5010,7 @@ export type UsersUser_Video_Histories_AggregateArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersVideo_ViewsArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
@@ -4360,6 +5019,7 @@ export type UsersVideo_ViewsArgs = {
   order_by?: InputMaybe<Array<Video_Views_Order_By>>;
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersVideo_Views_AggregateArgs = {
@@ -4370,6 +5030,7 @@ export type UsersVideo_Views_AggregateArgs = {
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersVideosArgs = {
   distinct_on?: InputMaybe<Array<Videos_Select_Column>>;
@@ -4378,6 +5039,7 @@ export type UsersVideosArgs = {
   order_by?: InputMaybe<Array<Videos_Order_By>>;
   where?: InputMaybe<Videos_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersVideos_AggregateArgs = {
@@ -4403,6 +5065,7 @@ export type Users_Aggregate_Fields = {
   min?: Maybe<Users_Min_Fields>;
 };
 
+
 /** aggregate fields of "users" */
 export type Users_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Users_Select_Column>>;
@@ -4417,6 +5080,8 @@ export type Users_Bool_Exp = {
   audios?: InputMaybe<Audios_Bool_Exp>;
   audios_aggregate?: InputMaybe<Audios_Aggregate_Bool_Exp>;
   auth0_id?: InputMaybe<String_Comparison_Exp>;
+  crawl_requests?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -4441,13 +5106,14 @@ export enum Users_Constraint {
   /** unique or primary key constraint on columns "id" */
   UsersPkey = 'users_pkey',
   /** unique or primary key constraint on columns "username" */
-  UsersUsernameKey = 'users_username_key',
+  UsersUsernameKey = 'users_username_key'
 }
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
   audios?: InputMaybe<Audios_Arr_Rel_Insert_Input>;
   auth0_id?: InputMaybe<Scalars['String']['input']>;
+  crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -4508,6 +5174,7 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   audios_aggregate?: InputMaybe<Audios_Aggregate_Order_By>;
   auth0_id?: InputMaybe<Order_By>;
+  crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -4537,7 +5204,7 @@ export enum Users_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  Username = 'username',
+  Username = 'username'
 }
 
 /** input type for updating data in table "users" */
@@ -4581,7 +5248,7 @@ export enum Users_Update_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  Username = 'username',
+  Username = 'username'
 }
 
 export type Users_Updates = {
@@ -4643,6 +5310,7 @@ export type Video_Tags_Aggregate_Fields = {
   min?: Maybe<Video_Tags_Min_Fields>;
 };
 
+
 /** aggregate fields of "video_tags" */
 export type Video_Tags_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Video_Tags_Select_Column>>;
@@ -4679,7 +5347,7 @@ export type Video_Tags_Bool_Exp = {
 /** unique or primary key constraints on table "video_tags" */
 export enum Video_Tags_Constraint {
   /** unique or primary key constraint on columns "video_id", "tag_id" */
-  VideoTagsPkey = 'video_tags_pkey',
+  VideoTagsPkey = 'video_tags_pkey'
 }
 
 /** input type for inserting data into table "video_tags" */
@@ -4767,7 +5435,7 @@ export enum Video_Tags_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 /** input type for updating data in table "video_tags" */
@@ -4803,7 +5471,7 @@ export enum Video_Tags_Update_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  VideoId = 'video_id',
+  VideoId = 'video_id'
 }
 
 export type Video_Tags_Updates = {
@@ -4852,6 +5520,7 @@ export type Video_Views_Aggregate_Fields = {
   min?: Maybe<Video_Views_Min_Fields>;
 };
 
+
 /** aggregate fields of "video_views" */
 export type Video_Views_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Video_Views_Select_Column>>;
@@ -4888,7 +5557,7 @@ export type Video_Views_Bool_Exp = {
 /** unique or primary key constraints on table "video_views" */
 export enum Video_Views_Constraint {
   /** unique or primary key constraint on columns "id" */
-  VideoViewsPkey = 'video_views_pkey',
+  VideoViewsPkey = 'video_views_pkey'
 }
 
 /** input type for inserting data into table "video_views" */
@@ -4975,7 +5644,7 @@ export enum Video_Views_Select_Column {
   /** column name */
   VideoId = 'video_id',
   /** column name */
-  ViewedAt = 'viewed_at',
+  ViewedAt = 'viewed_at'
 }
 
 /** input type for updating data in table "video_views" */
@@ -5011,7 +5680,7 @@ export enum Video_Views_Update_Column {
   /** column name */
   VideoId = 'video_id',
   /** column name */
-  ViewedAt = 'viewed_at',
+  ViewedAt = 'viewed_at'
 }
 
 export type Video_Views_Updates = {
@@ -5058,6 +5727,7 @@ export type Videos = {
   view_count?: Maybe<Scalars['Int']['output']>;
 };
 
+
 /** columns and relationships of "videos" */
 export type VideosPlaylist_VideosArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Videos_Select_Column>>;
@@ -5066,6 +5736,7 @@ export type VideosPlaylist_VideosArgs = {
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
+
 
 /** columns and relationships of "videos" */
 export type VideosPlaylist_Videos_AggregateArgs = {
@@ -5076,6 +5747,7 @@ export type VideosPlaylist_Videos_AggregateArgs = {
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
 };
 
+
 /** columns and relationships of "videos" */
 export type VideosUser_Video_HistoriesArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
@@ -5084,6 +5756,7 @@ export type VideosUser_Video_HistoriesArgs = {
   order_by?: InputMaybe<Array<User_Video_History_Order_By>>;
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
+
 
 /** columns and relationships of "videos" */
 export type VideosUser_Video_Histories_AggregateArgs = {
@@ -5094,6 +5767,7 @@ export type VideosUser_Video_Histories_AggregateArgs = {
   where?: InputMaybe<User_Video_History_Bool_Exp>;
 };
 
+
 /** columns and relationships of "videos" */
 export type VideosVideo_TagsArgs = {
   distinct_on?: InputMaybe<Array<Video_Tags_Select_Column>>;
@@ -5102,6 +5776,7 @@ export type VideosVideo_TagsArgs = {
   order_by?: InputMaybe<Array<Video_Tags_Order_By>>;
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
+
 
 /** columns and relationships of "videos" */
 export type VideosVideo_Tags_AggregateArgs = {
@@ -5112,6 +5787,7 @@ export type VideosVideo_Tags_AggregateArgs = {
   where?: InputMaybe<Video_Tags_Bool_Exp>;
 };
 
+
 /** columns and relationships of "videos" */
 export type VideosVideo_ViewsArgs = {
   distinct_on?: InputMaybe<Array<Video_Views_Select_Column>>;
@@ -5120,6 +5796,7 @@ export type VideosVideo_ViewsArgs = {
   order_by?: InputMaybe<Array<Video_Views_Order_By>>;
   where?: InputMaybe<Video_Views_Bool_Exp>;
 };
+
 
 /** columns and relationships of "videos" */
 export type VideosVideo_Views_AggregateArgs = {
@@ -5179,6 +5856,7 @@ export type Videos_Aggregate_Fields = {
   var_samp?: Maybe<Videos_Var_Samp_Fields>;
   variance?: Maybe<Videos_Variance_Fields>;
 };
+
 
 /** aggregate fields of "videos" */
 export type Videos_Aggregate_FieldsCountArgs = {
@@ -5256,7 +5934,7 @@ export enum Videos_Constraint {
   /** unique or primary key constraint on columns "id" */
   VideosPkey = 'videos_pkey',
   /** unique or primary key constraint on columns "slug" */
-  VideosSlugUnique = 'videos_slug_unique',
+  VideosSlugUnique = 'videos_slug_unique'
 }
 
 /** input type for incrementing numeric columns in table "videos" */
@@ -5438,19 +6116,19 @@ export enum Videos_Select_Column {
   /** column name */
   VideoUrl = 'video_url',
   /** column name */
-  ViewCount = 'view_count',
+  ViewCount = 'view_count'
 }
 
 /** select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Public = 'public',
+  Public = 'public'
 }
 
 /** input type for updating data in table "videos" */
@@ -5578,7 +6256,7 @@ export enum Videos_Update_Column {
   /** column name */
   VideoUrl = 'video_url',
   /** column name */
-  ViewCount = 'view_count',
+  ViewCount = 'view_count'
 }
 
 export type Videos_Updates = {
@@ -5629,51 +6307,22 @@ export type Videos_Variance_Order_By = {
   view_count?: InputMaybe<Order_By>;
 };
 
-export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type GetAudiosAndFeelingsQuery = {
-  __typename?: 'query_root';
-  audios: Array<{
-    __typename?: 'audios';
-    id: any;
-    name: string;
-    source: string;
-    thumbnailUrl?: string | null;
-    public: boolean;
-    artistName: string;
-    createdAt: any;
-    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
-  }>;
-  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
-};
 
-export type GetPublicAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAudiosAndFeelingsQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, public: boolean, artistName: string, createdAt: any, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }> };
 
-export type GetPublicAudiosAndFeelingsQuery = {
-  __typename?: 'query_root';
-  audios: Array<{
-    __typename?: 'audios';
-    id: any;
-    name: string;
-    source: string;
-    thumbnailUrl?: string | null;
-    artistName: string;
-    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
-  }>;
-  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
-};
+export type GetPublicAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPublicAudiosAndFeelingsQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
 
-export type InsertVideosMutation = {
-  __typename?: 'mutation_root';
-  insert_videos?: {
-    __typename?: 'videos_mutation_response';
-    returning: Array<{ __typename?: 'videos'; id: any; title: string; description?: string | null }>;
-  } | null;
-};
+
+export type InsertVideosMutation = { __typename?: 'mutation_root', insert_videos?: { __typename?: 'videos_mutation_response', returning: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null }> } | null };
 
 export type UpdateVideoProgressMutationVariables = Exact<{
   videoId: Scalars['uuid']['input'];
@@ -5681,127 +6330,72 @@ export type UpdateVideoProgressMutationVariables = Exact<{
   lastWatchedAt: Scalars['timestamptz']['input'];
 }>;
 
-export type UpdateVideoProgressMutation = {
-  __typename?: 'mutation_root';
-  insert_user_video_history_one?: {
-    __typename?: 'user_video_history';
-    id: any;
-    progress_seconds: number;
-    last_watched_at: any;
-  } | null;
-};
 
-export type UserFieldsFragment = { __typename?: 'users'; username?: string | null } & {
-  ' $fragmentName'?: 'UserFieldsFragment';
-};
+export type UpdateVideoProgressMutation = { __typename?: 'mutation_root', insert_user_video_history_one?: { __typename?: 'user_video_history', id: any, progress_seconds: number, last_watched_at: any } | null };
 
-export type VideoFieldsFragment = {
-  __typename?: 'videos';
-  id: any;
-  title: string;
-  description?: string | null;
-  duration?: number | null;
-  thumbnailUrl?: string | null;
-  source?: string | null;
-  slug: string;
-  createdAt?: any | null;
-  user: { __typename?: 'users' } & { ' $fragmentRefs'?: { UserFieldsFragment: UserFieldsFragment } };
-  user_video_histories: Array<{ __typename?: 'user_video_history'; last_watched_at: any; progress_seconds: number }>;
-} & { ' $fragmentName'?: 'VideoFieldsFragment' };
+export type UserFieldsFragment = { __typename?: 'users', username?: string | null } & { ' $fragmentName'?: 'UserFieldsFragment' };
 
-export type PlaylistVideoFieldsFragment = {
-  __typename?: 'playlist_videos';
-  position: number;
-  video: { __typename?: 'videos' } & { ' $fragmentRefs'?: { VideoFieldsFragment: VideoFieldsFragment } };
-} & { ' $fragmentName'?: 'PlaylistVideoFieldsFragment' };
+export type VideoFieldsFragment = { __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user: (
+    { __typename?: 'users' }
+    & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+  ), user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> } & { ' $fragmentName'?: 'VideoFieldsFragment' };
 
-export type PlaylistFieldsFragment = {
-  __typename?: 'playlist';
-  id: any;
-  title: string;
-  thumbnailUrl?: string | null;
-  slug: string;
-  createdAt: any;
-  description?: string | null;
-  user: { __typename?: 'users' } & { ' $fragmentRefs'?: { UserFieldsFragment: UserFieldsFragment } };
-  playlist_videos: Array<
-    { __typename?: 'playlist_videos' } & {
-      ' $fragmentRefs'?: { PlaylistVideoFieldsFragment: PlaylistVideoFieldsFragment };
-    }
-  >;
-} & { ' $fragmentName'?: 'PlaylistFieldsFragment' };
+export type PlaylistVideoFieldsFragment = { __typename?: 'playlist_videos', position: number, video: (
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  ) } & { ' $fragmentName'?: 'PlaylistVideoFieldsFragment' };
 
-export type UserVideoHistoryQueryVariables = Exact<{ [key: string]: never }>;
+export type PlaylistFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl?: string | null, slug: string, createdAt: any, description?: string | null, user: (
+    { __typename?: 'users' }
+    & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+  ), playlist_videos: Array<(
+    { __typename?: 'playlist_videos' }
+    & { ' $fragmentRefs'?: { 'PlaylistVideoFieldsFragment': PlaylistVideoFieldsFragment } }
+  )> } & { ' $fragmentName'?: 'PlaylistFieldsFragment' };
 
-export type UserVideoHistoryQuery = {
-  __typename?: 'query_root';
-  user_video_history: Array<{
-    __typename?: 'user_video_history';
-    id: any;
-    last_watched_at: any;
-    progress_seconds: number;
-    video: {
-      __typename?: 'videos';
-      id: any;
-      title: string;
-      source?: string | null;
-      slug: string;
-      thumbnailUrl?: string | null;
-      duration?: number | null;
-      createdAt?: any | null;
-      user: { __typename?: 'users' } & { ' $fragmentRefs'?: { UserFieldsFragment: UserFieldsFragment } };
-      playlist_videos: Array<{
-        __typename?: 'playlist_videos';
-        playlist: { __typename?: 'playlist'; id: any; slug: string; title: string; thumbnailUrl?: string | null };
-      }>;
-    };
-  }>;
-};
+export type UserVideoHistoryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_history: Array<{ __typename?: 'user_video_history', id: any, last_watched_at: any, progress_seconds: number, video: { __typename?: 'videos', id: any, title: string, source?: string | null, slug: string, thumbnailUrl?: string | null, duration?: number | null, createdAt?: any | null, user: (
+        { __typename?: 'users' }
+        & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
+      ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl?: string | null } }> } }> };
 
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
-export type PlaylistDetailQuery = {
-  __typename?: 'query_root';
-  playlist_by_pk?:
-    | ({ __typename?: 'playlist' } & { ' $fragmentRefs'?: { PlaylistFieldsFragment: PlaylistFieldsFragment } })
-    | null;
-};
 
-export type PlaylistsQueryVariables = Exact<{ [key: string]: never }>;
+export type PlaylistDetailQuery = { __typename?: 'query_root', playlist_by_pk?: (
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'PlaylistFieldsFragment': PlaylistFieldsFragment } }
+  ) | null };
 
-export type PlaylistsQuery = {
-  __typename?: 'query_root';
-  playlist: Array<{ __typename?: 'playlist'; title: string; id: any; slug: string }>;
-};
+export type PlaylistsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PlaylistsQuery = { __typename?: 'query_root', playlist: Array<{ __typename?: 'playlist', title: string, id: any, slug: string }> };
 
 export type VideoDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
-export type VideoDetailQuery = {
-  __typename?: 'query_root';
-  videos: Array<{ __typename?: 'videos' } & { ' $fragmentRefs'?: { VideoFieldsFragment: VideoFieldsFragment } }>;
-  videos_by_pk?: {
-    __typename?: 'videos';
-    id: any;
-    source?: string | null;
-    thumbnailUrl?: string | null;
-    title: string;
-    description?: string | null;
-  } | null;
-};
 
-export type AllVideosQueryVariables = Exact<{ [key: string]: never }>;
+export type VideoDetailQuery = { __typename?: 'query_root', videos: Array<(
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  )>, videos_by_pk?: { __typename?: 'videos', id: any, source?: string | null, thumbnailUrl?: string | null, title: string, description?: string | null } | null };
 
-export type AllVideosQuery = {
-  __typename?: 'query_root';
-  videos: Array<{ __typename?: 'videos' } & { ' $fragmentRefs'?: { VideoFieldsFragment: VideoFieldsFragment } }>;
-  playlist: Array<
-    { __typename?: 'playlist' } & { ' $fragmentRefs'?: { PlaylistFieldsFragment: PlaylistFieldsFragment } }
-  >;
-};
+export type AllVideosQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllVideosQuery = { __typename?: 'query_root', videos: Array<(
+    { __typename?: 'videos' }
+    & { ' $fragmentRefs'?: { 'VideoFieldsFragment': VideoFieldsFragment } }
+  )>, playlist: Array<(
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'PlaylistFieldsFragment': PlaylistFieldsFragment } }
+  )> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -5817,16 +6411,12 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-export const UserFieldsFragmentDoc = new TypedDocumentString(
-  `
+export const UserFieldsFragmentDoc = new TypedDocumentString(`
     fragment UserFields on users {
   username
 }
-    `,
-  { fragmentName: 'UserFields' }
-) as unknown as TypedDocumentString<UserFieldsFragment, unknown>;
-export const VideoFieldsFragmentDoc = new TypedDocumentString(
-  `
+    `, {"fragmentName":"UserFields"}) as unknown as TypedDocumentString<UserFieldsFragment, unknown>;
+export const VideoFieldsFragmentDoc = new TypedDocumentString(`
     fragment VideoFields on videos {
   id
   title
@@ -5846,11 +6436,8 @@ export const VideoFieldsFragmentDoc = new TypedDocumentString(
 }
     fragment UserFields on users {
   username
-}`,
-  { fragmentName: 'VideoFields' }
-) as unknown as TypedDocumentString<VideoFieldsFragment, unknown>;
-export const PlaylistVideoFieldsFragmentDoc = new TypedDocumentString(
-  `
+}`, {"fragmentName":"VideoFields"}) as unknown as TypedDocumentString<VideoFieldsFragment, unknown>;
+export const PlaylistVideoFieldsFragmentDoc = new TypedDocumentString(`
     fragment PlaylistVideoFields on playlist_videos {
   position
   video {
@@ -5876,11 +6463,8 @@ fragment VideoFields on videos {
     last_watched_at
     progress_seconds
   }
-}`,
-  { fragmentName: 'PlaylistVideoFields' }
-) as unknown as TypedDocumentString<PlaylistVideoFieldsFragment, unknown>;
-export const PlaylistFieldsFragmentDoc = new TypedDocumentString(
-  `
+}`, {"fragmentName":"PlaylistVideoFields"}) as unknown as TypedDocumentString<PlaylistVideoFieldsFragment, unknown>;
+export const PlaylistFieldsFragmentDoc = new TypedDocumentString(`
     fragment PlaylistFields on playlist {
   id
   title
@@ -5920,9 +6504,7 @@ fragment PlaylistVideoFields on playlist_videos {
   video {
     ...VideoFields
   }
-}`,
-  { fragmentName: 'PlaylistFields' }
-) as unknown as TypedDocumentString<PlaylistFieldsFragment, unknown>;
+}`, {"fragmentName":"PlaylistFields"}) as unknown as TypedDocumentString<PlaylistFieldsFragment, unknown>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {
@@ -6076,7 +6658,7 @@ export const PlaylistsDocument = new TypedDocumentString(`
 export const VideoDetailDocument = new TypedDocumentString(`
     query VideoDetail($id: uuid!) @cached {
   videos(
-    where: {_and: {_not: {playlist_videos: {}}, source: {_is_null: false}}}
+    where: {_and: {_not: {playlist_videos: {}}, status: {_eq: "ready"}}}
     order_by: {createdAt: desc}
   ) {
     ...VideoFields
@@ -6112,7 +6694,7 @@ fragment VideoFields on videos {
 export const AllVideosDocument = new TypedDocumentString(`
     query AllVideos @cached {
   videos(
-    where: {_and: {_not: {playlist_videos: {}}, source: {_is_null: false}}}
+    where: {_and: {_not: {playlist_videos: {}}, status: {_eq: "ready"}}}
     order_by: {createdAt: desc}
   ) {
     ...VideoFields
