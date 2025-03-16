@@ -71,6 +71,7 @@ select_permissions:
         - id
         - slug
         - source
+        - status
         - thumbnail_url
         - title
       filter:
@@ -87,6 +88,7 @@ select_permissions:
         - public
         - slug
         - source
+        - status
         - thumbnail_url
         - title
       filter:
