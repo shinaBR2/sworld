@@ -69,6 +69,7 @@ select_permissions:
           - video:
               public:
                 _eq: true
+      allow_aggregations: true
       query_root_fields: []
       subscription_root_fields: []
     comment: ""
