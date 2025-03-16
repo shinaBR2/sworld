@@ -20,6 +20,7 @@ const allowedQueries: QueryTestCase[] = [
           slug
           thumbnailUrl
           source
+          status
         }
       }
     `,
@@ -48,6 +49,7 @@ const allowedQueries: QueryTestCase[] = [
           id
           title
           description
+          status
         }
       }
     `,
@@ -142,6 +144,7 @@ const allowedUserQueries: QueryTestCase[] = [
           thumbnailUrl
           duration
           source
+          status
           createdAt
         }
       }
