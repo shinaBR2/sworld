@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
-import { useMutationRequest } from '../../../universal/hooks/useMutation';
 import { graphql } from '../../../graphql';
 import { UpdateVideoProgressMutation } from '../../../graphql/graphql';
+import { useMutationRequest } from '../../../universal/hooks/useMutation';
 
 interface UpdateVideoProgressVars {
   videoId: string;
