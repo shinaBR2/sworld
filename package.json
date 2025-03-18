@@ -3,7 +3,7 @@
   "private": false,
   "engines": {
     "node": ">=20.10.0",
-    "pnpm": ">=9.12.2"
+    "pnpm": ">=9.4.0"
   },
   "scripts": {
     "build": "turbo run build",
