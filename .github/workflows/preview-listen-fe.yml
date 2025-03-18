@@ -119,6 +119,7 @@ jobs:
           echo "details_url: ${{ steps.deploy.outputs.details_url }}"
           echo "hosting_url: ${{ steps.deploy.outputs.hosting_url }}"
           echo "All outputs: ${{ toJSON(steps.deploy.outputs) }}"
+          echo "All outputs: ${{ steps.deploy.outputs.urls[0] }}"
       - name: Verify preview URL
         run: |
           if [ -z "${{ steps.deploy.outputs.details_url }}" ]; then
@@ -136,7 +137,7 @@ jobs:
           pnpm exec playwright install --with-deps
           pnpm run e2e
         env:
-          VITE_LISTEN_SITE_URL: ${{ steps.deploy.outputs.urls[0] }}
+          VITE_LISTEN_SITE_URL: ${{ steps.deploy.outputs.hosting_url }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
