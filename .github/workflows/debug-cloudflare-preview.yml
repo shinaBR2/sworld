@@ -1,0 +1,15 @@
+name: Debug Cloudflare Deployment
+
+on:
+  deployment_status:
+
+jobs:
+  log-deployment-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log deployment details
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Deployment Status: ${{ github.event.deployment_status.state }}"
+          echo "Environment: ${{ github.event.deployment_status.environment }}"
+          echo "Target URL: ${{ github.event.deployment_status.target_url }}"
