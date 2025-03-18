@@ -136,7 +136,7 @@ jobs:
           pnpm exec playwright install --with-deps
           pnpm run e2e
         env:
-          VITE_LISTEN_SITE_URL: ${{ steps.deploy.outputs.details_url }}
+          VITE_LISTEN_SITE_URL: ${{ steps.deploy.outputs.urls[0] }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
