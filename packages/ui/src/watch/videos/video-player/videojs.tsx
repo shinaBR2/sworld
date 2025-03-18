@@ -121,7 +121,7 @@ export const VideoJS = (props: VideoJSProps) => {
       const player = playerRef.current;
 
       if (player) {
-        player.autoplay(options.autoplay);
+        player.autoplay((options as VideoJsOptions).autoplay);
         player.src(options.sources);
       }
     }
