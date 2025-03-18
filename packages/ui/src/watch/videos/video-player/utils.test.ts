@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getVideoPlayerOptions } from '../utils';
+import { getVideoPlayerOptions } from './utils';
 
 describe('Video Player Utils', () => {
   describe('getVideoPlayerOptions', () => {
