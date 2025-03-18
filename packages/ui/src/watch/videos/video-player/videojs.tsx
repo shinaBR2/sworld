@@ -111,7 +111,7 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('pause', handlePause);
         player.on('ended', handleEnded);
 
-        videojs.log('player is ready');
+        console.log('player is ready');
         playerRef.current = player;
       });
 
@@ -135,10 +135,17 @@ export const VideoJS = (props: VideoJSProps) => {
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
-        cleanup();
       }
     };
   }, [playerRef]);
+
+  useEffect(() => {
+    console.log('Setting up cleanup effect');
+    return () => {
+      console.log('Running cleanup effect');
+      cleanup();
+    };
+  }, []);
 
   return (
     <div data-vjs-player>
