@@ -42,7 +42,7 @@ jobs:
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
       - name: Deploy docs
-        uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
+        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
           target: 'docs'
           entryPoint: 'apps/docs'
@@ -84,7 +84,7 @@ jobs:
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
       - name: Deploy docs
-        uses: FirebaseExtended/action-hosting-deploy@0f248036885ae672f78587669fa2923f0ef6cac2
+        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
           target: 'docs'
           entryPoint: 'apps/docs'
