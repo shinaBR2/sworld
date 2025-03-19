@@ -67,8 +67,6 @@ export const VideoJS = (props: VideoJSProps) => {
     // onError,
   });
 
-  console.log(`videoJS rerendered`);
-
   useEffect(() => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current && videoRef.current) {
@@ -82,7 +80,6 @@ export const VideoJS = (props: VideoJSProps) => {
         let lastUpdateSeconds = -1;
 
         player.on('play', () => {
-          console.log(`on play`);
           handlePlay();
         });
 
@@ -111,7 +108,6 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('pause', handlePause);
         player.on('ended', handleEnded);
 
-        console.log('player is ready');
         playerRef.current = player;
       });
 
@@ -140,9 +136,7 @@ export const VideoJS = (props: VideoJSProps) => {
   }, [playerRef]);
 
   useEffect(() => {
-    console.log('Setting up cleanup effect');
     return () => {
-      console.log('Running cleanup effect');
       cleanup();
     };
   }, []);

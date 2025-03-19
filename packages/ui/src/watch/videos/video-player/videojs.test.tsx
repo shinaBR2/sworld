@@ -41,7 +41,7 @@ const mockHandlers = {
   cleanup: vi.fn(),
 };
 
-describe.only('VideoJS', () => {
+describe('VideoJS', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
