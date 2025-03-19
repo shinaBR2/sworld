@@ -54,7 +54,7 @@ jobs:
           VITE_ROLLBAR_TOKEN: ${{ vars.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'development'
       - name: Deploy game
-        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
+        uses: FirebaseExtended/action-hosting-deploy@v0.8.0
         with:
           target: 'game'
           entryPoint: 'apps/game'
@@ -104,7 +104,7 @@ jobs:
           VITE_ROLLBAR_TOKEN: ${{ vars.VITE_ROLLBAR_TOKEN }}
           VITE_ROLLBAR_ENV: 'production'
       - name: Deploy game
-        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
+        uses: FirebaseExtended/action-hosting-deploy@v0.8.0
         with:
           target: 'game'
           entryPoint: 'apps/game'
