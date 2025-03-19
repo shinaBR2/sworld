@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuthContext } from '../../../providers/auth';
-import type { SubscriptionState, WebSocketMessage } from './types';
 import { createConnectionError } from '../../error-boundary/errors';
-import { createExponentialBackoff, SubscriptionErrorType } from './helpers';
 import { useTracker } from '../../tracker';
+import { createExponentialBackoff, SubscriptionErrorType } from './helpers';
+import type { SubscriptionState, WebSocketMessage } from './types';
 
 interface ConnectionInfo {
   ws: WebSocket;
@@ -199,7 +199,8 @@ export function useSubscription<T>(
   );
 
   const createWebSocketConnection = useCallback(() => {
-    const ws = new WebSocket(hasuraUrl, 'graphql-ws');
+    const wsUrl = hasuraUrl.replace('https://', 'wss://');
+    const ws = new WebSocket(wsUrl, 'graphql-ws');
     const subscriptionId = Math.random().toString(36).substring(2, 11);
     const connection = { ws, subscriptionId };
 
