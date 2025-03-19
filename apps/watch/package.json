@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "pre-dev": "cp ../../.env.development.local .env",
     "lint": "eslint .",
     "dev": "pnpm run pre-dev && vite",
@@ -18,18 +19,15 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
     "@tanstack/router-plugin": "^1.78.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.2.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
+    "eslint-config-custom": "workspace:*",
     "globals": "^15.12.0",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
     "typescript": "^5.6.2",
-    "typescript-eslint": "^8.15.0",
     "vite": "^6.0.0"
   }
 }

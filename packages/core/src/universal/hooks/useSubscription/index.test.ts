@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useSubscription } from './index';
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthContextValue, useAuthContext } from '../../../providers/auth';
-import { SubscriptionErrorType } from './helpers';
 import { useTracker } from '../../tracker';
+import { SubscriptionErrorType } from './helpers';
+import { useSubscription } from './index';
 
 // Mock the dependencies
 vi.mock('../../../providers/auth', () => ({
@@ -351,5 +351,12 @@ describe('useSubscription', () => {
       extras,
       fingerprint,
     });
+  });
+
+  it('should convert HTTP/HTTPS URLs to WS/WSS', () => {
+    const httpsUrl = 'https://hasura.example.com/graphql';
+
+    renderHook(() => useSubscription(httpsUrl, mockQuery));
+    expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
   });
 });
