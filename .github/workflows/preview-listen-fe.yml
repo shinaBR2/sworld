@@ -54,7 +54,7 @@ jobs:
           VITE_ROLLBAR_ENV: 'development'
       - name: Deploy listen
         id: deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0.8.0
+        uses: FirebaseExtended/action-hosting-deploy@v0.7.2
         with:
           target: 'listen'
           entryPoint: 'apps/listen'
@@ -106,7 +106,7 @@ jobs:
           VITE_ROLLBAR_ENV: 'production'
       - name: Deploy listen
         id: deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0.8.0
+        uses: FirebaseExtended/action-hosting-deploy@v0.7.2
         with:
           target: 'listen'
           entryPoint: 'apps/listen'
