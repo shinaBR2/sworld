@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import type Player from 'video.js/dist/types/player';
@@ -56,9 +56,16 @@ export const VideoJS = (props: VideoJSProps) => {
   //   //   },
   //   // ],
   // };
-  const options = getVideoPlayerOptions(video.source, {
-    ...videoJsOptions,
-  });
+
+  // This is IMPORTANT to memoize the options object
+  // Otherwise, the player will be reinitialized on every render
+  const options = useMemo(
+    () =>
+      getVideoPlayerOptions(video.source, {
+        ...videoJsOptions,
+      }),
+    [video.source, JSON.stringify(videoJsOptions)]
+  );
 
   const { getAccessToken } = useAuthContext();
   const { handleProgress, handlePlay, handlePause, handleSeek, handleEnded, cleanup } = useVideoProgress({
@@ -110,9 +117,6 @@ export const VideoJS = (props: VideoJSProps) => {
 
         playerRef.current = player;
       });
-
-      // You could update an existing player in the `else` block here
-      // on prop change, for example:
     } else {
       const player = playerRef.current;
 
@@ -121,9 +125,8 @@ export const VideoJS = (props: VideoJSProps) => {
         player.src(options.sources);
       }
     }
-  }, [options, videoRef, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
+  }, [options, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
 
-  // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
     const player = playerRef.current;
 
