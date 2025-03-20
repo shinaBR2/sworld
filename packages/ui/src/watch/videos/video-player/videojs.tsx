@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import type Player from 'video.js/dist/types/player';
@@ -56,9 +56,16 @@ export const VideoJS = (props: VideoJSProps) => {
   //   //   },
   //   // ],
   // };
-  const options = getVideoPlayerOptions(video.source, {
-    ...videoJsOptions,
-  });
+
+  // This is IMPORTANT to memoize the options object
+  // Otherwise, the player will be reinitialized on every render
+  const options = useMemo(
+    () =>
+      getVideoPlayerOptions(video.source, {
+        ...videoJsOptions,
+      }),
+    [video.source, JSON.stringify(videoJsOptions)]
+  );
 
   const { getAccessToken } = useAuthContext();
   const { handleProgress, handlePlay, handlePause, handleSeek, handleEnded, cleanup } = useVideoProgress({
@@ -67,9 +74,13 @@ export const VideoJS = (props: VideoJSProps) => {
     // onError,
   });
 
+  console.log('VideoJS rendered', options);
+
   useEffect(() => {
+    console.log('VideoJS first useEffect');
     // Make sure Video.js player is only initialized once
     if (!playerRef.current && videoRef.current) {
+      console.log('VideoJS first useEffect first if');
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
       const videoElement = document.createElement('video-js');
 
@@ -109,34 +120,37 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('ended', handleEnded);
 
         playerRef.current = player;
+        console.log('VideoJS first useEffect after assign player');
       });
-
-      // You could update an existing player in the `else` block here
-      // on prop change, for example:
     } else {
       const player = playerRef.current;
+      console.log('VideoJS first useEffect else', player);
 
       if (player) {
         player.autoplay((options as VideoJsOptions).autoplay);
         player.src(options.sources);
       }
     }
-  }, [options, videoRef, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
+  }, [options, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
 
-  // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
+    console.log('VideoJS second useEffect');
     const player = playerRef.current;
 
     return () => {
+      console.log('VideoJS second useEffect in return');
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
+        console.log('VideoJS second useEffect in return, player disposed');
       }
     };
   }, [playerRef]);
 
   useEffect(() => {
+    console.log('VideoJS last useEffect');
     return () => {
+      console.log('VideoJS last useEffect cleanup');
       cleanup();
     };
   }, [cleanup]);
