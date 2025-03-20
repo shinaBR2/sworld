@@ -74,13 +74,9 @@ export const VideoJS = (props: VideoJSProps) => {
     // onError,
   });
 
-  console.log('VideoJS rendered', options);
-
   useEffect(() => {
-    console.log('VideoJS first useEffect');
     // Make sure Video.js player is only initialized once
     if (!playerRef.current && videoRef.current) {
-      console.log('VideoJS first useEffect first if');
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
       const videoElement = document.createElement('video-js');
 
@@ -120,11 +116,9 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('ended', handleEnded);
 
         playerRef.current = player;
-        console.log('VideoJS first useEffect after assign player');
       });
     } else {
       const player = playerRef.current;
-      console.log('VideoJS first useEffect else', player);
 
       if (player) {
         player.autoplay((options as VideoJsOptions).autoplay);
@@ -134,23 +128,18 @@ export const VideoJS = (props: VideoJSProps) => {
   }, [options, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
 
   useEffect(() => {
-    console.log('VideoJS second useEffect');
     const player = playerRef.current;
 
     return () => {
-      console.log('VideoJS second useEffect in return');
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
-        console.log('VideoJS second useEffect in return, player disposed');
       }
     };
   }, [playerRef]);
 
   useEffect(() => {
-    console.log('VideoJS last useEffect');
     return () => {
-      console.log('VideoJS last useEffect cleanup');
       cleanup();
     };
   }, [cleanup]);
