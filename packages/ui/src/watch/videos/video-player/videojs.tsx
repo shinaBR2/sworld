@@ -121,7 +121,7 @@ export const VideoJS = (props: VideoJSProps) => {
         player.src(options.sources);
       }
     }
-  }, [options, videoRef]);
+  }, [options, videoRef, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
 
   // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
@@ -139,7 +139,7 @@ export const VideoJS = (props: VideoJSProps) => {
     return () => {
       cleanup();
     };
-  }, []);
+  }, [cleanup]);
 
   return (
     <div data-vjs-player>
