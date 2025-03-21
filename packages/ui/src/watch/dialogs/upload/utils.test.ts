@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { buildVariables, canPlayUrls } from './utils';
+import { describe, expect, it, vi } from 'vitest';
 import { DialogState } from './types';
+import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST } from './utils';
 
 // Mock react-player
 vi.mock('react-player', () => ({
@@ -101,7 +101,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should add playlist data when playlistId is provided', () => {
+  it('should add playlist data when playlistId is provided (isUseExistedPlaylist)', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -131,7 +131,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should use provided videoPositionInPlaylist for existing playlist', () => {
+  it('should use provided videoPositionInPlaylist for existing playlist (isUseExistedPlaylist)', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -162,11 +162,12 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should create new playlist when newPlaylistName is provided', () => {
+  it('should create new playlist when playlistId is CREATE_NEW_PLAYLIST and newPlaylistName is provided (isCreateNewPlaylist)', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: 'My New Playlist',
     } as DialogState;
 
@@ -197,11 +198,12 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should use provided videoPositionInPlaylist for new playlist', () => {
+  it('should use provided videoPositionInPlaylist for new playlist (isCreateNewPlaylist)', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: 'My New Playlist',
       videoPositionInPlaylist: 3,
     } as DialogState;
@@ -233,12 +235,36 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should prioritize playlistId over newPlaylistName if both are provided', () => {
+  it('should not add playlist data when playlistId is CREATE_NEW_PLAYLIST but newPlaylistName is missing', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
-      playlistId: 'playlist-123',
+      playlistId: CREATE_NEW_PLAYLIST,
+      // newPlaylistName is missing
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          // No playlist_videos property
+        },
+      ],
+    });
+  });
+
+  it('should prioritize existing playlist when both playlistId and newPlaylistName are provided (isUseExistedPlaylist)', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      playlistId: 'playlist-123', // Not CREATE_NEW_PLAYLIST
       newPlaylistName: 'My New Playlist', // This should be ignored
       videoPositionInPlaylist: 2,
     } as DialogState;
