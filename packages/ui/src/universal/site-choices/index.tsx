@@ -8,7 +8,7 @@ import Menu from '@mui/material/Menu';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
-import { LibraryBooks, MenuBook } from '@mui/icons-material';
+import { MenuBook } from '@mui/icons-material';
 
 const sites = [
   {

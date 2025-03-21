@@ -1,16 +1,12 @@
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import { Auth } from 'core';
-import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
 // TODO fix this
-import { RequiredLinkComponent } from '../../watch/videos/types';
+import { WithLinkComponent } from '../../watch/videos/types';
 
-interface HeaderProps extends RequiredLinkComponent {
+interface HeaderProps extends WithLinkComponent {
   sites: {
     listen: string;
     watch: string;
@@ -33,7 +29,7 @@ const Header = (props: HeaderProps) => {
           }}
         >
           <Logo LinkComponent={LinkComponent} />
-          <SiteChoices activeSite="watch" sites={sites} />
+          <SiteChoices activeSite="til" sites={sites} />
         </Box>
       </Toolbar>
     </AppBar>

@@ -14,6 +14,7 @@ interface HeaderProps {
     listen: string;
     watch: string;
     play: string;
+    til: string;
   };
   user: Auth.CustomUser | null;
 }

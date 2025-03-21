@@ -9,6 +9,7 @@ const appConfig = {
     listen: import.meta.env.VITE_LISTEN_SITE_URL,
     watch: import.meta.env.VITE_WATCH_SITE_URL,
     play: import.meta.env.VITE_PLAY_SITE_URL,
+    til: import.meta.env.VITE_PLAY_SITE_URL,
   },
 };
 
