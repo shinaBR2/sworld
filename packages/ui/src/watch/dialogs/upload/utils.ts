@@ -1,7 +1,7 @@
+import { slugify } from 'core/universal/common';
 import { BulkConvertVariables } from 'core/watch/mutation-hooks/bulk-convert';
 import { DialogState } from './types';
 import { ValidationResult } from './validation-results';
-import { slugify } from 'core/universal/common';
 
 const CLOSE_DELAY_MS = 3000;
 const CREATE_NEW_PLAYLIST = '__create-new';
@@ -32,8 +32,28 @@ const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
   );
 };
 
+const formalizeState = (dialogState: DialogState) => {
+  const { title, description, url, playlistId, newPlaylistName, videoPositionInPlaylist } = dialogState;
+
+  return {
+    title: title?.trim(),
+    description: description?.trim() || '',
+    url: url?.trim(),
+    playlistId,
+    newPlaylistName: newPlaylistName?.trim(),
+    videoPositionInPlaylist,
+  };
+};
+
 const buildVariables = (dialogState: DialogState) => {
-  const { title, description = '', url, playlistId, newPlaylistName, videoPositionInPlaylist = 0 } = dialogState;
+  const {
+    title,
+    description = '',
+    url,
+    playlistId,
+    newPlaylistName,
+    videoPositionInPlaylist = 0,
+  } = formalizeState(dialogState);
 
   const variables: BulkConvertVariables = {
     objects: [
@@ -46,8 +66,11 @@ const buildVariables = (dialogState: DialogState) => {
     ],
   };
 
-  if (playlistId || newPlaylistName) {
-    const playlistVideoData = playlistId
+  const isCreateNewPlaylist = playlistId === CREATE_NEW_PLAYLIST && newPlaylistName;
+  const isUseExistedPlaylist = playlistId && playlistId !== CREATE_NEW_PLAYLIST;
+
+  if (isCreateNewPlaylist || isUseExistedPlaylist) {
+    const playlistVideoData = isUseExistedPlaylist
       ? { playlist_id: playlistId, position: videoPositionInPlaylist }
       : {
           position: videoPositionInPlaylist,
@@ -67,4 +90,4 @@ const buildVariables = (dialogState: DialogState) => {
   return variables;
 };
 
-export { CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, canPlayUrls, buildVariables };
+export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, formalizeState };
