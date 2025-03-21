@@ -1227,6 +1227,10 @@ export type Mutation_Root = {
   delete_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** delete single row from the table: "playlist_videos" */
   delete_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** delete data from the table: "subtitles" */
+  delete_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** delete single row from the table: "subtitles" */
+  delete_subtitles_by_pk?: Maybe<Subtitles>;
   /** delete data from the table: "tags" */
   delete_tags?: Maybe<Tags_Mutation_Response>;
   /** delete single row from the table: "tags" */
@@ -1283,6 +1287,10 @@ export type Mutation_Root = {
   insert_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** insert a single row into the table: "playlist_videos" */
   insert_playlist_videos_one?: Maybe<Playlist_Videos>;
+  /** insert data into the table: "subtitles" */
+  insert_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** insert a single row into the table: "subtitles" */
+  insert_subtitles_one?: Maybe<Subtitles>;
   /** insert data into the table: "tags" */
   insert_tags?: Maybe<Tags_Mutation_Response>;
   /** insert a single row into the table: "tags" */
@@ -1351,6 +1359,12 @@ export type Mutation_Root = {
   update_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** update multiples rows of table: "playlist_videos" */
   update_playlist_videos_many?: Maybe<Array<Maybe<Playlist_Videos_Mutation_Response>>>;
+  /** update data of the table: "subtitles" */
+  update_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** update single row of the table: "subtitles" */
+  update_subtitles_by_pk?: Maybe<Subtitles>;
+  /** update multiples rows of table: "subtitles" */
+  update_subtitles_many?: Maybe<Array<Maybe<Subtitles_Mutation_Response>>>;
   /** update data of the table: "tags" */
   update_tags?: Maybe<Tags_Mutation_Response>;
   /** update single row of the table: "tags" */
@@ -1473,6 +1487,18 @@ export type Mutation_RootDelete_Playlist_VideosArgs = {
 export type Mutation_RootDelete_Playlist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_SubtitlesArgs = {
+  where: Subtitles_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Subtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1654,6 +1680,20 @@ export type Mutation_RootInsert_Playlist_VideosArgs = {
 export type Mutation_RootInsert_Playlist_Videos_OneArgs = {
   object: Playlist_Videos_Insert_Input;
   on_conflict?: InputMaybe<Playlist_Videos_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_SubtitlesArgs = {
+  objects: Array<Subtitles_Insert_Input>;
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Subtitles_OneArgs = {
+  object: Subtitles_Insert_Input;
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
 };
 
 
@@ -1898,6 +1938,26 @@ export type Mutation_RootUpdate_Playlist_Videos_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_Videos_ManyArgs = {
   updates: Array<Playlist_Videos_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_SubtitlesArgs = {
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  where: Subtitles_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Subtitles_By_PkArgs = {
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  pk_columns: Subtitles_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Subtitles_ManyArgs = {
+  updates: Array<Subtitles_Updates>;
 };
 
 
@@ -2802,6 +2862,12 @@ export type Query_Root = {
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   /** fetch data from the table: "playlist_videos" using primary key columns */
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
+  /** fetch data from the table: "subtitles" using primary key columns */
+  subtitles_by_pk?: Maybe<Subtitles>;
   /** fetch data from the table: "tags" */
   tags: Array<Tags>;
   /** fetch aggregated fields from the table: "tags" */
@@ -2990,6 +3056,29 @@ export type Query_RootPlaylist_Videos_AggregateArgs = {
 export type Query_RootPlaylist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+export type Query_RootSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+export type Query_RootSubtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -3227,6 +3316,14 @@ export type Subscription_Root = {
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** fetch data from the table in a streaming manner: "playlist_videos" */
   playlist_videos_stream: Array<Playlist_Videos>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
+  /** fetch data from the table: "subtitles" using primary key columns */
+  subtitles_by_pk?: Maybe<Subtitles>;
+  /** fetch data from the table in a streaming manner: "subtitles" */
+  subtitles_stream: Array<Subtitles>;
   /** fetch data from the table: "tags" */
   tags: Array<Tags>;
   /** fetch aggregated fields from the table: "tags" */
@@ -3476,6 +3573,36 @@ export type Subscription_RootPlaylist_Videos_StreamArgs = {
 };
 
 
+export type Subscription_RootSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+export type Subscription_RootSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+export type Subscription_RootSubtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootSubtitles_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Subtitles_Stream_Cursor_Input>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
 export type Subscription_RootTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3714,6 +3841,276 @@ export type Subscription_RootVideos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Videos_Stream_Cursor_Input>>;
   where?: InputMaybe<Videos_Bool_Exp>;
+};
+
+/** Subtitles for video */
+export type Subtitles = {
+  __typename?: 'subtitles';
+  created_at: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  lang: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  url: Scalars['String']['output'];
+  /** An object relationship */
+  video: Videos;
+  video_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "subtitles" */
+export type Subtitles_Aggregate = {
+  __typename?: 'subtitles_aggregate';
+  aggregate?: Maybe<Subtitles_Aggregate_Fields>;
+  nodes: Array<Subtitles>;
+};
+
+export type Subtitles_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Count>;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Subtitles_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "subtitles" */
+export type Subtitles_Aggregate_Fields = {
+  __typename?: 'subtitles_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Subtitles_Max_Fields>;
+  min?: Maybe<Subtitles_Min_Fields>;
+};
+
+
+/** aggregate fields of "subtitles" */
+export type Subtitles_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Subtitles_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "subtitles" */
+export type Subtitles_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Subtitles_Max_Order_By>;
+  min?: InputMaybe<Subtitles_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "subtitles" */
+export type Subtitles_Arr_Rel_Insert_Input = {
+  data: Array<Subtitles_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "subtitles". All fields are combined with a logical 'AND'. */
+export type Subtitles_Bool_Exp = {
+  _and?: InputMaybe<Array<Subtitles_Bool_Exp>>;
+  _not?: InputMaybe<Subtitles_Bool_Exp>;
+  _or?: InputMaybe<Array<Subtitles_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  isDefault?: InputMaybe<Boolean_Comparison_Exp>;
+  lang?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+  video?: InputMaybe<Videos_Bool_Exp>;
+  video_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "subtitles" */
+export enum Subtitles_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  SubtitlesPkey = 'subtitles_pkey'
+}
+
+/** input type for inserting data into table "subtitles" */
+export type Subtitles_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Subtitles_Max_Fields = {
+  __typename?: 'subtitles_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lang?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  video_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "subtitles" */
+export type Subtitles_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Subtitles_Min_Fields = {
+  __typename?: 'subtitles_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lang?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  video_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "subtitles" */
+export type Subtitles_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "subtitles" */
+export type Subtitles_Mutation_Response = {
+  __typename?: 'subtitles_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Subtitles>;
+};
+
+/** on_conflict condition type for table "subtitles" */
+export type Subtitles_On_Conflict = {
+  constraint: Subtitles_Constraint;
+  update_columns?: Array<Subtitles_Update_Column>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "subtitles". */
+export type Subtitles_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  isDefault?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video?: InputMaybe<Videos_Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: subtitles */
+export type Subtitles_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "subtitles" */
+export enum Subtitles_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDefault = 'isDefault',
+  /** column name */
+  Lang = 'lang',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  VideoId = 'video_id'
+}
+
+/** select "subtitles_aggregate_bool_exp_bool_and_arguments_columns" columns of table "subtitles" */
+export enum Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  IsDefault = 'isDefault'
+}
+
+/** select "subtitles_aggregate_bool_exp_bool_or_arguments_columns" columns of table "subtitles" */
+export enum Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  IsDefault = 'isDefault'
+}
+
+/** input type for updating data in table "subtitles" */
+export type Subtitles_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "subtitles" */
+export type Subtitles_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Subtitles_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Subtitles_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "subtitles" */
+export enum Subtitles_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDefault = 'isDefault',
+  /** column name */
+  Lang = 'lang',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  VideoId = 'video_id'
+}
+
+export type Subtitles_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Subtitles_Bool_Exp;
 };
 
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
@@ -5705,6 +6102,10 @@ export type Videos = {
   slug: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -5745,6 +6146,26 @@ export type VideosPlaylist_Videos_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+
+/** columns and relationships of "videos" */
+export type VideosSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "videos" */
+export type VideosSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
 };
 
 
@@ -5914,6 +6335,8 @@ export type Videos_Bool_Exp = {
   slug?: InputMaybe<String_Comparison_Exp>;
   source?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
+  subtitles?: InputMaybe<Subtitles_Bool_Exp>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Bool_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -5954,6 +6377,7 @@ export type Videos_Insert_Input = {
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
+  subtitles?: InputMaybe<Subtitles_Arr_Rel_Insert_Input>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -6070,6 +6494,7 @@ export type Videos_Order_By = {
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
@@ -6402,9 +6827,13 @@ export class TypedDocumentString<TResult, TVariables>
   implements DocumentTypeDecoration<TResult, TVariables>
 {
   __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
+  private value: string;
+  public __meta__?: Record<string, any> | undefined;
 
-  constructor(private value: string, public __meta__?: Record<string, any> | undefined) {
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
     super(value);
+    this.value = value;
+    this.__meta__ = __meta__;
   }
 
   toString(): string & DocumentTypeDecoration<TResult, TVariables> {
@@ -6705,7 +7134,9 @@ export const AllVideosDocument = new TypedDocumentString(`
   ) {
     ...VideoFields
   }
-  playlist(where: {playlist_videos_aggregate: {count: {predicate: {_gt: 0}}}}) {
+  playlist(
+    where: {playlist_videos_aggregate: {count: {predicate: {_gt: 0}, filter: {video: {status: {_eq: "ready"}}}}}}
+  ) {
     ...PlaylistFields
   }
 }

@@ -11,7 +11,11 @@ const videosQuery = graphql(/* GraphQL */ `
     ) {
       ...VideoFields
     }
-    playlist(where: { playlist_videos_aggregate: { count: { predicate: { _gt: 0 } } } }) {
+    playlist(
+      where: {
+        playlist_videos_aggregate: { count: { predicate: { _gt: 0 }, filter: { video: { status: { _eq: "ready" } } } } }
+      }
+    ) {
       ...PlaylistFields
     }
   }
