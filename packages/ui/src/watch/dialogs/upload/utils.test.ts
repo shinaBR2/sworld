@@ -1,15 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DialogState } from './types';
-import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST } from './utils';
+import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
 
-// First, we need to export the formalizeState function from utils.ts
-// Add this to the exports in utils.ts:
-// export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, formalizeState };
-
-// Then import it in the test file
-import { formalizeState } from './utils';
-
-// Mock react-player
 vi.mock('react-player', () => ({
   default: {
     canPlay: vi.fn((url: string) => {
@@ -19,7 +11,6 @@ vi.mock('react-player', () => ({
   },
 }));
 
-// Add tests for formalizeState
 describe('formalizeState', () => {
   it('should trim string values in the dialog state', () => {
     const dialogState = {
