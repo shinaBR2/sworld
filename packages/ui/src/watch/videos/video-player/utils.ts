@@ -13,17 +13,15 @@ const getVideoPlayerOptions = (video: PlayableVideo, baseOptions = {}) => {
   const sources = getVideoSources(source);
   const isYoutube = sources[0].type === 'video/youtube';
 
-  let result;
-
-  result = {
+  const options = {
     ...baseOptions,
     techOrder: isYoutube ? ['youtube', 'html5'] : ['html5'],
     sources,
   };
 
   if (subtitles?.length) {
-    result = {
-      ...result,
+    return {
+      ...options,
       tracks: subtitles.map(({ src, lang, isDefault, label }) => ({
         kind: 'captions',
         src,
@@ -34,7 +32,7 @@ const getVideoPlayerOptions = (video: PlayableVideo, baseOptions = {}) => {
     };
   }
 
-  return result;
+  return options;
 };
 
 export { getVideoPlayerOptions };
