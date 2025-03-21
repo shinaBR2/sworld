@@ -1,8 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import { buildVariables, canPlayUrls } from './utils';
+import { describe, expect, it, vi } from 'vitest';
 import { DialogState } from './types';
+import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
 
-// Mock react-player
 vi.mock('react-player', () => ({
   default: {
     canPlay: vi.fn((url: string) => {
@@ -11,6 +10,72 @@ vi.mock('react-player', () => ({
     }),
   },
 }));
+
+describe('formalizeState', () => {
+  it('should trim string values in the dialog state', () => {
+    const dialogState = {
+      title: '  Test Title  ',
+      description: ' Test Description ',
+      url: '  https://example.com/video  ',
+      playlistId: 'playlist-123',
+      newPlaylistName: '  New Playlist  ',
+      videoPositionInPlaylist: 5,
+    } as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: 'Test Title',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      playlistId: 'playlist-123',
+      newPlaylistName: 'New Playlist',
+      videoPositionInPlaylist: 5,
+    });
+  });
+
+  it('should handle null or undefined values', () => {
+    const dialogState: DialogState = {
+      title: undefined,
+      description: '',
+      url: '  https://example.com/video  ',
+      // playlistId is missing
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 0,
+    } as unknown as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: undefined,
+      description: '',
+      url: 'https://example.com/video',
+      playlistId: undefined,
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 0,
+    });
+  });
+
+  it('should preserve non-string values', () => {
+    const dialogState: DialogState = {
+      title: 'Test Title',
+      url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
+      videoPositionInPlaylist: 10,
+    } as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: 'Test Title',
+      description: '',
+      url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 10,
+    });
+  });
+});
 
 describe('canPlayUrls', () => {
   it('should validate URLs correctly', async () => {
@@ -162,11 +227,12 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should create new playlist when newPlaylistName is provided', () => {
+  it('should create new playlist when playlistId is CREATE_NEW_PLAYLIST and newPlaylistName is provided', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: 'My New Playlist',
     } as DialogState;
 
@@ -202,6 +268,7 @@ describe('buildVariables', () => {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: 'My New Playlist',
       videoPositionInPlaylist: 3,
     } as DialogState;
@@ -233,12 +300,36 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should prioritize playlistId over newPlaylistName if both are provided', () => {
+  it('should not add playlist data when playlistId is CREATE_NEW_PLAYLIST but newPlaylistName is missing', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
       url: 'https://example.com/video',
-      playlistId: 'playlist-123',
+      playlistId: CREATE_NEW_PLAYLIST,
+      // newPlaylistName is missing
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          // No playlist_videos property
+        },
+      ],
+    });
+  });
+
+  it('should prioritize existing playlist when both playlistId and newPlaylistName are provided', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      playlistId: 'playlist-123', // Not CREATE_NEW_PLAYLIST
       newPlaylistName: 'My New Playlist', // This should be ignored
       videoPositionInPlaylist: 2,
     } as DialogState;
