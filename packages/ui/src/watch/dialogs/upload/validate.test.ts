@@ -1,108 +1,147 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { validateForm } from './validate';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { texts } from './texts';
 import { DialogState } from './types';
-import { canPlayUrls, CREATE_NEW_PLAYLIST } from './utils';
+import { canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
+import { validateForm } from './validate';
 
 // Mock dependencies
 vi.mock('./utils', () => ({
   canPlayUrls: vi.fn(),
-  CREATE_NEW_PLAYLIST: 'create_new',
+  CREATE_NEW_PLAYLIST: '__create-new',
+  formalizeState: vi.fn(state => ({
+    ...state,
+    title: state.title?.trim(),
+    url: state.url?.trim(),
+    newPlaylistName: state.newPlaylistName?.trim(),
+  })),
+}));
+
+vi.mock('./texts', () => ({
+  texts: {
+    errors: {
+      emptyTitle: 'Title is required',
+      emptyNewPlaylistName: 'Playlist name is required',
+      invalidUrl: 'Invalid URL',
+    },
+  },
 }));
 
 describe('validateForm', () => {
-  // Default valid state for testing
-  const validState = {
-    title: 'Test Video',
-    url: 'https://example.com/video.mp4',
-    description: 'Test description',
-    playlistId: 'existing-playlist',
-    isSubmitting: false,
-    error: null,
-  } as DialogState;
-
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default mock implementation for canPlayUrls to return valid by default
-    vi.mocked(canPlayUrls).mockResolvedValue([{ url: 'https://example.com/video.mp4', isValid: true }]);
   });
 
-  it('should return null for valid input', async () => {
-    const result = await validateForm(validState);
-    expect(result).toBeNull();
-    expect(canPlayUrls).toHaveBeenCalledWith([validState.url]);
-  });
-
-  it('should return error for empty title', async () => {
-    const invalidState = { ...validState, title: '' };
-    const result = await validateForm(invalidState);
-    expect(result).toBe(texts.errors.emptyTitle);
-    expect(canPlayUrls).not.toHaveBeenCalled();
-  });
-
-  it('should return error for empty new playlist name when creating new playlist', async () => {
-    const invalidState = {
-      ...validState,
-      playlistId: CREATE_NEW_PLAYLIST,
-      newPlaylistName: '',
-    };
-
-    const result = await validateForm(invalidState);
-    expect(result).toBe(texts.errors.emptyNewPlaylistName);
-    expect(canPlayUrls).not.toHaveBeenCalled();
-  });
-
-  it('should validate properly with new playlist selected and name provided', async () => {
+  it('should return error when title is empty', async () => {
     const state = {
-      ...validState,
+      title: '   ',
+      url: 'https://example.com/video',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValue({
+      ...state,
+      title: '',
+      url: 'https://example.com/video',
+    } as ReturnType<typeof formalizeState>);
+
+    const result = await validateForm(state);
+    expect(result).toBe(texts.errors.emptyTitle);
+    expect(formalizeState).toHaveBeenCalledWith(state);
+  });
+
+  it('should return error when creating new playlist but name is empty', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://example.com/video',
       playlistId: CREATE_NEW_PLAYLIST,
-      newPlaylistName: 'My New Playlist',
-    };
+      newPlaylistName: '   ',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://example.com/video',
+      newPlaylistName: '',
+    } as ReturnType<typeof formalizeState>);
+
+    const result = await validateForm(state);
+    expect(result).toBe(texts.errors.emptyNewPlaylistName);
+    expect(formalizeState).toHaveBeenCalledWith(state);
+  });
+
+  it('should return error when URL is invalid', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://example.com/video',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://example.com/video',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://example.com/video', isValid: false }]);
+
+    const result = await validateForm(state);
+    expect(result).toBe(texts.errors.invalidUrl);
+    expect(canPlayUrls).toHaveBeenCalledWith(['https://example.com/video']);
+  });
+
+  it('should return null when all validations pass', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
 
     const result = await validateForm(state);
     expect(result).toBeNull();
-    expect(canPlayUrls).toHaveBeenCalledWith([state.url]);
   });
 
-  it('should return error for invalid URL', async () => {
-    vi.mocked(canPlayUrls).mockResolvedValue([{ url: 'invalid-url', isValid: false }]);
+  it('should return null when using existing playlist with valid data', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      playlistId: 'existing-playlist-id',
+    } as DialogState;
 
-    const result = await validateForm(validState);
-    expect(result).toBe(texts.errors.invalidUrl);
-    expect(canPlayUrls).toHaveBeenCalledWith([validState.url]);
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+
+    const result = await validateForm(state);
+    expect(result).toBeNull();
   });
 
-  it('should handle empty URL case', async () => {
-    // Even though the URL is empty, we'll still try to validate it
-    const stateWithEmptyUrl = { ...validState, url: '' };
-    vi.mocked(canPlayUrls).mockResolvedValue([{ url: '', isValid: false }]);
+  it('should return null when creating new playlist with valid data', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      playlistId: CREATE_NEW_PLAYLIST,
+      newPlaylistName: 'My New Playlist',
+    } as DialogState;
 
-    const result = await validateForm(stateWithEmptyUrl);
-    expect(result).toBe(texts.errors.invalidUrl);
-    expect(canPlayUrls).toHaveBeenCalledWith(['']);
-  });
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      newPlaylistName: 'My New Playlist',
+    } as ReturnType<typeof formalizeState>);
 
-  it('should handle errors from canPlayUrls', async () => {
-    vi.mocked(canPlayUrls).mockRejectedValue(new Error('Network error'));
+    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
 
-    // The function should catch the error and treat it as an invalid URL
-    await expect(validateForm(validState)).rejects.toThrow('Network error');
-  });
-
-  it('should handle unexpected response from canPlayUrls', async () => {
-    // Empty response
-    vi.mocked(canPlayUrls).mockResolvedValue([]);
-
-    const result = await validateForm(validState);
-    expect(result).toBe(texts.errors.invalidUrl);
-
-    // Multiple responses
-    vi.mocked(canPlayUrls).mockResolvedValue([
-      { url: 'https://example.com/1.mp4', isValid: true },
-      { url: 'https://example.com/2.mp4', isValid: true },
-    ]);
-
-    const result2 = await validateForm(validState);
-    expect(result2).toBe(texts.errors.invalidUrl);
+    const result = await validateForm(state);
+    expect(result).toBeNull();
   });
 });

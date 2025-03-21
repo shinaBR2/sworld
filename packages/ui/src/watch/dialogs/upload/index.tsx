@@ -48,7 +48,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   };
 
   const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.trim();
+    const newValue = e.target.value;
     setState(prev => ({
       ...prev,
       [field]: newValue,
@@ -71,6 +71,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const variables = buildVariables(state);
+
       const response = await bulkConvert(variables);
 
       if (response.insert_videos?.returning.length !== 1) {
