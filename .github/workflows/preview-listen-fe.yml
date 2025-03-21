@@ -113,6 +113,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWORLD_PROD }}'
           projectId: ${{ secrets.VITE_PROJECT_ID }}
+          disableComment: true
       - name: Debug Firebase Deploy Outputs
         run: |
           echo "Deploy Action Outputs:"
