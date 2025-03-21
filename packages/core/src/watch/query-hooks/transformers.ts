@@ -11,8 +11,6 @@ const transformUser = (userData: FragmentType<typeof UserFragment>) => {
   };
 };
 
-// Add at the top with other imports
-
 const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) => {
   const video = getFragmentData(VideoFragment, videoData);
   if (!video.source) {

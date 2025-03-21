@@ -33,6 +33,14 @@ vi.mock('video.js', () => {
 vi.mock('core/watch/mutation-hooks/use-video-progress');
 vi.mock('core/providers/auth');
 
+vi.mock('./utils', () => ({
+  getVideoPlayerOptions: vi.fn((video, baseOptions) => ({
+    techOrder: ['html5'],
+    sources: [{ type: 'video/mp4', src: video.source }],
+    ...baseOptions,
+  })),
+}));
+
 const mockHandlers = {
   handleProgress: vi.fn(),
   handlePlay: vi.fn(),
@@ -127,25 +135,15 @@ describe('VideoJS', () => {
     expect(mockHandlers.handleProgress).toHaveBeenCalledWith({ playedSeconds: 10 });
   });
 
-  // Add this mock at the top with other mocks
-  vi.mock('./utils', () => ({
-    getVideoPlayerOptions: vi.fn((video, baseOptions) => ({
-      techOrder: ['html5'],
-      sources: [{ type: 'video/mp4', src: video.source }],
-      ...baseOptions,
-    }))
-  }));
-
-  // Add this test case to the existing describe block
   it('should memoize player options correctly', async () => {
     const props = {
       video: { id: '123', source: 'test.mp4' } as PlayableVideo,
-      videoJsOptions: { autoplay: true }
+      videoJsOptions: { autoplay: true },
     };
-  
+
     const { rerender } = render(<VideoJS {...props} />);
     await vi.waitFor(() => expect(getVideoPlayerOptions).toHaveBeenCalledTimes(1));
-  
+
     // Update source trigger
     rerender(<VideoJS {...props} video={{ ...props.video, source: 'new.mp4' }} />);
     await vi.waitFor(() => expect(getVideoPlayerOptions).toHaveBeenCalledTimes(2));
