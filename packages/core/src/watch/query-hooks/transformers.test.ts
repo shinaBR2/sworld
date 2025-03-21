@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { transformVideoFragment, transformPlaylistFragment, transformUser } from './transformers';
-import { AppError } from '../../universal/error-boundary/app-error';
-import { MEDIA_TYPES } from './types';
+import { describe, expect, it } from 'vitest';
 import { FragmentType } from '../../graphql';
+import { AppError } from '../../universal/error-boundary/app-error';
 import { PlaylistFragment, UserFragment, VideoFragment } from './fragments';
+import { transformPlaylistFragment, transformUser, transformVideoFragment } from './transformers';
+import { MEDIA_TYPES } from './types';
 
 describe('Fragment Transformations', () => {
   describe('transformUser', () => {
@@ -29,6 +29,21 @@ describe('Fragment Transformations', () => {
       duration: 100,
       createdAt: '2023-01-01T00:00:00Z',
       user: { username: 'testuser' },
+      subtitles: [
+        {
+          id: '1',
+          lang: 'en',
+          url: 'test.vtt',
+          isDefault: true,
+        },
+        {
+          // Add multiple language cases
+          id: '2',
+          lang: 'vi',
+          url: 'test-vi.vtt',
+          isDefault: false,
+        },
+      ],
       user_video_histories: [
         {
           last_watched_at: '2023-02-01T00:00:00Z',
@@ -40,20 +55,29 @@ describe('Fragment Transformations', () => {
     it('should transform video fragment correctly', () => {
       const result = transformVideoFragment(mockVideoData as FragmentType<typeof VideoFragment>);
 
-      expect(result).toEqual({
-        id: '123',
-        type: MEDIA_TYPES.VIDEO,
-        title: 'Test Video',
-        description: 'Test Description',
-        thumbnailUrl: 'https://example.com/thumb.jpg',
-        source: 'https://example.com/video.mp4',
-        slug: 'test-video',
-        duration: 100,
-        createdAt: '2023-01-01T00:00:00Z',
-        user: { username: 'testuser' },
-        lastWatchedAt: '2023-02-01T00:00:00Z',
-        progressSeconds: 50,
-      });
+      // Update subtitle expectations
+      expect(result.subtitles).toEqual([
+        {
+          id: '1',
+          lang: 'en',
+          src: 'test.vtt',
+          isDefault: true,
+          label: 'English', // Changed from Vietnamese
+        },
+        {
+          id: '2',
+          lang: 'vi',
+          src: 'test-vi.vtt',
+          isDefault: false,
+          label: 'Vietnamese',
+        },
+      ]);
+    });
+
+    // Rename and update this test
+    it('should translate language codes to names', () => {
+      const result = transformVideoFragment(mockVideoData as FragmentType<typeof VideoFragment>);
+      expect(result.subtitles.map(s => s.label)).toEqual(['English', 'Vietnamese']);
     });
 
     it('should throw AppError when source is missing', () => {

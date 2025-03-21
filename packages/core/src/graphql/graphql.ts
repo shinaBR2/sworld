@@ -6763,7 +6763,7 @@ export type UserFieldsFragment = { __typename?: 'users', username?: string | nul
 export type VideoFieldsFragment = { __typename?: 'videos', id: any, title: string, description?: string | null, duration?: number | null, thumbnailUrl?: string | null, source?: string | null, slug: string, createdAt?: any | null, user: (
     { __typename?: 'users' }
     & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
-  ), user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }> } & { ' $fragmentName'?: 'VideoFieldsFragment' };
+  ), user_video_histories: Array<{ __typename?: 'user_video_history', last_watched_at: any, progress_seconds: number }>, subtitles: Array<{ __typename?: 'subtitles', id: any, isDefault: boolean, lang: string, url: string }> } & { ' $fragmentName'?: 'VideoFieldsFragment' };
 
 export type PlaylistVideoFieldsFragment = { __typename?: 'playlist_videos', position: number, video: (
     { __typename?: 'videos' }
@@ -6862,6 +6862,12 @@ export const VideoFieldsFragmentDoc = new TypedDocumentString(`
     last_watched_at
     progress_seconds
   }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
+  }
 }
     fragment UserFields on users {
   username
@@ -6891,6 +6897,12 @@ fragment VideoFields on videos {
   user_video_histories {
     last_watched_at
     progress_seconds
+  }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
   }
 }`, {"fragmentName":"PlaylistVideoFields"}) as unknown as TypedDocumentString<PlaylistVideoFieldsFragment, unknown>;
 export const PlaylistFieldsFragmentDoc = new TypedDocumentString(`
@@ -6929,6 +6941,12 @@ fragment VideoFields on videos {
   user_video_histories {
     last_watched_at
     progress_seconds
+  }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
   }
 }
 fragment PlaylistVideoFields on playlist_videos {
@@ -7057,6 +7075,12 @@ fragment VideoFields on videos {
     last_watched_at
     progress_seconds
   }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
+  }
 }
 fragment PlaylistVideoFields on playlist_videos {
   position
@@ -7125,6 +7149,12 @@ fragment VideoFields on videos {
     last_watched_at
     progress_seconds
   }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
+  }
 }`) as unknown as TypedDocumentString<VideoDetailQuery, VideoDetailQueryVariables>;
 export const AllVideosDocument = new TypedDocumentString(`
     query AllVideos @cached {
@@ -7158,6 +7188,12 @@ fragment VideoFields on videos {
   user_video_histories {
     last_watched_at
     progress_seconds
+  }
+  subtitles {
+    id
+    isDefault
+    lang
+    url
   }
 }
 fragment PlaylistVideoFields on playlist_videos {

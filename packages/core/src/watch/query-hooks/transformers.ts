@@ -1,4 +1,5 @@
 import { FragmentType, getFragmentData } from '../../graphql';
+import { getLanguageName } from '../../universal/common/language';
 import { AppError } from '../../universal/error-boundary/app-error';
 import { PlaylistFragment, PlaylistVideoFragment, UserFragment, VideoFragment } from './fragments';
 import { MEDIA_TYPES } from './types';
@@ -19,6 +20,13 @@ const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) =
   }
 
   const history = video?.user_video_histories?.[0];
+  const subtitles = video?.subtitles?.map(subtitle => ({
+    id: subtitle.id,
+    lang: subtitle.lang,
+    src: subtitle.url,
+    isDefault: subtitle.isDefault,
+    label: getLanguageName(subtitle.lang),
+  }));
   const user = transformUser(video.user);
 
   return {
@@ -34,6 +42,7 @@ const transformVideoFragment = (videoData: FragmentType<typeof VideoFragment>) =
     user,
     lastWatchedAt: history?.last_watched_at ?? null,
     progressSeconds: history?.progress_seconds ?? 0,
+    subtitles,
   };
 };
 
@@ -61,4 +70,4 @@ const transformPlaylistFragment = (playlistFragmentData: FragmentType<typeof Pla
   };
 };
 
-export { transformUser, transformVideoFragment, transformPlaylistFragment };
+export { transformPlaylistFragment, transformUser, transformVideoFragment };
