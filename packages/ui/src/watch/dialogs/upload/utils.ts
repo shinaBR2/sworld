@@ -32,8 +32,28 @@ const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
   );
 };
 
+const formalizeState = (dialogState: DialogState) => {
+  const { title, description, url, playlistId, newPlaylistName, videoPositionInPlaylist } = dialogState;
+
+  return {
+    title: title?.trim(),
+    description: description?.trim() || '',
+    url: url?.trim(),
+    playlistId,
+    newPlaylistName: newPlaylistName?.trim(),
+    videoPositionInPlaylist,
+  };
+};
+
 const buildVariables = (dialogState: DialogState) => {
-  const { title, description = '', url, playlistId, newPlaylistName, videoPositionInPlaylist = 0 } = dialogState;
+  const {
+    title,
+    description = '',
+    url,
+    playlistId,
+    newPlaylistName,
+    videoPositionInPlaylist = 0,
+  } = formalizeState(dialogState);
 
   const variables: BulkConvertVariables = {
     objects: [
@@ -70,4 +90,4 @@ const buildVariables = (dialogState: DialogState) => {
   return variables;
 };
 
-export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST };
+export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, formalizeState };

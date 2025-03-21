@@ -2,6 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { DialogState } from './types';
 import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST } from './utils';
 
+// First, we need to export the formalizeState function from utils.ts
+// Add this to the exports in utils.ts:
+// export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, formalizeState };
+
+// Then import it in the test file
+import { formalizeState } from './utils';
+
 // Mock react-player
 vi.mock('react-player', () => ({
   default: {
@@ -11,6 +18,73 @@ vi.mock('react-player', () => ({
     }),
   },
 }));
+
+// Add tests for formalizeState
+describe('formalizeState', () => {
+  it('should trim string values in the dialog state', () => {
+    const dialogState = {
+      title: '  Test Title  ',
+      description: ' Test Description ',
+      url: '  https://example.com/video  ',
+      playlistId: 'playlist-123',
+      newPlaylistName: '  New Playlist  ',
+      videoPositionInPlaylist: 5,
+    } as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: 'Test Title',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      playlistId: 'playlist-123',
+      newPlaylistName: 'New Playlist',
+      videoPositionInPlaylist: 5,
+    });
+  });
+
+  it('should handle null or undefined values', () => {
+    const dialogState: DialogState = {
+      title: undefined,
+      description: '',
+      url: '  https://example.com/video  ',
+      // playlistId is missing
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 0,
+    } as unknown as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: undefined,
+      description: '',
+      url: 'https://example.com/video',
+      playlistId: undefined,
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 0,
+    });
+  });
+
+  it('should preserve non-string values', () => {
+    const dialogState: DialogState = {
+      title: 'Test Title',
+      url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
+      videoPositionInPlaylist: 10,
+    } as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: 'Test Title',
+      description: '',
+      url: 'https://example.com/video',
+      playlistId: CREATE_NEW_PLAYLIST,
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 10,
+    });
+  });
+});
 
 describe('canPlayUrls', () => {
   it('should validate URLs correctly', async () => {
