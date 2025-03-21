@@ -61,7 +61,7 @@ export const VideoJS = (props: VideoJSProps) => {
   // Otherwise, the player will be reinitialized on every render
   const options = useMemo(
     () =>
-      getVideoPlayerOptions(video.source, {
+      getVideoPlayerOptions(video, {
         ...videoJsOptions,
       }),
     [video.source, JSON.stringify(videoJsOptions)]
