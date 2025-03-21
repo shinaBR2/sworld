@@ -1,3 +1,5 @@
+import { PlayableVideo } from '../types';
+
 const getVideoSources = (videoUrl: string) => {
   if (videoUrl.includes('youtu.be') || videoUrl.includes('youtube.com')) {
     return [{ type: 'video/youtube', src: videoUrl }];
@@ -6,15 +8,33 @@ const getVideoSources = (videoUrl: string) => {
   }
 };
 
-const getVideoPlayerOptions = (videoUrl: string, baseOptions = {}) => {
-  const sources = getVideoSources(videoUrl);
+const getVideoPlayerOptions = (video: PlayableVideo, baseOptions = {}) => {
+  const { source, subtitles } = video;
+  const sources = getVideoSources(source);
   const isYoutube = sources[0].type === 'video/youtube';
 
-  return {
+  let result;
+
+  result = {
     ...baseOptions,
     techOrder: isYoutube ? ['youtube', 'html5'] : ['html5'],
     sources,
   };
+
+  if (subtitles?.length) {
+    result = {
+      ...result,
+      tracks: subtitles.map(({ src, lang, isDefault, label }) => ({
+        kind: 'captions',
+        src,
+        default: isDefault,
+        lang,
+        label,
+      })),
+    };
+  }
+
+  return result;
 };
 
 export { getVideoPlayerOptions };
