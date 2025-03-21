@@ -42,29 +42,14 @@ export const VideoJS = (props: VideoJSProps) => {
   const playerRef = useRef<Player | null>(null);
   const { video, videoJsOptions } = props;
 
-  // const options = {
-  //   ...videoJsOptions,
-  //   techOrder: isYoutube ? ['youtube'] : ['html5'],
-  //   sources: sources,
-  //   // tracks: [
-  //   //   {
-  //   //     kind: 'captions',
-  //   //     src: 'https://url.com/sub.vtt',// 'https://url.com/sub.vtt'
-  //   //     lang: 'vie',
-  //   //     default: true,
-  //   //     label: 'Vietnamese', // Display as the cc button options
-  //   //   },
-  //   // ],
-  // };
-
   // This is IMPORTANT to memoize the options object
   // Otherwise, the player will be reinitialized on every render
   const options = useMemo(
     () =>
-      getVideoPlayerOptions(video.source, {
+      getVideoPlayerOptions(video, {
         ...videoJsOptions,
       }),
-    [video.source, JSON.stringify(videoJsOptions)]
+    [video, JSON.stringify(videoJsOptions)]
   );
 
   const { getAccessToken } = useAuthContext();
@@ -83,7 +68,7 @@ export const VideoJS = (props: VideoJSProps) => {
       videoElement.classList.add('vjs-big-play-centered');
       (videoRef.current as HTMLDivElement).appendChild(videoElement);
 
-      const player = videojs(videoElement, options, () => {
+      const player = (playerRef.current = videojs(videoElement, options, () => {
         let lastUpdateSeconds = -1;
 
         player.on('play', () => {
@@ -114,9 +99,7 @@ export const VideoJS = (props: VideoJSProps) => {
 
         player.on('pause', handlePause);
         player.on('ended', handleEnded);
-
-        playerRef.current = player;
-      });
+      }));
     } else {
       const player = playerRef.current;
 
@@ -125,7 +108,15 @@ export const VideoJS = (props: VideoJSProps) => {
         player.src(options.sources);
       }
     }
-  }, [options, handlePlay, handleProgress, handleSeek, handlePause, handleEnded]);
+
+    return () => {
+      const player = playerRef.current;
+      if (player && !player.isDisposed()) {
+        player.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [options]);
 
   useEffect(() => {
     const player = playerRef.current;

@@ -23,6 +23,12 @@ const VideoFragment = graphql(/* GraphQL */ `
       last_watched_at
       progress_seconds
     }
+    subtitles {
+      id
+      isDefault
+      lang
+      url
+    }
   }
 `);
 

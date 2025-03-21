@@ -1,8 +1,17 @@
+interface Subtitle {
+  id: string;
+  lang: string;
+  src: string;
+  isDefault: boolean;
+  label: string;
+}
+
 interface PlayableVideo {
   id: string;
   title: string;
   source: string;
   thumbnailUrl: string;
+  subtitles?: Subtitle[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,4 +44,4 @@ interface WithLinkComponent<T = any> {
   };
 }
 
-export { type PlayableVideo, type LinkComponentType, type RequiredLinkComponent, type WithLinkComponent };
+export { type LinkComponentType, type PlayableVideo, type RequiredLinkComponent, type WithLinkComponent };
