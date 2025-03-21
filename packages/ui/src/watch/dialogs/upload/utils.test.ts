@@ -166,7 +166,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should add playlist data when playlistId is provided (isUseExistedPlaylist)', () => {
+  it('should add playlist data when playlistId is provided', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -196,7 +196,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should use provided videoPositionInPlaylist for existing playlist (isUseExistedPlaylist)', () => {
+  it('should use provided videoPositionInPlaylist for existing playlist', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -227,7 +227,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should create new playlist when playlistId is CREATE_NEW_PLAYLIST and newPlaylistName is provided (isCreateNewPlaylist)', () => {
+  it('should create new playlist when playlistId is CREATE_NEW_PLAYLIST and newPlaylistName is provided', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -263,7 +263,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should use provided videoPositionInPlaylist for new playlist (isCreateNewPlaylist)', () => {
+  it('should use provided videoPositionInPlaylist for new playlist', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
@@ -324,7 +324,7 @@ describe('buildVariables', () => {
     });
   });
 
-  it('should prioritize existing playlist when both playlistId and newPlaylistName are provided (isUseExistedPlaylist)', () => {
+  it('should prioritize existing playlist when both playlistId and newPlaylistName are provided', () => {
     const dialogState = {
       title: 'Test Video',
       description: 'Test Description',
