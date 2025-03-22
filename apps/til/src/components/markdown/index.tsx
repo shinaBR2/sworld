@@ -1,5 +1,12 @@
 import React from 'react';
+
+/**
+ * TODO
+ * Dynamic loading or using RSC in the future
+ */
 import Markdown from 'react-markdown';
+
+// https://shiki.style/guide/best-performance
 import { codeToHtml } from 'shiki';
 import parse from 'html-react-parser';
 
@@ -9,11 +16,38 @@ interface MarkdownContentProps {
 
 const MarkdownContent = (props: MarkdownContentProps) => {
   const { content } = props;
-  const processedContent = content.replace(/\\n/g, '\n');
+  const processedContent = content
+    .replace(/\\n/g, '\n')
+    .replace(/!\[(.*?)\]\((.*?)( align=.*?)?\)/g, (match, alt, url) => {
+      // Only keep the URL part, discard anything after it
+      return `![${alt}](${url})`;
+    });
+  console.log('MarkdownContent re-rendered processedContent');
 
   return (
     <Markdown
       components={{
+        img: ({ node, src, alt, ...props }) => {
+          console.log('Rendering image:', { src, alt });
+
+          // Handle alignment attribute in src
+          let imgSrc = src || '';
+          let alignment = 'center'; // Default alignment
+
+          if (typeof imgSrc === 'string' && imgSrc.includes(' align=')) {
+            const parts = imgSrc.split(' align=');
+            imgSrc = parts[0];
+            if (parts[1]) {
+              alignment = parts[1].replace(/"/g, '').trim();
+            }
+          }
+
+          return (
+            <div style={{ textAlign: alignment, margin: '1rem 0' }}>
+              <img src={imgSrc} alt={alt || ''} style={{ maxWidth: '100%' }} {...props} />
+            </div>
+          );
+        },
         code({ node, inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
 

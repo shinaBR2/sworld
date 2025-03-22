@@ -20,7 +20,7 @@ function RouteComponent() {
     return <div>Post not found</div>;
   }
 
-  console.log('post', post);
+  console.log('post detail rerender');
   const { title, readTimeInMinutes, mContent } = post;
 
   return (
