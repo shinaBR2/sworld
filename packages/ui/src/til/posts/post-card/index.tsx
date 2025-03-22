@@ -1,6 +1,6 @@
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Post } from '../type';
+import { Post } from '../types';
 import { StyledCard, StyledDescription } from './Styled';
 import { RequiredLinkComponent } from '../../../watch/videos/types';
 import { genlinkProps } from './utils';

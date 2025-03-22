@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { PostCard } from './index';
-import { Post } from '../type';
+import { Post } from '../types';
 import { describe, it, expect } from 'vitest';
 
 const mockPost = {
