@@ -26,9 +26,7 @@ interface HomeContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 
 const HomeContainer = (props: HomeContainerProps) => {
   const { queryRs } = props;
-  const { posts, isLoading: originalLoading } = queryRs;
-  const debug = true;
-  const isLoading = originalLoading || debug;
+  const { posts, isLoading } = queryRs;
 
   return (
     <Container maxWidth={false} sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}>
