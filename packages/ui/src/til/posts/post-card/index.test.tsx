@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { PostCard } from './index';
 import { Post } from '../types';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 const mockPost = {
   id: '123',
@@ -12,7 +12,6 @@ const mockPost = {
 
 describe('PostCard', () => {
   it('renders post content correctly', () => {
-    // Fix prop spreading syntax
     render(<PostCard post={mockPost} LinkComponent={({ children }) => <div>{children}</div>} />);
 
     // Check title
