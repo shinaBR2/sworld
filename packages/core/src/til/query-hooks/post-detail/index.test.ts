@@ -25,9 +25,9 @@ describe('useLoadPostDetail', () => {
 
   it('should handle loading state', () => {
     (useRequest as Mock).mockReturnValue({ isLoading: true });
-    const { isLoading, posts } = useLoadPostDetail('123');
+    const { isLoading, post } = useLoadPostDetail('123');
     expect(isLoading).toBe(true);
-    expect(posts).toEqual([]);
+    expect(post).toEqual(null);
   });
 
   it('should handle error state', () => {
@@ -39,19 +39,19 @@ describe('useLoadPostDetail', () => {
 
   it('should transform post data', () => {
     (useRequest as Mock).mockReturnValue({
-      data: { posts: [mockPostData] },
+      data: { posts_by_pk: mockPostData },
       isLoading: false,
     });
     (transformPost as Mock).mockImplementation(data => ({ ...data, transformed: true }));
 
-    const { posts } = useLoadPostDetail('123');
+    const { post } = useLoadPostDetail('123');
     expect(transformPost).toHaveBeenCalledWith(mockPostData);
-    expect(posts).toEqual([{ ...mockPostData, transformed: true }]);
+    expect(post).toEqual({ ...mockPostData, transformed: true });
   });
 
-  it('should return empty array when no posts', () => {
-    (useRequest as Mock).mockReturnValue({ data: { posts: [] } });
-    const { posts } = useLoadPostDetail('123');
-    expect(posts).toEqual([]);
+  it('should return null when no post', () => {
+    (useRequest as Mock).mockReturnValue({ data: { post: null } });
+    const { post } = useLoadPostDetail('123');
+    expect(post).toEqual(null);
   });
 });
