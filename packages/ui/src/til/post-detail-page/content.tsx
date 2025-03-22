@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@mui/material';
-import { CodeBlockWrapper } from './Styled';
+import { CodeBlockWrapper } from './styled';
 
 interface Props {
   children: React.ReactNode;

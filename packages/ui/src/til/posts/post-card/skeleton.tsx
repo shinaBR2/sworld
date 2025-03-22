@@ -1,6 +1,6 @@
 import CardContent from '@mui/material/CardContent';
 import Skeleton from '@mui/material/Skeleton';
-import { StyledCard, StyledDescription } from './Styled';
+import { StyledCard, StyledDescription } from './styled';
 
 const SkeletonPostCard = () => (
   <StyledCard aria-busy="true">
