@@ -1,7 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
 import React from 'react';
-import { PostContent, PostDetailPageContainer, PostMetadata } from 'ui/til/post-detail-page';
+import {
+  PostContent,
+  PostDetailPageContainer,
+  PostMetadata,
+  SkeletonPostContent,
+  SkeletonPostMetadata,
+} from 'ui/til/post-detail-page';
 import { Layout } from '../components/layout';
 import { MarkdownContent } from '../components/markdown';
 
@@ -14,7 +20,14 @@ function RouteComponent() {
   const queryRs = useLoadPostDetail(postId);
   const { post, isLoading } = queryRs;
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Layout sx={{ overflow: 'auto', pb: 6 }}>
+        <PostDetailPageContainer>
+          <SkeletonPostMetadata sx={{ my: 3 }} />
+          <SkeletonPostContent />
+        </PostDetailPageContainer>
+      </Layout>
+    );
   }
   if (!post) {
     return <div>Post not found</div>;
