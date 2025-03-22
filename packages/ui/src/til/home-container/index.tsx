@@ -31,8 +31,9 @@ const HomeContainer = (props: HomeContainerProps) => {
 
   return (
     <Container maxWidth={false} sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}>
-      {isLoading ? <Loading /> : null}
-      {posts.length > 0 ? (
+      {isLoading ? (
+        <Loading />
+      ) : posts.length > 0 ? (
         <Grid container spacing={2}>
           {posts.map(p => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
