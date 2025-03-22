@@ -13,7 +13,7 @@ const mockPosts = [
     id: '1',
     title: 'Test Post',
     brief: 'Test brief',
-    markdown_content: '# Content',
+    markdownContent: '# Content',
     readTimeInMinutes: 5,
   },
 ];

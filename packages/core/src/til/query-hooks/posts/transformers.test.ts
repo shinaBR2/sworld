@@ -7,18 +7,18 @@ describe('transformPost', () => {
       id: 'post-123',
       title: 'Test Post',
       brief: 'Sample brief description',
-      markdown_content: '# Hello World\nTest content',
-      readTimeInMinutes: 5
+      markdownContent: '# Hello World\nTest content',
+      readTimeInMinutes: 5,
     };
 
     const result = transformPost(mockData);
-    
+
     expect(result).toEqual({
       id: 'post-123',
       title: 'Test Post',
       brief: 'Sample brief description',
       mContent: '# Hello World\nTest content',
-      readTimeInMinutes: 5
+      readTimeInMinutes: 5,
     });
   });
 });

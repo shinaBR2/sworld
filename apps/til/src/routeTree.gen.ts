@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PostsSlugIdImport } from './routes/posts.$slug.$id'
 
 // Create Virtual Routes
 
@@ -26,6 +27,12 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const PostsSlugIdRoute = PostsSlugIdImport.update({
+  id: '/posts/$slug/$id',
+  path: '/posts/$slug/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -37,6 +44,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/posts/$slug/$id': {
+      id: '/posts/$slug/$id'
+      path: '/posts/$slug/$id'
+      fullPath: '/posts/$slug/$id'
+      preLoaderRoute: typeof PostsSlugIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -44,32 +58,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/posts/$slug/$id': typeof PostsSlugIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/posts/$slug/$id': typeof PostsSlugIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/posts/$slug/$id': typeof PostsSlugIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/posts/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/posts/$slug/$id'
+  id: '__root__' | '/' | '/posts/$slug/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  PostsSlugIdRoute: typeof PostsSlugIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  PostsSlugIdRoute: PostsSlugIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -82,11 +101,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/posts/$slug/$id"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/posts/$slug/$id": {
+      "filePath": "posts.$slug.$id.tsx"
     }
   }
 }

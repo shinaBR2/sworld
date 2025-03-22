@@ -2894,7 +2894,7 @@ export type Posts = {
   /** Hashnode public id */
   hId: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
-  markdown_content: Scalars['String']['output'];
+  markdownContent: Scalars['String']['output'];
   readTimeInMinutes: Scalars['Int']['output'];
   title: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
@@ -2945,7 +2945,7 @@ export type Posts_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   hId?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  markdown_content?: InputMaybe<String_Comparison_Exp>;
+  markdownContent?: InputMaybe<String_Comparison_Exp>;
   readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -2969,7 +2969,7 @@ export type Posts_Insert_Input = {
   /** Hashnode public id */
   hId?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  markdown_content?: InputMaybe<Scalars['String']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -2983,7 +2983,7 @@ export type Posts_Max_Fields = {
   /** Hashnode public id */
   hId?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  markdown_content?: Maybe<Scalars['String']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
@@ -2997,7 +2997,7 @@ export type Posts_Min_Fields = {
   /** Hashnode public id */
   hId?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  markdown_content?: Maybe<Scalars['String']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
@@ -3025,7 +3025,7 @@ export type Posts_Order_By = {
   created_at?: InputMaybe<Order_By>;
   hId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  markdown_content?: InputMaybe<Order_By>;
+  markdownContent?: InputMaybe<Order_By>;
   readTimeInMinutes?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
@@ -3047,7 +3047,7 @@ export enum Posts_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  MarkdownContent = 'markdown_content',
+  MarkdownContent = 'markdownContent',
   /** column name */
   ReadTimeInMinutes = 'readTimeInMinutes',
   /** column name */
@@ -3063,7 +3063,7 @@ export type Posts_Set_Input = {
   /** Hashnode public id */
   hId?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  markdown_content?: InputMaybe<Scalars['String']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -3102,7 +3102,7 @@ export type Posts_Stream_Cursor_Value_Input = {
   /** Hashnode public id */
   hId?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  markdown_content?: InputMaybe<Scalars['String']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -3125,7 +3125,7 @@ export enum Posts_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  MarkdownContent = 'markdown_content',
+  MarkdownContent = 'markdownContent',
   /** column name */
   ReadTimeInMinutes = 'readTimeInMinutes',
   /** column name */
@@ -7149,7 +7149,7 @@ export type GetPublicAudiosAndFeelingsQuery = { __typename?: 'query_root', audio
 export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllPostsQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', brief: string, id: any, markdown_content: string, readTimeInMinutes: number, title: string }> };
+export type AllPostsQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', brief: string, id: any, markdownContent: string, readTimeInMinutes: number, title: string }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
@@ -7407,7 +7407,7 @@ export const AllPostsDocument = new TypedDocumentString(`
   posts {
     brief
     id
-    markdown_content
+    markdownContent
     readTimeInMinutes
     title
   }

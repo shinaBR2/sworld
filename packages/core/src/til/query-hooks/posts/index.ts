@@ -8,7 +8,7 @@ const postsQuery = graphql(/* GraphQL */ `
     posts {
       brief
       id
-      markdown_content
+      markdownContent
       readTimeInMinutes
       title
     }

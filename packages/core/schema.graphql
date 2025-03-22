@@ -2995,7 +2995,7 @@ type posts {
   """Hashnode public id"""
   hId: String!
   id: uuid!
-  markdown_content: String!
+  markdownContent: String!
   readTimeInMinutes: Int!
   title: String!
   updated_at: timestamptz!
@@ -3042,7 +3042,7 @@ input posts_bool_exp {
   created_at: timestamptz_comparison_exp
   hId: String_comparison_exp
   id: uuid_comparison_exp
-  markdown_content: String_comparison_exp
+  markdownContent: String_comparison_exp
   readTimeInMinutes: Int_comparison_exp
   title: String_comparison_exp
   updated_at: timestamptz_comparison_exp
@@ -3074,7 +3074,7 @@ input posts_insert_input {
   """Hashnode public id"""
   hId: String
   id: uuid
-  markdown_content: String
+  markdownContent: String
   readTimeInMinutes: Int
   title: String
   updated_at: timestamptz
@@ -3087,7 +3087,7 @@ type posts_max_fields {
   """Hashnode public id"""
   hId: String
   id: uuid
-  markdown_content: String
+  markdownContent: String
   readTimeInMinutes: Int
   title: String
   updated_at: timestamptz
@@ -3100,7 +3100,7 @@ type posts_min_fields {
   """Hashnode public id"""
   hId: String
   id: uuid
-  markdown_content: String
+  markdownContent: String
   readTimeInMinutes: Int
   title: String
   updated_at: timestamptz
@@ -3131,7 +3131,7 @@ input posts_order_by {
   created_at: order_by
   hId: order_by
   id: order_by
-  markdown_content: order_by
+  markdownContent: order_by
   readTimeInMinutes: order_by
   title: order_by
   updated_at: order_by
@@ -3155,7 +3155,7 @@ enum posts_select_column {
   """column name"""
   id
   """column name"""
-  markdown_content
+  markdownContent
   """column name"""
   readTimeInMinutes
   """column name"""
@@ -3173,7 +3173,7 @@ input posts_set_input {
   """Hashnode public id"""
   hId: String
   id: uuid
-  markdown_content: String
+  markdownContent: String
   readTimeInMinutes: Int
   title: String
   updated_at: timestamptz
@@ -3211,7 +3211,7 @@ input posts_stream_cursor_value_input {
   """Hashnode public id"""
   hId: String
   id: uuid
-  markdown_content: String
+  markdownContent: String
   readTimeInMinutes: Int
   title: String
   updated_at: timestamptz
@@ -3235,7 +3235,7 @@ enum posts_update_column {
   """column name"""
   id
   """column name"""
-  markdown_content
+  markdownContent
   """column name"""
   readTimeInMinutes
   """column name"""
