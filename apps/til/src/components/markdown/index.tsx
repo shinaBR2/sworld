@@ -27,27 +27,6 @@ const MarkdownContent = (props: MarkdownContentProps) => {
   return (
     <Markdown
       components={{
-        img: ({ node, src, alt, ...props }) => {
-          console.log('Rendering image:', { src, alt });
-
-          // Handle alignment attribute in src
-          let imgSrc = src || '';
-          let alignment = 'center'; // Default alignment
-
-          if (typeof imgSrc === 'string' && imgSrc.includes(' align=')) {
-            const parts = imgSrc.split(' align=');
-            imgSrc = parts[0];
-            if (parts[1]) {
-              alignment = parts[1].replace(/"/g, '').trim();
-            }
-          }
-
-          return (
-            <div style={{ textAlign: alignment, margin: '1rem 0' }}>
-              <img src={imgSrc} alt={alt || ''} style={{ maxWidth: '100%' }} {...props} />
-            </div>
-          );
-        },
         code({ node, inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
 
