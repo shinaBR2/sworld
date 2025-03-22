@@ -1,7 +1,11 @@
 import { PostQuery } from '../../graphql/graphql';
 
 const transformPost = (data: PostQuery['posts_by_pk']) => {
-  const { brief, id, slug, markdownContent, readTimeInMinutes, title } = data || {};
+  if (!data) {
+    return null;
+  }
+
+  const { brief, id, slug, markdownContent, readTimeInMinutes, title } = data;
 
   return {
     id,
