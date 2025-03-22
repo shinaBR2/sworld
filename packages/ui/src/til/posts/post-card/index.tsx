@@ -3,7 +3,12 @@ import Typography from '@mui/material/Typography';
 import { Post } from '../type';
 import { StyledCard, StyledDescription } from './Styled';
 
-export const PostCard = (post: Post) => {
+interface PostCardProps {
+  post: Post;
+}
+
+export const PostCard = (props: PostCardProps) => {
+  const { post } = props;
   const { id, title, brief, readTimeInMinutes } = post;
 
   return (

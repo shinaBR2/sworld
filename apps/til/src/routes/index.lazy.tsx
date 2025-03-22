@@ -1,19 +1,15 @@
 import React from 'react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Layout } from '../components/layout';
-import { HomeContainer } from 'ui/watch/home-page/container';
-import { useAuthContext } from 'core/providers/auth';
-import { useLoadVideos } from 'core/watch/query-hooks/videos';
+import { HomeContainer } from 'ui/til/home-container';
+import { useLoadPosts } from 'core/til/query-hooks/posts';
 
 const Content = () => {
-  const { getAccessToken } = useAuthContext();
-  const videoResult = useLoadVideos({
-    getAccessToken,
-  });
+  const queryRs = useLoadPosts();
 
   return (
     <Layout>
-      <HomeContainer queryRs={videoResult} LinkComponent={Link} />
+      <HomeContainer queryRs={queryRs} LinkComponent={Link} />
     </Layout>
   );
 };
