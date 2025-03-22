@@ -48,12 +48,16 @@ const CodeBlock = React.memo(({ code, language }: CodeBlockProps) => {
   }, [code, language]);
 
   if (isLoading) {
-    return <div className="code-loading">Loading code...</div>;
+    return (
+      <div className="code-loading" aria-live="polite" role="status">
+        Loading code...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <pre>
+      <pre aria-label="Code block with error">
         <code>{code}</code>
       </pre>
     );
