@@ -32,7 +32,7 @@ describe('PostCard', () => {
     expect(mockLinkComponent).toHaveBeenCalledWith(
       expect.objectContaining({
         children: expect.anything(),
-        // Add expectations for the link props based on genlinkProps output
+        style: { textDecoration: 'none' },
       }),
       expect.anything()
     );
