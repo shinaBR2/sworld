@@ -3,7 +3,6 @@ import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 import { useLoadPostDetail } from './index';
 
-vi.mock('../../../universal/hooks/use-request');
 vi.mock('../transformers');
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
