@@ -8,7 +8,7 @@ interface CodeBlockProps {
   language: string;
 }
 
-const CodeBlock = ({ code, language }: CodeBlockProps) => {
+const CodeBlock = React.memo(({ code, language }: CodeBlockProps) => {
   const [highlighted, setHighlighted] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -60,6 +60,6 @@ const CodeBlock = ({ code, language }: CodeBlockProps) => {
   }
 
   return <>{parse(highlighted)}</>;
-};
+});
 
 export { CodeBlock };
