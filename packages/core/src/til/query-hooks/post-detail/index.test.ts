@@ -50,7 +50,7 @@ describe('useLoadPostDetail', () => {
   });
 
   it('should return null when no post', () => {
-    (useRequest as Mock).mockReturnValue({ data: { post: null } });
+    (useRequest as Mock).mockReturnValue({ data: { posts_by_pk: null } });
     const { post } = useLoadPostDetail('123');
     expect(post).toEqual(null);
   });
