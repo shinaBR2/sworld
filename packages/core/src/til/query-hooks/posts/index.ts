@@ -5,7 +5,7 @@ import { transformPost } from '../transformers';
 
 const postsQuery = graphql(/* GraphQL */ `
   query AllPosts @cached {
-    posts {
+    posts(order_by: { slug: desc }) {
       brief
       id
       markdownContent
