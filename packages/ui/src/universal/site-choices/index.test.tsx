@@ -47,6 +47,7 @@ describe('SiteChoices', () => {
     expect(menuItems[0]).toHaveTextContent('Watch');
     expect(menuItems[1]).toHaveTextContent('Listen');
     expect(menuItems[2]).toHaveTextContent('Play');
+    expect(menuItems[3]).toHaveTextContent('TIL');
   });
 
   it('renders correct icons for each menu item', () => {
@@ -62,10 +63,12 @@ describe('SiteChoices', () => {
     const watchIcon = menuItems[0].querySelector('[data-testid="OndemandVideoIcon"]');
     const listenIcon = menuItems[1].querySelector('[data-testid="HeadphonesIcon"]');
     const playIcon = menuItems[2].querySelector('[data-testid="PlayCircleIcon"]');
+    const tilIcon = menuItems[3].querySelector('[data-testid="MenuBookIcon"]');
 
     expect(watchIcon).toBeInTheDocument();
     expect(listenIcon).toBeInTheDocument();
     expect(playIcon).toBeInTheDocument();
+    expect(tilIcon).toBeInTheDocument();
   });
 
   it('sets correct href for menu items', () => {
@@ -79,6 +82,7 @@ describe('SiteChoices', () => {
     expect(menuItems[0]).toHaveAttribute('href', 'http://watch.example.com');
     expect(menuItems[1]).toHaveAttribute('href', 'http://listen.example.com');
     expect(menuItems[2]).toHaveAttribute('href', 'http://play.example.com');
+    expect(menuItems[3]).toHaveAttribute('href', 'http://til.example.com');
   });
 
   it('shows correct selected state for active site', () => {
