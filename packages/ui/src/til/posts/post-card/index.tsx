@@ -15,7 +15,7 @@ export const PostCard = (props: PostCardProps) => {
 
   return (
     <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
-      <StyledCard key={id}>
+      <StyledCard>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {title}
