@@ -7160,6 +7160,13 @@ export type GetPublicAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: ne
 
 export type GetPublicAudiosAndFeelingsQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }> };
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type PostQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', title: string, readTimeInMinutes: number, markdownContent: string, id: any, brief: string, slug: string }> };
+
 export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -7416,6 +7423,18 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetPublicAudiosAndFeelingsQuery, GetPublicAudiosAndFeelingsQueryVariables>;
+export const PostDocument = new TypedDocumentString(`
+    query Post($id: uuid!) @cached {
+  posts {
+    title
+    readTimeInMinutes
+    markdownContent
+    id
+    brief
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<PostQuery, PostQueryVariables>;
 export const AllPostsDocument = new TypedDocumentString(`
     query AllPosts @cached {
   posts {

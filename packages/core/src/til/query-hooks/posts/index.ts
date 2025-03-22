@@ -1,7 +1,7 @@
 import { graphql } from '../../../graphql';
 import { AllPostsQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
-import { transformPost } from './transformers';
+import { transformPost } from '../transformers';
 
 const postsQuery = graphql(/* GraphQL */ `
   query AllPosts @cached {
