@@ -10,6 +10,7 @@ describe('SiteChoices', () => {
       listen: 'http://listen.example.com',
       watch: 'http://watch.example.com',
       play: 'http://play.example.com',
+      til: 'http://til.example.com',
     },
   };
 
@@ -40,7 +41,7 @@ describe('SiteChoices', () => {
     expect(menu).toBeInTheDocument();
 
     const menuItems = screen.getAllByRole('menuitem');
-    expect(menuItems).toHaveLength(3);
+    expect(menuItems).toHaveLength(4);
 
     // Check all menu items are present
     expect(menuItems[0]).toHaveTextContent('Watch');
