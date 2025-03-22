@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@mui/material';
+import { CodeBlockWrapper } from './Styled';
 
 interface Props {
   children: React.ReactNode;
@@ -7,7 +8,9 @@ interface Props {
 const PostContent = (props: Props) => {
   return (
     <Card>
-      <CardContent>{props.children}</CardContent>
+      <CardContent>
+        <CodeBlockWrapper>{props.children}</CodeBlockWrapper>
+      </CardContent>
     </Card>
   );
 };

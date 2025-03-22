@@ -27,9 +27,9 @@ function RouteComponent() {
   const processedContent = mContent.replace(/\\n/g, '\n');
 
   return (
-    <Layout>
+    <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <PostMetadata title={title} readTimeInMinutes={readTimeInMinutes} />
+        <PostMetadata title={title} readTimeInMinutes={readTimeInMinutes} sx={{ my: 3 }} />
         <PostContent>
           {/* <Markdown>{post.mContent.replace(/\\n/g, '\n')}</Markdown> */}
 
@@ -50,7 +50,7 @@ function RouteComponent() {
                       try {
                         const html = await codeToHtml(code, {
                           lang: language,
-                          theme: 'github-dark',
+                          theme: 'material-theme',
                         });
                         setHighlighted(html);
                       } catch (error) {
