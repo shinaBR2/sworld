@@ -21,14 +21,7 @@ const rollbarConfig = {
 };
 
 const validateEnvVars = () => {
-  const required = [
-    'VITE_AUTH0_DOMAIN',
-    'VITE_AUTH0_CLIENT_ID',
-    'VITE_HASURA_DOMAIN',
-    'VITE_MAIN_SITE_URL',
-    'VITE_ROLLBAR_TOKEN',
-    'VITE_ROLLBAR_ENV',
-  ];
+  const required = ['VITE_HASURA_DOMAIN', 'VITE_MAIN_SITE_URL', 'VITE_ROLLBAR_TOKEN', 'VITE_ROLLBAR_ENV'];
   const missing = required.filter(key => !import.meta.env[key]);
   if (missing.length) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
