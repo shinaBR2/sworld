@@ -24,4 +24,18 @@ describe('PostCard', () => {
     // Check read time
     expect(screen.getByText(`${mockPost.readTimeInMinutes} min read`)).toBeInTheDocument();
   });
+
+  it('applies correct link props', () => {
+    const mockLinkComponent = vi.fn(({ children }) => <div>{children}</div>);
+
+    render(<PostCard post={mockPost} LinkComponent={mockLinkComponent} />);
+
+    expect(mockLinkComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        children: expect.anything(),
+        // Add expectations for the link props based on genlinkProps output
+      }),
+      expect.anything()
+    );
+  });
 });
