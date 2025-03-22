@@ -18,7 +18,9 @@ describe('FullPageContainer', () => {
     const { container } = render(<FullPageContainer sx={{ margin: 2 }}>Content</FullPageContainer>);
 
     const stackElement = container.firstChild as HTMLElement;
-    expect(stackElement).toHaveStyle('margin: 16px');
+    expect(stackElement).toHaveStyle({
+      margin: '16px',
+    });
   });
 
   it('renders children content correctly', () => {
