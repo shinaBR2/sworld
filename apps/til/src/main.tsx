@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { Auth, ErrorBoundary, Query } from 'core';
+import { ErrorBoundary, Query } from 'core';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { ErrorFallback } from 'ui/universal/error-boundary';
 import { queryConfig, rollbarConfig, validateEnvVars } from './config';
@@ -14,9 +14,6 @@ const router = createRouter({
   routeTree,
   defaultViewTransition: true,
   defaultPreload: 'intent',
-  context: {
-    auth: undefined!,
-  },
 });
 
 // Register the router instance for type safety
@@ -27,9 +24,7 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  const auth = Auth.useAuthContext();
-
-  return <RouterProvider router={router} context={{ auth }} />;
+  return <RouterProvider router={router} />;
 };
 
 const AppWrapper = () => {
