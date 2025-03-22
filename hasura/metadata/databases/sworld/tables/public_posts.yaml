@@ -1,0 +1,30 @@
+table:
+  name: posts
+  schema: public
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - brief
+        - id
+        - markdown_content
+        - readTimeInMinutes
+        - title
+      filter: {}
+      query_root_fields:
+        - select
+      subscription_root_fields: []
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - brief
+        - id
+        - markdown_content
+        - readTimeInMinutes
+        - title
+      filter: {}
+      query_root_fields:
+        - select
+      subscription_root_fields: []
+    comment: ""

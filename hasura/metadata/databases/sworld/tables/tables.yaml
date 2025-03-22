@@ -4,6 +4,7 @@
 - "!include public_feature_flag.yaml"
 - "!include public_playlist.yaml"
 - "!include public_playlist_videos.yaml"
+- "!include public_posts.yaml"
 - "!include public_subtitles.yaml"
 - "!include public_tags.yaml"
 - "!include public_tasks.yaml"
