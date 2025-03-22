@@ -2896,6 +2896,7 @@ export type Posts = {
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   readTimeInMinutes: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
 };
@@ -2947,6 +2948,7 @@ export type Posts_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   markdownContent?: InputMaybe<String_Comparison_Exp>;
   readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
@@ -2954,7 +2956,9 @@ export type Posts_Bool_Exp = {
 /** unique or primary key constraints on table "posts" */
 export enum Posts_Constraint {
   /** unique or primary key constraint on columns "id" */
-  PostsPkey = 'posts_pkey'
+  PostsPkey = 'posts_pkey',
+  /** unique or primary key constraint on columns "slug" */
+  PostsSlugKey = 'posts_slug_key'
 }
 
 /** input type for incrementing numeric columns in table "posts" */
@@ -2971,6 +2975,7 @@ export type Posts_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -2985,6 +2990,7 @@ export type Posts_Max_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
@@ -2999,6 +3005,7 @@ export type Posts_Min_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
@@ -3027,6 +3034,7 @@ export type Posts_Order_By = {
   id?: InputMaybe<Order_By>;
   markdownContent?: InputMaybe<Order_By>;
   readTimeInMinutes?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
@@ -3051,6 +3059,8 @@ export enum Posts_Select_Column {
   /** column name */
   ReadTimeInMinutes = 'readTimeInMinutes',
   /** column name */
+  Slug = 'slug',
+  /** column name */
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -3065,6 +3075,7 @@ export type Posts_Set_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -3104,6 +3115,7 @@ export type Posts_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -3128,6 +3140,8 @@ export enum Posts_Update_Column {
   MarkdownContent = 'markdownContent',
   /** column name */
   ReadTimeInMinutes = 'readTimeInMinutes',
+  /** column name */
+  Slug = 'slug',
   /** column name */
   Title = 'title',
   /** column name */
@@ -7149,7 +7163,7 @@ export type GetPublicAudiosAndFeelingsQuery = { __typename?: 'query_root', audio
 export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllPostsQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', brief: string, id: any, markdownContent: string, readTimeInMinutes: number, title: string }> };
+export type AllPostsQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', brief: string, id: any, markdownContent: string, readTimeInMinutes: number, title: string, slug: string }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
@@ -7410,6 +7424,7 @@ export const AllPostsDocument = new TypedDocumentString(`
     markdownContent
     readTimeInMinutes
     title
+    slug
   }
 }
     `) as unknown as TypedDocumentString<AllPostsQuery, AllPostsQueryVariables>;

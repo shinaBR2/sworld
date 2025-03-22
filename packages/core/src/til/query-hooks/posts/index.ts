@@ -11,6 +11,7 @@ const postsQuery = graphql(/* GraphQL */ `
       markdownContent
       readTimeInMinutes
       title
+      slug
     }
   }
 `);
