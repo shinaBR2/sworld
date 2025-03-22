@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * TODO
@@ -13,11 +13,11 @@ interface MarkdownContentProps {
 
 const MarkdownContent = (props: MarkdownContentProps) => {
   const { content } = props;
-  const processedContent = content
-    .replace(/\\n/g, '\n')
-    .replace(/!\[(.*?)\]\((.*?)( align=.*?)?\)/g, (_match, alt, url) => {
+  const processedContent = useMemo(() => {
+    return content.replace(/\\n/g, '\n').replace(/!\[(.*?)\]\((.*?)( align=.*?)?\)/g, (_match, alt, url) => {
       return `![${alt}](${url})`;
     });
+  }, [content]);
   console.log('MarkdownContent re-rendered processedContent');
 
   return (
