@@ -8,13 +8,15 @@ interface Props extends MuiStyledProps {
 }
 
 const PostMetadata = (props: Props) => {
+  const { title, readTimeInMinutes, sx } = props;
+
   return (
-    <Card sx={props.sx}>
+    <Card sx={sx}>
       <CardContent>
         <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-          {props.title}
+          {title}
         </Typography>
-        <Typography gutterBottom>{props.readTimeInMinutes} min read</Typography>
+        <Typography gutterBottom>{readTimeInMinutes} min read</Typography>
       </CardContent>
     </Card>
   );
