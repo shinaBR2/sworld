@@ -18,7 +18,6 @@ const MarkdownContent = (props: MarkdownContentProps) => {
       return `![${alt}](${url})`;
     });
   }, [content]);
-  console.log('MarkdownContent re-rendered processedContent');
 
   return (
     <Markdown
