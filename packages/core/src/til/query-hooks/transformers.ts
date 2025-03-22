@@ -1,10 +1,6 @@
 import { PostQuery } from '../../graphql/graphql';
 
-const transformPost = (data: PostQuery['posts_by_pk']) => {
-  if (!data) {
-    return null;
-  }
-
+const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
   const { brief, id, slug, markdownContent, readTimeInMinutes, title } = data;
 
   return {
