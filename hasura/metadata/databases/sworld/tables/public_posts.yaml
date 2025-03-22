@@ -19,6 +19,7 @@ select_permissions:
         - id
         - markdown_content
         - readTimeInMinutes
+        - slug
         - title
       filter: {}
       query_root_fields:
@@ -33,6 +34,7 @@ select_permissions:
         - id
         - markdown_content
         - readTimeInMinutes
+        - slug
         - title
       filter: {}
       query_root_fields:

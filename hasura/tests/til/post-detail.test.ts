@@ -14,6 +14,7 @@ const postDetailQuery = `
       markdownContent
       readTimeInMinutes
       title
+      slug
     }
   }
 `;
@@ -32,8 +33,9 @@ const allowedQueries: QueryTestCase[] = [
         expect(post).toHaveProperty("id");
         expect(post).toHaveProperty("title");
         expect(post).toHaveProperty("brief");
-        expect(post).toHaveProperty("markdown_content");
+        expect(post).toHaveProperty("markdownContent");
         expect(post).toHaveProperty("readTimeInMinutes");
+        expect(post).toHaveProperty("slug");
       }
     },
   },
