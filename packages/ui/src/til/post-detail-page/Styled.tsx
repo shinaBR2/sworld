@@ -3,13 +3,14 @@ import { styled } from '@mui/material/styles';
 import baseTheme from '../../baseTheme';
 
 const CodeBlockWrapper = styled(Box)({
-  borderRadius: '8px',
-  overflow: 'auto',
-  margin: '24px 0',
+  borderRadius: baseTheme.spacing(1),
+  maxWidth: '100%',
+  overflow: 'hidden',
   '& pre pre': {
     margin: 0,
     padding: baseTheme.spacing(4),
     borderRadius: baseTheme.spacing(1),
+    overflowX: 'auto',
   },
   '& p code': {
     fontFamily: '"SF Mono", Menlo, Monaco, Consolas, monospace',
