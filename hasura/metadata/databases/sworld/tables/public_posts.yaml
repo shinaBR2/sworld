@@ -1,6 +1,13 @@
 table:
   name: posts
   schema: public
+configuration:
+  column_config:
+    h_id:
+      custom_name: hId
+  custom_column_names:
+    h_id: hId
+  custom_root_fields: {}
 select_permissions:
   - role: anonymous
     permission:
