@@ -7165,7 +7165,7 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', title: string, readTimeInMinutes: number, markdownContent: string, id: any, brief: string, slug: string }> };
+export type PostQuery = { __typename?: 'query_root', posts_by_pk?: { __typename?: 'posts', title: string, readTimeInMinutes: number, markdownContent: string, id: any, brief: string, slug: string } | null };
 
 export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7425,7 +7425,7 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<GetPublicAudiosAndFeelingsQuery, GetPublicAudiosAndFeelingsQueryVariables>;
 export const PostDocument = new TypedDocumentString(`
     query Post($id: uuid!) @cached {
-  posts {
+  posts_by_pk(id: $id) {
     title
     readTimeInMinutes
     markdownContent

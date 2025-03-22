@@ -5,7 +5,7 @@ import { transformPost } from '../transformers';
 
 const postDetailQuery = graphql(/* GraphQL */ `
   query Post($id: uuid!) @cached {
-    posts {
+    posts_by_pk(id: $id) {
       title
       readTimeInMinutes
       markdownContent
@@ -18,7 +18,7 @@ const postDetailQuery = graphql(/* GraphQL */ `
 
 const useLoadPostDetail = (id: string) => {
   const { data, isLoading, error } = useRequest<PostQuery, { id: string }>({
-    queryKey: ['posts'],
+    queryKey: ['post', id],
     document: postDetailQuery,
     variables: {
       id,
@@ -26,7 +26,7 @@ const useLoadPostDetail = (id: string) => {
   });
 
   return {
-    posts: data?.posts ? data.posts.map(p => transformPost(p)) : [],
+    post: data?.posts_by_pk ? transformPost(data.posts_by_pk) : null,
     isLoading,
     error,
   };
