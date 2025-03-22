@@ -10,13 +10,15 @@ const auth0Config = {
 const queryConfig = {
   hasuraUrl: hasuraGraphqlUrl,
 };
+
+const mainDomain = import.meta.env.VITE_MAIN_SITE_URL;
 const appConfig = {
   sites: {
     main: import.meta.env.VITE_MAIN_SITE_URL,
-    listen: import.meta.env.VITE_LISTEN_SITE_URL,
-    watch: import.meta.env.VITE_WATCH_SITE_URL,
-    play: import.meta.env.VITE_PLAY_SITE_URL,
-    til: import.meta.env.VITE_PLAY_SITE_URL,
+    listen: `https://listen.${mainDomain}`,
+    watch: `https://watch.${mainDomain}`,
+    play: `https://play.${mainDomain}`,
+    til: `https://til.${mainDomain}`,
   },
 };
 
@@ -31,9 +33,6 @@ const validateEnvVars = () => {
     'VITE_AUTH0_CLIENT_ID',
     'VITE_HASURA_DOMAIN',
     'VITE_MAIN_SITE_URL',
-    'VITE_LISTEN_SITE_URL',
-    'VITE_WATCH_SITE_URL',
-    'VITE_PLAY_SITE_URL',
     'VITE_ROLLBAR_TOKEN',
     'VITE_ROLLBAR_ENV',
   ];
