@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import { StyledCard, StyledDescription } from './Styled';
 
 const SkeletonPostCard = () => (
-  <StyledCard>
+  <StyledCard aria-busy="true">
     <CardContent>
       <Skeleton variant="text" width="80%" height={32} sx={{ mb: 2 }} />
       <StyledDescription>
