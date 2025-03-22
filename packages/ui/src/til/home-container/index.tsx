@@ -5,6 +5,7 @@ import { useLoadPosts } from 'core/til/query-hooks/posts';
 import { SkeletonPostCard } from '../posts/post-card/skeleton';
 import { RequiredLinkComponent } from '../../watch/videos/types';
 import { PostCard } from '../posts/post-card';
+import { Link } from '@tanstack/react-router';
 
 const Loading = () => {
   return (
@@ -35,7 +36,7 @@ const HomeContainer = (props: HomeContainerProps) => {
         <Grid container spacing={2}>
           {posts.map(p => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
-              <PostCard post={p} />
+              <PostCard post={p} LinkComponent={Link} />
             </Grid>
           ))}
         </Grid>

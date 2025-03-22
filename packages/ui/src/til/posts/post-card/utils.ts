@@ -1,5 +1,5 @@
 import { generatePostDetailRoute } from 'core/til/routes';
-import { Post } from '../posts/type';
+import { Post } from '../type';
 
 const genlinkProps = (post: Post) => {
   return generatePostDetailRoute({

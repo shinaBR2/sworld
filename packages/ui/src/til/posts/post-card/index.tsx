@@ -2,28 +2,32 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Post } from '../type';
 import { StyledCard, StyledDescription } from './Styled';
+import { RequiredLinkComponent } from '../../../watch/videos/types';
+import { genlinkProps } from './utils';
 
-interface PostCardProps {
+interface PostCardProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   post: Post;
 }
 
 export const PostCard = (props: PostCardProps) => {
-  const { post } = props;
+  const { post, LinkComponent } = props;
   const { id, title, brief, readTimeInMinutes } = post;
 
   return (
-    <StyledCard key={id}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
-        <StyledDescription variant="body2" color="text.secondary">
-          {brief}
-        </StyledDescription>
-        <Typography variant="caption" color="text.disabled">
-          {readTimeInMinutes} min read
-        </Typography>
-      </CardContent>
-    </StyledCard>
+    <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
+      <StyledCard key={id}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            {title}
+          </Typography>
+          <StyledDescription variant="body2" color="text.secondary">
+            {brief}
+          </StyledDescription>
+          <Typography variant="caption" color="text.disabled">
+            {readTimeInMinutes} min read
+          </Typography>
+        </CardContent>
+      </StyledCard>
+    </LinkComponent>
   );
 };
