@@ -11,9 +11,11 @@ interface MarkdownContentProps {
   content: string;
 }
 
-const MarkdownContent = (props: MarkdownContentProps) => {
+const MarkdownContent = React.memo((props: MarkdownContentProps) => {
   const { content } = props;
   const processedContent = useMemo(() => {
+    if (!content) return '';
+
     return content.replace(/\\n/g, '\n').replace(/!\[(.*?)\]\((.*?)( align=.*?)?\)/g, (_match, alt, url) => {
       return `![${alt}](${url})`;
     });
@@ -43,6 +45,6 @@ const MarkdownContent = (props: MarkdownContentProps) => {
       {processedContent}
     </Markdown>
   );
-};
+});
 
 export { MarkdownContent };
