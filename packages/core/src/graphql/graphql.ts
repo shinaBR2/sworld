@@ -1227,6 +1227,10 @@ export type Mutation_Root = {
   delete_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** delete single row from the table: "playlist_videos" */
   delete_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** delete data from the table: "posts" */
+  delete_posts?: Maybe<Posts_Mutation_Response>;
+  /** delete single row from the table: "posts" */
+  delete_posts_by_pk?: Maybe<Posts>;
   /** delete data from the table: "subtitles" */
   delete_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** delete single row from the table: "subtitles" */
@@ -1287,6 +1291,10 @@ export type Mutation_Root = {
   insert_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** insert a single row into the table: "playlist_videos" */
   insert_playlist_videos_one?: Maybe<Playlist_Videos>;
+  /** insert data into the table: "posts" */
+  insert_posts?: Maybe<Posts_Mutation_Response>;
+  /** insert a single row into the table: "posts" */
+  insert_posts_one?: Maybe<Posts>;
   /** insert data into the table: "subtitles" */
   insert_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** insert a single row into the table: "subtitles" */
@@ -1359,6 +1367,12 @@ export type Mutation_Root = {
   update_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** update multiples rows of table: "playlist_videos" */
   update_playlist_videos_many?: Maybe<Array<Maybe<Playlist_Videos_Mutation_Response>>>;
+  /** update data of the table: "posts" */
+  update_posts?: Maybe<Posts_Mutation_Response>;
+  /** update single row of the table: "posts" */
+  update_posts_by_pk?: Maybe<Posts>;
+  /** update multiples rows of table: "posts" */
+  update_posts_many?: Maybe<Array<Maybe<Posts_Mutation_Response>>>;
   /** update data of the table: "subtitles" */
   update_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** update single row of the table: "subtitles" */
@@ -1487,6 +1501,18 @@ export type Mutation_RootDelete_Playlist_VideosArgs = {
 export type Mutation_RootDelete_Playlist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PostsArgs = {
+  where: Posts_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Posts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1680,6 +1706,20 @@ export type Mutation_RootInsert_Playlist_VideosArgs = {
 export type Mutation_RootInsert_Playlist_Videos_OneArgs = {
   object: Playlist_Videos_Insert_Input;
   on_conflict?: InputMaybe<Playlist_Videos_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PostsArgs = {
+  objects: Array<Posts_Insert_Input>;
+  on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Posts_OneArgs = {
+  object: Posts_Insert_Input;
+  on_conflict?: InputMaybe<Posts_On_Conflict>;
 };
 
 
@@ -1938,6 +1978,28 @@ export type Mutation_RootUpdate_Playlist_Videos_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_Videos_ManyArgs = {
   updates: Array<Playlist_Videos_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_PostsArgs = {
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  _set?: InputMaybe<Posts_Set_Input>;
+  where: Posts_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Posts_By_PkArgs = {
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  _set?: InputMaybe<Posts_Set_Input>;
+  pk_columns: Posts_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Posts_ManyArgs = {
+  updates: Array<Posts_Updates>;
 };
 
 
@@ -2824,6 +2886,295 @@ export type Playlist_Videos_Variance_Order_By = {
   position?: InputMaybe<Order_By>;
 };
 
+/** Blog posts initial idea is fetch from hashnode for til */
+export type Posts = {
+  __typename?: 'posts';
+  brief: Scalars['String']['output'];
+  created_at: Scalars['timestamptz']['output'];
+  /** Hashnode public id */
+  hId: Scalars['String']['output'];
+  id: Scalars['uuid']['output'];
+  markdownContent: Scalars['String']['output'];
+  readTimeInMinutes: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+};
+
+/** aggregated selection of "posts" */
+export type Posts_Aggregate = {
+  __typename?: 'posts_aggregate';
+  aggregate?: Maybe<Posts_Aggregate_Fields>;
+  nodes: Array<Posts>;
+};
+
+/** aggregate fields of "posts" */
+export type Posts_Aggregate_Fields = {
+  __typename?: 'posts_aggregate_fields';
+  avg?: Maybe<Posts_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Posts_Max_Fields>;
+  min?: Maybe<Posts_Min_Fields>;
+  stddev?: Maybe<Posts_Stddev_Fields>;
+  stddev_pop?: Maybe<Posts_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Posts_Stddev_Samp_Fields>;
+  sum?: Maybe<Posts_Sum_Fields>;
+  var_pop?: Maybe<Posts_Var_Pop_Fields>;
+  var_samp?: Maybe<Posts_Var_Samp_Fields>;
+  variance?: Maybe<Posts_Variance_Fields>;
+};
+
+
+/** aggregate fields of "posts" */
+export type Posts_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Posts_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Posts_Avg_Fields = {
+  __typename?: 'posts_avg_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "posts". All fields are combined with a logical 'AND'. */
+export type Posts_Bool_Exp = {
+  _and?: InputMaybe<Array<Posts_Bool_Exp>>;
+  _not?: InputMaybe<Posts_Bool_Exp>;
+  _or?: InputMaybe<Array<Posts_Bool_Exp>>;
+  brief?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  hId?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  markdownContent?: InputMaybe<String_Comparison_Exp>;
+  readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "posts" */
+export enum Posts_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  PostsPkey = 'posts_pkey',
+  /** unique or primary key constraint on columns "slug" */
+  PostsSlugKey = 'posts_slug_key'
+}
+
+/** input type for incrementing numeric columns in table "posts" */
+export type Posts_Inc_Input = {
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "posts" */
+export type Posts_Insert_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate max on columns */
+export type Posts_Max_Fields = {
+  __typename?: 'posts_max_fields';
+  brief?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** Hashnode public id */
+  hId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregate min on columns */
+export type Posts_Min_Fields = {
+  __typename?: 'posts_min_fields';
+  brief?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** Hashnode public id */
+  hId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** response of any mutation on the table "posts" */
+export type Posts_Mutation_Response = {
+  __typename?: 'posts_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Posts>;
+};
+
+/** on_conflict condition type for table "posts" */
+export type Posts_On_Conflict = {
+  constraint: Posts_Constraint;
+  update_columns?: Array<Posts_Update_Column>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "posts". */
+export type Posts_Order_By = {
+  brief?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  hId?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  markdownContent?: InputMaybe<Order_By>;
+  readTimeInMinutes?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: posts */
+export type Posts_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "posts" */
+export enum Posts_Select_Column {
+  /** column name */
+  Brief = 'brief',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HId = 'hId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MarkdownContent = 'markdownContent',
+  /** column name */
+  ReadTimeInMinutes = 'readTimeInMinutes',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "posts" */
+export type Posts_Set_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Posts_Stddev_Fields = {
+  __typename?: 'posts_stddev_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Posts_Stddev_Pop_Fields = {
+  __typename?: 'posts_stddev_pop_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Posts_Stddev_Samp_Fields = {
+  __typename?: 'posts_stddev_samp_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "posts" */
+export type Posts_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Posts_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Posts_Stream_Cursor_Value_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Posts_Sum_Fields = {
+  __typename?: 'posts_sum_fields';
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+};
+
+/** update columns of table "posts" */
+export enum Posts_Update_Column {
+  /** column name */
+  Brief = 'brief',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HId = 'hId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MarkdownContent = 'markdownContent',
+  /** column name */
+  ReadTimeInMinutes = 'readTimeInMinutes',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+export type Posts_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Posts_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Posts_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Posts_Var_Pop_Fields = {
+  __typename?: 'posts_var_pop_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Posts_Var_Samp_Fields = {
+  __typename?: 'posts_var_samp_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Posts_Variance_Fields = {
+  __typename?: 'posts_variance_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
 export type Query_Root = {
   __typename?: 'query_root';
   /** An array relationship */
@@ -2862,6 +3213,12 @@ export type Query_Root = {
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   /** fetch data from the table: "playlist_videos" using primary key columns */
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** fetch data from the table: "posts" */
+  posts: Array<Posts>;
+  /** fetch aggregated fields from the table: "posts" */
+  posts_aggregate: Posts_Aggregate;
+  /** fetch data from the table: "posts" using primary key columns */
+  posts_by_pk?: Maybe<Posts>;
   /** An array relationship */
   subtitles: Array<Subtitles>;
   /** An aggregate relationship */
@@ -3056,6 +3413,29 @@ export type Query_RootPlaylist_Videos_AggregateArgs = {
 export type Query_RootPlaylist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootPostsArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+export type Query_RootPosts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+export type Query_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -3316,6 +3696,14 @@ export type Subscription_Root = {
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** fetch data from the table in a streaming manner: "playlist_videos" */
   playlist_videos_stream: Array<Playlist_Videos>;
+  /** fetch data from the table: "posts" */
+  posts: Array<Posts>;
+  /** fetch aggregated fields from the table: "posts" */
+  posts_aggregate: Posts_Aggregate;
+  /** fetch data from the table: "posts" using primary key columns */
+  posts_by_pk?: Maybe<Posts>;
+  /** fetch data from the table in a streaming manner: "posts" */
+  posts_stream: Array<Posts>;
   /** An array relationship */
   subtitles: Array<Subtitles>;
   /** An aggregate relationship */
@@ -3570,6 +3958,36 @@ export type Subscription_RootPlaylist_Videos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Playlist_Videos_Stream_Cursor_Input>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+
+export type Subscription_RootPostsArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+export type Subscription_RootPosts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+export type Subscription_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootPosts_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Posts_Stream_Cursor_Input>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
 };
 
 
@@ -6742,6 +7160,18 @@ export type GetPublicAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: ne
 
 export type GetPublicAudiosAndFeelingsQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }> };
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type PostQuery = { __typename?: 'query_root', posts_by_pk?: { __typename?: 'posts', title: string, readTimeInMinutes: number, markdownContent: string, id: any, brief: string, slug: string } | null };
+
+export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllPostsQuery = { __typename?: 'query_root', posts: Array<{ __typename?: 'posts', brief: string, id: any, markdownContent: string, readTimeInMinutes: number, title: string, slug: string }> };
+
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
@@ -6993,6 +7423,30 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetPublicAudiosAndFeelingsQuery, GetPublicAudiosAndFeelingsQueryVariables>;
+export const PostDocument = new TypedDocumentString(`
+    query Post($id: uuid!) @cached {
+  posts_by_pk(id: $id) {
+    title
+    readTimeInMinutes
+    markdownContent
+    id
+    brief
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<PostQuery, PostQueryVariables>;
+export const AllPostsDocument = new TypedDocumentString(`
+    query AllPosts @cached {
+  posts {
+    brief
+    id
+    markdownContent
+    readTimeInMinutes
+    title
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<AllPostsQuery, AllPostsQueryVariables>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {

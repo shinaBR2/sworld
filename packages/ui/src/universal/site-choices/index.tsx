@@ -8,6 +8,7 @@ import Menu from '@mui/material/Menu';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
+import { MenuBook } from '@mui/icons-material';
 
 const sites = [
   {
@@ -22,15 +23,20 @@ const sites = [
     name: 'Play',
     value: 'play',
   },
+  {
+    name: 'TIL',
+    value: 'til',
+  },
 ];
 
 const siteIcons = {
   listen: <Headphones fontSize="small" />,
   watch: <OndemandVideo fontSize="small" />,
   play: <PlayCircle fontSize="small" />,
+  til: <MenuBook fontSize="small" />,
 } as const;
 
-type SiteName = 'listen' | 'watch' | 'play';
+type SiteName = 'listen' | 'watch' | 'play' | 'til';
 
 interface SiteChoicesProps {
   activeSite: string;
@@ -38,6 +44,7 @@ interface SiteChoicesProps {
     listen: string;
     watch: string;
     play: string;
+    til: string;
   };
 }
 

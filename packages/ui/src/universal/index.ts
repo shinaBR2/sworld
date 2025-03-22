@@ -1,11 +1,12 @@
 /**
  * This should include all UI components for all workspaces
  */
+import { FullWidthContainer } from './containers/full-width';
+import { ResponsiveAvatar, ResponsiveCardMedia } from './images/image';
 import LoadingBackdrop from './LoadingBackdrop';
 import Logo from './logo';
-export * as Minimalism from './minimalism';
 export * as Dialogs from './dialogs';
-import { FullWidthContainer } from './containers/full-width';
-import { ResponsiveCardMedia, ResponsiveAvatar } from './images/image';
+export * as Minimalism from './minimalism';
 
-export { LoadingBackdrop, Logo, FullWidthContainer, ResponsiveCardMedia, ResponsiveAvatar };
+export { type MuiStyledProps } from './types';
+export { FullWidthContainer, LoadingBackdrop, Logo, ResponsiveAvatar, ResponsiveCardMedia };

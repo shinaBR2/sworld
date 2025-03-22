@@ -1373,6 +1373,17 @@ type mutation_root {
   """
   delete_playlist_videos_by_pk(playlist_id: uuid!, video_id: uuid!): playlist_videos
   """
+  delete data from the table: "posts"
+  """
+  delete_posts(
+    """filter the rows which have to be deleted"""
+    where: posts_bool_exp!
+  ): posts_mutation_response
+  """
+  delete single row from the table: "posts"
+  """
+  delete_posts_by_pk(id: uuid!): posts
+  """
   delete data from the table: "subtitles"
   """
   delete_subtitles(
@@ -1579,6 +1590,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: playlist_videos_on_conflict
   ): playlist_videos
+  """
+  insert data into the table: "posts"
+  """
+  insert_posts(
+    """the rows to be inserted"""
+    objects: [posts_insert_input!]!
+    """upsert condition"""
+    on_conflict: posts_on_conflict
+  ): posts_mutation_response
+  """
+  insert a single row into the table: "posts"
+  """
+  insert_posts_one(
+    """the row to be inserted"""
+    object: posts_insert_input!
+    """upsert condition"""
+    on_conflict: posts_on_conflict
+  ): posts
   """
   insert data into the table: "subtitles"
   """
@@ -1921,6 +1950,34 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [playlist_videos_updates!]!
   ): [playlist_videos_mutation_response]
+  """
+  update data of the table: "posts"
+  """
+  update_posts(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: posts_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: posts_set_input
+    """filter the rows which have to be updated"""
+    where: posts_bool_exp!
+  ): posts_mutation_response
+  """
+  update single row of the table: "posts"
+  """
+  update_posts_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: posts_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: posts_set_input
+    pk_columns: posts_pk_columns_input!
+  ): posts
+  """
+  update multiples rows of table: "posts"
+  """
+  update_posts_many(
+    """updates to execute, in order"""
+    updates: [posts_updates!]!
+  ): [posts_mutation_response]
   """
   update data of the table: "subtitles"
   """
@@ -2931,6 +2988,302 @@ input playlist_videos_variance_order_by {
   position: order_by
 }
 
+"""Blog posts initial idea is fetch from hashnode for til"""
+type posts {
+  brief: String!
+  created_at: timestamptz!
+  """Hashnode public id"""
+  hId: String!
+  id: uuid!
+  markdownContent: String!
+  readTimeInMinutes: Int!
+  slug: String!
+  title: String!
+  updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "posts"
+"""
+type posts_aggregate {
+  aggregate: posts_aggregate_fields
+  nodes: [posts!]!
+}
+
+"""
+aggregate fields of "posts"
+"""
+type posts_aggregate_fields {
+  avg: posts_avg_fields
+  count(columns: [posts_select_column!], distinct: Boolean): Int!
+  max: posts_max_fields
+  min: posts_min_fields
+  stddev: posts_stddev_fields
+  stddev_pop: posts_stddev_pop_fields
+  stddev_samp: posts_stddev_samp_fields
+  sum: posts_sum_fields
+  var_pop: posts_var_pop_fields
+  var_samp: posts_var_samp_fields
+  variance: posts_variance_fields
+}
+
+"""aggregate avg on columns"""
+type posts_avg_fields {
+  readTimeInMinutes: Float
+}
+
+"""
+Boolean expression to filter rows from the table "posts". All fields are combined with a logical 'AND'.
+"""
+input posts_bool_exp {
+  _and: [posts_bool_exp!]
+  _not: posts_bool_exp
+  _or: [posts_bool_exp!]
+  brief: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  hId: String_comparison_exp
+  id: uuid_comparison_exp
+  markdownContent: String_comparison_exp
+  readTimeInMinutes: Int_comparison_exp
+  slug: String_comparison_exp
+  title: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "posts"
+"""
+enum posts_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  posts_pkey
+  """
+  unique or primary key constraint on columns "slug"
+  """
+  posts_slug_key
+}
+
+"""
+input type for incrementing numeric columns in table "posts"
+"""
+input posts_inc_input {
+  readTimeInMinutes: Int
+}
+
+"""
+input type for inserting data into table "posts"
+"""
+input posts_insert_input {
+  brief: String
+  created_at: timestamptz
+  """Hashnode public id"""
+  hId: String
+  id: uuid
+  markdownContent: String
+  readTimeInMinutes: Int
+  slug: String
+  title: String
+  updated_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type posts_max_fields {
+  brief: String
+  created_at: timestamptz
+  """Hashnode public id"""
+  hId: String
+  id: uuid
+  markdownContent: String
+  readTimeInMinutes: Int
+  slug: String
+  title: String
+  updated_at: timestamptz
+}
+
+"""aggregate min on columns"""
+type posts_min_fields {
+  brief: String
+  created_at: timestamptz
+  """Hashnode public id"""
+  hId: String
+  id: uuid
+  markdownContent: String
+  readTimeInMinutes: Int
+  slug: String
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "posts"
+"""
+type posts_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [posts!]!
+}
+
+"""
+on_conflict condition type for table "posts"
+"""
+input posts_on_conflict {
+  constraint: posts_constraint!
+  update_columns: [posts_update_column!]! = []
+  where: posts_bool_exp
+}
+
+"""Ordering options when selecting data from "posts"."""
+input posts_order_by {
+  brief: order_by
+  created_at: order_by
+  hId: order_by
+  id: order_by
+  markdownContent: order_by
+  readTimeInMinutes: order_by
+  slug: order_by
+  title: order_by
+  updated_at: order_by
+}
+
+"""primary key columns input for table: posts"""
+input posts_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "posts"
+"""
+enum posts_select_column {
+  """column name"""
+  brief
+  """column name"""
+  created_at
+  """column name"""
+  hId
+  """column name"""
+  id
+  """column name"""
+  markdownContent
+  """column name"""
+  readTimeInMinutes
+  """column name"""
+  slug
+  """column name"""
+  title
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "posts"
+"""
+input posts_set_input {
+  brief: String
+  created_at: timestamptz
+  """Hashnode public id"""
+  hId: String
+  id: uuid
+  markdownContent: String
+  readTimeInMinutes: Int
+  slug: String
+  title: String
+  updated_at: timestamptz
+}
+
+"""aggregate stddev on columns"""
+type posts_stddev_fields {
+  readTimeInMinutes: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type posts_stddev_pop_fields {
+  readTimeInMinutes: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type posts_stddev_samp_fields {
+  readTimeInMinutes: Float
+}
+
+"""
+Streaming cursor of the table "posts"
+"""
+input posts_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: posts_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input posts_stream_cursor_value_input {
+  brief: String
+  created_at: timestamptz
+  """Hashnode public id"""
+  hId: String
+  id: uuid
+  markdownContent: String
+  readTimeInMinutes: Int
+  slug: String
+  title: String
+  updated_at: timestamptz
+}
+
+"""aggregate sum on columns"""
+type posts_sum_fields {
+  readTimeInMinutes: Int
+}
+
+"""
+update columns of table "posts"
+"""
+enum posts_update_column {
+  """column name"""
+  brief
+  """column name"""
+  created_at
+  """column name"""
+  hId
+  """column name"""
+  id
+  """column name"""
+  markdownContent
+  """column name"""
+  readTimeInMinutes
+  """column name"""
+  slug
+  """column name"""
+  title
+  """column name"""
+  updated_at
+}
+
+input posts_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: posts_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: posts_set_input
+  """filter the rows which have to be updated"""
+  where: posts_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type posts_var_pop_fields {
+  readTimeInMinutes: Float
+}
+
+"""aggregate var_samp on columns"""
+type posts_var_samp_fields {
+  readTimeInMinutes: Float
+}
+
+"""aggregate variance on columns"""
+type posts_variance_fields {
+  readTimeInMinutes: Float
+}
+
 type query_root {
   """An array relationship"""
   audio_tags(
@@ -3108,6 +3461,38 @@ type query_root {
   ): playlist_videos_aggregate!
   """fetch data from the table: "playlist_videos" using primary key columns"""
   playlist_videos_by_pk(playlist_id: uuid!, video_id: uuid!): playlist_videos
+  """
+  fetch data from the table: "posts"
+  """
+  posts(
+    """distinct select on columns"""
+    distinct_on: [posts_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [posts_order_by!]
+    """filter the rows returned"""
+    where: posts_bool_exp
+  ): [posts!]!
+  """
+  fetch aggregated fields from the table: "posts"
+  """
+  posts_aggregate(
+    """distinct select on columns"""
+    distinct_on: [posts_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [posts_order_by!]
+    """filter the rows returned"""
+    where: posts_bool_exp
+  ): posts_aggregate!
+  """fetch data from the table: "posts" using primary key columns"""
+  posts_by_pk(id: uuid!): posts
   """An array relationship"""
   subtitles(
     """distinct select on columns"""
@@ -3627,6 +4012,49 @@ type subscription_root {
     """filter the rows returned"""
     where: playlist_videos_bool_exp
   ): [playlist_videos!]!
+  """
+  fetch data from the table: "posts"
+  """
+  posts(
+    """distinct select on columns"""
+    distinct_on: [posts_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [posts_order_by!]
+    """filter the rows returned"""
+    where: posts_bool_exp
+  ): [posts!]!
+  """
+  fetch aggregated fields from the table: "posts"
+  """
+  posts_aggregate(
+    """distinct select on columns"""
+    distinct_on: [posts_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [posts_order_by!]
+    """filter the rows returned"""
+    where: posts_bool_exp
+  ): posts_aggregate!
+  """fetch data from the table: "posts" using primary key columns"""
+  posts_by_pk(id: uuid!): posts
+  """
+  fetch data from the table in a streaming manner: "posts"
+  """
+  posts_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [posts_stream_cursor_input]!
+    """filter the rows returned"""
+    where: posts_bool_exp
+  ): [posts!]!
   """An array relationship"""
   subtitles(
     """distinct select on columns"""
