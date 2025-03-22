@@ -1,6 +1,6 @@
 import Stack from '@mui/material/Stack';
 import { ReactNode } from 'react';
-import { MuiStyledProps } from '../../type';
+import { MuiStyledProps } from '../../types';
 
 interface FullPageContainerProps extends MuiStyledProps {
   children: ReactNode;

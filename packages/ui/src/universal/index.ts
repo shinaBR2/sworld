@@ -8,5 +8,5 @@ import Logo from './logo';
 export * as Dialogs from './dialogs';
 export * as Minimalism from './minimalism';
 
-export { type MuiStyledProps } from './type';
+export { type MuiStyledProps } from './types';
 export { FullWidthContainer, LoadingBackdrop, Logo, ResponsiveAvatar, ResponsiveCardMedia };
