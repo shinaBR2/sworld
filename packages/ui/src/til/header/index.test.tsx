@@ -46,7 +46,7 @@ describe('Header', () => {
     const { getByTestId, getByText } = render(<Header sites={mockSites} LinkComponent={MockLink} />);
 
     // Verify Logo component
-    expect(getByText('MockLink')).toBeInTheDocument(); // Changed this line
+    expect(getByText('MockLink')).toBeInTheDocument();
 
     // Verify SiteChoices component
     const siteChoices = getByTestId('site-choices');

@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { HomeContainer } from './index';
 import { texts } from './texts';
 
-// Mock components and hooks
 vi.mock('../posts/post-card/skeleton', () => ({
   SkeletonPostCard: () => <div data-testid="skeleton-post-card" />,
 }));
@@ -31,7 +30,7 @@ describe('HomeContainer', () => {
     const mockPosts = [
       { id: '1', title: 'Post 1' },
       { id: '2', title: 'Post 2' },
-    ] as any;
+    ];
 
     render(<HomeContainer queryRs={mockQueryRs(false, mockPosts)} />);
 
