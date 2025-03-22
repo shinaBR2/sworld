@@ -2,8 +2,6 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { useLoadPosts } from './index';
 
-// Mock the useRequest hook
-// Correct the mock path and add factory function
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
 }));
