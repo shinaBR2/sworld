@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { PostCard } from './index';
-import { Post } from '../types';
 import { describe, it, expect, vi } from 'vitest';
 
 const mockPost = {
@@ -8,7 +7,9 @@ const mockPost = {
   title: 'Test Post Title',
   brief: 'This is a test brief description for the post card component',
   readTimeInMinutes: 5,
-} as Post;
+  mContent: '# markdown content',
+  slug: 'test-post-title',
+};
 
 describe('PostCard', () => {
   it('renders post content correctly', () => {
