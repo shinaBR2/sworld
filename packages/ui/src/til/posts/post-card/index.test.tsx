@@ -12,7 +12,8 @@ const mockPost = {
 
 describe('PostCard', () => {
   it('renders post content correctly', () => {
-    render(<PostCard {...mockPost} />);
+    // Fix prop spreading syntax
+    render(<PostCard post={mockPost} LinkComponent={({ children }) => <div>{children}</div>} />);
 
     // Check title
     expect(screen.getByRole('heading', { level: 6 })).toHaveTextContent(mockPost.title);
