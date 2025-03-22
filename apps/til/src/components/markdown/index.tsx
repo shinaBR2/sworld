@@ -16,9 +16,11 @@ const MarkdownContent = React.memo((props: MarkdownContentProps) => {
   const processedContent = useMemo(() => {
     if (!content) return '';
 
-    return content.replace(/\\n/g, '\n').replace(/!\[(.*?)\]\((.*?)( align=.*?)?\)/g, (_match, alt, url) => {
-      return `![${alt}](${url})`;
-    });
+    return content
+      .replace(/\\n/g, '\n')
+      .replace(/!\[(.*?)\]\((.*?)( align=(.*?))?\)/g, (_match, alt, url, alignFull, alignValue) => {
+        return alignValue ? `![${alt}](${url}#align=${alignValue})` : `![${alt}](${url})`;
+      });
   }, [content]);
 
   return (
