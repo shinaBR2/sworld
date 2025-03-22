@@ -11,7 +11,7 @@ interface PostCardProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 
 export const PostCard = (props: PostCardProps) => {
   const { post, LinkComponent } = props;
-  const { id, title, brief, readTimeInMinutes } = post;
+  const { title, brief, readTimeInMinutes } = post;
 
   return (
     <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
