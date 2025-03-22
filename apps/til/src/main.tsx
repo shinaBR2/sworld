@@ -10,7 +10,6 @@ import { queryConfig, rollbarConfig, validateEnvVars } from './config';
 
 validateEnvVars();
 
-// @ts-ignore
 const router = createRouter({
   routeTree,
   defaultViewTransition: true,
