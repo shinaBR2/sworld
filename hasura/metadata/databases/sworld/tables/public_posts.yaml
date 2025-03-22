@@ -5,8 +5,11 @@ configuration:
   column_config:
     h_id:
       custom_name: hId
+    markdown_content:
+      custom_name: markdownContent
   custom_column_names:
     h_id: hId
+    markdown_content: markdownContent
   custom_root_fields: {}
 select_permissions:
   - role: anonymous
@@ -20,6 +23,7 @@ select_permissions:
       filter: {}
       query_root_fields:
         - select
+        - select_by_pk
       subscription_root_fields: []
     comment: ""
   - role: user
@@ -33,5 +37,6 @@ select_permissions:
       filter: {}
       query_root_fields:
         - select
+        - select_by_pk
       subscription_root_fields: []
     comment: ""

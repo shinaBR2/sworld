@@ -6,9 +6,9 @@ import {
   ROLE_USER,
 } from "../create-role-test-suite";
 
-const allPostsQuery = `
-  query AllPosts {
-    posts {
+const postDetailQuery = `
+  query PostDetail($id: uuid!) {
+    posts_by_pk(id: $id) {
       brief
       id
       markdownContent
@@ -20,16 +20,15 @@ const allPostsQuery = `
 
 const allowedQueries: QueryTestCase[] = [
   {
-    name: "Get all posts",
-    query: allPostsQuery,
+    name: "Get post detail",
+    query: postDetailQuery,
+    variables: {
+      id: "123e4567-e89b-12d3-a456-426614174000",
+    },
     additionalTest: (response) => {
-      // Verify response structure
-      expect(response).toHaveProperty("posts");
-      expect(Array.isArray(response.posts)).toBe(true);
-
-      // If posts exist, verify they have the expected fields
-      if (response.posts.length > 0) {
-        const post = response.posts[0];
+      expect(response).toHaveProperty("posts_by_pk");
+      const post = response.posts_by_pk;
+      if (post) {
         expect(post).toHaveProperty("id");
         expect(post).toHaveProperty("title");
         expect(post).toHaveProperty("brief");
@@ -40,7 +39,7 @@ const allowedQueries: QueryTestCase[] = [
   },
 ];
 
-// Test for anonymous role
+// Test suite for anonymous role
 await createRoleTestSuite(ROLE_ANONYMOUS, {
   queries: {
     allowed: [...allowedQueries],
@@ -49,7 +48,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
   },
 });
 
-// Test for authenticated user role
+// Test suite for authenticated user role
 await createRoleTestSuite(ROLE_USER, {
   queries: {
     allowed: [...allowedQueries],
