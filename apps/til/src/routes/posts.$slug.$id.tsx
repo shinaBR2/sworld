@@ -30,10 +30,16 @@ function RouteComponent() {
     );
   }
   if (!post) {
-    return <div>Post not found</div>;
+    return (
+      <Layout sx={{ overflow: 'auto', pb: 6 }}>
+        <PostDetailPageContainer>
+          <h2>Post Not Found</h2>
+          <p>The post you're looking for is unavailable or has been removed.</p>
+        </PostDetailPageContainer>
+      </Layout>
+    );
   }
 
-  console.log('post detail rerender');
   const { title, readTimeInMinutes, mContent } = post;
 
   return (
