@@ -4,7 +4,7 @@ import { Layout } from '../components/layout';
 import { HomeContainer } from 'ui/til/home-container';
 import { useLoadPosts } from 'core/til/query-hooks/posts';
 
-const Content = () => {
+const Index = () => {
   const queryRs = useLoadPosts();
 
   return (
@@ -12,10 +12,6 @@ const Content = () => {
       <HomeContainer queryRs={queryRs} LinkComponent={Link} />
     </Layout>
   );
-};
-
-const Index = () => {
-  return <Content />;
 };
 
 export const Route = createLazyFileRoute('/')({
