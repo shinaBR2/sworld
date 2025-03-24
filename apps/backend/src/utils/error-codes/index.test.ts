@@ -21,7 +21,7 @@ describe('error-codes', () => {
   });
 
   it('should contain all expected validation error codes', () => {
-    const expectedCodes = ['INVALID_SIGNATURE'];
+    const expectedCodes = ['INVALID_SIGNATURE', 'INVALID_PAYLOAD'];
 
     const actualCodes = Object.values(VALIDATION_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);

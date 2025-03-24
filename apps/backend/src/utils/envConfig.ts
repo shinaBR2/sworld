@@ -14,6 +14,9 @@ const envConfig = {
   cloudTaskServiceAccount: process.env.CLOUD_TASKS_SERVICE_ACCOUNT,
   hasuraEndpoint: process.env.HASURA_ENDPOINT,
   hasuraAdminSecret: process.env.HASURA_ADMIN_SECRET,
+  hashnodeWebhookSecret: process.env.HASHNODE_WEBHOOK_SECRET,
+  hashnodeEndpoint: process.env.HASHNODE_ENDPOINT,
+  hashnodePersonalToken: process.env.HASHNODE_PERSONAL_TOKEN,
 };
 
 export { envConfig };

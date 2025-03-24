@@ -617,6 +617,303 @@ export type Audios_Updates = {
   where: Audios_Bool_Exp;
 };
 
+/** Requests to crawl content from any sources */
+export type Crawl_Requests = {
+  __typename?: 'crawl_requests';
+  created_at: Scalars['timestamptz']['output'];
+  get_single_video?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['uuid']['output'];
+  site: Scalars['String']['output'];
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  url: Scalars['String']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "crawl_requests" */
+export type Crawl_Requests_Aggregate = {
+  __typename?: 'crawl_requests_aggregate';
+  aggregate?: Maybe<Crawl_Requests_Aggregate_Fields>;
+  nodes: Array<Crawl_Requests>;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp_Count>;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Crawl_Requests_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "crawl_requests" */
+export type Crawl_Requests_Aggregate_Fields = {
+  __typename?: 'crawl_requests_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Crawl_Requests_Max_Fields>;
+  min?: Maybe<Crawl_Requests_Min_Fields>;
+};
+
+/** aggregate fields of "crawl_requests" */
+export type Crawl_Requests_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "crawl_requests" */
+export type Crawl_Requests_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Crawl_Requests_Max_Order_By>;
+  min?: InputMaybe<Crawl_Requests_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "crawl_requests" */
+export type Crawl_Requests_Arr_Rel_Insert_Input = {
+  data: Array<Crawl_Requests_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "crawl_requests". All fields are combined with a logical 'AND'. */
+export type Crawl_Requests_Bool_Exp = {
+  _and?: InputMaybe<Array<Crawl_Requests_Bool_Exp>>;
+  _not?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  _or?: InputMaybe<Array<Crawl_Requests_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  get_single_video?: InputMaybe<Boolean_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  site?: InputMaybe<String_Comparison_Exp>;
+  slug_prefix?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "crawl_requests" */
+export enum Crawl_Requests_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  CrawlRequestsPkey = 'crawl_requests_pkey',
+}
+
+/** input type for inserting data into table "crawl_requests" */
+export type Crawl_Requests_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Crawl_Requests_Max_Fields = {
+  __typename?: 'crawl_requests_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "crawl_requests" */
+export type Crawl_Requests_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Crawl_Requests_Min_Fields = {
+  __typename?: 'crawl_requests_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
+  slug_prefix?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "crawl_requests" */
+export type Crawl_Requests_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "crawl_requests" */
+export type Crawl_Requests_Mutation_Response = {
+  __typename?: 'crawl_requests_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Crawl_Requests>;
+};
+
+/** on_conflict condition type for table "crawl_requests" */
+export type Crawl_Requests_On_Conflict = {
+  constraint: Crawl_Requests_Constraint;
+  update_columns?: Array<Crawl_Requests_Update_Column>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "crawl_requests". */
+export type Crawl_Requests_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  get_single_video?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
+  slug_prefix?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: crawl_requests */
+export type Crawl_Requests_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Site = 'site',
+  /** column name */
+  SlugPrefix = 'slug_prefix',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  UserId = 'user_id',
+}
+
+/** select "crawl_requests_aggregate_bool_exp_bool_and_arguments_columns" columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+}
+
+/** select "crawl_requests_aggregate_bool_exp_bool_or_arguments_columns" columns of table "crawl_requests" */
+export enum Crawl_Requests_Select_Column_Crawl_Requests_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+}
+
+/** input type for updating data in table "crawl_requests" */
+export type Crawl_Requests_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "crawl_requests" */
+export type Crawl_Requests_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Crawl_Requests_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Crawl_Requests_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  get_single_video?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
+  slug_prefix?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "crawl_requests" */
+export enum Crawl_Requests_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GetSingleVideo = 'get_single_video',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Site = 'site',
+  /** column name */
+  SlugPrefix = 'slug_prefix',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  UserId = 'user_id',
+}
+
+export type Crawl_Requests_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Crawl_Requests_Bool_Exp;
+};
+
 /** ordering argument of a cursor */
 export enum Cursor_Ordering {
   /** ascending ordering of the cursor */
@@ -907,6 +1204,10 @@ export type Mutation_Root = {
   delete_audios?: Maybe<Audios_Mutation_Response>;
   /** delete single row from the table: "audios" */
   delete_audios_by_pk?: Maybe<Audios>;
+  /** delete data from the table: "crawl_requests" */
+  delete_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** delete single row from the table: "crawl_requests" */
+  delete_crawl_requests_by_pk?: Maybe<Crawl_Requests>;
   /** delete data from the table: "feature_flag" */
   delete_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** delete single row from the table: "feature_flag" */
@@ -919,6 +1220,14 @@ export type Mutation_Root = {
   delete_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** delete single row from the table: "playlist_videos" */
   delete_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** delete data from the table: "posts" */
+  delete_posts?: Maybe<Posts_Mutation_Response>;
+  /** delete single row from the table: "posts" */
+  delete_posts_by_pk?: Maybe<Posts>;
+  /** delete data from the table: "subtitles" */
+  delete_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** delete single row from the table: "subtitles" */
+  delete_subtitles_by_pk?: Maybe<Subtitles>;
   /** delete data from the table: "tags" */
   delete_tags?: Maybe<Tags_Mutation_Response>;
   /** delete single row from the table: "tags" */
@@ -959,6 +1268,10 @@ export type Mutation_Root = {
   insert_audios?: Maybe<Audios_Mutation_Response>;
   /** insert a single row into the table: "audios" */
   insert_audios_one?: Maybe<Audios>;
+  /** insert data into the table: "crawl_requests" */
+  insert_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** insert a single row into the table: "crawl_requests" */
+  insert_crawl_requests_one?: Maybe<Crawl_Requests>;
   /** insert data into the table: "feature_flag" */
   insert_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** insert a single row into the table: "feature_flag" */
@@ -971,6 +1284,14 @@ export type Mutation_Root = {
   insert_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** insert a single row into the table: "playlist_videos" */
   insert_playlist_videos_one?: Maybe<Playlist_Videos>;
+  /** insert data into the table: "posts" */
+  insert_posts?: Maybe<Posts_Mutation_Response>;
+  /** insert a single row into the table: "posts" */
+  insert_posts_one?: Maybe<Posts>;
+  /** insert data into the table: "subtitles" */
+  insert_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** insert a single row into the table: "subtitles" */
+  insert_subtitles_one?: Maybe<Subtitles>;
   /** insert data into the table: "tags" */
   insert_tags?: Maybe<Tags_Mutation_Response>;
   /** insert a single row into the table: "tags" */
@@ -1015,6 +1336,12 @@ export type Mutation_Root = {
   update_audios_by_pk?: Maybe<Audios>;
   /** update multiples rows of table: "audios" */
   update_audios_many?: Maybe<Array<Maybe<Audios_Mutation_Response>>>;
+  /** update data of the table: "crawl_requests" */
+  update_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
+  /** update single row of the table: "crawl_requests" */
+  update_crawl_requests_by_pk?: Maybe<Crawl_Requests>;
+  /** update multiples rows of table: "crawl_requests" */
+  update_crawl_requests_many?: Maybe<Array<Maybe<Crawl_Requests_Mutation_Response>>>;
   /** update data of the table: "feature_flag" */
   update_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** update single row of the table: "feature_flag" */
@@ -1033,6 +1360,18 @@ export type Mutation_Root = {
   update_playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** update multiples rows of table: "playlist_videos" */
   update_playlist_videos_many?: Maybe<Array<Maybe<Playlist_Videos_Mutation_Response>>>;
+  /** update data of the table: "posts" */
+  update_posts?: Maybe<Posts_Mutation_Response>;
+  /** update single row of the table: "posts" */
+  update_posts_by_pk?: Maybe<Posts>;
+  /** update multiples rows of table: "posts" */
+  update_posts_many?: Maybe<Array<Maybe<Posts_Mutation_Response>>>;
+  /** update data of the table: "subtitles" */
+  update_subtitles?: Maybe<Subtitles_Mutation_Response>;
+  /** update single row of the table: "subtitles" */
+  update_subtitles_by_pk?: Maybe<Subtitles>;
+  /** update multiples rows of table: "subtitles" */
+  update_subtitles_many?: Maybe<Array<Maybe<Subtitles_Mutation_Response>>>;
   /** update data of the table: "tags" */
   update_tags?: Maybe<Tags_Mutation_Response>;
   /** update single row of the table: "tags" */
@@ -1105,6 +1444,16 @@ export type Mutation_RootDelete_Audios_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Crawl_RequestsArgs = {
+  where: Crawl_Requests_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Crawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Feature_FlagArgs = {
   where: Feature_Flag_Bool_Exp;
 };
@@ -1133,6 +1482,26 @@ export type Mutation_RootDelete_Playlist_VideosArgs = {
 export type Mutation_RootDelete_Playlist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_PostsArgs = {
+  where: Posts_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Posts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_SubtitlesArgs = {
+  where: Subtitles_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Subtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 /** mutation root */
@@ -1241,6 +1610,18 @@ export type Mutation_RootInsert_Audios_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Crawl_RequestsArgs = {
+  objects: Array<Crawl_Requests_Insert_Input>;
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Crawl_Requests_OneArgs = {
+  object: Crawl_Requests_Insert_Input;
+  on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Feature_FlagArgs = {
   objects: Array<Feature_Flag_Insert_Input>;
   on_conflict?: InputMaybe<Feature_Flag_On_Conflict>;
@@ -1274,6 +1655,30 @@ export type Mutation_RootInsert_Playlist_VideosArgs = {
 export type Mutation_RootInsert_Playlist_Videos_OneArgs = {
   object: Playlist_Videos_Insert_Input;
   on_conflict?: InputMaybe<Playlist_Videos_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_PostsArgs = {
+  objects: Array<Posts_Insert_Input>;
+  on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Posts_OneArgs = {
+  object: Posts_Insert_Input;
+  on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_SubtitlesArgs = {
+  objects: Array<Subtitles_Insert_Input>;
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Subtitles_OneArgs = {
+  object: Subtitles_Insert_Input;
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
 };
 
 /** mutation root */
@@ -1407,6 +1812,23 @@ export type Mutation_RootUpdate_Audios_ManyArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Crawl_RequestsArgs = {
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  where: Crawl_Requests_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Crawl_Requests_By_PkArgs = {
+  _set?: InputMaybe<Crawl_Requests_Set_Input>;
+  pk_columns: Crawl_Requests_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Crawl_Requests_ManyArgs = {
+  updates: Array<Crawl_Requests_Updates>;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Feature_FlagArgs = {
   _append?: InputMaybe<Feature_Flag_Append_Input>;
   _delete_at_path?: InputMaybe<Feature_Flag_Delete_At_Path_Input>;
@@ -1467,6 +1889,42 @@ export type Mutation_RootUpdate_Playlist_Videos_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_Videos_ManyArgs = {
   updates: Array<Playlist_Videos_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_PostsArgs = {
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  _set?: InputMaybe<Posts_Set_Input>;
+  where: Posts_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Posts_By_PkArgs = {
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  _set?: InputMaybe<Posts_Set_Input>;
+  pk_columns: Posts_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Posts_ManyArgs = {
+  updates: Array<Posts_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_SubtitlesArgs = {
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  where: Subtitles_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Subtitles_By_PkArgs = {
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  pk_columns: Subtitles_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Subtitles_ManyArgs = {
+  updates: Array<Subtitles_Updates>;
 };
 
 /** mutation root */
@@ -1762,6 +2220,8 @@ export type Playlist_Bool_Exp = {
 export enum Playlist_Constraint {
   /** unique or primary key constraint on columns "id" */
   PlaylistPkey = 'playlist_pkey',
+  /** unique or primary key constraint on columns "user_id", "slug" */
+  PlaylistUserIdSlugKey = 'playlist_user_id_slug_key',
 }
 
 /** input type for inserting data into table "playlist" */
@@ -2303,6 +2763,294 @@ export type Playlist_Videos_Variance_Order_By = {
   position?: InputMaybe<Order_By>;
 };
 
+/** Blog posts initial idea is fetch from hashnode for til */
+export type Posts = {
+  __typename?: 'posts';
+  brief: Scalars['String']['output'];
+  created_at: Scalars['timestamptz']['output'];
+  /** Hashnode public id */
+  hId: Scalars['String']['output'];
+  id: Scalars['uuid']['output'];
+  markdownContent: Scalars['String']['output'];
+  readTimeInMinutes: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+};
+
+/** aggregated selection of "posts" */
+export type Posts_Aggregate = {
+  __typename?: 'posts_aggregate';
+  aggregate?: Maybe<Posts_Aggregate_Fields>;
+  nodes: Array<Posts>;
+};
+
+/** aggregate fields of "posts" */
+export type Posts_Aggregate_Fields = {
+  __typename?: 'posts_aggregate_fields';
+  avg?: Maybe<Posts_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Posts_Max_Fields>;
+  min?: Maybe<Posts_Min_Fields>;
+  stddev?: Maybe<Posts_Stddev_Fields>;
+  stddev_pop?: Maybe<Posts_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Posts_Stddev_Samp_Fields>;
+  sum?: Maybe<Posts_Sum_Fields>;
+  var_pop?: Maybe<Posts_Var_Pop_Fields>;
+  var_samp?: Maybe<Posts_Var_Samp_Fields>;
+  variance?: Maybe<Posts_Variance_Fields>;
+};
+
+/** aggregate fields of "posts" */
+export type Posts_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Posts_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Posts_Avg_Fields = {
+  __typename?: 'posts_avg_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "posts". All fields are combined with a logical 'AND'. */
+export type Posts_Bool_Exp = {
+  _and?: InputMaybe<Array<Posts_Bool_Exp>>;
+  _not?: InputMaybe<Posts_Bool_Exp>;
+  _or?: InputMaybe<Array<Posts_Bool_Exp>>;
+  brief?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  hId?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  markdownContent?: InputMaybe<String_Comparison_Exp>;
+  readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "posts" */
+export enum Posts_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  PostsPkey = 'posts_pkey',
+  /** unique or primary key constraint on columns "slug" */
+  PostsSlugKey = 'posts_slug_key',
+}
+
+/** input type for incrementing numeric columns in table "posts" */
+export type Posts_Inc_Input = {
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "posts" */
+export type Posts_Insert_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate max on columns */
+export type Posts_Max_Fields = {
+  __typename?: 'posts_max_fields';
+  brief?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** Hashnode public id */
+  hId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregate min on columns */
+export type Posts_Min_Fields = {
+  __typename?: 'posts_min_fields';
+  brief?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** Hashnode public id */
+  hId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  markdownContent?: Maybe<Scalars['String']['output']>;
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** response of any mutation on the table "posts" */
+export type Posts_Mutation_Response = {
+  __typename?: 'posts_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Posts>;
+};
+
+/** on_conflict condition type for table "posts" */
+export type Posts_On_Conflict = {
+  constraint: Posts_Constraint;
+  update_columns?: Array<Posts_Update_Column>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "posts". */
+export type Posts_Order_By = {
+  brief?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  hId?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  markdownContent?: InputMaybe<Order_By>;
+  readTimeInMinutes?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: posts */
+export type Posts_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "posts" */
+export enum Posts_Select_Column {
+  /** column name */
+  Brief = 'brief',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HId = 'hId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MarkdownContent = 'markdownContent',
+  /** column name */
+  ReadTimeInMinutes = 'readTimeInMinutes',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "posts" */
+export type Posts_Set_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Posts_Stddev_Fields = {
+  __typename?: 'posts_stddev_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Posts_Stddev_Pop_Fields = {
+  __typename?: 'posts_stddev_pop_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Posts_Stddev_Samp_Fields = {
+  __typename?: 'posts_stddev_samp_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "posts" */
+export type Posts_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Posts_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Posts_Stream_Cursor_Value_Input = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Hashnode public id */
+  hId?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  markdownContent?: InputMaybe<Scalars['String']['input']>;
+  readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Posts_Sum_Fields = {
+  __typename?: 'posts_sum_fields';
+  readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
+};
+
+/** update columns of table "posts" */
+export enum Posts_Update_Column {
+  /** column name */
+  Brief = 'brief',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HId = 'hId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MarkdownContent = 'markdownContent',
+  /** column name */
+  ReadTimeInMinutes = 'readTimeInMinutes',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+}
+
+export type Posts_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Posts_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Posts_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Posts_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Posts_Var_Pop_Fields = {
+  __typename?: 'posts_var_pop_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Posts_Var_Samp_Fields = {
+  __typename?: 'posts_var_samp_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Posts_Variance_Fields = {
+  __typename?: 'posts_variance_fields';
+  readTimeInMinutes?: Maybe<Scalars['Float']['output']>;
+};
+
 export type Query_Root = {
   __typename?: 'query_root';
   /** An array relationship */
@@ -2317,6 +3065,12 @@ export type Query_Root = {
   audios_aggregate: Audios_Aggregate;
   /** fetch data from the table: "audios" using primary key columns */
   audios_by_pk?: Maybe<Audios>;
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
+  /** fetch data from the table: "crawl_requests" using primary key columns */
+  crawl_requests_by_pk?: Maybe<Crawl_Requests>;
   /** fetch data from the table: "feature_flag" */
   feature_flag: Array<Feature_Flag>;
   /** fetch aggregated fields from the table: "feature_flag" */
@@ -2335,6 +3089,18 @@ export type Query_Root = {
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   /** fetch data from the table: "playlist_videos" using primary key columns */
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
+  /** fetch data from the table: "posts" */
+  posts: Array<Posts>;
+  /** fetch aggregated fields from the table: "posts" */
+  posts_aggregate: Posts_Aggregate;
+  /** fetch data from the table: "posts" using primary key columns */
+  posts_by_pk?: Maybe<Posts>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
+  /** fetch data from the table: "subtitles" using primary key columns */
+  subtitles_by_pk?: Maybe<Subtitles>;
   /** fetch data from the table: "tags" */
   tags: Array<Tags>;
   /** fetch aggregated fields from the table: "tags" */
@@ -2426,6 +3192,26 @@ export type Query_RootAudios_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+export type Query_RootCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+export type Query_RootCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+export type Query_RootCrawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
 export type Query_RootFeature_FlagArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2485,6 +3271,46 @@ export type Query_RootPlaylist_Videos_AggregateArgs = {
 export type Query_RootPlaylist_Videos_By_PkArgs = {
   playlist_id: Scalars['uuid']['input'];
   video_id: Scalars['uuid']['input'];
+};
+
+export type Query_RootPostsArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Query_RootPosts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Query_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Query_RootSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+export type Query_RootSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+export type Query_RootSubtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 export type Query_RootTagsArgs = {
@@ -2666,6 +3492,14 @@ export type Subscription_Root = {
   audios_by_pk?: Maybe<Audios>;
   /** fetch data from the table in a streaming manner: "audios" */
   audios_stream: Array<Audios>;
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
+  /** fetch data from the table: "crawl_requests" using primary key columns */
+  crawl_requests_by_pk?: Maybe<Crawl_Requests>;
+  /** fetch data from the table in a streaming manner: "crawl_requests" */
+  crawl_requests_stream: Array<Crawl_Requests>;
   /** fetch data from the table: "feature_flag" */
   feature_flag: Array<Feature_Flag>;
   /** fetch aggregated fields from the table: "feature_flag" */
@@ -2690,6 +3524,22 @@ export type Subscription_Root = {
   playlist_videos_by_pk?: Maybe<Playlist_Videos>;
   /** fetch data from the table in a streaming manner: "playlist_videos" */
   playlist_videos_stream: Array<Playlist_Videos>;
+  /** fetch data from the table: "posts" */
+  posts: Array<Posts>;
+  /** fetch aggregated fields from the table: "posts" */
+  posts_aggregate: Posts_Aggregate;
+  /** fetch data from the table: "posts" using primary key columns */
+  posts_by_pk?: Maybe<Posts>;
+  /** fetch data from the table in a streaming manner: "posts" */
+  posts_stream: Array<Posts>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
+  /** fetch data from the table: "subtitles" using primary key columns */
+  subtitles_by_pk?: Maybe<Subtitles>;
+  /** fetch data from the table in a streaming manner: "subtitles" */
+  subtitles_stream: Array<Subtitles>;
   /** fetch data from the table: "tags" */
   tags: Array<Tags>;
   /** fetch aggregated fields from the table: "tags" */
@@ -2809,6 +3659,32 @@ export type Subscription_RootAudios_StreamArgs = {
   where?: InputMaybe<Audios_Bool_Exp>;
 };
 
+export type Subscription_RootCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+export type Subscription_RootCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+export type Subscription_RootCrawl_Requests_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootCrawl_Requests_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Crawl_Requests_Stream_Cursor_Input>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
 export type Subscription_RootFeature_FlagArgs = {
   distinct_on?: InputMaybe<Array<Feature_Flag_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -2886,6 +3762,58 @@ export type Subscription_RootPlaylist_Videos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Playlist_Videos_Stream_Cursor_Input>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+export type Subscription_RootPostsArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Subscription_RootPosts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Posts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Posts_Order_By>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Subscription_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootPosts_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Posts_Stream_Cursor_Input>>;
+  where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Subscription_RootSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+export type Subscription_RootSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+export type Subscription_RootSubtitles_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootSubtitles_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Subtitles_Stream_Cursor_Input>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
 };
 
 export type Subscription_RootTagsArgs = {
@@ -3095,6 +4023,275 @@ export type Subscription_RootVideos_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Videos_Stream_Cursor_Input>>;
   where?: InputMaybe<Videos_Bool_Exp>;
+};
+
+/** Subtitles for video */
+export type Subtitles = {
+  __typename?: 'subtitles';
+  created_at: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  lang: Scalars['String']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  url: Scalars['String']['output'];
+  /** An object relationship */
+  video: Videos;
+  video_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "subtitles" */
+export type Subtitles_Aggregate = {
+  __typename?: 'subtitles_aggregate';
+  aggregate?: Maybe<Subtitles_Aggregate_Fields>;
+  nodes: Array<Subtitles>;
+};
+
+export type Subtitles_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Subtitles_Aggregate_Bool_Exp_Count>;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Subtitles_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Subtitles_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Subtitles_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "subtitles" */
+export type Subtitles_Aggregate_Fields = {
+  __typename?: 'subtitles_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Subtitles_Max_Fields>;
+  min?: Maybe<Subtitles_Min_Fields>;
+};
+
+/** aggregate fields of "subtitles" */
+export type Subtitles_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Subtitles_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "subtitles" */
+export type Subtitles_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Subtitles_Max_Order_By>;
+  min?: InputMaybe<Subtitles_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "subtitles" */
+export type Subtitles_Arr_Rel_Insert_Input = {
+  data: Array<Subtitles_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Subtitles_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "subtitles". All fields are combined with a logical 'AND'. */
+export type Subtitles_Bool_Exp = {
+  _and?: InputMaybe<Array<Subtitles_Bool_Exp>>;
+  _not?: InputMaybe<Subtitles_Bool_Exp>;
+  _or?: InputMaybe<Array<Subtitles_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  isDefault?: InputMaybe<Boolean_Comparison_Exp>;
+  lang?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+  video?: InputMaybe<Videos_Bool_Exp>;
+  video_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "subtitles" */
+export enum Subtitles_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  SubtitlesPkey = 'subtitles_pkey',
+}
+
+/** input type for inserting data into table "subtitles" */
+export type Subtitles_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Subtitles_Max_Fields = {
+  __typename?: 'subtitles_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lang?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  video_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "subtitles" */
+export type Subtitles_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Subtitles_Min_Fields = {
+  __typename?: 'subtitles_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lang?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  video_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "subtitles" */
+export type Subtitles_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "subtitles" */
+export type Subtitles_Mutation_Response = {
+  __typename?: 'subtitles_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Subtitles>;
+};
+
+/** on_conflict condition type for table "subtitles" */
+export type Subtitles_On_Conflict = {
+  constraint: Subtitles_Constraint;
+  update_columns?: Array<Subtitles_Update_Column>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "subtitles". */
+export type Subtitles_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  isDefault?: InputMaybe<Order_By>;
+  lang?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  video?: InputMaybe<Videos_Order_By>;
+  video_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: subtitles */
+export type Subtitles_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "subtitles" */
+export enum Subtitles_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDefault = 'isDefault',
+  /** column name */
+  Lang = 'lang',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  VideoId = 'video_id',
+}
+
+/** select "subtitles_aggregate_bool_exp_bool_and_arguments_columns" columns of table "subtitles" */
+export enum Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  IsDefault = 'isDefault',
+}
+
+/** select "subtitles_aggregate_bool_exp_bool_or_arguments_columns" columns of table "subtitles" */
+export enum Subtitles_Select_Column_Subtitles_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  IsDefault = 'isDefault',
+}
+
+/** input type for updating data in table "subtitles" */
+export type Subtitles_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "subtitles" */
+export type Subtitles_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Subtitles_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Subtitles_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  lang?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  video_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "subtitles" */
+export enum Subtitles_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDefault = 'isDefault',
+  /** column name */
+  Lang = 'lang',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  VideoId = 'video_id',
+}
+
+export type Subtitles_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Subtitles_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Subtitles_Bool_Exp;
 };
 
 /** Including all tags for all sites (watch, listen, etc). Tags can have name and slug, slug + site is unique */
@@ -4275,6 +5472,10 @@ export type Users = {
   /** An aggregate relationship */
   audios_aggregate: Audios_Aggregate;
   auth0_id: Scalars['String']['output'];
+  /** An array relationship */
+  crawl_requests: Array<Crawl_Requests>;
+  /** An aggregate relationship */
+  crawl_requests_aggregate: Crawl_Requests_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
@@ -4314,6 +5515,24 @@ export type UsersAudios_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Audios_Order_By>>;
   where?: InputMaybe<Audios_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersCrawl_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersCrawl_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Crawl_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
+  where?: InputMaybe<Crawl_Requests_Bool_Exp>;
 };
 
 /** columns and relationships of "users" */
@@ -4417,6 +5636,8 @@ export type Users_Bool_Exp = {
   audios?: InputMaybe<Audios_Bool_Exp>;
   audios_aggregate?: InputMaybe<Audios_Aggregate_Bool_Exp>;
   auth0_id?: InputMaybe<String_Comparison_Exp>;
+  crawl_requests?: InputMaybe<Crawl_Requests_Bool_Exp>;
+  crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -4448,6 +5669,7 @@ export enum Users_Constraint {
 export type Users_Insert_Input = {
   audios?: InputMaybe<Audios_Arr_Rel_Insert_Input>;
   auth0_id?: InputMaybe<Scalars['String']['input']>;
+  crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -4508,6 +5730,7 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   audios_aggregate?: InputMaybe<Audios_Aggregate_Order_By>;
   auth0_id?: InputMaybe<Order_By>;
+  crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -5036,6 +6259,10 @@ export type Videos = {
   slug: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -5074,6 +6301,24 @@ export type VideosPlaylist_Videos_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+/** columns and relationships of "videos" */
+export type VideosSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+/** columns and relationships of "videos" */
+export type VideosSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
 };
 
 /** columns and relationships of "videos" */
@@ -5236,6 +6481,8 @@ export type Videos_Bool_Exp = {
   slug?: InputMaybe<String_Comparison_Exp>;
   source?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
+  subtitles?: InputMaybe<Subtitles_Bool_Exp>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Bool_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -5276,6 +6523,7 @@ export type Videos_Insert_Input = {
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
+  subtitles?: InputMaybe<Subtitles_Arr_Rel_Insert_Input>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -5392,6 +6640,7 @@ export type Videos_Order_By = {
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
@@ -5629,6 +6878,34 @@ export type Videos_Variance_Order_By = {
   view_count?: InputMaybe<Order_By>;
 };
 
+export type DeletePostMutationVariables = Exact<{
+  hId: Scalars['String']['input'];
+}>;
+
+export type DeletePostMutation = {
+  __typename?: 'mutation_root';
+  delete_posts?: { __typename?: 'posts_mutation_response'; returning: Array<{ __typename?: 'posts'; id: any }> } | null;
+};
+
+export type InsertPostMutationVariables = Exact<{
+  object: Posts_Insert_Input;
+}>;
+
+export type InsertPostMutation = {
+  __typename?: 'mutation_root';
+  insert_posts_one?: { __typename?: 'posts'; id: any } | null;
+};
+
+export type UpdatePostMutationVariables = Exact<{
+  hId: Scalars['String']['input'];
+  set: Posts_Set_Input;
+}>;
+
+export type UpdatePostMutation = {
+  __typename?: 'mutation_root';
+  update_posts?: { __typename?: 'posts_mutation_response'; returning: Array<{ __typename?: 'posts'; id: any }> } | null;
+};
+
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
@@ -5660,6 +6937,31 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const DeletePostDocument = new TypedDocumentString(`
+    mutation DeletePost($hId: String!) {
+  delete_posts(where: {hId: {_eq: $hId}}) {
+    returning {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<DeletePostMutation, DeletePostMutationVariables>;
+export const InsertPostDocument = new TypedDocumentString(`
+    mutation InsertPost($object: posts_insert_input!) {
+  insert_posts_one(object: $object) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<InsertPostMutation, InsertPostMutationVariables>;
+export const UpdatePostDocument = new TypedDocumentString(`
+    mutation UpdatePost($hId: String!, $set: posts_set_input!) {
+  update_posts(where: {hId: {_eq: $hId}}, _set: $set) {
+    returning {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdatePostMutation, UpdatePostMutationVariables>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {

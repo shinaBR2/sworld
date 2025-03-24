@@ -19,6 +19,8 @@ ignore:
   - 'src/**/*.spec.ts'
   - 'src/services/hasura/generated-graphql/**'
   - 'src/services/hasura/codegen.ts'
+  - 'src/services/hashnode/generated-graphql/**'
+  - 'src/services/hashnode/codegen.ts'
 
 comment:
   layout: 'reach, diff, flags, files'

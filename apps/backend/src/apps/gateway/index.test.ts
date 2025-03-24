@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { errorHandler } from '../../utils/error-handler';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createBaseApp } from '../../utils/base-app';
 
 // Mock dependencies
@@ -13,6 +12,10 @@ vi.mock('../../utils/logger', () => ({
 
 vi.mock('./videos', () => ({
   videosRouter: 'mockVideosRouter',
+}));
+
+vi.mock('./hashnode', () => ({
+  hashnodeRouter: 'mockHashnodeRouter',
 }));
 
 // Mock base app
@@ -49,20 +52,15 @@ describe('app', () => {
   it('should set up videos route', async () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
-    const videoRouteCall = useCalls.find(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
-    );
+    const videoRouteCall = useCalls.find(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
     expect(videoRouteCall).toBeTruthy();
   });
 
-  it('should set up error handler with logger', async () => {
+  it('should set up hashnode route', async () => {
     await import('./index');
-    expect(errorHandler).toHaveBeenCalledWith('mockLogger');
-    // Find the error handler middleware registration
-    const errorHandlerCall = mockUse.mock.calls.find(
-      call => call[0] === 'mockErrorHandler'
-    );
-    expect(errorHandlerCall).toBeTruthy();
+    const useCalls = mockUse.mock.calls;
+    const hashnodeRouteCall = useCalls.find(call => call[0] === '/hashnode' && call[1] === 'mockHashnodeRouter');
+    expect(hashnodeRouteCall).toBeTruthy();
   });
 
   it('should set up middleware in correct order', async () => {
@@ -70,19 +68,20 @@ describe('app', () => {
     const calls = mockUse.mock.calls;
 
     // Find the indexes of our middleware
-    const videosRouterCallIndex = calls.findIndex(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
+    const videosRouterCallIndex = calls.findIndex(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
+    const hashnodeRouterCallIndex = calls.findIndex(
+      call => call[0] === '/hashnode' && call[1] === 'mockHashnodeRouter'
     );
-    const errorHandlerCallIndex = calls.findIndex(
-      call => call[0] === 'mockErrorHandler'
-    );
+    const errorHandlerCallIndex = calls.findIndex(call => call[0] === 'mockErrorHandler');
 
-    // Both middleware should be found
+    // All middleware should be found
     expect(videosRouterCallIndex).not.toBe(-1);
+    expect(hashnodeRouterCallIndex).not.toBe(-1);
     expect(errorHandlerCallIndex).not.toBe(-1);
 
     // Error handler should be after routes
     expect(errorHandlerCallIndex).toBeGreaterThan(videosRouterCallIndex);
+    expect(errorHandlerCallIndex).toBeGreaterThan(hashnodeRouterCallIndex);
   });
 
   it('should export configured app', async () => {
@@ -98,8 +97,6 @@ describe('app', () => {
     });
 
     // The import should now fail
-    await expect(() => import('./index')).rejects.toThrow(
-      'Base app creation failed'
-    );
+    await expect(() => import('./index')).rejects.toThrow('Base app creation failed');
   });
 });

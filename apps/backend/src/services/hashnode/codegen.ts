@@ -1,23 +1,23 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 import { envConfig } from '../../utils/envConfig';
 
-const hasuraUrl = envConfig.hasuraEndpoint as string;
-const hasuraAdminSecret = envConfig.hasuraAdminSecret as string;
+const hashnodeUrl = envConfig.hashnodeEndpoint as string;
+const token = envConfig.hashnodePersonalToken as string;
 
 const config: CodegenConfig = {
   schema: [
     {
-      [hasuraUrl]: {
+      [hashnodeUrl]: {
         headers: {
-          'x-hasura-admin-secret': hasuraAdminSecret,
+          Authorization: token,
         },
       },
     },
   ],
-  documents: ['src/services/hasura/**/*.{ts,tsx}'],
+  documents: ['src/services/hashnode/**/*.{ts,tsx}'],
   ignoreNoDocuments: true,
   generates: {
-    './src/services/hasura/generated-graphql/': {
+    './src/services/hashnode/generated-graphql/': {
       preset: 'client',
       config: {
         documentMode: 'string',
@@ -26,7 +26,7 @@ const config: CodegenConfig = {
         fragmentMasking: { unmaskFunctionName: 'getFragmentData' },
       },
     },
-    './src/services/hasura/schema.graphql': {
+    './src/services/hashnode/schema.graphql': {
       plugins: ['schema-ast'],
       config: {
         includeDirectives: true,
