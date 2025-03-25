@@ -1,10 +1,10 @@
 import { AuthContextValue } from './../../../providers/auth';
 // packages/core/src/universal/hooks/useFeatureFlagSubscription/index.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useFeatureFlagSubscription } from './index';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
+import { FEATURE_FLAGS_SUBSCRIPTION, useFeatureFlagSubscription } from './index';
 
 // Mock dependencies
 vi.mock('../../../providers/auth', () => ({
@@ -36,14 +36,18 @@ describe('useFeatureFlagSubscription', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       user: { id: mockUserId },
     } as AuthContextValue);
-    vi.mocked(useSubscription).mockReturnValue({
+    vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
       data: null,
       isLoading: true,
       error: null,
-    });
+    }));
 
     const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
 
+    expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
+      hasuraUrl: mockUrl,
+      query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+    });
     expect(result.current).toEqual({
       data: null,
       isLoading: true,
@@ -56,14 +60,18 @@ describe('useFeatureFlagSubscription', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       user: { id: mockUserId },
     } as AuthContextValue);
-    vi.mocked(useSubscription).mockReturnValue({
+    vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
       data: null,
       isLoading: false,
       error: mockError,
-    });
+    }));
 
     const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
 
+    expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
+      hasuraUrl: mockUrl,
+      query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+    });
     expect(result.current).toEqual({
       data: null,
       isLoading: false,
