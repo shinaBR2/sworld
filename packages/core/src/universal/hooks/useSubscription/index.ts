@@ -10,7 +10,7 @@ interface ConnectionInfo {
   subscriptionId: string;
 }
 
-interface SubscriptionParams {
+export interface SubscriptionParams {
   hasuraUrl: string;
   query: string;
   variables?: Record<string, unknown>;
