@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, FC, useContext } from 'react';
 import { useFeatureFlagSubscription } from '../../universal/hooks/useFeatureFlagSubscription';
+import { useNotificationsSubscription } from '../../universal/hooks/useNotificationsSubscription';
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
   const { config, children } = props;
   const { hasuraUrl } = config;
   const featureFlags = useFeatureFlagSubscription(hasuraUrl);
+  const rs = useNotificationsSubscription(hasuraUrl);
 
   const contextValue: QueryContextValue = {
     hasuraUrl,

@@ -3,10 +3,26 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
 import { useQueryContext, QueryProvider } from './index';
 import type { QueryContextValue } from './index';
+import { SubscriptionParams } from '../../universal/hooks/useSubscription';
 
-// Mock the useSubscription hook
+vi.mock('@rollbar/react', () => ({
+  useRollbar: () => ({
+    error: vi.fn(),
+    warning: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+    critical: vi.fn(),
+  }),
+}));
+
+vi.mock('../../universal/tracker', () => ({
+  useTracker: () => ({
+    captureError: vi.fn(),
+  }),
+}));
+
 vi.mock('../universal/hooks/useSubscription', () => ({
-  useSubscription: () => ({
+  useSubscription: ({}: SubscriptionParams) => ({
     data: null,
     isLoading: true,
     error: null,
