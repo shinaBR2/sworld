@@ -1,6 +1,19 @@
 table:
   name: notifications
   schema: public
+configuration:
+  column_config:
+    entity_id:
+      custom_name: entityId
+    entity_type:
+      custom_name: entityType
+    read_at:
+      custom_name: readAt
+  custom_column_names:
+    entity_id: entityId
+    entity_type: entityType
+    read_at: readAt
+  custom_root_fields: {}
 object_relationships:
   - name: user
     using:
@@ -9,10 +22,13 @@ select_permissions:
   - role: user
     permission:
       columns:
+        - entity_id
+        - entity_type
         - id
         - link
         - message
         - metadata
+        - read_at
         - title
         - type
         - user_id
