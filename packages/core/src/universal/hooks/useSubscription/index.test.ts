@@ -359,4 +359,30 @@ describe('useSubscription', () => {
     renderHook(() => useSubscription(httpsUrl, mockQuery));
     expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
   });
+
+  it('should not initialize connection when disabled is true', () => {
+    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables, true));
+
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
+    expect(MockWebSocketSpy).not.toHaveBeenCalled();
+  });
+
+  it('should cleanup and stop connection when disabled changes to true', async () => {
+    const { rerender } = renderHook(({ disabled }) => useSubscription(mockUrl, mockQuery, mockVariables, disabled), {
+      initialProps: { disabled: false },
+    });
+
+    await act(async () => {
+      mockWsInstance.onopen?.();
+    });
+
+    rerender({ disabled: true });
+
+    expect(mockWsInstance.send).toHaveBeenLastCalledWith(expect.stringContaining('"type":"stop"'));
+    expect(mockWsInstance.close).toHaveBeenCalled();
+  });
 });

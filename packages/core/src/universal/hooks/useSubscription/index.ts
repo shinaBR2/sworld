@@ -13,11 +13,12 @@ interface ConnectionInfo {
 export function useSubscription<T>(
   hasuraUrl: string,
   query: string,
-  variables?: Record<string, unknown>
+  variables?: Record<string, unknown>,
+  disabled?: boolean
 ): SubscriptionState<T> {
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
-    isLoading: true,
+    isLoading: !disabled, // Don't show loading if disabled
     error: null,
   });
 
@@ -212,6 +213,10 @@ export function useSubscription<T>(
   }, [hasuraUrl, initializeConnection, handleConnectionError, handleSubscriptionMessage]);
 
   useEffect(() => {
+    if (disabled) {
+      return;
+    }
+
     const { ws, subscriptionId } = createWebSocketConnection();
 
     return () => {
@@ -238,7 +243,16 @@ export function useSubscription<T>(
         }
       }
     };
-  }, [createWebSocketConnection]);
+  }, [createWebSocketConnection, disabled]); // Add disabled to deps
+
+  // Return initial state when disabled
+  if (disabled) {
+    return {
+      data: null,
+      isLoading: false,
+      error: null,
+    };
+  }
 
   return state;
 }
