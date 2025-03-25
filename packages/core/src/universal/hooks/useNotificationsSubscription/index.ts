@@ -20,11 +20,13 @@ const NOTIFICATIONS_SUBSCRIPTION = graphql(/* GraphQL */ `
 `);
 
 export function useNotificationsSubscription(url: string) {
-  const { isSignedIn } = useAuthContext();
+  const { isSignedIn, isLoading } = useAuthContext();
+  console.log(`'auth loading`, isLoading);
+  console.log(`'auth isSignedIn`, isSignedIn);
   const subscription = useSubscription<NotificationsSubscription>({
     hasuraUrl: url,
     query: NOTIFICATIONS_SUBSCRIPTION.toString(),
-    disabled: !isSignedIn,
+    enabled: isSignedIn,
   });
 
   return {

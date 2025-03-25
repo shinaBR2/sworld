@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthContextValue, useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 import { useNotificationsSubscription } from './index';
@@ -14,45 +14,56 @@ vi.mock('../useSubscription', () => ({
 }));
 
 describe('useNotificationsSubscription', () => {
-  const mockUrl = 'wss://test-hasura.com/graphql';
+  const mockUrl = 'wss://hasura.example.com/graphql';
+  const mockNotifications = [
+    {
+      id: '1',
+      entityId: 'entity1',
+      entityType: 'type1',
+      type: 'notification',
+      readAt: null,
+      message: 'Test message',
+      link: 'test-link',
+      metadata: {},
+      title: 'Test Title',
+    },
+  ];
 
-  it('should initialize with loading state', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should handle auth loading state', () => {
     vi.mocked(useAuthContext).mockReturnValue({
-      isSignedIn: true,
+      isSignedIn: false,
+      isLoading: true,
     } as AuthContextValue);
 
     vi.mocked(useSubscription).mockReturnValue({
       data: null,
-      isLoading: true,
+      isLoading: false,
       error: null,
     });
 
     const { result } = renderHook(() => useNotificationsSubscription(mockUrl));
 
+    expect(useSubscription).toHaveBeenCalledWith({
+      hasuraUrl: mockUrl,
+      query: expect.any(String),
+      enabled: false,
+    });
+
     expect(result.current).toEqual({
-      data: null,
-      isLoading: true,
+      data: [],
+      isLoading: false,
       error: null,
     });
   });
 
-  it('should handle successful data fetch', () => {
-    const mockNotifications = [
-      {
-        id: '1',
-        entityId: 'entity1',
-        entityType: 'type1',
-        type: 'notification',
-        readAt: null,
-        message: 'Test message',
-        link: 'test-link',
-        metadata: {},
-        title: 'Test Title',
-      },
-    ];
-
+  it('should handle signed in state', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       isSignedIn: true,
+      isLoading: false,
     } as AuthContextValue);
 
     vi.mocked(useSubscription).mockReturnValue({
@@ -63,6 +74,12 @@ describe('useNotificationsSubscription', () => {
 
     const { result } = renderHook(() => useNotificationsSubscription(mockUrl));
 
+    expect(useSubscription).toHaveBeenCalledWith({
+      hasuraUrl: mockUrl,
+      query: expect.any(String),
+      enabled: true,
+    });
+
     expect(result.current).toEqual({
       data: mockNotifications,
       isLoading: false,
@@ -70,11 +87,32 @@ describe('useNotificationsSubscription', () => {
     });
   });
 
-  it('should handle error state', () => {
-    const mockError = new Error('Subscription failed');
-
+  it('should handle subscription loading state', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       isSignedIn: true,
+      isLoading: false,
+    } as AuthContextValue);
+
+    vi.mocked(useSubscription).mockReturnValue({
+      data: { notifications: mockNotifications },
+      isLoading: true,
+      error: null,
+    });
+
+    const { result } = renderHook(() => useNotificationsSubscription(mockUrl));
+
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+  });
+
+  it('should handle subscription error', () => {
+    const mockError = new Error('Subscription failed');
+    vi.mocked(useAuthContext).mockReturnValue({
+      isSignedIn: true,
+      isLoading: false,
     } as AuthContextValue);
 
     vi.mocked(useSubscription).mockReturnValue({
@@ -92,27 +130,14 @@ describe('useNotificationsSubscription', () => {
     });
   });
 
-  it('should disable subscription when user is not signed in', () => {
-    vi.mocked(useAuthContext).mockReturnValue({
-      isSignedIn: false,
-    } as AuthContextValue);
-
-    renderHook(() => useNotificationsSubscription(mockUrl));
-
-    expect(useSubscription).toHaveBeenCalledWith({
-      hasuraUrl: mockUrl,
-      query: expect.any(String),
-      disabled: true,
-    });
-  });
-
-  it('should return empty array when data is null', () => {
+  it('should return empty array when no notifications', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       isSignedIn: true,
+      isLoading: false,
     } as AuthContextValue);
 
     vi.mocked(useSubscription).mockReturnValue({
-      data: null,
+      data: { notifications: [] },
       isLoading: false,
       error: null,
     });
