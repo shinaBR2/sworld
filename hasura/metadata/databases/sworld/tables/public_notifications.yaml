@@ -1,0 +1,25 @@
+table:
+  name: notifications
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - link
+        - message
+        - metadata
+        - title
+        - type
+        - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields:
+        - select
+    comment: ""
