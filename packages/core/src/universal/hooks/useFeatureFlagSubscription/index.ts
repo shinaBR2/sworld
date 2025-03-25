@@ -17,10 +17,11 @@ export const FEATURE_FLAGS_SUBSCRIPTION = graphql(/* GraphQL */ `
 `);
 
 export function useFeatureFlagSubscription(url: string) {
-  const { user } = useAuthContext();
+  const { user, isSignedIn } = useAuthContext();
   const subscription = useSubscription<FeatureFlagsSubscription>({
     hasuraUrl: url,
     query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+    disabled: !isSignedIn,
   });
 
   const processedFlags = useMemo(() => {

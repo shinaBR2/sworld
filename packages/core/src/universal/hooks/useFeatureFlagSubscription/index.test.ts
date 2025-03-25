@@ -35,6 +35,7 @@ describe('useFeatureFlagSubscription', () => {
   it('should return loading state', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       user: { id: mockUserId },
+      isSignedIn: true,
     } as AuthContextValue);
     vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
       data: null,
@@ -47,6 +48,7 @@ describe('useFeatureFlagSubscription', () => {
     expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
       hasuraUrl: mockUrl,
       query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+      disabled: false,
     });
     expect(result.current).toEqual({
       data: null,
@@ -59,6 +61,7 @@ describe('useFeatureFlagSubscription', () => {
     const mockError = new Error('Subscription failed');
     vi.mocked(useAuthContext).mockReturnValue({
       user: { id: mockUserId },
+      isSignedIn: true,
     } as AuthContextValue);
     vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
       data: null,
@@ -71,6 +74,7 @@ describe('useFeatureFlagSubscription', () => {
     expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
       hasuraUrl: mockUrl,
       query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+      disabled: false,
     });
     expect(result.current).toEqual({
       data: null,

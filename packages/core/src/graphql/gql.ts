@@ -19,6 +19,8 @@ type Documents = {
     "\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n": typeof types.GetPublicAudiosAndFeelingsDocument,
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": typeof types.PostDocument,
     "\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n": typeof types.AllPostsDocument,
+    "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n": typeof types.FeatureFlagsDocument,
+    "\n  subscription Notifications {\n    notifications {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      message\n      link\n      metadata\n      title\n    }\n  }\n": typeof types.NotificationsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": typeof types.InsertVideosDocument,
     "\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n": typeof types.UpdateVideoProgressDocument,
     "\n  fragment UserFields on users {\n    username\n  }\n": typeof types.UserFieldsFragmentDoc,
@@ -36,6 +38,8 @@ const documents: Documents = {
     "\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n": types.GetPublicAudiosAndFeelingsDocument,
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": types.PostDocument,
     "\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n": types.AllPostsDocument,
+    "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n": types.FeatureFlagsDocument,
+    "\n  subscription Notifications {\n    notifications {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      message\n      link\n      metadata\n      title\n    }\n  }\n": types.NotificationsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": types.InsertVideosDocument,
     "\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n": types.UpdateVideoProgressDocument,
     "\n  fragment UserFields on users {\n    username\n  }\n": types.UserFieldsFragmentDoc,
@@ -65,6 +69,14 @@ export function graphql(source: "\n  query Post($id: uuid!) @cached {\n    posts
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n"): typeof import('./graphql').AllPostsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n"): typeof import('./graphql').FeatureFlagsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription Notifications {\n    notifications {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      message\n      link\n      metadata\n      title\n    }\n  }\n"): typeof import('./graphql').NotificationsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
