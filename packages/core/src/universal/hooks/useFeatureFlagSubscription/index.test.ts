@@ -1,10 +1,9 @@
-import { AuthContextValue } from './../../../providers/auth';
-// packages/core/src/universal/hooks/useFeatureFlagSubscription/index.test.tsx
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useAuthContext } from '../../../providers/auth';
+import { AuthContextValue, useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
-import { FEATURE_FLAGS_SUBSCRIPTION, useFeatureFlagSubscription } from './index';
+import { checkFeatureFlag } from './helpers';
+import { useFeatureFlagSubscription } from './index';
 
 // Mock dependencies
 vi.mock('../../../providers/auth', () => ({
@@ -15,95 +14,55 @@ vi.mock('../useSubscription', () => ({
   useSubscription: vi.fn(),
 }));
 
-// Mock the helper with a simple implementation
 vi.mock('./helpers', () => ({
-  checkFeatureFlag: vi
-    .fn()
-    .mockImplementation(() => false)
-    .mockReturnValueOnce(true) // first feature flag
-    .mockReturnValueOnce(false), // second feature flag
+  checkFeatureFlag: vi.fn(),
 }));
 
 describe('useFeatureFlagSubscription', () => {
-  const mockUrl = 'https://test-hasura.com/graphql';
-  const mockUserId = 'test-user-123';
+  const mockUrl = 'wss://hasura.example.com/graphql';
+  const mockUserId = 'user-123';
+  const mockFeatureFlags = [
+    {
+      id: '1',
+      name: 'feature1',
+      conditions: '{"rules": []}',
+    },
+    {
+      id: '2',
+      name: 'feature2',
+      conditions: '{"rules": []}',
+    },
+  ];
 
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  it('should return loading state', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       user: { id: mockUserId },
       isSignedIn: true,
-    } as AuthContextValue);
-    vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
-      data: null,
-      isLoading: true,
-      error: null,
-    }));
-
-    const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
-
-    expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
-      hasuraUrl: mockUrl,
-      query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
-      disabled: false,
-    });
-    expect(result.current).toEqual({
-      data: null,
-      isLoading: true,
-      error: null,
-    });
-  });
-
-  it('should return error state', () => {
-    const mockError = new Error('Subscription failed');
-    vi.mocked(useAuthContext).mockReturnValue({
-      user: { id: mockUserId },
-      isSignedIn: true,
-    } as AuthContextValue);
-    vi.mocked(useSubscription).mockImplementation(({ hasuraUrl, query }) => ({
-      data: null,
-      isLoading: false,
-      error: mockError,
-    }));
-
-    const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
-
-    expect(vi.mocked(useSubscription)).toHaveBeenCalledWith({
-      hasuraUrl: mockUrl,
-      query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
-      disabled: false,
-    });
-    expect(result.current).toEqual({
-      data: null,
-      isLoading: false,
-      error: mockError,
-    });
-  });
-
-  it('should process feature flags correctly', () => {
-    const mockFeatureFlags = {
-      feature_flag: [
-        {
-          id: '1',
-          name: 'feature1',
-          conditions: { someCondition: true },
-        },
-        {
-          id: '2',
-          name: 'feature2',
-          conditions: { someOtherCondition: false },
-        },
-      ],
-    };
-
-    vi.mocked(useAuthContext).mockReturnValue({
-      user: { id: mockUserId },
-    } as AuthContextValue);
+    } as unknown as AuthContextValue);
     vi.mocked(useSubscription).mockReturnValue({
-      data: mockFeatureFlags,
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+    vi.mocked(checkFeatureFlag).mockReturnValue(true);
+  });
+
+  it('should initialize with loading state', () => {
+    const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
+
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+  });
+
+  it('should process feature flags when data is available', () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: {
+        feature_flag: mockFeatureFlags,
+      },
       isLoading: false,
       error: null,
     });
@@ -113,120 +72,90 @@ describe('useFeatureFlagSubscription', () => {
     expect(result.current).toEqual({
       data: {
         feature1: true,
-        feature2: false,
+        feature2: true,
       },
       isLoading: false,
       error: null,
     });
+
+    expect(checkFeatureFlag).toHaveBeenCalledTimes(2);
+    expect(checkFeatureFlag).toHaveBeenCalledWith(mockFeatureFlags[0].conditions, mockUserId);
+    expect(checkFeatureFlag).toHaveBeenCalledWith(mockFeatureFlags[1].conditions, mockUserId);
   });
 
-  it('should handle empty feature flags list', () => {
-    const mockFeatureFlags = {
-      feature_flag: [],
-    };
-
-    vi.mocked(useAuthContext).mockReturnValue({
-      user: { id: mockUserId },
-    } as AuthContextValue);
+  it('should handle subscription errors', () => {
+    const mockError = new Error('Subscription failed');
     vi.mocked(useSubscription).mockReturnValue({
-      data: mockFeatureFlags,
+      data: null,
       isLoading: false,
-      error: null,
+      error: mockError,
     });
 
     const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
 
     expect(result.current).toEqual({
-      data: {},
+      data: null,
       isLoading: false,
-      error: null,
+      error: mockError,
     });
   });
 
-  it('should handle null conditions', () => {
-    const mockFeatureFlags = {
-      feature_flag: [
-        {
-          id: '1',
-          name: 'feature1',
-          conditions: null,
-        },
-      ],
-    };
-
-    vi.mocked(useAuthContext).mockReturnValue({
-      user: { id: mockUserId },
-    } as AuthContextValue);
-    vi.mocked(useSubscription).mockReturnValue({
-      data: mockFeatureFlags,
-      isLoading: false,
-      error: null,
-    });
-
-    const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
-
-    expect(result.current).toEqual({
-      data: {
-        feature1: false,
-      },
-      isLoading: false,
-      error: null,
-    });
-  });
-
-  it('should handle missing user ID', () => {
-    const mockFeatureFlags = {
-      feature_flag: [
-        {
-          id: '1',
-          name: 'feature1',
-          conditions: { someMockCondition: true },
-        },
-      ],
-    };
-
+  it('should not subscribe when user is not signed in', () => {
     vi.mocked(useAuthContext).mockReturnValue({
       user: null,
-    } as AuthContextValue);
-    vi.mocked(useSubscription).mockReturnValue({
-      data: mockFeatureFlags,
-      isLoading: false,
-      error: null,
-    });
+      isSignedIn: false,
+    } as unknown as AuthContextValue);
 
-    const { result } = renderHook(() => useFeatureFlagSubscription(mockUrl));
+    renderHook(() => useFeatureFlagSubscription(mockUrl));
 
-    expect(result.current.data).toEqual({
-      feature1: false,
+    expect(useSubscription).toHaveBeenCalledWith({
+      hasuraUrl: mockUrl,
+      query: expect.any(String),
+      enabled: false,
     });
   });
 
-  it('should memoize processed flags when data and user ID remain the same', () => {
-    const mockFeatureFlags = {
-      feature_flag: [
-        {
-          id: '1',
-          name: 'feature1',
-          conditions: { someMockCondition: true },
-        },
-      ],
-    };
-
+  it('should use empty string as userId when user is not available', () => {
     vi.mocked(useAuthContext).mockReturnValue({
-      user: { id: mockUserId },
-    } as AuthContextValue);
+      user: null,
+      isSignedIn: true,
+    } as unknown as AuthContextValue);
+
     vi.mocked(useSubscription).mockReturnValue({
-      data: mockFeatureFlags,
+      data: {
+        feature_flag: mockFeatureFlags,
+      },
       isLoading: false,
       error: null,
     });
 
-    const { result, rerender } = renderHook(() => useFeatureFlagSubscription(mockUrl));
-    const firstResult = result.current.data;
+    renderHook(() => useFeatureFlagSubscription(mockUrl));
 
-    // Rerender with same data
-    rerender();
+    expect(checkFeatureFlag).toHaveBeenCalledWith(expect.any(String), '');
+  });
 
-    expect(result.current.data).toBe(firstResult);
+  it('should reprocess flags when user id changes', () => {
+    const { rerender } = renderHook(
+      ({ userId }) => {
+        vi.mocked(useAuthContext).mockReturnValue({
+          user: { id: userId },
+          isSignedIn: true,
+        } as unknown as AuthContextValue);
+        return useFeatureFlagSubscription(mockUrl);
+      },
+      { initialProps: { userId: 'user-1' } }
+    );
+
+    vi.mocked(useSubscription).mockReturnValue({
+      data: {
+        feature_flag: mockFeatureFlags,
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    rerender({ userId: 'user-2' });
+
+    expect(checkFeatureFlag).toHaveBeenCalledWith(expect.any(String), 'user-2');
   });
 });

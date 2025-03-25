@@ -21,7 +21,7 @@ export function useFeatureFlagSubscription(url: string) {
   const subscription = useSubscription<FeatureFlagsSubscription>({
     hasuraUrl: url,
     query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
-    disabled: !isSignedIn,
+    enabled: isSignedIn,
   });
 
   const processedFlags = useMemo(() => {
