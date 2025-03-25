@@ -2340,8 +2340,8 @@ type notifications {
   metadata(
     """JSON select path"""
     path: String
-  ): jsonb!
-  readAt: timestamptz!
+  ): jsonb
+  readAt: timestamptz
   title: String!
   type: String!
   updated_at: timestamptz!

@@ -2279,8 +2279,8 @@ export type Notifications = {
   id: Scalars['uuid']['output'];
   link?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
-  metadata: Scalars['jsonb']['output'];
-  readAt: Scalars['timestamptz']['output'];
+  metadata?: Maybe<Scalars['jsonb']['output']>;
+  readAt?: Maybe<Scalars['timestamptz']['output']>;
   title: Scalars['String']['output'];
   type: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
@@ -7698,7 +7698,7 @@ export type FeatureFlagsSubscription = { __typename?: 'subscription_root', featu
 export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt: any, message: string, link?: string | null, metadata: any, title: string }> };
+export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, message: string, link?: string | null, metadata?: any | null, title: string }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
