@@ -433,22 +433,14 @@ describe('useSubscription', () => {
     expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
   });
 
-  // Update all other test cases that use the old style:
-  // - should handle message parsing error
-  // - should handle WebSocket errors with reconnection
-  // - should handle connection complete message
-  // - should clean up on unmount
-  // - should not send stop message if socket is not open on unmount
-  // - should handle error when closing WebSocket after complete message
-  // - should handle error during cleanup on unmount
-
-  it('should not initialize connection when disabled is true', () => {
+  // Replace the disabled test cases with enabled ones
+  it('should not initialize connection when enabled is false', () => {
     const { result } = renderHook(() =>
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
-        disabled: true,
+        enabled: false,
       })
     );
 
@@ -460,25 +452,55 @@ describe('useSubscription', () => {
     expect(MockWebSocketSpy).not.toHaveBeenCalled();
   });
 
-  it('should cleanup and stop connection when disabled changes to true', async () => {
+  it('should cleanup and stop connection when enabled changes to false', async () => {
     const { rerender } = renderHook(
-      ({ disabled }) =>
+      ({ enabled }) =>
         useSubscription({
           hasuraUrl: mockUrl,
           query: mockQuery,
           variables: mockVariables,
-          disabled,
+          enabled,
         }),
-      { initialProps: { disabled: false } }
+      { initialProps: { enabled: true } } // Fix: Move options object as second argument
     );
 
     await act(async () => {
       mockWsInstance.onopen?.();
     });
 
-    rerender({ disabled: true });
+    rerender({ enabled: false });
 
     expect(mockWsInstance.send).toHaveBeenLastCalledWith(expect.stringContaining('"type":"stop"'));
     expect(mockWsInstance.close).toHaveBeenCalled();
+  });
+
+  it('should initialize with loading state when enabled', () => {
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        enabled: true,
+      })
+    );
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+  });
+
+  it('should not be in loading state when enabled is false', () => {
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        enabled: false,
+      })
+    );
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
   });
 });

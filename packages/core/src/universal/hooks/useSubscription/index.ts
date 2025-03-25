@@ -14,14 +14,15 @@ export interface SubscriptionParams {
   hasuraUrl: string;
   query: string;
   variables?: Record<string, unknown>;
-  disabled?: boolean;
+  enabled?: boolean;
 }
 
 export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
-  const { hasuraUrl, query, variables, disabled } = params;
+  const { hasuraUrl, query, variables, enabled = true } = params; // Default to true
+  console.log(`useSubscription enabled?: ${params.enabled}`);
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
-    isLoading: !disabled, // Don't show loading if disabled
+    isLoading: true,
     error: null,
   });
 
@@ -216,9 +217,11 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
   }, [hasuraUrl, initializeConnection, handleConnectionError, handleSubscriptionMessage]);
 
   useEffect(() => {
-    if (disabled) {
+    if (!enabled) {
+      // Changed from disabled to !enabled
       return;
     }
+    console.log('useSubscription: useEffect');
 
     const { ws, subscriptionId } = createWebSocketConnection();
 
@@ -246,10 +249,10 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
         }
       }
     };
-  }, [createWebSocketConnection, disabled]); // Add disabled to deps
+  }, [createWebSocketConnection, enabled]);
 
-  // Return initial state when disabled
-  if (disabled) {
+  // Return initial state when not enabled
+  if (!enabled) {
     return {
       data: null,
       isLoading: false,
