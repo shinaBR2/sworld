@@ -88,13 +88,18 @@ describe('useSubscription', () => {
   });
 
   it('should initialize connection without token when user is not signed in', async () => {
-    // Mock user not being signed in
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: vi.fn(),
       isSignedIn: false,
     } as unknown as AuthContextValue);
 
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Initial connection
     await act(async () => {
@@ -114,7 +119,12 @@ describe('useSubscription', () => {
   });
 
   it('should initialize with loading state', () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
     expect(result.current).toEqual({
       data: null,
       isLoading: true,
@@ -123,7 +133,13 @@ describe('useSubscription', () => {
   });
 
   it('should establish connection and handle successful subscription flow', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Initial connection
     await act(async () => {
@@ -361,7 +377,14 @@ describe('useSubscription', () => {
   });
 
   it('should not initialize connection when disabled is true', () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables, true));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+        disabled: true,
+      })
+    );
 
     expect(result.current).toEqual({
       data: null,
@@ -372,9 +395,16 @@ describe('useSubscription', () => {
   });
 
   it('should cleanup and stop connection when disabled changes to true', async () => {
-    const { rerender } = renderHook(({ disabled }) => useSubscription(mockUrl, mockQuery, mockVariables, disabled), {
-      initialProps: { disabled: false },
-    });
+    const { rerender } = renderHook(
+      ({ disabled }) =>
+        useSubscription({
+          hasuraUrl: mockUrl,
+          query: mockQuery,
+          variables: mockVariables,
+          disabled,
+        }),
+      { initialProps: { disabled: false } }
+    );
 
     await act(async () => {
       mockWsInstance.onopen?.();

@@ -10,12 +10,15 @@ interface ConnectionInfo {
   subscriptionId: string;
 }
 
-export function useSubscription<T>(
-  hasuraUrl: string,
-  query: string,
-  variables?: Record<string, unknown>,
-  disabled?: boolean
-): SubscriptionState<T> {
+interface SubscriptionParams {
+  hasuraUrl: string;
+  query: string;
+  variables?: Record<string, unknown>;
+  disabled?: boolean;
+}
+
+export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
+  const { hasuraUrl, query, variables, disabled } = params;
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
     isLoading: !disabled, // Don't show loading if disabled
