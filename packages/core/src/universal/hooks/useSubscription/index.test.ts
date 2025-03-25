@@ -190,6 +190,7 @@ describe('useSubscription', () => {
     });
   });
 
+  // Update these test cases to use object params
   it('should handle authentication error', async () => {
     const mockError = new Error('Auth failed');
     vi.mocked(useAuthContext).mockReturnValue({
@@ -197,7 +198,13 @@ describe('useSubscription', () => {
       getAccessToken: vi.fn().mockRejectedValue(mockError),
     } as unknown as AuthContextValue);
 
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onopen?.();
@@ -214,7 +221,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle server error message', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onopen?.();
@@ -243,7 +256,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle message parsing error', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onmessage?.({
@@ -268,9 +287,14 @@ describe('useSubscription', () => {
   });
 
   it('should handle WebSocket errors with reconnection', async () => {
-    vi.useFakeTimers(); // Use fake timers
+    vi.useFakeTimers();
 
-    renderHook(() => useSubscription(mockUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onerror?.();
@@ -284,11 +308,16 @@ describe('useSubscription', () => {
     // Should attempt reconnection
     expect(MockWebSocketSpy).toHaveBeenCalledTimes(2);
 
-    vi.useRealTimers(); // Restore real timers
+    vi.useRealTimers();
   });
 
   it('should handle connection complete message', async () => {
-    renderHook(() => useSubscription(mockUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onmessage?.({
@@ -300,7 +329,12 @@ describe('useSubscription', () => {
   });
 
   it('should clean up on unmount', async () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     unmount();
 
@@ -309,7 +343,12 @@ describe('useSubscription', () => {
   });
 
   it('should not send stop message if socket is not open on unmount', () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     mockWsInstance.readyState = WebSocket.CLOSED;
     unmount();
@@ -318,7 +357,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle error when closing WebSocket after complete message', async () => {
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Set up close to throw an error
     mockWsInstance.close.mockImplementationOnce(() => {
@@ -344,7 +389,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle error during cleanup on unmount', async () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Ensure the WebSocket is in OPEN state and properly initialized
     await act(async () => {
@@ -372,9 +423,24 @@ describe('useSubscription', () => {
   it('should convert HTTP/HTTPS URLs to WS/WSS', () => {
     const httpsUrl = 'https://hasura.example.com/graphql';
 
-    renderHook(() => useSubscription(httpsUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: httpsUrl,
+        query: mockQuery,
+      })
+    );
+
     expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
   });
+
+  // Update all other test cases that use the old style:
+  // - should handle message parsing error
+  // - should handle WebSocket errors with reconnection
+  // - should handle connection complete message
+  // - should clean up on unmount
+  // - should not send stop message if socket is not open on unmount
+  // - should handle error when closing WebSocket after complete message
+  // - should handle error during cleanup on unmount
 
   it('should not initialize connection when disabled is true', () => {
     const { result } = renderHook(() =>
