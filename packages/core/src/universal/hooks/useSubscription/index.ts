@@ -19,7 +19,6 @@ export interface SubscriptionParams {
 
 export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
   const { hasuraUrl, query, variables, enabled = true } = params; // Default to true
-  console.log(`useSubscription enabled?: ${params.enabled}`);
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
     isLoading: true,
@@ -221,7 +220,6 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
       // Changed from disabled to !enabled
       return;
     }
-    console.log('useSubscription: useEffect');
 
     const { ws, subscriptionId } = createWebSocketConnection();
 
