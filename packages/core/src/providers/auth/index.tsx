@@ -39,8 +39,16 @@ const AuthContext = createContext<AuthContextValue>({
 const AuthContextProvider: FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { isAuthenticated, isLoading, loginWithRedirect, logout, user: auth0User, getAccessTokenSilently } = useAuth0();
+  const {
+    isAuthenticated,
+    isLoading: auth0Loading,
+    loginWithRedirect,
+    logout,
+    user: auth0User,
+    getAccessTokenSilently,
+  } = useAuth0();
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<CustomUser | null>(null);
@@ -70,16 +78,20 @@ const AuthContextProvider: FC<{
           const userId = claims['x-hasura-user-id'];
           setIsSignedIn(true);
           setUser(transformUser(userId, auth0User));
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Session validation failed:', error);
+        setIsLoading(false);
       }
     };
 
-    if (isAuthenticated && !isLoading) {
+    if (isAuthenticated && !auth0Loading) {
       checkAuth();
+    } else {
+      setIsLoading(false);
     }
-  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
+  }, [isAuthenticated, auth0Loading, getAccessTokenSilently]);
 
   const handleSignOut = useCallback(() => {
     logout({
