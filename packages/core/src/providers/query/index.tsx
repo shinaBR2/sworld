@@ -26,6 +26,7 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
   const featureFlags = useFeatureFlagSubscription(hasuraUrl);
   const rs = useNotificationsSubscription(hasuraUrl);
 
+  console.log('rs', rs);
   const contextValue: QueryContextValue = {
     hasuraUrl,
     featureFlags,
