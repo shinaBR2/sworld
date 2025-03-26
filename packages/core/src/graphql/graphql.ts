@@ -2273,7 +2273,7 @@ export type Mutation_RootUpdate_Videos_ManyArgs = {
 /** Notification system */
 export type Notifications = {
   __typename?: 'notifications';
-  created_at: Scalars['timestamptz']['output'];
+  createdAt: Scalars['timestamptz']['output'];
   entityId: Scalars['uuid']['output'];
   entityType: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
@@ -2283,7 +2283,7 @@ export type Notifications = {
   readAt?: Maybe<Scalars['timestamptz']['output']>;
   title: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  updated_at: Scalars['timestamptz']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
   user: Users;
   user_id: Scalars['uuid']['output'];
@@ -2352,7 +2352,7 @@ export type Notifications_Bool_Exp = {
   _and?: InputMaybe<Array<Notifications_Bool_Exp>>;
   _not?: InputMaybe<Notifications_Bool_Exp>;
   _or?: InputMaybe<Array<Notifications_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   entityId?: InputMaybe<Uuid_Comparison_Exp>;
   entityType?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -2362,7 +2362,7 @@ export type Notifications_Bool_Exp = {
   readAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   type?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
@@ -2390,7 +2390,7 @@ export type Notifications_Delete_Key_Input = {
 
 /** input type for inserting data into table "notifications" */
 export type Notifications_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   entityId?: InputMaybe<Scalars['uuid']['input']>;
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2400,7 +2400,7 @@ export type Notifications_Insert_Input = {
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
 };
@@ -2408,7 +2408,7 @@ export type Notifications_Insert_Input = {
 /** aggregate max on columns */
 export type Notifications_Max_Fields = {
   __typename?: 'notifications_max_fields';
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
   entityId?: Maybe<Scalars['uuid']['output']>;
   entityType?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
@@ -2417,13 +2417,13 @@ export type Notifications_Max_Fields = {
   readAt?: Maybe<Scalars['timestamptz']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
 };
 
 /** order by max() on columns of table "notifications" */
 export type Notifications_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
   entityId?: InputMaybe<Order_By>;
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2432,14 +2432,14 @@ export type Notifications_Max_Order_By = {
   readAt?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Notifications_Min_Fields = {
   __typename?: 'notifications_min_fields';
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
   entityId?: Maybe<Scalars['uuid']['output']>;
   entityType?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
@@ -2448,13 +2448,13 @@ export type Notifications_Min_Fields = {
   readAt?: Maybe<Scalars['timestamptz']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
 };
 
 /** order by min() on columns of table "notifications" */
 export type Notifications_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
   entityId?: InputMaybe<Order_By>;
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2463,7 +2463,7 @@ export type Notifications_Min_Order_By = {
   readAt?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -2485,7 +2485,7 @@ export type Notifications_On_Conflict = {
 
 /** Ordering options when selecting data from "notifications". */
 export type Notifications_Order_By = {
-  created_at?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
   entityId?: InputMaybe<Order_By>;
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2495,7 +2495,7 @@ export type Notifications_Order_By = {
   readAt?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
@@ -2513,7 +2513,7 @@ export type Notifications_Prepend_Input = {
 /** select columns of table "notifications" */
 export enum Notifications_Select_Column {
   /** column name */
-  CreatedAt = 'created_at',
+  CreatedAt = 'createdAt',
   /** column name */
   EntityId = 'entityId',
   /** column name */
@@ -2533,14 +2533,14 @@ export enum Notifications_Select_Column {
   /** column name */
   Type = 'type',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updatedAt',
   /** column name */
   UserId = 'user_id'
 }
 
 /** input type for updating data in table "notifications" */
 export type Notifications_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   entityId?: InputMaybe<Scalars['uuid']['input']>;
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2550,7 +2550,7 @@ export type Notifications_Set_Input = {
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -2564,7 +2564,7 @@ export type Notifications_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Notifications_Stream_Cursor_Value_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   entityId?: InputMaybe<Scalars['uuid']['input']>;
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2574,14 +2574,14 @@ export type Notifications_Stream_Cursor_Value_Input = {
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
 /** update columns of table "notifications" */
 export enum Notifications_Update_Column {
   /** column name */
-  CreatedAt = 'created_at',
+  CreatedAt = 'createdAt',
   /** column name */
   EntityId = 'entityId',
   /** column name */
@@ -2601,7 +2601,7 @@ export enum Notifications_Update_Column {
   /** column name */
   Type = 'type',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updatedAt',
   /** column name */
   UserId = 'user_id'
 }
@@ -7986,7 +7986,7 @@ export const FeatureFlagsDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<FeatureFlagsSubscription, FeatureFlagsSubscriptionVariables>;
 export const NotificationsDocument = new TypedDocumentString(`
     subscription Notifications {
-  notifications {
+  notifications(order_by: {createdAt: desc}) {
     id
     entityId
     entityType

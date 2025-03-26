@@ -8,6 +8,7 @@ const queryClient = new QueryClient();
 interface QueryContextValue {
   hasuraUrl: string;
   featureFlags: ReturnType<typeof useFeatureFlagSubscription>;
+  notifications: ReturnType<typeof useNotificationsSubscription>;
 }
 
 interface Config {
@@ -24,12 +25,12 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
   const { config, children } = props;
   const { hasuraUrl } = config;
   const featureFlags = useFeatureFlagSubscription(hasuraUrl);
-  const rs = useNotificationsSubscription(hasuraUrl);
+  const notifications = useNotificationsSubscription(hasuraUrl);
 
-  console.log('rs', rs);
   const contextValue: QueryContextValue = {
     hasuraUrl,
     featureFlags,
+    notifications,
   };
 
   return <QueryContext.Provider value={contextValue}>{children}</QueryContext.Provider>;

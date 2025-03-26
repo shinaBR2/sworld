@@ -5,7 +5,7 @@ import { useSubscription } from '../useSubscription';
 
 const NOTIFICATIONS_SUBSCRIPTION = graphql(/* GraphQL */ `
   subscription Notifications {
-    notifications {
+    notifications(order_by: { createdAt: desc }) {
       id
       entityId
       entityType
