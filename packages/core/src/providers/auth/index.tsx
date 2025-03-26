@@ -66,7 +66,6 @@ const AuthContextProvider: FC<{
         const claims = getClaims(token);
 
         if (claims) {
-          console.log('Session is valid, user is authenticated, isLoading', isLoading);
           /**
            * This was a bit confusing at first,
            * but the 'x-hasura-default-role' is ACTUALLY the role of current signed in user
@@ -90,10 +89,8 @@ const AuthContextProvider: FC<{
 
     if (!auth0Loading) {
       if (isAuthenticated) {
-        console.log('User is authenticated, checking session..., isLoading: ', isLoading);
         checkAuth();
       } else {
-        console.log('User is not authenticated, isLoading: ', isLoading);
         setIsLoading(false);
       }
     }
