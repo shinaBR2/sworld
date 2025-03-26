@@ -446,7 +446,7 @@ describe('useSubscription', () => {
 
     expect(result.current).toEqual({
       data: null,
-      isLoading: false,
+      isLoading: true,
       error: null,
     });
     expect(MockWebSocketSpy).not.toHaveBeenCalled();
@@ -461,7 +461,7 @@ describe('useSubscription', () => {
           variables: mockVariables,
           enabled,
         }),
-      { initialProps: { enabled: true } } // Fix: Move options object as second argument
+      { initialProps: { enabled: true } }
     );
 
     await act(async () => {
@@ -489,7 +489,7 @@ describe('useSubscription', () => {
     });
   });
 
-  it('should not be in loading state when enabled is false', () => {
+  it('loading state should be true when enabled is false', () => {
     const { result } = renderHook(() =>
       useSubscription({
         hasuraUrl: mockUrl,
@@ -499,7 +499,7 @@ describe('useSubscription', () => {
     );
     expect(result.current).toEqual({
       data: null,
-      isLoading: false,
+      isLoading: true,
       error: null,
     });
   });

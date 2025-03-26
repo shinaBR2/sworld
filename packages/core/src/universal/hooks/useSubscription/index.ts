@@ -255,7 +255,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
   if (!enabled) {
     return {
       data: null,
-      isLoading: false,
+      isLoading: true,
       error: null,
     };
   }
