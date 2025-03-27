@@ -55,7 +55,10 @@ const Header = (props: HeaderProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content', gap: 1, alignItems: 'center' }}>
-          <IconButton onClick={handleNotificationClick}>
+          <IconButton 
+            onClick={handleNotificationClick} 
+            disabled={notifications.isLoading}
+          >
             <Badge badgeContent={unreadCount} color="primary">
               <NotificationsIcon />
             </Badge>

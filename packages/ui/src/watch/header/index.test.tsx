@@ -3,6 +3,7 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Header } from './index';
 import '@testing-library/jest-dom';
 import { Link } from '@mui/material';
+import { useQueryContext } from 'core/providers/query';
 
 // Mock the child components
 vi.mock('../../universal/logo', () => ({
@@ -30,13 +31,17 @@ const mockNotifications = {
   isLoading: false,
 };
 
-vi.mock('core', () => ({
-  Auth: {},
-  Query: {
-    useQueryContext: () => ({
-      notifications: mockNotifications,
-    }),
-  },
+// Update the mock at the top of the file
+vi.mock('core/providers/query', () => ({
+  useQueryContext: vi.fn(() => ({
+    notifications: mockNotifications,
+    hasuraUrl: 'hasura-url',
+    featureFlags: {
+      data: null,
+      isLoading: false,
+      error: null,
+    },
+  })),
 }));
 
 describe('Header', () => {
@@ -164,5 +169,49 @@ describe('Header', () => {
     fireEvent.click(menu);
 
     expect(menu).toHaveAttribute('data-open', 'false');
+  });
+
+  it('disables notification button while loading', () => {
+    // Mock loading state
+    vi.mocked(useQueryContext).mockImplementation(() => ({
+      notifications: {
+        data: [],
+        isLoading: true,
+        error: null,
+      },
+      hasuraUrl: 'hasura-url',
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    }));
+
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    expect(notificationButton).toBeDisabled();
+  });
+
+  it('enables notification button when loading completes', () => {
+    // Mock loaded state
+    vi.mocked(useQueryContext).mockImplementation(() => ({
+      notifications: {
+        data: [],
+        isLoading: false,
+        error: null,
+      },
+      hasuraUrl: 'hasura-url',
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    }));
+
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    expect(notificationButton).not.toBeDisabled();
   });
 });
