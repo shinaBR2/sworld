@@ -62,6 +62,11 @@ describe('Query Provider and Context', () => {
       isLoading: true,
       error: null,
     },
+    notifications: {
+      data: null,
+      isLoading: true,
+      error: null,
+    },
   };
 
   it('should provide context values to children', () => {
@@ -137,6 +142,11 @@ describe('Query Provider and Context', () => {
         isLoading: true,
         error: null,
       },
+      notifications: {
+        data: null,
+        isLoading: true,
+        error: null,
+      },
     };
 
     let outerContextValue: QueryContextValue | undefined;
@@ -183,6 +193,11 @@ describe('Query Provider and Context', () => {
     expect(contextValue).toEqual({
       hasuraUrl: undefined,
       featureFlags: {
+        data: null,
+        isLoading: true,
+        error: null,
+      },
+      notifications: {
         data: null,
         isLoading: true,
         error: null,
