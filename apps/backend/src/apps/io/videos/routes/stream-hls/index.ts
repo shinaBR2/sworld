@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
-import { sequelize } from 'src/database';
-import { completeTask } from 'src/database/queries/tasks';
-import { finalizeVideo } from 'src/database/queries/videos';
+import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
 import { CustomError } from 'src/utils/custom-error';
-import { DATABASE_ERRORS } from 'src/utils/error-codes';
+import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 
 const streamHLSHandler = async (req: Request, res: Response) => {
@@ -22,29 +20,30 @@ const streamHLSHandler = async (req: Request, res: Response) => {
     excludePatterns: videoConfig.excludePatterns,
   });
 
-  const transaction = await sequelize.transaction();
-
   try {
-    await finalizeVideo({
-      id,
-      source: playableVideoUrl,
-      thumbnailUrl,
-      duration,
-    });
-
-    await completeTask({
+    await finishVideoProcess({
       taskId,
+      notificationObject: {
+        type: 'video-ready',
+        entityId: id,
+        entityType: 'video',
+        user_id: userId,
+      },
+      videoId: id,
+      videoUpdates: {
+        source: playableVideoUrl,
+        status: 'ready',
+        thumbnailUrl,
+        duration,
+      },
     });
-    await transaction.commit();
 
     return res.json({ playableVideoUrl });
   } catch (error) {
-    await transaction.rollback();
-
-    throw CustomError.critical('Failed to save to database', {
+    throw CustomError.critical('Hasura server error', {
       originalError: error,
       shouldRetry: true,
-      errorCode: DATABASE_ERRORS.DB_ERROR,
+      errorCode: HTTP_ERRORS.SERVER_ERROR,
       context: {
         data,
         metadata,

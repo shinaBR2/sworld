@@ -1,29 +1,35 @@
-import * as path from 'path';
-import { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize } from '../helpers/file';
-import { getDownloadUrl, uploadFolderParallel } from '../helpers/gcp-cloud-storage';
-import { convertToHLS, getDuration, takeScreenshot } from '../helpers/ffmpeg';
-import { logger } from 'src/utils/logger';
-import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { existsSync, statSync } from 'fs';
-import { finalizeVideo } from 'src/database/queries/videos';
+import * as path from 'path';
+import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
+import { logger } from 'src/utils/logger';
 import { videoConfig } from '../config';
+import { uploadFromLocalFilePath } from '../helpers/cloudinary';
+import { convertToHLS, getDuration, takeScreenshot } from '../helpers/ffmpeg';
+import { cleanupDirectory, createDirectory, downloadFile, generateTempDir, verifyFileSize } from '../helpers/file';
+import { getDownloadUrl, uploadFolderParallel } from '../helpers/gcp-cloud-storage';
 
-export interface ConversionVideo {
+interface VideoData {
   id: string;
   videoUrl: string;
   userId: string;
+}
+
+export interface ConversionVideo {
+  taskId: string;
+  videoData: VideoData;
 }
 
 /**
  * Handles the complete video conversion process from source URL to HLS format
  * including downloading, converting, generating thumbnail, and uploading to cloud storage
  *
- * @param data Object containing video ID, source URL, and user ID
+ * @param data ConversionVideo object containing taskId and videoData (which includes video ID, source URL, and user ID)
  * @returns Promise resolving to the updated video record
  * @throws Error if any step in the conversion process fails
  */
 export const convertVideo = async (data: ConversionVideo) => {
-  const { id, videoUrl, userId } = data;
+  const { taskId, videoData } = data;
+  const { id, videoUrl, userId } = videoData;
   const workingDir = generateTempDir();
   const outputDir = path.join(workingDir, 'output');
   const thumbnailFilename = `${id}--${Date.now()}.jpg`;
@@ -69,12 +75,21 @@ export const convertVideo = async (data: ConversionVideo) => {
     const playlistUrl = getDownloadUrl(`${outputPath}/playlist.m3u8`);
     logger.debug(`Uploaded converted files to cloud storage: ${playlistUrl}`);
 
-    // Step 6: Update database with new video information
-    await finalizeVideo({
-      id,
-      source: playlistUrl,
-      thumbnailUrl,
-      duration: videoDuration,
+    await finishVideoProcess({
+      taskId,
+      notificationObject: {
+        type: 'video-ready',
+        entityId: id,
+        entityType: 'video',
+        user_id: userId,
+      },
+      videoId: id,
+      videoUpdates: {
+        source: playlistUrl,
+        status: 'ready',
+        thumbnailUrl,
+        duration: videoDuration,
+      },
     });
     return playlistUrl;
   } catch (error) {

@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { Request, Response } from 'express';
-import { convertHandler } from './index';
-import { convertVideo } from 'src/services/videos/convert/handler';
-import { logger } from 'src/utils/logger';
 import { completeTask } from 'src/database/queries/tasks';
+import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { logger } from 'src/utils/logger';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { convertHandler } from './index';
 
 interface MockResponse extends Response {
   json: Mock;
@@ -118,7 +118,10 @@ describe('convertHandler', () => {
       context.defaultMetadata,
       expect.stringContaining('start processing event')
     );
-    expect(convertVideo).toHaveBeenCalledWith(context.defaultData);
+    expect(convertVideo).toHaveBeenCalledWith({
+      taskId: context.defaultTaskId,
+      videoData: context.defaultData,
+    });
     checksAfterError?.();
     expect(context.mockResponse.json).not.toHaveBeenCalled();
   };
@@ -129,9 +132,9 @@ describe('convertHandler', () => {
     await convertHandler(request, context.mockResponse);
 
     expect(logger.info).toHaveBeenCalledWith(request.body.metadata, expect.stringContaining('start processing event'));
-    expect(convertVideo).toHaveBeenCalledWith(request.body.data);
-    expect(completeTask).toHaveBeenCalledWith({
-      taskId: request.headers['x-task-id'] as string,
+    expect(convertVideo).toHaveBeenCalledWith({
+      taskId: context.defaultTaskId,
+      videoData: request.body.data,
     });
     expect(context.mockResponse.json).toHaveBeenCalledWith({
       playableVideoUrl: context.mockPlayableUrl,
@@ -153,14 +156,6 @@ describe('convertHandler', () => {
         expect(completeTask).not.toHaveBeenCalled();
       }
     );
-  });
-
-  it('should throw error when task completion fails', async () => {
-    const errorMessage = 'Failed to complete task';
-    await testErrorScenario(() => {
-      vi.mocked(convertVideo).mockResolvedValueOnce(context.mockPlayableUrl);
-      vi.mocked(completeTask).mockRejectedValueOnce(new Error(errorMessage));
-    }, errorMessage);
   });
 
   it('should handle different video data', async () => {

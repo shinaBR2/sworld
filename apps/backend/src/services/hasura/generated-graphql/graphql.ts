@@ -1212,6 +1212,10 @@ export type Mutation_Root = {
   delete_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** delete single row from the table: "feature_flag" */
   delete_feature_flag_by_pk?: Maybe<Feature_Flag>;
+  /** delete data from the table: "notifications" */
+  delete_notifications?: Maybe<Notifications_Mutation_Response>;
+  /** delete single row from the table: "notifications" */
+  delete_notifications_by_pk?: Maybe<Notifications>;
   /** delete data from the table: "playlist" */
   delete_playlist?: Maybe<Playlist_Mutation_Response>;
   /** delete single row from the table: "playlist" */
@@ -1276,6 +1280,10 @@ export type Mutation_Root = {
   insert_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** insert a single row into the table: "feature_flag" */
   insert_feature_flag_one?: Maybe<Feature_Flag>;
+  /** insert data into the table: "notifications" */
+  insert_notifications?: Maybe<Notifications_Mutation_Response>;
+  /** insert a single row into the table: "notifications" */
+  insert_notifications_one?: Maybe<Notifications>;
   /** insert data into the table: "playlist" */
   insert_playlist?: Maybe<Playlist_Mutation_Response>;
   /** insert a single row into the table: "playlist" */
@@ -1348,6 +1356,12 @@ export type Mutation_Root = {
   update_feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** update multiples rows of table: "feature_flag" */
   update_feature_flag_many?: Maybe<Array<Maybe<Feature_Flag_Mutation_Response>>>;
+  /** update data of the table: "notifications" */
+  update_notifications?: Maybe<Notifications_Mutation_Response>;
+  /** update single row of the table: "notifications" */
+  update_notifications_by_pk?: Maybe<Notifications>;
+  /** update multiples rows of table: "notifications" */
+  update_notifications_many?: Maybe<Array<Maybe<Notifications_Mutation_Response>>>;
   /** update data of the table: "playlist" */
   update_playlist?: Maybe<Playlist_Mutation_Response>;
   /** update single row of the table: "playlist" */
@@ -1460,6 +1474,16 @@ export type Mutation_RootDelete_Feature_FlagArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Feature_Flag_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_NotificationsArgs = {
+  where: Notifications_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Notifications_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -1631,6 +1655,18 @@ export type Mutation_RootInsert_Feature_FlagArgs = {
 export type Mutation_RootInsert_Feature_Flag_OneArgs = {
   object: Feature_Flag_Insert_Input;
   on_conflict?: InputMaybe<Feature_Flag_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_NotificationsArgs = {
+  objects: Array<Notifications_Insert_Input>;
+  on_conflict?: InputMaybe<Notifications_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Notifications_OneArgs = {
+  object: Notifications_Insert_Input;
+  on_conflict?: InputMaybe<Notifications_On_Conflict>;
 };
 
 /** mutation root */
@@ -1853,6 +1889,33 @@ export type Mutation_RootUpdate_Feature_Flag_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Feature_Flag_ManyArgs = {
   updates: Array<Feature_Flag_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_NotificationsArgs = {
+  _append?: InputMaybe<Notifications_Append_Input>;
+  _delete_at_path?: InputMaybe<Notifications_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Notifications_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Notifications_Delete_Key_Input>;
+  _prepend?: InputMaybe<Notifications_Prepend_Input>;
+  _set?: InputMaybe<Notifications_Set_Input>;
+  where: Notifications_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Notifications_By_PkArgs = {
+  _append?: InputMaybe<Notifications_Append_Input>;
+  _delete_at_path?: InputMaybe<Notifications_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Notifications_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Notifications_Delete_Key_Input>;
+  _prepend?: InputMaybe<Notifications_Prepend_Input>;
+  _set?: InputMaybe<Notifications_Set_Input>;
+  pk_columns: Notifications_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Notifications_ManyArgs = {
+  updates: Array<Notifications_Updates>;
 };
 
 /** mutation root */
@@ -2079,6 +2142,329 @@ export type Mutation_RootUpdate_Videos_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Videos_ManyArgs = {
   updates: Array<Videos_Updates>;
+};
+
+/** Notification system */
+export type Notifications = {
+  __typename?: 'notifications';
+  createdAt: Scalars['timestamptz']['output'];
+  entityId: Scalars['uuid']['output'];
+  entityType: Scalars['String']['output'];
+  id: Scalars['uuid']['output'];
+  link?: Maybe<Scalars['String']['output']>;
+  metadata?: Maybe<Scalars['jsonb']['output']>;
+  readAt?: Maybe<Scalars['timestamptz']['output']>;
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** Notification system */
+export type NotificationsMetadataArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "notifications" */
+export type Notifications_Aggregate = {
+  __typename?: 'notifications_aggregate';
+  aggregate?: Maybe<Notifications_Aggregate_Fields>;
+  nodes: Array<Notifications>;
+};
+
+export type Notifications_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Notifications_Aggregate_Bool_Exp_Count>;
+};
+
+export type Notifications_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Notifications_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Notifications_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "notifications" */
+export type Notifications_Aggregate_Fields = {
+  __typename?: 'notifications_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Notifications_Max_Fields>;
+  min?: Maybe<Notifications_Min_Fields>;
+};
+
+/** aggregate fields of "notifications" */
+export type Notifications_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Notifications_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "notifications" */
+export type Notifications_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Notifications_Max_Order_By>;
+  min?: InputMaybe<Notifications_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Notifications_Append_Input = {
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** input type for inserting array relation for remote table "notifications" */
+export type Notifications_Arr_Rel_Insert_Input = {
+  data: Array<Notifications_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Notifications_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "notifications". All fields are combined with a logical 'AND'. */
+export type Notifications_Bool_Exp = {
+  _and?: InputMaybe<Array<Notifications_Bool_Exp>>;
+  _not?: InputMaybe<Notifications_Bool_Exp>;
+  _or?: InputMaybe<Array<Notifications_Bool_Exp>>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  entityId?: InputMaybe<Uuid_Comparison_Exp>;
+  entityType?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  link?: InputMaybe<String_Comparison_Exp>;
+  metadata?: InputMaybe<Jsonb_Comparison_Exp>;
+  readAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "notifications" */
+export enum Notifications_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  NotificationsPkey = 'notifications_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Notifications_Delete_At_Path_Input = {
+  metadata?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Notifications_Delete_Elem_Input = {
+  metadata?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Notifications_Delete_Key_Input = {
+  metadata?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** input type for inserting data into table "notifications" */
+export type Notifications_Insert_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  entityId?: InputMaybe<Scalars['uuid']['input']>;
+  entityType?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  link?: InputMaybe<Scalars['String']['input']>;
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
+  readAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Notifications_Max_Fields = {
+  __typename?: 'notifications_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  entityId?: Maybe<Scalars['uuid']['output']>;
+  entityType?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  link?: Maybe<Scalars['String']['output']>;
+  readAt?: Maybe<Scalars['timestamptz']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "notifications" */
+export type Notifications_Max_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  entityId?: InputMaybe<Order_By>;
+  entityType?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  link?: InputMaybe<Order_By>;
+  readAt?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Notifications_Min_Fields = {
+  __typename?: 'notifications_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  entityId?: Maybe<Scalars['uuid']['output']>;
+  entityType?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  link?: Maybe<Scalars['String']['output']>;
+  readAt?: Maybe<Scalars['timestamptz']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "notifications" */
+export type Notifications_Min_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  entityId?: InputMaybe<Order_By>;
+  entityType?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  link?: InputMaybe<Order_By>;
+  readAt?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "notifications" */
+export type Notifications_Mutation_Response = {
+  __typename?: 'notifications_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Notifications>;
+};
+
+/** on_conflict condition type for table "notifications" */
+export type Notifications_On_Conflict = {
+  constraint: Notifications_Constraint;
+  update_columns?: Array<Notifications_Update_Column>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "notifications". */
+export type Notifications_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  entityId?: InputMaybe<Order_By>;
+  entityType?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  link?: InputMaybe<Order_By>;
+  metadata?: InputMaybe<Order_By>;
+  readAt?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: notifications */
+export type Notifications_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Notifications_Prepend_Input = {
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** select columns of table "notifications" */
+export enum Notifications_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  EntityType = 'entityType',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Link = 'link',
+  /** column name */
+  Metadata = 'metadata',
+  /** column name */
+  ReadAt = 'readAt',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+}
+
+/** input type for updating data in table "notifications" */
+export type Notifications_Set_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  entityId?: InputMaybe<Scalars['uuid']['input']>;
+  entityType?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  link?: InputMaybe<Scalars['String']['input']>;
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
+  readAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "notifications" */
+export type Notifications_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Notifications_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Notifications_Stream_Cursor_Value_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  entityId?: InputMaybe<Scalars['uuid']['input']>;
+  entityType?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  link?: InputMaybe<Scalars['String']['input']>;
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
+  readAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "notifications" */
+export enum Notifications_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  EntityType = 'entityType',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Link = 'link',
+  /** column name */
+  Metadata = 'metadata',
+  /** column name */
+  ReadAt = 'readAt',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+}
+
+export type Notifications_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Notifications_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Notifications_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Notifications_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Notifications_Delete_Key_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Notifications_Prepend_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Notifications_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Notifications_Bool_Exp;
 };
 
 /** column ordering options */
@@ -3077,6 +3463,12 @@ export type Query_Root = {
   feature_flag_aggregate: Feature_Flag_Aggregate;
   /** fetch data from the table: "feature_flag" using primary key columns */
   feature_flag_by_pk?: Maybe<Feature_Flag>;
+  /** An array relationship */
+  notifications: Array<Notifications>;
+  /** An aggregate relationship */
+  notifications_aggregate: Notifications_Aggregate;
+  /** fetch data from the table: "notifications" using primary key columns */
+  notifications_by_pk?: Maybe<Notifications>;
   /** fetch data from the table: "playlist" */
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
@@ -3229,6 +3621,26 @@ export type Query_RootFeature_Flag_AggregateArgs = {
 };
 
 export type Query_RootFeature_Flag_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Query_RootNotificationsArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+export type Query_RootNotifications_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+export type Query_RootNotifications_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -3508,6 +3920,14 @@ export type Subscription_Root = {
   feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** fetch data from the table in a streaming manner: "feature_flag" */
   feature_flag_stream: Array<Feature_Flag>;
+  /** An array relationship */
+  notifications: Array<Notifications>;
+  /** An aggregate relationship */
+  notifications_aggregate: Notifications_Aggregate;
+  /** fetch data from the table: "notifications" using primary key columns */
+  notifications_by_pk?: Maybe<Notifications>;
+  /** fetch data from the table in a streaming manner: "notifications" */
+  notifications_stream: Array<Notifications>;
   /** fetch data from the table: "playlist" */
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
@@ -3709,6 +4129,32 @@ export type Subscription_RootFeature_Flag_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Feature_Flag_Stream_Cursor_Input>>;
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
+};
+
+export type Subscription_RootNotificationsArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+export type Subscription_RootNotifications_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+export type Subscription_RootNotifications_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootNotifications_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Notifications_Stream_Cursor_Input>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
 };
 
 export type Subscription_RootPlaylistArgs = {
@@ -5480,6 +5926,10 @@ export type Users = {
   email: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
   /** An array relationship */
+  notifications: Array<Notifications>;
+  /** An aggregate relationship */
+  notifications_aggregate: Notifications_Aggregate;
+  /** An array relationship */
   playlists: Array<Playlist>;
   /** An aggregate relationship */
   playlists_aggregate: Playlist_Aggregate;
@@ -5533,6 +5983,24 @@ export type UsersCrawl_Requests_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
   where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersNotificationsArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersNotifications_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Notifications_Order_By>>;
+  where?: InputMaybe<Notifications_Bool_Exp>;
 };
 
 /** columns and relationships of "users" */
@@ -5641,6 +6109,8 @@ export type Users_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  notifications?: InputMaybe<Notifications_Bool_Exp>;
+  notifications_aggregate?: InputMaybe<Notifications_Aggregate_Bool_Exp>;
   playlists?: InputMaybe<Playlist_Bool_Exp>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -5673,6 +6143,7 @@ export type Users_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  notifications?: InputMaybe<Notifications_Arr_Rel_Insert_Input>;
   playlists?: InputMaybe<Playlist_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   user_video_histories?: InputMaybe<User_Video_History_Arr_Rel_Insert_Input>;
@@ -5734,6 +6205,7 @@ export type Users_Order_By = {
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  notifications_aggregate?: InputMaybe<Notifications_Aggregate_Order_By>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Order_By>;
@@ -6918,6 +7390,24 @@ export type InsertVideosMutation = {
   } | null;
 };
 
+export type FinalizeVideoMutationVariables = Exact<{
+  taskId: Scalars['uuid']['input'];
+  notificationObject: Notifications_Insert_Input;
+  videoId: Scalars['uuid']['input'];
+  videoUpdates: Videos_Set_Input;
+}>;
+
+export type FinalizeVideoMutation = {
+  __typename?: 'mutation_root';
+  update_tasks?: {
+    __typename?: 'tasks_mutation_response';
+    affected_rows: number;
+    returning: Array<{ __typename?: 'tasks'; id: any }>;
+  } | null;
+  insert_notifications_one?: { __typename?: 'notifications'; id: any } | null;
+  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
+};
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -6973,3 +7463,19 @@ export const InsertVideosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<InsertVideosMutation, InsertVideosMutationVariables>;
+export const FinalizeVideoDocument = new TypedDocumentString(`
+    mutation FinalizeVideo($taskId: uuid!, $notificationObject: notifications_insert_input!, $videoId: uuid!, $videoUpdates: videos_set_input!) {
+  update_tasks(where: {task_id: {_eq: $taskId}}, _set: {status: "completed"}) {
+    affected_rows
+    returning {
+      id
+    }
+  }
+  insert_notifications_one(object: $notificationObject) {
+    id
+  }
+  update_videos_by_pk(pk_columns: {id: $videoId}, _set: $videoUpdates) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<FinalizeVideoMutation, FinalizeVideoMutationVariables>;

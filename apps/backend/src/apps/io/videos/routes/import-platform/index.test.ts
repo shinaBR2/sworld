@@ -1,11 +1,10 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { Request, Response } from 'express';
-import { importPlatformHandler } from './index';
-import { logger } from 'src/utils/logger';
-import { finalizeVideo } from 'src/database/queries/videos';
-import { completeTask } from 'src/database/queries/tasks';
+import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { logger } from 'src/utils/logger';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { importPlatformHandler } from './index';
 
 vi.mock('src/utils/logger', () => ({
   logger: {
@@ -13,12 +12,8 @@ vi.mock('src/utils/logger', () => ({
   },
 }));
 
-vi.mock('src/database/queries/videos', () => ({
-  finalizeVideo: vi.fn(),
-}));
-
-vi.mock('src/database/queries/tasks', () => ({
-  completeTask: vi.fn(),
+vi.mock('src/services/hasura/mutations/videos/finalize', () => ({
+  finishVideoProcess: vi.fn(),
 }));
 
 vi.mock('src/utils/custom-error', () => ({
@@ -65,8 +60,7 @@ const createMockRequest = (data: any = {}, metadata: any = {}, taskId: string = 
 };
 
 const setupSuccessfulMocks = () => {
-  vi.mocked(finalizeVideo).mockResolvedValueOnce(undefined);
-  vi.mocked(completeTask).mockResolvedValueOnce(undefined);
+  vi.mocked(finishVideoProcess).mockResolvedValueOnce('uuid');
 };
 
 describe('importPlatformHandler', () => {
@@ -98,14 +92,21 @@ describe('importPlatformHandler', () => {
 
     const requestData = request.body.data;
 
-    expect(finalizeVideo).toHaveBeenCalledWith({
-      id: requestData.id,
-      source: requestData.videoUrl,
-      thumbnailUrl: '',
-    });
-
-    expect(completeTask).toHaveBeenCalledWith({
-      taskId: context.defaultTaskId,
+    expect(finishVideoProcess).toHaveBeenCalledWith({
+      taskId: request.headers['x-task-id'], // Use actual request header
+      notificationObject: {
+        type: 'video-ready',
+        entityId: requestData.id, // Use custom request data
+        entityType: 'video',
+        user_id: requestData.userId, // Use custom request data
+      },
+      videoId: requestData.id, // Use custom request data
+      videoUpdates: {
+        source: requestData.videoUrl, // Use custom request data
+        status: 'ready',
+        thumbnailUrl: '',
+        duration: null,
+      },
     });
 
     expect(logger.info).toHaveBeenCalledWith(
@@ -149,25 +150,13 @@ describe('importPlatformHandler', () => {
     expect(context.mockResponse.json).not.toHaveBeenCalled();
   };
 
-  it('should throw error when finalizeVideo fails', async () => {
-    const errorMessage = 'Database error';
+  it('should handle Hasura mutation failure', async () => {
+    const errorMessage = 'Hasura failure';
     await testErrorScenario(
-      () => {
-        vi.mocked(finalizeVideo).mockRejectedValueOnce(new Error(errorMessage));
-      },
+      () => vi.mocked(finishVideoProcess).mockRejectedValueOnce(new Error(errorMessage)),
       errorMessage,
-      () => {
-        expect(completeTask).not.toHaveBeenCalled();
-      }
+      () => {}
     );
-  });
-
-  it('should throw error when completeTask fails', async () => {
-    const errorMessage = 'Failed to complete task';
-    await testErrorScenario(() => {
-      vi.mocked(finalizeVideo).mockResolvedValueOnce(undefined);
-      vi.mocked(completeTask).mockRejectedValueOnce(new Error(errorMessage));
-    }, errorMessage);
   });
 
   it('should log event start with correct metadata', async () => {

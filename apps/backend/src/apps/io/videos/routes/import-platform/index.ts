@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
-import { logger } from 'src/utils/logger';
-import { finalizeVideo } from 'src/database/queries/videos';
-import { completeTask } from 'src/database/queries/tasks';
+import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { logger } from 'src/utils/logger';
 
 const importPlatformHandler = async (req: Request, res: Response) => {
   const { data, metadata } = req.body;
   const taskId = req.headers['x-task-id'] as string;
-  const { id, videoUrl } = data;
+  const { id, videoUrl, userId } = data;
 
   try {
     logger.info(
@@ -16,14 +15,21 @@ const importPlatformHandler = async (req: Request, res: Response) => {
       `[/videos/import-platform-handler] start processing event "${metadata.id}", video "${data.id}"`
     );
 
-    await finalizeVideo({
-      id,
-      source: videoUrl,
-      thumbnailUrl: '',
-    });
-
-    await completeTask({
+    await finishVideoProcess({
       taskId,
+      notificationObject: {
+        type: 'video-ready',
+        entityId: id,
+        entityType: 'video',
+        user_id: userId,
+      },
+      videoId: id,
+      videoUpdates: {
+        source: videoUrl,
+        status: 'ready',
+        thumbnailUrl: '',
+        duration: null,
+      },
     });
 
     return res.json({ playableVideoUrl: videoUrl });

@@ -1,26 +1,14 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { Request, Response } from 'express';
-import { streamHLSHandler } from './index';
-import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
-import { finalizeVideo } from 'src/database/queries/videos';
-import { completeTask } from 'src/database/queries/tasks';
-import { logger } from 'src/utils/logger';
-import { CustomError } from 'src/utils/custom-error';
-import { DATABASE_ERRORS, VIDEO_ERRORS } from 'src/utils/error-codes';
-import { sequelize } from 'src/database';
+import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { videoConfig } from 'src/services/videos/config';
-
-// Mock all external dependencies
-vi.mock('src/database/queries/videos', () => ({
-  finalizeVideo: vi.fn(),
-}));
+import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
+import { CustomError } from 'src/utils/custom-error';
+import { HTTP_ERRORS, VIDEO_ERRORS } from 'src/utils/error-codes';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { streamHLSHandler } from './index';
 
 vi.mock('src/services/videos/helpers/m3u8', () => ({
   streamM3U8: vi.fn(),
-}));
-
-vi.mock('src/database/queries/tasks', () => ({
-  completeTask: vi.fn(),
 }));
 
 vi.mock('src/utils/logger', () => ({
@@ -35,16 +23,14 @@ vi.mock('src/services/videos/config', () => ({
   },
 }));
 
-vi.mock('src/database', () => ({
-  sequelize: {
-    transaction: vi.fn(),
-  },
+vi.mock('src/services/hasura/mutations/videos/finalize', () => ({
+  finishVideoProcess: vi.fn().mockResolvedValue({ id: 'notification-123' }),
 }));
 
 // Mock error codes and CustomError
 vi.mock('src/utils/error-codes', () => ({
-  DATABASE_ERRORS: {
-    DB_ERROR: 'DATABASE_ERROR',
+  HTTP_ERRORS: {
+    SERVER_ERROR: 'SERVER_ERROR',
   },
   VIDEO_ERRORS: {
     CONVERSION_FAILED: 'VIDEO_CONVERSION_FAILED',
@@ -80,10 +66,6 @@ interface TestContext {
   streamOptions: {
     excludePatterns: RegExp[];
   };
-  mockTransaction: {
-    commit: Mock;
-    rollback: Mock;
-  };
 }
 
 const createMockResponse = (): MockResponse =>
@@ -114,19 +96,10 @@ describe('streamHLSHandler', () => {
       streamOptions: {
         excludePatterns: videoConfig.excludePatterns,
       },
-      mockTransaction: {
-        commit: vi.fn().mockResolvedValue(undefined),
-        rollback: vi.fn().mockResolvedValue(undefined),
-      },
     } as TestContext;
 
     context.mockResponse = createMockResponse();
     context.mockRequest = createMockRequest(context.defaultData, context.defaultMetadata, context.defaultTaskId);
-
-    // Setup mock transaction
-    vi.mocked(sequelize.transaction).mockResolvedValue(context.mockTransaction as any);
-
-    vi.spyOn(context.mockTransaction, 'rollback');
 
     // Reset mocks
     vi.clearAllMocks();
@@ -150,10 +123,6 @@ describe('streamHLSHandler', () => {
     expect(caughtError).toBeTruthy();
     expect(caughtError?.message).toBe(expectedErrorMessage);
 
-    if (expectedErrorCode !== VIDEO_ERRORS.CONVERSION_FAILED) {
-      expect(context.mockTransaction.rollback).toHaveBeenCalled();
-    }
-
     // Verify CustomError.critical was called
     const criticalCalls = vi.mocked(CustomError.critical).mock.calls;
     expect(criticalCalls.length).toBeGreaterThan(0);
@@ -176,8 +145,6 @@ describe('streamHLSHandler', () => {
       duration: 100,
       thumbnailUrl: 'cloud-storage-url',
     } as any);
-    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
-    vi.mocked(completeTask).mockResolvedValueOnce(undefined);
 
     await streamHLSHandler(context.mockRequest, context.mockResponse);
 
@@ -186,16 +153,22 @@ describe('streamHLSHandler', () => {
       `videos/${context.defaultData.userId}/${context.defaultData.id}`,
       context.streamOptions
     );
-    expect(finalizeVideo).toHaveBeenCalledWith({
-      id: context.defaultData.id,
-      source: expectedPlayableUrl,
-      thumbnailUrl: 'cloud-storage-url',
-      duration: 100,
-    });
-    expect(completeTask).toHaveBeenCalledWith({
+    expect(finishVideoProcess).toHaveBeenCalledWith({
       taskId: context.defaultTaskId,
+      notificationObject: {
+        type: 'video-ready',
+        entityId: context.defaultData.id,
+        entityType: 'video',
+        user_id: context.defaultData.userId,
+      },
+      videoId: context.defaultData.id,
+      videoUpdates: {
+        source: expectedPlayableUrl,
+        status: 'ready',
+        thumbnailUrl: 'cloud-storage-url',
+        duration: 100,
+      },
     });
-    expect(context.mockTransaction.commit).toHaveBeenCalled();
     expect(context.mockResponse.json).toHaveBeenCalledWith({
       playableVideoUrl: expectedPlayableUrl,
     });
@@ -214,55 +187,8 @@ describe('streamHLSHandler', () => {
       VIDEO_ERRORS.CONVERSION_FAILED,
       'Stream HLS failed',
       () => {
-        expect(finalizeVideo).not.toHaveBeenCalled();
-        expect(completeTask).not.toHaveBeenCalled();
+        expect(finishVideoProcess).not.toHaveBeenCalled();
       }
-    );
-  });
-
-  it('should handle finalizeVideo failure', async () => {
-    await testErrorScenario(
-      () => {
-        const expectedPlayableUrl = 'https://example.com/video.m3u8';
-        vi.mocked(streamM3U8).mockResolvedValueOnce({
-          playlistUrl: expectedPlayableUrl,
-          duration: 100,
-          thumbnailUrl: 'cloud-storage-url',
-        } as any);
-        vi.mocked(finalizeVideo).mockRejectedValueOnce(
-          CustomError.critical('Failed to save to database', {
-            errorCode: DATABASE_ERRORS.DB_ERROR,
-            shouldRetry: true,
-          })
-        );
-      },
-      DATABASE_ERRORS.DB_ERROR,
-      'Failed to save to database',
-      () => {
-        expect(completeTask).not.toHaveBeenCalled();
-      }
-    );
-  });
-
-  it('should handle completeTask failure', async () => {
-    await testErrorScenario(
-      () => {
-        const expectedPlayableUrl = 'https://example.com/video.m3u8';
-        vi.mocked(streamM3U8).mockResolvedValueOnce({
-          playlistUrl: expectedPlayableUrl,
-          duration: 100,
-          thumbnailUrl: 'cloud-storage-url',
-        } as any);
-        vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
-        vi.mocked(completeTask).mockRejectedValueOnce(
-          CustomError.critical('Failed to save to database', {
-            errorCode: DATABASE_ERRORS.DB_ERROR,
-            shouldRetry: true,
-          })
-        );
-      },
-      DATABASE_ERRORS.DB_ERROR,
-      'Failed to save to database'
     );
   });
 
@@ -279,8 +205,6 @@ describe('streamHLSHandler', () => {
       duration: 100,
       thumbnailUrl: 'cloud-storage-url',
     } as any);
-    vi.mocked(finalizeVideo).mockResolvedValueOnce(1);
-    vi.mocked(completeTask).mockResolvedValueOnce(undefined);
 
     await streamHLSHandler(customRequest, context.mockResponse);
 
@@ -288,6 +212,49 @@ describe('streamHLSHandler', () => {
       customData.videoUrl,
       `videos/${customData.userId}/${customData.id}`,
       context.streamOptions
+    );
+  });
+
+  it('should handle Hasura mutation failure', async () => {
+    // Mock successful streamM3U8 response first
+    vi.mocked(streamM3U8).mockResolvedValueOnce({
+      playlistUrl: 'temp-url',
+      duration: 100,
+      thumbnailUrl: 'temp-thumbnail',
+    } as any);
+
+    // Setup Hasura failure
+    const hasuraError = CustomError.critical('Hasura mutation failed', {
+      errorCode: HTTP_ERRORS.SERVER_ERROR,
+      shouldRetry: true,
+    });
+    vi.mocked(finishVideoProcess).mockRejectedValueOnce(hasuraError);
+
+    await testErrorScenario(
+      () => {
+        // Additional mocks can be placed here if needed
+      },
+      HTTP_ERRORS.SERVER_ERROR,
+      'Hasura server error',
+      () => {
+        // Verify finishVideoProcess was called with expected arguments
+        expect(finishVideoProcess).toHaveBeenCalledWith({
+          taskId: context.defaultTaskId,
+          notificationObject: {
+            type: 'video-ready',
+            entityId: context.defaultData.id,
+            entityType: 'video',
+            user_id: context.defaultData.userId,
+          },
+          videoId: context.defaultData.id,
+          videoUpdates: {
+            source: 'temp-url',
+            status: 'ready',
+            thumbnailUrl: 'temp-thumbnail',
+            duration: 100,
+          },
+        });
+      }
     );
   });
 });
