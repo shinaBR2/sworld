@@ -10,11 +10,15 @@ interface ConnectionInfo {
   subscriptionId: string;
 }
 
-export function useSubscription<T>(
-  hasuraUrl: string,
-  query: string,
-  variables?: Record<string, unknown>
-): SubscriptionState<T> {
+export interface SubscriptionParams {
+  hasuraUrl: string;
+  query: string;
+  variables?: Record<string, unknown>;
+  enabled?: boolean;
+}
+
+export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
+  const { hasuraUrl, query, variables, enabled = true } = params; // Default to true
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
     isLoading: true,
@@ -212,6 +216,11 @@ export function useSubscription<T>(
   }, [hasuraUrl, initializeConnection, handleConnectionError, handleSubscriptionMessage]);
 
   useEffect(() => {
+    if (!enabled) {
+      // Changed from disabled to !enabled
+      return;
+    }
+
     const { ws, subscriptionId } = createWebSocketConnection();
 
     return () => {
@@ -238,7 +247,16 @@ export function useSubscription<T>(
         }
       }
     };
-  }, [createWebSocketConnection]);
+  }, [createWebSocketConnection, enabled]);
+
+  // Return initial state when not enabled
+  if (!enabled) {
+    return {
+      data: null,
+      isLoading: true,
+      error: null,
+    };
+  }
 
   return state;
 }

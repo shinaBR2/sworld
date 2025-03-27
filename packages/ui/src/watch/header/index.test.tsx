@@ -3,6 +3,7 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Header } from './index';
 import '@testing-library/jest-dom';
 import { Link } from '@mui/material';
+import { useQueryContext } from 'core/providers/query';
 
 // Mock the child components
 vi.mock('../../universal/logo', () => ({
@@ -13,6 +14,36 @@ vi.mock('../../universal/site-choices', () => ({
   default: () => <div data-testid="mock-site-choices">SiteChoices</div>,
 }));
 
+vi.mock('./notifications-menu', () => ({
+  NotificationsMenu: ({ anchorEl, onClose }: any) => (
+    <div data-testid="mock-notifications-menu" data-open={Boolean(anchorEl)} onClick={onClose}>
+      NotificationsMenu
+    </div>
+  ),
+}));
+
+// Mock Query context
+const mockNotifications = {
+  data: [
+    { id: 1, readAt: null },
+    { id: 2, readAt: new Date().toISOString() },
+  ],
+  isLoading: false,
+};
+
+// Update the mock at the top of the file
+vi.mock('core/providers/query', () => ({
+  useQueryContext: vi.fn(() => ({
+    notifications: mockNotifications,
+    hasuraUrl: 'hasura-url',
+    featureFlags: {
+      data: null,
+      isLoading: false,
+      error: null,
+    },
+  })),
+}));
+
 describe('Header', () => {
   const defaultProps = {
     toggleSetting: vi.fn(),
@@ -20,9 +51,13 @@ describe('Header', () => {
       listen: 'listen',
       watch: 'watch',
       play: 'play',
+      til: 'til',
     },
     user: null,
     LinkComponent: Link,
+    linkProps: {
+      to: '/',
+    },
   };
 
   it('renders all components correctly', () => {
@@ -101,5 +136,82 @@ describe('Header', () => {
 
     const appBar = screen.getByRole('banner');
     expect(appBar).toHaveClass('MuiAppBar-colorDefault');
+  });
+
+  it('renders notification button with correct unread count', () => {
+    render(<Header {...defaultProps} />);
+
+    const badge = screen.getByTestId('NotificationsIcon').closest('button')?.querySelector('.MuiBadge-badge');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent('1');
+  });
+
+  it('opens notification menu when notification button is clicked', () => {
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    fireEvent.click(notificationButton as Element);
+
+    const menu = screen.getByTestId('mock-notifications-menu');
+    expect(menu).toHaveAttribute('data-open', 'true');
+  });
+
+  it('closes notification menu when clicking away', () => {
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    fireEvent.click(notificationButton as Element);
+
+    const menu = screen.getByTestId('mock-notifications-menu');
+    expect(menu).toHaveAttribute('data-open', 'true');
+
+    // Simulate menu close by clicking the menu itself
+    fireEvent.click(menu);
+
+    expect(menu).toHaveAttribute('data-open', 'false');
+  });
+
+  it('disables notification button while loading', () => {
+    // Mock loading state
+    vi.mocked(useQueryContext).mockImplementation(() => ({
+      notifications: {
+        data: [],
+        isLoading: true,
+        error: null,
+      },
+      hasuraUrl: 'hasura-url',
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    }));
+
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    expect(notificationButton).toBeDisabled();
+  });
+
+  it('enables notification button when loading completes', () => {
+    // Mock loaded state
+    vi.mocked(useQueryContext).mockImplementation(() => ({
+      notifications: {
+        data: [],
+        isLoading: false,
+        error: null,
+      },
+      hasuraUrl: 'hasura-url',
+      featureFlags: {
+        data: null,
+        isLoading: false,
+        error: null,
+      },
+    }));
+
+    render(<Header {...defaultProps} />);
+
+    const notificationButton = screen.getByTestId('NotificationsIcon').closest('button');
+    expect(notificationButton).not.toBeDisabled();
   });
 });

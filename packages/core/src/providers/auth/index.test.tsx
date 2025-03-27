@@ -314,4 +314,39 @@ describe('AuthProvider', () => {
       });
     });
   });
+
+  test('should handle loading states correctly for anonymous visitors', async () => {
+    // Initial state with auth0 loading
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: true,
+      user: null,
+      getAccessTokenSilently: vi.fn(),
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    const { result, rerender } = renderHook(() => useAuthContext(), {
+      wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+    });
+
+    // Should be loading while auth0 is loading
+    expect(result.current.isLoading).toBe(true);
+
+    // Auth0 finished loading, but user is not authenticated
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      getAccessTokenSilently: vi.fn(),
+      loginWithRedirect: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    // Trigger a rerender with the new mock values
+    rerender();
+
+    // Now check if isLoading was updated
+    expect(result.current.isLoading).toBe(false);
+  });
 });
