@@ -7698,7 +7698,7 @@ export type FeatureFlagsSubscription = { __typename?: 'subscription_root', featu
 export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, message: string, link?: string | null, metadata?: any | null, title: string }> };
+export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, link?: string | null, metadata?: any | null }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
@@ -7992,10 +7992,8 @@ export const NotificationsDocument = new TypedDocumentString(`
     entityType
     type
     readAt
-    message
     link
     metadata
-    title
   }
 }
     `) as unknown as TypedDocumentString<NotificationsSubscription, NotificationsSubscriptionVariables>;

@@ -11,10 +11,8 @@ const NOTIFICATIONS_SUBSCRIPTION = graphql(/* GraphQL */ `
       entityType
       type
       readAt
-      message
       link
       metadata
-      title
     }
   }
 `);
