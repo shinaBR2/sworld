@@ -1,9 +1,9 @@
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { RequiredLinkComponent } from '../videos/types';
 import { useQueryContext } from 'core/providers/query';
+import { NotificationItem } from './notification-item';
 
 interface NotificationsMenuProps {
   anchorEl: HTMLElement | null;
@@ -11,7 +11,7 @@ interface NotificationsMenuProps {
   LinkComponent: RequiredLinkComponent['LinkComponent'];
 }
 
-const NotificationsMenu = ({ anchorEl, onClose }: NotificationsMenuProps) => {
+const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMenuProps) => {
   const { notifications } = useQueryContext();
 
   return (
@@ -27,23 +27,12 @@ const NotificationsMenu = ({ anchorEl, onClose }: NotificationsMenuProps) => {
     >
       {notifications.data?.length ? (
         notifications.data.map(notification => (
-          <MenuItem
+          <NotificationItem
             key={notification.id}
-            onClick={onClose}
-            sx={{
-              whiteSpace: 'normal',
-              bgcolor: notification.readAt ? 'inherit' : 'action.hover',
-            }}
-          >
-            <Box sx={{ py: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: notification.readAt ? 'normal' : 'bold' }}>
-                {notification.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {notification.message}
-              </Typography>
-            </Box>
-          </MenuItem>
+            notification={notification}
+            onClose={onClose}
+            LinkComponent={LinkComponent}
+          />
         ))
       ) : (
         <MenuItem disabled>
