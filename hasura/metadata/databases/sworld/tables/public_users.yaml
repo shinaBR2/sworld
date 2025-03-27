@@ -16,6 +16,13 @@ array_relationships:
         table:
           name: crawl_requests
           schema: public
+  - name: notifications
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: notifications
+          schema: public
   - name: playlists
     using:
       foreign_key_constraint_on:
