@@ -1,13 +1,17 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import { Auth } from 'core';
+import Badge from '@mui/material/Badge';
+import { Auth, Query } from 'core';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
 import { RequiredLinkComponent } from '../videos/types';
+import { useState } from 'react';
+import { NotificationsMenu } from './notifications-menu';
 
 interface HeaderProps extends RequiredLinkComponent {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +27,18 @@ interface HeaderProps extends RequiredLinkComponent {
 const Header = (props: HeaderProps) => {
   const { toggleSetting, sites, user, LinkComponent } = props;
   const avatarUrl = user?.picture;
+  const { notifications } = Query.useQueryContext();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const unreadCount = notifications.data?.filter(n => !n.readAt).length || 0;
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
@@ -38,7 +54,20 @@ const Header = (props: HeaderProps) => {
           <SiteChoices activeSite="watch" sites={sites} />
         </Box>
 
-        <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
+        <Box sx={{ display: 'flex', minWidth: 'fit-content', gap: 1, alignItems: 'center' }}>
+          <IconButton 
+            onClick={handleNotificationClick} 
+            disabled={notifications.isLoading}
+          >
+            <Badge badgeContent={unreadCount} color="primary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <NotificationsMenu 
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            LinkComponent={LinkComponent}
+          />
           <IconButton onClick={() => toggleSetting(true)}>
             {avatarUrl ? (
               <ResponsiveAvatar src={avatarUrl} alt={user.name} data-testid="user-avatar" />

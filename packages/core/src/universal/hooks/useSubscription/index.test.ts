@@ -88,13 +88,18 @@ describe('useSubscription', () => {
   });
 
   it('should initialize connection without token when user is not signed in', async () => {
-    // Mock user not being signed in
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: vi.fn(),
       isSignedIn: false,
     } as unknown as AuthContextValue);
 
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Initial connection
     await act(async () => {
@@ -114,7 +119,12 @@ describe('useSubscription', () => {
   });
 
   it('should initialize with loading state', () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
     expect(result.current).toEqual({
       data: null,
       isLoading: true,
@@ -123,7 +133,13 @@ describe('useSubscription', () => {
   });
 
   it('should establish connection and handle successful subscription flow', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Initial connection
     await act(async () => {
@@ -174,6 +190,7 @@ describe('useSubscription', () => {
     });
   });
 
+  // Update these test cases to use object params
   it('should handle authentication error', async () => {
     const mockError = new Error('Auth failed');
     vi.mocked(useAuthContext).mockReturnValue({
@@ -181,7 +198,13 @@ describe('useSubscription', () => {
       getAccessToken: vi.fn().mockRejectedValue(mockError),
     } as unknown as AuthContextValue);
 
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onopen?.();
@@ -198,7 +221,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle server error message', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onopen?.();
@@ -227,7 +256,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle message parsing error', async () => {
-    const { result } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onmessage?.({
@@ -252,9 +287,14 @@ describe('useSubscription', () => {
   });
 
   it('should handle WebSocket errors with reconnection', async () => {
-    vi.useFakeTimers(); // Use fake timers
+    vi.useFakeTimers();
 
-    renderHook(() => useSubscription(mockUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onerror?.();
@@ -268,11 +308,16 @@ describe('useSubscription', () => {
     // Should attempt reconnection
     expect(MockWebSocketSpy).toHaveBeenCalledTimes(2);
 
-    vi.useRealTimers(); // Restore real timers
+    vi.useRealTimers();
   });
 
   it('should handle connection complete message', async () => {
-    renderHook(() => useSubscription(mockUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     await act(async () => {
       mockWsInstance.onmessage?.({
@@ -284,7 +329,12 @@ describe('useSubscription', () => {
   });
 
   it('should clean up on unmount', async () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     unmount();
 
@@ -293,7 +343,12 @@ describe('useSubscription', () => {
   });
 
   it('should not send stop message if socket is not open on unmount', () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+      })
+    );
 
     mockWsInstance.readyState = WebSocket.CLOSED;
     unmount();
@@ -302,7 +357,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle error when closing WebSocket after complete message', async () => {
-    renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Set up close to throw an error
     mockWsInstance.close.mockImplementationOnce(() => {
@@ -328,7 +389,13 @@ describe('useSubscription', () => {
   });
 
   it('should handle error during cleanup on unmount', async () => {
-    const { unmount } = renderHook(() => useSubscription(mockUrl, mockQuery, mockVariables));
+    const { unmount } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+      })
+    );
 
     // Ensure the WebSocket is in OPEN state and properly initialized
     await act(async () => {
@@ -356,7 +423,84 @@ describe('useSubscription', () => {
   it('should convert HTTP/HTTPS URLs to WS/WSS', () => {
     const httpsUrl = 'https://hasura.example.com/graphql';
 
-    renderHook(() => useSubscription(httpsUrl, mockQuery));
+    renderHook(() =>
+      useSubscription({
+        hasuraUrl: httpsUrl,
+        query: mockQuery,
+      })
+    );
+
     expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
+  });
+
+  // Replace the disabled test cases with enabled ones
+  it('should not initialize connection when enabled is false', () => {
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        variables: mockVariables,
+        enabled: false,
+      })
+    );
+
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+    expect(MockWebSocketSpy).not.toHaveBeenCalled();
+  });
+
+  it('should cleanup and stop connection when enabled changes to false', async () => {
+    const { rerender } = renderHook(
+      ({ enabled }) =>
+        useSubscription({
+          hasuraUrl: mockUrl,
+          query: mockQuery,
+          variables: mockVariables,
+          enabled,
+        }),
+      { initialProps: { enabled: true } }
+    );
+
+    await act(async () => {
+      mockWsInstance.onopen?.();
+    });
+
+    rerender({ enabled: false });
+
+    expect(mockWsInstance.send).toHaveBeenLastCalledWith(expect.stringContaining('"type":"stop"'));
+    expect(mockWsInstance.close).toHaveBeenCalled();
+  });
+
+  it('should initialize with loading state when enabled', () => {
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        enabled: true,
+      })
+    );
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+  });
+
+  it('loading state should be true when enabled is false', () => {
+    const { result } = renderHook(() =>
+      useSubscription({
+        hasuraUrl: mockUrl,
+        query: mockQuery,
+        enabled: false,
+      })
+    );
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
   });
 });

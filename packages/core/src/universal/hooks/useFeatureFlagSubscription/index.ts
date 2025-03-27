@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
-import { useSubscription } from '../useSubscription';
-import type { FeatureFlagsData, FeatureFlagsResponse } from './types';
-import { checkFeatureFlag } from './helpers';
+import { graphql } from '../../../graphql';
+import { FeatureFlagsSubscription } from '../../../graphql/graphql';
 import { useAuthContext } from '../../../providers/auth';
+import { useSubscription } from '../useSubscription';
+import { checkFeatureFlag } from './helpers';
+import type { FeatureFlagsData } from './types';
 
-const FEATURE_FLAGS_SUBSCRIPTION = `
+export const FEATURE_FLAGS_SUBSCRIPTION = graphql(/* GraphQL */ `
   subscription FeatureFlags {
     feature_flag {
       id
@@ -12,11 +14,15 @@ const FEATURE_FLAGS_SUBSCRIPTION = `
       conditions
     }
   }
-`;
+`);
 
 export function useFeatureFlagSubscription(url: string) {
-  const { user } = useAuthContext();
-  const subscription = useSubscription<FeatureFlagsResponse>(url, FEATURE_FLAGS_SUBSCRIPTION);
+  const { user, isSignedIn } = useAuthContext();
+  const subscription = useSubscription<FeatureFlagsSubscription>({
+    hasuraUrl: url,
+    query: FEATURE_FLAGS_SUBSCRIPTION.toString(),
+    enabled: isSignedIn,
+  });
 
   const processedFlags = useMemo(() => {
     if (!subscription.data) {
