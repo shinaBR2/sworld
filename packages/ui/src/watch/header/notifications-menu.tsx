@@ -31,7 +31,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
     (notificationId: string) => () => {
       markAsRead({ notificationId });
     },
-    []
+    [markAsRead]
   );
 
   const handleMarkAll = useCallback(() => {
