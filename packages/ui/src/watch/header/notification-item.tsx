@@ -2,6 +2,7 @@ import { RequiredLinkComponent } from '../videos/types';
 import { NOTIFICATION_TYPES, NOTIFICATION_ICONS, NotificationType } from './types';
 import { NOTIFICATION_TEXTS } from './texts';
 import { NotificationMenuItem, NotificationBox, NotificationTitle, NotificationMessage } from './styled';
+import { getNotificationMessage } from './notification-utils';
 
 interface NotificationItemProps {
   notification: NotificationType;
@@ -18,7 +19,9 @@ const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
           <NotificationTitle isRead={!!notification.readAt}>
             {NOTIFICATION_ICONS[notification.type]} {texts.title}
           </NotificationTitle>
-          <NotificationMessage>{texts.message}</NotificationMessage>
+          <NotificationMessage>
+            {getNotificationMessage(notification)}
+          </NotificationMessage>
         </>
       );
     }
@@ -28,7 +31,9 @@ const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
         <NotificationTitle isRead={!!notification.readAt}>
           {NOTIFICATION_ICONS[NOTIFICATION_TYPES.DEFAULT]} {NOTIFICATION_TEXTS[NOTIFICATION_TYPES.DEFAULT].title}
         </NotificationTitle>
-        <NotificationMessage>{NOTIFICATION_TEXTS[NOTIFICATION_TYPES.DEFAULT].message}</NotificationMessage>
+        <NotificationMessage>
+          {getNotificationMessage(notification)}
+        </NotificationMessage>
       </>
     );
   };
