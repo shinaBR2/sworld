@@ -27,7 +27,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
     // onError,
   });
 
-  const onClick = useCallback(
+  const onItemClick = useCallback(
     (notificationId: string) => () => {
       markAsRead({ notificationId });
     },
@@ -55,7 +55,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
           <NotificationItem
             key={notification.id}
             notification={notification}
-            onClick={onClick(notification.id)}
+            onClick={onItemClick(notification.id)}
             LinkComponent={LinkComponent}
           />
         ))
