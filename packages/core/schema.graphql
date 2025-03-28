@@ -2336,18 +2336,18 @@ type notifications {
   entityType: String!
   id: uuid!
   link: String
-  message: String!
   metadata(
     """JSON select path"""
     path: String
   ): jsonb
   readAt: timestamptz
-  title: String!
   type: String!
   updatedAt: timestamptz!
   """An object relationship"""
   user: users!
   user_id: uuid!
+  """An object relationship"""
+  video: videos
 }
 
 """
@@ -2413,14 +2413,13 @@ input notifications_bool_exp {
   entityType: String_comparison_exp
   id: uuid_comparison_exp
   link: String_comparison_exp
-  message: String_comparison_exp
   metadata: jsonb_comparison_exp
   readAt: timestamptz_comparison_exp
-  title: String_comparison_exp
   type: String_comparison_exp
   updatedAt: timestamptz_comparison_exp
   user: users_bool_exp
   user_id: uuid_comparison_exp
+  video: videos_bool_exp
 }
 
 """
@@ -2463,14 +2462,13 @@ input notifications_insert_input {
   entityType: String
   id: uuid
   link: String
-  message: String
   metadata: jsonb
   readAt: timestamptz
-  title: String
   type: String
   updatedAt: timestamptz
   user: users_obj_rel_insert_input
   user_id: uuid
+  video: videos_obj_rel_insert_input
 }
 
 """aggregate max on columns"""
@@ -2480,9 +2478,7 @@ type notifications_max_fields {
   entityType: String
   id: uuid
   link: String
-  message: String
   readAt: timestamptz
-  title: String
   type: String
   updatedAt: timestamptz
   user_id: uuid
@@ -2497,9 +2493,7 @@ input notifications_max_order_by {
   entityType: order_by
   id: order_by
   link: order_by
-  message: order_by
   readAt: order_by
-  title: order_by
   type: order_by
   updatedAt: order_by
   user_id: order_by
@@ -2512,9 +2506,7 @@ type notifications_min_fields {
   entityType: String
   id: uuid
   link: String
-  message: String
   readAt: timestamptz
-  title: String
   type: String
   updatedAt: timestamptz
   user_id: uuid
@@ -2529,9 +2521,7 @@ input notifications_min_order_by {
   entityType: order_by
   id: order_by
   link: order_by
-  message: order_by
   readAt: order_by
-  title: order_by
   type: order_by
   updatedAt: order_by
   user_id: order_by
@@ -2563,14 +2553,13 @@ input notifications_order_by {
   entityType: order_by
   id: order_by
   link: order_by
-  message: order_by
   metadata: order_by
   readAt: order_by
-  title: order_by
   type: order_by
   updatedAt: order_by
   user: users_order_by
   user_id: order_by
+  video: videos_order_by
 }
 
 """primary key columns input for table: notifications"""
@@ -2598,13 +2587,9 @@ enum notifications_select_column {
   """column name"""
   link
   """column name"""
-  message
-  """column name"""
   metadata
   """column name"""
   readAt
-  """column name"""
-  title
   """column name"""
   type
   """column name"""
@@ -2622,10 +2607,8 @@ input notifications_set_input {
   entityType: String
   id: uuid
   link: String
-  message: String
   metadata: jsonb
   readAt: timestamptz
-  title: String
   type: String
   updatedAt: timestamptz
   user_id: uuid
@@ -2648,10 +2631,8 @@ input notifications_stream_cursor_value_input {
   entityType: String
   id: uuid
   link: String
-  message: String
   metadata: jsonb
   readAt: timestamptz
-  title: String
   type: String
   updatedAt: timestamptz
   user_id: uuid
@@ -2672,13 +2653,9 @@ enum notifications_update_column {
   """column name"""
   link
   """column name"""
-  message
-  """column name"""
   metadata
   """column name"""
   readAt
-  """column name"""
-  title
   """column name"""
   type
   """column name"""

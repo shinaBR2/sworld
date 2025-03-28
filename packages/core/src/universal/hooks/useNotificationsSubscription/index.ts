@@ -13,6 +13,10 @@ const NOTIFICATIONS_SUBSCRIPTION = graphql(/* GraphQL */ `
       readAt
       link
       metadata
+      video {
+        id
+        title
+      }
     }
   }
 `);
