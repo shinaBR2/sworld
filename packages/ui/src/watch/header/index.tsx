@@ -12,6 +12,7 @@ import SiteChoices from '../../universal/site-choices';
 import { RequiredLinkComponent } from '../videos/types';
 import { useState } from 'react';
 import { NotificationsMenu } from './notifications-menu';
+import { useAuthContext } from 'core/providers/auth';
 
 interface HeaderProps extends RequiredLinkComponent {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,6 +29,7 @@ const Header = (props: HeaderProps) => {
   const { toggleSetting, sites, user, LinkComponent } = props;
   const avatarUrl = user?.picture;
   const { notifications } = Query.useQueryContext();
+  const { isSignedIn } = useAuthContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,19 +57,16 @@ const Header = (props: HeaderProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', minWidth: 'fit-content', gap: 1, alignItems: 'center' }}>
-          <IconButton 
-            onClick={handleNotificationClick} 
-            disabled={notifications.isLoading}
-          >
-            <Badge badgeContent={unreadCount} color="primary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <NotificationsMenu 
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            LinkComponent={LinkComponent}
-          />
+          {isSignedIn && (
+            <>
+              <IconButton onClick={handleNotificationClick} disabled={notifications.isLoading}>
+                <Badge badgeContent={unreadCount} color="primary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <NotificationsMenu anchorEl={anchorEl} onClose={handleClose} LinkComponent={LinkComponent} />
+            </>
+          )}
           <IconButton onClick={() => toggleSetting(true)}>
             {avatarUrl ? (
               <ResponsiveAvatar src={avatarUrl} alt={user.name} data-testid="user-avatar" />

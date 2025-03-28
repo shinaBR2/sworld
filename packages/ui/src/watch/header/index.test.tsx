@@ -4,6 +4,7 @@ import { Header } from './index';
 import '@testing-library/jest-dom';
 import { Link } from '@mui/material';
 import { useQueryContext } from 'core/providers/query';
+import { useAuthContext } from 'core/providers/auth';
 
 // Mock the child components
 vi.mock('../../universal/logo', () => ({
@@ -44,6 +45,14 @@ vi.mock('core/providers/query', () => ({
   })),
 }));
 
+// Add auth mock at the top
+vi.mock('core/providers/auth', () => ({
+  useAuthContext: vi.fn().mockReturnValue({
+    isSignedIn: false,
+    getAccessToken: vi.fn(),
+  }),
+}));
+
 describe('Header', () => {
   const defaultProps = {
     toggleSetting: vi.fn(),
@@ -79,7 +88,19 @@ describe('Header', () => {
     expect(accountButton).toBeInTheDocument();
   });
 
+  it('should not show notifications when signed out', () => {
+    render(<Header {...defaultProps} />);
+    expect(screen.queryByTestId('NotificationsIcon')).not.toBeInTheDocument();
+  });
+
+  it('should show account circle when signed out', () => {
+    render(<Header {...defaultProps} />);
+    expect(screen.getByTestId('AccountCircleIcon')).toBeInTheDocument();
+  });
+
+  // Modify existing avatar test
   it('renders avatar for signed in user', () => {
+    vi.mocked(useAuthContext).mockReturnValue({ isSignedIn: true });
     const props = {
       ...defaultProps,
       user: {
@@ -94,6 +115,20 @@ describe('Header', () => {
     const avatarImg = within(avatar).getByRole('img');
     expect(avatarImg).toHaveAttribute('src', props.user.picture);
     expect(avatarImg).toHaveAttribute('alt', props.user.name);
+  });
+
+  // Update notification tests to use auth mock
+  it('renders notification button when signed in', () => {
+    vi.mocked(useAuthContext).mockReturnValue({ isSignedIn: true });
+    render(<Header {...defaultProps} />);
+    expect(screen.getByTestId('NotificationsIcon')).toBeInTheDocument();
+  });
+
+  it('shows correct unread count when signed in', () => {
+    vi.mocked(useAuthContext).mockReturnValue({ isSignedIn: true });
+    render(<Header {...defaultProps} />);
+    const badge = screen.getByTestId('NotificationsIcon').closest('button')?.querySelector('.MuiBadge-badge');
+    expect(badge).toHaveTextContent('1');
   });
 
   it('calls toggleSetting when account button is clicked', () => {
