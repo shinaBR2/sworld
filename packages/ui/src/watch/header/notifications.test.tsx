@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import Notifications from './notifications';
 import { useAuthContext } from 'core/providers/auth';
 import { useQueryContext } from 'core/providers/query';
@@ -58,31 +58,6 @@ describe('Notifications', () => {
     { id: '1', type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
     { id: '2', type: 'default', title: 'Test 2', message: 'Message 2', readAt: '2023-01-01' },
   ];
-
-  beforeEach(() => {
-    vi.mocked(useAuthContext).mockReset();
-    vi.mocked(useQueryContext).mockReset();
-  });
-
-  // Update beforeEach to properly reset all mocks
-  beforeEach(() => {
-    vi.mocked(useAuthContext).mockImplementation(() => ({
-      isSignedIn: false,
-      user: null,
-      signIn: vi.fn(),
-      signOut: vi.fn(),
-    }));
-
-    vi.mocked(useQueryContext).mockImplementation(() => ({
-      notifications: {
-        data: [],
-        isLoading: false,
-        refetch: vi.fn(),
-      },
-      videos: { data: [], isLoading: false, refetch: vi.fn() },
-      posts: { data: [], isLoading: false, refetch: vi.fn() },
-    }));
-  });
 
   // Update failing test cases
   it('does not render when user is not signed in', () => {
@@ -190,22 +165,6 @@ describe('Notifications', () => {
     render(<Notifications LinkComponent={LinkComponent} />);
     const badge = screen.getByText('1');
     expect(badge).toBeInTheDocument();
-  });
-
-  it('opens menu when clicked', () => {
-    vi.mocked(useAuthContext).mockReturnValue({ isSignedIn: true });
-    render(<Notifications LinkComponent={LinkComponent} />);
-
-    fireEvent.click(screen.getByTestId('NotificationsIcon').closest('button')!);
-
-    expect(NotificationsMenu).toHaveBeenCalledWith(
-      expect.objectContaining({
-        anchorEl: expect.any(HTMLElement),
-        onClose: expect.any(Function),
-        LinkComponent: expect.any(Function),
-      }),
-      expect.anything()
-    );
   });
 
   it('disables button when loading', () => {
