@@ -87,4 +87,42 @@ describe('useMarkNotificationAsRead', () => {
 
     consoleSpy.mockRestore();
   });
+
+  it('should trigger onError when markAllAsRead mutation fails', async () => {
+    const mockError = new Error('Bulk mutation failed');
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Reset mocks to ensure clean state
+    vi.clearAllMocks();
+
+    // Mock useMutationRequest twice - first for markAsRead (not used), second for markAllAsRead
+    (useMutationRequest as any)
+      .mockReturnValueOnce({ mutateAsync: vi.fn().mockResolvedValue({ data: {} }) }) // First call (markAsRead)
+      .mockImplementationOnce(({ options }) => ({
+        // Second call (markAllAsRead)
+        mutateAsync: async () => {
+          options.onError(mockError);
+          throw mockError;
+        },
+      }));
+
+    const { markAllAsRead } = useMarkNotificationAsRead({
+      getAccessToken: mockGetAccessToken,
+      onSuccess: mockOnSuccess,
+      onError: mockOnError,
+    });
+
+    // Use try/catch to ensure error is properly caught
+    try {
+      await markAllAsRead({ ids: ['id1', 'id2'] });
+      // Should not reach here
+      expect(true).toBe(false); // Force test to fail if we reach this point
+    } catch (error) {
+      expect(error).toBe(mockError);
+      expect(mockOnError).toHaveBeenCalledWith(mockError);
+      expect(consoleSpy).toHaveBeenCalledWith('Mark all as read failed:', mockError);
+    }
+
+    consoleSpy.mockRestore();
+  });
 });
