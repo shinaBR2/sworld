@@ -7672,6 +7672,20 @@ export type FeatureFlagsSubscriptionVariables = Exact<{ [key: string]: never; }>
 
 export type FeatureFlagsSubscription = { __typename?: 'subscription_root', feature_flag: Array<{ __typename?: 'feature_flag', id: any, name: string, conditions?: any | null }> };
 
+export type MarkNotificationAsReadMutationVariables = Exact<{
+  notificationId: Scalars['uuid']['input'];
+}>;
+
+
+export type MarkNotificationAsReadMutation = { __typename?: 'mutation_root', update_notifications_by_pk?: { __typename?: 'notifications', id: any, readAt?: any | null } | null };
+
+export type MarkNotificationsAsReadMutationVariables = Exact<{
+  ids: Array<Scalars['uuid']['input']> | Scalars['uuid']['input'];
+}>;
+
+
+export type MarkNotificationsAsReadMutation = { __typename?: 'mutation_root', update_notifications?: { __typename?: 'notifications_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'notifications', id: any, readAt?: any | null }> } | null };
+
 export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -7961,6 +7975,31 @@ export const FeatureFlagsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FeatureFlagsSubscription, FeatureFlagsSubscriptionVariables>;
+export const MarkNotificationAsReadDocument = new TypedDocumentString(`
+    mutation MarkNotificationAsRead($notificationId: uuid!) {
+  update_notifications_by_pk(
+    pk_columns: {id: $notificationId}
+    _set: {readAt: "now()"}
+  ) {
+    id
+    readAt
+  }
+}
+    `) as unknown as TypedDocumentString<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>;
+export const MarkNotificationsAsReadDocument = new TypedDocumentString(`
+    mutation MarkNotificationsAsRead($ids: [uuid!]!) {
+  update_notifications(
+    where: {id: {_in: $ids}, readAt: {_is_null: true}}
+    _set: {readAt: "now()"}
+  ) {
+    affected_rows
+    returning {
+      id
+      readAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<MarkNotificationsAsReadMutation, MarkNotificationsAsReadMutationVariables>;
 export const NotificationsDocument = new TypedDocumentString(`
     subscription Notifications {
   notifications(order_by: {createdAt: desc}) {

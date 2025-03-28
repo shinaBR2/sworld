@@ -20,6 +20,8 @@ type Documents = {
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": typeof types.PostDocument,
     "\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n": typeof types.AllPostsDocument,
     "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n": typeof types.FeatureFlagsDocument,
+    "\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: \"now()\" }) {\n      id\n      readAt\n    }\n  }\n": typeof types.MarkNotificationAsReadDocument,
+    "\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: \"now()\" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n": typeof types.MarkNotificationsAsReadDocument,
     "\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n": typeof types.NotificationsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": typeof types.InsertVideosDocument,
     "\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n": typeof types.UpdateVideoProgressDocument,
@@ -39,6 +41,8 @@ const documents: Documents = {
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": types.PostDocument,
     "\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n": types.AllPostsDocument,
     "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n": types.FeatureFlagsDocument,
+    "\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: \"now()\" }) {\n      id\n      readAt\n    }\n  }\n": types.MarkNotificationAsReadDocument,
+    "\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: \"now()\" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n": types.MarkNotificationsAsReadDocument,
     "\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n": types.NotificationsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": types.InsertVideosDocument,
     "\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n": types.UpdateVideoProgressDocument,
@@ -73,6 +77,14 @@ export function graphql(source: "\n  query AllPosts @cached {\n    posts(order_b
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n"): typeof import('./graphql').FeatureFlagsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: \"now()\" }) {\n      id\n      readAt\n    }\n  }\n"): typeof import('./graphql').MarkNotificationAsReadDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: \"now()\" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n"): typeof import('./graphql').MarkNotificationsAsReadDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
