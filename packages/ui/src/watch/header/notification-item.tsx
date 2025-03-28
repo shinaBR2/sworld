@@ -6,11 +6,11 @@ import { getNotificationMessage } from './notification-utils';
 
 interface NotificationItemProps {
   notification: NotificationType;
-  onClose: () => void;
+  onClick: () => void;
   LinkComponent: RequiredLinkComponent['LinkComponent'];
 }
 
-const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
+const NotificationItem = ({ notification, onClick }: NotificationItemProps) => {
   const renderContent = () => {
     if (notification.type === NOTIFICATION_TYPES.VIDEO_READY) {
       const texts = NOTIFICATION_TEXTS[notification.type];
@@ -19,9 +19,7 @@ const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
           <NotificationTitle isRead={!!notification.readAt}>
             {NOTIFICATION_ICONS[notification.type]} {texts.title}
           </NotificationTitle>
-          <NotificationMessage>
-            {getNotificationMessage(notification)}
-          </NotificationMessage>
+          <NotificationMessage>{getNotificationMessage(notification)}</NotificationMessage>
         </>
       );
     }
@@ -31,15 +29,13 @@ const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
         <NotificationTitle isRead={!!notification.readAt}>
           {NOTIFICATION_ICONS[NOTIFICATION_TYPES.DEFAULT]} {NOTIFICATION_TEXTS[NOTIFICATION_TYPES.DEFAULT].title}
         </NotificationTitle>
-        <NotificationMessage>
-          {getNotificationMessage(notification)}
-        </NotificationMessage>
+        <NotificationMessage>{getNotificationMessage(notification)}</NotificationMessage>
       </>
     );
   };
 
   return (
-    <NotificationMenuItem onClick={onClose} isRead={!!notification.readAt}>
+    <NotificationMenuItem onClick={onClick} isRead={!!notification.readAt}>
       <NotificationBox>{renderContent()}</NotificationBox>
     </NotificationMenuItem>
   );

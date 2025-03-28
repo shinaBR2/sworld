@@ -4,6 +4,9 @@ import Typography from '@mui/material/Typography';
 import { RequiredLinkComponent } from '../videos/types';
 import { useQueryContext } from 'core/providers/query';
 import { NotificationItem } from './notification-item';
+import { useMarkNotificationAsRead } from 'core/universal/hooks/useMarkNotificationAsRead';
+import { useAuthContext } from 'core/providers/auth';
+import { useCallback } from 'react';
 
 interface NotificationsMenuProps {
   anchorEl: HTMLElement | null;
@@ -13,6 +16,22 @@ interface NotificationsMenuProps {
 
 const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMenuProps) => {
   const { notifications } = useQueryContext();
+  const { getAccessToken } = useAuthContext();
+  const { markAsRead } = useMarkNotificationAsRead({
+    getAccessToken,
+    onSuccess: data => {
+      // onClose(); // Close popup after successful mutation
+      // onSuccess?.(data);
+    },
+    // onError,
+  });
+
+  const onClick = useCallback(
+    (notificationId: string) => () => {
+      markAsRead({ notificationId });
+    },
+    []
+  );
 
   return (
     <Menu
@@ -30,7 +49,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
           <NotificationItem
             key={notification.id}
             notification={notification}
-            onClose={onClose}
+            onClick={onClick(notification.id)}
             LinkComponent={LinkComponent}
           />
         ))
