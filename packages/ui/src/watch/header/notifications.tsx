@@ -29,6 +29,7 @@ const Notifications = ({ LinkComponent }: RequiredLinkComponentWithoutLinkProps)
         onClick={handleNotificationClick}
         disabled={notifications.isLoading}
         aria-expanded={Boolean(anchorEl)}
+        aria-label="Notifications"
       >
         <Badge badgeContent={unreadCount} color="primary">
           <NotificationsIcon />

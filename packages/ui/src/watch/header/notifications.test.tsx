@@ -81,7 +81,7 @@ describe('Notifications', () => {
     }));
 
     render(<Notifications LinkComponent={LinkComponent} />);
-    fireEvent.click(screen.getByTestId('NotificationsIcon').closest('button')!);
+    fireEvent.click(screen.getByRole('button'));
     expect(NotificationsMenu).toHaveBeenCalled();
   });
 

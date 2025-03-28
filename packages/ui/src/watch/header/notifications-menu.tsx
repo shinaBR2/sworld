@@ -20,10 +20,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
   const { getAccessToken } = useAuthContext();
   const { markAsRead, markAllAsRead } = useMarkNotificationAsRead({
     getAccessToken,
-    onSuccess: () => {
-      // onClose(); // Close popup after successful mutation
-      // onSuccess?.(data);
-    },
+    onSuccess: () => {},
     // onError,
   });
 
