@@ -66,19 +66,19 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
           </Typography>
         </MenuItem>
       )}
-      
-      {notifications.data?.length > 0 && (
+
+      {(notifications.data?.length ?? 0) > 0 && (
         <>
           <Divider />
           <MenuItem onClick={handleMarkAll}>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                textAlign: 'center', 
+            <Typography
+              variant="body2"
+              sx={{
+                textAlign: 'center',
                 width: '100%',
                 color: 'primary.main',
                 fontWeight: 500,
-                '&:hover': { backgroundColor: 'transparent' }
+                '&:hover': { backgroundColor: 'transparent' },
               }}
             >
               Mark All as Read
