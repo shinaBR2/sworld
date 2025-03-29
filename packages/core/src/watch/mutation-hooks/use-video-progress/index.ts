@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { graphql } from '../../../graphql';
 import { UpdateVideoProgressMutation } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
@@ -27,6 +27,7 @@ const UPDATE_VIDEO_PROGRESS = graphql(/* GraphQL */ `
 
 interface UseVideoProgressProps {
   videoId: string;
+  isSignedIn: boolean;
   getAccessToken: () => Promise<string>;
   onError?: (error: Error) => void;
 }
@@ -67,7 +68,8 @@ interface UseVideoProgressProps {
  * };
  * ```
  */
-const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgressProps) => {
+const useVideoProgress = (props: UseVideoProgressProps) => {
+  const { isSignedIn, videoId, getAccessToken, onError } = props;
   /**
    * Use refs to:
    * - Track interval without triggering re-renders
@@ -101,56 +103,71 @@ const useVideoProgress = ({ videoId, getAccessToken, onError }: UseVideoProgress
     [videoId, mutate]
   );
 
-  const handleProgress = useCallback(({ playedSeconds }: { playedSeconds: number }) => {
-    currentProgressRef.current = playedSeconds;
-  }, []);
+  const handleProgress = useCallback(
+    ({ playedSeconds }: { playedSeconds: number }) => {
+      if (!isSignedIn) return;
+
+      currentProgressRef.current = playedSeconds;
+    },
+    [isSignedIn]
+  );
 
   const handlePlay = useCallback(() => {
+    if (!isSignedIn) return;
     if (intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
       saveProgress(currentProgressRef.current);
     }, 15000);
-  }, [saveProgress]);
+  }, [saveProgress, isSignedIn]);
 
   const handlePause = useCallback(() => {
+    if (!isSignedIn) return;
+
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = undefined;
     }
-
     saveProgress(currentProgressRef.current);
-  }, [saveProgress]);
+  }, [saveProgress, isSignedIn]);
 
   const handleSeek = useCallback(
     (seconds: number) => {
-      currentProgressRef.current = seconds;
+      if (!isSignedIn) return;
 
+      currentProgressRef.current = seconds;
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = undefined;
       }
-
       saveProgress(currentProgressRef.current);
     },
-    [saveProgress]
+    [saveProgress, isSignedIn]
   );
 
   const handleEnded = useCallback(() => {
+    if (!isSignedIn) return;
+
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = undefined;
     }
-
     saveProgress(currentProgressRef.current);
-  }, [saveProgress]);
+  }, [saveProgress, isSignedIn]);
 
-  // Explicit cleanup for component unmounts
   const cleanup = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
   }, []);
+
+  // Add effect to clear interval when signing out
+  useEffect(() => {
+    if (!isSignedIn && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = undefined;
+    }
+  }, [isSignedIn]);
 
   return {
     handleProgress,
