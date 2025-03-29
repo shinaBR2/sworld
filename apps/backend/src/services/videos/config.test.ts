@@ -62,7 +62,7 @@ describe('videoConfig', () => {
       '-level:v',
       '4.1',
       '-preset',
-      'slow',
+      'medium',
       '-crf',
       '18',
       '-pix_fmt',

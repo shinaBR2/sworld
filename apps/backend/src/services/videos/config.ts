@@ -17,7 +17,7 @@ const videoConfig = {
     '-level:v',
     '4.1', // H.264 level
     '-preset',
-    'slow', // Encoding preset (slower = better quality)
+    'medium', // Encoding preset (slower = better quality)
     '-crf',
     '18', // Constant Rate Factor (lower = higher quality)
     '-pix_fmt',
