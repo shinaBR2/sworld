@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 import type Player from 'video.js/dist/types/player';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import { useAuthContext } from 'core/providers/auth';
@@ -134,6 +133,10 @@ export const VideoJS = (props: VideoJSProps) => {
       cleanup();
     };
   }, [cleanup]);
+
+  useEffect(() => {
+    import(/* webpackChunkName: "videojs-styles" */ 'video.js/dist/video-js.css' as string);
+  }, []);
 
   return (
     <div data-vjs-player>
