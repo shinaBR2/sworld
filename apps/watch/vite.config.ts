@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 // import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vite.dev/config/
@@ -24,13 +24,23 @@ export default defineConfig({
       output: {
         manualChunks: id => {
           if (id.includes('node_modules')) {
+            /** For error tracking, analytics */
+            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
+
+            if (
+              id.includes('/video.js@') ||
+              id.includes('/videojs-youtube@') ||
+              id.includes('/videojs-vtt.js@') ||
+              id.includes('/m3u8-parser/') ||
+              id.includes('/mpd-parser/')
+            ) {
+              return 'video-player';
+            }
+
             /**
              * App broken if bundle mui separately
              */
             if (id.includes('react')) return 'react-vendor';
-
-            /** For error tracking, analytics */
-            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
 
             return 'vendor';
           }

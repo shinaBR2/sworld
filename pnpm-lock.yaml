@@ -563,9 +563,6 @@ importers:
       react-helmet:
         specifier: ^6.1.0
         version: 6.1.0(react@18.3.1)
-      react-player:
-        specifier: 3.0.0-canary.3
-        version: 3.0.0-canary.3(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       video.js:
         specifier: ^8.22.0
         version: 8.22.0
@@ -602,7 +599,7 @@ importers:
         version: 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
       '@storybook/react-vite':
         specifier: ^7.0.0
-        version: 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.36.0)(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+        version: 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.36.0)(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
       '@storybook/test':
         specifier: ^8.5.3
         version: 8.6.7(storybook@7.6.20)
@@ -635,7 +632,7 @@ importers:
         version: 2.1.9(vitest@2.1.9(@types/node@18.19.80)(jsdom@25.0.1)(terser@5.39.0))
       babel-loader:
         specifier: ^8.3.0
-        version: 8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.18.20))
+        version: 8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.17.19))
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
@@ -8234,9 +8231,6 @@ packages:
       enquirer:
         optional: true
 
-  load-script@1.0.0:
-    resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
-
   load-tsconfig@0.2.5:
     resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -8469,9 +8463,6 @@ packages:
   memfs@3.5.3:
     resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}
     engines: {node: '>= 4.0.0'}
-
-  memoize-one@5.2.1:
-    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
 
   memoizerific@1.11.3:
     resolution: {integrity: sha512-/EuHYwAPdLtXwAwSZkh/Gutery6pD2KYd44oQLhAvQp/50mpyduZh8Q7PYHXTCJ+wuXxt7oij2LXyIJOOYFPog==}
@@ -9852,13 +9843,6 @@ packages:
     peerDependencies:
       '@types/react': '>=18'
       react: '>=18'
-
-  react-player@3.0.0-canary.3:
-    resolution: {integrity: sha512-xyBQLIKJsbVT5mvugv2igCn2kF5m9iH+ZbDueCwc0Ld+hEnS5QoKEDaK6GjU6+lCP0RUj1NKbgJUp9AY6tD+aQ==}
-    peerDependencies:
-      '@types/react': ^17.0.0 || ^18
-      react: ^17.0.2 || ^18
-      react-dom: ^17.0.2 || ^18
 
   react-property@2.0.2:
     resolution: {integrity: sha512-+PbtI3VuDV0l6CleQMsx2gtK0JZbZKbpdu5ynr+lbsuvtmgbNcS3VM0tuY2QjFNOcWxvXeHjDpy42RO+4U2rug==}
@@ -15109,13 +15093,13 @@ snapshots:
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
-  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
+  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))':
     dependencies:
       glob: 7.2.3
       glob-promise: 4.2.2(glob@7.2.3)
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@5.8.2)
-      vite: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
     optionalDependencies:
       typescript: 5.8.2
 
@@ -16132,7 +16116,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@storybook/builder-vite@7.6.20(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
+  '@storybook/builder-vite@7.6.20(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))':
     dependencies:
       '@storybook/channels': 7.6.20
       '@storybook/client-logger': 7.6.20
@@ -16150,7 +16134,7 @@ snapshots:
       fs-extra: 11.3.0
       magic-string: 0.30.17
       rollup: 3.29.5
-      vite: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
     optionalDependencies:
       typescript: 5.8.2
     transitivePeerDependencies:
@@ -16452,18 +16436,18 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/react-vite@7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.36.0)(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
+  '@storybook/react-vite@7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.36.0)(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))':
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
       '@rollup/pluginutils': 5.1.4(rollup@4.36.0)
-      '@storybook/builder-vite': 7.6.20(typescript@5.8.2)(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+      '@storybook/builder-vite': 7.6.20(typescript@5.8.2)(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
       '@storybook/react': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
-      '@vitejs/plugin-react': 3.1.0(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+      '@vitejs/plugin-react': 3.1.0(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
       magic-string: 0.30.17
       react: 18.3.1
       react-docgen: 7.1.1
       react-dom: 18.3.1(react@18.3.1)
-      vite: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - encoding
@@ -17361,14 +17345,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@3.1.0(vite@6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
+  '@vitejs/plugin-react@3.1.0(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))':
     dependencies:
       '@babel/core': 7.26.10
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.10)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.10)
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -17887,14 +17871,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-loader@8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.18.20)):
+  babel-loader@8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.17.19)):
     dependencies:
       '@babel/core': 7.26.10
       find-cache-dir: 3.3.2
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.98.0(esbuild@0.18.20)
+      webpack: 5.98.0(esbuild@0.17.19)
 
   babel-loader@8.4.1(@babel/core@7.26.10)(webpack@5.98.0):
     dependencies:
@@ -21564,8 +21548,6 @@ snapshots:
       through: 2.3.8
       wrap-ansi: 7.0.0
 
-  load-script@1.0.0: {}
-
   load-tsconfig@0.2.5: {}
 
   loader-runner@4.3.0: {}
@@ -21917,8 +21899,6 @@ snapshots:
   memfs@3.5.3:
     dependencies:
       fs-monkey: 1.0.6
-
-  memoize-one@5.2.1: {}
 
   memoizerific@1.11.3:
     dependencies:
@@ -23519,17 +23499,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-player@3.0.0-canary.3(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@types/react': 18.3.18
-      deepmerge: 4.3.1
-      load-script: 1.0.0
-      memoize-one: 5.2.1
-      prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-fast-compare: 3.2.2
-
   react-property@2.0.2: {}
 
   react-refresh@0.14.2: {}
@@ -24700,16 +24669,16 @@ snapshots:
       type-fest: 0.16.0
       unique-string: 2.0.0
 
-  terser-webpack-plugin@5.3.14(esbuild@0.18.20)(webpack@5.98.0(esbuild@0.18.20)):
+  terser-webpack-plugin@5.3.14(esbuild@0.17.19)(webpack@5.98.0(esbuild@0.17.19)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.39.0
-      webpack: 5.98.0(esbuild@0.18.20)
+      webpack: 5.98.0(esbuild@0.17.19)
     optionalDependencies:
-      esbuild: 0.18.20
+      esbuild: 0.17.19
 
   terser-webpack-plugin@5.3.14(webpack@5.98.0):
     dependencies:
@@ -25535,7 +25504,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.98.0(esbuild@0.18.20):
+  webpack@5.98.0(esbuild@0.17.19):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -25557,7 +25526,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.14(esbuild@0.18.20)(webpack@5.98.0(esbuild@0.18.20))
+      terser-webpack-plugin: 5.3.14(esbuild@0.17.19)(webpack@5.98.0(esbuild@0.17.19))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:

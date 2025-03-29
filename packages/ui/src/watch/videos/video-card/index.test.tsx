@@ -4,15 +4,6 @@ import { VideoCard } from '.';
 import '@testing-library/jest-dom';
 import { MEDIA_TYPES, TransformedMediaItem } from 'core/watch/query-hooks';
 
-// Mock react-player
-vi.mock('react-player', () => ({
-  default: vi.fn(({ url, light }) => (
-    <div data-testid="mock-react-player" data-url={url} data-light={light}>
-      Mock Player
-    </div>
-  )),
-}));
-
 vi.mock('../video-container', () => ({
   VideoContainer: vi.fn(({ video }) => (
     <div data-testid="mock-video-container" data-video-id={video.id}>

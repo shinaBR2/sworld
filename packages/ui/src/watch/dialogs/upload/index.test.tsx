@@ -101,7 +101,7 @@ describe('VideoUploadDialog', () => {
     vi.clearAllMocks();
 
     // Setup mock implementation for validateForm
-    mockValidateForm.mockImplementation(async () => null);
+    mockValidateForm.mockImplementation(() => null);
     mockCanPlayUrls.mockResolvedValue([{ url: 'https://example.com/video.mp4', isValid: true }]);
 
     // Setup mock implementation for bulk convert
@@ -167,7 +167,7 @@ describe('VideoUploadDialog', () => {
   });
 
   it('should handle form validation errors', async () => {
-    mockValidateForm.mockResolvedValue(texts.errors.invalidUrl);
+    mockValidateForm.mockReturnValue(texts.errors.invalidUrl);
 
     renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
@@ -283,7 +283,7 @@ describe('VideoUploadDialog', () => {
   });
 
   it('should clear errors when form fields change', async () => {
-    vi.mocked(validateForm).mockResolvedValue(texts.errors.invalidUrl);
+    vi.mocked(validateForm).mockReturnValue(texts.errors.invalidUrl);
 
     renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 

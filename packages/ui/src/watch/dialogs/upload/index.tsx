@@ -60,7 +60,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     e.preventDefault();
     setState(prev => ({ ...prev, isSubmitting: true, error: null }));
 
-    const error = await validateForm(state);
+    const error = validateForm(state);
     if (error) {
       return setState(prev => ({
         ...prev,

@@ -1,15 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { DialogState } from './types';
 import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
-
-vi.mock('react-player', () => ({
-  default: {
-    canPlay: vi.fn((url: string) => {
-      // Simulate canPlay logic for testing
-      return url.includes('youtube.com') || url.includes('vimeo.com');
-    }),
-  },
-}));
 
 describe('formalizeState', () => {
   it('should trim string values in the dialog state', () => {
@@ -78,49 +69,58 @@ describe('formalizeState', () => {
 });
 
 describe('canPlayUrls', () => {
-  it('should validate URLs correctly', async () => {
+  it('should validate URLs correctly', () => {
+    // Remove async
     const urls = [
       'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      'https://vimeo.com/123456',
+      'https://vimeo.com/123456', // This should now fail
       'https://invalid-url.com',
-      '  https://www.youtube.com/watch?v=abc123  ',
+      '  https://example.com/video.m3u8  ',
+      'https://example.com/video.mp4',
+      '  https://youtube.com/playlist?list=ABC123  ',
     ];
 
-    const results = await canPlayUrls(urls);
+    const results = canPlayUrls(urls); // Remove await
 
-    expect(results).toHaveLength(4);
+    expect(results).toHaveLength(6);
     expect(results[0]).toEqual({
       url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       isValid: true,
     });
     expect(results[1]).toEqual({
       url: 'https://vimeo.com/123456',
-      isValid: true,
+      isValid: false, // Now false as we don't support Vimeo
     });
     expect(results[2]).toEqual({
       url: 'https://invalid-url.com',
       isValid: false,
     });
     expect(results[3]).toEqual({
-      url: 'https://www.youtube.com/watch?v=abc123',
+      url: 'https://example.com/video.m3u8',
+      isValid: true,
+    });
+    expect(results[4]).toEqual({
+      url: 'https://example.com/video.mp4',
+      isValid: true,
+    });
+    expect(results[5]).toEqual({
+      url: 'https://youtube.com/playlist?list=ABC123',
       isValid: true,
     });
   });
 
-  it('should handle empty and whitespace-only inputs', async () => {
+  it('should handle empty and whitespace-only inputs', () => {
+    // Remove async
     const urls = ['', '   ', null, undefined];
-
-    const results = await canPlayUrls(urls as string[]);
-
+    const results = canPlayUrls(urls as string[]); // Remove await
     expect(results).toHaveLength(0);
   });
 
-  it('should trim whitespace from URLs', async () => {
-    const urls = ['  https://www.youtube.com/watch?v=dQw4w9WgXcQ  '];
-
-    const results = await canPlayUrls(urls);
-
-    expect(results[0].url).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  it('should trim whitespace from URLs', () => {
+    // Remove async
+    const urls = ['  https://example.com/video.mov?query=1  '];
+    const results = canPlayUrls(urls); // Remove await
+    expect(results[0].url).toBe('https://example.com/video.mov?query=1');
   });
 });
 

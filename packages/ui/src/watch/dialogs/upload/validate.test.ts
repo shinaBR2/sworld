@@ -43,7 +43,7 @@ describe('validateForm', () => {
       url: 'https://example.com/video',
     } as ReturnType<typeof formalizeState>);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBe(texts.errors.emptyTitle);
     expect(formalizeState).toHaveBeenCalledWith(state);
   });
@@ -63,7 +63,7 @@ describe('validateForm', () => {
       newPlaylistName: '',
     } as ReturnType<typeof formalizeState>);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBe(texts.errors.emptyNewPlaylistName);
     expect(formalizeState).toHaveBeenCalledWith(state);
   });
@@ -80,9 +80,9 @@ describe('validateForm', () => {
       url: 'https://example.com/video',
     } as ReturnType<typeof formalizeState>);
 
-    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://example.com/video', isValid: false }]);
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://example.com/video', isValid: false }]);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBe(texts.errors.invalidUrl);
     expect(canPlayUrls).toHaveBeenCalledWith(['https://example.com/video']);
   });
@@ -99,9 +99,9 @@ describe('validateForm', () => {
       url: 'https://youtube.com/watch?v=123',
     } as ReturnType<typeof formalizeState>);
 
-    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBeNull();
   });
 
@@ -118,9 +118,9 @@ describe('validateForm', () => {
       url: 'https://youtube.com/watch?v=123',
     } as ReturnType<typeof formalizeState>);
 
-    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBeNull();
   });
 
@@ -139,9 +139,9 @@ describe('validateForm', () => {
       newPlaylistName: 'My New Playlist',
     } as ReturnType<typeof formalizeState>);
 
-    vi.mocked(canPlayUrls).mockResolvedValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
 
-    const result = await validateForm(state);
+    const result = validateForm(state);
     expect(result).toBeNull();
   });
 });
