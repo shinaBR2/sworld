@@ -1,5 +1,5 @@
-import { VideoPlayer } from '../video-player';
 import { PlayableVideo } from '../types';
+import { VideoPlayer } from '../video-player';
 
 interface VideoContainerInterface {
   video: PlayableVideo;

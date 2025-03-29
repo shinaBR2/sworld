@@ -1,7 +1,9 @@
+import { lazy, Suspense } from 'react';
 import Box from '@mui/material/Box';
 import { PlayableVideo } from '../types';
-import 'video.js/dist/video-js.css';
-import VideoJS from './videojs';
+
+// Lazy load the VideoJS component that contains video.js
+const VideoJS = lazy(() => import('./videojs'));
 
 interface VideoPlayerProps {
   video: PlayableVideo;
@@ -35,7 +37,9 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         height: '100%',
       })}
     >
-      <VideoJS video={video} videoJsOptions={videoJsOptions} />
+      <Suspense fallback={<div>Loading player...</div>}>
+        <VideoJS video={video} videoJsOptions={videoJsOptions} />
+      </Suspense>
     </Box>
   );
 };

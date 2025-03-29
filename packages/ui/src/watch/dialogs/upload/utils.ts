@@ -6,30 +6,29 @@ import { ValidationResult } from './validation-results';
 const CLOSE_DELAY_MS = 3000;
 const CREATE_NEW_PLAYLIST = '__create-new';
 
-let cachedCanPlay: ((url: string) => boolean) | null = null;
+// Updated URL validation patterns
+const MATCH_URL_YOUTUBE =
+  /(?:youtu\.be\/|youtube(?:-nocookie|education)?\.com\/(?:embed\/|v\/|watch\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))((\w|-){11})|youtube\.com\/playlist\?list=|youtube\.com\/user\//;
+const HLS_EXTENSIONS = /\.(m3u8)($|\?)/i;
+const VIDEO_EXTENSIONS = /\.(mp4|mov|m4v|ts|webm|mkv)($|\?)/i;  // Added more video formats
 
-const loadReactPlayerCanPlay = async () => {
-  if (cachedCanPlay) return cachedCanPlay;
-
-  const ReactPlayer = await import('react-player');
-  cachedCanPlay = ReactPlayer.default.canPlay;
-
-  return cachedCanPlay;
+const canPlay = (url: string) => {
+  const isYouTube = MATCH_URL_YOUTUBE.test(url);
+  const isHLS = HLS_EXTENSIONS.test(url);
+  const isVideo = VIDEO_EXTENSIONS.test(url);
+  return isYouTube || isHLS || isVideo;
 };
 
-const canPlayUrls = async (urls: string[]): Promise<ValidationResult[]> => {
-  const canPlay = await loadReactPlayerCanPlay();
-
-  return Promise.all(
-    urls
-      .filter(url => url != null)
-      .map(url => url!.trim())
-      .filter(Boolean)
-      .map(async url => ({
-        url,
-        isValid: canPlay(url),
-      }))
-  );
+// Replace the async canPlayUrls with this version
+const canPlayUrls = (urls: string[]): ValidationResult[] => {
+  return urls
+    .filter(url => url != null)
+    .map(url => url!.trim())
+    .filter(Boolean)
+    .map(url => ({
+      url,
+      isValid: canPlay(url)
+    }));
 };
 
 const formalizeState = (dialogState: DialogState) => {

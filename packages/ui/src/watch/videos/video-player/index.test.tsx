@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { VideoPlayer } from './index';
 import VideoJS from './videojs';
 import { PlayableVideo } from '../types';
@@ -29,10 +29,12 @@ describe('VideoPlayer', () => {
     vi.clearAllMocks();
   });
 
-  it('should render VideoJS player with correct props', () => {
-    const { getByTestId } = render(<VideoPlayer video={mockVideo} />);
+  it('should render VideoJS player with correct props', async () => {
+    // Make test async
+    render(<VideoPlayer video={mockVideo} />);
 
-    const player = getByTestId('mock-videojs');
+    // Wait for Suspense to resolve
+    const player = await screen.findByTestId('mock-videojs'); // Use findBy instead of getBy
     expect(player).toBeInTheDocument();
     expect(player).toHaveAttribute('data-video-id', mockVideo.id);
 
@@ -53,8 +55,14 @@ describe('VideoPlayer', () => {
     });
   });
 
-  it('should pass video source to VideoJS component', () => {
+  it('should pass video source to VideoJS component', async () => {
+    // Make test async
     render(<VideoPlayer video={mockVideo} />);
+
+    await act(async () => {
+      // Wrap in act for async operations
+      await new Promise(resolve => setTimeout(resolve, 0)); // Let Suspense resolve
+    });
 
     expect(VideoJS).toHaveBeenCalledWith(
       expect.objectContaining({
