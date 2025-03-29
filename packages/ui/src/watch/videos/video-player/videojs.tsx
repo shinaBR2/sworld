@@ -4,8 +4,8 @@ import type Player from 'video.js/dist/types/player';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import { useAuthContext } from 'core/providers/auth';
 import { PlayableVideo } from '../types';
-import 'videojs-youtube';
 import { getVideoPlayerOptions } from './utils';
+import 'video.js/dist/video-js.css';
 
 /**
  * videojs has no exported type
@@ -135,7 +135,7 @@ export const VideoJS = (props: VideoJSProps) => {
   }, [cleanup]);
 
   useEffect(() => {
-    import(/* webpackChunkName: "videojs-styles" */ 'video.js/dist/video-js.css' as string);
+    import(/* webpackChunkName: "videojs-youtube" */ 'videojs-youtube' as string);
   }, []);
 
   return (
