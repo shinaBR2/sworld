@@ -22,10 +22,12 @@ describe('useNotificationsSubscription', () => {
       entityType: 'type1',
       type: 'notification',
       readAt: null,
-      message: 'Test message',
       link: 'test-link',
       metadata: {},
-      title: 'Test Title',
+      video: {
+        id: 'video1',
+        title: 'Test Title'
+      }
     },
   ];
 
