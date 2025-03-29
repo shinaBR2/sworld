@@ -51,9 +51,10 @@ export const VideoJS = (props: VideoJSProps) => {
     [video, JSON.stringify(videoJsOptions)]
   );
 
-  const { getAccessToken } = useAuthContext();
+  const { isSignedIn, getAccessToken } = useAuthContext();
   const { handleProgress, handlePlay, handlePause, handleSeek, handleEnded, cleanup } = useVideoProgress({
     videoId: video.id,
+    isSignedIn,
     getAccessToken,
     // onError,
   });

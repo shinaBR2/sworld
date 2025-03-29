@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { useVideoProgress } from './index';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { useVideoProgress } from './index';
 
 vi.mock('../../../universal/hooks/useMutation', () => ({
   useMutationRequest: vi.fn(),
@@ -39,15 +39,17 @@ describe('useVideoProgress', () => {
     vi.useRealTimers();
   });
 
-  const renderVideoProgressHook = () =>
+  const renderVideoProgressHook = (isSignedIn = true) =>
     renderHook(() =>
       useVideoProgress({
         videoId: mockVideoId,
         getAccessToken: mockGetAccessToken,
         onError: mockOnError,
+        isSignedIn,
       })
     );
 
+  // Add to existing tests - update all test cases to include isSignedIn: true
   it('should initialize with correct mutation config', () => {
     renderVideoProgressHook();
     expect(useMutationRequest).toHaveBeenCalledWith({
@@ -59,8 +61,69 @@ describe('useVideoProgress', () => {
     });
   });
 
+  // Add new test cases for unauthorized state
+  it('should not track progress when user is not signed in', () => {
+    const { result } = renderVideoProgressHook(false);
+
+    result.current.handleProgress({ playedSeconds: 5 });
+    result.current.handlePlay();
+
+    vi.advanceTimersByTime(15000);
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  it('should not save progress on pause when unauthorized', () => {
+    const { result } = renderVideoProgressHook(false);
+
+    result.current.handlePause();
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  it('should not save progress on seek when unauthorized', () => {
+    const { result } = renderVideoProgressHook(false);
+
+    result.current.handleSeek(10);
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  it('should not save progress on ended when unauthorized', () => {
+    const { result } = renderVideoProgressHook(false);
+
+    result.current.handleEnded();
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  it('should clear interval when signing out during playback', () => {
+    const { result, rerender } = renderHook(
+      ({ isSignedIn }) =>
+        useVideoProgress({
+          videoId: mockVideoId,
+          getAccessToken: mockGetAccessToken,
+          isSignedIn,
+        }),
+      { initialProps: { isSignedIn: true } }
+    );
+
+    // Start playback and verify initial state
+    result.current.handleProgress({ playedSeconds: 30 });
+    result.current.handlePlay();
+
+    // Clear any calls that might have happened during setup
+    mockMutate.mockClear();
+
+    // Immediately sign out before any time passes
+    rerender({ isSignedIn: false });
+
+    // Advance past the interval period
+    vi.advanceTimersByTime(15000);
+
+    // Verify no calls were made after signing out
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  // Update existing tests to include isSignedIn: true
   it('should handle periodic progress updates during playback', () => {
-    const { result } = renderVideoProgressHook();
+    const { result } = renderVideoProgressHook(true);
 
     result.current.handleProgress({ playedSeconds: 5 });
     result.current.handlePlay();
