@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { videoConfig } from './config';
 
 describe('videoConfig', () => {
@@ -7,7 +7,13 @@ describe('videoConfig', () => {
   });
 
   it('contains expected configuration keys', () => {
-    const expectedKeys = ['defaultConcurrencyLimit', 'essentialHLSTags', 'excludePatterns'];
+    const expectedKeys = [
+      'defaultConcurrencyLimit',
+      'essentialHLSTags',
+      'excludePatterns',
+      'maxFileSize',
+      'ffmpegCommands',
+    ];
 
     expectedKeys.forEach(key => {
       expect(videoConfig).toHaveProperty(key);
@@ -49,15 +55,34 @@ describe('videoConfig', () => {
 
   it('has ffmpeg commands', () => {
     expect(videoConfig.ffmpegCommands).toEqual([
-      '-map 0:v',
-      '-map 0:a',
-      '-map 0:s:0?',
-      '-codec copy',
-      '-codec:s webvtt',
-      '-start_number 0',
-      '-hls_time 10',
-      '-hls_list_size 0',
-      '-f hls',
+      '-c:v',
+      'libx264',
+      '-profile:v',
+      'high',
+      '-level:v',
+      '4.1',
+      '-preset',
+      'slow',
+      '-crf',
+      '18',
+      '-pix_fmt',
+      'yuv420p',
+      '-c:a',
+      'aac',
+      '-b:a',
+      '192k',
+      '-ac',
+      '2',
+      '-ar',
+      '48000',
+      '-f',
+      'hls',
+      '-hls_time',
+      '4',
+      '-hls_list_size',
+      '0',
+      '-hls_segment_filename',
+      'segment_%03d.ts',
     ]);
   });
 });
