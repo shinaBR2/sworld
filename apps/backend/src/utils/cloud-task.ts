@@ -1,11 +1,11 @@
 import { CloudTasksClient, protos } from '@google-cloud/tasks';
-import { envConfig } from './envConfig';
-import { v5 as uuidv5 } from 'uuid';
-import { uuidNamespaces } from './systemConfig';
-import { logger } from './logger';
 import { sequelize } from 'src/database';
 import { TaskEntityType, TaskStatus, TaskType } from 'src/database/models/task';
 import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
+import { v5 as uuidv5 } from 'uuid';
+import { envConfig } from './envConfig';
+import { logger } from './logger';
+import { uuidNamespaces } from './systemConfig';
 
 let client: CloudTasksClient | null = null;
 
@@ -101,6 +101,9 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
           serviceAccountEmail: cloudTaskServiceAccount,
           audience,
         },
+      },
+      dispatchDeadline: {
+        seconds: 1800,
       },
     };
 

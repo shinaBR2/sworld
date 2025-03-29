@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { logger } from './logger';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { logger } from './logger';
 
 // Mock modules
 const mockCreateTask = vi.fn();
@@ -143,6 +143,9 @@ describe('createCloudTasks', () => {
             audience: 'https://test.com',
           },
           body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
+        },
+        dispatchDeadline: {
+          seconds: 1800,
         },
       },
     });
@@ -406,6 +409,30 @@ describe('createCloudTasks', () => {
         url: 'https://test.com',
       }),
       'Task creation failed'
+    );
+  });
+
+  it('should set the dispatch deadline to 1800 seconds', async () => {
+    const transaction = { commit: vi.fn(), rollback: vi.fn() };
+    sequelize.transaction.mockResolvedValue(transaction);
+    dbCreateTask.mockResolvedValue({ completed: false });
+    dbUpdateStatus.mockResolvedValue({});
+
+    const params = {
+      ...baseParams,
+    };
+
+    const { createCloudTasks } = await import('./cloud-task');
+    await createCloudTasks(params);
+
+    expect(mockCreateTask).toHaveBeenCalledWith(
+      expect.objectContaining({
+        task: expect.objectContaining({
+          dispatchDeadline: {
+            seconds: 1800,
+          },
+        }),
+      })
     );
   });
 });
