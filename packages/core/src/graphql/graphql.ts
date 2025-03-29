@@ -2278,15 +2278,15 @@ export type Notifications = {
   entityType: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
   link?: Maybe<Scalars['String']['output']>;
-  message: Scalars['String']['output'];
   metadata?: Maybe<Scalars['jsonb']['output']>;
   readAt?: Maybe<Scalars['timestamptz']['output']>;
-  title: Scalars['String']['output'];
   type: Scalars['String']['output'];
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
   user: Users;
   user_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  video?: Maybe<Videos>;
 };
 
 
@@ -2357,14 +2357,13 @@ export type Notifications_Bool_Exp = {
   entityType?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   link?: InputMaybe<String_Comparison_Exp>;
-  message?: InputMaybe<String_Comparison_Exp>;
   metadata?: InputMaybe<Jsonb_Comparison_Exp>;
   readAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-  title?: InputMaybe<String_Comparison_Exp>;
   type?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
+  video?: InputMaybe<Videos_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "notifications" */
@@ -2395,14 +2394,13 @@ export type Notifications_Insert_Input = {
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
-  message?: InputMaybe<Scalars['String']['input']>;
   metadata?: InputMaybe<Scalars['jsonb']['input']>;
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
+  video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -2413,9 +2411,7 @@ export type Notifications_Max_Fields = {
   entityType?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   link?: Maybe<Scalars['String']['output']>;
-  message?: Maybe<Scalars['String']['output']>;
   readAt?: Maybe<Scalars['timestamptz']['output']>;
-  title?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
@@ -2428,9 +2424,7 @@ export type Notifications_Max_Order_By = {
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   link?: InputMaybe<Order_By>;
-  message?: InputMaybe<Order_By>;
   readAt?: InputMaybe<Order_By>;
-  title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -2444,9 +2438,7 @@ export type Notifications_Min_Fields = {
   entityType?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   link?: Maybe<Scalars['String']['output']>;
-  message?: Maybe<Scalars['String']['output']>;
   readAt?: Maybe<Scalars['timestamptz']['output']>;
-  title?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
@@ -2459,9 +2451,7 @@ export type Notifications_Min_Order_By = {
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   link?: InputMaybe<Order_By>;
-  message?: InputMaybe<Order_By>;
   readAt?: InputMaybe<Order_By>;
-  title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -2490,14 +2480,13 @@ export type Notifications_Order_By = {
   entityType?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   link?: InputMaybe<Order_By>;
-  message?: InputMaybe<Order_By>;
   metadata?: InputMaybe<Order_By>;
   readAt?: InputMaybe<Order_By>;
-  title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
+  video?: InputMaybe<Videos_Order_By>;
 };
 
 /** primary key columns input for table: notifications */
@@ -2523,13 +2512,9 @@ export enum Notifications_Select_Column {
   /** column name */
   Link = 'link',
   /** column name */
-  Message = 'message',
-  /** column name */
   Metadata = 'metadata',
   /** column name */
   ReadAt = 'readAt',
-  /** column name */
-  Title = 'title',
   /** column name */
   Type = 'type',
   /** column name */
@@ -2545,10 +2530,8 @@ export type Notifications_Set_Input = {
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
-  message?: InputMaybe<Scalars['String']['input']>;
   metadata?: InputMaybe<Scalars['jsonb']['input']>;
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2569,10 +2552,8 @@ export type Notifications_Stream_Cursor_Value_Input = {
   entityType?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
-  message?: InputMaybe<Scalars['String']['input']>;
   metadata?: InputMaybe<Scalars['jsonb']['input']>;
   readAt?: InputMaybe<Scalars['timestamptz']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
@@ -2591,13 +2572,9 @@ export enum Notifications_Update_Column {
   /** column name */
   Link = 'link',
   /** column name */
-  Message = 'message',
-  /** column name */
   Metadata = 'metadata',
   /** column name */
   ReadAt = 'readAt',
-  /** column name */
-  Title = 'title',
   /** column name */
   Type = 'type',
   /** column name */
@@ -7695,10 +7672,24 @@ export type FeatureFlagsSubscriptionVariables = Exact<{ [key: string]: never; }>
 
 export type FeatureFlagsSubscription = { __typename?: 'subscription_root', feature_flag: Array<{ __typename?: 'feature_flag', id: any, name: string, conditions?: any | null }> };
 
+export type MarkNotificationAsReadMutationVariables = Exact<{
+  notificationId: Scalars['uuid']['input'];
+}>;
+
+
+export type MarkNotificationAsReadMutation = { __typename?: 'mutation_root', update_notifications_by_pk?: { __typename?: 'notifications', id: any, readAt?: any | null } | null };
+
+export type MarkNotificationsAsReadMutationVariables = Exact<{
+  ids: Array<Scalars['uuid']['input']> | Scalars['uuid']['input'];
+}>;
+
+
+export type MarkNotificationsAsReadMutation = { __typename?: 'mutation_root', update_notifications?: { __typename?: 'notifications_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'notifications', id: any, readAt?: any | null }> } | null };
+
 export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, link?: string | null, metadata?: any | null }> };
+export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, link?: string | null, metadata?: any | null, video?: { __typename?: 'videos', id: any, title: string } | null }> };
 
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
@@ -7984,6 +7975,31 @@ export const FeatureFlagsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FeatureFlagsSubscription, FeatureFlagsSubscriptionVariables>;
+export const MarkNotificationAsReadDocument = new TypedDocumentString(`
+    mutation MarkNotificationAsRead($notificationId: uuid!) {
+  update_notifications_by_pk(
+    pk_columns: {id: $notificationId}
+    _set: {readAt: "now()"}
+  ) {
+    id
+    readAt
+  }
+}
+    `) as unknown as TypedDocumentString<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>;
+export const MarkNotificationsAsReadDocument = new TypedDocumentString(`
+    mutation MarkNotificationsAsRead($ids: [uuid!]!) {
+  update_notifications(
+    where: {id: {_in: $ids}, readAt: {_is_null: true}}
+    _set: {readAt: "now()"}
+  ) {
+    affected_rows
+    returning {
+      id
+      readAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<MarkNotificationsAsReadMutation, MarkNotificationsAsReadMutationVariables>;
 export const NotificationsDocument = new TypedDocumentString(`
     subscription Notifications {
   notifications(order_by: {createdAt: desc}) {
@@ -7994,6 +8010,10 @@ export const NotificationsDocument = new TypedDocumentString(`
     readAt
     link
     metadata
+    video {
+      id
+      title
+    }
   }
 }
     `) as unknown as TypedDocumentString<NotificationsSubscription, NotificationsSubscriptionVariables>;
