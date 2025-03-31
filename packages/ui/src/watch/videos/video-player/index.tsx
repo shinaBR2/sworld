@@ -25,6 +25,47 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       nativeAudioTracks: false,
       nativeVideoTracks: false,
     },
+    userActions: {
+      hotkeys: function (event) {
+        const player = this; // Get player instance
+        const key = event.which;
+
+        // Space/K for play/pause
+        if (key === 75) {
+          // 32=Space, 75=K
+          event.preventDefault();
+          player.paused() ? player.play() : player.pause();
+          return true;
+        }
+
+        // M for mute
+        if (key === 77) {
+          // 77=M
+          event.preventDefault();
+          player.muted(!player.muted());
+          return true;
+        }
+
+        // Left/Right arrows for 5s seek
+        if (key === 37) {
+          // Left arrow
+          player.currentTime(player.currentTime() - 5);
+          return true;
+        }
+        if (key === 39) {
+          // Right arrow
+          player.currentTime(player.currentTime() + 5);
+          return true;
+        }
+
+        // Keep existing fullscreen override
+        if (key === 70) {
+          // f
+          player.isFullscreen() ? player.exitFullscreen() : player.requestFullscreen();
+          return true;
+        }
+      },
+    },
   };
 
   return (

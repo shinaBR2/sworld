@@ -30,15 +30,14 @@ describe('VideoPlayer', () => {
   });
 
   it('should render VideoJS player with correct props', async () => {
-    // Make test async
     render(<VideoPlayer video={mockVideo} />);
+    const player = await screen.findByTestId('mock-videojs');
 
-    // Wait for Suspense to resolve
-    const player = await screen.findByTestId('mock-videojs'); // Use findBy instead of getBy
     expect(player).toBeInTheDocument();
     expect(player).toHaveAttribute('data-video-id', mockVideo.id);
 
     const options = JSON.parse(player.getAttribute('data-options') || '{}');
+
     expect(options).toMatchObject({
       autoplay: false,
       controls: true,
@@ -53,6 +52,18 @@ describe('VideoPlayer', () => {
         nativeVideoTracks: false,
       },
     });
+
+    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
+    expect(videoJsOptions.userActions?.hotkeys).toBeInstanceOf(Function);
+  });
+
+  // New test case for keyboard handling
+  it('should configure keyboard hotkeys', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-videojs');
+
+    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
+    expect(typeof videoJsOptions.userActions?.hotkeys).toBe('function');
   });
 
   it('should pass video source to VideoJS component', async () => {
