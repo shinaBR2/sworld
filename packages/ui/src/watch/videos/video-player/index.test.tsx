@@ -30,15 +30,14 @@ describe('VideoPlayer', () => {
   });
 
   it('should render VideoJS player with correct props', async () => {
-    // Make test async
     render(<VideoPlayer video={mockVideo} />);
+    const player = await screen.findByTestId('mock-videojs');
 
-    // Wait for Suspense to resolve
-    const player = await screen.findByTestId('mock-videojs'); // Use findBy instead of getBy
     expect(player).toBeInTheDocument();
     expect(player).toHaveAttribute('data-video-id', mockVideo.id);
 
     const options = JSON.parse(player.getAttribute('data-options') || '{}');
+
     expect(options).toMatchObject({
       autoplay: false,
       controls: true,
@@ -53,6 +52,18 @@ describe('VideoPlayer', () => {
         nativeVideoTracks: false,
       },
     });
+
+    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
+    expect(videoJsOptions.userActions?.hotkeys).toBeInstanceOf(Function);
+  });
+
+  // New test case for keyboard handling
+  it('should configure keyboard hotkeys', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-videojs');
+
+    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
+    expect(typeof videoJsOptions.userActions?.hotkeys).toBe('function');
   });
 
   it('should pass video source to VideoJS component', async () => {
@@ -70,5 +81,117 @@ describe('VideoPlayer', () => {
       }),
       expect.any(Object)
     );
+  });
+});
+
+describe('VideoPlayer keyboard hotkeys', () => {
+  let hotkeysFn;
+  let playerMock;
+
+  beforeEach(() => {
+    // Render component to get the hotkeys function
+    render(<VideoPlayer video={mockVideo} />);
+    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
+    hotkeysFn = videoJsOptions.userActions.hotkeys;
+
+    // Create mock player context
+    playerMock = {
+      play: vi.fn(),
+      pause: vi.fn(),
+      paused: vi.fn(),
+      muted: vi.fn(),
+      currentTime: vi.fn(),
+      isFullscreen: vi.fn(),
+      exitFullscreen: vi.fn(),
+      requestFullscreen: vi.fn(),
+    };
+  });
+
+  it('should toggle play/pause when K key is pressed', () => {
+    // Mock KeyboardEvent
+    const event = { which: 75, preventDefault: vi.fn() };
+
+    // Test when player is paused
+    playerMock.paused.mockReturnValue(true);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.play).toHaveBeenCalled();
+    expect(playerMock.pause).not.toHaveBeenCalled();
+
+    // Reset mocks
+    vi.clearAllMocks();
+
+    // Test when player is playing
+    playerMock.paused.mockReturnValue(false);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.pause).toHaveBeenCalled();
+    expect(playerMock.play).not.toHaveBeenCalled();
+  });
+
+  it('should toggle mute when M key is pressed', () => {
+    const event = { which: 77, preventDefault: vi.fn() };
+
+    // Test when player is unmuted
+    playerMock.muted.mockReturnValue(false);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.muted).toHaveBeenCalledWith(true);
+
+    // Reset mocks
+    vi.clearAllMocks();
+
+    // Test when player is muted
+    playerMock.muted.mockReturnValue(true);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.muted).toHaveBeenCalledWith(false);
+  });
+
+  it('should seek backward when left arrow key is pressed', () => {
+    const event = { which: 37, preventDefault: vi.fn() };
+
+    playerMock.currentTime.mockReturnValue(10);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.currentTime).toHaveBeenCalledWith(5); // 10 - 5
+  });
+
+  it('should seek forward when right arrow key is pressed', () => {
+    const event = { which: 39, preventDefault: vi.fn() };
+
+    playerMock.currentTime.mockReturnValue(10);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.currentTime).toHaveBeenCalledWith(15); // 10 + 5
+  });
+
+  it('should toggle fullscreen when F key is pressed', () => {
+    const event = { which: 70, preventDefault: vi.fn() };
+
+    // Test when not in fullscreen
+    playerMock.isFullscreen.mockReturnValue(false);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.requestFullscreen).toHaveBeenCalled();
+    expect(playerMock.exitFullscreen).not.toHaveBeenCalled();
+
+    // Reset mocks
+    vi.clearAllMocks();
+
+    // Test when in fullscreen
+    playerMock.isFullscreen.mockReturnValue(true);
+    hotkeysFn.call(playerMock, event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(playerMock.exitFullscreen).toHaveBeenCalled();
+    expect(playerMock.requestFullscreen).not.toHaveBeenCalled();
   });
 });
