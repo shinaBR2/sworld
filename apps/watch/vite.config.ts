@@ -9,6 +9,10 @@ export default defineConfig({
     port: 3002,
     host: '0.0.0.0',
   },
+  preview: {
+    port: 4002,
+    host: '0.0.0.0',
+  },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
     sourcemap: true,

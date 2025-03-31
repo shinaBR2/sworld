@@ -48,7 +48,7 @@ export const VideoJS = (props: VideoJSProps) => {
       getVideoPlayerOptions(video, {
         ...videoJsOptions,
       }),
-    [video, JSON.stringify(videoJsOptions)]
+    [video.source, JSON.stringify(videoJsOptions)]
   );
 
   const { isSignedIn, getAccessToken } = useAuthContext();
@@ -116,18 +116,7 @@ export const VideoJS = (props: VideoJSProps) => {
         playerRef.current = null;
       }
     };
-  }, [options]);
-
-  useEffect(() => {
-    const player = playerRef.current;
-
-    return () => {
-      if (player && !player.isDisposed()) {
-        player.dispose();
-        playerRef.current = null;
-      }
-    };
-  }, [playerRef]);
+  }, [video.id]);
 
   useEffect(() => {
     return () => {
