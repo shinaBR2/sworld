@@ -14,11 +14,11 @@ export interface SubscriptionParams {
   hasuraUrl: string;
   query: string;
   variables?: Record<string, unknown>;
-  enabled?: boolean;
+  enabled: boolean;
 }
 
 export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
-  const { hasuraUrl, query, variables, enabled = true } = params; // Default to true
+  const { hasuraUrl, query, variables, enabled } = params;
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
     isLoading: true,
@@ -217,7 +217,6 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
 
   useEffect(() => {
     if (!enabled) {
-      // Changed from disabled to !enabled
       return;
     }
 

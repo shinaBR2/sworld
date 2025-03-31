@@ -98,6 +98,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -123,6 +124,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
     expect(result.current).toEqual({
@@ -138,6 +140,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -203,6 +206,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -226,6 +230,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -261,6 +266,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -293,6 +299,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
 
@@ -316,6 +323,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
 
@@ -333,6 +341,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
 
@@ -347,6 +356,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: mockUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
 
@@ -362,6 +372,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -394,6 +405,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         variables: mockVariables,
+        enabled: true,
       })
     );
 
@@ -427,6 +439,7 @@ describe('useSubscription', () => {
       useSubscription({
         hasuraUrl: httpsUrl,
         query: mockQuery,
+        enabled: true,
       })
     );
 
