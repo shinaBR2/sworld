@@ -67,6 +67,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         // Keep existing fullscreen override
         if (key === 70) {
           // f
+          event.preventDefault();
           // @ts-ignore
           player.isFullscreen() ? player.exitFullscreen() : player.requestFullscreen();
           return true;

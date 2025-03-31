@@ -158,6 +158,7 @@ describe('VideoPlayer keyboard hotkeys', () => {
     playerMock.currentTime.mockReturnValue(10);
     hotkeysFn.call(playerMock, event);
 
+    expect(event.preventDefault).toHaveBeenCalled();
     expect(playerMock.currentTime).toHaveBeenCalledWith(5); // 10 - 5
   });
 
@@ -167,6 +168,7 @@ describe('VideoPlayer keyboard hotkeys', () => {
     playerMock.currentTime.mockReturnValue(10);
     hotkeysFn.call(playerMock, event);
 
+    expect(event.preventDefault).toHaveBeenCalled();
     expect(playerMock.currentTime).toHaveBeenCalledWith(15); // 10 + 5
   });
 
@@ -177,6 +179,7 @@ describe('VideoPlayer keyboard hotkeys', () => {
     playerMock.isFullscreen.mockReturnValue(false);
     hotkeysFn.call(playerMock, event);
 
+    expect(event.preventDefault).toHaveBeenCalled();
     expect(playerMock.requestFullscreen).toHaveBeenCalled();
     expect(playerMock.exitFullscreen).not.toHaveBeenCalled();
 
@@ -187,6 +190,7 @@ describe('VideoPlayer keyboard hotkeys', () => {
     playerMock.isFullscreen.mockReturnValue(true);
     hotkeysFn.call(playerMock, event);
 
+    expect(event.preventDefault).toHaveBeenCalled();
     expect(playerMock.exitFullscreen).toHaveBeenCalled();
     expect(playerMock.requestFullscreen).not.toHaveBeenCalled();
   });
