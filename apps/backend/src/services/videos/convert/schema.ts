@@ -19,6 +19,7 @@ const VideoDataSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   video_url: videoUrlSchema,
+  skip_process: z.boolean(),
 });
 
 const EventMetadataSchema = z.object({
@@ -41,6 +42,7 @@ const transformEvent = (event: z.infer<typeof EventSchema>) => {
       id: event.data.id,
       userId: event.data.user_id,
       videoUrl: event.data.video_url,
+      skipProcess: event.data.skip_process,
       platform,
       fileType,
     },
@@ -70,5 +72,5 @@ const ConvertSchema = z
     signatureHeader: req.headers['x-webhook-signature'] as string,
   }));
 
-export { VideoDataSchema, EventMetadataSchema, EventSchema, ConvertSchema };
+export { ConvertSchema, EventMetadataSchema, EventSchema, VideoDataSchema };
 export type ConvertRequest = z.infer<typeof ConvertSchema>;

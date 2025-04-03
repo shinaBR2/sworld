@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Request, Response } from 'express';
-import { envConfig } from 'src/utils/envConfig';
-import { createCloudTasks } from 'src/utils/cloud-task';
-import { verifySignature } from 'src/services/videos/convert/validator';
-import { streamToStorage } from './index';
-import { queues } from 'src/utils/systemConfig';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
+import { verifySignature } from 'src/services/videos/convert/validator';
+import { createCloudTasks } from 'src/utils/cloud-task';
+import { envConfig } from 'src/utils/envConfig';
+import { queues } from 'src/utils/systemConfig';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { streamToStorage } from './index';
 
 vi.mock('src/utils/schema', () => ({
   AppError: vi.fn((message, details) => {
@@ -207,6 +207,20 @@ describe('streamToStorage', () => {
           error,
           eventId: 'test-event',
         },
+      })
+    );
+  });
+
+  it('should skip processing when skipProcess is true', async () => {
+    const skipReq = createMockRequest({ skipProcess: true });
+
+    await streamToStorage(skipReq, mockRes as Response);
+
+    expect(createCloudTasks).not.toHaveBeenCalled();
+    expect(mockRes.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: 'ok',
       })
     );
   });

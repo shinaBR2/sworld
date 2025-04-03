@@ -47,8 +47,13 @@ const streamToStorage = async (req: Request, res: Response) => {
     );
   }
 
-  const { id: entityId, platform, fileType } = data;
+  const { id: entityId, platform, fileType, skipProcess } = data;
   const { streamVideoQueue, convertVideoQueue } = queues;
+
+  if (skipProcess) {
+    logger.info({ metadata }, 'Skip process');
+    return res.json(AppResponse(true, 'ok'));
+  }
 
   const taskConfig: CreateCloudTasksParams = {
     audience: '',

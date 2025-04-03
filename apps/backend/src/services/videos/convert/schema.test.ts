@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConvertSchema } from './schema';
 
 describe('ConvertSchema', () => {
@@ -14,6 +14,7 @@ describe('ConvertSchema', () => {
           id: '550e8400-e29b-41d4-a716-446655440000',
           user_id: '550e8400-e29b-41d4-a716-446655440001',
           video_url: 'https://example.com/video.mp4',
+          skip_process: false,
         },
       },
     },
@@ -119,6 +120,7 @@ describe('ConvertSchema', () => {
             userId: '550e8400-e29b-41d4-a716-446655440001',
             videoUrl: 'https://example.com/video.mp4',
             fileType: 'video',
+            skipProcess: false,
             platform: null,
           },
           metadata: {
@@ -151,11 +153,7 @@ describe('ConvertSchema', () => {
     const result = ConvertSchema.safeParse(invalidPayload);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(
-        result.error.issues.some(
-          issue => issue.path.includes('id') || issue.path.includes('user_id')
-        )
-      ).toBe(true);
+      expect(result.error.issues.some(issue => issue.path.includes('id') || issue.path.includes('user_id'))).toBe(true);
     }
   });
 
