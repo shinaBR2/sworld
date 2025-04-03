@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { describe, expect, it, vi } from 'vitest';
 import { hasuraClient } from '../client';
 import { finishVideoProcess } from './finalize';
@@ -6,6 +7,11 @@ vi.mock('../client', () => ({
   hasuraClient: {
     request: vi.fn(),
   },
+}));
+
+// Add nanoid mock at the top
+vi.mock('nanoid', () => ({
+  nanoid: vi.fn(() => 'mocked-short-id'),
 }));
 
 describe('finishVideoProcess', () => {
@@ -47,7 +53,13 @@ describe('finishVideoProcess', () => {
 
     expect(hasuraClient.request).toHaveBeenCalledWith({
       document: expect.stringContaining('mutation FinalizeVideo'),
-      variables: mockVariables,
+      variables: {
+        ...mockVariables,
+        videoUpdates: {
+          ...mockVariables.videoUpdates,
+          sId: 'mocked-short-id',
+        },
+      },
     });
     expect(result).toBe('notification-123');
   });
@@ -79,5 +91,40 @@ describe('finishVideoProcess', () => {
     vi.mocked(hasuraClient.request).mockRejectedValueOnce(error);
 
     await expect(finishVideoProcess(mockVariables)).rejects.toThrow('Database error');
+  });
+
+  // Add new test case for short ID generation
+  it('should generate a short ID for videoUpdates', async () => {
+    vi.mocked(nanoid).mockReturnValueOnce('test-id-123');
+    const mockResponse = {
+      update_tasks: {
+        affected_rows: 1,
+        returning: [
+          {
+            id: 1,
+          },
+        ],
+      },
+      insert_notifications_one: {
+        id: 'notification-123',
+      },
+      update_videos_by_pk: {
+        id: mockVariables.videoId,
+      },
+    };
+    vi.mocked(hasuraClient.request).mockResolvedValueOnce(mockResponse);
+
+    const result = await finishVideoProcess(mockVariables);
+
+    expect(nanoid).toHaveBeenCalledWith(11);
+    expect(hasuraClient.request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          videoUpdates: expect.objectContaining({
+            sId: 'test-id-123',
+          }),
+        }),
+      })
+    );
   });
 });

@@ -2346,6 +2346,8 @@ type notifications {
   """An object relationship"""
   user: users!
   user_id: uuid!
+  """An object relationship"""
+  video: videos
 }
 
 """
@@ -2417,6 +2419,7 @@ input notifications_bool_exp {
   updatedAt: timestamptz_comparison_exp
   user: users_bool_exp
   user_id: uuid_comparison_exp
+  video: videos_bool_exp
 }
 
 """
@@ -2465,6 +2468,7 @@ input notifications_insert_input {
   updatedAt: timestamptz
   user: users_obj_rel_insert_input
   user_id: uuid
+  video: videos_obj_rel_insert_input
 }
 
 """aggregate max on columns"""
@@ -2555,6 +2559,7 @@ input notifications_order_by {
   updatedAt: order_by
   user: users_order_by
   user_id: order_by
+  video: videos_order_by
 }
 
 """primary key columns input for table: notifications"""
@@ -2730,6 +2735,8 @@ type playlist {
     where: playlist_videos_bool_exp
   ): playlist_videos_aggregate!
   public: Boolean!
+  """Short id like Youtube video id"""
+  sId: String
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -2814,6 +2821,7 @@ input playlist_bool_exp {
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
+  sId: String_comparison_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -2831,6 +2839,10 @@ enum playlist_constraint {
   """
   playlist_pkey
   """
+  unique or primary key constraint on columns "s_id"
+  """
+  playlist_s_id_key
+  """
   unique or primary key constraint on columns "user_id", "slug"
   """
   playlist_user_id_slug_key
@@ -2845,6 +2857,8 @@ input playlist_insert_input {
   id: uuid
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2858,6 +2872,8 @@ type playlist_max_fields {
   createdAt: timestamptz
   description: String
   id: uuid
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2872,6 +2888,8 @@ input playlist_max_order_by {
   createdAt: order_by
   description: order_by
   id: order_by
+  """Short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2884,6 +2902,8 @@ type playlist_min_fields {
   createdAt: timestamptz
   description: String
   id: uuid
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2898,6 +2918,8 @@ input playlist_min_order_by {
   createdAt: order_by
   description: order_by
   id: order_by
+  """Short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2940,6 +2962,7 @@ input playlist_order_by {
   id: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2965,6 +2988,8 @@ enum playlist_select_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""
@@ -3001,6 +3026,8 @@ input playlist_set_input {
   description: String
   id: uuid
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -3024,6 +3051,8 @@ input playlist_stream_cursor_value_input {
   description: String
   id: uuid
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -3043,6 +3072,8 @@ enum playlist_update_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""
@@ -7429,6 +7460,8 @@ type videos {
     where: playlist_videos_bool_exp
   ): playlist_videos_aggregate!
   public: Boolean!
+  """short id like Youtube video id"""
+  sId: String
   slug: String!
   source: String
   status: String
@@ -7652,6 +7685,7 @@ input videos_bool_exp {
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
+  sId: String_comparison_exp
   slug: String_comparison_exp
   source: String_comparison_exp
   status: String_comparison_exp
@@ -7681,6 +7715,10 @@ enum videos_constraint {
   """
   videos_pkey
   """
+  unique or primary key constraint on columns "s_id"
+  """
+  videos_s_id_key
+  """
   unique or primary key constraint on columns "slug"
   """
   videos_slug_unique
@@ -7704,6 +7742,8 @@ input videos_insert_input {
   id: uuid
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7726,6 +7766,8 @@ type videos_max_fields {
   description: String
   duration: Int
   id: uuid
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7745,6 +7787,8 @@ input videos_max_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7762,6 +7806,8 @@ type videos_min_fields {
   description: String
   duration: Int
   id: uuid
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7781,6 +7827,8 @@ input videos_min_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7828,6 +7876,7 @@ input videos_order_by {
   id: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
+  sId: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7863,6 +7912,8 @@ enum videos_select_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""
@@ -7908,6 +7959,8 @@ input videos_set_input {
   duration: Int
   id: uuid
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7978,6 +8031,8 @@ input videos_stream_cursor_value_input {
   duration: Int
   id: uuid
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -8017,6 +8072,8 @@ enum videos_update_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""

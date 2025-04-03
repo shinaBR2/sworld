@@ -2159,6 +2159,8 @@ export type Notifications = {
   /** An object relationship */
   user: Users;
   user_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  video?: Maybe<Videos>;
 };
 
 /** Notification system */
@@ -2233,6 +2235,7 @@ export type Notifications_Bool_Exp = {
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
+  video?: InputMaybe<Videos_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "notifications" */
@@ -2269,6 +2272,7 @@ export type Notifications_Insert_Input = {
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
+  video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -2354,6 +2358,7 @@ export type Notifications_Order_By = {
   updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
+  video?: InputMaybe<Videos_Order_By>;
 };
 
 /** primary key columns input for table: notifications */
@@ -2494,6 +2499,8 @@ export type Playlist = {
   /** An aggregate relationship */
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   public: Scalars['Boolean']['output'];
+  /** Short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug: Scalars['String']['output'];
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
@@ -2594,6 +2601,7 @@ export type Playlist_Bool_Exp = {
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
+  sId?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
@@ -2606,6 +2614,8 @@ export type Playlist_Bool_Exp = {
 export enum Playlist_Constraint {
   /** unique or primary key constraint on columns "id" */
   PlaylistPkey = 'playlist_pkey',
+  /** unique or primary key constraint on columns "s_id" */
+  PlaylistSIdKey = 'playlist_s_id_key',
   /** unique or primary key constraint on columns "user_id", "slug" */
   PlaylistUserIdSlugKey = 'playlist_user_id_slug_key',
 }
@@ -2617,6 +2627,8 @@ export type Playlist_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2631,6 +2643,8 @@ export type Playlist_Max_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** Short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
@@ -2643,6 +2657,8 @@ export type Playlist_Max_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** Short id like Youtube video id */
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -2656,6 +2672,8 @@ export type Playlist_Min_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** Short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
@@ -2668,6 +2686,8 @@ export type Playlist_Min_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** Short id like Youtube video id */
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -2705,6 +2725,7 @@ export type Playlist_Order_By = {
   id?: InputMaybe<Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -2728,6 +2749,8 @@ export enum Playlist_Select_Column {
   Id = 'id',
   /** column name */
   Public = 'public',
+  /** column name */
+  SId = 'sId',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -2758,6 +2781,8 @@ export type Playlist_Set_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2779,6 +2804,8 @@ export type Playlist_Stream_Cursor_Value_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2796,6 +2823,8 @@ export enum Playlist_Update_Column {
   Id = 'id',
   /** column name */
   Public = 'public',
+  /** column name */
+  SId = 'sId',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -6728,6 +6757,8 @@ export type Videos = {
   /** An aggregate relationship */
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   public: Scalars['Boolean']['output'];
+  /** short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -6950,6 +6981,7 @@ export type Videos_Bool_Exp = {
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
+  sId?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   source?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
@@ -6974,6 +7006,8 @@ export type Videos_Bool_Exp = {
 export enum Videos_Constraint {
   /** unique or primary key constraint on columns "id" */
   VideosPkey = 'videos_pkey',
+  /** unique or primary key constraint on columns "s_id" */
+  VideosSIdKey = 'videos_s_id_key',
   /** unique or primary key constraint on columns "slug" */
   VideosSlugUnique = 'videos_slug_unique',
 }
@@ -6992,6 +7026,8 @@ export type Videos_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7015,6 +7051,8 @@ export type Videos_Max_Fields = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -7032,6 +7070,8 @@ export type Videos_Max_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** short id like Youtube video id */
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
@@ -7050,6 +7090,8 @@ export type Videos_Min_Fields = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** short id like Youtube video id */
+  sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -7067,6 +7109,8 @@ export type Videos_Min_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** short id like Youtube video id */
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
@@ -7109,6 +7153,7 @@ export type Videos_Order_By = {
   id?: InputMaybe<Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
+  sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
@@ -7142,6 +7187,8 @@ export enum Videos_Select_Column {
   Id = 'id',
   /** column name */
   Public = 'public',
+  /** column name */
+  SId = 'sId',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -7181,6 +7228,8 @@ export type Videos_Set_Input = {
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7246,6 +7295,8 @@ export type Videos_Stream_Cursor_Value_Input = {
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** short id like Youtube video id */
+  sId?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7282,6 +7333,8 @@ export enum Videos_Update_Column {
   Id = 'id',
   /** column name */
   Public = 'public',
+  /** column name */
+  SId = 'sId',
   /** column name */
   Slug = 'slug',
   /** column name */

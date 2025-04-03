@@ -7,7 +7,7 @@
   "main": "index.ts",
   "type": "module",
   "engines": {
-    "node": "^20.10.0"
+    "node": "^22.14.0"
   },
   "scripts": {
     "build": "tsc",
@@ -73,6 +73,7 @@
     "graphql-request": "^7.1.2",
     "helmet": "^8.0.0",
     "m3u8-parser": "^7.2.0",
+    "nanoid": "^5.1.5",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
