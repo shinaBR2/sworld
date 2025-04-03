@@ -53,3 +53,15 @@ select_permissions:
       subscription_root_fields:
         - select
     comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - read_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
