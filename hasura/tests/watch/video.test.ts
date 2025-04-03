@@ -15,6 +15,7 @@ const allowedQueries: QueryTestCase[] = [
       query GetPublicVideos {
         standalone_videos: videos(where: {playlist_videos_aggregate: {count: {predicate: {_eq: 0}}}}) {
           id
+          sId
           title
           description
           slug
@@ -39,6 +40,7 @@ const allowedQueries: QueryTestCase[] = [
       if (response.standalone_videos.length > 0) {
         const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
+        expect(video).toHaveProperty("sId");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
         expect(video).toHaveProperty("slug");
@@ -65,6 +67,7 @@ const allowedQueries: QueryTestCase[] = [
       query GetVideoById($id: uuid!) {
         videos_by_pk(id: $id) {
           id
+          sId
           title
           description
           status
@@ -82,6 +85,7 @@ const allowedQueries: QueryTestCase[] = [
       const video = response.videos_by_pk;
       if (video) {
         expect(video).toHaveProperty("id");
+        expect(video).toHaveProperty("sId");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
       }
@@ -156,6 +160,7 @@ const allowedUserQueries: QueryTestCase[] = [
       query GetOwnVideos {
         standalone_videos: videos(where: {playlist_videos_aggregate: {count: {predicate: {_eq: 0}}}}) {
           id
+          sId
           title
           description
           slug
@@ -182,6 +187,7 @@ const allowedUserQueries: QueryTestCase[] = [
       if (response.standalone_videos.length > 0) {
         const video = response.standalone_videos[0];
         expect(video).toHaveProperty("id");
+        expect(video).toHaveProperty("sId");
         expect(video).toHaveProperty("title");
         expect(video).toHaveProperty("description");
         expect(video).toHaveProperty("slug");
