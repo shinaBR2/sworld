@@ -5,12 +5,15 @@ configuration:
   column_config:
     created_at:
       custom_name: createdAt
+    s_id:
+      custom_name: sId
     thumbnail_url:
       custom_name: thumbnailUrl
     updated_at:
       custom_name: updatedAt
   custom_column_names:
     created_at: createdAt
+    s_id: sId
     thumbnail_url: thumbnailUrl
     updated_at: updatedAt
   custom_root_fields: {}
@@ -49,6 +52,7 @@ select_permissions:
         - description
         - id
         - public
+        - s_id
         - slug
         - thumbnail_url
         - title
@@ -63,6 +67,7 @@ select_permissions:
         - description
         - id
         - public
+        - s_id
         - slug
         - thumbnail_url
         - title

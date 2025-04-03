@@ -21,6 +21,7 @@ const allowedQueries: QueryTestCase[] = [
           thumbnailUrl
           public
           createdAt
+          sId
         }
       }
     `,
@@ -39,6 +40,7 @@ const allowedQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("thumbnailUrl");
         expect(playlist).toHaveProperty("public");
         expect(playlist).toHaveProperty("createdAt");
+        expect(playlist).toHaveProperty("sId");
         expect(playlist.public).toBe(true);
       }
     },
@@ -54,6 +56,7 @@ const allowedQueries: QueryTestCase[] = [
           slug
           thumbnailUrl
           public
+          sId
         }
       }
     `,
@@ -73,6 +76,7 @@ const allowedQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("slug");
         expect(playlist).toHaveProperty("thumbnailUrl");
         expect(playlist).toHaveProperty("public");
+        expect(playlist).toHaveProperty("sId");
         expect(playlist.public).toBe(true);
       }
     },
@@ -185,6 +189,7 @@ const allowedUserQueries: QueryTestCase[] = [
           thumbnailUrl
           public
           createdAt
+          sId
         }
       }
     `,
@@ -203,6 +208,7 @@ const allowedUserQueries: QueryTestCase[] = [
         expect(playlist).toHaveProperty("thumbnailUrl");
         expect(playlist).toHaveProperty("public");
         expect(playlist).toHaveProperty("createdAt");
+        expect(playlist).toHaveProperty("sId");
       }
     },
   },
