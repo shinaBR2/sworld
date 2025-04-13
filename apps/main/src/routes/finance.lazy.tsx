@@ -1,7 +1,7 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import React, { useState } from 'react';
 import { Layout } from '../components/layout';
-import { Grid, Typography } from 'ui/universal/containers/generic';
+import { Container, Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
 import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
@@ -150,44 +150,46 @@ const RouteComponent = () => {
         />
       </Grid>
 
-      <Grid container spacing={3}>
-        {/* Summary Cards */}
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {categoryData.map(data => (
-              <Grid item xs={6} md={3} key={data.category}>
-                <SummaryCard
-                  category={data.category}
-                  amount={data.amount}
-                  count={data.count}
-                  onClick={() => handleSummaryCardClick(data.category === 'total' ? null : data.category)}
-                  selected={data.category === selectedCategory}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-
-        {/* Charts Section */}
-        <Grid item xs={12} md={6}>
-          <SpendingBreakdown
-            categoryData={categoryData}
-            handleCategoryClick={handleCategoryClick}
-            selectedCategory={selectedCategory}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
-        </Grid>
-
-        {/* Transaction List Section - Show when a category is selected */}
-        {showTransactions && (
+      <Container maxWidth="xl" component="main">
+        <Grid container spacing={3}>
+          {/* Summary Cards */}
           <Grid item xs={12}>
-            <TransactionList transactions={transactions} selectedCategory={selectedCategory} />
+            <Grid container spacing={2}>
+              {categoryData.map(data => (
+                <Grid item xs={6} md={3} key={data.category}>
+                  <SummaryCard
+                    category={data.category}
+                    amount={data.amount}
+                    count={data.count}
+                    onClick={() => handleSummaryCardClick(data.category === 'total' ? null : data.category)}
+                    selected={data.category === selectedCategory}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-        )}
-      </Grid>
+
+          {/* Charts Section */}
+          <Grid item xs={12} md={6}>
+            <SpendingBreakdown
+              categoryData={categoryData}
+              handleCategoryClick={handleCategoryClick}
+              selectedCategory={selectedCategory}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
+          </Grid>
+
+          {/* Transaction List Section - Show when a category is selected */}
+          {showTransactions && (
+            <Grid item xs={12}>
+              <TransactionList transactions={transactions} selectedCategory={selectedCategory} />
+            </Grid>
+          )}
+        </Grid>
+      </Container>
 
       {/* Add Expense Button */}
       <AddExpenseButton onAddExpense={handleAddExpense} position="bottom-right" />

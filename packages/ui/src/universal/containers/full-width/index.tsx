@@ -1,12 +1,15 @@
 import Box from '@mui/material/Box';
 import { ReactNode } from 'react';
+import { MuiStyledProps } from '../../types';
 
-interface FullWidthContainerProps {
+interface FullWidthContainerProps extends MuiStyledProps {
   children: ReactNode;
 }
 
 const FullWidthContainer = (props: FullWidthContainerProps) => {
-  return <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>{props.children}</Box>;
+  const { sx, children } = props;
+
+  return <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', ...sx }}>{children}</Box>;
 };
 
 export { FullWidthContainer };
