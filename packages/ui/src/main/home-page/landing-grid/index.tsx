@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { LandingCard, LandingCardProps } from '../cards';
+import { LandingCard, LandingCardProps } from '../landing-card';
 
 interface LandingGridProps {
   items: Array<Omit<LandingCardProps, 'LinkComponent'> & { to?: string }>;
