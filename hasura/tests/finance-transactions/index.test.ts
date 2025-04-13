@@ -12,6 +12,8 @@ const sampleRecord = {
   name: "Test Expense",
   amount: 125.5,
   category: "must",
+  month: 2,
+  year: 2023,
 };
 
 const testState: { financeRecordId?: string } = {};
@@ -65,6 +67,8 @@ const allowedUserQueries: QueryTestCase[] = [
           name
           amount
           category
+          month
+          year
           createdAt
           updatedAt
         }
@@ -92,6 +96,8 @@ const allowedUserQueries: QueryTestCase[] = [
             name
             amount
             category
+            month
+            year
           }
         }
       }
@@ -112,21 +118,21 @@ const allowedUserMutations: MutationTestCase[] = [
   {
     name: "Create finance record",
     mutation: `
-      mutation CreateFinanceRecord($name: String!, $amount: numeric!, $category: String!) {
-        insert_finance_transactions_one(object: {
-          name: $name,
-          amount: $amount,
-          category: $category
-        }) {
+      mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {
+        insert_finance_transactions_one(object: $object) {
           id
           name
           amount
+          month
+          year
           category
           createdAt
         }
       }
     `,
-    variables: sampleRecord,
+    variables: {
+      object: sampleRecord,
+    },
     additionalTest: (response) => {
       expect(response).toHaveProperty("insert_finance_transactions_one");
       const record = response.insert_finance_transactions_one;
@@ -137,11 +143,8 @@ const allowedUserMutations: MutationTestCase[] = [
   {
     name: "Update finance record",
     mutation: `
-      mutation UpdateFinanceRecord($id: uuid!, $name: String!, $amount: numeric!, $category: String!) {
-        update_finance_transactions_by_pk(
-          pk_columns: { id: $id },
-          _set: { name: $name, amount: $amount, category: $category }
-        ) {
+      mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {
+        update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {
           id
           name
           amount
@@ -151,9 +154,11 @@ const allowedUserMutations: MutationTestCase[] = [
     `,
     variables: () => ({
       id: testState.financeRecordId,
-      name: "Updated Test Expense",
-      amount: 200.75,
-      category: "want",
+      object: {
+        name: "Updated Test Expense",
+        amount: 200.75,
+        category: "nice",
+      },
     }),
     additionalTest: (response) => {
       expect(response).toHaveProperty("update_finance_transactions_by_pk");
