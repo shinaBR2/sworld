@@ -50,6 +50,7 @@ export const texts = {
     emptyTitle: '✗ Video title is required',
     emptyNewPlaylistName: '✗ Playlist name is required',
     invalidUrl: '✗ Invalid video URL',
+    invalidSubtitleFormat: '✗ Invalid subtitle URL',
     failedToSave: 'Failed to upload',
     unexpected: 'An unexpected error occurred while upload',
   },
