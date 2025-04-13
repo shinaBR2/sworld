@@ -1,13 +1,13 @@
-import fetch from "node-fetch";
-import { describe, test, expect } from "vitest";
 import { GraphQLClient } from "graphql-request";
+import fetch from "node-fetch";
+import { describe, expect, test } from "vitest";
 import { auth0Domain, clientId, clientSecret, hasuraEndpoint } from "./config";
 
 type QueryTestCase = {
   name: string;
   query: string;
   headers?: Record<string, string>;
-  variables?: Record<string, unknown>;
+  variables?: Record<string, unknown> | (() => Record<string, unknown>);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   additionalTest?: (response: any, roleName: string) => void;
 };
@@ -16,7 +16,7 @@ type MutationTestCase = {
   name: string;
   mutation: string;
   headers?: Record<string, string>;
-  variables?: Record<string, unknown>;
+  variables?: Record<string, unknown> | (() => Record<string, unknown>);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   additionalTest?: (response: any, roleName: string) => void;
 };
@@ -124,7 +124,9 @@ const createRoleTestSuite = async (
         test.each(mutations.allowed)(
           "$name",
           async ({ mutation, variables, additionalTest }) => {
-            const response = await client.request(mutation, variables);
+            const resolvedVariables =
+              typeof variables === "function" ? variables() : variables;
+            const response = await client.request(mutation, resolvedVariables);
 
             if (additionalTest) {
               additionalTest(response, roleName);
@@ -139,7 +141,11 @@ const createRoleTestSuite = async (
         test.each(mutations.denied)(
           "$name",
           async ({ mutation, variables }) => {
-            await expect(client.request(mutation, variables)).rejects.toThrow();
+            const resolvedVariables =
+              typeof variables === "function" ? variables() : variables;
+            await expect(
+              client.request(mutation, resolvedVariables)
+            ).rejects.toThrow();
           }
         );
       });
@@ -148,9 +154,9 @@ const createRoleTestSuite = async (
 };
 
 export {
+  createRoleTestSuite,
+  MutationTestCase,
+  QueryTestCase,
   ROLE_ANONYMOUS,
   ROLE_USER,
-  QueryTestCase,
-  MutationTestCase,
-  createRoleTestSuite,
 };
