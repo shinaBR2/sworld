@@ -1,11 +1,11 @@
-import { CardContent, Typography, Box, Skeleton } from '@mui/material';
+import { CardContent, Typography, Skeleton } from '@mui/material';
 import { StyledCard, StyledAmount, StyledCategoryName, StyledCategoryWrapper } from './styled';
 import { CategoryType } from './types';
 import { getCategoryIcon, getCategoryTitle } from './utils';
 
 export interface SummaryCardProps {
   isLoading: boolean;
-  category: CategoryType;
+  category: string;
   amount: number;
   count?: number;
   onClick?: () => void;
@@ -17,7 +17,7 @@ const SummaryCard = (props: SummaryCardProps) => {
 
   if (isLoading) {
     return (
-      <StyledCard category={category} selected={selected}>
+      <StyledCard category={category as CategoryType} selected={selected}>
         <CardContent>
           <StyledCategoryWrapper>
             <StyledCategoryName variant="h6" component="div">
@@ -39,12 +39,12 @@ const SummaryCard = (props: SummaryCardProps) => {
   }
 
   return (
-    <StyledCard category={category} selected={selected} onClick={onClick}>
+    <StyledCard category={category as CategoryType} selected={selected} onClick={onClick}>
       <CardContent>
         <StyledCategoryWrapper>
           <StyledCategoryName variant="h6" component="div">
-            <span style={{ marginRight: '8px' }}>{getCategoryIcon(category)}</span>
-            {getCategoryTitle(category)}
+            <span style={{ marginRight: '8px' }}>{getCategoryIcon(category as CategoryType)}</span>
+            {getCategoryTitle(category as CategoryType)}
           </StyledCategoryName>
         </StyledCategoryWrapper>
 

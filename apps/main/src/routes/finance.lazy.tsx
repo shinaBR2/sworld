@@ -121,12 +121,11 @@ const Content = () => {
   // Current month data
   const currentMonth = monthlyData[currentMonthIndex];
 
-  // Prepare data for components
   const categoryData = [
-    { category: 'must', amount: currentMonth.categories.must || 0, count: 5 },
-    { category: 'nice', amount: currentMonth.categories.nice || 0, count: 3 },
-    { category: 'waste', amount: currentMonth.categories.waste || 0, count: 2 },
-    { category: 'total', amount: currentMonth.total, count: 10 },
+    { category: 'must', amount: data?.must.amount, count: data?.must.count },
+    { category: 'nice', amount: data?.nice.amount, count: data?.nice.count },
+    { category: 'waste', amount: data?.waste.amount, count: data?.waste.count },
+    { category: 'total', amount: data?.total.amount, count: data?.total.count },
   ];
 
   const handlePrevMonth = () => {
