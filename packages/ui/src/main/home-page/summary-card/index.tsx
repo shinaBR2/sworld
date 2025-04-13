@@ -1,6 +1,6 @@
 import { CardContent, Typography, Skeleton } from '@mui/material';
 import { StyledCard, StyledAmount, StyledCategoryName, StyledCategoryWrapper } from './styled';
-import { CategoryType } from './types';
+import { CategoryType } from '../types';
 import { getCategoryIcon, getCategoryTitle } from './utils';
 
 export interface SummaryCardProps {

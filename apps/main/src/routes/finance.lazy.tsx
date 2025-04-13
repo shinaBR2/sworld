@@ -207,6 +207,7 @@ const Content = () => {
           {/* Charts Section */}
           <Grid item xs={12} md={6}>
             <SpendingBreakdown
+              isLoading={isLoading}
               categoryData={categoryData}
               handleCategoryClick={handleCategoryClick}
               selectedCategory={selectedCategory}

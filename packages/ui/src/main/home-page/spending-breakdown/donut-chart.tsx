@@ -1,7 +1,7 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Skeleton, Typography, useTheme } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import { CategoryType } from '../summary-card';
+import { CategoryType } from '../types';
 
 export interface CategoryData {
   category: CategoryType;
@@ -10,6 +10,7 @@ export interface CategoryData {
 }
 
 export interface DonutChartProps {
+  isLoading: boolean;
   data: CategoryData[];
   onCategoryClick?: (category: CategoryType) => void;
   selectedCategory?: CategoryType | null;
@@ -45,7 +46,7 @@ const getCategoryTitle = (category: CategoryType) => {
   }
 };
 
-const DonutChart = ({ data, onCategoryClick, selectedCategory }: DonutChartProps) => {
+const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: DonutChartProps) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -121,6 +122,24 @@ const DonutChart = ({ data, onCategoryClick, selectedCategory }: DonutChartProps
       }
     },
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          height: 280,
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Skeleton variant="circular" width={196} height={196} sx={{ mx: 'auto' }} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ width: '100%', height: 280, position: 'relative' }}>
