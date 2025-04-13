@@ -212,9 +212,9 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
                 label="Category"
                 onChange={handleChange}
               >
-                <MenuItem value="must">Must-Have (Essential)</MenuItem>
-                <MenuItem value="nice">Nice-to-Have (Useful)</MenuItem>
-                <MenuItem value="waste">Waste (Unnecessary)</MenuItem>
+                <MenuItem value="must">Must</MenuItem>
+                <MenuItem value="nice">Nice</MenuItem>
+                <MenuItem value="waste">Waste</MenuItem>
               </Select>
               {errors.category && <FormHelperText>{errors.category}</FormHelperText>}
             </FormControl>

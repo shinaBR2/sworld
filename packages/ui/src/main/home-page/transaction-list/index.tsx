@@ -34,7 +34,7 @@ const TransactionList = (props: TransactionListProps) => {
               }}
             >
               <Typography variant="body2" fontWeight="medium">
-                {selectedCategory === 'must' ? 'Must-Have' : selectedCategory === 'nice' ? 'Nice-to-Have' : 'Waste'}
+                {selectedCategory === 'must' ? 'Must' : selectedCategory === 'nice' ? 'Nice' : 'Waste'}
               </Typography>
             </Box>
           )}
