@@ -38,7 +38,7 @@ const formalizeState = (dialogState: DialogState) => {
     title: title?.trim(),
     description: description?.trim() || '',
     url: url?.trim(),
-    subtitle: subtitle?.trim(),
+    subtitle: subtitle?.trim() || '',
     playlistId,
     newPlaylistName: newPlaylistName?.trim(),
     videoPositionInPlaylist,
