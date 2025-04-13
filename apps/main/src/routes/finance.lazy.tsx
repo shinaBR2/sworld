@@ -7,6 +7,7 @@ import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
+import { TransactionList } from 'ui/main/home-page/transaction-list';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -131,11 +132,6 @@ const RouteComponent = () => {
     return Promise.resolve();
   };
 
-  // Filter transactions based on selected category
-  const filteredTransactions = selectedCategory
-    ? transactions.filter(t => t.category === selectedCategory)
-    : transactions;
-
   return (
     <Layout>
       <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
@@ -188,105 +184,7 @@ const RouteComponent = () => {
         {/* Transaction List Section - Show when a category is selected */}
         {showTransactions && (
           <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6">
-                    {selectedCategory
-                      ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Expenses`
-                      : 'All Expenses'}
-                  </Typography>
-
-                  {selectedCategory && (
-                    <Box
-                      sx={{
-                        display: 'inline-block',
-                        px: 1.5,
-                        py: 0.5,
-                        borderRadius: 1,
-                        backgroundColor: `${
-                          selectedCategory === 'must'
-                            ? '#ef444420'
-                            : selectedCategory === 'nice'
-                            ? '#3b82f620'
-                            : '#f59e0b20'
-                        }`,
-                      }}
-                    >
-                      <Typography variant="body2" fontWeight="medium">
-                        {selectedCategory === 'must'
-                          ? 'Must-Have'
-                          : selectedCategory === 'nice'
-                          ? 'Nice-to-Have'
-                          : 'Waste'}
-                      </Typography>
-                    </Box>
-                  )}
-                </Box>
-
-                <Box sx={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {filteredTransactions.length === 0 ? (
-                    <Box sx={{ py: 4, textAlign: 'center' }}>
-                      <Typography color="text.secondary">No expenses found for this category</Typography>
-                    </Box>
-                  ) : (
-                    filteredTransactions.map(transaction => (
-                      <Box
-                        key={transaction.id}
-                        sx={{
-                          py: 2,
-                          px: 1,
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          // borderBottom: `1px solid ${theme.palette.divider}`,
-                        }}
-                      >
-                        <Box>
-                          <Typography variant="subtitle1">{transaction.name}</Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {new Date(transaction.date).toLocaleDateString()}
-                          </Typography>
-                        </Box>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              px: 1.5,
-                              py: 0.5,
-                              borderRadius: 1,
-                              backgroundColor: `${
-                                transaction.category === 'must'
-                                  ? '#ef444420'
-                                  : transaction.category === 'nice'
-                                  ? '#3b82f620'
-                                  : '#f59e0b20'
-                              }`,
-                            }}
-                          >
-                            <Typography variant="body2" fontSize="0.75rem">
-                              {transaction.category === 'must'
-                                ? 'Must'
-                                : transaction.category === 'nice'
-                                ? 'Nice'
-                                : 'Waste'}
-                            </Typography>
-                          </Box>
-                          <Typography variant="subtitle1" fontWeight="bold">
-                            ${transaction.amount.toFixed(2)}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
+            <TransactionList transactions={transactions} selectedCategory={selectedCategory} />
           </Grid>
         )}
       </Grid>

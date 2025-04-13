@@ -1,4 +1,4 @@
-import { FullPageContainer } from 'ui/universal/containers/full-page';
+import { FullWidthContainer } from 'ui/universal/containers/full-width';
 import React from 'react';
 
 interface LayoutProps {
@@ -8,7 +8,7 @@ interface LayoutProps {
 const Layout = (props: LayoutProps) => {
   const { children } = props;
 
-  return <FullPageContainer>{children}</FullPageContainer>;
+  return <FullWidthContainer>{children}</FullWidthContainer>;
 };
 
 export { Layout };
