@@ -1181,7 +1181,7 @@ export type Finance_Transactions = {
   category: Scalars['String']['output'];
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['uuid']['output'];
-  month: Scalars['numeric']['output'];
+  month: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   note?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
@@ -1236,7 +1236,7 @@ export type Finance_Transactions_Bool_Exp = {
   category?: InputMaybe<String_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  month?: InputMaybe<Numeric_Comparison_Exp>;
+  month?: InputMaybe<Int_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   note?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -1253,7 +1253,7 @@ export enum Finance_Transactions_Constraint {
 /** input type for incrementing numeric columns in table "finance_transactions" */
 export type Finance_Transactions_Inc_Input = {
   amount?: InputMaybe<Scalars['numeric']['input']>;
-  month?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -1264,7 +1264,7 @@ export type Finance_Transactions_Insert_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  month?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -1280,7 +1280,7 @@ export type Finance_Transactions_Max_Fields = {
   category?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  month?: Maybe<Scalars['numeric']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   note?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -1296,7 +1296,7 @@ export type Finance_Transactions_Min_Fields = {
   category?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  month?: Maybe<Scalars['numeric']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   note?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -1370,7 +1370,7 @@ export type Finance_Transactions_Set_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  month?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -1417,7 +1417,7 @@ export type Finance_Transactions_Stream_Cursor_Value_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  month?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -1429,7 +1429,7 @@ export type Finance_Transactions_Stream_Cursor_Value_Input = {
 export type Finance_Transactions_Sum_Fields = {
   __typename?: 'finance_transactions_sum_fields';
   amount?: Maybe<Scalars['numeric']['output']>;
-  month?: Maybe<Scalars['numeric']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
 
@@ -8176,7 +8176,7 @@ export type CreateFinanceRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateFinanceRecordMutation = { __typename?: 'mutation_root', insert_finance_transactions_one?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: any, year: number, category: string, createdAt: any } | null };
+export type CreateFinanceRecordMutation = { __typename?: 'mutation_root', insert_finance_transactions_one?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any } | null };
 
 export type UpdateFinanceRecordMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -8184,7 +8184,7 @@ export type UpdateFinanceRecordMutationVariables = Exact<{
 }>;
 
 
-export type UpdateFinanceRecordMutation = { __typename?: 'mutation_root', update_finance_transactions_by_pk?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: any, year: number, category: string, updatedAt: any } | null };
+export type UpdateFinanceRecordMutation = { __typename?: 'mutation_root', update_finance_transactions_by_pk?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, updatedAt: any } | null };
 
 export type DeleteFinanceRecordMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -8193,15 +8193,13 @@ export type DeleteFinanceRecordMutationVariables = Exact<{
 
 export type DeleteFinanceRecordMutation = { __typename?: 'mutation_root', delete_finance_transactions_by_pk?: { __typename?: 'finance_transactions', id: any } | null };
 
-export type GetFinanceRecordsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetFinanceRecordsQueryVariables = Exact<{
+  month: Scalars['Int']['input'];
+  year: Scalars['Int']['input'];
+}>;
 
 
-export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, category: string, createdAt: any, updatedAt: any }> };
-
-export type GetFinanceSummaryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetFinanceSummaryQuery = { __typename?: 'query_root', must_total: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_total: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_total: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null } };
+export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any, updatedAt: any }> };
 
 export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -8496,42 +8494,22 @@ export const DeleteFinanceRecordDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<DeleteFinanceRecordMutation, DeleteFinanceRecordMutationVariables>;
 export const GetFinanceRecordsDocument = new TypedDocumentString(`
-    query GetFinanceRecords {
-  finance_transactions(order_by: {createdAt: desc}) {
+    query GetFinanceRecords($month: Int!, $year: Int!) {
+  finance_transactions(
+    where: {month: {_eq: $month}, year: {_eq: $year}}
+    order_by: {createdAt: desc}
+  ) {
     id
     name
     amount
+    month
+    year
     category
     createdAt
     updatedAt
   }
 }
     `) as unknown as TypedDocumentString<GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables>;
-export const GetFinanceSummaryDocument = new TypedDocumentString(`
-    query GetFinanceSummary {
-  must_total: finance_transactions_aggregate(where: {category: {_eq: "must"}}) {
-    aggregate {
-      sum {
-        amount
-      }
-    }
-  }
-  nice_total: finance_transactions_aggregate(where: {category: {_eq: "nice"}}) {
-    aggregate {
-      sum {
-        amount
-      }
-    }
-  }
-  waste_total: finance_transactions_aggregate(where: {category: {_eq: "waste"}}) {
-    aggregate {
-      sum {
-        amount
-      }
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<GetFinanceSummaryQuery, GetFinanceSummaryQueryVariables>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {

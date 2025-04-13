@@ -145,4 +145,4 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
   );
 };
 
-export { TransactionsDialog };
+export { TransactionsDialog, type TransactionsDialogProps };

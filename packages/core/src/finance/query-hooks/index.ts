@@ -1,11 +1,15 @@
 import { graphql } from '../../graphql';
+import { GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables } from '../../graphql/graphql';
+import { useRequest } from '../../universal/hooks/use-request';
 
-const allTransactionsQuery = graphql(/* GraphQL */ `
-  query GetFinanceRecords {
-    finance_transactions(order_by: { createdAt: desc }) {
+const transactionsByPeriodQuery = graphql(/* GraphQL */ `
+  query GetFinanceRecords($month: Int!, $year: Int!) {
+    finance_transactions(where: { month: { _eq: $month }, year: { _eq: $year } }, order_by: { createdAt: desc }) {
       id
       name
       amount
+      month
+      year
       category
       createdAt
       updatedAt
@@ -13,50 +17,30 @@ const allTransactionsQuery = graphql(/* GraphQL */ `
   }
 `);
 
-// const GET_FINANCE_SUMMARY = graphql(/* GraphQL */ `
-//   query GetFinanceSummary {
-//     must_total: finance_transactions_aggregate(where: { category: { _eq: "must" } }) {
-//       aggregate {
-//         sum {
-//           amount
-//         }
-//       }
-//     }
-//     nice_total: finance_transactions_aggregate(where: { category: { _eq: "nice" } }) {
-//       aggregate {
-//         sum {
-//           amount
-//         }
-//       }
-//     }
-//     waste_total: finance_transactions_aggregate(where: { category: { _eq: "waste" } }) {
-//       aggregate {
-//         sum {
-//           amount
-//         }
-//       }
-//     }
-//   }
-// `);
+interface LoadTransactionsByPeriodProps {
+  getAccessToken: () => Promise<string>;
+  month: number;
+  year: number;
+}
 
-// interface LoadFinanceTransactionsProps {
-//   getAccessToken: () => Promise<string>;
-// }
+const useLoadTransactionsByPeriod = (props: LoadTransactionsByPeriodProps) => {
+  const { getAccessToken, month, year } = props;
 
-// const useLoadAllFinanceTransactions = (props: LoadFinanceTransactionsProps) => {
-//   const { getAccessToken } = props;
+  const { data, isLoading, error } = useRequest<GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables>({
+    queryKey: ['finance-transactions', month, year],
+    getAccessToken,
+    document: transactionsByPeriodQuery,
+    variables: {
+      month,
+      year,
+    },
+  });
 
-//   const { data, isLoading, error } = useRequest<GetFinanceRecordsQuery>({
-//     queryKey: ['finance-transactions'],
-//     getAccessToken,
-//     document: allTransactionsQuery,
-//   });
+  return {
+    videos: data?.finance_transactions || [],
+    isLoading,
+    error,
+  };
+};
 
-//   return {
-//     videos: data ? transform(data) : [],
-//     isLoading,
-//     error,
-//   };
-// };
-
-export { allTransactionsQuery };
+export { useLoadTransactionsByPeriod };
