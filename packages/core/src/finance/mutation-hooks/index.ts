@@ -15,6 +15,8 @@ const createRecord = graphql(/* GraphQL */ `
       id
       name
       amount
+      month
+      year
       category
       createdAt
     }
@@ -27,6 +29,8 @@ const updateRecord = graphql(/* GraphQL */ `
       id
       name
       amount
+      month
+      year
       category
       updatedAt
     }
