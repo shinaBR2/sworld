@@ -14,6 +14,11 @@ export const texts = {
       label: 'Video URL',
       helperText: 'Can be either direct video url or platform like youtube url',
     },
+    subtitleInput: {
+      placeholder: 'Enter subtitle URL (*.vtt)',
+      label: 'Subtitle URL',
+      helperText: 'Should be a valid vtt file',
+    },
     descriptionInput: {
       placeholder: 'Description for the video (optional)',
       label: 'Video description',

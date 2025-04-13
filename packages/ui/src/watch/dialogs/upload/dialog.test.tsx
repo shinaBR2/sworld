@@ -28,6 +28,7 @@ describe('DialogComponent', () => {
     isSubmitting: false,
     title: '',
     url: '',
+    subtitle: '',
     description: '',
     playlistId: '',
     newPlaylistName: '',
@@ -64,6 +65,7 @@ describe('DialogComponent', () => {
     renderComponent();
     expect(screen.getByPlaceholderText(texts.form.titleInput.placeholder)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(texts.form.urlInput.placeholder)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(texts.form.subtitleInput.placeholder)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(texts.form.descriptionInput.placeholder)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(texts.form.playlistInput.placeholder)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(texts.form.videoPositionInPlaylistInput.placeholder)).toBeInTheDocument();

@@ -6,6 +6,7 @@ interface ValidationResult {
 interface DialogState {
   title: string;
   url: string;
+  subtitle?: string;
   description?: string;
   playlistId?: string;
   newPlaylistName?: string;
@@ -15,4 +16,4 @@ interface DialogState {
   closeDialogCountdown: number | null;
 }
 
-export { type ValidationResult, type DialogState };
+export { type DialogState, type ValidationResult };

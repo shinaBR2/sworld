@@ -25,6 +25,17 @@ const getFormFieldStaticConfigs = () => {
       inputProps: { 'data-testid': 'url-input-text' },
       required: true,
     },
+    subtitle: {
+      fullWidth: true,
+      placeholder: texts.form.subtitleInput.placeholder,
+      label: texts.form.subtitleInput.label,
+      helperText: texts.form.subtitleInput.helperText,
+      variant: 'outlined' as TextFieldVariants,
+      sx: { mb: 2 },
+      'aria-label': texts.form.subtitleInput.label,
+      inputProps: { 'data-testid': 'subtitle-input-text' },
+      required: false,
+    },
     description: {
       fullWidth: true,
       multiline: true,
