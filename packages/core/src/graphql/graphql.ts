@@ -8199,7 +8199,12 @@ export type GetFinanceRecordsQueryVariables = Exact<{
 }>;
 
 
-export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any, updatedAt: any }> };
+export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any, updatedAt: any }>, must_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null } };
+
+export type GetMonthlyComparisonQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMonthlyComparisonQuery = { __typename?: 'query_root', monthly_totals: { __typename?: 'finance_transactions_aggregate', nodes: Array<{ __typename?: 'finance_transactions', month: number, year: number }>, aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null } };
 
 export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -8508,8 +8513,56 @@ export const GetFinanceRecordsDocument = new TypedDocumentString(`
     createdAt
     updatedAt
   }
+  must_aggregate: finance_transactions_aggregate(
+    where: {month: {_eq: $month}, year: {_eq: $year}, category: {_eq: "must"}}
+  ) {
+    aggregate {
+      count
+      sum {
+        amount
+      }
+    }
+  }
+  nice_aggregate: finance_transactions_aggregate(
+    where: {month: {_eq: $month}, year: {_eq: $year}, category: {_eq: "nice"}}
+  ) {
+    aggregate {
+      count
+      sum {
+        amount
+      }
+    }
+  }
+  waste_aggregate: finance_transactions_aggregate(
+    where: {month: {_eq: $month}, year: {_eq: $year}, category: {_eq: "waste"}}
+  ) {
+    aggregate {
+      count
+      sum {
+        amount
+      }
+    }
+  }
 }
     `) as unknown as TypedDocumentString<GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables>;
+export const GetMonthlyComparisonDocument = new TypedDocumentString(`
+    query GetMonthlyComparison {
+  monthly_totals: finance_transactions_aggregate(
+    order_by: {year: desc, month: desc}
+  ) {
+    nodes {
+      month
+      year
+    }
+    aggregate {
+      sum {
+        amount
+      }
+      count
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetMonthlyComparisonQuery, GetMonthlyComparisonQueryVariables>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {

@@ -1,18 +1,12 @@
-// packages/ui/src/finance/month-comparison/index.tsx
-import React from 'react';
 import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
-import { CategoryType } from '../summary-card';
 
 export interface MonthData {
   month: string; // Format: "YYYY-MM"
   displayMonth: string; // Format: "Jan", "Feb", etc.
   total: number;
-  categories: {
-    [key in Exclude<CategoryType, 'total'>]?: number;
-  };
 }
 
 export interface MonthComparisonProps {

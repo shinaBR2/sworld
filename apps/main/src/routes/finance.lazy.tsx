@@ -7,6 +7,10 @@ import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
+import { TransactionsDialogProps } from 'ui/main/home-page/transactions-dialog';
+import { useAuthContext } from 'core/providers/auth';
+import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
+import { LoginDialogProps } from 'ui/universal/dialogs/login';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -83,15 +87,36 @@ const generateMockData = () => {
 const { monthlyData, transactions } = generateMockData();
 
 const TransactionsDialog = lazy(() =>
-  import('ui/main/home-page/transactions-dialog' as string).then(mod => ({
-    default: mod.TransactionsDialog,
-  }))
+  import('ui/main/home-page/transactions-dialog').then(module => {
+    const Component = module.TransactionsDialog;
+
+    return { default: (props: TransactionsDialogProps) => <Component {...props} /> };
+  })
 );
 
-const RouteComponent = () => {
+const LoginDialog = lazy(() =>
+  import('ui/universal/dialogs').then(module => {
+    const Component = module.LoginDialog;
+    return { default: (props: LoginDialogProps) => <Component {...props} /> };
+  })
+);
+
+const Content = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const { getAccessToken } = useAuthContext();
+
+  const currentDate = new Date();
+  const { data, isLoading } = useLoadTransactionsByPeriod({
+    month: currentDate.getMonth(),
+    year: currentDate.getFullYear(),
+    getAccessToken: getAccessToken,
+  });
+
+  console.log('data', data);
+  console.log('isLoading', isLoading);
 
   // Current month data
   const currentMonth = monthlyData[currentMonthIndex];
@@ -104,7 +129,6 @@ const RouteComponent = () => {
     { category: 'total', amount: currentMonth.total, count: 10 },
   ];
 
-  // Handlers
   const handlePrevMonth = () => {
     if (currentMonthIndex > 0) {
       setCurrentMonthIndex(currentMonthIndex - 1);
@@ -206,6 +230,19 @@ const RouteComponent = () => {
       />
     </Layout>
   );
+};
+
+const RouteComponent = () => {
+  const { isSignedIn, isLoading, signIn } = useAuthContext();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!isSignedIn) {
+    return <LoginDialog onAction={signIn} />;
+  }
+
+  return <Content />;
 };
 
 export const Route = createLazyFileRoute('/finance')({
