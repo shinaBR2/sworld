@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "serve": "vite preview",
+    "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "deploy": "vercel deploy dist --team=turborepo --confirm",
-    "dev": "vite --host 0.0.0.0 --port 3000 --clearScreen false",
+    "pre-dev": "cp ../../.env.development.local .env",
+    "dev": "pnpm run pre-dev && vite",
     "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
   },
   "dependencies": {
