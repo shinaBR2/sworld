@@ -1,5 +1,5 @@
 import React from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Layout } from '../components/layout';
 import { LandingGrid } from 'ui/main/home-page/landing-grid';
 
@@ -29,7 +29,7 @@ const landingItems = [
 const Content = () => {
   return (
     <Layout>
-      <LandingGrid items={landingItems} LinkComponent="a" />
+      <LandingGrid items={landingItems} LinkComponent={Link} />
     </Layout>
   );
 };
