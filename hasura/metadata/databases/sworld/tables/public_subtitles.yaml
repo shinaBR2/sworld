@@ -12,6 +12,16 @@ object_relationships:
   - name: video
     using:
       foreign_key_constraint_on: video_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - is_default
+        - lang
+        - url
+        - video_id
+    comment: ""
 select_permissions:
   - role: anonymous
     permission:
