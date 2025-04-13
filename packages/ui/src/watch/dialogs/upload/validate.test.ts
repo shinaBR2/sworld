@@ -22,6 +22,7 @@ vi.mock('./texts', () => ({
       emptyTitle: 'Title is required',
       emptyNewPlaylistName: 'Playlist name is required',
       invalidUrl: 'Invalid URL',
+      invalidSubtitleFormat: 'Subtitle must be a .vtt file',
     },
   },
 }));
@@ -137,6 +138,87 @@ describe('validateForm', () => {
       title: 'Test Video',
       url: 'https://youtube.com/watch?v=123',
       newPlaylistName: 'My New Playlist',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+
+    const result = validateForm(state);
+    expect(result).toBeNull();
+  });
+
+  // Add new tests for subtitle validation
+  it('should return error when subtitle is not a .vtt file', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.srt',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.srt',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+
+    const result = validateForm(state);
+    expect(result).toBe(texts.errors.invalidSubtitleFormat);
+  });
+
+  it('should return null when subtitle has valid .vtt extension', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.vtt',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.vtt',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+
+    const result = validateForm(state);
+    expect(result).toBeNull();
+  });
+
+  it('should return null when subtitle has valid .VTT extension (case insensitive)', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.VTT',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: 'https://example.com/subtitle.VTT',
+    } as ReturnType<typeof formalizeState>);
+
+    vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
+
+    const result = validateForm(state);
+    expect(result).toBeNull();
+  });
+
+  it('should ignore subtitle validation when subtitle is empty', async () => {
+    const state: DialogState = {
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: '',
+    } as DialogState;
+
+    vi.mocked(formalizeState).mockReturnValueOnce({
+      ...state,
+      title: 'Test Video',
+      url: 'https://youtube.com/watch?v=123',
+      subtitle: '',
     } as ReturnType<typeof formalizeState>);
 
     vi.mocked(canPlayUrls).mockReturnValueOnce([{ url: 'https://youtube.com/watch?v=123', isValid: true }]);
