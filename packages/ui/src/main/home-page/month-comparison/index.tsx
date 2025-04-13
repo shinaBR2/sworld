@@ -1,7 +1,8 @@
 // packages/ui/src/finance/month-comparison/index.tsx
 import React from 'react';
 import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
-import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { CategoryType } from '../summary-card';
 
@@ -21,6 +22,7 @@ export interface MonthComparisonProps {
 
 const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
 
   // Calculate percentage change
   const getCurrentMonthChange = () => {
@@ -46,33 +48,70 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
 
   const { percentage, isIncrease } = getCurrentMonthChange();
 
-  // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <Box
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            p: 1.5,
-            borderRadius: 1,
-            boxShadow: theme.shadows[2],
-          }}
-        >
-          <Typography variant="subtitle2">{label}</Typography>
-          <Typography variant="body2">${payload[0].value.toFixed(2)}</Typography>
-        </Box>
-      );
-    }
-    return null;
-  };
-
   // Process the chart data
-  const chartData = data.map(month => ({
-    name: month.displayMonth,
-    amount: month.total,
-    isCurrentMonth: month === data[currentMonthIndex],
-  }));
+  const monthNames = data.map(month => month.displayMonth);
+  const monthValues = data.map(month => month.total);
+
+  // Set different colors for the current month
+  const itemColors = data.map((_, index) =>
+    index === currentMonthIndex ? theme.palette.primary.main : theme.palette.primary.light
+  );
+
+  // Generate ECharts option
+  const getOption = (): echarts.EChartsOption => {
+    return {
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '8%',
+        top: '3%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        data: monthNames,
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          color: isDarkMode ? '#aaa' : '#666',
+        },
+      },
+      yAxis: {
+        type: 'value',
+        show: false,
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          return `${params.name}: $${params.value.toFixed(2)}`;
+        },
+        backgroundColor: isDarkMode ? '#1e1e1e' : 'white',
+        borderColor: isDarkMode ? '#333' : '#ddd',
+        textStyle: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+      },
+      series: [
+        {
+          data: monthValues.map((value, index) => ({
+            value,
+            itemStyle: {
+              color: itemColors[index],
+              opacity: index === currentMonthIndex ? 1 : 0.7,
+              borderRadius: [4, 4, 0, 0],
+            },
+          })),
+          type: 'bar',
+          barWidth: '60%',
+          emphasis: {
+            itemStyle: {
+              opacity: 1,
+            },
+          },
+        },
+      ],
+    };
+  };
 
   return (
     <Card>
@@ -107,37 +146,20 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
         )}
 
         <Box sx={{ width: '100%', height: 160 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="amount"
-                fill={theme.palette.primary.main}
-                radius={[4, 4, 0, 0]}
-                barSize={30}
-                // Apply different styling to the current month
-                isAnimationActive={false}
-              >
-                {chartData.map((entry, index) => (
-                  <rect
-                    key={`bar-${index}`}
-                    fill={entry.isCurrentMonth ? theme.palette.primary.main : theme.palette.primary.light}
-                    opacity={entry.isCurrentMonth ? 1 : 0.7}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {data.length === 0 ? (
+            <Box sx={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography variant="body1" color="text.secondary">
+                No data available
+              </Typography>
+            </Box>
+          ) : (
+            <ReactECharts
+              option={getOption()}
+              style={{ height: '100%', width: '100%' }}
+              opts={{ renderer: 'canvas' }}
+            />
+          )}
         </Box>
-
-        {data.length === 0 && (
-          <Box sx={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography variant="body1" color="text.secondary">
-              No data available
-            </Typography>
-          </Box>
-        )}
       </CardContent>
     </Card>
   );

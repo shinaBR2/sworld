@@ -1,7 +1,8 @@
 // packages/ui/src/finance/donut-chart/index.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
 import { CategoryType } from '../summary-card';
 
 export interface CategoryData {
@@ -48,93 +49,89 @@ const getCategoryTitle = (category: CategoryType) => {
 
 const DonutChart = ({ data, onCategoryClick, selectedCategory }: DonutChartProps) => {
   const theme = useTheme();
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const isDarkMode = theme.palette.mode === 'dark';
 
   // Filter out any 'total' category and zero values for chart display
   const chartData = data
     .filter(item => item.category !== 'total' && item.amount > 0)
     .map(item => ({
-      name: getCategoryTitle(item.category),
       value: item.amount,
+      name: getCategoryTitle(item.category),
       category: item.category,
+      // Reduce opacity for non-selected categories if a category is selected
+      itemStyle: {
+        color: getCategoryColor(item.category),
+        opacity: selectedCategory && item.category !== selectedCategory ? 0.6 : 1,
+      },
     }));
 
   // Calculate the total for the center text
   const total = data.reduce((sum, item) => (item.category !== 'total' ? sum + item.amount : sum), 0);
 
-  const handlePieClick = (data: any, index: number) => {
-    if (onCategoryClick) {
-      onCategoryClick(data.category);
-    }
+  // Generate ECharts option
+  const getOption = (): echarts.EChartsOption => {
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          const { name, value, percent } = params;
+          return `${name}: $${value.toFixed(2)} (${percent.toFixed(1)}%)`;
+        },
+        backgroundColor: isDarkMode ? '#1e1e1e' : 'white',
+        borderColor: isDarkMode ? '#333' : '#ddd',
+        textStyle: {
+          color: isDarkMode ? '#fff' : '#333',
+        },
+      },
+      series: [
+        {
+          name: 'Spending',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 4,
+            borderColor: isDarkMode ? '#121212' : '#ffffff',
+            borderWidth: 2,
+          },
+          label: {
+            show: false,
+          },
+          emphasis: {
+            scale: true,
+            scaleSize: 10,
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+          labelLine: {
+            show: false,
+          },
+          data: chartData,
+        },
+      ],
+    };
   };
 
-  const handleMouseEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
-
-  const handleMouseLeave = () => {
-    setActiveIndex(null);
-  };
-
-  // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <Box
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${getCategoryColor(data.category)}`,
-            p: 1.5,
-            borderRadius: 1,
-            boxShadow: theme.shadows[2],
-          }}
-        >
-          <Typography variant="subtitle2" sx={{ color: getCategoryColor(data.category) }}>
-            {data.name}
-          </Typography>
-          <Typography variant="body2">
-            ${data.value.toFixed(2)} ({((data.value / total) * 100).toFixed(1)}%)
-          </Typography>
-        </Box>
-      );
-    }
-    return null;
+  // Handle chart events
+  const handleChartEvents = {
+    click: (params: any) => {
+      if (onCategoryClick && params.data.category) {
+        onCategoryClick(params.data.category);
+      }
+    },
   };
 
   return (
     <Box sx={{ width: '100%', height: 280, position: 'relative' }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={80}
-            paddingAngle={2}
-            dataKey="value"
-            onClick={handlePieClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={getCategoryColor(entry.category)}
-                stroke={getCategoryColor(entry.category)}
-                strokeWidth={selectedCategory === entry.category ? 2 : 1}
-                opacity={selectedCategory && selectedCategory !== entry.category ? 0.6 : 1}
-                style={{
-                  filter: activeIndex === index ? 'drop-shadow(0px 0px 4px rgba(0,0,0,0.3))' : 'none',
-                  cursor: 'pointer',
-                }}
-              />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-        </PieChart>
-      </ResponsiveContainer>
+      <ReactECharts
+        option={getOption()}
+        style={{ height: '100%', width: '100%' }}
+        opts={{ renderer: 'canvas' }}
+        onEvents={handleChartEvents}
+      />
 
       {/* Center text */}
       <Box
@@ -144,6 +141,7 @@ const DonutChart = ({ data, onCategoryClick, selectedCategory }: DonutChartProps
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
+          pointerEvents: 'none', // So clicks pass through to the chart
         }}
       >
         <Typography variant="body2" color="text.secondary">
