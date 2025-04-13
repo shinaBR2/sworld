@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { StyledCard } from './styled';
 
-export interface LandingCardProps {
+interface LandingCardProps {
   icon: string;
   title: string;
   LinkComponent?: React.ElementType;
@@ -42,4 +42,4 @@ const LandingCard = ({ icon, title, LinkComponent, to }: LandingCardProps) => {
   );
 };
 
-export { LandingCard };
+export { LandingCard, type LandingCardProps };
