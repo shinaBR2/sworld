@@ -15,6 +15,11 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n": typeof types.CreateFinanceRecordDocument,
+    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n": typeof types.UpdateFinanceRecordDocument,
+    "\n  mutation DeleteFinanceRecord($id: uuid!) {\n    delete_finance_transactions_by_pk(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteFinanceRecordDocument,
+    "\n  query GetFinanceRecords {\n    finance_transactions(order_by: { createdAt: desc }) {\n      id\n      name\n      amount\n      category\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetFinanceRecordsDocument,
+    "\n  query GetFinanceSummary {\n    must_total: finance_transactions_aggregate(where: { category: { _eq: \"must\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    nice_total: finance_transactions_aggregate(where: { category: { _eq: \"nice\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    waste_total: finance_transactions_aggregate(where: { category: { _eq: \"waste\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n  }\n": typeof types.GetFinanceSummaryDocument,
     "\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" } }) {\n      id\n      name\n    }\n  }\n": typeof types.GetAudiosAndFeelingsDocument,
     "\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n": typeof types.GetPublicAudiosAndFeelingsDocument,
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": typeof types.PostDocument,
@@ -36,6 +41,11 @@ type Documents = {
     "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(\n      where: {\n        playlist_videos_aggregate: { count: { predicate: { _gt: 0 }, filter: { video: { status: { _eq: \"ready\" } } } } }\n      }\n    ) {\n      ...PlaylistFields\n    }\n  }\n": typeof types.AllVideosDocument,
 };
 const documents: Documents = {
+    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n": types.CreateFinanceRecordDocument,
+    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n": types.UpdateFinanceRecordDocument,
+    "\n  mutation DeleteFinanceRecord($id: uuid!) {\n    delete_finance_transactions_by_pk(id: $id) {\n      id\n    }\n  }\n": types.DeleteFinanceRecordDocument,
+    "\n  query GetFinanceRecords {\n    finance_transactions(order_by: { createdAt: desc }) {\n      id\n      name\n      amount\n      category\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetFinanceRecordsDocument,
+    "\n  query GetFinanceSummary {\n    must_total: finance_transactions_aggregate(where: { category: { _eq: \"must\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    nice_total: finance_transactions_aggregate(where: { category: { _eq: \"nice\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    waste_total: finance_transactions_aggregate(where: { category: { _eq: \"waste\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n  }\n": types.GetFinanceSummaryDocument,
     "\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" } }) {\n      id\n      name\n    }\n  }\n": types.GetAudiosAndFeelingsDocument,
     "\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n": types.GetPublicAudiosAndFeelingsDocument,
     "\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n": types.PostDocument,
@@ -57,6 +67,26 @@ const documents: Documents = {
     "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(\n      where: {\n        playlist_videos_aggregate: { count: { predicate: { _gt: 0 }, filter: { video: { status: { _eq: \"ready\" } } } } }\n      }\n    ) {\n      ...PlaylistFields\n    }\n  }\n": types.AllVideosDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n"): typeof import('./graphql').CreateFinanceRecordDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').UpdateFinanceRecordDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteFinanceRecord($id: uuid!) {\n    delete_finance_transactions_by_pk(id: $id) {\n      id\n    }\n  }\n"): typeof import('./graphql').DeleteFinanceRecordDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetFinanceRecords {\n    finance_transactions(order_by: { createdAt: desc }) {\n      id\n      name\n      amount\n      category\n      createdAt\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').GetFinanceRecordsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetFinanceSummary {\n    must_total: finance_transactions_aggregate(where: { category: { _eq: \"must\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    nice_total: finance_transactions_aggregate(where: { category: { _eq: \"nice\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    waste_total: finance_transactions_aggregate(where: { category: { _eq: \"waste\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetFinanceSummaryDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
