@@ -24,6 +24,11 @@ const landingItems = [
     title: 'Play',
     to: '/play',
   },
+  {
+    icon: '💰',
+    title: 'Finance',
+    to: '/finance',
+  },
 ];
 
 const Content = () => {
