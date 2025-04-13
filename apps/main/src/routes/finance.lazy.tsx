@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
-import React, { useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { Layout } from '../components/layout';
 import { Container, Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
@@ -7,7 +7,6 @@ import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
-import { TransactionsDialog } from 'ui/main/home-page/transactions-dialog';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -82,6 +81,12 @@ const generateMockData = () => {
 };
 
 const { monthlyData, transactions } = generateMockData();
+
+const TransactionsDialog = lazy(() =>
+  import('ui/main/home-page/transactions-dialog' as string).then(mod => ({
+    default: mod.TransactionsDialog,
+  }))
+);
 
 const RouteComponent = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
