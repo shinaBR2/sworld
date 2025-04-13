@@ -1,5 +1,5 @@
 import { CardContent, Typography, Box, Skeleton } from '@mui/material';
-import { StyledCard } from './styled';
+import { StyledCard, StyledAmount, StyledCategoryName, StyledCategoryWrapper } from './styled';
 import { CategoryType } from './types';
 import { getCategoryIcon, getCategoryTitle } from './utils';
 
@@ -19,16 +19,16 @@ const SummaryCard = (props: SummaryCardProps) => {
     return (
       <StyledCard category={category} selected={selected}>
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+          <StyledCategoryWrapper>
+            <StyledCategoryName variant="h6" component="div">
               <Skeleton variant="circular" width={24} height={24} sx={{ marginRight: '8px' }} />
               <Skeleton width={40} />
-            </Typography>
-          </Box>
+            </StyledCategoryName>
+          </StyledCategoryWrapper>
 
-          <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+          <StyledAmount variant="h4" component="div">
             <Skeleton width={100} height={40} />
-          </Typography>
+          </StyledAmount>
 
           <Typography variant="body2" color="text.secondary">
             <Skeleton width={80} />
@@ -41,16 +41,16 @@ const SummaryCard = (props: SummaryCardProps) => {
   return (
     <StyledCard category={category} selected={selected} onClick={onClick}>
       <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+        <StyledCategoryWrapper>
+          <StyledCategoryName variant="h6" component="div">
             <span style={{ marginRight: '8px' }}>{getCategoryIcon(category)}</span>
             {getCategoryTitle(category)}
-          </Typography>
-        </Box>
+          </StyledCategoryName>
+        </StyledCategoryWrapper>
 
-        <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+        <StyledAmount variant="h4" component="div">
           ${amount.toFixed(2)}
-        </Typography>
+        </StyledAmount>
 
         {count > 0 && (
           <Typography variant="body2" color="text.secondary">

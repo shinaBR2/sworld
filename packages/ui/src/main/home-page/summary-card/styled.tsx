@@ -1,5 +1,5 @@
 import { StyledComponent } from '@emotion/styled';
-import { Card, CardProps } from '@mui/material';
+import { Box, Card, CardProps, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CategoryType } from './types';
 
@@ -44,4 +44,20 @@ const StyledCard: StyledComponent<CardProps & { category: CategoryType; selected
     : {},
 }));
 
-export { StyledCard };
+const StyledCategoryWrapper = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  mb: 1,
+}) as typeof Box;
+
+const StyledCategoryName = styled(Typography)({
+  display: 'flex',
+  alignItems: 'center',
+}) as typeof Typography;
+
+const StyledAmount = styled(Typography)({
+  fontWeight: 'bold',
+  mb: 0.5,
+}) as typeof Typography;
+
+export { StyledCard, StyledCategoryWrapper, StyledCategoryName, StyledAmount };
