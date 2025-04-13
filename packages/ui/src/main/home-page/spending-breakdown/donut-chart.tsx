@@ -1,5 +1,3 @@
-// packages/ui/src/finance/donut-chart/index.tsx
-import React, { useEffect, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';

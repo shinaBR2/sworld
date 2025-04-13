@@ -1,11 +1,12 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import React, { useState } from 'react';
 import { Layout } from '../components/layout';
-import { Grid } from 'ui/universal/containers/grid';
+import { Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
 import { MonthComparison } from 'ui/main/home-page/month-comparison';
-import { DonutChart } from 'ui/main/home-page/donut-chart';
+import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
+import { MonthSelector } from 'ui/main/home-page/month-selector';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -137,7 +138,7 @@ const RouteComponent = () => {
 
   return (
     <Layout>
-      {/* <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" fontWeight="bold">
           Finance Dashboard
         </Typography>
@@ -151,7 +152,7 @@ const RouteComponent = () => {
           disableNext={currentMonthIndex === monthlyData.length - 1}
           variant="plain"
         />
-      </Box> */}
+      </Grid>
 
       <Grid container spacing={3}>
         {/* Summary Cards */}
@@ -172,27 +173,20 @@ const RouteComponent = () => {
         </Grid>
 
         {/* Charts Section */}
-        {/* <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Spending Breakdown
-              </Typography>
-              <DonutChart
-                data={categoryData.filter(d => d.category !== 'total')}
-                onCategoryClick={handleCategoryClick}
-                selectedCategory={selectedCategory}
-              />
-            </CardContent>
-          </Card>
-        </Grid> */}
+        <Grid item xs={12} md={6}>
+          <SpendingBreakdown
+            categoryData={categoryData}
+            handleCategoryClick={handleCategoryClick}
+            selectedCategory={selectedCategory}
+          />
+        </Grid>
 
-        {/* <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}>
           <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
-        </Grid> */}
+        </Grid>
 
         {/* Transaction List Section - Show when a category is selected */}
-        {/* {showTransactions && (
+        {showTransactions && (
           <Grid item xs={12}>
             <Card>
               <CardContent>
@@ -294,7 +288,7 @@ const RouteComponent = () => {
               </CardContent>
             </Card>
           </Grid>
-        )} */}
+        )}
       </Grid>
 
       {/* Add Expense Button */}
