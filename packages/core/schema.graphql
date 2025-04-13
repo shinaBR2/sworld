@@ -1279,10 +1279,12 @@ type finance_transactions {
   category: String!
   createdAt: timestamptz!
   id: uuid!
+  month: numeric!
   name: String!
   note: String
   updatedAt: timestamptz!
   user_id: uuid!
+  year: Int!
 }
 
 """
@@ -1313,6 +1315,8 @@ type finance_transactions_aggregate_fields {
 """aggregate avg on columns"""
 type finance_transactions_avg_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """
@@ -1326,10 +1330,12 @@ input finance_transactions_bool_exp {
   category: String_comparison_exp
   createdAt: timestamptz_comparison_exp
   id: uuid_comparison_exp
+  month: numeric_comparison_exp
   name: String_comparison_exp
   note: String_comparison_exp
   updatedAt: timestamptz_comparison_exp
   user_id: uuid_comparison_exp
+  year: Int_comparison_exp
 }
 
 """
@@ -1347,6 +1353,8 @@ input type for incrementing numeric columns in table "finance_transactions"
 """
 input finance_transactions_inc_input {
   amount: numeric
+  month: numeric
+  year: Int
 }
 
 """
@@ -1358,10 +1366,12 @@ input finance_transactions_insert_input {
   category: String
   createdAt: timestamptz
   id: uuid
+  month: numeric
   name: String
   note: String
   updatedAt: timestamptz
   user_id: uuid
+  year: Int
 }
 
 """aggregate max on columns"""
@@ -1371,10 +1381,12 @@ type finance_transactions_max_fields {
   category: String
   createdAt: timestamptz
   id: uuid
+  month: numeric
   name: String
   note: String
   updatedAt: timestamptz
   user_id: uuid
+  year: Int
 }
 
 """aggregate min on columns"""
@@ -1384,10 +1396,12 @@ type finance_transactions_min_fields {
   category: String
   createdAt: timestamptz
   id: uuid
+  month: numeric
   name: String
   note: String
   updatedAt: timestamptz
   user_id: uuid
+  year: Int
 }
 
 """
@@ -1415,10 +1429,12 @@ input finance_transactions_order_by {
   category: order_by
   createdAt: order_by
   id: order_by
+  month: order_by
   name: order_by
   note: order_by
   updatedAt: order_by
   user_id: order_by
+  year: order_by
 }
 
 """primary key columns input for table: finance_transactions"""
@@ -1439,6 +1455,8 @@ enum finance_transactions_select_column {
   """column name"""
   id
   """column name"""
+  month
+  """column name"""
   name
   """column name"""
   note
@@ -1446,6 +1464,8 @@ enum finance_transactions_select_column {
   updatedAt
   """column name"""
   user_id
+  """column name"""
+  year
 }
 
 """
@@ -1457,25 +1477,33 @@ input finance_transactions_set_input {
   category: String
   createdAt: timestamptz
   id: uuid
+  month: numeric
   name: String
   note: String
   updatedAt: timestamptz
   user_id: uuid
+  year: Int
 }
 
 """aggregate stddev on columns"""
 type finance_transactions_stddev_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """aggregate stddev_pop on columns"""
 type finance_transactions_stddev_pop_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """aggregate stddev_samp on columns"""
 type finance_transactions_stddev_samp_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """
@@ -1495,15 +1523,19 @@ input finance_transactions_stream_cursor_value_input {
   category: String
   createdAt: timestamptz
   id: uuid
+  month: numeric
   name: String
   note: String
   updatedAt: timestamptz
   user_id: uuid
+  year: Int
 }
 
 """aggregate sum on columns"""
 type finance_transactions_sum_fields {
   amount: numeric
+  month: numeric
+  year: Int
 }
 
 """
@@ -1519,6 +1551,8 @@ enum finance_transactions_update_column {
   """column name"""
   id
   """column name"""
+  month
+  """column name"""
   name
   """column name"""
   note
@@ -1526,6 +1560,8 @@ enum finance_transactions_update_column {
   updatedAt
   """column name"""
   user_id
+  """column name"""
+  year
 }
 
 input finance_transactions_updates {
@@ -1540,16 +1576,22 @@ input finance_transactions_updates {
 """aggregate var_pop on columns"""
 type finance_transactions_var_pop_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """aggregate var_samp on columns"""
 type finance_transactions_var_samp_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 """aggregate variance on columns"""
 type finance_transactions_variance_fields {
   amount: Float
+  month: Float
+  year: Float
 }
 
 scalar jsonb

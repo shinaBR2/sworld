@@ -1181,10 +1181,12 @@ export type Finance_Transactions = {
   category: Scalars['String']['output'];
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['uuid']['output'];
+  month: Scalars['numeric']['output'];
   name: Scalars['String']['output'];
   note?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   user_id: Scalars['uuid']['output'];
+  year: Scalars['Int']['output'];
 };
 
 /** aggregated selection of "finance_transactions" */
@@ -1221,6 +1223,8 @@ export type Finance_Transactions_Aggregate_FieldsCountArgs = {
 export type Finance_Transactions_Avg_Fields = {
   __typename?: 'finance_transactions_avg_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** Boolean expression to filter rows from the table "finance_transactions". All fields are combined with a logical 'AND'. */
@@ -1232,10 +1236,12 @@ export type Finance_Transactions_Bool_Exp = {
   category?: InputMaybe<String_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  month?: InputMaybe<Numeric_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   note?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
+  year?: InputMaybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "finance_transactions" */
@@ -1247,6 +1253,8 @@ export enum Finance_Transactions_Constraint {
 /** input type for incrementing numeric columns in table "finance_transactions" */
 export type Finance_Transactions_Inc_Input = {
   amount?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['numeric']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** input type for inserting data into table "finance_transactions" */
@@ -1256,10 +1264,12 @@ export type Finance_Transactions_Insert_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['numeric']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate max on columns */
@@ -1270,10 +1280,12 @@ export type Finance_Transactions_Max_Fields = {
   category?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  month?: Maybe<Scalars['numeric']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   note?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** aggregate min on columns */
@@ -1284,10 +1296,12 @@ export type Finance_Transactions_Min_Fields = {
   category?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  month?: Maybe<Scalars['numeric']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   note?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** response of any mutation on the table "finance_transactions" */
@@ -1312,10 +1326,12 @@ export type Finance_Transactions_Order_By = {
   category?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   note?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: finance_transactions */
@@ -1334,13 +1350,17 @@ export enum Finance_Transactions_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Month = 'month',
+  /** column name */
   Name = 'name',
   /** column name */
   Note = 'note',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id'
+  UserId = 'user_id',
+  /** column name */
+  Year = 'year'
 }
 
 /** input type for updating data in table "finance_transactions" */
@@ -1350,28 +1370,36 @@ export type Finance_Transactions_Set_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['numeric']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate stddev on columns */
 export type Finance_Transactions_Stddev_Fields = {
   __typename?: 'finance_transactions_stddev_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Finance_Transactions_Stddev_Pop_Fields = {
   __typename?: 'finance_transactions_stddev_pop_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Finance_Transactions_Stddev_Samp_Fields = {
   __typename?: 'finance_transactions_stddev_samp_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** Streaming cursor of the table "finance_transactions" */
@@ -1389,16 +1417,20 @@ export type Finance_Transactions_Stream_Cursor_Value_Input = {
   category?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['numeric']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate sum on columns */
 export type Finance_Transactions_Sum_Fields = {
   __typename?: 'finance_transactions_sum_fields';
   amount?: Maybe<Scalars['numeric']['output']>;
+  month?: Maybe<Scalars['numeric']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** update columns of table "finance_transactions" */
@@ -1412,13 +1444,17 @@ export enum Finance_Transactions_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Month = 'month',
+  /** column name */
   Name = 'name',
   /** column name */
   Note = 'note',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UserId = 'user_id'
+  UserId = 'user_id',
+  /** column name */
+  Year = 'year'
 }
 
 export type Finance_Transactions_Updates = {
@@ -1434,18 +1470,24 @@ export type Finance_Transactions_Updates = {
 export type Finance_Transactions_Var_Pop_Fields = {
   __typename?: 'finance_transactions_var_pop_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate var_samp on columns */
 export type Finance_Transactions_Var_Samp_Fields = {
   __typename?: 'finance_transactions_var_samp_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate variance on columns */
 export type Finance_Transactions_Variance_Fields = {
   __typename?: 'finance_transactions_variance_fields';
   amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Jsonb_Cast_Exp = {
@@ -8134,7 +8176,7 @@ export type CreateFinanceRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateFinanceRecordMutation = { __typename?: 'mutation_root', insert_finance_transactions_one?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, category: string, createdAt: any } | null };
+export type CreateFinanceRecordMutation = { __typename?: 'mutation_root', insert_finance_transactions_one?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: any, year: number, category: string, createdAt: any } | null };
 
 export type UpdateFinanceRecordMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -8142,7 +8184,7 @@ export type UpdateFinanceRecordMutationVariables = Exact<{
 }>;
 
 
-export type UpdateFinanceRecordMutation = { __typename?: 'mutation_root', update_finance_transactions_by_pk?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, category: string, updatedAt: any } | null };
+export type UpdateFinanceRecordMutation = { __typename?: 'mutation_root', update_finance_transactions_by_pk?: { __typename?: 'finance_transactions', id: any, name: string, amount: any, month: any, year: number, category: string, updatedAt: any } | null };
 
 export type DeleteFinanceRecordMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -8426,6 +8468,8 @@ export const CreateFinanceRecordDocument = new TypedDocumentString(`
     id
     name
     amount
+    month
+    year
     category
     createdAt
   }
@@ -8437,6 +8481,8 @@ export const UpdateFinanceRecordDocument = new TypedDocumentString(`
     id
     name
     amount
+    month
+    year
     category
     updatedAt
   }

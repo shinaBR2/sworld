@@ -15,8 +15,8 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n": typeof types.CreateFinanceRecordDocument,
-    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n": typeof types.UpdateFinanceRecordDocument,
+    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      createdAt\n    }\n  }\n": typeof types.CreateFinanceRecordDocument,
+    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      updatedAt\n    }\n  }\n": typeof types.UpdateFinanceRecordDocument,
     "\n  mutation DeleteFinanceRecord($id: uuid!) {\n    delete_finance_transactions_by_pk(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteFinanceRecordDocument,
     "\n  query GetFinanceRecords {\n    finance_transactions(order_by: { createdAt: desc }) {\n      id\n      name\n      amount\n      category\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetFinanceRecordsDocument,
     "\n  query GetFinanceSummary {\n    must_total: finance_transactions_aggregate(where: { category: { _eq: \"must\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    nice_total: finance_transactions_aggregate(where: { category: { _eq: \"nice\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    waste_total: finance_transactions_aggregate(where: { category: { _eq: \"waste\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n  }\n": typeof types.GetFinanceSummaryDocument,
@@ -41,8 +41,8 @@ type Documents = {
     "\n  query AllVideos @cached {\n    videos(\n      where: { _and: { _not: { playlist_videos: {} }, status: { _eq: \"ready\" } } }\n      order_by: { createdAt: desc }\n    ) {\n      ...VideoFields\n    }\n    playlist(\n      where: {\n        playlist_videos_aggregate: { count: { predicate: { _gt: 0 }, filter: { video: { status: { _eq: \"ready\" } } } } }\n      }\n    ) {\n      ...PlaylistFields\n    }\n  }\n": typeof types.AllVideosDocument,
 };
 const documents: Documents = {
-    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n": types.CreateFinanceRecordDocument,
-    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n": types.UpdateFinanceRecordDocument,
+    "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      createdAt\n    }\n  }\n": types.CreateFinanceRecordDocument,
+    "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      updatedAt\n    }\n  }\n": types.UpdateFinanceRecordDocument,
     "\n  mutation DeleteFinanceRecord($id: uuid!) {\n    delete_finance_transactions_by_pk(id: $id) {\n      id\n    }\n  }\n": types.DeleteFinanceRecordDocument,
     "\n  query GetFinanceRecords {\n    finance_transactions(order_by: { createdAt: desc }) {\n      id\n      name\n      amount\n      category\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetFinanceRecordsDocument,
     "\n  query GetFinanceSummary {\n    must_total: finance_transactions_aggregate(where: { category: { _eq: \"must\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    nice_total: finance_transactions_aggregate(where: { category: { _eq: \"nice\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n    waste_total: finance_transactions_aggregate(where: { category: { _eq: \"waste\" } }) {\n      aggregate {\n        sum {\n          amount\n        }\n      }\n    }\n  }\n": types.GetFinanceSummaryDocument,
@@ -70,11 +70,11 @@ const documents: Documents = {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      category\n      createdAt\n    }\n  }\n"): typeof import('./graphql').CreateFinanceRecordDocument;
+export function graphql(source: "\n  mutation CreateFinanceRecord($object: finance_transactions_insert_input!) {\n    insert_finance_transactions_one(object: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      createdAt\n    }\n  }\n"): typeof import('./graphql').CreateFinanceRecordDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      category\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').UpdateFinanceRecordDocument;
+export function graphql(source: "\n  mutation UpdateFinanceRecord($id: uuid!, $object: finance_transactions_set_input!) {\n    update_finance_transactions_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      name\n      amount\n      month\n      year\n      category\n      updatedAt\n    }\n  }\n"): typeof import('./graphql').UpdateFinanceRecordDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
