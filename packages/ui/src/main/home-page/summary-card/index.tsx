@@ -1,9 +1,10 @@
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
-
-export type CategoryType = 'must' | 'nice' | 'waste' | 'total';
+import { CardContent, Typography, Box, Skeleton } from '@mui/material';
+import { StyledCard } from './styled';
+import { CategoryType } from './types';
+import { getCategoryIcon, getCategoryTitle } from './utils';
 
 export interface SummaryCardProps {
+  isLoading: boolean;
   category: CategoryType;
   amount: number;
   count?: number;
@@ -11,78 +12,32 @@ export interface SummaryCardProps {
   selected?: boolean;
 }
 
-const getCategoryColor = (category: CategoryType) => {
-  switch (category) {
-    case 'must':
-      return '#ef4444'; // red-500
-    case 'nice':
-      return '#3b82f6'; // blue-500
-    case 'waste':
-      return '#f59e0b'; // amber-500
-    case 'total':
-      return '#8b5cf6'; // violet-500
-    default:
-      return '#6b7280'; // gray-500
+const SummaryCard = (props: SummaryCardProps) => {
+  const { isLoading, category, amount, count = 0, onClick, selected = false } = props;
+
+  if (isLoading) {
+    return (
+      <StyledCard category={category} selected={selected}>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+              <Skeleton variant="circular" width={24} height={24} sx={{ marginRight: '8px' }} />
+              <Skeleton width={40} />
+            </Typography>
+          </Box>
+
+          <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+            <Skeleton width={100} height={40} />
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            <Skeleton width={80} />
+          </Typography>
+        </CardContent>
+      </StyledCard>
+    );
   }
-};
 
-const getCategoryIcon = (category: CategoryType) => {
-  switch (category) {
-    case 'must':
-      return '🔴';
-    case 'nice':
-      return '🔵';
-    case 'waste':
-      return '🟠';
-    case 'total':
-      return '💰';
-    default:
-      return '📊';
-  }
-};
-
-const getCategoryTitle = (category: CategoryType) => {
-  switch (category) {
-    case 'must':
-      return 'Must';
-    case 'nice':
-      return 'Nice';
-    case 'waste':
-      return 'Waste';
-    case 'total':
-      return 'Total';
-    default:
-      return 'Expenses';
-  }
-};
-
-const StyledCard = styled(Card, {
-  shouldForwardProp: prop => prop !== 'category' && prop !== 'selected',
-})<{ category: CategoryType; selected: boolean }>(({ theme, category, selected }) => ({
-  borderLeft: `4px solid ${getCategoryColor(category)}`,
-  cursor: 'pointer',
-  transition: 'all 0.2s',
-  position: 'relative',
-  backgroundColor: selected ? `${getCategoryColor(category)}20` : theme.palette.background.paper,
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[4],
-    backgroundColor: `${getCategoryColor(category)}10`,
-  },
-  '&::after': selected
-    ? {
-        content: '""',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '2px',
-        backgroundColor: getCategoryColor(category),
-      }
-    : {},
-}));
-
-const SummaryCard = ({ category, amount, count = 0, onClick, selected = false }: SummaryCardProps) => {
   return (
     <StyledCard category={category} selected={selected} onClick={onClick}>
       <CardContent>

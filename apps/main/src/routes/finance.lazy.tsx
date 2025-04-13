@@ -193,6 +193,7 @@ const Content = () => {
               {categoryData.map(data => (
                 <Grid item xs={6} md={3} key={data.category}>
                   <SummaryCard
+                    isLoading={isLoading}
                     category={data.category}
                     amount={data.amount}
                     count={data.count}
