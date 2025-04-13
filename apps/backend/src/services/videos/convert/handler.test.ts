@@ -1,4 +1,4 @@
-import { existsSync, statSync } from 'fs';
+import { existsSync, readdirSync, statSync } from 'fs';
 import path from 'path';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { logger } from 'src/utils/logger';
@@ -74,12 +74,15 @@ describe('convertVideo', () => {
     vi.spyOn(logger, 'debug').mockImplementation(() => {});
     vi.spyOn(logger, 'info').mockImplementation(() => {});
     vi.spyOn(logger, 'error').mockImplementation(() => {});
+
+    vi.mocked(readdirSync).mockReturnValue(['file1.m3u8', 'file2.ts'] as any);
   });
 
   afterEach(() => {
     vi.resetAllMocks();
   });
 
+  // Move these assertions INSIDE the test case:
   it('should successfully convert a video', async () => {
     const playableUrl = await convertVideo(mockData);
 
@@ -93,6 +96,9 @@ describe('convertVideo', () => {
       mockPaths.inputPath
     );
     expect(fileHelpers.verifyFileSize).toHaveBeenCalledWith(mockPaths.inputPath, videoConfig.maxFileSize);
+
+    expect(readdirSync).toHaveBeenCalledWith(mockPaths.outputDir);
+    expect(logger.info).toHaveBeenCalledWith('HLS converted with 2 files');
 
     // Verify video conversion
     expect(ffmpegHelpers.getDuration).toHaveBeenCalledWith(mockPaths.inputPath);
@@ -207,5 +213,16 @@ describe('convertVideo', () => {
       cleanupError,
       expect.stringMatching(/Failed to clean up working directory/)
     );
+  });
+
+  // Fix the empty directory test case:
+  it('should log zero files if output directory is empty', async () => {
+    // Override the default mock for this test
+    vi.mocked(readdirSync).mockReturnValue([] as any);
+
+    await convertVideo(mockData);
+
+    expect(readdirSync).toHaveBeenCalledWith(mockPaths.outputDir);
+    expect(logger.info).toHaveBeenCalledWith('HLS converted with 0 files');
   });
 });

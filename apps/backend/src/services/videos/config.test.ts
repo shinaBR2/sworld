@@ -81,8 +81,6 @@ describe('videoConfig', () => {
       '4',
       '-hls_list_size',
       '0',
-      '-hls_segment_filename',
-      'segment_%03d.ts',
     ]);
   });
 });

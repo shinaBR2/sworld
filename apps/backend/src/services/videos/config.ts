@@ -36,8 +36,8 @@ const videoConfig = {
     '4', // Segment duration in seconds
     '-hls_list_size',
     '0', // Include all segments in the playlist
-    '-hls_segment_filename',
-    'segment_%03d.ts', // Segment filename pattern
+    // '-hls_segment_filename',
+    // 'segment_%03d.ts', // Segment filename pattern
   ],
 };
 

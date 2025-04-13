@@ -1,9 +1,9 @@
-import { describe, expect, it, vi, beforeEach, afterEach, type Mock } from 'vitest';
-import * as path from 'path';
 import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
-import { convertToHLS, getDuration, takeScreenshot } from '.';
 import { existsSync } from 'fs';
+import * as path from 'path';
 import { logger } from 'src/utils/logger';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { convertToHLS, getDuration, takeScreenshot } from '.';
 import { videoConfig } from '../../config';
 
 // Mock all external dependencies
