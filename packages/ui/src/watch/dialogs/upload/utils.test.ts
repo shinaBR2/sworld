@@ -8,6 +8,7 @@ describe('formalizeState', () => {
       title: '  Test Title  ',
       description: ' Test Description ',
       url: '  https://example.com/video  ',
+      subtitle: '  https://example.com/sub.vtt  ',
       playlistId: 'playlist-123',
       newPlaylistName: '  New Playlist  ',
       videoPositionInPlaylist: 5,
@@ -19,6 +20,7 @@ describe('formalizeState', () => {
       title: 'Test Title',
       description: 'Test Description',
       url: 'https://example.com/video',
+      subtitle: 'https://example.com/sub.vtt',
       playlistId: 'playlist-123',
       newPlaylistName: 'New Playlist',
       videoPositionInPlaylist: 5,
@@ -41,6 +43,7 @@ describe('formalizeState', () => {
       title: undefined,
       description: '',
       url: 'https://example.com/video',
+      subtitle: '',
       playlistId: undefined,
       newPlaylistName: undefined,
       videoPositionInPlaylist: 0,
@@ -61,6 +64,7 @@ describe('formalizeState', () => {
       title: 'Test Title',
       description: '',
       url: 'https://example.com/video',
+      subtitle: '',
       playlistId: CREATE_NEW_PLAYLIST,
       newPlaylistName: undefined,
       videoPositionInPlaylist: 10,
@@ -348,6 +352,102 @@ describe('buildVariables', () => {
               {
                 playlist_id: 'playlist-123',
                 position: 2,
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
+
+  // Add new tests for subtitle handling
+  it('should add subtitle data when subtitle URL is provided', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      subtitle: 'https://example.com/subtitle.vtt',
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          subtitles: {
+            data: [
+              {
+                url: 'https://example.com/subtitle.vtt',
+                lang: 'vi',
+                isDefault: true,
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
+
+  it('should not add subtitle data when subtitle URL is empty', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      subtitle: '',
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          // No subtitles property
+        },
+      ],
+    });
+  });
+
+  it('should handle both subtitle and playlist data together', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      subtitle: 'https://example.com/subtitle.vtt',
+      playlistId: 'playlist-123',
+      videoPositionInPlaylist: 2,
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          playlist_videos: {
+            data: [
+              {
+                playlist_id: 'playlist-123',
+                position: 2,
+              },
+            ],
+          },
+          subtitles: {
+            data: [
+              {
+                url: 'https://example.com/subtitle.vtt',
+                lang: 'vi',
+                isDefault: true,
               },
             ],
           },

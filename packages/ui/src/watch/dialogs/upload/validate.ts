@@ -3,7 +3,7 @@ import { DialogState } from './types';
 import { canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
 
 const validateForm = (state: DialogState) => {
-  const { title, url, playlistId, newPlaylistName } = formalizeState(state);
+  const { title, url, subtitle, playlistId, newPlaylistName } = formalizeState(state);
 
   if (!title.trim()) {
     return texts.errors.emptyTitle;
@@ -18,6 +18,14 @@ const validateForm = (state: DialogState) => {
 
   if (!isValid) {
     return texts.errors.invalidUrl;
+  }
+
+  // Validate subtitle URL if provided
+  if (subtitle?.trim()) {
+    const isValidSubtitle = subtitle.trim().toLowerCase().endsWith('.vtt');
+    if (!isValidSubtitle) {
+      return texts.errors.invalidSubtitleFormat;
+    }
   }
 
   return null;

@@ -10,7 +10,7 @@ const CREATE_NEW_PLAYLIST = '__create-new';
 const MATCH_URL_YOUTUBE =
   /(?:youtu\.be\/|youtube(?:-nocookie|education)?\.com\/(?:embed\/|v\/|watch\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))((\w|-){11})|youtube\.com\/playlist\?list=|youtube\.com\/user\//;
 const HLS_EXTENSIONS = /\.(m3u8)($|\?)/i;
-const VIDEO_EXTENSIONS = /\.(mp4|mov|m4v|ts|webm|mkv)($|\?)/i;  // Added more video formats
+const VIDEO_EXTENSIONS = /\.(mp4|mov|m4v|ts|webm|mkv)($|\?)/i; // Added more video formats
 
 const canPlay = (url: string) => {
   const isYouTube = MATCH_URL_YOUTUBE.test(url);
@@ -27,17 +27,18 @@ const canPlayUrls = (urls: string[]): ValidationResult[] => {
     .filter(Boolean)
     .map(url => ({
       url,
-      isValid: canPlay(url)
+      isValid: canPlay(url),
     }));
 };
 
 const formalizeState = (dialogState: DialogState) => {
-  const { title, description, url, playlistId, newPlaylistName, videoPositionInPlaylist } = dialogState;
+  const { title, description, url, subtitle, playlistId, newPlaylistName, videoPositionInPlaylist } = dialogState;
 
   return {
     title: title?.trim(),
     description: description?.trim() || '',
     url: url?.trim(),
+    subtitle: subtitle?.trim() || '',
     playlistId,
     newPlaylistName: newPlaylistName?.trim(),
     videoPositionInPlaylist,
@@ -49,6 +50,7 @@ const buildVariables = (dialogState: DialogState) => {
     title,
     description = '',
     url,
+    subtitle = '',
     playlistId,
     newPlaylistName,
     videoPositionInPlaylist = 0,
@@ -83,6 +85,18 @@ const buildVariables = (dialogState: DialogState) => {
 
     variables.objects[0].playlist_videos = {
       data: [playlistVideoData],
+    };
+  }
+
+  if (subtitle) {
+    variables.objects[0].subtitles = {
+      data: [
+        {
+          url: subtitle,
+          lang: 'vi',
+          isDefault: true,
+        },
+      ],
     };
   }
 

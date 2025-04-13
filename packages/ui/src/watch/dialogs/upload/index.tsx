@@ -17,6 +17,7 @@ interface VideoUploadDialogProps {
 const defaultState: DialogState = {
   title: '',
   url: '',
+  subtitle: '',
   description: '',
   isSubmitting: false,
   error: null,

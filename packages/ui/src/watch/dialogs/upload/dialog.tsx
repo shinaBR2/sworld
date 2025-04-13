@@ -88,6 +88,7 @@ const DialogComponent = (props: DialogComponentProps) => {
     isSubmitting,
     title,
     url,
+    subtitle,
     description,
     playlistId,
     newPlaylistName,
@@ -119,6 +120,10 @@ const DialogComponent = (props: DialogComponentProps) => {
   };
   const urlTextFieldProps = {
     ...fieldConfigs.url,
+    disabled: isSubmitting,
+  };
+  const subtitleTextFieldProps = {
+    ...fieldConfigs.subtitle,
     disabled: isSubmitting,
   };
   const descriptionTextFieldProps = {
@@ -160,6 +165,7 @@ const DialogComponent = (props: DialogComponentProps) => {
         <Box component="form" noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
           <TextField value={title} onChange={onFormFieldChange('title')} {...titleTextFieldProps} />
           <TextField value={url} onChange={onFormFieldChange('url')} {...urlTextFieldProps} />
+          <TextField value={subtitle} onChange={onFormFieldChange('subtitle')} {...subtitleTextFieldProps} />
           <TextField value={description} onChange={onFormFieldChange('description')} {...descriptionTextFieldProps} />
           <TextField select value={playlistId} onChange={onFormFieldChange('playlistId')} {...playlistTextFieldProps}>
             <MenuItem value="">
