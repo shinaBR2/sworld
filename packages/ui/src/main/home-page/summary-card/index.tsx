@@ -44,13 +44,13 @@ const getCategoryIcon = (category: CategoryType) => {
 const getCategoryTitle = (category: CategoryType) => {
   switch (category) {
     case 'must':
-      return 'Must-Have';
+      return 'Must';
     case 'nice':
-      return 'Nice-to-Have';
+      return 'Nice';
     case 'waste':
       return 'Waste';
     case 'total':
-      return 'Total Spending';
+      return 'Total';
     default:
       return 'Expenses';
   }

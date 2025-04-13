@@ -134,23 +134,25 @@ const RouteComponent = () => {
 
   return (
     <Layout>
-      <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight="bold">
-          Finance Dashboard
-        </Typography>
+      <Container maxWidth="xl">
+        <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" fontWeight="bold" py={2}>
+            Finance Dashboard
+          </Typography>
 
-        <MonthSelector
-          currentMonth={currentMonth.month}
-          displayMonth={`${currentMonth.displayMonth} ${currentMonth.month.split('-')[0]}`}
-          onPreviousMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-          disablePrevious={currentMonthIndex === 0}
-          disableNext={currentMonthIndex === monthlyData.length - 1}
-          variant="plain"
-        />
-      </Grid>
+          <MonthSelector
+            currentMonth={currentMonth.month}
+            displayMonth={`${currentMonth.displayMonth} ${currentMonth.month.split('-')[0]}`}
+            onPreviousMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            disablePrevious={currentMonthIndex === 0}
+            disableNext={currentMonthIndex === monthlyData.length - 1}
+            variant="plain"
+          />
+        </Grid>
+      </Container>
 
-      <Container maxWidth="xl" component="main">
+      <Container maxWidth="xl" component="main" sx={{ mb: 12 }}>
         <Grid container spacing={3}>
           {/* Summary Cards */}
           <Grid item xs={12}>
