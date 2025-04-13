@@ -11,22 +11,22 @@
     "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.78.2",
     "core": "workspace:*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@tanstack/router-plugin": "^1.78.2",
     "@types/node": "^18.11.9",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.8",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.2.0",
     "eslint-config-custom": "workspace:*",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
     "typescript": "^5.6.2",
-    "vite": "^3.1.0",
-    "vite-plugin-pwa": "^0.13.3"
+    "vite": "^6.0.0"
   }
 }
