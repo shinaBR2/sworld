@@ -1,4 +1,4 @@
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
@@ -12,5 +12,5 @@ export default defineConfig({
     port: 4000,
     host: '0.0.0.0',
   },
-  plugins: [viteCommonjs(), react()],
+  plugins: [TanStackRouterVite(), react()],
 });
