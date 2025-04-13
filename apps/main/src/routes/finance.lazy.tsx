@@ -7,7 +7,7 @@ import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
-import { TransactionList } from 'ui/main/home-page/transaction-list';
+import { TransactionsDialog } from 'ui/main/home-page/transactions-dialog';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -86,7 +86,7 @@ const { monthlyData, transactions } = generateMockData();
 const RouteComponent = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showTransactions, setShowTransactions] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Current month data
   const currentMonth = monthlyData[currentMonthIndex];
@@ -117,13 +117,17 @@ const RouteComponent = () => {
       setSelectedCategory(null);
     } else {
       setSelectedCategory(category);
-      setShowTransactions(true);
+      setIsDialogOpen(true);
     }
   };
 
   const handleSummaryCardClick = category => {
     handleCategoryClick(category);
-    setShowTransactions(true);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   const handleAddExpense = async expenseData => {
@@ -183,18 +187,18 @@ const RouteComponent = () => {
           <Grid item xs={12} md={6}>
             <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
           </Grid>
-
-          {/* Transaction List Section - Show when a category is selected */}
-          {showTransactions && (
-            <Grid item xs={12}>
-              <TransactionList transactions={transactions} selectedCategory={selectedCategory} />
-            </Grid>
-          )}
         </Grid>
       </Container>
 
       {/* Add Expense Button */}
       <AddExpenseButton onAddExpense={handleAddExpense} position="bottom-right" />
+
+      <TransactionsDialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        transactions={transactions}
+        selectedCategory={selectedCategory}
+      />
     </Layout>
   );
 };
