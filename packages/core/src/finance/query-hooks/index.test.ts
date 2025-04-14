@@ -104,6 +104,14 @@ describe('Finance Query Hooks', () => {
             },
           },
         },
+        oldest_aggregate: {
+          aggregate: {
+            min: {
+              month: 1,
+              year: 2023,
+            },
+          },
+        },
       },
       isLoading: false,
       error: null,
@@ -125,6 +133,10 @@ describe('Finance Query Hooks', () => {
           { category: 'waste' as CategoryType, amount: 0, count: 0 },
           { category: 'total' as CategoryType, amount: 54.75, count: 2 },
         ],
+        oldest: {
+          month: 1,
+          year: 2023,
+        },
       },
       isLoading: false,
       error: null,
