@@ -1,16 +1,18 @@
-import { Card, CardContent, Skeleton, Typography } from '@mui/material';
+import { CardContent, Skeleton, Typography } from '@mui/material';
 import { DonutChart } from './donut-chart';
 import { BreakdownCard } from './styled';
+import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
+import { CategoryType } from 'core/finance';
 
 interface SpendingBreakdownProps {
   isLoading: boolean;
-  categoryData: { category: string; amount: number; count: number }[];
-  handleCategoryClick: (category: string) => void;
-  selectedCategory: string | null;
+  categoryData?: NonNullable<ReturnType<typeof useLoadTransactionsByPeriod>['data']>['categories'];
+  handleCategoryClick: (category: CategoryType) => void;
+  selectedCategory?: CategoryType;
 }
 
 const SpendingBreakdown = (props: SpendingBreakdownProps) => {
-  const { isLoading, categoryData, handleCategoryClick, selectedCategory } = props;
+  const { isLoading, categoryData = [], handleCategoryClick, selectedCategory } = props;
 
   if (isLoading) {
     return (

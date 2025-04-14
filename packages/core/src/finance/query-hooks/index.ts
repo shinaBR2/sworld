@@ -1,6 +1,7 @@
 import { graphql } from '../../graphql';
 import { GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables } from '../../graphql/graphql';
 import { useRequest } from '../../universal/hooks/use-request';
+import { CategoryType } from '../types';
 
 const transactionsByPeriodQuery = graphql(/* GraphQL */ `
   query GetFinanceRecords($month: Int!, $year: Int!) {
@@ -54,39 +55,25 @@ interface LoadTransactionsByPeriodProps {
 }
 
 const transform = (data: GetFinanceRecordsQuery) => {
-  const { finance_transactions, must_aggregate, nice_aggregate, waste_aggregate } = data;
-  const mustAmount = must_aggregate.aggregate?.sum?.amount || 0;
-  const niceAmount = nice_aggregate.aggregate?.sum?.amount || 0;
-  const wasteAmount = waste_aggregate.aggregate?.sum?.amount || 0;
+  const { finance_transactions = [], must_aggregate, nice_aggregate, waste_aggregate } = data;
+  const mustAmount = (must_aggregate.aggregate?.sum?.amount || 0) as number;
+  const niceAmount = (nice_aggregate.aggregate?.sum?.amount || 0) as number;
+  const wasteAmount = (waste_aggregate.aggregate?.sum?.amount || 0) as number;
   const totalAmount = mustAmount + niceAmount + wasteAmount;
 
   const mustCount = must_aggregate.aggregate?.count || 0;
   const niceCount = nice_aggregate.aggregate?.count || 0;
   const wasteCount = waste_aggregate.aggregate?.count || 0;
   const totalCount = mustCount + niceCount + wasteCount;
-  const must = {
-    amount: mustAmount,
-    count: mustCount,
-  };
-  const nice = {
-    amount: niceAmount,
-    count: niceCount,
-  };
-  const waste = {
-    amount: wasteAmount,
-    count: wasteCount,
-  };
-  const total = {
-    amount: totalAmount,
-    count: totalCount,
-  };
 
   return {
     transactions: finance_transactions,
-    must,
-    nice,
-    waste,
-    total,
+    categories: [
+      { category: 'must' as CategoryType, amount: mustAmount, count: mustCount },
+      { category: 'nice' as CategoryType, amount: niceAmount, count: niceCount },
+      { category: 'waste' as CategoryType, amount: wasteAmount, count: wasteCount },
+      { category: 'total' as CategoryType, amount: totalAmount, count: totalCount },
+    ],
   };
 };
 

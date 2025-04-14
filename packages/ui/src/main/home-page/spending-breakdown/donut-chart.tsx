@@ -1,7 +1,7 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import { CategoryType } from '../types';
+import { CategoryType } from 'core/finance';
 
 export interface CategoryData {
   category: CategoryType;
@@ -13,7 +13,7 @@ export interface DonutChartProps {
   isLoading: boolean;
   data: CategoryData[];
   onCategoryClick?: (category: CategoryType) => void;
-  selectedCategory?: CategoryType | null;
+  selectedCategory?: CategoryType;
 }
 
 const getCategoryColor = (category: CategoryType) => {

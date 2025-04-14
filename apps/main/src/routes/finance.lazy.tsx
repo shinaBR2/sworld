@@ -3,7 +3,7 @@ import React, { lazy, useState } from 'react';
 import { Layout } from '../components/layout';
 import { Container, Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
-import { MonthComparison } from 'ui/main/home-page/month-comparison';
+// import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
 import { AddExpenseButton } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
@@ -11,6 +11,7 @@ import { TransactionsDialogProps } from 'ui/main/home-page/transactions-dialog';
 import { useAuthContext } from 'core/providers/auth';
 import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
 import { LoginDialogProps } from 'ui/universal/dialogs/login';
+import { CategoryType } from 'core/finance';
 
 const generateMockData = () => {
   // Generate mock monthly data for the last 6 months
@@ -105,7 +106,7 @@ const currentDate = new Date();
 
 const Content = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { getAccessToken } = useAuthContext();
@@ -122,13 +123,6 @@ const Content = () => {
   // Current month data
   const currentMonth = monthlyData[currentMonthIndex];
 
-  const categoryData = [
-    { category: 'must', amount: data?.must.amount, count: data?.must.count },
-    { category: 'nice', amount: data?.nice.amount, count: data?.nice.count },
-    { category: 'waste', amount: data?.waste.amount, count: data?.waste.count },
-    { category: 'total', amount: data?.total.amount, count: data?.total.count },
-  ];
-
   const handlePrevMonth = () => {
     if (currentMonthIndex > 0) {
       setCurrentMonthIndex(currentMonthIndex - 1);
@@ -141,16 +135,12 @@ const Content = () => {
     }
   };
 
-  const handleCategoryClick = category => {
-    if (category === selectedCategory) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(category);
-      setIsDialogOpen(true);
-    }
+  const handleCategoryClick = (category: CategoryType) => {
+    setSelectedCategory(category);
+    setIsDialogOpen(true);
   };
 
-  const handleSummaryCardClick = category => {
+  const handleSummaryCardClick = (category: CategoryType) => {
     handleCategoryClick(category);
     setIsDialogOpen(true);
   };
@@ -164,6 +154,8 @@ const Content = () => {
     // In a real app, you would call your mutation hook here
     return Promise.resolve();
   };
+
+  const enabledTransactionsDialog = !isLoading && data?.transactions && selectedCategory;
 
   return (
     <Layout>
@@ -190,14 +182,14 @@ const Content = () => {
           {/* Summary Cards */}
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {categoryData.map(data => (
+              {data?.categories.map(data => (
                 <Grid item xs={6} md={3} key={data.category}>
                   <SummaryCard
                     isLoading={isLoading}
                     category={data.category}
                     amount={data.amount}
                     count={data.count}
-                    onClick={() => handleSummaryCardClick(data.category === 'total' ? null : data.category)}
+                    onClick={() => handleSummaryCardClick(data.category)}
                     selected={data.category === selectedCategory}
                   />
                 </Grid>
@@ -209,22 +201,22 @@ const Content = () => {
           <Grid item xs={12} md={6}>
             <SpendingBreakdown
               isLoading={isLoading}
-              categoryData={categoryData}
+              categoryData={data?.categories}
               handleCategoryClick={handleCategoryClick}
               selectedCategory={selectedCategory}
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
 
       {/* Add Expense Button */}
       <AddExpenseButton onAddExpense={handleAddExpense} position="bottom-right" />
 
-      {!isLoading && data?.transactions && (
+      {enabledTransactionsDialog && (
         <TransactionsDialog
           open={isDialogOpen}
           onClose={handleCloseDialog}
