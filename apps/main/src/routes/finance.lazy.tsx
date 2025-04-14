@@ -5,7 +5,7 @@ import { Container, Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
 // import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
-import { AddExpenseButton } from 'ui/main/home-page/add-button';
+import { AddExpenseButtonProps } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
 import { TransactionsDialogProps } from 'ui/main/home-page/transactions-dialog';
 import { useAuthContext } from 'core/providers/auth';
@@ -25,6 +25,13 @@ const LoginDialog = lazy(() =>
   import('ui/universal/dialogs').then(module => {
     const Component = module.LoginDialog;
     return { default: (props: LoginDialogProps) => <Component {...props} /> };
+  })
+);
+
+const AddExpenseButton = lazy(() =>
+  import('ui/main/home-page/add-button').then(module => {
+    const Component = module.AddExpenseButton;
+    return { default: (props: AddExpenseButtonProps) => <Component {...props} /> };
   })
 );
 
