@@ -16,6 +16,17 @@ const rollbarConfig = {
   environment: import.meta.env.VITE_ROLLBAR_ENV!,
 };
 
+const mainDomain = import.meta.env.VITE_MAIN_SITE_URL;
+const appConfig = {
+  sites: {
+    main: import.meta.env.VITE_MAIN_SITE_URL,
+    listen: `https://listen.${mainDomain}`,
+    watch: `https://watch.${mainDomain}`,
+    play: `https://play.${mainDomain}`,
+    til: `https://til.${mainDomain}`,
+  },
+};
+
 const validateEnvVars = () => {
   const required = [
     'VITE_AUTH0_DOMAIN',
@@ -31,4 +42,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { auth0Config, queryConfig, rollbarConfig, validateEnvVars };
+export { appConfig, auth0Config, queryConfig, rollbarConfig, validateEnvVars };

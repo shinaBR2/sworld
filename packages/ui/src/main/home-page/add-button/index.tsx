@@ -42,7 +42,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
   const [formData, setFormData] = useState<ExpenseFormData>({
     name: '',
     note: '',
-    amount: '',
+    amount: 0,
     category: 'must',
   });
   const [errors, setErrors] = useState<{
@@ -61,7 +61,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     setOpen(false);
     // Reset form after animation completes
     setTimeout(() => {
-      setFormData({ name: '', note: '', amount: '', category: 'must' });
+      setFormData({ name: '', note: '', amount: 0, category: 'must' });
       setErrors({});
     }, 300);
   };
@@ -155,6 +155,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
           color="primary"
           aria-label="add expense"
           onClick={handleClickOpen}
+          // @ts-ignore
           sx={{
             ...getPositionStyle(),
             zIndex: theme.zIndex.speedDial,

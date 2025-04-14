@@ -3,17 +3,20 @@ import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Layout } from '../components/layout';
 import { LandingGrid } from 'ui/main/home-page/landing-grid';
 import { Container } from 'ui/universal/containers/generic';
+import { appConfig } from '../config';
 
 const landingItems = [
   {
     icon: '🎵',
     title: 'Listen',
-    to: '/listen',
+    to: appConfig.sites.listen,
+    isExternal: true,
   },
   {
     icon: '📺',
     title: 'Watch',
-    to: '/watch',
+    to: appConfig.sites.watch,
+    isExternal: true,
   },
   // {
   //   icon: '📖',
@@ -29,6 +32,7 @@ const landingItems = [
     icon: '💰',
     title: 'Finance',
     to: '/finance',
+    isExternal: false,
   },
 ];
 

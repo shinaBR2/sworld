@@ -1,4 +1,5 @@
-import { Card, Box, Typography } from '@mui/material';
+import { StyledComponent } from '@emotion/styled';
+import { Card, Box, Typography, BoxProps, TypographyProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -20,7 +21,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 })) as typeof Card;
 
-const IconContainer = styled(Box, {
+const IconContainer: StyledComponent<BoxProps & { customColor?: string }> = styled(Box, {
   shouldForwardProp: prop => prop !== 'customColor',
 })<{ customColor?: string }>(({ theme, customColor }) => {
   const iconColor = customColor || theme.palette.primary.main;
@@ -39,14 +40,14 @@ const IconContainer = styled(Box, {
       backgroundColor: `${iconColor}25`,
     },
   };
-}) as typeof Box;
+});
 
-const IconTypography = styled(Typography, {
+const IconTypography: StyledComponent<TypographyProps & { customColor?: string }> = styled(Typography, {
   shouldForwardProp: prop => prop !== 'customColor',
 })<{ customColor?: string }>(({ theme, customColor }) => ({
   fontSize: '2rem',
   color: customColor || theme.palette.primary.main,
-})) as typeof Typography;
+}));
 
 const TitleTypography = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',

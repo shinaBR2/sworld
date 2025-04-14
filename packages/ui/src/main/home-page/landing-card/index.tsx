@@ -13,11 +13,12 @@ interface LandingCardProps {
   title: string;
   LinkComponent?: React.ElementType;
   to?: string;
+  isExternal?: boolean;
   description?: string;
   color?: string;
 }
 
-const LandingCard = ({ icon, title, LinkComponent, to, description, color }: LandingCardProps) => {
+const LandingCard = ({ icon, title, LinkComponent, to, isExternal, description, color }: LandingCardProps) => {
   const CardContent = () => (
     <>
       <IconContainer customColor={color}>
@@ -29,6 +30,18 @@ const LandingCard = ({ icon, title, LinkComponent, to, description, color }: Lan
       {description && <DescriptionTypography variant="body2">{description}</DescriptionTypography>}
     </>
   );
+
+  if (isExternal) {
+    return (
+      <a href={to} style={{ textDecoration: 'none' }}>
+        <StyledCard>
+          <CardContentBox>
+            <CardContent />
+          </CardContentBox>
+        </StyledCard>
+      </a>
+    );
+  }
 
   // If LinkComponent is provided, wrap the content with it
   if (LinkComponent) {
