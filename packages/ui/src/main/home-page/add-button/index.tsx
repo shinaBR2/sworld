@@ -21,20 +21,15 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 import { CategoryType } from 'core/finance';
 
-export type ExpenseFormData = {
+type ExpenseFormData = {
   name: string;
-  note: string;
+  note?: string;
   amount: string;
   category: Exclude<CategoryType, 'total'>;
 };
 
-export interface AddExpenseButtonProps {
-  onAddExpense: (expense: {
-    name: string;
-    note?: string;
-    amount: number;
-    category: Exclude<CategoryType, 'total'>;
-  }) => Promise<void>;
+interface AddExpenseButtonProps {
+  onAddExpense: (expense: ExpenseFormData) => Promise<void>;
   position?: 'bottom-right' | 'bottom-center';
 }
 
@@ -256,4 +251,4 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
   );
 };
 
-export { AddExpenseButton };
+export { AddExpenseButton, type ExpenseFormData, type AddExpenseButtonProps };

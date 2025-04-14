@@ -5,7 +5,7 @@ import { Container, Grid, Typography } from 'ui/universal/containers/generic';
 import { SummaryCard } from 'ui/main/home-page/summary-card';
 // import { MonthComparison } from 'ui/main/home-page/month-comparison';
 import { SpendingBreakdown } from 'ui/main/home-page/spending-breakdown';
-import { AddExpenseButtonProps } from 'ui/main/home-page/add-button';
+import { AddExpenseButtonProps, ExpenseFormData } from 'ui/main/home-page/add-button';
 import { MonthSelector } from 'ui/main/home-page/month-selector';
 import { TransactionsDialogProps } from 'ui/main/home-page/transactions-dialog';
 import { useAuthContext } from 'core/providers/auth';
@@ -88,9 +88,11 @@ const Content = () => {
     setIsDialogOpen(false);
   };
 
-  const handleAddExpense = async expenseData => {
+  const handleAddExpense = async (expenseData: ExpenseFormData) => {
     console.log('Adding expense:', expenseData);
-    await addExpense(expenseData);
+    await addExpense({
+      object: expenseData,
+    });
   };
 
   const enabledTransactionsDialog = !isLoading && data?.transactions && selectedCategory;
