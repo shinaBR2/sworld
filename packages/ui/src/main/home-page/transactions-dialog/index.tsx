@@ -35,9 +35,9 @@ interface TransactionsDialogProps {
 const getCategoryLabel = (category: Category): string => {
   switch (category) {
     case 'must':
-      return 'Must-Have Expenses';
+      return 'Must Expenses';
     case 'nice':
-      return 'Nice-to-Have Expenses';
+      return 'Nice Expenses';
     case 'waste':
       return 'Waste Expenses';
     default:
