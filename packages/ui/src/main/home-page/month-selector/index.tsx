@@ -1,10 +1,7 @@
-// packages/ui/src/finance/month-selector/index.tsx
-import React from 'react';
-import { Box, IconButton, Typography, Card, useTheme } from '@mui/material';
+import { Box, IconButton, Typography, Card } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export interface MonthSelectorProps {
-  currentMonth: string; // Format: "YYYY-MM"
   displayMonth: string; // Format: "January 2024"
   onPreviousMonth: () => void;
   onNextMonth: () => void;
@@ -14,7 +11,6 @@ export interface MonthSelectorProps {
 }
 
 const MonthSelector = ({
-  currentMonth,
   displayMonth,
   onPreviousMonth,
   onNextMonth,
@@ -22,8 +18,6 @@ const MonthSelector = ({
   disablePrevious = false,
   variant = 'card',
 }: MonthSelectorProps) => {
-  const theme = useTheme();
-
   const content = (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <IconButton onClick={onPreviousMonth} disabled={disablePrevious} size="small" color="primary">

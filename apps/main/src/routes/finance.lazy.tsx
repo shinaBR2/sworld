@@ -13,80 +13,6 @@ import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
 import { LoginDialogProps } from 'ui/universal/dialogs/login';
 import { CategoryType } from 'core/finance';
 
-const generateMockData = () => {
-  // Generate mock monthly data for the last 6 months
-  const monthlyData = [];
-
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-
-  // Generate data for the last 6 months
-  for (let i = 5; i >= 0; i--) {
-    const monthIndex = (currentMonth - i + 12) % 12; // Ensure it's positive
-    const year = currentYear - (currentMonth - i < 0 ? 1 : 0);
-    const month = monthIndex + 1; // JavaScript months are 0-indexed
-
-    // Generate random amounts for each category
-    const mustAmount = Math.round(Math.random() * 8000 + 2000) / 100; // $20-$100
-    const niceAmount = Math.round(Math.random() * 5000 + 1000) / 100; // $10-$60
-    const wasteAmount = Math.round(Math.random() * 3000 + 500) / 100; // $5-$35
-
-    monthlyData.push({
-      month: `${year}-${month.toString().padStart(2, '0')}`,
-      displayMonth: monthNames[monthIndex],
-      total: mustAmount + niceAmount + wasteAmount,
-      categories: {
-        must: mustAmount,
-        nice: niceAmount,
-        waste: wasteAmount,
-      },
-    });
-  }
-
-  // Generate mock transactions for the current month
-  const transactions = [];
-  const categories = ['must', 'nice', 'waste'];
-  const expenseNames = [
-    'Groceries',
-    'Rent',
-    'Utilities',
-    'Internet',
-    'Dining out',
-    'Movies',
-    'Coffee',
-    'Books',
-    'Clothing',
-    'Subscription',
-    'Electronics',
-    'Gift',
-  ];
-
-  // Generate 15 transactions
-  for (let i = 0; i < 15; i++) {
-    const category = categories[Math.floor(Math.random() * categories.length)];
-    const name = expenseNames[Math.floor(Math.random() * expenseNames.length)];
-    const amount = Math.round(Math.random() * 10000 + 500) / 100; // $5-$105
-
-    // Generate a random date within the current month
-    const day = Math.floor(Math.random() * 28) + 1;
-    const date = new Date(currentYear, currentMonth, day);
-
-    transactions.push({
-      id: `tx-${i}`,
-      name,
-      amount,
-      category,
-      date: date.toISOString(),
-    });
-  }
-
-  return { monthlyData, transactions };
-};
-
-const { monthlyData, transactions } = generateMockData();
-
 const TransactionsDialog = lazy(() =>
   import('ui/main/home-page/transactions-dialog').then(module => {
     const Component = module.TransactionsDialog;
@@ -102,37 +28,48 @@ const LoginDialog = lazy(() =>
   })
 );
 
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const currentDate = new Date();
+const initialMonth = currentDate.getMonth();
+const initialYear = currentDate.getFullYear();
 
 const Content = () => {
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
+  const [currentMonth, setCurrentMonth] = useState(initialMonth);
+  const [currentYear, setCurrentYear] = useState(initialYear);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { getAccessToken } = useAuthContext();
 
+  console.log('currentMonth', currentMonth);
+  console.log('currentYear', currentYear);
+  console.log('selectedCategory', selectedCategory);
+  console.log('isDialogOpen', isDialogOpen);
+
   const { data, isLoading } = useLoadTransactionsByPeriod({
-    month: currentDate.getMonth(),
-    year: currentDate.getFullYear(),
+    month: currentMonth,
+    year: currentYear,
     getAccessToken: getAccessToken,
   });
 
   console.log('data', data);
   console.log('isLoading', isLoading);
 
-  // Current month data
-  const currentMonth = monthlyData[currentMonthIndex];
+  const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
 
   const handlePrevMonth = () => {
-    if (currentMonthIndex > 0) {
-      setCurrentMonthIndex(currentMonthIndex - 1);
-    }
+    setCurrentMonth(currentMonth - 1);
   };
 
   const handleNextMonth = () => {
-    if (currentMonthIndex < monthlyData.length - 1) {
-      setCurrentMonthIndex(currentMonthIndex + 1);
+    if (isMaxMonth) {
+      return;
     }
+    // TODO handle next month navigation
+    // Edge case: if current month is December, set to January of the next year
+    // if (currentMonthIndex < monthlyData.length - 1) {
+    setCurrentMonth(currentMonth + 1);
+    // }
   };
 
   const handleCategoryClick = (category: CategoryType) => {
@@ -166,12 +103,11 @@ const Content = () => {
           </Typography>
 
           <MonthSelector
-            currentMonth={currentMonth.month}
-            displayMonth={`${currentMonth.displayMonth} ${currentMonth.month.split('-')[0]}`}
+            displayMonth={`${monthNames[currentMonth]} ${currentYear}`}
             onPreviousMonth={handlePrevMonth}
             onNextMonth={handleNextMonth}
-            disablePrevious={currentMonthIndex === 0}
-            disableNext={currentMonthIndex === monthlyData.length - 1}
+            disablePrevious={false} // TODO
+            disableNext={isMaxMonth}
             variant="plain"
           />
         </Grid>
