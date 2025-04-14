@@ -99,7 +99,6 @@ const Content = () => {
   };
 
   const handleAddExpense = async (expenseData: ExpenseFormData) => {
-    console.log('Adding expense:', expenseData);
     await addExpense({
       object: {
         ...expenseData,
