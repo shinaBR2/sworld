@@ -19,8 +19,10 @@ interface Transaction {
   id: string;
   name: string;
   amount: number;
-  category: Exclude<Category, 'total' | null>;
-  date: string;
+  month: number;
+  year: number;
+  category: string;
+  createdAt: string;
 }
 
 interface TransactionsDialogProps {
@@ -110,7 +112,7 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                 <Box>
                   <Typography variant="subtitle1">{transaction.name}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {new Date(transaction.date).toLocaleDateString()}
+                    {new Date(transaction.createdAt).toLocaleDateString()}
                   </Typography>
                 </Box>
                 <Box

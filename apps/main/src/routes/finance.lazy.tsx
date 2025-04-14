@@ -101,6 +101,8 @@ const LoginDialog = lazy(() =>
   })
 );
 
+const currentDate = new Date();
+
 const Content = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(5); // Current month in the data array
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -108,7 +110,6 @@ const Content = () => {
 
   const { getAccessToken } = useAuthContext();
 
-  const currentDate = new Date();
   const { data, isLoading } = useLoadTransactionsByPeriod({
     month: currentDate.getMonth(),
     year: currentDate.getFullYear(),
@@ -223,12 +224,14 @@ const Content = () => {
       {/* Add Expense Button */}
       <AddExpenseButton onAddExpense={handleAddExpense} position="bottom-right" />
 
-      <TransactionsDialog
-        open={isDialogOpen}
-        onClose={handleCloseDialog}
-        transactions={transactions}
-        selectedCategory={selectedCategory}
-      />
+      {!isLoading && data?.transactions && (
+        <TransactionsDialog
+          open={isDialogOpen}
+          onClose={handleCloseDialog}
+          transactions={data.transactions}
+          selectedCategory={selectedCategory}
+        />
+      )}
     </Layout>
   );
 };
