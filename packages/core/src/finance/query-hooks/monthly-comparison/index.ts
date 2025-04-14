@@ -35,7 +35,7 @@ const useLoadMonthlyComparison = (props: LoadMonthlyComparisonProps) => {
   });
 
   return {
-    videos: data?.monthly_totals || [],
+    data: data?.monthly_totals || [],
     isLoading,
     error,
   };

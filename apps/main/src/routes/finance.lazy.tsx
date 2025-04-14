@@ -67,8 +67,6 @@ const Content = () => {
   const minMonth = data?.oldest.month || 0;
   const minYear = data?.oldest.year || 0;
 
-  console.log(`min month`, minMonth, minYear);
-  console.log(`current`, currentMonth, currentYear);
   const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
   const isMinMonth = currentMonth === minMonth && currentYear === minYear;
 
@@ -126,8 +124,8 @@ const Content = () => {
     await addExpense({
       object: {
         ...expenseData,
-        month: initialMonth,
-        year: initialYear,
+        month: currentMonth,
+        year: currentYear,
       },
     });
   };
@@ -155,7 +153,7 @@ const Content = () => {
             displayMonth={`${monthNames[currentMonth]} ${currentYear}`}
             onPreviousMonth={handlePrevMonth}
             onNextMonth={handleNextMonth}
-            disablePrevious={false} // TODO
+            disablePrevious={isMinMonth}
             disableNext={isMaxMonth}
             variant="plain"
           />
@@ -170,7 +168,7 @@ const Content = () => {
               {categories?.map(data => (
                 <Grid item xs={6} md={3} key={data.category}>
                   <SummaryCard
-                    isLoading={isLoading} // TODO: handle loading state
+                    isLoading={isLoading}
                     category={data.category}
                     amount={data.amount}
                     count={data.count}

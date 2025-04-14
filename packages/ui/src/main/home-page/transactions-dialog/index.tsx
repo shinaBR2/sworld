@@ -11,9 +11,7 @@ import {
   Toolbar,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-
-// You may need to adjust these types based on your actual data structure
-type Category = 'must' | 'nice' | 'waste' | 'total' | null;
+import { CategoryType } from 'core/finance';
 
 interface Transaction {
   id: string;
@@ -29,10 +27,10 @@ interface TransactionsDialogProps {
   open: boolean;
   onClose: () => void;
   transactions: Transaction[];
-  selectedCategory: Category;
+  selectedCategory: CategoryType;
 }
 
-const getCategoryLabel = (category: Category): string => {
+const getCategoryLabel = (category: CategoryType): string => {
   switch (category) {
     case 'must':
       return 'Must Expenses';
@@ -45,7 +43,7 @@ const getCategoryLabel = (category: Category): string => {
   }
 };
 
-const getCategoryColor = (category: Exclude<Category, null | 'total'>): string => {
+const getCategoryColor = (category: CategoryType): string => {
   switch (category) {
     case 'must':
       return '#ef444420';
@@ -129,7 +127,7 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                       px: 1.5,
                       py: 0.5,
                       borderRadius: 1,
-                      backgroundColor: getCategoryColor(transaction.category),
+                      backgroundColor: getCategoryColor(transaction.category as CategoryType),
                     }}
                   >
                     <Typography variant="body2" fontSize="0.75rem">

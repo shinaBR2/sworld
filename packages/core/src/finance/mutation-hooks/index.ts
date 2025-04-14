@@ -63,7 +63,7 @@ const useInsertFinanceTransaction = (props: MutationProps) => {
     options: {
       onSuccess,
       onError: error => {
-        console.error('Bulk convert videos failed:', error);
+        console.error('Insert finance transaction failed:', error);
         onError?.(error);
       },
     },
@@ -84,7 +84,7 @@ const useUpdateFinanceTransaction = (props: MutationProps) => {
     options: {
       onSuccess,
       onError: error => {
-        console.error('Bulk convert videos failed:', error);
+        console.error('Update finance transaction failed:', error);
         onError?.(error);
       },
     },
@@ -104,7 +104,7 @@ const useDeleteFinanceTransaction = (props: MutationProps) => {
     options: {
       onSuccess,
       onError: error => {
-        console.error('Bulk convert videos failed:', error);
+        console.error('Delete finance transaction failed:', error);
         onError?.(error);
       },
     },

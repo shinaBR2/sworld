@@ -7,19 +7,15 @@ import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { ErrorFallback } from 'ui/universal/error-boundary';
 import { auth0Config, queryConfig, rollbarConfig, validateEnvVars } from './config';
 import { ErrorBoundary } from 'core/universal/error-boundary';
-import { AuthProvider, useAuthContext } from 'core/providers/auth';
+import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
 
 validateEnvVars();
 
-// @ts-ignore
 const router = createRouter({
   routeTree,
   defaultViewTransition: true,
   defaultPreload: 'intent',
-  context: {
-    auth: undefined!,
-  },
 });
 
 // Register the router instance for type safety

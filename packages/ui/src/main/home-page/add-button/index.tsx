@@ -24,7 +24,7 @@ import { CategoryType } from 'core/finance';
 type ExpenseFormData = {
   name: string;
   note?: string;
-  amount: string;
+  amount: number;
   category: Exclude<CategoryType, 'total'>;
 };
 
@@ -93,7 +93,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     if (!formData.amount) {
       newErrors.amount = 'Amount is required';
     } else {
-      const amountValue = parseFloat(formData.amount);
+      const amountValue = formData.amount;
       if (isNaN(amountValue)) {
         newErrors.amount = 'Amount must be a valid number';
       } else if (amountValue <= 0) {
@@ -116,8 +116,8 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     try {
       await onAddExpense({
         name: formData.name.trim(),
-        note: formData.note.trim(),
-        amount: parseFloat(formData.amount),
+        note: formData.note?.trim() || '',
+        amount: formData.amount,
         category: formData.category,
       });
       handleClose();
@@ -147,8 +147,6 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
         };
     }
   };
-
-  // console.log('formData', formData);
 
   return (
     <>
@@ -201,7 +199,6 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
               error={!!errors.note}
               helperText={errors.note}
               disabled={loading}
-              autoFocus
             />
 
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>

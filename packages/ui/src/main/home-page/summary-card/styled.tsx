@@ -44,20 +44,20 @@ const StyledCard: StyledComponent<CardProps & { category: CategoryType; selected
     : {},
 }));
 
-const StyledCategoryWrapper = styled(Box)({
+const StyledCategoryWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  mb: 1,
-}) as typeof Box;
+  mb: theme.spacing(1),
+})) as typeof Box;
 
 const StyledCategoryName = styled(Typography)({
   display: 'flex',
   alignItems: 'center',
 }) as typeof Typography;
 
-const StyledAmount = styled(Typography)({
+const StyledAmount = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
-  mb: 0.5,
-}) as typeof Typography;
+  mb: theme.spacing(0.5),
+})) as typeof Typography;
 
 export { StyledCard, StyledCategoryWrapper, StyledCategoryName, StyledAmount };
