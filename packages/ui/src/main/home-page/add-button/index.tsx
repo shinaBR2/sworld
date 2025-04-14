@@ -138,7 +138,6 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
           left: '50%',
           transform: 'translateX(-50%)',
         };
-      case 'bottom-right':
       default:
         return {
           position: 'fixed',
