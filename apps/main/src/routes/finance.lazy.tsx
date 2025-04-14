@@ -13,6 +13,7 @@ import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
 import { useInsertFinanceTransaction } from 'core/finance/mutation-hooks';
 import { LoginDialogProps } from 'ui/universal/dialogs/login';
 import { CategoryType } from 'core/finance';
+import { useQueryContext } from 'core/providers/query';
 
 const TransactionsDialog = lazy(() =>
   import('ui/main/home-page/transactions-dialog').then(module => {
@@ -43,6 +44,7 @@ const initialYear = currentDate.getFullYear();
 
 const Content = () => {
   const { getAccessToken } = useAuthContext();
+  const { queryClient } = useQueryContext();
   const [currentMonth, setCurrentMonth] = useState(initialMonth);
   const [currentYear, setCurrentYear] = useState(initialYear);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>();
@@ -55,6 +57,13 @@ const Content = () => {
   });
   const addExpense = useInsertFinanceTransaction({
     getAccessToken,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['finance-transactions', currentMonth, currentYear],
+        refetchType: 'all',
+      });
+      setIsDialogOpen(false);
+    },
   });
 
   const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
@@ -128,7 +137,7 @@ const Content = () => {
               {data?.categories.map(data => (
                 <Grid item xs={6} md={3} key={data.category}>
                   <SummaryCard
-                    isLoading={isLoading}
+                    isLoading={isLoading} // TODO: handle loading state
                     category={data.category}
                     amount={data.amount}
                     count={data.count}

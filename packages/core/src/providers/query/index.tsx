@@ -9,6 +9,7 @@ interface QueryContextValue {
   hasuraUrl: string;
   featureFlags: ReturnType<typeof useFeatureFlagSubscription>;
   notifications: ReturnType<typeof useNotificationsSubscription>;
+  queryClient: QueryClient;
 }
 
 interface Config {
@@ -31,6 +32,7 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     hasuraUrl,
     featureFlags,
     notifications,
+    queryClient,
   };
 
   return <QueryContext.Provider value={contextValue}>{children}</QueryContext.Provider>;
