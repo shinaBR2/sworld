@@ -14,6 +14,7 @@ import { useInsertFinanceTransaction } from 'core/finance/mutation-hooks';
 import { LoginDialogProps } from 'ui/universal/dialogs/login';
 import { CategoryType } from 'core/finance';
 import { useQueryContext } from 'core/providers/query';
+import { LoadingBackdrop } from 'ui/universal';
 
 const TransactionsDialog = lazy(() =>
   import('ui/main/home-page/transactions-dialog').then(module => {
@@ -184,7 +185,7 @@ const RouteComponent = () => {
   const { isSignedIn, isLoading, signIn } = useAuthContext();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingBackdrop message="Valuable things deserve waiting" />;
   }
   if (!isSignedIn) {
     return <LoginDialog onAction={signIn} />;
