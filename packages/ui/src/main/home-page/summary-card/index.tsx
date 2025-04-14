@@ -6,7 +6,7 @@ import { SummaryCardSkeleton } from './skeleton';
 
 export interface SummaryCardProps {
   isLoading: boolean;
-  category: string;
+  category: CategoryType;
   amount: number;
   count?: number;
   onClick?: () => void;
