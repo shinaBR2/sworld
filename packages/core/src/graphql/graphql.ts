@@ -8199,7 +8199,7 @@ export type GetFinanceRecordsQueryVariables = Exact<{
 }>;
 
 
-export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any, updatedAt: any }>, must_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null } };
+export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, month: number, year: number, category: string, createdAt: any, updatedAt: any }>, must_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, oldest_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', min?: { __typename?: 'finance_transactions_min_fields', year?: number | null, month?: number | null } | null } | null } };
 
 export type GetMonthlyComparisonQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -8540,6 +8540,14 @@ export const GetFinanceRecordsDocument = new TypedDocumentString(`
       count
       sum {
         amount
+      }
+    }
+  }
+  oldest_aggregate: finance_transactions_aggregate {
+    aggregate {
+      min {
+        year
+        month
       }
     }
   }

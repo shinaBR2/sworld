@@ -45,6 +45,14 @@ const transactionsByPeriodQuery = graphql(/* GraphQL */ `
         }
       }
     }
+    oldest_aggregate: finance_transactions_aggregate {
+      aggregate {
+        min {
+          year
+          month
+        }
+      }
+    }
   }
 `);
 
@@ -55,7 +63,7 @@ interface LoadTransactionsByPeriodProps {
 }
 
 const transform = (data: GetFinanceRecordsQuery) => {
-  const { finance_transactions = [], must_aggregate, nice_aggregate, waste_aggregate } = data;
+  const { finance_transactions = [], must_aggregate, nice_aggregate, waste_aggregate, oldest_aggregate } = data;
   const mustAmount = (must_aggregate.aggregate?.sum?.amount || 0) as number;
   const niceAmount = (nice_aggregate.aggregate?.sum?.amount || 0) as number;
   const wasteAmount = (waste_aggregate.aggregate?.sum?.amount || 0) as number;
@@ -74,6 +82,10 @@ const transform = (data: GetFinanceRecordsQuery) => {
       { category: 'waste' as CategoryType, amount: wasteAmount, count: wasteCount },
       { category: 'total' as CategoryType, amount: totalAmount, count: totalCount },
     ],
+    oldest: {
+      month: oldest_aggregate.aggregate?.min?.month || 0,
+      year: oldest_aggregate.aggregate?.min?.year || 0,
+    },
   };
 };
 

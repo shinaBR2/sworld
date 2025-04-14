@@ -64,21 +64,48 @@ const Content = () => {
     },
   });
 
+  const minMonth = data?.oldest.month || 0;
+  const minYear = data?.oldest.year || 0;
+
+  console.log(`min month`, minMonth, minYear);
+  console.log(`current`, currentMonth, currentYear);
   const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
+  const isMinMonth = currentMonth === minMonth && currentYear === minYear;
 
   const handlePrevMonth = () => {
-    setCurrentMonth(currentMonth - 1);
+    if (isLoading) {
+      return;
+    }
+
+    if (isMinMonth) {
+      return;
+    }
+
+    if (currentMonth === 0) {
+      // If January, go to December of previous year
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
   };
 
   const handleNextMonth = () => {
+    if (isLoading) {
+      return;
+    }
+
     if (isMaxMonth) {
       return;
     }
-    // TODO handle next month navigation
-    // Edge case: if current month is December, set to January of the next year
-    // if (currentMonthIndex < monthlyData.length - 1) {
-    setCurrentMonth(currentMonth + 1);
-    // }
+
+    if (currentMonth === 11) {
+      // If December, go to January of next year
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
   };
 
   const handleCategoryClick = (category: CategoryType) => {
