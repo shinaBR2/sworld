@@ -20,10 +20,11 @@ import {
   useTheme,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import { CategoryType } from '../summary-card';
+import { CategoryType } from 'core/finance';
 
 export type ExpenseFormData = {
   name: string;
+  note: string;
   amount: string;
   category: Exclude<CategoryType, 'total'>;
 };
@@ -41,11 +42,13 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ExpenseFormData>({
     name: '',
+    note: '',
     amount: '',
     category: 'must',
   });
   const [errors, setErrors] = useState<{
     name?: string;
+    note?: string;
     amount?: string;
     category?: string;
   }>({});
@@ -59,7 +62,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     setOpen(false);
     // Reset form after animation completes
     setTimeout(() => {
-      setFormData({ name: '', amount: '', category: 'must' });
+      setFormData({ name: '', note: '', amount: '', category: 'must' });
       setErrors({});
     }, 300);
   };
@@ -187,37 +190,50 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
               disabled={loading}
               autoFocus
             />
-
             <TextField
-              name="amount"
-              label="Amount"
+              name="note"
+              label="Note"
               fullWidth
-              type="number"
-              InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>,
-              }}
-              value={formData.amount}
+              value={formData.note}
               onChange={handleChange}
-              error={!!errors.amount}
-              helperText={errors.amount}
+              error={!!errors.note}
+              helperText={errors.note}
               disabled={loading}
+              autoFocus
             />
 
-            <FormControl fullWidth error={!!errors.category} disabled={loading}>
-              <InputLabel id="category-label">Category</InputLabel>
-              <Select
-                labelId="category-label"
-                name="category"
-                value={formData.category}
-                label="Category"
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+              <TextField
+                name="amount"
+                label="Amount"
+                sx={{ width: '50%' }}
+                type="number"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                }}
+                value={formData.amount}
                 onChange={handleChange}
-              >
-                <MenuItem value="must">Must</MenuItem>
-                <MenuItem value="nice">Nice</MenuItem>
-                <MenuItem value="waste">Waste</MenuItem>
-              </Select>
-              {errors.category && <FormHelperText>{errors.category}</FormHelperText>}
-            </FormControl>
+                error={!!errors.amount}
+                helperText={errors.amount}
+                disabled={loading}
+              />
+
+              <FormControl sx={{ width: '50%' }} error={!!errors.category} disabled={loading}>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  name="category"
+                  value={formData.category}
+                  label="Category"
+                  onChange={handleChange}
+                >
+                  <MenuItem value="must">Must</MenuItem>
+                  <MenuItem value="nice">Nice</MenuItem>
+                  <MenuItem value="waste">Waste</MenuItem>
+                </Select>
+                {errors.category && <FormHelperText>{errors.category}</FormHelperText>}
+              </FormControl>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
