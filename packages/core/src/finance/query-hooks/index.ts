@@ -64,14 +64,14 @@ interface LoadTransactionsByPeriodProps {
 
 const transform = (data: GetFinanceRecordsQuery) => {
   const { finance_transactions = [], must_aggregate, nice_aggregate, waste_aggregate, oldest_aggregate } = data;
-  const mustAmount = (must_aggregate.aggregate?.sum?.amount || 0) as number;
-  const niceAmount = (nice_aggregate.aggregate?.sum?.amount || 0) as number;
-  const wasteAmount = (waste_aggregate.aggregate?.sum?.amount || 0) as number;
+  const mustAmount = (must_aggregate.aggregate?.sum?.amount ?? 0) as number;
+  const niceAmount = (nice_aggregate.aggregate?.sum?.amount ?? 0) as number;
+  const wasteAmount = (waste_aggregate.aggregate?.sum?.amount ?? 0) as number;
   const totalAmount = mustAmount + niceAmount + wasteAmount;
 
-  const mustCount = must_aggregate.aggregate?.count || 0;
-  const niceCount = nice_aggregate.aggregate?.count || 0;
-  const wasteCount = waste_aggregate.aggregate?.count || 0;
+  const mustCount = must_aggregate.aggregate?.count ?? 0;
+  const niceCount = nice_aggregate.aggregate?.count ?? 0;
+  const wasteCount = waste_aggregate.aggregate?.count ?? 0;
   const totalCount = mustCount + niceCount + wasteCount;
 
   return {

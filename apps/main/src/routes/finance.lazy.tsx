@@ -43,6 +43,13 @@ const currentDate = new Date();
 const initialMonth = currentDate.getMonth();
 const initialYear = currentDate.getFullYear();
 
+const getDefaultCategories = (): Array<{ category: CategoryType; amount: number; count: number }> => [
+  { category: 'must' as CategoryType, amount: 0, count: 0 },
+  { category: 'nice' as CategoryType, amount: 0, count: 0 },
+  { category: 'waste' as CategoryType, amount: 0, count: 0 },
+  { category: 'total' as CategoryType, amount: 0, count: 0 },
+];
+
 const Content = () => {
   const { getAccessToken } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
@@ -113,7 +120,6 @@ const Content = () => {
 
   const handleSummaryCardClick = (category: CategoryType) => {
     handleCategoryClick(category);
-    setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
@@ -132,14 +138,7 @@ const Content = () => {
 
   const enabledTransactionsDialog = !isLoading && data?.transactions && selectedCategory;
   // This is a temporary solution for the loading state
-  const categories = isLoading
-    ? [
-        { category: 'must' as CategoryType, amount: 0, count: 0 },
-        { category: 'nice' as CategoryType, amount: 0, count: 0 },
-        { category: 'waste' as CategoryType, amount: 0, count: 0 },
-        { category: 'total' as CategoryType, amount: 0, count: 0 },
-      ]
-    : data?.categories;
+  const categories = isLoading ? getDefaultCategories() : data?.categories;
 
   return (
     <Layout>
