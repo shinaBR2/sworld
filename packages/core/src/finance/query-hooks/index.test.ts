@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
+import { CategoryType } from '../types';
 import { useLoadTransactionsByPeriod } from './index';
 
 // Mock the useRequest hook
@@ -45,13 +46,13 @@ describe('Finance Query Hooks', () => {
 
     // Verify the returned result
     expect(result).toEqual({
-      videos: [],
+      data: null,
       isLoading: true,
       error: null,
     });
   });
 
-  it('should return transactions data when available', () => {
+  it('should transform data correctly when available', () => {
     const mockTransactions = [
       {
         id: '1',
@@ -79,6 +80,30 @@ describe('Finance Query Hooks', () => {
     vi.mocked(useRequest).mockReturnValue({
       data: {
         finance_transactions: mockTransactions,
+        must_aggregate: {
+          aggregate: {
+            count: 1,
+            sum: {
+              amount: 50.25,
+            },
+          },
+        },
+        nice_aggregate: {
+          aggregate: {
+            count: 1,
+            sum: {
+              amount: 4.5,
+            },
+          },
+        },
+        waste_aggregate: {
+          aggregate: {
+            count: 0,
+            sum: {
+              amount: 0,
+            },
+          },
+        },
       },
       isLoading: false,
       error: null,
@@ -90,9 +115,17 @@ describe('Finance Query Hooks', () => {
       year: mockYear,
     });
 
-    // Verify the returned result contains the transactions
+    // Verify the returned result contains the transformed data
     expect(result).toEqual({
-      videos: mockTransactions,
+      data: {
+        transactions: mockTransactions,
+        categories: [
+          { category: 'must' as CategoryType, amount: 50.25, count: 1 },
+          { category: 'nice' as CategoryType, amount: 4.5, count: 1 },
+          { category: 'waste' as CategoryType, amount: 0, count: 0 },
+          { category: 'total' as CategoryType, amount: 54.75, count: 2 },
+        ],
+      },
       isLoading: false,
       error: null,
     });
@@ -116,7 +149,7 @@ describe('Finance Query Hooks', () => {
 
     // Verify the returned result contains the error
     expect(result).toEqual({
-      videos: [],
+      data: null,
       isLoading: false,
       error: mockError,
     });
