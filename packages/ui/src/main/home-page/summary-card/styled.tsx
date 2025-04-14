@@ -1,7 +1,7 @@
 import { StyledComponent } from '@emotion/styled';
 import { Box, Card, CardProps, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CategoryType } from '../types';
+import { CategoryType } from 'core/finance';
 
 const getCategoryColor = (category: CategoryType) => {
   switch (category) {

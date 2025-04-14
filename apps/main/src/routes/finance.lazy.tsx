@@ -109,6 +109,15 @@ const Content = () => {
   };
 
   const enabledTransactionsDialog = !isLoading && data?.transactions && selectedCategory;
+  // This is a temporary solution for the loading state
+  const categories = isLoading
+    ? [
+        { category: 'must' as CategoryType, amount: 0, count: 0 },
+        { category: 'nice' as CategoryType, amount: 0, count: 0 },
+        { category: 'waste' as CategoryType, amount: 0, count: 0 },
+        { category: 'total' as CategoryType, amount: 0, count: 0 },
+      ]
+    : data?.categories;
 
   return (
     <Layout>
@@ -134,7 +143,7 @@ const Content = () => {
           {/* Summary Cards */}
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {data?.categories.map(data => (
+              {categories?.map(data => (
                 <Grid item xs={6} md={3} key={data.category}>
                   <SummaryCard
                     isLoading={isLoading} // TODO: handle loading state
