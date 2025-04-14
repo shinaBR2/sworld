@@ -33,7 +33,7 @@ const LandingCard = ({ icon, title, LinkComponent, to, isExternal, description, 
 
   if (isExternal) {
     return (
-      <a href={to} style={{ textDecoration: 'none' }}>
+      <a href={to} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
         <StyledCard>
           <CardContentBox>
             <CardContent />

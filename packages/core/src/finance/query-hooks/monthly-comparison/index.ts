@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { GetMonthlyComparisonQuery, GetMonthlyComparisonQueryVariables } from '../../../graphql/graphql';
+import { GetMonthlyComparisonQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 
 const monthlyComparisonQuery = graphql(/* GraphQL */ `
@@ -21,15 +21,13 @@ const monthlyComparisonQuery = graphql(/* GraphQL */ `
 
 interface LoadMonthlyComparisonProps {
   getAccessToken: () => Promise<string>;
-  month: number;
-  year: number;
 }
 
 const useLoadMonthlyComparison = (props: LoadMonthlyComparisonProps) => {
-  const { getAccessToken, month, year } = props;
+  const { getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<GetMonthlyComparisonQuery, GetMonthlyComparisonQueryVariables>({
-    queryKey: ['finance-transactions', month, year],
+  const { data, isLoading, error } = useRequest<GetMonthlyComparisonQuery>({
+    queryKey: ['monthly_totals'],
     getAccessToken,
     document: monthlyComparisonQuery,
   });
