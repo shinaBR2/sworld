@@ -2,6 +2,7 @@ import React from 'react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Layout } from '../components/layout';
 import { LandingGrid } from 'ui/main/home-page/landing-grid';
+import { Container } from 'ui/universal/containers/generic';
 
 const landingItems = [
   {
@@ -34,7 +35,9 @@ const landingItems = [
 const Content = () => {
   return (
     <Layout>
-      <LandingGrid items={landingItems} LinkComponent={Link} />
+      <Container maxWidth="xl">
+        <LandingGrid items={landingItems} LinkComponent={Link} />
+      </Container>
     </Layout>
   );
 };
