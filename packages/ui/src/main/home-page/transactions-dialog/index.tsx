@@ -131,7 +131,7 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                     }}
                   >
                     <Typography variant="body2" fontSize="0.75rem">
-                      {transaction.category === 'must' ? 'Must' : transaction.category === 'nice' ? 'Nice' : 'Waste'}
+                      {getCategoryLabel(transaction.category as CategoryType).split(' ')[0]}
                     </Typography>
                   </Box>
                   <Typography variant="subtitle1" fontWeight="bold">
