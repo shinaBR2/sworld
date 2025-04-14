@@ -45,7 +45,7 @@ const initialYear = currentDate.getFullYear();
 
 const Content = () => {
   const { getAccessToken } = useAuthContext();
-  const { queryClient } = useQueryContext();
+  const { invalidateQuery } = useQueryContext();
   const [currentMonth, setCurrentMonth] = useState(initialMonth);
   const [currentYear, setCurrentYear] = useState(initialYear);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>();
@@ -59,10 +59,7 @@ const Content = () => {
   const addExpense = useInsertFinanceTransaction({
     getAccessToken,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['finance-transactions', currentMonth, currentYear],
-        refetchType: 'all',
-      });
+      invalidateQuery(['finance-transactions', currentMonth, currentYear]);
       setIsDialogOpen(false);
     },
   });

@@ -9,7 +9,7 @@ interface QueryContextValue {
   hasuraUrl: string;
   featureFlags: ReturnType<typeof useFeatureFlagSubscription>;
   notifications: ReturnType<typeof useNotificationsSubscription>;
-  queryClient: QueryClient;
+  invalidateQuery: (queryKey: unknown[]) => void;
 }
 
 interface Config {
@@ -32,7 +32,9 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     hasuraUrl,
     featureFlags,
     notifications,
-    queryClient,
+    invalidateQuery: (queryKey: unknown[]) => {
+      queryClient.invalidateQueries({ queryKey, refetchType: 'all' });
+    },
   };
 
   return <QueryContext.Provider value={contextValue}>{children}</QueryContext.Provider>;
