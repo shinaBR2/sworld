@@ -10,6 +10,7 @@ import { MonthSelector } from 'ui/main/home-page/month-selector';
 import { TransactionsDialogProps } from 'ui/main/home-page/transactions-dialog';
 import { useAuthContext } from 'core/providers/auth';
 import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
+import { useInsertFinanceTransaction } from 'core/finance/mutation-hooks';
 import { LoginDialogProps } from 'ui/universal/dialogs/login';
 import { CategoryType } from 'core/finance';
 
@@ -41,26 +42,20 @@ const initialMonth = currentDate.getMonth();
 const initialYear = currentDate.getFullYear();
 
 const Content = () => {
+  const { getAccessToken } = useAuthContext();
   const [currentMonth, setCurrentMonth] = useState(initialMonth);
   const [currentYear, setCurrentYear] = useState(initialYear);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const { getAccessToken } = useAuthContext();
-
-  console.log('currentMonth', currentMonth);
-  console.log('currentYear', currentYear);
-  console.log('selectedCategory', selectedCategory);
-  console.log('isDialogOpen', isDialogOpen);
 
   const { data, isLoading } = useLoadTransactionsByPeriod({
     month: currentMonth,
     year: currentYear,
     getAccessToken: getAccessToken,
   });
-
-  console.log('data', data);
-  console.log('isLoading', isLoading);
+  const addExpense = useInsertFinanceTransaction({
+    getAccessToken,
+  });
 
   const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
 
@@ -95,8 +90,7 @@ const Content = () => {
 
   const handleAddExpense = async expenseData => {
     console.log('Adding expense:', expenseData);
-    // In a real app, you would call your mutation hook here
-    return Promise.resolve();
+    await addExpense(expenseData);
   };
 
   const enabledTransactionsDialog = !isLoading && data?.transactions && selectedCategory;

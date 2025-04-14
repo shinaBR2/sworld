@@ -1,4 +1,3 @@
-// packages/ui/src/finance/add-expense-button/index.tsx
 import React, { useState } from 'react';
 import {
   Fab,
@@ -30,7 +29,12 @@ export type ExpenseFormData = {
 };
 
 export interface AddExpenseButtonProps {
-  onAddExpense: (expense: { name: string; amount: number; category: Exclude<CategoryType, 'total'> }) => Promise<void>;
+  onAddExpense: (expense: {
+    name: string;
+    note?: string;
+    amount: number;
+    category: Exclude<CategoryType, 'total'>;
+  }) => Promise<void>;
   position?: 'bottom-right' | 'bottom-center';
 }
 
@@ -117,6 +121,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     try {
       await onAddExpense({
         name: formData.name.trim(),
+        note: formData.note.trim(),
         amount: parseFloat(formData.amount),
         category: formData.category,
       });
@@ -147,6 +152,8 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
         };
     }
   };
+
+  // console.log('formData', formData);
 
   return (
     <>
@@ -225,7 +232,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
                   name="category"
                   value={formData.category}
                   label="Category"
-                  onChange={handleChange}
+                  onChange={e => handleChange(e as any)}
                 >
                   <MenuItem value="must">Must</MenuItem>
                   <MenuItem value="nice">Nice</MenuItem>
