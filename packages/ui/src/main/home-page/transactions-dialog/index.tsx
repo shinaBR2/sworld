@@ -83,7 +83,9 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
         </AppBar>
       ) : (
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">{getCategoryLabel(selectedCategory)}</Typography>
+          <Typography variant="h6" component="div">
+            {getCategoryLabel(selectedCategory)}
+          </Typography>
           <IconButton aria-label="close" onClick={onClose} size="small">
             <CloseIcon />
           </IconButton>
