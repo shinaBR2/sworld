@@ -15,16 +15,16 @@ const landingItems = [
     title: 'Watch',
     to: '/watch',
   },
-  {
-    icon: '📖',
-    title: 'Read',
-    to: '/read',
-  },
-  {
-    icon: '🎮',
-    title: 'Play',
-    to: '/play',
-  },
+  // {
+  //   icon: '📖',
+  //   title: 'Read',
+  //   to: '/read',
+  // },
+  // {
+  //   icon: '🎮',
+  //   title: 'Play',
+  //   to: '/play',
+  // },
   {
     icon: '💰',
     title: 'Finance',
