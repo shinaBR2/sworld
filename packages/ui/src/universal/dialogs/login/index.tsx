@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import GoogleIcon from '@mui/icons-material/Google';
 
-interface LoginDialogProps {
+export interface LoginDialogProps {
   onAction?: () => void;
 }
 

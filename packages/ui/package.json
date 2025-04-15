@@ -78,6 +78,8 @@
     "@mui/material": "^5.10.12",
     "@tanstack/react-router": "^1.78.2",
     "core": "workspace:*",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.1.2",
     "react-helmet": "^6.1.0",
