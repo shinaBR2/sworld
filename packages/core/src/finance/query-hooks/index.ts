@@ -45,13 +45,9 @@ const transactionsByPeriodQuery = graphql(/* GraphQL */ `
         }
       }
     }
-    oldest_aggregate: finance_transactions_aggregate {
-      aggregate {
-        min {
-          year
-          month
-        }
-      }
+    oldest_aggregate: finance_transactions(order_by: { year: asc, month: asc }, limit: 1) {
+      year
+      month
     }
   }
 `);
@@ -83,8 +79,8 @@ const transform = (data: GetFinanceRecordsQuery) => {
       { category: 'total' as CategoryType, amount: totalAmount, count: totalCount },
     ],
     oldest: {
-      month: oldest_aggregate.aggregate?.min?.month || 0,
-      year: oldest_aggregate.aggregate?.min?.year || 0,
+      month: oldest_aggregate[0].month || 0,
+      year: oldest_aggregate[0].year || 0,
     },
   };
 };
