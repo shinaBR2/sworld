@@ -79,8 +79,8 @@ const transform = (data: GetFinanceRecordsQuery) => {
       { category: 'total' as CategoryType, amount: totalAmount, count: totalCount },
     ],
     oldest: {
-      month: oldest_aggregate[0].month || 0,
-      year: oldest_aggregate[0].year || 0,
+      month: oldest_aggregate[0]?.month || 0,
+      year: oldest_aggregate[0]?.year || 0,
     },
   };
 };
