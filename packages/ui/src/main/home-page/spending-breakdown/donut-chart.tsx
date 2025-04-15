@@ -135,6 +135,8 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
           alignItems: 'center',
           justifyContent: 'center',
         }}
+        aria-label="Loading"
+        aria-busy="true"
       >
         <Skeleton variant="circular" width={196} height={196} sx={{ mx: 'auto' }} />
       </Box>

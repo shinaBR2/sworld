@@ -16,7 +16,7 @@ const SpendingBreakdown = (props: SpendingBreakdownProps) => {
 
   if (isLoading) {
     return (
-      <BreakdownCard>
+      <BreakdownCard aria-busy={true}>
         <CardContent>
           <Skeleton variant="text" width={180} height={32} sx={{ mb: 1 }} />
           <DonutChart isLoading={true} data={[]} />
