@@ -1272,6 +1272,328 @@ input feature_flag_updates {
   where: feature_flag_bool_exp!
 }
 
+"""Transactions for personal finance management"""
+type finance_transactions {
+  amount: numeric!
+  """Should be either must, nice or waste"""
+  category: String!
+  createdAt: timestamptz!
+  id: uuid!
+  month: Int!
+  name: String!
+  note: String
+  updatedAt: timestamptz!
+  user_id: uuid!
+  year: Int!
+}
+
+"""
+aggregated selection of "finance_transactions"
+"""
+type finance_transactions_aggregate {
+  aggregate: finance_transactions_aggregate_fields
+  nodes: [finance_transactions!]!
+}
+
+"""
+aggregate fields of "finance_transactions"
+"""
+type finance_transactions_aggregate_fields {
+  avg: finance_transactions_avg_fields
+  count(columns: [finance_transactions_select_column!], distinct: Boolean): Int!
+  max: finance_transactions_max_fields
+  min: finance_transactions_min_fields
+  stddev: finance_transactions_stddev_fields
+  stddev_pop: finance_transactions_stddev_pop_fields
+  stddev_samp: finance_transactions_stddev_samp_fields
+  sum: finance_transactions_sum_fields
+  var_pop: finance_transactions_var_pop_fields
+  var_samp: finance_transactions_var_samp_fields
+  variance: finance_transactions_variance_fields
+}
+
+"""aggregate avg on columns"""
+type finance_transactions_avg_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+Boolean expression to filter rows from the table "finance_transactions". All fields are combined with a logical 'AND'.
+"""
+input finance_transactions_bool_exp {
+  _and: [finance_transactions_bool_exp!]
+  _not: finance_transactions_bool_exp
+  _or: [finance_transactions_bool_exp!]
+  amount: numeric_comparison_exp
+  category: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  month: Int_comparison_exp
+  name: String_comparison_exp
+  note: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user_id: uuid_comparison_exp
+  year: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "finance_transactions"
+"""
+enum finance_transactions_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  finance_transactions_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "finance_transactions"
+"""
+input finance_transactions_inc_input {
+  amount: numeric
+  month: Int
+  year: Int
+}
+
+"""
+input type for inserting data into table "finance_transactions"
+"""
+input finance_transactions_insert_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate max on columns"""
+type finance_transactions_max_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate min on columns"""
+type finance_transactions_min_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""
+response of any mutation on the table "finance_transactions"
+"""
+type finance_transactions_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [finance_transactions!]!
+}
+
+"""
+on_conflict condition type for table "finance_transactions"
+"""
+input finance_transactions_on_conflict {
+  constraint: finance_transactions_constraint!
+  update_columns: [finance_transactions_update_column!]! = []
+  where: finance_transactions_bool_exp
+}
+
+"""Ordering options when selecting data from "finance_transactions"."""
+input finance_transactions_order_by {
+  amount: order_by
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user_id: order_by
+  year: order_by
+}
+
+"""primary key columns input for table: finance_transactions"""
+input finance_transactions_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "finance_transactions"
+"""
+enum finance_transactions_select_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  month
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  year
+}
+
+"""
+input type for updating data in table "finance_transactions"
+"""
+input finance_transactions_set_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate stddev on columns"""
+type finance_transactions_stddev_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type finance_transactions_stddev_pop_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type finance_transactions_stddev_samp_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+Streaming cursor of the table "finance_transactions"
+"""
+input finance_transactions_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: finance_transactions_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input finance_transactions_stream_cursor_value_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate sum on columns"""
+type finance_transactions_sum_fields {
+  amount: numeric
+  month: Int
+  year: Int
+}
+
+"""
+update columns of table "finance_transactions"
+"""
+enum finance_transactions_update_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  month
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  year
+}
+
+input finance_transactions_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: finance_transactions_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: finance_transactions_set_input
+  """filter the rows which have to be updated"""
+  where: finance_transactions_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type finance_transactions_var_pop_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""aggregate var_samp on columns"""
+type finance_transactions_var_samp_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""aggregate variance on columns"""
+type finance_transactions_variance_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
 scalar jsonb
 
 input jsonb_cast_exp {
@@ -1350,6 +1672,17 @@ type mutation_root {
   delete single row from the table: "feature_flag"
   """
   delete_feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  delete data from the table: "finance_transactions"
+  """
+  delete_finance_transactions(
+    """filter the rows which have to be deleted"""
+    where: finance_transactions_bool_exp!
+  ): finance_transactions_mutation_response
+  """
+  delete single row from the table: "finance_transactions"
+  """
+  delete_finance_transactions_by_pk(id: uuid!): finance_transactions
   """
   delete data from the table: "notifications"
   """
@@ -1565,6 +1898,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: feature_flag_on_conflict
   ): feature_flag
+  """
+  insert data into the table: "finance_transactions"
+  """
+  insert_finance_transactions(
+    """the rows to be inserted"""
+    objects: [finance_transactions_insert_input!]!
+    """upsert condition"""
+    on_conflict: finance_transactions_on_conflict
+  ): finance_transactions_mutation_response
+  """
+  insert a single row into the table: "finance_transactions"
+  """
+  insert_finance_transactions_one(
+    """the row to be inserted"""
+    object: finance_transactions_insert_input!
+    """upsert condition"""
+    on_conflict: finance_transactions_on_conflict
+  ): finance_transactions
   """
   insert data into the table: "notifications"
   """
@@ -1927,6 +2278,34 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [feature_flag_updates!]!
   ): [feature_flag_mutation_response]
+  """
+  update data of the table: "finance_transactions"
+  """
+  update_finance_transactions(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transactions_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transactions_set_input
+    """filter the rows which have to be updated"""
+    where: finance_transactions_bool_exp!
+  ): finance_transactions_mutation_response
+  """
+  update single row of the table: "finance_transactions"
+  """
+  update_finance_transactions_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transactions_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transactions_set_input
+    pk_columns: finance_transactions_pk_columns_input!
+  ): finance_transactions
+  """
+  update multiples rows of table: "finance_transactions"
+  """
+  update_finance_transactions_many(
+    """updates to execute, in order"""
+    updates: [finance_transactions_updates!]!
+  ): [finance_transactions_mutation_response]
   """
   update data of the table: "notifications"
   """
@@ -2687,6 +3066,23 @@ input notifications_updates {
   where: notifications_bool_exp!
 }
 
+scalar numeric
+
+"""
+Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'.
+"""
+input numeric_comparison_exp {
+  _eq: numeric
+  _gt: numeric
+  _gte: numeric
+  _in: [numeric!]
+  _is_null: Boolean
+  _lt: numeric
+  _lte: numeric
+  _neq: numeric
+  _nin: [numeric!]
+}
+
 """column ordering options"""
 enum order_by {
   """in ascending order, nulls last"""
@@ -2735,6 +3131,8 @@ type playlist {
     where: playlist_videos_bool_exp
   ): playlist_videos_aggregate!
   public: Boolean!
+  """Short id like Youtube video id"""
+  sId: String
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -2819,6 +3217,7 @@ input playlist_bool_exp {
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
+  sId: String_comparison_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -2836,6 +3235,10 @@ enum playlist_constraint {
   """
   playlist_pkey
   """
+  unique or primary key constraint on columns "s_id"
+  """
+  playlist_s_id_key
+  """
   unique or primary key constraint on columns "user_id", "slug"
   """
   playlist_user_id_slug_key
@@ -2850,6 +3253,8 @@ input playlist_insert_input {
   id: uuid
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2863,6 +3268,8 @@ type playlist_max_fields {
   createdAt: timestamptz
   description: String
   id: uuid
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2877,6 +3284,8 @@ input playlist_max_order_by {
   createdAt: order_by
   description: order_by
   id: order_by
+  """Short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2889,6 +3298,8 @@ type playlist_min_fields {
   createdAt: timestamptz
   description: String
   id: uuid
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -2903,6 +3314,8 @@ input playlist_min_order_by {
   createdAt: order_by
   description: order_by
   id: order_by
+  """Short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2945,6 +3358,7 @@ input playlist_order_by {
   id: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
+  sId: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2970,6 +3384,8 @@ enum playlist_select_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""
@@ -3006,6 +3422,8 @@ input playlist_set_input {
   description: String
   id: uuid
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -3029,6 +3447,8 @@ input playlist_stream_cursor_value_input {
   description: String
   id: uuid
   public: Boolean
+  """Short id like Youtube video id"""
+  sId: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -3048,6 +3468,8 @@ enum playlist_update_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
   """column name"""
   slug
   """column name"""
@@ -3844,6 +4266,40 @@ type query_root {
   ): feature_flag_aggregate!
   """fetch data from the table: "feature_flag" using primary key columns"""
   feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  fetch data from the table: "finance_transactions"
+  """
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """
+  fetch aggregated fields from the table: "finance_transactions"
+  """
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
+  """
+  fetch data from the table: "finance_transactions" using primary key columns
+  """
+  finance_transactions_by_pk(id: uuid!): finance_transactions
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -4401,6 +4857,51 @@ type subscription_root {
     """filter the rows returned"""
     where: feature_flag_bool_exp
   ): [feature_flag!]!
+  """
+  fetch data from the table: "finance_transactions"
+  """
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """
+  fetch aggregated fields from the table: "finance_transactions"
+  """
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
+  """
+  fetch data from the table: "finance_transactions" using primary key columns
+  """
+  finance_transactions_by_pk(id: uuid!): finance_transactions
+  """
+  fetch data from the table in a streaming manner: "finance_transactions"
+  """
+  finance_transactions_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [finance_transactions_stream_cursor_input]!
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -7434,6 +7935,12 @@ type videos {
     where: playlist_videos_bool_exp
   ): playlist_videos_aggregate!
   public: Boolean!
+  """short id like Youtube video id"""
+  sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean!
   slug: String!
   source: String
   status: String
@@ -7657,6 +8164,8 @@ input videos_bool_exp {
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
+  sId: String_comparison_exp
+  skip_process: Boolean_comparison_exp
   slug: String_comparison_exp
   source: String_comparison_exp
   status: String_comparison_exp
@@ -7686,6 +8195,10 @@ enum videos_constraint {
   """
   videos_pkey
   """
+  unique or primary key constraint on columns "s_id"
+  """
+  videos_s_id_key
+  """
   unique or primary key constraint on columns "slug"
   """
   videos_slug_unique
@@ -7709,6 +8222,12 @@ input videos_insert_input {
   id: uuid
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -7731,6 +8250,8 @@ type videos_max_fields {
   description: String
   duration: Int
   id: uuid
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7750,6 +8271,8 @@ input videos_max_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7767,6 +8290,8 @@ type videos_min_fields {
   description: String
   duration: Int
   id: uuid
+  """short id like Youtube video id"""
+  sId: String
   slug: String
   source: String
   status: String
@@ -7786,6 +8311,8 @@ input videos_min_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """short id like Youtube video id"""
+  sId: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7833,6 +8360,8 @@ input videos_order_by {
   id: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
+  sId: order_by
+  skip_process: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7869,6 +8398,10 @@ enum videos_select_column {
   """column name"""
   public
   """column name"""
+  sId
+  """column name"""
+  skip_process
+  """column name"""
   slug
   """column name"""
   source
@@ -7894,6 +8427,8 @@ select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "
 enum videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns {
   """column name"""
   public
+  """column name"""
+  skip_process
 }
 
 """
@@ -7902,6 +8437,8 @@ select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "v
 enum videos_select_column_videos_aggregate_bool_exp_bool_or_arguments_columns {
   """column name"""
   public
+  """column name"""
+  skip_process
 }
 
 """
@@ -7913,6 +8450,12 @@ input videos_set_input {
   duration: Int
   id: uuid
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -7983,6 +8526,12 @@ input videos_stream_cursor_value_input {
   duration: Int
   id: uuid
   public: Boolean
+  """short id like Youtube video id"""
+  sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -8022,6 +8571,10 @@ enum videos_update_column {
   id
   """column name"""
   public
+  """column name"""
+  sId
+  """column name"""
+  skip_process
   """column name"""
   slug
   """column name"""
