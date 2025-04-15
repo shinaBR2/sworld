@@ -54,9 +54,29 @@ describe('Header', () => {
     expect(avatar).toHaveAttribute('data-src', mockUser.picture);
     expect(avatar).toHaveAttribute('data-alt', mockUser.name);
     // No need to check for data-testid="user-avatar" as we're already finding by that
+
+    // AccountCircle should not be in the document
+    const accountIcon = document.querySelector('[data-testid="AccountCircleIcon"]');
+    expect(accountIcon).not.toBeInTheDocument();
   });
 
-  // AccountCircle should not be in the document
-  const accountIcon = document.querySelector('[data-testid="AccountCircleIcon"]');
-  expect(accountIcon).not.toBeInTheDocument();
+  it('calls onProfileClick when avatar is clicked', () => {
+    const onProfileClick = vi.fn();
+    render(<Header {...defaultProps} user={mockUser} onProfileClick={onProfileClick} />);
+
+    const avatar = screen.getByTestId('user-avatar');
+    fireEvent.click(avatar);
+
+    expect(onProfileClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onProfileClick when account icon is clicked', () => {
+    const onProfileClick = vi.fn();
+    render(<Header {...defaultProps} user={{ ...mockUser, picture: undefined }} onProfileClick={onProfileClick} />);
+
+    const accountIcon = screen.getByTestId('AccountCircleIcon');
+    fireEvent.click(accountIcon);
+
+    expect(onProfileClick).toHaveBeenCalledTimes(1);
+  });
 });
