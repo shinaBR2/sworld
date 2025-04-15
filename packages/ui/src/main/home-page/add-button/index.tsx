@@ -117,7 +117,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
       await onAddExpense({
         name: formData.name.trim(),
         note: formData.note?.trim() || '',
-        amount: formData.amount,
+        amount: Number(formData.amount),
         category: formData.category,
       });
       handleClose();
