@@ -34,11 +34,9 @@ const SummaryCard = (props: SummaryCardProps) => {
           ${amount.toFixed(2)}
         </StyledAmount>
 
-        {count > 0 && (
-          <Typography variant="body2" color="text.secondary">
-            {count} transaction{count !== 1 ? 's' : ''}
-          </Typography>
-        )}
+        <Typography variant="body2" color="text.secondary">
+          {count > 0 ? `${count} transaction${count !== 1 ? 's' : ''}` : '\u00A0'}
+        </Typography>
       </CardContent>
     </StyledCard>
   );

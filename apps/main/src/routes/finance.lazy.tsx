@@ -71,8 +71,8 @@ const Content = () => {
     },
   });
 
-  const minMonth = data?.oldest.month || 0;
-  const minYear = data?.oldest.year || 0;
+  const minMonth = data?.oldest.month || initialMonth;
+  const minYear = data?.oldest.year || initialYear;
 
   const isMaxMonth = currentMonth === initialMonth && currentYear === initialYear;
   const isMinMonth = currentMonth === minMonth && currentYear === minYear;
