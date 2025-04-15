@@ -104,14 +104,12 @@ describe('Finance Query Hooks', () => {
             },
           },
         },
-        oldest_aggregate: {
-          aggregate: {
-            min: {
-              month: 1,
-              year: 2023,
-            },
+        oldest_aggregate: [
+          {
+            month: 1,
+            year: 2023,
           },
-        },
+        ],
       },
       isLoading: false,
       error: null,
