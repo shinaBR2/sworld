@@ -4,7 +4,7 @@ import { StyledAmount, StyledCard, StyledCategoryName, StyledCategoryWrapper } f
 
 const SummaryCardSkeleton = () => {
   return (
-    <StyledCard category={'' as CategoryType} selected={false}>
+    <StyledCard aria-busy="true" category={'' as CategoryType} selected={false}>
       <CardContent>
         <StyledCategoryWrapper>
           <StyledCategoryName variant="h6" component="div">
