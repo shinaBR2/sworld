@@ -1003,6 +1003,23 @@ enum cursor_ordering {
   DESC
 }
 
+scalar date
+
+"""
+Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'.
+"""
+input date_comparison_exp {
+  _eq: date
+  _gt: date
+  _gte: date
+  _in: [date!]
+  _is_null: Boolean
+  _lt: date
+  _lte: date
+  _neq: date
+  _nin: [date!]
+}
+
 """
 Feature flag system and we must leverage Hasura subscription to watch this
 """
@@ -1594,6 +1611,271 @@ type finance_transactions_variance_fields {
   year: Float
 }
 
+"""Daily journal"""
+type journals {
+  content: String!
+  createdAt: timestamptz!
+  date: date!
+  id: uuid!
+  mood: String!
+  tags(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  updatedAt: timestamptz!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "journals"
+"""
+type journals_aggregate {
+  aggregate: journals_aggregate_fields
+  nodes: [journals!]!
+}
+
+"""
+aggregate fields of "journals"
+"""
+type journals_aggregate_fields {
+  count(columns: [journals_select_column!], distinct: Boolean): Int!
+  max: journals_max_fields
+  min: journals_min_fields
+}
+
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input journals_append_input {
+  tags: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "journals". All fields are combined with a logical 'AND'.
+"""
+input journals_bool_exp {
+  _and: [journals_bool_exp!]
+  _not: journals_bool_exp
+  _or: [journals_bool_exp!]
+  content: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  date: date_comparison_exp
+  id: uuid_comparison_exp
+  mood: String_comparison_exp
+  tags: jsonb_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "journals"
+"""
+enum journals_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  journals_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input journals_delete_at_path_input {
+  tags: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input journals_delete_elem_input {
+  tags: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input journals_delete_key_input {
+  tags: String
+}
+
+"""
+input type for inserting data into table "journals"
+"""
+input journals_insert_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type journals_max_fields {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate min on columns"""
+type journals_min_fields {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+response of any mutation on the table "journals"
+"""
+type journals_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [journals!]!
+}
+
+"""
+on_conflict condition type for table "journals"
+"""
+input journals_on_conflict {
+  constraint: journals_constraint!
+  update_columns: [journals_update_column!]! = []
+  where: journals_bool_exp
+}
+
+"""Ordering options when selecting data from "journals"."""
+input journals_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  tags: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: journals"""
+input journals_pk_columns_input {
+  id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input journals_prepend_input {
+  tags: jsonb
+}
+
+"""
+select columns of table "journals"
+"""
+enum journals_select_column {
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  date
+  """column name"""
+  id
+  """column name"""
+  mood
+  """column name"""
+  tags
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "journals"
+"""
+input journals_set_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "journals"
+"""
+input journals_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: journals_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input journals_stream_cursor_value_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+update columns of table "journals"
+"""
+enum journals_update_column {
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  date
+  """column name"""
+  id
+  """column name"""
+  mood
+  """column name"""
+  tags
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input journals_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: journals_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: journals_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: journals_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: journals_delete_key_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: journals_prepend_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: journals_set_input
+  """filter the rows which have to be updated"""
+  where: journals_bool_exp!
+}
+
 scalar jsonb
 
 input jsonb_cast_exp {
@@ -1683,6 +1965,17 @@ type mutation_root {
   delete single row from the table: "finance_transactions"
   """
   delete_finance_transactions_by_pk(id: uuid!): finance_transactions
+  """
+  delete data from the table: "journals"
+  """
+  delete_journals(
+    """filter the rows which have to be deleted"""
+    where: journals_bool_exp!
+  ): journals_mutation_response
+  """
+  delete single row from the table: "journals"
+  """
+  delete_journals_by_pk(id: uuid!): journals
   """
   delete data from the table: "notifications"
   """
@@ -1916,6 +2209,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: finance_transactions_on_conflict
   ): finance_transactions
+  """
+  insert data into the table: "journals"
+  """
+  insert_journals(
+    """the rows to be inserted"""
+    objects: [journals_insert_input!]!
+    """upsert condition"""
+    on_conflict: journals_on_conflict
+  ): journals_mutation_response
+  """
+  insert a single row into the table: "journals"
+  """
+  insert_journals_one(
+    """the row to be inserted"""
+    object: journals_insert_input!
+    """upsert condition"""
+    on_conflict: journals_on_conflict
+  ): journals
   """
   insert data into the table: "notifications"
   """
@@ -2306,6 +2617,62 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [finance_transactions_updates!]!
   ): [finance_transactions_mutation_response]
+  """
+  update data of the table: "journals"
+  """
+  update_journals(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: journals_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: journals_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: journals_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: journals_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: journals_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: journals_set_input
+    """filter the rows which have to be updated"""
+    where: journals_bool_exp!
+  ): journals_mutation_response
+  """
+  update single row of the table: "journals"
+  """
+  update_journals_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: journals_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: journals_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: journals_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: journals_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: journals_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: journals_set_input
+    pk_columns: journals_pk_columns_input!
+  ): journals
+  """
+  update multiples rows of table: "journals"
+  """
+  update_journals_many(
+    """updates to execute, in order"""
+    updates: [journals_updates!]!
+  ): [journals_mutation_response]
   """
   update data of the table: "notifications"
   """
@@ -4300,6 +4667,38 @@ type query_root {
   fetch data from the table: "finance_transactions" using primary key columns
   """
   finance_transactions_by_pk(id: uuid!): finance_transactions
+  """
+  fetch data from the table: "journals"
+  """
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """
+  fetch aggregated fields from the table: "journals"
+  """
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
+  """fetch data from the table: "journals" using primary key columns"""
+  journals_by_pk(id: uuid!): journals
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -4902,6 +5301,49 @@ type subscription_root {
     """filter the rows returned"""
     where: finance_transactions_bool_exp
   ): [finance_transactions!]!
+  """
+  fetch data from the table: "journals"
+  """
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """
+  fetch aggregated fields from the table: "journals"
+  """
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
+  """fetch data from the table: "journals" using primary key columns"""
+  journals_by_pk(id: uuid!): journals
+  """
+  fetch data from the table in a streaming manner: "journals"
+  """
+  journals_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [journals_stream_cursor_input]!
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
   """An array relationship"""
   notifications(
     """distinct select on columns"""

@@ -14,6 +14,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  date: { input: any; output: any; }
   jsonb: { input: any; output: any; }
   numeric: { input: any; output: any; }
   timestamptz: { input: any; output: any; }
@@ -928,6 +929,19 @@ export enum Cursor_Ordering {
   Desc = 'DESC'
 }
 
+/** Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'. */
+export type Date_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['date']['input']>;
+  _gt?: InputMaybe<Scalars['date']['input']>;
+  _gte?: InputMaybe<Scalars['date']['input']>;
+  _in?: InputMaybe<Array<Scalars['date']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['date']['input']>;
+  _lte?: InputMaybe<Scalars['date']['input']>;
+  _neq?: InputMaybe<Scalars['date']['input']>;
+  _nin?: InputMaybe<Array<Scalars['date']['input']>>;
+};
+
 /** Feature flag system and we must leverage Hasura subscription to watch this */
 export type Feature_Flag = {
   __typename?: 'feature_flag';
@@ -1490,6 +1504,251 @@ export type Finance_Transactions_Variance_Fields = {
   year?: Maybe<Scalars['Float']['output']>;
 };
 
+/** Daily journal */
+export type Journals = {
+  __typename?: 'journals';
+  content: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  date: Scalars['date']['output'];
+  id: Scalars['uuid']['output'];
+  mood: Scalars['String']['output'];
+  tags: Scalars['jsonb']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  user_id: Scalars['uuid']['output'];
+};
+
+
+/** Daily journal */
+export type JournalsTagsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "journals" */
+export type Journals_Aggregate = {
+  __typename?: 'journals_aggregate';
+  aggregate?: Maybe<Journals_Aggregate_Fields>;
+  nodes: Array<Journals>;
+};
+
+/** aggregate fields of "journals" */
+export type Journals_Aggregate_Fields = {
+  __typename?: 'journals_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Journals_Max_Fields>;
+  min?: Maybe<Journals_Min_Fields>;
+};
+
+
+/** aggregate fields of "journals" */
+export type Journals_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Journals_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Journals_Append_Input = {
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "journals". All fields are combined with a logical 'AND'. */
+export type Journals_Bool_Exp = {
+  _and?: InputMaybe<Array<Journals_Bool_Exp>>;
+  _not?: InputMaybe<Journals_Bool_Exp>;
+  _or?: InputMaybe<Array<Journals_Bool_Exp>>;
+  content?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  date?: InputMaybe<Date_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  mood?: InputMaybe<String_Comparison_Exp>;
+  tags?: InputMaybe<Jsonb_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "journals" */
+export enum Journals_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  JournalsPkey = 'journals_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Journals_Delete_At_Path_Input = {
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Journals_Delete_Elem_Input = {
+  tags?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Journals_Delete_Key_Input = {
+  tags?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** input type for inserting data into table "journals" */
+export type Journals_Insert_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Journals_Max_Fields = {
+  __typename?: 'journals_max_fields';
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  date?: Maybe<Scalars['date']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mood?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type Journals_Min_Fields = {
+  __typename?: 'journals_min_fields';
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  date?: Maybe<Scalars['date']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mood?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** response of any mutation on the table "journals" */
+export type Journals_Mutation_Response = {
+  __typename?: 'journals_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Journals>;
+};
+
+/** on_conflict condition type for table "journals" */
+export type Journals_On_Conflict = {
+  constraint: Journals_Constraint;
+  update_columns?: Array<Journals_Update_Column>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "journals". */
+export type Journals_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  tags?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: journals */
+export type Journals_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Journals_Prepend_Input = {
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** select columns of table "journals" */
+export enum Journals_Select_Column {
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Mood = 'mood',
+  /** column name */
+  Tags = 'tags',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** input type for updating data in table "journals" */
+export type Journals_Set_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "journals" */
+export type Journals_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Journals_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Journals_Stream_Cursor_Value_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "journals" */
+export enum Journals_Update_Column {
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Mood = 'mood',
+  /** column name */
+  Tags = 'tags',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+export type Journals_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Journals_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Journals_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Journals_Bool_Exp;
+};
+
 export type Jsonb_Cast_Exp = {
   String?: InputMaybe<String_Comparison_Exp>;
 };
@@ -1541,6 +1800,10 @@ export type Mutation_Root = {
   delete_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
   /** delete single row from the table: "finance_transactions" */
   delete_finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** delete data from the table: "journals" */
+  delete_journals?: Maybe<Journals_Mutation_Response>;
+  /** delete single row from the table: "journals" */
+  delete_journals_by_pk?: Maybe<Journals>;
   /** delete data from the table: "notifications" */
   delete_notifications?: Maybe<Notifications_Mutation_Response>;
   /** delete single row from the table: "notifications" */
@@ -1613,6 +1876,10 @@ export type Mutation_Root = {
   insert_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
   /** insert a single row into the table: "finance_transactions" */
   insert_finance_transactions_one?: Maybe<Finance_Transactions>;
+  /** insert data into the table: "journals" */
+  insert_journals?: Maybe<Journals_Mutation_Response>;
+  /** insert a single row into the table: "journals" */
+  insert_journals_one?: Maybe<Journals>;
   /** insert data into the table: "notifications" */
   insert_notifications?: Maybe<Notifications_Mutation_Response>;
   /** insert a single row into the table: "notifications" */
@@ -1695,6 +1962,12 @@ export type Mutation_Root = {
   update_finance_transactions_by_pk?: Maybe<Finance_Transactions>;
   /** update multiples rows of table: "finance_transactions" */
   update_finance_transactions_many?: Maybe<Array<Maybe<Finance_Transactions_Mutation_Response>>>;
+  /** update data of the table: "journals" */
+  update_journals?: Maybe<Journals_Mutation_Response>;
+  /** update single row of the table: "journals" */
+  update_journals_by_pk?: Maybe<Journals>;
+  /** update multiples rows of table: "journals" */
+  update_journals_many?: Maybe<Array<Maybe<Journals_Mutation_Response>>>;
   /** update data of the table: "notifications" */
   update_notifications?: Maybe<Notifications_Mutation_Response>;
   /** update single row of the table: "notifications" */
@@ -1833,6 +2106,18 @@ export type Mutation_RootDelete_Finance_TransactionsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Finance_Transactions_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_JournalsArgs = {
+  where: Journals_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Journals_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -2062,6 +2347,20 @@ export type Mutation_RootInsert_Finance_TransactionsArgs = {
 export type Mutation_RootInsert_Finance_Transactions_OneArgs = {
   object: Finance_Transactions_Insert_Input;
   on_conflict?: InputMaybe<Finance_Transactions_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_JournalsArgs = {
+  objects: Array<Journals_Insert_Input>;
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Journals_OneArgs = {
+  object: Journals_Insert_Input;
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
 };
 
 
@@ -2356,6 +2655,36 @@ export type Mutation_RootUpdate_Finance_Transactions_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Finance_Transactions_ManyArgs = {
   updates: Array<Finance_Transactions_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_JournalsArgs = {
+  _append?: InputMaybe<Journals_Append_Input>;
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  _set?: InputMaybe<Journals_Set_Input>;
+  where: Journals_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Journals_By_PkArgs = {
+  _append?: InputMaybe<Journals_Append_Input>;
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  _set?: InputMaybe<Journals_Set_Input>;
+  pk_columns: Journals_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Journals_ManyArgs = {
+  updates: Array<Journals_Updates>;
 };
 
 
@@ -4024,6 +4353,12 @@ export type Query_Root = {
   finance_transactions_aggregate: Finance_Transactions_Aggregate;
   /** fetch data from the table: "finance_transactions" using primary key columns */
   finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** fetch data from the table: "journals" */
+  journals: Array<Journals>;
+  /** fetch aggregated fields from the table: "journals" */
+  journals_aggregate: Journals_Aggregate;
+  /** fetch data from the table: "journals" using primary key columns */
+  journals_by_pk?: Maybe<Journals>;
   /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
@@ -4217,6 +4552,29 @@ export type Query_RootFinance_Transactions_AggregateArgs = {
 
 
 export type Query_RootFinance_Transactions_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+
+export type Query_RootJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+
+export type Query_RootJournals_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -4563,6 +4921,14 @@ export type Subscription_Root = {
   finance_transactions_by_pk?: Maybe<Finance_Transactions>;
   /** fetch data from the table in a streaming manner: "finance_transactions" */
   finance_transactions_stream: Array<Finance_Transactions>;
+  /** fetch data from the table: "journals" */
+  journals: Array<Journals>;
+  /** fetch aggregated fields from the table: "journals" */
+  journals_aggregate: Journals_Aggregate;
+  /** fetch data from the table: "journals" using primary key columns */
+  journals_by_pk?: Maybe<Journals>;
+  /** fetch data from the table in a streaming manner: "journals" */
+  journals_stream: Array<Journals>;
   /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
@@ -4818,6 +5184,36 @@ export type Subscription_RootFinance_Transactions_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Finance_Transactions_Stream_Cursor_Input>>;
   where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+
+export type Subscription_RootJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+
+export type Subscription_RootJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+
+export type Subscription_RootJournals_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootJournals_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Journals_Stream_Cursor_Input>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
 };
 
 
@@ -8206,6 +8602,43 @@ export type GetMonthlyComparisonQueryVariables = Exact<{ [key: string]: never; }
 
 export type GetMonthlyComparisonQuery = { __typename?: 'query_root', monthly_totals: { __typename?: 'finance_transactions_aggregate', nodes: Array<{ __typename?: 'finance_transactions', month: number, year: number }>, aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null } };
 
+export type CreateJournalMutationVariables = Exact<{
+  object: Journals_Insert_Input;
+}>;
+
+
+export type CreateJournalMutation = { __typename?: 'mutation_root', insert_journals_one?: { __typename?: 'journals', id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any } | null };
+
+export type UpdateJournalMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  set: Journals_Set_Input;
+}>;
+
+
+export type UpdateJournalMutation = { __typename?: 'mutation_root', update_journals_by_pk?: { __typename?: 'journals', id: any, date: any, content: string, mood: string, tags: any, updatedAt: any } | null };
+
+export type DeleteJournalMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeleteJournalMutation = { __typename?: 'mutation_root', delete_journals_by_pk?: { __typename?: 'journals', id: any } | null };
+
+export type GetJournalsByMonthQueryVariables = Exact<{
+  startDate: Scalars['date']['input'];
+  endDate: Scalars['date']['input'];
+}>;
+
+
+export type GetJournalsByMonthQuery = { __typename?: 'query_root', journals: Array<{ __typename?: 'journals', id: any, user_id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any }>, happy_aggregate: { __typename?: 'journals_aggregate', aggregate?: { __typename?: 'journals_aggregate_fields', count: number } | null }, neutral_aggregate: { __typename?: 'journals_aggregate', aggregate?: { __typename?: 'journals_aggregate_fields', count: number } | null }, sad_aggregate: { __typename?: 'journals_aggregate', aggregate?: { __typename?: 'journals_aggregate_fields', count: number } | null }, oldest_aggregate: Array<{ __typename?: 'journals', date: any }> };
+
+export type GetJournalByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type GetJournalByIdQuery = { __typename?: 'query_root', journals_by_pk?: { __typename?: 'journals', id: any, user_id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any } | null };
+
 export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -8570,6 +9003,93 @@ export const GetMonthlyComparisonDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetMonthlyComparisonQuery, GetMonthlyComparisonQueryVariables>;
+export const CreateJournalDocument = new TypedDocumentString(`
+    mutation CreateJournal($object: journals_insert_input!) {
+  insert_journals_one(object: $object) {
+    id
+    date
+    content
+    mood
+    tags
+    createdAt
+    updatedAt
+  }
+}
+    `) as unknown as TypedDocumentString<CreateJournalMutation, CreateJournalMutationVariables>;
+export const UpdateJournalDocument = new TypedDocumentString(`
+    mutation UpdateJournal($id: uuid!, $set: journals_set_input!) {
+  update_journals_by_pk(pk_columns: {id: $id}, _set: $set) {
+    id
+    date
+    content
+    mood
+    tags
+    updatedAt
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateJournalMutation, UpdateJournalMutationVariables>;
+export const DeleteJournalDocument = new TypedDocumentString(`
+    mutation DeleteJournal($id: uuid!) {
+  delete_journals_by_pk(id: $id) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<DeleteJournalMutation, DeleteJournalMutationVariables>;
+export const GetJournalsByMonthDocument = new TypedDocumentString(`
+    query GetJournalsByMonth($startDate: date!, $endDate: date!) {
+  journals(
+    where: {date: {_gte: $startDate, _lte: $endDate}}
+    order_by: {date: desc, createdAt: desc}
+  ) {
+    id
+    user_id
+    date
+    content
+    mood
+    tags
+    createdAt
+    updatedAt
+  }
+  happy_aggregate: journals_aggregate(
+    where: {date: {_gte: $startDate, _lte: $endDate}, mood: {_eq: "happy"}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  neutral_aggregate: journals_aggregate(
+    where: {date: {_gte: $startDate, _lte: $endDate}, mood: {_eq: "neutral"}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  sad_aggregate: journals_aggregate(
+    where: {date: {_gte: $startDate, _lte: $endDate}, mood: {_eq: "sad"}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  oldest_aggregate: journals(order_by: {date: asc}, limit: 1) {
+    date
+  }
+}
+    `) as unknown as TypedDocumentString<GetJournalsByMonthQuery, GetJournalsByMonthQueryVariables>;
+export const GetJournalByIdDocument = new TypedDocumentString(`
+    query GetJournalById($id: uuid!) {
+  journals_by_pk(id: $id) {
+    id
+    user_id
+    date
+    content
+    mood
+    tags
+    createdAt
+    updatedAt
+  }
+}
+    `) as unknown as TypedDocumentString<GetJournalByIdQuery, GetJournalByIdQueryVariables>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {
