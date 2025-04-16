@@ -13,6 +13,7 @@ import { Container } from 'ui/universal/containers/generic';
 // import Alert from '@mui/material/Alert';
 import { useAuthContext } from 'core/providers/auth';
 import { Journal } from 'core/journal';
+import { Layout } from '../components/layout';
 
 export const Route = createLazyFileRoute('/journal')({
   component: JournalPage,
@@ -148,37 +149,39 @@ function JournalPage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ pb: 8, position: 'relative' }}>
-      {renderContent()}
+    <Layout>
+      <Container maxWidth="sm" sx={{ pb: 8, position: 'relative' }}>
+        {renderContent()}
 
-      {/* FAB for creating new journal entry */}
-      {view === 'list' && <FabButton onClick={handleCreateNew} />}
+        {/* FAB for creating new journal entry */}
+        {view === 'list' && <FabButton onClick={handleCreateNew} />}
 
-      {/* Edit Dialog */}
-      <EditDialog
-        open={dialogOpen}
-        onClose={handleCloseDialog}
-        selectedJournal={selectedJournal}
-        journalDetail={journalDetail}
-        isLoadingDetail={isLoadingDetail}
-        createJournal={createJournal}
-        updateJournal={updateJournal}
-        onSave={handleSave}
-      />
+        {/* Edit Dialog */}
+        <EditDialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          selectedJournal={selectedJournal}
+          journalDetail={journalDetail}
+          isLoadingDetail={isLoadingDetail}
+          createJournal={createJournal}
+          updateJournal={updateJournal}
+          onSave={handleSave}
+        />
 
-      {/* Notifications */}
-      {/* <Snackbar
-        open={!!notification}
-        autoHideDuration={5000}
-        onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        {notification && (
-          <Alert severity={notification.severity} onClose={handleCloseNotification} variant="filled">
-            {notification.message}
-          </Alert>
-        )}
-      </Snackbar> */}
-    </Container>
+        {/* Notifications */}
+        {/* <Snackbar
+          open={!!notification}
+          autoHideDuration={5000}
+          onClose={handleCloseNotification}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          {notification && (
+            <Alert severity={notification.severity} onClose={handleCloseNotification} variant="filled">
+              {notification.message}
+            </Alert>
+          )}
+        </Snackbar> */}
+      </Container>
+    </Layout>
   );
 }
