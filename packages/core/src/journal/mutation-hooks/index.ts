@@ -1,6 +1,4 @@
 // packages/core/src/journal/mutation-hooks/journals.ts
-import { useQueryClient } from '@tanstack/react-query';
-import { Auth } from '../..';
 import { graphql } from '../../graphql';
 import {
   CreateJournalMutation,
@@ -10,6 +8,8 @@ import {
   UpdateJournalMutation,
   UpdateJournalMutationVariables,
 } from '../../graphql/graphql';
+import { useAuthContext } from '../../providers/auth';
+import { useQueryContext } from '../../providers/query';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
 
 const createJournalMutation = graphql(/* GraphQL */ `
@@ -48,26 +48,28 @@ const deleteJournalMutation = graphql(/* GraphQL */ `
 `);
 
 interface MutationProps {
-  getAccessToken: () => Promise<string>;
   onSuccess?: (data: any) => void;
   onError?: (error: unknown) => void;
 }
 
 const useCreateJournal = (props: MutationProps) => {
-  const { getAccessToken = Auth.useAuthContext().getAccessToken, onSuccess, onError } = props;
-  const queryClient = useQueryClient();
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
 
   const { mutateAsync: createJournal } = useMutationRequest<CreateJournalMutation, CreateJournalMutationVariables>({
     document: createJournalMutation,
     getAccessToken,
     options: {
       onSuccess: data => {
+        // For now I want to create only for current date
+        // Not for the specific date
         const currentDate = new Date();
         const month = currentDate.getMonth() + 1;
         const year = currentDate.getFullYear();
 
         // Invalidate journals query to refetch the list
-        queryClient.invalidateQueries({ queryKey: ['journals', month, year] });
+        invalidateQuery(['journals', month, year]);
 
         onSuccess?.(data);
       },
@@ -82,8 +84,9 @@ const useCreateJournal = (props: MutationProps) => {
 };
 
 const useUpdateJournal = (props: MutationProps) => {
-  const { getAccessToken = Auth.useAuthContext().getAccessToken, onSuccess, onError } = props;
-  const queryClient = useQueryClient();
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
 
   const { mutateAsync: updateJournal } = useMutationRequest<UpdateJournalMutation, UpdateJournalMutationVariables>({
     document: updateJournalMutation,
@@ -95,13 +98,13 @@ const useUpdateJournal = (props: MutationProps) => {
 
         // Invalidate journals query for the specific month/year
         if (month && year) {
-          queryClient.invalidateQueries({ queryKey: ['journals', month, year] });
+          invalidateQuery(['journals', month, year]);
         }
 
         // Invalidate the specific journal query
         const journalId = data.update_journals_by_pk?.id;
         if (journalId) {
-          queryClient.invalidateQueries({ queryKey: ['journal', journalId] });
+          invalidateQuery(['journal', journalId]);
         }
 
         onSuccess?.(data);
@@ -117,8 +120,9 @@ const useUpdateJournal = (props: MutationProps) => {
 };
 
 const useDeleteJournal = (props: MutationProps) => {
-  const { getAccessToken = Auth.useAuthContext().getAccessToken, onSuccess, onError } = props;
-  const queryClient = useQueryClient();
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
 
   const { mutateAsync: deleteJournal } = useMutationRequest<DeleteJournalMutation, DeleteJournalMutationVariables>({
     document: deleteJournalMutation,
@@ -130,7 +134,7 @@ const useDeleteJournal = (props: MutationProps) => {
         const year = currentDate.getFullYear();
 
         // Invalidate journals query to refetch the list
-        queryClient.invalidateQueries({ queryKey: ['journals', month, year] });
+        invalidateQuery(['journals', month, year]);
 
         onSuccess?.(data);
       },

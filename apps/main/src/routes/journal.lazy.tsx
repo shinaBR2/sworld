@@ -91,19 +91,19 @@ function JournalPage() {
     setDialogOpen(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedJournal?.id) {
       if (window.confirm('Are you sure you want to delete this journal entry?')) {
-        deleteJournal.mutate(selectedJournal.id);
+        await deleteJournal(selectedJournal.id);
       }
     }
   };
 
-  const handleSave = (input: any) => {
+  const handleSave = async (input: any) => {
     if (selectedJournal?.id) {
-      updateJournal.mutate({ id: selectedJournal.id, input });
+      await updateJournal({ id: selectedJournal.id, input });
     } else {
-      createJournal.mutate(input);
+      await createJournal(input);
     }
   };
 
