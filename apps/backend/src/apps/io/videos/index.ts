@@ -1,13 +1,13 @@
 import express, { Router } from 'express';
-import { streamHLSHandler } from './routes/stream-hls';
-import { importPlatformHandler } from './routes/import-platform';
 import { validateRequest } from 'src/utils/validator';
-import { StreamHandlerRequest, StreamHandlerSchema } from './routes/stream-hls/schema';
-import { ImportHandlerRequest, ImportHandlerSchema } from './routes/import-platform/schema';
-import { FixDurationHandlerRequest, FixDurationHandlerSchema } from './routes/fix-duration/schema';
 import { fixDurationHandler } from './routes/fix-duration';
+import { FixDurationHandlerRequest, FixDurationHandlerSchema } from './routes/fix-duration/schema';
 import { fixThumbnailHandler } from './routes/fix-thumbnail';
 import { FixThumbnailHandlerRequest, FixThumbnailHandlerSchema } from './routes/fix-thumbnail/schema';
+import { importPlatformHandler } from './routes/import-platform';
+import { ImportHandlerRequest, ImportHandlerSchema } from './routes/import-platform/schema';
+import { streamHLSHandler } from './routes/stream-hls';
+import { StreamHandlerRequest, StreamHandlerSchema } from './routes/stream-hls/schema';
 
 const videosRouter: Router = express.Router();
 

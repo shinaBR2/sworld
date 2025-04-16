@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { streamM3U8 } from './index';
-import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
-import { getDownloadUrl } from '../gcp-cloud-storage';
-import { logger } from 'src/utils/logger';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { logger } from 'src/utils/logger';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { getDownloadUrl } from '../gcp-cloud-storage';
 import { processThumbnail } from '../thumbnail';
+import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
+import { streamM3U8 } from './index';
 
 // Mock dependencies
 vi.mock('./helpers');
@@ -42,10 +42,10 @@ describe('streamM3U8', () => {
     thumbnailUrl: mockThumbnailUrl,
     segments: {
       included: [
-        { url: 'segment1.ts', duration: 3 },
-        { url: 'segment2.ts', duration: 3 },
+        { url: 'segment1.ts', name: '0.ts', duration: 3 },
+        { url: 'segment2.ts', name: '1.ts', duration: 3 },
       ],
-      excluded: [{ url: 'segment3.ts' }],
+      excluded: [{ url: 'segment3.ts', name: '' }],
     },
     duration: 300,
   };
@@ -79,7 +79,7 @@ describe('streamM3U8', () => {
     expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, undefined);
     expect(streamPlaylistFile).toHaveBeenCalledWith('#EXTM3U\n#EXT-X-VERSION:3', 'videos/test-video/playlist.m3u8');
     expect(streamSegments).toHaveBeenCalledWith({
-      segmentUrls: ['segment1.ts', 'segment2.ts'],
+      segments: expectedResult.segments.included,
       baseStoragePath: mockStoragePath,
       options: {},
     });
@@ -101,7 +101,7 @@ describe('streamM3U8', () => {
     await streamM3U8(mockM3u8Url, mockStoragePath, options);
 
     expect(streamSegments).toHaveBeenCalledWith({
-      segmentUrls: ['segment1.ts', 'segment2.ts'],
+      segments: expectedResult.segments.included,
       baseStoragePath: mockStoragePath,
       options,
     });

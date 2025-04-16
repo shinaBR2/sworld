@@ -1,13 +1,13 @@
-import { describe, expect, vi, test, beforeEach, Mock } from 'vitest';
-import { downloadSegments, parseM3U8Content, streamPlaylistFile, streamSegmentFile, streamSegments } from './helpers';
-import { downloadFile, verifyFileSize } from '../file';
-import { logger } from 'src/utils/logger';
 import { Readable } from 'node:stream';
-import { streamFile } from '../gcp-cloud-storage';
-import { fetchWithError } from 'src/utils/fetch';
-import { systemConfig } from 'src/utils/systemConfig';
-import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { CustomError } from 'src/utils/custom-error';
+import { HTTP_ERRORS } from 'src/utils/error-codes';
+import { fetchWithError } from 'src/utils/fetch';
+import { logger } from 'src/utils/logger';
+import { systemConfig } from 'src/utils/systemConfig';
+import { Mock, beforeEach, describe, expect, test, vi } from 'vitest';
+import { downloadFile, verifyFileSize } from '../file';
+import { streamFile } from '../gcp-cloud-storage';
+import { downloadSegments, parseM3U8Content, streamPlaylistFile, streamSegmentFile, streamSegments } from './helpers';
 
 vi.mock('src/utils/fetch', () => ({
   fetchWithError: vi.fn(),
@@ -85,9 +85,9 @@ describe('M3U8 parser', () => {
         #EXT-X-VERSION:3
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXTINF:3,
-        segment2.ts
+        1.ts
         #EXT-X-ENDLIST
       `);
 
@@ -102,22 +102,27 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts', // Added name field
           duration: 3,
         },
         {
           url: 'https://example.com/segment2.ts',
+          name: '1.ts', // Added name field
           duration: 3,
         },
       ]);
       expect(segments.excluded).toEqual([
         {
           url: 'https://example.com/adjump/ad1.ts',
+          name: '',
         },
         {
           url: 'https://example.com/ads/ad2.ts',
+          name: '',
         },
         {
           url: 'https://example.com/commercial/ad3.ts',
+          name: '',
         },
       ]);
     });
@@ -145,11 +150,11 @@ describe('M3U8 parser', () => {
         #EXT-X-VERSION:3
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXTINF:3,
-        segment2.ts
+        1.ts
         #EXTINF:3,
-        segment3.ts
+        2.ts
         #EXT-X-ENDLIST
       `);
 
@@ -165,14 +170,17 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts',
           duration: 3,
         },
         {
           url: 'https://example.com/segment2.ts',
+          name: '1.ts',
           duration: 3,
         },
         {
           url: 'https://example.com/segment3.ts',
+          name: '2.ts',
           duration: 3,
         },
       ]);
@@ -181,9 +189,11 @@ describe('M3U8 parser', () => {
       expect(segments.excluded).toEqual([
         {
           url: 'https://example.com/ads/ad1.ts',
+          name: '',
         },
         {
           url: 'https://example.com/commercial/ad2.ts',
+          name: '',
         },
       ]);
 
@@ -223,9 +233,9 @@ describe('M3U8 parser', () => {
         #EXT-X-VERSION:3
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXTINF:3,
-        segment2.ts
+        1.ts
         #EXT-X-ENDLIST
       `);
 
@@ -241,10 +251,12 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts',
           duration: 3,
         },
         {
           url: 'https://example.com/segment2.ts',
+          name: '1.ts',
           duration: 3,
         },
       ]);
@@ -253,8 +265,9 @@ describe('M3U8 parser', () => {
       expect(segments.excluded).toEqual([
         {
           url: 'https://example.com/adjump/ad1.ts',
+          name: '',
         },
-        { url: 'https://example.com/adjump/ad2.ts' },
+        { url: 'https://example.com/adjump/ad2.ts', name: '' },
       ]);
 
       // Check content contains all required HLS tags
@@ -289,9 +302,9 @@ describe('M3U8 parser', () => {
         #EXT-X-VERSION:3
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXTINF:3,
-        segment2.ts
+        1.ts
         #EXT-X-ENDLIST
       `);
 
@@ -306,10 +319,12 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts',
           duration: 3,
         },
         {
           url: 'https://example.com/segment2.ts',
+          name: '1.ts',
           duration: 3,
         },
       ]);
@@ -330,7 +345,18 @@ describe('M3U8 parser', () => {
         #EXT-X-ENDLIST
       `;
 
-      const expected = normalizeContent(content);
+      const expected = normalizeContent(`
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:10
+        #EXTINF:3,
+        0.ts
+        #EXTINF:3,
+        1.ts
+        #EXTINF:3,
+        2.ts
+        #EXT-X-ENDLIST
+      `);
 
       const mockResponse = {
         text: () => Promise.resolve(content),
@@ -343,14 +369,17 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts', // Added name field
           duration: 3,
         },
         {
           url: 'https://example.com/segment2.ts',
+          name: '1.ts',
           duration: 3,
         },
         {
           url: 'https://example.com/segment3.ts',
+          name: '2.ts',
           duration: 3,
         },
       ]);
@@ -374,7 +403,7 @@ describe('M3U8 parser', () => {
         #EXT-X-PLAYLIST-TYPE:VOD
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXT-X-ENDLIST
       `);
 
@@ -386,7 +415,7 @@ describe('M3U8 parser', () => {
       const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(modifiedContent).toContain('#EXT-X-PLAYLIST-TYPE:VOD');
-      expect(segments.included).toEqual([{ url: 'https://example.com/segment1.ts', duration: 3 }]);
+      expect(segments.included).toEqual([{ url: 'https://example.com/segment1.ts', name: '0.ts', duration: 3 }]);
       expect(segments.excluded).toHaveLength(0);
     });
 
@@ -411,19 +440,21 @@ describe('M3U8 parser', () => {
       expect(segments.included).toEqual([
         {
           url: 'https://example.com/segment1.ts',
+          name: '0.ts', // Added
           duration: 3,
         },
       ]);
       expect(segments.excluded).toEqual([
         {
           url: 'https://example.com/adjump/ad1.ts',
+          name: '',
         },
       ]);
       const expectedContent = normalizeContent(`
         #EXTM3U
         #EXT-X-VERSION:3
         #EXTINF:3,
-        segment1.ts
+        0.ts
       `);
       expect(normalizeContent(modifiedContent)).toBe(expectedContent);
     });
@@ -481,9 +512,9 @@ describe('M3U8 parser', () => {
         #EXT-X-VERSION:3
         #EXT-X-TARGETDURATION:10
         #EXTINF:3,
-        segment1.ts
+        0.ts
         #EXTINF:3,
-        segment2.ts
+        1.ts
         #EXT-X-ENDLIST
       `);
 
@@ -747,11 +778,11 @@ describe('streamSegments', () => {
   });
 
   test('should process segments in batches based on concurrency limit', async () => {
-    const segmentUrls = [
-      'http://example.com/seg-1.ts',
-      'http://example.com/seg-2.ts',
-      'http://example.com/seg-3.ts',
-      'http://example.com/seg-4.ts',
+    const segments = [
+      { url: 'http://example.com/seg-1.ts', name: '0.ts' },
+      { url: 'http://example.com/seg-2.ts', name: '1.ts' },
+      { url: 'http://example.com/seg-3.ts', name: '2.ts' },
+      { url: 'http://example.com/seg-4.ts', name: '3.ts' },
     ];
     const baseStoragePath = 'videos/test';
 
@@ -767,7 +798,7 @@ describe('streamSegments', () => {
     (streamFile as Mock).mockResolvedValue(undefined);
 
     await streamSegments({
-      segmentUrls,
+      segments,
       baseStoragePath,
       options: { concurrencyLimit: 2 },
     });
@@ -780,13 +811,16 @@ describe('streamSegments', () => {
     const streamFileCalls = (streamFile as Mock).mock.calls;
     streamFileCalls.forEach((call, index) => {
       expect(call[0].stream).toBeInstanceOf(Readable);
-      expect(call[0].storagePath).toBe(`videos/test/seg-${index + 1}.ts`);
+      expect(call[0].storagePath).toBe(`videos/test/${index}.ts`);
       expect(call[0].options.contentType).toBe('video/MP2T');
     });
   });
 
   test('should use default concurrency limit when not specified', async () => {
-    const segmentUrls = Array.from({ length: 5 }, (_, i) => `http://example.com/seg-${i + 1}.ts`);
+    const segments = Array.from({ length: 5 }, (_, i) => ({
+      url: `http://example.com/seg-${i + 1}.ts`,
+      name: `${i}.ts`,
+    }));
 
     (fetchWithError as Mock).mockImplementation(() =>
       Promise.resolve({
@@ -797,7 +831,7 @@ describe('streamSegments', () => {
     (streamFile as Mock).mockResolvedValue(undefined);
 
     await streamSegments({
-      segmentUrls,
+      segments,
       baseStoragePath: 'videos/test',
     });
 
@@ -806,7 +840,11 @@ describe('streamSegments', () => {
   });
 
   test('should log error and throw when segment streaming fails', async () => {
-    const segmentUrls = ['http://example.com/seg-1.ts', 'http://example.com/seg-2.ts', 'http://example.com/seg-3.ts'];
+    const segments = [
+      { url: 'http://example.com/seg-1.ts', name: '0.ts' },
+      { url: 'http://example.com/seg-2.ts', name: '1.ts' },
+      { url: 'http://example.com/seg-3.ts', name: '2.ts' },
+    ];
     const baseStoragePath = 'videos/test';
     const mockBody = new ReadableStream();
 
@@ -825,7 +863,7 @@ describe('streamSegments', () => {
 
     await expect(
       streamSegments({
-        segmentUrls,
+        segments,
         baseStoragePath,
         options: { concurrencyLimit: 1 },
       })

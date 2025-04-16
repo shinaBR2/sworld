@@ -1,10 +1,10 @@
 import path from 'path';
-import { getDownloadUrl } from '../gcp-cloud-storage';
-import { logger } from 'src/utils/logger';
-import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { logger } from 'src/utils/logger';
+import { getDownloadUrl } from '../gcp-cloud-storage';
 import { processThumbnail } from '../thumbnail';
+import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
 
 interface ProcessOptions {
   excludePatterns?: RegExp[];
@@ -95,7 +95,7 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
 
     // Stream segments in parallel
     await streamSegments({
-      segmentUrls: segments.included.map(s => s.url),
+      segments: segments.included,
       baseStoragePath: storagePath,
       options,
     });
@@ -120,4 +120,4 @@ const streamM3U8 = async (m3u8Url: string, storagePath: string, options: Process
   }
 };
 
-export { streamM3U8, ProcessOptions };
+export { ProcessOptions, streamM3U8 };

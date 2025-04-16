@@ -1,17 +1,18 @@
-import path from 'path';
-import { logger } from 'src/utils/logger';
-import { downloadFile, verifyFileSize } from '../file';
-import { streamFile } from '../gcp-cloud-storage';
-import { Readable } from 'node:stream';
-import { videoConfig } from '../../config';
-import { systemConfig } from 'src/utils/systemConfig';
 import { Parser } from 'm3u8-parser';
-import { fetchWithError } from 'src/utils/fetch';
+import { Readable } from 'node:stream';
+import path from 'path';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
+import { fetchWithError } from 'src/utils/fetch';
+import { logger } from 'src/utils/logger';
+import { systemConfig } from 'src/utils/systemConfig';
+import { videoConfig } from '../../config';
+import { downloadFile, verifyFileSize } from '../file';
+import { streamFile } from '../gcp-cloud-storage';
 
 interface HLSSegment {
   url: string;
+  name: string;
   duration?: number;
 }
 interface ParsedResult {
@@ -92,22 +93,27 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
   }
 
   // Process segments
+  let segmentIndex = 0;
   manifest.segments?.forEach(segment => {
     const segmentUrl = new URL(segment.uri, m3u8Url).toString();
 
     if (isAds(segmentUrl, excludePatterns)) {
       segments.excluded.push({
         url: segmentUrl,
+        name: '',
       });
     } else {
       // Include non-ad segment
       if (segment.duration) {
         modifiedContent += `#EXTINF:${segment.duration},\n`;
         totalDuration += segment.duration;
+        const segmentName = `${segmentIndex++}.ts`;
+        modifiedContent += `${segmentName}\n`;
 
-        modifiedContent += `${segment.uri}\n`;
+        // modifiedContent += `${segment.uri}\n`;
         segments.included.push({
           url: segmentUrl,
+          name: segmentName,
           duration: segment.duration,
         });
       }
@@ -239,8 +245,7 @@ const streamSegmentFile = async (segmentUrl: string, storagePath: string) => {
 };
 
 interface StreamSegmentsParams {
-  /** Array of segment URLs to stream */
-  segmentUrls: string[];
+  segments: HLSSegment[];
   /** Base path in Cloud Storage to store the segments */
   baseStoragePath: string;
   options?: {
@@ -250,22 +255,22 @@ interface StreamSegmentsParams {
 }
 
 const streamSegments = async (params: StreamSegmentsParams) => {
-  const { segmentUrls, baseStoragePath, options } = params;
+  const { segments, baseStoragePath, options } = params;
   const { defaultConcurrencyLimit } = videoConfig;
   const concurrencyLimit = options?.concurrencyLimit || defaultConcurrencyLimit;
 
-  for (let i = 0; i < segmentUrls.length; i += concurrencyLimit) {
-    const batch = segmentUrls.slice(i, i + concurrencyLimit);
+  for (let i = 0; i < segments.length; i += concurrencyLimit) {
+    const batch = segments.slice(i, i + concurrencyLimit);
 
     await Promise.all(
-      batch.map(async segmentUrl => {
-        const segmentFileName = segmentUrl.split('/').pop();
+      batch.map(async segment => {
+        const segmentFileName = segment.name;
         const segmentStoragePath = path.join(baseStoragePath, segmentFileName as string);
 
-        await streamSegmentFile(segmentUrl, segmentStoragePath);
+        await streamSegmentFile(segment.url, segmentStoragePath);
       })
     );
   }
 };
 
-export { parseM3U8Content, downloadSegments, streamPlaylistFile, streamSegmentFile, streamSegments };
+export { downloadSegments, parseM3U8Content, streamPlaylistFile, streamSegmentFile, streamSegments };
