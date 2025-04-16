@@ -16,10 +16,17 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const JournalLazyImport = createFileRoute('/journal')()
 const FinanceLazyImport = createFileRoute('/finance')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const JournalLazyRoute = JournalLazyImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/journal.lazy').then((d) => d.Route))
 
 const FinanceLazyRoute = FinanceLazyImport.update({
   id: '/finance',
@@ -51,6 +58,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FinanceLazyImport
       parentRoute: typeof rootRoute
     }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -59,36 +73,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
+  '/journal': typeof JournalLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
+  '/journal': typeof JournalLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
+  '/journal': typeof JournalLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/finance'
+  fullPaths: '/' | '/finance' | '/journal'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/finance'
-  id: '__root__' | '/' | '/finance'
+  to: '/' | '/finance' | '/journal'
+  id: '__root__' | '/' | '/finance' | '/journal'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   FinanceLazyRoute: typeof FinanceLazyRoute
+  JournalLazyRoute: typeof JournalLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   FinanceLazyRoute: FinanceLazyRoute,
+  JournalLazyRoute: JournalLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +121,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/finance"
+        "/finance",
+        "/journal"
       ]
     },
     "/": {
@@ -110,6 +130,9 @@ export const routeTree = rootRoute
     },
     "/finance": {
       "filePath": "finance.lazy.tsx"
+    },
+    "/journal": {
+      "filePath": "journal.lazy.tsx"
     }
   }
 }
