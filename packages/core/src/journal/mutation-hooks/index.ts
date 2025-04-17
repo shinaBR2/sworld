@@ -42,6 +42,7 @@ const deleteJournalMutation = graphql(/* GraphQL */ `
   mutation DeleteJournal($id: uuid!) {
     delete_journals_by_pk(id: $id) {
       id
+      date
     }
   }
 `);
@@ -50,6 +51,35 @@ interface MutationProps {
   onSuccess?: (data: any) => void;
   onError?: (error: unknown) => void;
 }
+
+// Helper function to extract month and year from date string
+const getMonthYearFromDate = (dateString?: string) => {
+  if (!dateString) return null;
+  
+  const [yearStr, monthStr] = dateString.split('-');
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  
+  if (isNaN(year) || isNaN(month)) return null;
+  return { month, year };
+};
+
+// Helper function to invalidate journal queries
+const invalidateJournalQueries = (
+  invalidateQuery: (queryKey: unknown[]) => void,
+  date?: string,
+  journalId?: string
+) => {
+  const dateInfo = getMonthYearFromDate(date);
+  
+  if (dateInfo) {
+    invalidateQuery(['journals', dateInfo.month, dateInfo.year]);
+  }
+  
+  if (journalId) {
+    invalidateQuery(['journal', journalId]);
+  }
+};
 
 const useCreateJournal = (props: MutationProps) => {
   const { getAccessToken } = useAuthContext();
@@ -61,13 +91,10 @@ const useCreateJournal = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess: data => {
-        const currentDate = new Date();
-        const month = currentDate.getMonth() + 1;
-        const year = currentDate.getFullYear();
-
-        // Invalidate journals query to refetch the list
-        invalidateQuery(['journals', month, year]);
-
+        const journalDate = data.insert_journals_one?.date;
+        const journalId = data.insert_journals_one?.id;
+        
+        invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
       onError: error => {
@@ -90,20 +117,10 @@ const useUpdateJournal = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess: data => {
-        // Get month and year from the updated journal's date
-        const [year, month] = data.update_journals_by_pk?.date.split('-').map((n: string) => parseInt(n, 10)) || [];
-
-        // Invalidate journals query for the specific month/year
-        if (month && year) {
-          invalidateQuery(['journals', month, year]);
-        }
-
-        // Invalidate the specific journal query
+        const journalDate = data.update_journals_by_pk?.date;
         const journalId = data.update_journals_by_pk?.id;
-        if (journalId) {
-          invalidateQuery(['journal', journalId]);
-        }
-
+        
+        invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
       onError: error => {
@@ -126,13 +143,10 @@ const useDeleteJournal = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess: data => {
-        const currentDate = new Date();
-        const month = currentDate.getMonth() + 1;
-        const year = currentDate.getFullYear();
-
-        // Invalidate journals query to refetch the list
-        invalidateQuery(['journals', month, year]);
-
+        const journalDate = data.delete_journals_by_pk?.date;
+        const journalId = data.delete_journals_by_pk?.id;
+        
+        invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
       onError: error => {

@@ -8622,7 +8622,7 @@ export type DeleteJournalMutationVariables = Exact<{
 }>;
 
 
-export type DeleteJournalMutation = { __typename?: 'mutation_root', delete_journals_by_pk?: { __typename?: 'journals', id: any } | null };
+export type DeleteJournalMutation = { __typename?: 'mutation_root', delete_journals_by_pk?: { __typename?: 'journals', id: any, date: any } | null };
 
 export type GetJournalsByMonthQueryVariables = Exact<{
   startDate: Scalars['date']['input'];
@@ -9032,6 +9032,7 @@ export const DeleteJournalDocument = new TypedDocumentString(`
     mutation DeleteJournal($id: uuid!) {
   delete_journals_by_pk(id: $id) {
     id
+    date
   }
 }
     `) as unknown as TypedDocumentString<DeleteJournalMutation, DeleteJournalMutationVariables>;
