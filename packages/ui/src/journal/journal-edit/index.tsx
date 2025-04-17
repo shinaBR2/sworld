@@ -56,8 +56,9 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
   };
 
   const handleAddTag = () => {
-    if (newTag.trim() !== '' && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
+    const trimmedTag = newTag.trim();
+    if (trimmedTag !== '' && tags.indexOf(trimmedTag) === -1) {
+      setTags([...tags, trimmedTag]);
       setNewTag('');
     }
   };
