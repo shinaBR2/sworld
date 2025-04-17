@@ -70,9 +70,14 @@ interface LoadJournalByIdProps {
 }
 
 const getStartEndDates = (month: number, year: number) => {
-  const startDate = new Date(year, month - 1, 1).toISOString().split('T')[0];
-  const endDate = new Date(year, month, 0).toISOString().split('T')[0];
-  return { startDate, endDate };
+  // Use UTC to avoid timezone-related date shifts
+  const startDate = new Date(Date.UTC(year, month - 1, 1));
+  const endDate = new Date(Date.UTC(year, month, 0)); // Last day of month
+
+  return {
+    startDate: startDate.toISOString().split('T')[0],
+    endDate: endDate.toISOString().split('T')[0],
+  };
 };
 
 const transformJournalsByMonth = (data: any) => {
