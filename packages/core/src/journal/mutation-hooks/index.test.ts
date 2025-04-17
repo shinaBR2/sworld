@@ -50,8 +50,12 @@ describe('Journal Mutation Hooks', () => {
       // Call the onSuccess callback directly
       onSuccessCallback?.(mockData);
 
+      const date = new Date(mockData.insert_journals_one.date);
+      const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+      const year = date.getFullYear();
+
       // Verify invalidation using date from returned data
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', 2, 2023]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', month, year]);
       expect(mockOnSuccess).toHaveBeenCalledWith(mockData);
     });
   });
@@ -76,8 +80,12 @@ describe('Journal Mutation Hooks', () => {
       // Call the onSuccess callback directly
       onSuccessCallback?.(mockData);
 
+      const date = new Date(mockData.delete_journals_by_pk.date);
+      const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+      const year = date.getFullYear();
+
       // Verify invalidation using date from returned data
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', 3, 2023]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', month, year]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['journal', '1']);
       expect(mockOnSuccess).toHaveBeenCalledWith(mockData);
     });
