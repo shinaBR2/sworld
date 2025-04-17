@@ -3,11 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { JournalDetail } from './index';
 import { formatDate, formatDateTime } from 'core/universal/common';
+import { MoodIcon } from '../mood-icons';
 
 // Mock dependencies
 vi.mock('core/universal/common', () => ({
   formatDate: vi.fn(date => `formatted-date-${date}`),
   formatDateTime: vi.fn(date => `formatted-datetime-${date}`),
+}));
+
+vi.mock('../mood-icons', () => ({
+  MoodIcon: vi.fn(() => null), // Mocking the MoodIcon component
 }));
 
 // Constants for testing
@@ -90,17 +95,19 @@ describe('JournalDetail', () => {
     // Check timestamps
     expect(formatDateTime).toHaveBeenCalledWith(mockJournal.createdAt);
     expect(formatDateTime).toHaveBeenCalledWith(mockJournal.updatedAt);
-    
+
     // Check for the combined text of label and formatted datetime
-    expect(screen.getByText((content) => 
-      content.includes('Created:') && 
-      content.includes(`formatted-datetime-${mockJournal.createdAt}`)
-    )).toBeInTheDocument();
-    
-    expect(screen.getByText((content) => 
-      content.includes('Updated:') && 
-      content.includes(`formatted-datetime-${mockJournal.updatedAt}`)
-    )).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        content => content.includes('Created:') && content.includes(`formatted-datetime-${mockJournal.createdAt}`)
+      )
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(
+        content => content.includes('Updated:') && content.includes(`formatted-datetime-${mockJournal.updatedAt}`)
+      )
+    ).toBeInTheDocument();
   });
 
   it('should handle back button click', () => {
@@ -143,7 +150,7 @@ describe('JournalDetail', () => {
     // At least 3 buttons should be present (back, edit, delete)
     expect(actionButtons.length).toBeGreaterThanOrEqual(3);
 
-    // Since we know MoodIcon is rendered, we can check that the mood prop was passed
-    // but we can't directly test its internal rendering
+    const mockMoodIcon = vi.mocked(MoodIcon);
+    expect(mockMoodIcon).toHaveBeenCalledWith(expect.objectContaining({ mood: mockJournal.mood }), expect.anything());
   });
 });
