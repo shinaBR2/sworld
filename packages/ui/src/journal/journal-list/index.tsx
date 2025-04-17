@@ -96,6 +96,7 @@ export const JournalList: React.FC<JournalListProps> = ({
 
     return (
       <Card
+        key={`stat-${mood}`}
         sx={{
           borderLeft: `4px solid ${color}`,
           boxShadow: 1,
@@ -189,7 +190,7 @@ export const JournalList: React.FC<JournalListProps> = ({
   );
 
   const renderSkeletonCard = (index: number) => (
-    <Card key={`skeleton-${index}`} sx={{ mb: 2, boxShadow: 1 }}>
+    <Card key={`skeleton-${index}`} data-testid={`skeleton-${index}`} sx={{ mb: 2, boxShadow: 1 }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box>
@@ -231,19 +232,12 @@ export const JournalList: React.FC<JournalListProps> = ({
       </Box>
 
       {/* Stats Cards */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 2,
-          mb: 3,
-        }}
-      >
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
         {isLoading
           ? Array(4)
               .fill(0)
               .map((_, index) => (
-                <Card key={`stat-skeleton-${index}`} sx={{ boxShadow: 1 }}>
+                <Card key={`stat-skeleton-${index}`} data-testid={`stat-skeleton-${index}`} sx={{ boxShadow: 1 }}>
                   <CardContent>
                     <Skeleton height={24} width={80} />
                     <Skeleton height={40} width={40} />
