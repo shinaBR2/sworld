@@ -80,7 +80,7 @@ const getStartEndDates = (month: number, year: number) => {
   };
 };
 
-const transformJournalsByMonth = (data: any) => {
+const transformJournalsByMonth = (data: GetJournalsByMonthQuery) => {
   const { journals = [], happy_aggregate, neutral_aggregate, sad_aggregate, oldest_aggregate } = data;
 
   const happyCount = happy_aggregate.aggregate?.count ?? 0;
