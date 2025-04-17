@@ -212,7 +212,7 @@ export const JournalList: React.FC<JournalListProps> = ({
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" fontWeight="bold">
-          Journal Dashboard
+          Journals
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
