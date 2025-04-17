@@ -33,8 +33,16 @@ const getCurrentMonthYear = (): { month: number; year: number } => {
 };
 
 const getStartEndDates = (month: number, year: number): { startDate: string; endDate: string } => {
-  const startDate = new Date(year, month - 1, 1).toISOString().split('T')[0];
-  const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+  // Create date for first day of the month
+  const startDate = new Date(Date.UTC(year, month - 1, 1))
+    .toISOString()
+    .split('T')[0];
+
+  // Create date for last day by getting day 0 of next month
+  const endDate = new Date(Date.UTC(year, month, 0))
+    .toISOString()
+    .split('T')[0];
+
   return { startDate, endDate };
 };
 
