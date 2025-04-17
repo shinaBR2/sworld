@@ -7,9 +7,8 @@ import { JournalList } from 'ui/journal/journal-list';
 import { JournalDetail } from 'ui/journal/journal-detail';
 import { EditDialog } from 'ui/journal/edit-dialog';
 import { FabButton } from 'ui/journal/fab-button';
+import { Notification } from 'ui/journal/notification';
 import { Container } from 'ui/universal/containers/generic';
-// import Snackbar from '@mui/material/Snackbar';
-// import Alert from '@mui/material/Alert';
 import { useAuthContext } from 'core/providers/auth';
 import { Journal } from 'core/journal';
 import { Layout } from '../components/layout';
@@ -39,7 +38,7 @@ const JournalPage = () => {
     getAccessToken,
     id: selectedJournal?.id || '',
     // Skip fetching if there's no selected journal or not in detail view
-    enabled: !!selectedJournal?.id && view === 'detail',
+    // enabled: !!selectedJournal?.id && view === 'detail',
   });
 
   // Mutation hooks
@@ -160,7 +159,7 @@ const JournalPage = () => {
           open={dialogOpen}
           onClose={handleCloseDialog}
           selectedJournal={selectedJournal}
-          journalDetail={journalDetail}
+          journalDetail={journalDetail!}
           isLoadingDetail={isLoadingDetail}
           createJournal={createJournal}
           updateJournal={updateJournal}
@@ -168,18 +167,7 @@ const JournalPage = () => {
         />
 
         {/* Notifications */}
-        {/* <Snackbar
-          open={!!notification}
-          autoHideDuration={5000}
-          onClose={handleCloseNotification}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-          {notification && (
-            <Alert severity={notification.severity} onClose={handleCloseNotification} variant="filled">
-              {notification.message}
-            </Alert>
-          )}
-        </Snackbar> */}
+        {notification && <Notification notification={notification} onClose={handleCloseNotification} />}
       </Container>
     </Layout>
   );
