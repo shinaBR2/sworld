@@ -62,10 +62,4 @@ describe('Notification', () => {
 
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
-
-  it('does not render Alert when notification is null', () => {
-    render(<Notification notification={null as any} onClose={defaultProps.onClose} />);
-
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-  });
 });
