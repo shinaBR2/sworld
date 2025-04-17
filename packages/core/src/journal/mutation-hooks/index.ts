@@ -1,4 +1,3 @@
-// packages/core/src/journal/mutation-hooks/journals.ts
 import { graphql } from '../../graphql';
 import {
   CreateJournalMutation,

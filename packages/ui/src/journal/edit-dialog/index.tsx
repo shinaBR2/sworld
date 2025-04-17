@@ -1,4 +1,3 @@
-// apps/main/src/routes/journal.lazy.tsx
 import { JournalEdit } from '../journal-edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';

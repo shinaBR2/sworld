@@ -1,4 +1,3 @@
-// apps/main/src/routes/journal.lazy.tsx
 import React, { useState } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { useLoadJournalsByMonth, useLoadJournalById } from 'core/journal/query-hooks';
