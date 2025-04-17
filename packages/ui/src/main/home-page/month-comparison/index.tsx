@@ -1,6 +1,5 @@
 import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-import * as echarts from 'echarts';
+import ReactECharts, { EChartsOption } from 'echarts-for-react';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 
 export interface MonthData {
@@ -52,7 +51,7 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
   );
 
   // Generate ECharts option
-  const getOption = (): echarts.EChartsOption => {
+  const getOption = (): EChartsOption => {
     return {
       grid: {
         left: '3%',

@@ -1,6 +1,5 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-import * as echarts from 'echarts';
+import ReactECharts, { EChartsOption } from 'echarts-for-react';
 import { CategoryType } from 'core/finance';
 
 export interface CategoryData {
@@ -68,7 +67,7 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
   const total = data.reduce((sum, item) => (item.category !== 'total' ? sum + item.amount : sum), 0);
 
   // Generate ECharts option
-  const getOption = (): echarts.EChartsOption => {
+  const getOption = (): EChartsOption => {
     return {
       tooltip: {
         trigger: 'item',
