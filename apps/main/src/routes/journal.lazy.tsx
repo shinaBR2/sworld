@@ -14,12 +14,10 @@ import { Container } from 'ui/universal/containers/generic';
 import { useAuthContext } from 'core/providers/auth';
 import { Journal } from 'core/journal';
 import { Layout } from '../components/layout';
+import LoadingBackdrop from 'ui/universal/LoadingBackdrop';
+import { LoginDialog } from 'ui/universal/dialogs/login';
 
-export const Route = createLazyFileRoute('/journal')({
-  component: JournalPage,
-});
-
-function JournalPage() {
+const JournalPage = () => {
   const { getAccessToken } = useAuthContext();
   const [view, setView] = useState<'list' | 'detail' | 'edit'>('list');
   const [selectedJournal, setSelectedJournal] = useState<Journal | null>(null);
@@ -94,16 +92,18 @@ function JournalPage() {
   const handleDelete = async () => {
     if (selectedJournal?.id) {
       if (window.confirm('Are you sure you want to delete this journal entry?')) {
-        await deleteJournal(selectedJournal.id);
+        await deleteJournal({ id: selectedJournal.id });
       }
     }
   };
 
   const handleSave = async (input: any) => {
     if (selectedJournal?.id) {
-      await updateJournal({ id: selectedJournal.id, input });
+      await updateJournal({ id: selectedJournal.id, set: input });
     } else {
-      await createJournal(input);
+      await createJournal({
+        object: input,
+      });
     }
   };
 
@@ -184,4 +184,19 @@ function JournalPage() {
       </Container>
     </Layout>
   );
-}
+};
+
+const RouteComponent = () => {
+  const { isSignedIn, isLoading, signIn } = useAuthContext();
+  if (isLoading) {
+    return <LoadingBackdrop message="Valuable things deserve waiting" />;
+  }
+  if (!isSignedIn) {
+    return <LoginDialog onAction={signIn} />;
+  }
+  return <JournalPage />;
+};
+
+export const Route = createLazyFileRoute('/journal')({
+  component: RouteComponent,
+});
