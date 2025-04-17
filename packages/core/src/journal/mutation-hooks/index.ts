@@ -61,8 +61,6 @@ const useCreateJournal = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess: data => {
-        // For now I want to create only for current date
-        // Not for the specific date
         const currentDate = new Date();
         const month = currentDate.getMonth() + 1;
         const year = currentDate.getFullYear();
