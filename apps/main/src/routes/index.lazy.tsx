@@ -34,6 +34,12 @@ const landingItems = [
     to: '/finance',
     isExternal: false,
   },
+  {
+    icon: '📝',
+    title: 'Journal',
+    to: '/journal',
+    isExternal: false,
+  },
 ];
 
 const Content = () => {
