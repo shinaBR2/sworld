@@ -141,6 +141,7 @@ const useLoadJournalById = (props: LoadJournalByIdProps) => {
     variables: {
       id,
     },
+    enabled: !!id,
   });
 
   return {

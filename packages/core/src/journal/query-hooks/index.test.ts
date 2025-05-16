@@ -151,10 +151,40 @@ describe('Journal Query Hooks', () => {
         getAccessToken: mockAccessToken,
         document: expect.anything(),
         variables: { id: '1' },
+        enabled: true,
       });
 
       expect(result.current).toEqual({
         data: mockData.journals_by_pk,
+        isLoading: false,
+        error: null,
+      });
+    });
+
+    it('should not fetch when id is falsy', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: null,
+        isLoading: false,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalById({
+          getAccessToken: mockAccessToken,
+          id: '',
+        })
+      );
+
+      expect(useRequest).toHaveBeenCalledWith({
+        queryKey: ['journal', ''],
+        getAccessToken: mockAccessToken,
+        document: expect.anything(),
+        variables: { id: '' },
+        enabled: false,
+      });
+
+      expect(result.current).toEqual({
+        data: null,
         isLoading: false,
         error: null,
       });
