@@ -13,6 +13,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { MoodIcon } from '../mood-icons';
 import { formatDate, formatDateTime } from 'core/universal/common';
 import { Journal, MoodType } from 'core/src/journal';
+import { LoadJournalByIdProps, useLoadJournalById } from 'core/journal/query-hooks';
 
 interface JournalDetailProps {
   journal: Journal | null;
@@ -22,7 +23,9 @@ interface JournalDetailProps {
   onDeleteClick: () => void;
 }
 
-export const JournalDetail: React.FC<JournalDetailProps> = ({
+interface JournalDetailPropsWithFetch extends Omit<JournalDetailProps, 'journal' | 'isLoading'>, LoadJournalByIdProps {}
+
+const JournalDetail: React.FC<JournalDetailProps> = ({
   journal,
   isLoading,
   onBackClick,
@@ -155,3 +158,14 @@ export const JournalDetail: React.FC<JournalDetailProps> = ({
     </Box>
   );
 };
+
+const JournalDetailWithFetch = (props: JournalDetailPropsWithFetch) => {
+  const { id, getAccessToken, ...rest } = props;
+  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
+    getAccessToken,
+    id,
+  });
+  return <JournalDetail {...rest} journal={journalDetail} isLoading={isLoadingDetail} />;
+};
+
+export { JournalDetail, JournalDetailWithFetch };
