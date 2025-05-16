@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { useLoadJournalsByMonth, useLoadJournalById } from 'core/journal/query-hooks';
+import { useLoadJournalsByMonth } from 'core/journal/query-hooks';
 import { useCreateJournal, useUpdateJournal, useDeleteJournal } from 'core/journal/mutation-hooks';
 import { getCurrentMonthYear } from 'core/universal/common';
 import { JournalList } from 'ui/journal/journal-list';
-import { JournalDetail } from 'ui/journal/journal-detail';
-import { EditDialog } from 'ui/journal/edit-dialog';
-import { FabButton } from 'ui/journal/fab-button';
-import { Notification } from 'ui/journal/notification';
 import { Container } from 'ui/universal/containers/generic';
 import { useAuthContext } from 'core/providers/auth';
 import { Journal } from 'core/journal';
 import { Layout } from '../components/layout';
-import LoadingBackdrop from 'ui/universal/LoadingBackdrop';
-import { LoginDialog } from 'ui/universal/dialogs/login';
+import { FabButton } from 'ui/journal/fab-button';
+import { AuthRoute } from 'ui/universal/authRoute';
+
+// Lazy loaded components
+const JournalDetailWithFetch = lazy(() =>
+  import('ui/journal/journal-detail').then(m => ({ default: m.JournalDetailWithFetch }))
+);
+const EditDialogWithFetch = lazy(() =>
+  import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialogWithFetch }))
+);
+const EditDialog = lazy(() => import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialog })));
+const Notification = lazy(() => import('ui/journal/notification').then(m => ({ default: m.Notification })));
 
 const JournalPage = () => {
   const { getAccessToken } = useAuthContext();
@@ -32,13 +38,6 @@ const JournalPage = () => {
     getAccessToken,
     month,
     year,
-  });
-
-  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
-    getAccessToken,
-    id: selectedJournal?.id || '',
-    // Skip fetching if there's no selected journal or not in detail view
-    // enabled: !!selectedJournal?.id && view === 'detail',
   });
 
   // Mutation hooks
@@ -122,15 +121,17 @@ const JournalPage = () => {
   const renderContent = () => {
     switch (view) {
       case 'detail':
-        return (
-          <JournalDetail
-            journal={journalDetail || selectedJournal}
-            isLoading={isLoadingDetail}
-            onBackClick={handleBackToList}
-            onEditClick={handleEdit}
-            onDeleteClick={handleDelete}
-          />
-        );
+        return selectedJournal?.id ? (
+          <Suspense fallback={null}>
+            <JournalDetailWithFetch
+              id={selectedJournal?.id}
+              getAccessToken={getAccessToken}
+              onBackClick={handleBackToList}
+              onEditClick={handleEdit}
+              onDeleteClick={handleDelete}
+            />
+          </Suspense>
+        ) : null;
       default:
         return (
           <JournalList
@@ -155,35 +156,45 @@ const JournalPage = () => {
         {view === 'list' && <FabButton onClick={handleCreateNew} />}
 
         {/* Edit Dialog */}
-        <EditDialog
-          open={dialogOpen}
-          onClose={handleCloseDialog}
-          selectedJournal={selectedJournal}
-          journalDetail={journalDetail!}
-          isLoadingDetail={isLoadingDetail}
-          createJournal={createJournal}
-          updateJournal={updateJournal}
-          onSave={handleSave}
-        />
+        <Suspense fallback={null}>
+          {selectedJournal?.id ? (
+            <EditDialogWithFetch
+              id={selectedJournal.id}
+              getAccessToken={getAccessToken}
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              createJournal={createJournal}
+              updateJournal={updateJournal}
+              onSave={handleSave}
+            />
+          ) : (
+            <EditDialog
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              createJournal={createJournal}
+              updateJournal={updateJournal}
+              onSave={handleSave}
+              journalDetail={null}
+              isLoadingDetail={false}
+            />
+          )}
+        </Suspense>
 
         {/* Notifications */}
-        {notification && <Notification notification={notification} onClose={handleCloseNotification} />}
+        <Suspense fallback={null}>
+          {notification && <Notification notification={notification} onClose={handleCloseNotification} />}
+        </Suspense>
       </Container>
     </Layout>
   );
 };
 
-const RouteComponent = () => {
-  const { isSignedIn, isLoading, signIn } = useAuthContext();
-  if (isLoading) {
-    return <LoadingBackdrop message="Valuable things deserve waiting" />;
-  }
-  if (!isSignedIn) {
-    return <LoginDialog onAction={signIn} />;
-  }
-  return <JournalPage />;
-};
-
 export const Route = createLazyFileRoute('/journal')({
-  component: RouteComponent,
+  component: () => {
+    return (
+      <AuthRoute>
+        <JournalPage />
+      </AuthRoute>
+    );
+  },
 });
