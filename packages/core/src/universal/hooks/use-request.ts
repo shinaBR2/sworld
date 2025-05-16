@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
-import { useQueryContext } from '../../providers/query';
 import { TypedDocumentString } from '../../graphql/graphql';
+import { useQueryContext } from '../../providers/query';
 
 interface UseRequestProps<TData, TVariables> {
   queryKey: unknown[];
@@ -9,10 +9,11 @@ interface UseRequestProps<TData, TVariables> {
   variables?: TVariables;
   getAccessToken?: () => Promise<string>;
   staleTime?: number;
+  enabled?: boolean;
 }
 
 const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseRequestProps<TData, TVariables>) => {
-  const { queryKey, getAccessToken, document, variables, staleTime = 5 * 60 * 1000 } = props;
+  const { queryKey, getAccessToken, document, variables, staleTime = 5 * 60 * 1000, enabled = true } = props;
 
   const { hasuraUrl } = useQueryContext();
 
@@ -54,6 +55,7 @@ const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseR
       }
     },
     staleTime,
+    enabled,
   });
 };
 
