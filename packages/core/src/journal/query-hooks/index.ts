@@ -110,7 +110,7 @@ const transformJournalsByMonth = (data: GetJournalsByMonthQuery) => {
   };
 };
 
-export const useLoadJournalsByMonth = (props: LoadJournalsByMonthProps) => {
+const useLoadJournalsByMonth = (props: LoadJournalsByMonthProps) => {
   const { getAccessToken, month, year } = props;
   const { startDate, endDate } = getStartEndDates(month, year);
 
@@ -131,7 +131,7 @@ export const useLoadJournalsByMonth = (props: LoadJournalsByMonthProps) => {
   };
 };
 
-export const useLoadJournalById = (props: LoadJournalByIdProps) => {
+const useLoadJournalById = (props: LoadJournalByIdProps) => {
   const { getAccessToken, id } = props;
 
   const { data, isLoading, error } = useRequest<GetJournalByIdQuery, GetJournalByIdQueryVariables>({
@@ -141,11 +141,14 @@ export const useLoadJournalById = (props: LoadJournalByIdProps) => {
     variables: {
       id,
     },
+    enabled: !!id,
   });
 
   return {
-    data: !isLoading && data ? data.journals_by_pk : null,
+    data: !isLoading && data ? data.journals_by_pk ?? null : null,
     isLoading,
     error,
   };
 };
+
+export { useLoadJournalById, useLoadJournalsByMonth, type LoadJournalByIdProps };

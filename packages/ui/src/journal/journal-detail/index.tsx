@@ -22,7 +22,7 @@ interface JournalDetailProps {
   onDeleteClick: () => void;
 }
 
-export const JournalDetail: React.FC<JournalDetailProps> = ({
+const JournalDetail: React.FC<JournalDetailProps> = ({
   journal,
   isLoading,
   onBackClick,
@@ -155,3 +155,5 @@ export const JournalDetail: React.FC<JournalDetailProps> = ({
     </Box>
   );
 };
+
+export { JournalDetail };

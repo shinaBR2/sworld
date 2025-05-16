@@ -206,4 +206,51 @@ describe('useRequest', () => {
     expect(request).toHaveBeenCalledOnce();
     expect(result.current.data).toEqual(mockResponse);
   });
+
+  it('should not fetch when enabled is false', async () => {
+    const { result } = renderHook(
+      () =>
+        useRequest({
+          queryKey: ['test-disabled'],
+          getAccessToken: mockGetAccessToken,
+          document: mockDocument,
+          enabled: false,
+        }),
+      { wrapper }
+    );
+
+    expect(result.current.isLoading).toBe(false);
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it('should fetch when enabled changes from false to true', async () => {
+    const { result, rerender } = renderHook(
+      ({ enabled }) =>
+        useRequest({
+          queryKey: ['test-enabled-change'],
+          getAccessToken: mockGetAccessToken,
+          document: mockDocument,
+          enabled,
+        }),
+      {
+        wrapper,
+        initialProps: { enabled: false },
+      }
+    );
+
+    expect(result.current.isLoading).toBe(false);
+    expect(request).not.toHaveBeenCalled();
+
+    rerender({ enabled: true });
+
+    await waitFor(
+      () => {
+        expect(result.current.isSuccess).toBe(true);
+      },
+      { timeout: 2000 }
+    );
+
+    expect(request).toHaveBeenCalledOnce();
+    expect(result.current.data).toEqual(mockResponse);
+  });
 });
