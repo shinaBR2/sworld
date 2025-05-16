@@ -69,11 +69,6 @@ describe('AuthRoute', () => {
 
     expect(screen.getByTestId('mock-login-dialog')).toBeInTheDocument();
     expect(mockLoginDialog).toHaveBeenCalledWith({ onAction: signIn }, {});
-
-    // Test sign in functionality
-    // const signInButton = screen.getByRole('button', { name: /sign in/i });
-    // signInButton.click();
-    // expect(signIn).toHaveBeenCalledTimes(1);
   });
 
   it('does not render children when not authenticated', () => {
