@@ -4,6 +4,7 @@ import { Layout } from '../components/layout';
 import React from 'react';
 import { useLoadVideoDetail } from 'core/watch/query-hooks/video-detail';
 import { useAuthContext } from 'core/providers/auth';
+import { AuthRoute } from 'ui/universal/authRoute';
 
 function VideoDetails() {
   const { id: videoId } = Route.useParams();
@@ -21,5 +22,11 @@ function VideoDetails() {
 }
 
 export const Route = createLazyFileRoute('/video/$slug/$id')({
-  component: VideoDetails,
+  component: () => {
+    return (
+      <AuthRoute>
+        <VideoDetails />
+      </AuthRoute>
+    );
+  },
 });
