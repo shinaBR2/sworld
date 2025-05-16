@@ -1,12 +1,11 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { LoadingBackdrop } from 'ui/universal';
-import { LoginDialog } from 'ui/universal/dialogs';
 import { Layout } from '../components/layout';
 import { HistoryContainer } from 'ui/watch/history-page/container';
 import { useMemo } from 'react';
 import React from 'react';
 import { useAuthContext } from 'core/providers/auth';
 import { useLoadHistory } from 'core/watch/query-hooks/history';
+import { AuthRoute } from 'ui/universal/authRoute';
 
 const Content = () => {
   const { getAccessToken } = useAuthContext();
@@ -29,20 +28,12 @@ const Content = () => {
   );
 };
 
-const History = () => {
-  const { isSignedIn, isLoading, signIn } = useAuthContext();
-
-  if (isLoading) {
-    return <LoadingBackdrop message="Valuable things deserve waiting" />;
-  }
-
-  if (!isSignedIn) {
-    return <LoginDialog onAction={signIn} />;
-  }
-
-  return <Content />;
-};
-
 export const Route = createLazyFileRoute('/history')({
-  component: History,
+  component: () => {
+    return (
+      <AuthRoute>
+        <Content />
+      </AuthRoute>
+    );
+  },
 });
