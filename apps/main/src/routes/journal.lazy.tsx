@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { useLoadJournalsByMonth } from 'core/journal/query-hooks';
+import { useLoadJournalById, useLoadJournalsByMonth } from 'core/journal/query-hooks';
 import { useCreateJournal, useUpdateJournal, useDeleteJournal } from 'core/journal/mutation-hooks';
 import { getCurrentMonthYear } from 'core/universal/common';
 import { JournalList } from 'ui/journal/journal-list';
@@ -11,13 +11,8 @@ import { Layout } from '../components/layout';
 import { FabButton } from 'ui/journal/fab-button';
 import { AuthRoute } from 'ui/universal/authRoute';
 
-// Lazy loaded components
-const JournalDetailWithFetch = lazy(() =>
-  import('ui/journal/journal-detail').then(m => ({ default: m.JournalDetailWithFetch }))
-);
-const EditDialogWithFetch = lazy(() =>
-  import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialogWithFetch }))
-);
+const JournalDetail = lazy(() => import('ui/journal/journal-detail').then(m => ({ default: m.JournalDetail })));
+const EditDialog = lazy(() => import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialog })));
 const Notification = lazy(() => import('ui/journal/notification').then(m => ({ default: m.Notification })));
 
 const JournalPage = () => {
@@ -37,6 +32,11 @@ const JournalPage = () => {
     getAccessToken,
     month,
     year,
+  });
+
+  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
+    getAccessToken,
+    id: selectedJournal?.id,
   });
 
   // Mutation hooks
@@ -122,9 +122,9 @@ const JournalPage = () => {
       case 'detail':
         return (
           <Suspense fallback={null}>
-            <JournalDetailWithFetch
-              id={selectedJournal?.id}
-              getAccessToken={getAccessToken}
+            <JournalDetail
+              journal={journalDetail}
+              isLoading={isLoadingDetail}
               onBackClick={handleBackToList}
               onEditClick={handleEdit}
               onDeleteClick={handleDelete}
@@ -157,9 +157,9 @@ const JournalPage = () => {
         {/* Edit Dialog */}
         <Suspense fallback={null}>
           {
-            <EditDialogWithFetch
-              id={selectedJournal?.id}
-              getAccessToken={getAccessToken}
+            <EditDialog
+              journalDetail={journalDetail!}
+              isLoadingDetail={isLoadingDetail}
               open={dialogOpen}
               onClose={handleCloseDialog}
               createJournal={createJournal}

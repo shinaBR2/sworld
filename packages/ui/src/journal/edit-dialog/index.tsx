@@ -2,7 +2,6 @@ import { JournalEdit } from '../journal-edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { Journal } from 'core/journal';
-import { LoadJournalByIdProps, useLoadJournalById } from 'core/journal/query-hooks';
 
 interface EditDialogProps {
   open: boolean;
@@ -13,10 +12,6 @@ interface EditDialogProps {
   updateJournal: any;
   onSave: (journal: Journal) => void;
 }
-
-interface EditDialogPropsWithFetch
-  extends Omit<EditDialogProps, 'journalDetail' | 'isLoadingDetail'>,
-    LoadJournalByIdProps {}
 
 const EditDialog = (props: EditDialogProps) => {
   const { open, onClose, journalDetail, isLoadingDetail, createJournal, updateJournal, onSave } = props;
@@ -44,14 +39,4 @@ const EditDialog = (props: EditDialogProps) => {
   );
 };
 
-const EditDialogWithFetch = (props: EditDialogPropsWithFetch) => {
-  const { id, getAccessToken, ...rest } = props;
-  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
-    getAccessToken,
-    id,
-  });
-
-  return <EditDialog {...rest} journalDetail={journalDetail} isLoadingDetail={isLoadingDetail} />;
-};
-
-export { EditDialog, EditDialogWithFetch };
+export { EditDialog };

@@ -1,10 +1,9 @@
 // packages/ui/src/journal/journal-detail.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { JournalDetail, JournalDetailWithFetch } from './index';
+import { JournalDetail } from './index';
 import { formatDate, formatDateTime } from 'core/universal/common';
 import { MoodIcon } from '../mood-icons';
-import { useLoadJournalById } from 'core/journal/query-hooks';
 
 // Mock dependencies
 vi.mock('core/universal/common', () => ({
@@ -26,11 +25,6 @@ const mockJournal = {
   createdAt: '2025-04-15T12:00:00Z',
   updatedAt: '2025-04-15T14:30:00Z',
 };
-
-// Add mock for useLoadJournalById
-vi.mock('core/journal/query-hooks', () => ({
-  useLoadJournalById: vi.fn(),
-}));
 
 describe('JournalDetail', () => {
   const mockOnBackClick = vi.fn();
@@ -158,107 +152,5 @@ describe('JournalDetail', () => {
 
     const mockMoodIcon = vi.mocked(MoodIcon);
     expect(mockMoodIcon).toHaveBeenCalledWith(expect.objectContaining({ mood: mockJournal.mood }), expect.anything());
-  });
-});
-
-describe('JournalDetailWithFetch', () => {
-  const mockOnBackClick = vi.fn();
-  const mockOnEditClick = vi.fn();
-  const mockOnDeleteClick = vi.fn();
-
-  const defaultFetchProps = {
-    id: '123',
-    getAccessToken: vi.fn().mockResolvedValue('test-token'),
-    onBackClick: mockOnBackClick,
-    onEditClick: mockOnEditClick,
-    onDeleteClick: mockOnDeleteClick,
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should render loading state while fetching data', () => {
-    vi.mocked(useLoadJournalById).mockReturnValue({
-      data: null,
-      isLoading: true,
-      error: null,
-    });
-
-    render(<JournalDetailWithFetch {...defaultFetchProps} />);
-
-    // Check for skeletons using MUI class
-    const skeletons = document.getElementsByClassName('MuiSkeleton-root');
-    expect(skeletons.length).toBeGreaterThan(0);
-
-    // Back button should still be present during loading
-    const backButton = screen.getByTestId('ArrowBackIcon').closest('button');
-    expect(backButton).toBeInTheDocument();
-  });
-
-  it('should render journal details when data is loaded', () => {
-    vi.mocked(useLoadJournalById).mockReturnValue({
-      data: mockJournal,
-      isLoading: false,
-      error: null,
-    });
-
-    render(<JournalDetailWithFetch {...defaultFetchProps} />);
-
-    // Check content is rendered
-    expect(screen.getByText(mockJournal.content)).toBeInTheDocument();
-    expect(screen.getByText(`formatted-date-${mockJournal.date}`)).toBeInTheDocument();
-  });
-
-  it('should render not found state when data is null', () => {
-    vi.mocked(useLoadJournalById).mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
-
-    render(<JournalDetailWithFetch {...defaultFetchProps} />);
-
-    expect(screen.getByText(/Journal entry not found/i)).toBeInTheDocument();
-  });
-
-  it('should call useLoadJournalById with correct props', () => {
-    vi.mocked(useLoadJournalById).mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
-
-    render(<JournalDetailWithFetch {...defaultFetchProps} />);
-
-    expect(useLoadJournalById).toHaveBeenCalledWith({
-      getAccessToken: defaultFetchProps.getAccessToken,
-      id: defaultFetchProps.id,
-    });
-  });
-
-  it('should pass through event handlers correctly', () => {
-    vi.mocked(useLoadJournalById).mockReturnValue({
-      data: mockJournal,
-      isLoading: false,
-      error: null,
-    });
-
-    render(<JournalDetailWithFetch {...defaultFetchProps} />);
-
-    // Test back button
-    const backButton = screen.getByTestId('ArrowBackIcon').closest('button');
-    fireEvent.click(backButton!);
-    expect(mockOnBackClick).toHaveBeenCalledTimes(1);
-
-    // Test edit button
-    const editButton = screen.getByTestId('EditIcon').closest('button');
-    fireEvent.click(editButton!);
-    expect(mockOnEditClick).toHaveBeenCalledTimes(1);
-
-    // Test delete button
-    const deleteButton = screen.getByTestId('DeleteOutlineIcon').closest('button');
-    fireEvent.click(deleteButton!);
-    expect(mockOnDeleteClick).toHaveBeenCalledTimes(1);
   });
 });
