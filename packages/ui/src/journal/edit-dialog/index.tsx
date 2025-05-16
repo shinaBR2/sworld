@@ -2,11 +2,11 @@ import { JournalEdit } from '../journal-edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { Journal } from 'core/journal';
+import { LoadJournalByIdProps, useLoadJournalById } from 'core/journal/query-hooks';
 
 interface EditDialogProps {
   open: boolean;
   onClose: () => void;
-  selectedJournal: Journal | null;
   journalDetail: Journal | null;
   isLoadingDetail: boolean;
   createJournal: any;
@@ -14,9 +14,12 @@ interface EditDialogProps {
   onSave: (journal: Journal) => void;
 }
 
+interface EditDialogPropsWithFetch
+  extends Omit<EditDialogProps, 'journalDetail' | 'isLoadingDetail'>,
+    LoadJournalByIdProps {}
+
 const EditDialog = (props: EditDialogProps) => {
-  const { open, onClose, selectedJournal, journalDetail, isLoadingDetail, createJournal, updateJournal, onSave } =
-    props;
+  const { open, onClose, journalDetail, isLoadingDetail, createJournal, updateJournal, onSave } = props;
 
   return (
     <Dialog
@@ -30,8 +33,8 @@ const EditDialog = (props: EditDialogProps) => {
     >
       <DialogContent sx={{ p: 0, height: '100%' }}>
         <JournalEdit
-          journal={journalDetail || selectedJournal}
-          isLoading={isLoadingDetail && !!selectedJournal}
+          journal={journalDetail}
+          isLoading={isLoadingDetail}
           isSaving={createJournal.isPending || updateJournal.isPending}
           onBackClick={onClose}
           onSave={onSave}
@@ -41,4 +44,14 @@ const EditDialog = (props: EditDialogProps) => {
   );
 };
 
-export { EditDialog };
+const EditDialogWithFetch = (props: EditDialogPropsWithFetch) => {
+  const { id, getAccessToken, ...rest } = props;
+  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
+    getAccessToken,
+    id,
+  });
+
+  return <EditDialog {...rest} journalDetail={journalDetail} isLoadingDetail={isLoadingDetail} />;
+};
+
+export { EditDialog, EditDialogWithFetch };
