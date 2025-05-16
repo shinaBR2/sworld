@@ -159,5 +159,69 @@ describe('Journal Query Hooks', () => {
         error: null,
       });
     });
+
+    it('should handle null journals_by_pk', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: { journals_by_pk: null },
+        isLoading: false,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalById({
+          getAccessToken: mockAccessToken,
+          id: '1',
+        })
+      );
+
+      expect(result.current).toEqual({
+        data: null,
+        isLoading: false,
+        error: null,
+      });
+    });
+
+    it('should handle loading state', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: null,
+        isLoading: true,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalById({
+          getAccessToken: mockAccessToken,
+          id: '1',
+        })
+      );
+
+      expect(result.current).toEqual({
+        data: null,
+        isLoading: true,
+        error: null,
+      });
+    });
+
+    it('should handle error state', () => {
+      const mockError = new Error('API error');
+      vi.mocked(useRequest).mockReturnValue({
+        data: null,
+        isLoading: false,
+        error: mockError,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalById({
+          getAccessToken: mockAccessToken,
+          id: '1',
+        })
+      );
+
+      expect(result.current).toEqual({
+        data: null,
+        isLoading: false,
+        error: mockError,
+      });
+    });
   });
 });
