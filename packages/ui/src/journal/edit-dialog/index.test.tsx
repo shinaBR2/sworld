@@ -61,13 +61,6 @@ describe('EditDialog', () => {
     expect(journalData.textContent).toContain(mockJournal.id);
   });
 
-  it('passes selectedJournal to JournalEdit when journalDetail is null', () => {
-    render(<EditDialog {...{ ...defaultProps, selectedJournal: mockJournal }} />);
-
-    const journalData = screen.getByTestId('journal-data');
-    expect(journalData.textContent).toContain(mockJournal.id);
-  });
-
   it('sets isLoading correctly when loading detail for selected journal', () => {
     render(<EditDialog {...{ ...defaultProps, selectedJournal: mockJournal, isLoadingDetail: true }} />);
 
