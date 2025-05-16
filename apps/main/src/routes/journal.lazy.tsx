@@ -18,7 +18,6 @@ const JournalDetailWithFetch = lazy(() =>
 const EditDialogWithFetch = lazy(() =>
   import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialogWithFetch }))
 );
-const EditDialog = lazy(() => import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialog })));
 const Notification = lazy(() => import('ui/journal/notification').then(m => ({ default: m.Notification })));
 
 const JournalPage = () => {
@@ -121,7 +120,7 @@ const JournalPage = () => {
   const renderContent = () => {
     switch (view) {
       case 'detail':
-        return selectedJournal?.id ? (
+        return (
           <Suspense fallback={null}>
             <JournalDetailWithFetch
               id={selectedJournal?.id}
@@ -131,7 +130,7 @@ const JournalPage = () => {
               onDeleteClick={handleDelete}
             />
           </Suspense>
-        ) : null;
+        );
       default:
         return (
           <JournalList
@@ -157,9 +156,9 @@ const JournalPage = () => {
 
         {/* Edit Dialog */}
         <Suspense fallback={null}>
-          {selectedJournal?.id ? (
+          {
             <EditDialogWithFetch
-              id={selectedJournal.id}
+              id={selectedJournal?.id}
               getAccessToken={getAccessToken}
               open={dialogOpen}
               onClose={handleCloseDialog}
@@ -167,17 +166,7 @@ const JournalPage = () => {
               updateJournal={updateJournal}
               onSave={handleSave}
             />
-          ) : (
-            <EditDialog
-              open={dialogOpen}
-              onClose={handleCloseDialog}
-              createJournal={createJournal}
-              updateJournal={updateJournal}
-              onSave={handleSave}
-              journalDetail={null}
-              isLoadingDetail={false}
-            />
-          )}
+          }
         </Suspense>
 
         {/* Notifications */}
