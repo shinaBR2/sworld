@@ -16,6 +16,20 @@ array_relationships:
         table:
           name: crawl_requests
           schema: public
+  - name: finance_transactions
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: finance_transactions
+          schema: public
+  - name: journals
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: journals
+          schema: public
   - name: notifications
     using:
       foreign_key_constraint_on:
