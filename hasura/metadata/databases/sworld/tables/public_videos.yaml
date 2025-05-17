@@ -5,6 +5,8 @@ configuration:
   column_config:
     created_at:
       custom_name: createdAt
+    keep_original_source:
+      custom_name: keepOriginalSource
     s_id:
       custom_name: sId
     thumbnail_url:
@@ -13,6 +15,7 @@ configuration:
       custom_name: updatedAt
   custom_column_names:
     created_at: createdAt
+    keep_original_source: keepOriginalSource
     s_id: sId
     thumbnail_url: thumbnailUrl
     updated_at: updatedAt
@@ -72,6 +75,21 @@ insert_permissions:
         - title
         - video_url
     comment: ""
+  - role: vip
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - keep_original_source
+        - public
+        - slug
+        - title
+        - video_url
+    comment: ""
 select_permissions:
   - role: anonymous
     permission:
@@ -107,8 +125,33 @@ select_permissions:
         user_id:
           _eq: X-Hasura-User-Id
     comment: ""
+  - role: vip
+    permission:
+      columns:
+        - created_at
+        - description
+        - duration
+        - id
+        - keep_original_source
+        - public
+        - s_id
+        - slug
+        - source
+        - status
+        - thumbnail_url
+        - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
 delete_permissions:
   - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: vip
     permission:
       filter:
         user_id:
