@@ -20,6 +20,7 @@ const VideoDataSchema = z.object({
   user_id: z.string().uuid(),
   video_url: videoUrlSchema,
   skip_process: z.boolean(),
+  keep_original_source: z.boolean(),
 });
 
 const EventMetadataSchema = z.object({
@@ -43,6 +44,7 @@ const transformEvent = (event: z.infer<typeof EventSchema>) => {
       userId: event.data.user_id,
       videoUrl: event.data.video_url,
       skipProcess: event.data.skip_process,
+      keepOriginalSource: event.data.keep_original_source,
       platform,
       fileType,
     },

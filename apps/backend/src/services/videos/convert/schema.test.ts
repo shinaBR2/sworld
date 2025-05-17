@@ -15,6 +15,7 @@ describe('ConvertSchema', () => {
           user_id: '550e8400-e29b-41d4-a716-446655440001',
           video_url: 'https://example.com/video.mp4',
           skip_process: false,
+          keep_original_source: false,
         },
       },
     },
@@ -121,6 +122,7 @@ describe('ConvertSchema', () => {
             videoUrl: 'https://example.com/video.mp4',
             fileType: 'video',
             skipProcess: false,
+            keepOriginalSource: false,
             platform: null,
           },
           metadata: {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { StreamHandlerSchema } from './schema';
 
 describe('StreamHandlerSchema', () => {
@@ -18,6 +18,7 @@ describe('StreamHandlerSchema', () => {
     id: '123e4567-e89b-12d3-a456-426614174000',
     userId: '123e4567-e89b-12d3-a456-426614174001',
     videoUrl: 'https://storage.example.com/video.mp4',
+    keepOriginalSource: false,
   };
 
   // Helper function to create test request
