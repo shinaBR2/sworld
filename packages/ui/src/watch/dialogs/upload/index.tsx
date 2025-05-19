@@ -19,9 +19,12 @@ const defaultState: DialogState = {
   url: '',
   subtitle: '',
   description: '',
+  playlistId: '',
+  keepOriginalSource: false,
   isSubmitting: false,
   error: null,
   closeDialogCountdown: null,
+  keepDialogOpen: false,
 };
 
 /**
@@ -49,7 +52,8 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   };
 
   const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+    const newValue = field === 'keepOriginalSource' || field === 'keepDialogOpen' ? e.target.checked : e.target.value;
+
     setState(prev => ({
       ...prev,
       [field]: newValue,

@@ -32,7 +32,16 @@ const canPlayUrls = (urls: string[]): ValidationResult[] => {
 };
 
 const formalizeState = (dialogState: DialogState) => {
-  const { title, description, url, subtitle, playlistId, newPlaylistName, videoPositionInPlaylist } = dialogState;
+  const {
+    title,
+    description,
+    url,
+    subtitle,
+    playlistId,
+    newPlaylistName,
+    videoPositionInPlaylist,
+    keepOriginalSource,
+  } = dialogState;
 
   return {
     title: title?.trim(),
@@ -42,6 +51,7 @@ const formalizeState = (dialogState: DialogState) => {
     playlistId,
     newPlaylistName: newPlaylistName?.trim(),
     videoPositionInPlaylist,
+    keepOriginalSource,
   };
 };
 
@@ -54,6 +64,7 @@ const buildVariables = (dialogState: DialogState) => {
     playlistId,
     newPlaylistName,
     videoPositionInPlaylist = 0,
+    keepOriginalSource = false,
   } = formalizeState(dialogState);
 
   const variables: BulkConvertVariables = {
@@ -63,6 +74,7 @@ const buildVariables = (dialogState: DialogState) => {
         description,
         slug: slugify(title),
         video_url: url,
+        keepOriginalSource,
       },
     ],
   };
