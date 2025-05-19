@@ -55,6 +55,8 @@ interface UploadSuccessResultProps {
 
 const UploadSuccessResult = (props: UploadSuccessResultProps) => {
   const { message, countdown } = props;
+
+  console.log('UploadSuccessResult', { message, countdown });
   const totalTime = CLOSE_DELAY_MS / 1000;
 
   return (
@@ -159,6 +161,7 @@ const DialogComponent = (props: DialogComponentProps) => {
       ? 'Successfully uploaded.'
       : `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
+  console.log(`uploadSuccessResultProps`, uploadSuccessResultProps);
 
   return (
     <StyledDialog {...dialogProps} fullScreen={isMobile}>

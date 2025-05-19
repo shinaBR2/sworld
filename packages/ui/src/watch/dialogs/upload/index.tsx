@@ -76,17 +76,30 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const variables = buildVariables(state);
+      const debug = true;
+      if (debug) {
+        console.log('variables', variables);
 
-      const response = await bulkConvert(variables);
-
-      if (response.insert_videos?.returning.length !== 1) {
-        // Unknown error
-        return setState(prev => ({
-          ...prev,
-          isSubmitting: false,
-          error: texts.errors.failedToSave,
+        setState(prev => ({
+          ...defaultState,
+          error: '', // Trigger cooldown
+          closeDialogCountdown: CLOSE_DELAY_MS / 1000,
+          keepDialogOpen: prev.keepDialogOpen,
         }));
+
+        return;
       }
+
+      // const response = await bulkConvert(variables);
+
+      // if (response.insert_videos?.returning.length !== 1) {
+      //   // Unknown error
+      //   return setState(prev => ({
+      //     ...prev,
+      //     isSubmitting: false,
+      //     error: texts.errors.failedToSave,
+      //   }));
+      // }
 
       setState({
         ...defaultState,
@@ -103,7 +116,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
   useCountdown({
     duration: CLOSE_DELAY_MS / 1000,
-    enabled: state.error === '' && !!state.closeDialogCountdown,
+    enabled: state.error === '' && !!state.closeDialogCountdown && !state.keepDialogOpen,
     onTick: (remaining: number) => {
       setState(prev => ({
         ...prev,
