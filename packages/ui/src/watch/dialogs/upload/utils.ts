@@ -50,7 +50,7 @@ const formalizeState = (dialogState: DialogState) => {
     subtitle: subtitle?.trim() || '',
     playlistId,
     newPlaylistName: newPlaylistName?.trim(),
-    videoPositionInPlaylist,
+    videoPositionInPlaylist: videoPositionInPlaylist ?? 0,
     keepOriginalSource,
   };
 };
