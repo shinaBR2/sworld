@@ -9,6 +9,7 @@ import {
   DialogTitle,
   Fade,
   FormControlLabel,
+  Grid,
   MenuItem,
   TextField,
 } from '@mui/material';
@@ -217,28 +218,32 @@ const DialogComponent = (props: DialogComponentProps) => {
             {...videoPositionInPlaylistTextFieldProps}
           />
 
-          <Box sx={{ mt: 2, mb: 2 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={keepOriginalSource}
-                  onChange={onFormFieldChange('keepOriginalSource')}
-                  disabled={isSubmitting}
-                />
-              }
-              label="Keep original source"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={keepDialogOpen}
-                  onChange={onFormFieldChange('keepDialogOpen')}
-                  disabled={isSubmitting}
-                />
-              }
-              label="Keep dialog open after success"
-            />
-          </Box>
+          <Grid container spacing={1} sx={{ mt: 2, mb: 2 }}>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={keepOriginalSource}
+                    onChange={onFormFieldChange('keepOriginalSource')}
+                    disabled={isSubmitting}
+                  />
+                }
+                label="Keep original source"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={keepDialogOpen}
+                    onChange={onFormFieldChange('keepDialogOpen')}
+                    disabled={isSubmitting}
+                  />
+                }
+                label="Keep dialog open after success"
+              />
+            </Grid>
+          </Grid>
 
           {error && <UploadErrorResult {...uploadErrorResultProps} />}
           {error === '' && <UploadSuccessResult {...uploadSuccessResultProps} />}
