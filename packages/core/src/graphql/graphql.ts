@@ -1199,6 +1199,8 @@ export type Finance_Transactions = {
   name: Scalars['String']['output'];
   note?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
   user_id: Scalars['uuid']['output'];
   year: Scalars['Int']['output'];
 };
@@ -1208,6 +1210,17 @@ export type Finance_Transactions_Aggregate = {
   __typename?: 'finance_transactions_aggregate';
   aggregate?: Maybe<Finance_Transactions_Aggregate_Fields>;
   nodes: Array<Finance_Transactions>;
+};
+
+export type Finance_Transactions_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Finance_Transactions_Aggregate_Bool_Exp_Count>;
+};
+
+export type Finance_Transactions_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Finance_Transactions_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "finance_transactions" */
@@ -1233,12 +1246,41 @@ export type Finance_Transactions_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+/** order by aggregate values of table "finance_transactions" */
+export type Finance_Transactions_Aggregate_Order_By = {
+  avg?: InputMaybe<Finance_Transactions_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Finance_Transactions_Max_Order_By>;
+  min?: InputMaybe<Finance_Transactions_Min_Order_By>;
+  stddev?: InputMaybe<Finance_Transactions_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Finance_Transactions_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Finance_Transactions_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Finance_Transactions_Sum_Order_By>;
+  var_pop?: InputMaybe<Finance_Transactions_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Finance_Transactions_Var_Samp_Order_By>;
+  variance?: InputMaybe<Finance_Transactions_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "finance_transactions" */
+export type Finance_Transactions_Arr_Rel_Insert_Input = {
+  data: Array<Finance_Transactions_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Finance_Transactions_On_Conflict>;
+};
+
 /** aggregate avg on columns */
 export type Finance_Transactions_Avg_Fields = {
   __typename?: 'finance_transactions_avg_fields';
   amount?: Maybe<Scalars['Float']['output']>;
   month?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "finance_transactions" */
+export type Finance_Transactions_Avg_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "finance_transactions". All fields are combined with a logical 'AND'. */
@@ -1254,6 +1296,7 @@ export type Finance_Transactions_Bool_Exp = {
   name?: InputMaybe<String_Comparison_Exp>;
   note?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
   year?: InputMaybe<Int_Comparison_Exp>;
 };
@@ -1282,6 +1325,7 @@ export type Finance_Transactions_Insert_Input = {
   name?: InputMaybe<Scalars['String']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1302,6 +1346,21 @@ export type Finance_Transactions_Max_Fields = {
   year?: Maybe<Scalars['Int']['output']>;
 };
 
+/** order by max() on columns of table "finance_transactions" */
+export type Finance_Transactions_Max_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Finance_Transactions_Min_Fields = {
   __typename?: 'finance_transactions_min_fields';
@@ -1316,6 +1375,21 @@ export type Finance_Transactions_Min_Fields = {
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by min() on columns of table "finance_transactions" */
+export type Finance_Transactions_Min_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "finance_transactions" */
@@ -1344,6 +1418,7 @@ export type Finance_Transactions_Order_By = {
   name?: InputMaybe<Order_By>;
   note?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
@@ -1400,6 +1475,13 @@ export type Finance_Transactions_Stddev_Fields = {
   year?: Maybe<Scalars['Float']['output']>;
 };
 
+/** order by stddev() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
 /** aggregate stddev_pop on columns */
 export type Finance_Transactions_Stddev_Pop_Fields = {
   __typename?: 'finance_transactions_stddev_pop_fields';
@@ -1408,12 +1490,26 @@ export type Finance_Transactions_Stddev_Pop_Fields = {
   year?: Maybe<Scalars['Float']['output']>;
 };
 
+/** order by stddev_pop() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Pop_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
 /** aggregate stddev_samp on columns */
 export type Finance_Transactions_Stddev_Samp_Fields = {
   __typename?: 'finance_transactions_stddev_samp_fields';
   amount?: Maybe<Scalars['Float']['output']>;
   month?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Samp_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "finance_transactions" */
@@ -1445,6 +1541,13 @@ export type Finance_Transactions_Sum_Fields = {
   amount?: Maybe<Scalars['numeric']['output']>;
   month?: Maybe<Scalars['Int']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "finance_transactions" */
+export type Finance_Transactions_Sum_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** update columns of table "finance_transactions" */
@@ -1488,6 +1591,13 @@ export type Finance_Transactions_Var_Pop_Fields = {
   year?: Maybe<Scalars['Float']['output']>;
 };
 
+/** order by var_pop() on columns of table "finance_transactions" */
+export type Finance_Transactions_Var_Pop_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
 /** aggregate var_samp on columns */
 export type Finance_Transactions_Var_Samp_Fields = {
   __typename?: 'finance_transactions_var_samp_fields';
@@ -1496,12 +1606,26 @@ export type Finance_Transactions_Var_Samp_Fields = {
   year?: Maybe<Scalars['Float']['output']>;
 };
 
+/** order by var_samp() on columns of table "finance_transactions" */
+export type Finance_Transactions_Var_Samp_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
 /** aggregate variance on columns */
 export type Finance_Transactions_Variance_Fields = {
   __typename?: 'finance_transactions_variance_fields';
   amount?: Maybe<Scalars['Float']['output']>;
   month?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "finance_transactions" */
+export type Finance_Transactions_Variance_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
 };
 
 /** Daily journal */
@@ -1514,6 +1638,8 @@ export type Journals = {
   mood: Scalars['String']['output'];
   tags: Scalars['jsonb']['output'];
   updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
   user_id: Scalars['uuid']['output'];
 };
 
@@ -1528,6 +1654,17 @@ export type Journals_Aggregate = {
   __typename?: 'journals_aggregate';
   aggregate?: Maybe<Journals_Aggregate_Fields>;
   nodes: Array<Journals>;
+};
+
+export type Journals_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Journals_Aggregate_Bool_Exp_Count>;
+};
+
+export type Journals_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Journals_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Journals_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "journals" */
@@ -1545,9 +1682,23 @@ export type Journals_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+/** order by aggregate values of table "journals" */
+export type Journals_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Journals_Max_Order_By>;
+  min?: InputMaybe<Journals_Min_Order_By>;
+};
+
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Journals_Append_Input = {
   tags?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** input type for inserting array relation for remote table "journals" */
+export type Journals_Arr_Rel_Insert_Input = {
+  data: Array<Journals_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "journals". All fields are combined with a logical 'AND'. */
@@ -1562,6 +1713,7 @@ export type Journals_Bool_Exp = {
   mood?: InputMaybe<String_Comparison_Exp>;
   tags?: InputMaybe<Jsonb_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
@@ -1595,6 +1747,7 @@ export type Journals_Insert_Input = {
   mood?: InputMaybe<Scalars['String']['input']>;
   tags?: InputMaybe<Scalars['jsonb']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -1610,6 +1763,17 @@ export type Journals_Max_Fields = {
   user_id?: Maybe<Scalars['uuid']['output']>;
 };
 
+/** order by max() on columns of table "journals" */
+export type Journals_Max_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Journals_Min_Fields = {
   __typename?: 'journals_min_fields';
@@ -1620,6 +1784,17 @@ export type Journals_Min_Fields = {
   mood?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "journals" */
+export type Journals_Min_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "journals" */
@@ -1647,6 +1822,7 @@ export type Journals_Order_By = {
   mood?: InputMaybe<Order_By>;
   tags?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -4347,15 +4523,15 @@ export type Query_Root = {
   feature_flag_aggregate: Feature_Flag_Aggregate;
   /** fetch data from the table: "feature_flag" using primary key columns */
   feature_flag_by_pk?: Maybe<Feature_Flag>;
-  /** fetch data from the table: "finance_transactions" */
+  /** An array relationship */
   finance_transactions: Array<Finance_Transactions>;
-  /** fetch aggregated fields from the table: "finance_transactions" */
+  /** An aggregate relationship */
   finance_transactions_aggregate: Finance_Transactions_Aggregate;
   /** fetch data from the table: "finance_transactions" using primary key columns */
   finance_transactions_by_pk?: Maybe<Finance_Transactions>;
-  /** fetch data from the table: "journals" */
+  /** An array relationship */
   journals: Array<Journals>;
-  /** fetch aggregated fields from the table: "journals" */
+  /** An aggregate relationship */
   journals_aggregate: Journals_Aggregate;
   /** fetch data from the table: "journals" using primary key columns */
   journals_by_pk?: Maybe<Journals>;
@@ -4913,17 +5089,17 @@ export type Subscription_Root = {
   feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** fetch data from the table in a streaming manner: "feature_flag" */
   feature_flag_stream: Array<Feature_Flag>;
-  /** fetch data from the table: "finance_transactions" */
+  /** An array relationship */
   finance_transactions: Array<Finance_Transactions>;
-  /** fetch aggregated fields from the table: "finance_transactions" */
+  /** An aggregate relationship */
   finance_transactions_aggregate: Finance_Transactions_Aggregate;
   /** fetch data from the table: "finance_transactions" using primary key columns */
   finance_transactions_by_pk?: Maybe<Finance_Transactions>;
   /** fetch data from the table in a streaming manner: "finance_transactions" */
   finance_transactions_stream: Array<Finance_Transactions>;
-  /** fetch data from the table: "journals" */
+  /** An array relationship */
   journals: Array<Journals>;
-  /** fetch aggregated fields from the table: "journals" */
+  /** An aggregate relationship */
   journals_aggregate: Journals_Aggregate;
   /** fetch data from the table: "journals" using primary key columns */
   journals_by_pk?: Maybe<Journals>;
@@ -7071,7 +7247,15 @@ export type Users = {
   crawl_requests_aggregate: Crawl_Requests_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email: Scalars['String']['output'];
+  /** An array relationship */
+  finance_transactions: Array<Finance_Transactions>;
+  /** An aggregate relationship */
+  finance_transactions_aggregate: Finance_Transactions_Aggregate;
   id: Scalars['uuid']['output'];
+  /** An array relationship */
+  journals: Array<Journals>;
+  /** An aggregate relationship */
+  journals_aggregate: Journals_Aggregate;
   /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
@@ -7134,6 +7318,46 @@ export type UsersCrawl_Requests_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Crawl_Requests_Order_By>>;
   where?: InputMaybe<Crawl_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersFinance_TransactionsArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersFinance_Transactions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
 };
 
 
@@ -7270,7 +7494,11 @@ export type Users_Bool_Exp = {
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
+  finance_transactions?: InputMaybe<Finance_Transactions_Bool_Exp>;
+  finance_transactions_aggregate?: InputMaybe<Finance_Transactions_Aggregate_Bool_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  journals?: InputMaybe<Journals_Bool_Exp>;
+  journals_aggregate?: InputMaybe<Journals_Aggregate_Bool_Exp>;
   notifications?: InputMaybe<Notifications_Bool_Exp>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Bool_Exp>;
   playlists?: InputMaybe<Playlist_Bool_Exp>;
@@ -7304,7 +7532,9 @@ export type Users_Insert_Input = {
   crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  finance_transactions?: InputMaybe<Finance_Transactions_Arr_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  journals?: InputMaybe<Journals_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<Notifications_Arr_Rel_Insert_Input>;
   playlists?: InputMaybe<Playlist_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -7366,7 +7596,9 @@ export type Users_Order_By = {
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
+  finance_transactions_aggregate?: InputMaybe<Finance_Transactions_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
+  journals_aggregate?: InputMaybe<Journals_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Order_By>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
@@ -7887,6 +8119,8 @@ export type Videos = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id: Scalars['uuid']['output'];
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: Maybe<Scalars['Boolean']['output']>;
   /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
@@ -8126,6 +8360,7 @@ export type Videos_Bool_Exp = {
   description?: InputMaybe<String_Comparison_Exp>;
   duration?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  keepOriginalSource?: InputMaybe<Boolean_Comparison_Exp>;
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
@@ -8173,6 +8408,8 @@ export type Videos_Insert_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
@@ -8302,6 +8539,7 @@ export type Videos_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  keepOriginalSource?: InputMaybe<Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
@@ -8338,6 +8576,8 @@ export enum Videos_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
   /** column name */
   SId = 'sId',
@@ -8366,6 +8606,8 @@ export enum Videos_Select_Column {
 /** select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
   /** column name */
   SkipProcess = 'skip_process'
@@ -8373,6 +8615,8 @@ export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_And_Arguments_Co
 
 /** select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
   /** column name */
   Public = 'public',
   /** column name */
@@ -8385,6 +8629,8 @@ export type Videos_Set_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
@@ -8454,6 +8700,8 @@ export type Videos_Stream_Cursor_Value_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
@@ -8493,6 +8741,8 @@ export enum Videos_Update_Column {
   Duration = 'duration',
   /** column name */
   Id = 'id',
+  /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
   /** column name */
   Public = 'public',
   /** column name */

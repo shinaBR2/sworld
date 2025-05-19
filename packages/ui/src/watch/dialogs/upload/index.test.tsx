@@ -77,11 +77,27 @@ vi.mock('./dialog', () => ({
           onChange={onFormFieldChange('description')}
           disabled={state.isSubmitting}
         />
+        <input
+          type="checkbox"
+          data-testid="keep-original-source"
+          checked={state.keepOriginalSource}
+          onChange={e => onFormFieldChange('keepOriginalSource')({ target: { value: e.target.checked } })}
+          disabled={state.isSubmitting}
+        />
+        <input
+          type="checkbox"
+          data-testid="keep-dialog-open"
+          checked={state.keepDialogOpen}
+          onChange={e => onFormFieldChange('keepDialogOpen')({ target: { value: e.target.checked } })}
+          disabled={state.isSubmitting}
+        />
         <button type="submit" data-testid="submit-button" disabled={state.isSubmitting}>
           {state.isSubmitting ? 'Importing...' : 'Import Video'}
         </button>
         {state.error && <div data-testid="error-message">{state.error}</div>}
-        {state.closeDialogCountdown && <div data-testid="countdown">Closing in {state.closeDialogCountdown}s</div>}
+        {state.closeDialogCountdown && !state.keepDialogOpen && (
+          <div data-testid="countdown">Closing in {state.closeDialogCountdown}s</div>
+        )}
       </form>
     </div>
   )),
