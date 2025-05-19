@@ -1300,6 +1300,8 @@ type finance_transactions {
   name: String!
   note: String
   updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
   user_id: uuid!
   year: Int!
 }
@@ -1310,6 +1312,17 @@ aggregated selection of "finance_transactions"
 type finance_transactions_aggregate {
   aggregate: finance_transactions_aggregate_fields
   nodes: [finance_transactions!]!
+}
+
+input finance_transactions_aggregate_bool_exp {
+  count: finance_transactions_aggregate_bool_exp_count
+}
+
+input finance_transactions_aggregate_bool_exp_count {
+  arguments: [finance_transactions_select_column!]
+  distinct: Boolean
+  filter: finance_transactions_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -1329,11 +1342,46 @@ type finance_transactions_aggregate_fields {
   variance: finance_transactions_variance_fields
 }
 
+"""
+order by aggregate values of table "finance_transactions"
+"""
+input finance_transactions_aggregate_order_by {
+  avg: finance_transactions_avg_order_by
+  count: order_by
+  max: finance_transactions_max_order_by
+  min: finance_transactions_min_order_by
+  stddev: finance_transactions_stddev_order_by
+  stddev_pop: finance_transactions_stddev_pop_order_by
+  stddev_samp: finance_transactions_stddev_samp_order_by
+  sum: finance_transactions_sum_order_by
+  var_pop: finance_transactions_var_pop_order_by
+  var_samp: finance_transactions_var_samp_order_by
+  variance: finance_transactions_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "finance_transactions"
+"""
+input finance_transactions_arr_rel_insert_input {
+  data: [finance_transactions_insert_input!]!
+  """upsert condition"""
+  on_conflict: finance_transactions_on_conflict
+}
+
 """aggregate avg on columns"""
 type finance_transactions_avg_fields {
   amount: Float
   month: Float
   year: Float
+}
+
+"""
+order by avg() on columns of table "finance_transactions"
+"""
+input finance_transactions_avg_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
 }
 
 """
@@ -1351,6 +1399,7 @@ input finance_transactions_bool_exp {
   name: String_comparison_exp
   note: String_comparison_exp
   updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
   user_id: uuid_comparison_exp
   year: Int_comparison_exp
 }
@@ -1387,6 +1436,7 @@ input finance_transactions_insert_input {
   name: String
   note: String
   updatedAt: timestamptz
+  user: users_obj_rel_insert_input
   user_id: uuid
   year: Int
 }
@@ -1406,6 +1456,23 @@ type finance_transactions_max_fields {
   year: Int
 }
 
+"""
+order by max() on columns of table "finance_transactions"
+"""
+input finance_transactions_max_order_by {
+  amount: order_by
+  """Should be either must, nice or waste"""
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user_id: order_by
+  year: order_by
+}
+
 """aggregate min on columns"""
 type finance_transactions_min_fields {
   amount: numeric
@@ -1419,6 +1486,23 @@ type finance_transactions_min_fields {
   updatedAt: timestamptz
   user_id: uuid
   year: Int
+}
+
+"""
+order by min() on columns of table "finance_transactions"
+"""
+input finance_transactions_min_order_by {
+  amount: order_by
+  """Should be either must, nice or waste"""
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user_id: order_by
+  year: order_by
 }
 
 """
@@ -1450,6 +1534,7 @@ input finance_transactions_order_by {
   name: order_by
   note: order_by
   updatedAt: order_by
+  user: users_order_by
   user_id: order_by
   year: order_by
 }
@@ -1509,6 +1594,15 @@ type finance_transactions_stddev_fields {
   year: Float
 }
 
+"""
+order by stddev() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
 """aggregate stddev_pop on columns"""
 type finance_transactions_stddev_pop_fields {
   amount: Float
@@ -1516,11 +1610,29 @@ type finance_transactions_stddev_pop_fields {
   year: Float
 }
 
+"""
+order by stddev_pop() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_pop_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
 """aggregate stddev_samp on columns"""
 type finance_transactions_stddev_samp_fields {
   amount: Float
   month: Float
   year: Float
+}
+
+"""
+order by stddev_samp() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_samp_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
 }
 
 """
@@ -1553,6 +1665,15 @@ type finance_transactions_sum_fields {
   amount: numeric
   month: Int
   year: Int
+}
+
+"""
+order by sum() on columns of table "finance_transactions"
+"""
+input finance_transactions_sum_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
 }
 
 """
@@ -1597,6 +1718,15 @@ type finance_transactions_var_pop_fields {
   year: Float
 }
 
+"""
+order by var_pop() on columns of table "finance_transactions"
+"""
+input finance_transactions_var_pop_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
 """aggregate var_samp on columns"""
 type finance_transactions_var_samp_fields {
   amount: Float
@@ -1604,11 +1734,29 @@ type finance_transactions_var_samp_fields {
   year: Float
 }
 
+"""
+order by var_samp() on columns of table "finance_transactions"
+"""
+input finance_transactions_var_samp_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
 """aggregate variance on columns"""
 type finance_transactions_variance_fields {
   amount: Float
   month: Float
   year: Float
+}
+
+"""
+order by variance() on columns of table "finance_transactions"
+"""
+input finance_transactions_variance_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
 }
 
 """Daily journal"""
@@ -1623,6 +1771,8 @@ type journals {
     path: String
   ): jsonb!
   updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
   user_id: uuid!
 }
 
@@ -1634,6 +1784,17 @@ type journals_aggregate {
   nodes: [journals!]!
 }
 
+input journals_aggregate_bool_exp {
+  count: journals_aggregate_bool_exp_count
+}
+
+input journals_aggregate_bool_exp_count {
+  arguments: [journals_select_column!]
+  distinct: Boolean
+  filter: journals_bool_exp
+  predicate: Int_comparison_exp!
+}
+
 """
 aggregate fields of "journals"
 """
@@ -1643,9 +1804,27 @@ type journals_aggregate_fields {
   min: journals_min_fields
 }
 
+"""
+order by aggregate values of table "journals"
+"""
+input journals_aggregate_order_by {
+  count: order_by
+  max: journals_max_order_by
+  min: journals_min_order_by
+}
+
 """append existing jsonb value of filtered columns with new jsonb value"""
 input journals_append_input {
   tags: jsonb
+}
+
+"""
+input type for inserting array relation for remote table "journals"
+"""
+input journals_arr_rel_insert_input {
+  data: [journals_insert_input!]!
+  """upsert condition"""
+  on_conflict: journals_on_conflict
 }
 
 """
@@ -1662,6 +1841,7 @@ input journals_bool_exp {
   mood: String_comparison_exp
   tags: jsonb_comparison_exp
   updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
   user_id: uuid_comparison_exp
 }
 
@@ -1707,6 +1887,7 @@ input journals_insert_input {
   mood: String
   tags: jsonb
   updatedAt: timestamptz
+  user: users_obj_rel_insert_input
   user_id: uuid
 }
 
@@ -1721,6 +1902,19 @@ type journals_max_fields {
   user_id: uuid
 }
 
+"""
+order by max() on columns of table "journals"
+"""
+input journals_max_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
 """aggregate min on columns"""
 type journals_min_fields {
   content: String
@@ -1730,6 +1924,19 @@ type journals_min_fields {
   mood: String
   updatedAt: timestamptz
   user_id: uuid
+}
+
+"""
+order by min() on columns of table "journals"
+"""
+input journals_min_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  updatedAt: order_by
+  user_id: order_by
 }
 
 """
@@ -1760,6 +1967,7 @@ input journals_order_by {
   mood: order_by
   tags: order_by
   updatedAt: order_by
+  user: users_order_by
   user_id: order_by
 }
 
@@ -4633,9 +4841,7 @@ type query_root {
   ): feature_flag_aggregate!
   """fetch data from the table: "feature_flag" using primary key columns"""
   feature_flag_by_pk(id: uuid!): feature_flag
-  """
-  fetch data from the table: "finance_transactions"
-  """
+  """An array relationship"""
   finance_transactions(
     """distinct select on columns"""
     distinct_on: [finance_transactions_select_column!]
@@ -4648,9 +4854,7 @@ type query_root {
     """filter the rows returned"""
     where: finance_transactions_bool_exp
   ): [finance_transactions!]!
-  """
-  fetch aggregated fields from the table: "finance_transactions"
-  """
+  """An aggregate relationship"""
   finance_transactions_aggregate(
     """distinct select on columns"""
     distinct_on: [finance_transactions_select_column!]
@@ -4667,9 +4871,7 @@ type query_root {
   fetch data from the table: "finance_transactions" using primary key columns
   """
   finance_transactions_by_pk(id: uuid!): finance_transactions
-  """
-  fetch data from the table: "journals"
-  """
+  """An array relationship"""
   journals(
     """distinct select on columns"""
     distinct_on: [journals_select_column!]
@@ -4682,9 +4884,7 @@ type query_root {
     """filter the rows returned"""
     where: journals_bool_exp
   ): [journals!]!
-  """
-  fetch aggregated fields from the table: "journals"
-  """
+  """An aggregate relationship"""
   journals_aggregate(
     """distinct select on columns"""
     distinct_on: [journals_select_column!]
@@ -5256,9 +5456,7 @@ type subscription_root {
     """filter the rows returned"""
     where: feature_flag_bool_exp
   ): [feature_flag!]!
-  """
-  fetch data from the table: "finance_transactions"
-  """
+  """An array relationship"""
   finance_transactions(
     """distinct select on columns"""
     distinct_on: [finance_transactions_select_column!]
@@ -5271,9 +5469,7 @@ type subscription_root {
     """filter the rows returned"""
     where: finance_transactions_bool_exp
   ): [finance_transactions!]!
-  """
-  fetch aggregated fields from the table: "finance_transactions"
-  """
+  """An aggregate relationship"""
   finance_transactions_aggregate(
     """distinct select on columns"""
     distinct_on: [finance_transactions_select_column!]
@@ -5301,9 +5497,7 @@ type subscription_root {
     """filter the rows returned"""
     where: finance_transactions_bool_exp
   ): [finance_transactions!]!
-  """
-  fetch data from the table: "journals"
-  """
+  """An array relationship"""
   journals(
     """distinct select on columns"""
     distinct_on: [journals_select_column!]
@@ -5316,9 +5510,7 @@ type subscription_root {
     """filter the rows returned"""
     where: journals_bool_exp
   ): [journals!]!
-  """
-  fetch aggregated fields from the table: "journals"
-  """
+  """An aggregate relationship"""
   journals_aggregate(
     """distinct select on columns"""
     distinct_on: [journals_select_column!]
@@ -7497,7 +7689,59 @@ type users {
   ): crawl_requests_aggregate!
   created_at: timestamptz
   email: String!
+  """An array relationship"""
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """An aggregate relationship"""
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
   id: uuid!
+  """An array relationship"""
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """An aggregate relationship"""
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -7663,7 +7907,11 @@ input users_bool_exp {
   crawl_requests_aggregate: crawl_requests_aggregate_bool_exp
   created_at: timestamptz_comparison_exp
   email: String_comparison_exp
+  finance_transactions: finance_transactions_bool_exp
+  finance_transactions_aggregate: finance_transactions_aggregate_bool_exp
   id: uuid_comparison_exp
+  journals: journals_bool_exp
+  journals_aggregate: journals_aggregate_bool_exp
   notifications: notifications_bool_exp
   notifications_aggregate: notifications_aggregate_bool_exp
   playlists: playlist_bool_exp
@@ -7709,7 +7957,9 @@ input users_insert_input {
   crawl_requests: crawl_requests_arr_rel_insert_input
   created_at: timestamptz
   email: String
+  finance_transactions: finance_transactions_arr_rel_insert_input
   id: uuid
+  journals: journals_arr_rel_insert_input
   notifications: notifications_arr_rel_insert_input
   playlists: playlist_arr_rel_insert_input
   updated_at: timestamptz
@@ -7774,7 +8024,9 @@ input users_order_by {
   crawl_requests_aggregate: crawl_requests_aggregate_order_by
   created_at: order_by
   email: order_by
+  finance_transactions_aggregate: finance_transactions_aggregate_order_by
   id: order_by
+  journals_aggregate: journals_aggregate_order_by
   notifications_aggregate: notifications_aggregate_order_by
   playlists_aggregate: playlist_aggregate_order_by
   updated_at: order_by
@@ -8350,6 +8602,10 @@ type videos {
   description: String
   duration: Int
   id: uuid!
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   """An array relationship"""
   playlist_videos(
     """distinct select on columns"""
@@ -8603,6 +8859,7 @@ input videos_bool_exp {
   description: String_comparison_exp
   duration: Int_comparison_exp
   id: uuid_comparison_exp
+  keepOriginalSource: Boolean_comparison_exp
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
@@ -8662,6 +8919,10 @@ input videos_insert_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
   """short id like Youtube video id"""
@@ -8800,6 +9061,7 @@ input videos_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  keepOriginalSource: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
@@ -8838,6 +9100,8 @@ enum videos_select_column {
   """column name"""
   id
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
   """column name"""
   sId
@@ -8868,6 +9132,8 @@ select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "
 """
 enum videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns {
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
   """column name"""
   skip_process
@@ -8877,6 +9143,8 @@ enum videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns {
 select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "videos"
 """
 enum videos_select_column_videos_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  keepOriginalSource
   """column name"""
   public
   """column name"""
@@ -8891,6 +9159,10 @@ input videos_set_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   public: Boolean
   """short id like Youtube video id"""
   sId: String
@@ -8967,6 +9239,10 @@ input videos_stream_cursor_value_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   public: Boolean
   """short id like Youtube video id"""
   sId: String
@@ -9011,6 +9287,8 @@ enum videos_update_column {
   duration
   """column name"""
   id
+  """column name"""
+  keepOriginalSource
   """column name"""
   public
   """column name"""

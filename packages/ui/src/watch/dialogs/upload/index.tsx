@@ -19,9 +19,12 @@ const defaultState: DialogState = {
   url: '',
   subtitle: '',
   description: '',
+  playlistId: '',
+  keepOriginalSource: false,
   isSubmitting: false,
   error: null,
   closeDialogCountdown: null,
+  keepDialogOpen: false,
 };
 
 /**
@@ -49,7 +52,8 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   };
 
   const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+    const newValue = field === 'keepOriginalSource' || field === 'keepDialogOpen' ? e.target.checked : e.target.value;
+
     setState(prev => ({
       ...prev,
       [field]: newValue,
@@ -72,7 +76,6 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const variables = buildVariables(state);
-
       const response = await bulkConvert(variables);
 
       if (response.insert_videos?.returning.length !== 1) {
@@ -84,11 +87,12 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
         }));
       }
 
-      setState({
+      setState(prev => ({
         ...defaultState,
         error: '', // Trigger cooldown
         closeDialogCountdown: CLOSE_DELAY_MS / 1000,
-      });
+        keepDialogOpen: prev.keepDialogOpen,
+      }));
     } catch (error) {
       // TODO
       // Determine retry ability
@@ -99,7 +103,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
   useCountdown({
     duration: CLOSE_DELAY_MS / 1000,
-    enabled: state.error === '' && !!state.closeDialogCountdown,
+    enabled: state.error === '' && !!state.closeDialogCountdown && !state.keepDialogOpen,
     onTick: (remaining: number) => {
       setState(prev => ({
         ...prev,

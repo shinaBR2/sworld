@@ -70,6 +70,27 @@ describe('formalizeState', () => {
       videoPositionInPlaylist: 10,
     });
   });
+
+  it('should preserve keepOriginalSource boolean value', () => {
+    const dialogState: DialogState = {
+      title: 'Test Title',
+      url: 'https://example.com/video',
+      keepOriginalSource: true,
+    } as DialogState;
+
+    const result = formalizeState(dialogState);
+
+    expect(result).toEqual({
+      title: 'Test Title',
+      description: '',
+      url: 'https://example.com/video',
+      subtitle: '',
+      playlistId: undefined,
+      newPlaylistName: undefined,
+      videoPositionInPlaylist: 0,
+      keepOriginalSource: true,
+    });
+  });
 });
 
 describe('canPlayUrls', () => {
@@ -145,6 +166,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
         },
       ],
     });
@@ -165,6 +187,7 @@ describe('buildVariables', () => {
           description: '',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
         },
       ],
     });
@@ -187,6 +210,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -218,6 +242,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -249,6 +274,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -286,6 +312,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -322,6 +349,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           // No playlist_videos property
         },
       ],
@@ -347,6 +375,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -378,6 +407,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           subtitles: {
             data: [
               {
@@ -409,6 +439,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           // No subtitles property
         },
       ],
@@ -434,6 +465,7 @@ describe('buildVariables', () => {
           description: 'Test Description',
           slug: 'test-video',
           video_url: 'https://example.com/video',
+          keepOriginalSource: false,
           playlist_videos: {
             data: [
               {
@@ -451,6 +483,52 @@ describe('buildVariables', () => {
               },
             ],
           },
+        },
+      ],
+    });
+  });
+
+  it('should include keepOriginalSource in the output when true', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      keepOriginalSource: true,
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          keepOriginalSource: true,
+        },
+      ],
+    });
+  });
+
+  it('should include false keepOriginalSource in the output when false', () => {
+    const dialogState = {
+      title: 'Test Video',
+      description: 'Test Description',
+      url: 'https://example.com/video',
+      keepOriginalSource: false,
+    } as DialogState;
+
+    const result = buildVariables(dialogState);
+
+    expect(result).toEqual({
+      objects: [
+        {
+          title: 'Test Video',
+          description: 'Test Description',
+          slug: 'test-video',
+          video_url: 'https://example.com/video',
+          keepOriginalSource: false,
         },
       ],
     });

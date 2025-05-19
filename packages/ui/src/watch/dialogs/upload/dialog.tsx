@@ -3,10 +3,13 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   DialogContent,
   DialogTitle,
   Fade,
+  FormControlLabel,
+  Grid,
   MenuItem,
   TextField,
 } from '@mui/material';
@@ -60,7 +63,9 @@ const UploadSuccessResult = (props: UploadSuccessResultProps) => {
       <Alert
         severity="success"
         sx={{ mb: 2 }}
-        action={<CircularProgress variant="determinate" value={(countdown / totalTime) * 100} size={20} />}
+        action={
+          countdown > 0 && <CircularProgress variant="determinate" value={(countdown / totalTime) * 100} size={20} />
+        }
       >
         {message}
       </Alert>
@@ -95,6 +100,8 @@ const DialogComponent = (props: DialogComponentProps) => {
     videoPositionInPlaylist,
     error,
     closeDialogCountdown,
+    keepOriginalSource = false,
+    keepDialogOpen = false,
   } = state;
   const isMobile = useIsMobile();
 
@@ -148,8 +155,10 @@ const DialogComponent = (props: DialogComponentProps) => {
     errorMessage: error as string,
   };
   const uploadSuccessResultProps = {
-    countdown: closeDialogCountdown as number,
-    message: `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
+    countdown: keepDialogOpen ? 0 : (closeDialogCountdown as number),
+    message: keepDialogOpen
+      ? 'Successfully uploaded.'
+      : `Successfully uploaded. Dialog will close in ${state.closeDialogCountdown} seconds.`,
   };
 
   return (
@@ -205,6 +214,33 @@ const DialogComponent = (props: DialogComponentProps) => {
             onChange={onFormFieldChange('videoPositionInPlaylist')}
             {...videoPositionInPlaylistTextFieldProps}
           />
+
+          <Grid container spacing={1} sx={{ mt: 2, mb: 2 }}>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={keepOriginalSource}
+                    onChange={onFormFieldChange('keepOriginalSource')}
+                    disabled={isSubmitting}
+                  />
+                }
+                label="Keep original source"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={keepDialogOpen}
+                    onChange={onFormFieldChange('keepDialogOpen')}
+                    disabled={isSubmitting}
+                  />
+                }
+                label="Keep dialog open after success"
+              />
+            </Grid>
+          </Grid>
 
           {error && <UploadErrorResult {...uploadErrorResultProps} />}
           {error === '' && <UploadSuccessResult {...uploadSuccessResultProps} />}

@@ -11,9 +11,11 @@ interface DialogState {
   playlistId?: string;
   newPlaylistName?: string;
   videoPositionInPlaylist?: number;
+  keepOriginalSource?: boolean;
   isSubmitting: boolean;
   error: string | null;
   closeDialogCountdown: number | null;
+  keepDialogOpen?: boolean;
 }
 
 export { type DialogState, type ValidationResult };

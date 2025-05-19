@@ -35,6 +35,8 @@ describe('DialogComponent', () => {
     videoPositionInPlaylist: 0,
     error: null,
     closeDialogCountdown: null,
+    keepOriginalSource: false,
+    keepDialogOpen: false,
   };
 
   // Helper function to render the component with specific state
@@ -99,6 +101,12 @@ describe('DialogComponent', () => {
     expect(screen.getByLabelText(/new playlist name/i)).toBeInTheDocument();
   });
 
+  it('renders checkbox controls', () => {
+    renderComponent();
+    expect(screen.getByLabelText(/keep original source/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/keep dialog open after success/i)).toBeInTheDocument();
+  });
+
   // === INTERACTION TESTS ===
   it('calls onFormFieldChange when fields change', () => {
     renderComponent();
@@ -126,6 +134,18 @@ describe('DialogComponent', () => {
     expect(mockHandleClose).not.toHaveBeenCalled();
   });
 
+  it('calls onFormFieldChange when keepOriginalSource checkbox is toggled', () => {
+    renderComponent();
+    fireEvent.click(screen.getByLabelText(/keep original source/i));
+    expect(mockOnFormFieldChange).toHaveBeenCalledWith('keepOriginalSource');
+  });
+
+  it('calls onFormFieldChange when keepDialogOpen checkbox is toggled', () => {
+    renderComponent();
+    fireEvent.click(screen.getByLabelText(/keep dialog open after success/i));
+    expect(mockOnFormFieldChange).toHaveBeenCalledWith('keepDialogOpen');
+  });
+
   // === STATE-BASED BEHAVIOR TESTS ===
   it('disables all fields and buttons when isSubmitting is true', () => {
     renderComponent({ isSubmitting: true });
@@ -136,6 +156,32 @@ describe('DialogComponent', () => {
     expect(screen.getByPlaceholderText(texts.form.videoPositionInPlaylistInput.placeholder)).toBeDisabled();
     expect(screen.getByRole('button', { name: texts.form.submitButton.submitting })).toBeDisabled();
     expect(screen.getByLabelText(texts.dialog.closeButton)).toBeDisabled();
+  });
+
+  it('disables checkbox controls when isSubmitting is true', () => {
+    renderComponent({ isSubmitting: true });
+    expect(screen.getByLabelText(/keep original source/i)).toBeDisabled();
+    expect(screen.getByLabelText(/keep dialog open after success/i)).toBeDisabled();
+  });
+
+  it('displays success message without countdown when keepDialogOpen is true', () => {
+    renderComponent({ 
+      error: '', 
+      closeDialogCountdown: 5,
+      keepDialogOpen: true 
+    });
+    expect(screen.getByText('Successfully uploaded.')).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
+
+  it('displays success message with countdown when keepDialogOpen is false', () => {
+    renderComponent({ 
+      error: '', 
+      closeDialogCountdown: 5,
+      keepDialogOpen: false 
+    });
+    expect(screen.getByText(/dialog will close in 5 seconds/i)).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('displays error message when error state is set', () => {
