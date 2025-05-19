@@ -76,36 +76,23 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
     try {
       const variables = buildVariables(state);
-      const debug = true;
-      if (debug) {
-        console.log('variables', variables);
+      const response = await bulkConvert(variables);
 
-        setState(prev => ({
-          ...defaultState,
-          error: '', // Trigger cooldown
-          closeDialogCountdown: CLOSE_DELAY_MS / 1000,
-          keepDialogOpen: prev.keepDialogOpen,
+      if (response.insert_videos?.returning.length !== 1) {
+        // Unknown error
+        return setState(prev => ({
+          ...prev,
+          isSubmitting: false,
+          error: texts.errors.failedToSave,
         }));
-
-        return;
       }
 
-      // const response = await bulkConvert(variables);
-
-      // if (response.insert_videos?.returning.length !== 1) {
-      //   // Unknown error
-      //   return setState(prev => ({
-      //     ...prev,
-      //     isSubmitting: false,
-      //     error: texts.errors.failedToSave,
-      //   }));
-      // }
-
-      setState({
+      setState(prev => ({
         ...defaultState,
         error: '', // Trigger cooldown
         closeDialogCountdown: CLOSE_DELAY_MS / 1000,
-      });
+        keepDialogOpen: prev.keepDialogOpen,
+      }));
     } catch (error) {
       // TODO
       // Determine retry ability
