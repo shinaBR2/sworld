@@ -33,7 +33,19 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     featureFlags,
     notifications,
     invalidateQuery: (queryKey: unknown[]) => {
-      queryClient.invalidateQueries({ queryKey, refetchType: 'all' });
+      console.log('Removing and refetching query:', queryKey);
+      // For unknown reason, invalidateQueries doesn't work as expected
+      // So I use removeQueries and refetchQueries instead
+
+      // First remove the data completely
+      queryClient.removeQueries({ queryKey });
+
+      // Only need to refetch active queries since others were removed
+      queryClient.refetchQueries({
+        queryKey,
+        exact: true,
+        type: 'active',
+      });
     },
   };
 
