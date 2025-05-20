@@ -5,7 +5,42 @@ interface CountdownMock extends ReturnType<typeof vi.fn> {
 
 const mockValidateForm = vi.hoisted(() => vi.fn());
 const mockCanPlayUrls = vi.hoisted(() => vi.fn());
-const mockUseBulkConvertVideos = vi.hoisted(() => vi.fn());
+const mockUseBulkConvertVideos = vi.hoisted(() => {
+  // Store the latest onSuccess callback
+  let successCallback: ((data: any) => void) | undefined;
+
+  const mock = vi.fn().mockImplementation(options => {
+    // Capture the onSuccess callback when the hook is called
+    successCallback = options?.onSuccess;
+
+    // Return a mutateAsync that will call the success callback
+    const mutateAsync = vi.fn().mockImplementation(async variables => {
+      const result = {
+        insert_videos: {
+          returning: [{ id: '123', title: 'Test Video' }],
+        },
+      };
+
+      // Simulate async operation
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Call the success callback if it exists
+      if (successCallback) {
+        successCallback(result);
+      }
+
+      return result;
+    });
+
+    return { mutateAsync };
+  });
+
+  // Add a property to expose the success callback for testing
+  mock.getSuccessCallback = () => successCallback;
+
+  return mock;
+});
+const mockInvalidateQuery = vi.hoisted(() => vi.fn());
 const mockUseCountdown = vi.hoisted(() => {
   const mock = vi.fn() as CountdownMock;
   // Add properties to store callbacks for later use in tests
@@ -49,6 +84,12 @@ vi.mock('core/providers/auth', () => ({
   }),
 }));
 
+vi.mock('core/providers/query', () => ({
+  useQueryContext: vi.fn().mockReturnValue({
+    invalidateQuery: mockInvalidateQuery,
+  }),
+}));
+
 vi.mock('core/watch/mutation-hooks/bulk-convert', () => ({
   useBulkConvertVideos: mockUseBulkConvertVideos,
 }));
@@ -77,6 +118,15 @@ vi.mock('./dialog', () => ({
           onChange={onFormFieldChange('description')}
           disabled={state.isSubmitting}
         />
+        <select
+          data-testid="playlist-select"
+          onChange={onFormFieldChange('playlistId')}
+          value={state.playlistId}
+          disabled={state.isSubmitting}
+        >
+          <option value="">No playlist</option>
+          <option value="playlist-1">Playlist 1</option>
+        </select>
         <input
           type="checkbox"
           data-testid="keep-original-source"
@@ -121,13 +171,25 @@ describe('VideoUploadDialog', () => {
     mockCanPlayUrls.mockResolvedValue([{ url: 'https://example.com/video.mp4', isValid: true }]);
 
     // Setup mock implementation for bulk convert
-    mockBulkConvert = vi.fn().mockResolvedValue({
-      insert_videos: {
-        returning: [{ id: '123', title: 'Test Video' }],
-      },
+    mockBulkConvert = vi.fn().mockImplementation(async variables => {
+      const result = {
+        insert_videos: {
+          returning: [{ id: '123', title: 'Test Video' }],
+        },
+      };
+      return result;
     });
-    mockUseBulkConvertVideos.mockReturnValue({
-      mutateAsync: mockBulkConvert,
+    mockUseBulkConvertVideos.mockImplementation(options => {
+      return {
+        mutateAsync: async (...args) => {
+          const result = await mockBulkConvert(...args);
+          // Call the onSuccess callback with the result
+          if (options?.onSuccess) {
+            options.onSuccess(result);
+          }
+          return result;
+        },
+      };
     });
 
     // Setup mock implementation for countdown
@@ -337,5 +399,76 @@ describe('VideoUploadDialog', () => {
     });
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('Closing in 2s');
+  });
+
+  it('should invalidate videos cache on successful submission', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if invalidateQuery was called with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+  });
+
+  it('should invalidate playlist-detail cache when a playlist is selected', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Select a playlist
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('playlist-select'), {
+        target: { value: 'playlist-1' },
+      });
+    });
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if both invalidateQuery calls were made with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['playlist-detail', 'playlist-1']);
+  });
+
+  it('should not invalidate playlist-detail cache when no playlist is selected', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if invalidateQuery was called with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+
+    // And make sure it wasn't called with playlist-detail
+    const playlistDetailCalls = mockInvalidateQuery.mock.calls.filter(
+      call => call[0] && call[0][0] === 'playlist-detail'
+    );
+    expect(playlistDetailCalls.length).toBe(0);
   });
 });
