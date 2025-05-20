@@ -33,7 +33,6 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     featureFlags,
     notifications,
     invalidateQuery: (queryKey: unknown[]) => {
-      console.log('Removing and refetching query:', queryKey);
       // For unknown reason, invalidateQueries doesn't work as expected
       // So I use removeQueries and refetchQueries instead
 
