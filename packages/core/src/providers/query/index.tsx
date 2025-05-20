@@ -37,7 +37,7 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
       // So I use removeQueries and refetchQueries instead
 
       // First remove the data completely
-      queryClient.removeQueries({ queryKey });
+      queryClient.removeQueries({ queryKey, exact: true });
 
       // Only need to refetch active queries since others were removed
       queryClient.refetchQueries({

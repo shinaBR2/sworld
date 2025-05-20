@@ -110,7 +110,7 @@ describe('Query Provider and Context', () => {
     const queryClientInstance = vi.mocked(QueryClient).mock.results[0].value;
 
     // Verify removeQueries was called first
-    expect(queryClientInstance.removeQueries).toHaveBeenCalledWith({ queryKey });
+    expect(queryClientInstance.removeQueries).toHaveBeenCalledWith({ queryKey, exact: true });
 
     // Verify refetchQueries was called with correct params
     expect(queryClientInstance.refetchQueries).toHaveBeenCalledWith({
