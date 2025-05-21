@@ -1,6 +1,12 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
-import ReactECharts, { EChartsOption } from 'echarts-for-react';
 import { CategoryType } from 'core/finance';
+import ReactEChartsCore from 'echarts-for-react/lib/core';
+import * as echarts from 'echarts/core';
+import { PieChart } from 'echarts/charts';
+import { TooltipComponent, LegendComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+
+echarts.use([PieChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
 export interface CategoryData {
   category: CategoryType;
@@ -67,7 +73,7 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
   const total = data.reduce((sum, item) => (item.category !== 'total' ? sum + item.amount : sum), 0);
 
   // Generate ECharts option
-  const getOption = (): EChartsOption => {
+  const getOption = () => {
     return {
       tooltip: {
         trigger: 'item',
@@ -144,7 +150,8 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
 
   return (
     <Box sx={{ width: '100%', height: 280, position: 'relative' }}>
-      <ReactECharts
+      <ReactEChartsCore
+        echarts={echarts}
         option={getOption()}
         style={{ height: '100%', width: '100%' }}
         opts={{ renderer: 'canvas' }}

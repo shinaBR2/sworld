@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
               /** For error tracking, analytics */
               if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
 
-              if (id.includes('/echarts@')) return 'chart-vendor';
+              if (id.includes('/echarts@') || id.includes('/zrender@')) return 'chart-vendor';
 
               /**
                * App broken if bundle mui separately
