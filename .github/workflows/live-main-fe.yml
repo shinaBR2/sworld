@@ -74,7 +74,7 @@ jobs:
       - name: Copy firebase.json file
         run: cp firebase.json apps/main/firebase.json
       - name: Build
-        run: pnpm build --filter=main
+        run: CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" pnpm build --filter=main
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
