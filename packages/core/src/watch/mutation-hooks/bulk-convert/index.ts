@@ -1,3 +1,4 @@
+import { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import { InsertVideosMutation, Videos_Insert_Input } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
@@ -18,31 +19,32 @@ const bulkConvertMutation = graphql(/* GraphQL */ `
   }
 `);
 
-interface UseBulkConvertVideosProps {
+type BulkConvertMutationOptions = UseMutationOptions<InsertVideosMutation, unknown, BulkConvertVariables, unknown>;
+
+interface UseBulkConvertVideosProps extends Pick<BulkConvertMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
-  onSuccess?: (data: InsertVideosMutation) => void;
-  onError?: (error: unknown) => void;
 }
 
 // Example usage
 // const { mutate: bulkConvert } = useBulkConvertVideos({
 //   getAccessToken: async () => 'your-token-here',
-//   onSuccess: (data) => {
+//   onSuccess: (data, variables) => {
 //     console.log('Videos converted:', data.insert_videos.returning)
+//     console.log('Variables used:', variables)
 //   }
 // })
 
 const useBulkConvertVideos = (props: UseBulkConvertVideosProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  return useMutationRequest<InsertVideosMutation, BulkConvertVariables>({
+  return useMutationRequest<InsertVideosMutation, unknown, BulkConvertVariables>({
     document: bulkConvertMutation,
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error: unknown, variables: BulkConvertVariables, context: unknown) => {
         console.error('Bulk convert videos failed:', error);
-        onError?.(error);
+        onError?.(error, variables, context);
       },
     },
   });
