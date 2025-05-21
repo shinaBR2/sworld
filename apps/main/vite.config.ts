@@ -1,6 +1,7 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
+import path from 'path';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 const codecovToken = process.env.CODECOV_TOKEN;
@@ -8,8 +9,10 @@ console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig(({ mode }) => {
-  const env = Object.assign(process.env, loadEnv(mode, __dirname));
+  const env = Object.assign(process.env, loadEnv(mode, __dirname, ''));
+  const env_2 = loadEnv(mode, path.resolve(__dirname, '../'), '');
   console.log('env.CODECOV_TOKEN is', !!env.CODECOV_TOKEN);
+  console.log('env_2.CODECOV_TOKEN is', !!env_2.CODECOV_TOKEN);
 
   return {
     server: {
