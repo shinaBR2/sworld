@@ -51,6 +51,7 @@ const mockUseCountdown = vi.hoisted(() => {
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { Videos_Insert_Input } from 'core/graphql/graphql';
 import { VideoUploadDialog } from './index';
 import { CLOSE_DELAY_MS } from './utils';
 import { texts } from './texts';
@@ -60,16 +61,31 @@ import { validateForm } from './validate';
 vi.mock('./utils', () => ({
   CLOSE_DELAY_MS: 2000,
   CREATE_NEW_PLAYLIST: 'tmp-id',
-  buildVariables: vi.fn().mockImplementation(state => ({
-    objects: [
-      {
-        title: state.title,
-        description: state.description,
-        slug: state.title.toLowerCase(),
-        video_url: state.url,
-      },
-    ],
-  })),
+  buildVariables: vi.fn().mockImplementation((state): { objects: Array<Videos_Insert_Input> } => {
+    const videoObject: Videos_Insert_Input = {
+      title: state.title,
+      description: state.description,
+      slug: state.title.toLowerCase(),
+      video_url: state.url,
+    };
+
+    const variables = {
+      objects: [videoObject],
+    };
+
+    if (state.playlistId) {
+      videoObject.playlist_videos = {
+        data: [
+          {
+            playlist_id: state.playlistId,
+            position: state.videoPositionInPlaylist || 0,
+          },
+        ],
+      };
+    }
+
+    return variables;
+  }),
   canPlayUrls: mockCanPlayUrls,
 }));
 
@@ -171,7 +187,7 @@ describe('VideoUploadDialog', () => {
     mockCanPlayUrls.mockResolvedValue([{ url: 'https://example.com/video.mp4', isValid: true }]);
 
     // Setup mock implementation for bulk convert
-    mockBulkConvert = vi.fn().mockImplementation(async variables => {
+    mockBulkConvert = vi.fn().mockImplementation(async (variables: { objects: Array<Videos_Insert_Input> }) => {
       const result = {
         insert_videos: {
           returning: [{ id: '123', title: 'Test Video' }],
@@ -181,11 +197,11 @@ describe('VideoUploadDialog', () => {
     });
     mockUseBulkConvertVideos.mockImplementation(options => {
       return {
-        mutateAsync: async (...args) => {
-          const result = await mockBulkConvert(...args);
-          // Call the onSuccess callback with the result
+        mutateAsync: async (variables: { objects: Array<Videos_Insert_Input> }) => {
+          const result = await mockBulkConvert(variables);
+          // Call the onSuccess callback with the result and variables
           if (options?.onSuccess) {
-            options.onSuccess(result);
+            options.onSuccess(result, variables);
           }
           return result;
         },
@@ -193,10 +209,11 @@ describe('VideoUploadDialog', () => {
     });
 
     // Setup mock implementation for countdown
-    mockUseCountdown.mockImplementation(({ onComplete, onTick }) => {
+    mockUseCountdown.mockImplementation(({ onComplete, onTick, enabled }) => {
       // Store callbacks for manual triggering in tests
       mockUseCountdown.onComplete = onComplete;
       mockUseCountdown.onTick = onTick;
+      return { enabled };
     });
   });
 
@@ -346,9 +363,20 @@ describe('VideoUploadDialog', () => {
   it('should handle unexpected API response', async () => {
     mockBulkConvert.mockResolvedValue({
       insert_videos: {
-        returning: [], // Empty array - unexpected response
+        returning: [],
       },
     });
+
+    // Update useBulkConvertVideos mock to pass the correct data structure
+    mockUseBulkConvertVideos.mockImplementation(options => ({
+      mutateAsync: async (variables: { objects: Array<Videos_Insert_Input> }) => {
+        const result = await mockBulkConvert(variables);
+        if (options?.onSuccess) {
+          options.onSuccess(result, variables);
+        }
+        return result;
+      },
+    }));
 
     renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 

@@ -42,10 +42,16 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   const { invalidateQuery } = useQueryContext();
   const { mutateAsync: bulkConvert } = useBulkConvertVideos({
     getAccessToken,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       invalidateQuery(['videos']);
-      if (state.playlistId) {
-        invalidateQuery(['playlist-detail', state.playlistId]);
+
+      const firstVideo = variables.objects[0];
+      const playlistVideos = firstVideo?.playlist_videos;
+      const firstPlaylistVideo = playlistVideos?.data?.[0];
+      const playlistId = firstPlaylistVideo?.playlist_id;
+
+      if (typeof playlistId === 'string') {
+        invalidateQuery(['playlist-detail', playlistId]);
       }
     },
   });
