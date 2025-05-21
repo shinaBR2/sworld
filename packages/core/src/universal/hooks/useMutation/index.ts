@@ -3,19 +3,23 @@ import request from 'graphql-request';
 import { useQueryContext } from '../../../providers/query';
 import { TypedDocumentString } from '../../../graphql/graphql';
 
-interface UseMutationProps<TData, TVariables> {
+interface UseMutationProps<TData, TError, TVariables> {
   document: TypedDocumentString<TData, TVariables>;
   getAccessToken?: () => Promise<string>;
-  options?: Omit<UseMutationOptions<TData, unknown, TVariables>, 'mutationFn'>;
+  options?: Omit<UseMutationOptions<TData, TError, TVariables>, 'mutationFn'>;
 }
 
-const useMutationRequest = <TData = unknown, TVariables extends object = {}>(
-  props: UseMutationProps<TData, TVariables>
+const useMutationRequest = <
+  TData = unknown,
+  TError = unknown,
+  TVariables extends object = {}
+>(
+  props: UseMutationProps<TData, TError, TVariables>
 ) => {
   const { document, getAccessToken, options } = props;
   const { hasuraUrl } = useQueryContext();
 
-  return useMutation<TData, unknown, TVariables>({
+  return useMutation<TData, TError, TVariables>({
     ...options,
     mutationFn: async variables => {
       let headers: Record<string, string> = {
