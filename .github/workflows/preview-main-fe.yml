@@ -73,7 +73,7 @@ jobs:
       - name: Copy firebase.json file
         run: cp firebase.json apps/main/firebase.json
       - name: Debug env
-        run: echo "CODECOV_TOKEN exists: ${{ secrets.CODECOV_TOKEN != '' }}"
+        run: echo "CODECOV_TOKEN exists ${{ secrets.CODECOV_TOKEN != '' }}"
 
       - name: Build
         run: pnpm build --filter=main
