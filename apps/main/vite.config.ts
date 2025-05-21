@@ -9,8 +9,21 @@ console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig(({ mode }) => {
+  console.log('fuck this token', process.env.CODECOV_TOKEN);
+
+  const allEnv = loadEnv(mode, process.cwd(), '');
   const env = Object.assign(process.env, loadEnv(mode, __dirname, ''));
   const env_2 = loadEnv(mode, path.resolve(__dirname, '../'), '');
+
+  console.log('Environment variables available to Vite:', Object.keys(allEnv));
+  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
+
+  console.log('Environment variables available to Vite:', Object.keys(env));
+  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
+
+  console.log('Environment variables available to Vite:', Object.keys(env_2));
+  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
+
   console.log('env.CODECOV_TOKEN is', !!env.CODECOV_TOKEN);
   console.log('env_2.CODECOV_TOKEN is', !!env_2.CODECOV_TOKEN);
 
