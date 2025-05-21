@@ -76,7 +76,7 @@ jobs:
         run: echo "CODECOV_TOKEN exists ${{ secrets.CODECOV_TOKEN != '' }}"
 
       - name: Build
-        run: pnpm build --filter=main --stream
+        run: pnpm build --stream --filter=main
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
