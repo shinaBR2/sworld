@@ -1,12 +1,4 @@
 import { graphql } from '../../graphql';
-import {
-  CreateJournalMutation,
-  CreateJournalMutationVariables,
-  DeleteJournalMutation,
-  DeleteJournalMutationVariables,
-  UpdateJournalMutation,
-  UpdateJournalMutationVariables,
-} from '../../graphql/graphql';
 import { useAuthContext } from '../../providers/auth';
 import { useQueryContext } from '../../providers/query';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
@@ -55,11 +47,11 @@ interface MutationProps {
 // Helper function to extract month and year from date string
 const getMonthYearFromDate = (dateString?: string) => {
   if (!dateString) return null;
-  
+
   const [yearStr, monthStr] = dateString.split('-');
   const year = parseInt(yearStr, 10);
   const month = parseInt(monthStr, 10);
-  
+
   if (isNaN(year) || isNaN(month)) return null;
   return { month, year };
 };
@@ -71,11 +63,11 @@ const invalidateJournalQueries = (
   journalId?: string
 ) => {
   const dateInfo = getMonthYearFromDate(date);
-  
+
   if (dateInfo) {
     invalidateQuery(['journals', dateInfo.month, dateInfo.year]);
   }
-  
+
   if (journalId) {
     invalidateQuery(['journal', journalId]);
   }
@@ -86,14 +78,14 @@ const useCreateJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: createJournal } = useMutationRequest<CreateJournalMutation, CreateJournalMutationVariables>({
+  const { mutateAsync: createJournal } = useMutationRequest({
     document: createJournalMutation,
     getAccessToken,
     options: {
       onSuccess: data => {
         const journalDate = data.insert_journals_one?.date;
         const journalId = data.insert_journals_one?.id;
-        
+
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
@@ -112,14 +104,14 @@ const useUpdateJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: updateJournal } = useMutationRequest<UpdateJournalMutation, UpdateJournalMutationVariables>({
+  const { mutateAsync: updateJournal } = useMutationRequest({
     document: updateJournalMutation,
     getAccessToken,
     options: {
       onSuccess: data => {
         const journalDate = data.update_journals_by_pk?.date;
         const journalId = data.update_journals_by_pk?.id;
-        
+
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
@@ -138,14 +130,14 @@ const useDeleteJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: deleteJournal } = useMutationRequest<DeleteJournalMutation, DeleteJournalMutationVariables>({
+  const { mutateAsync: deleteJournal } = useMutationRequest({
     document: deleteJournalMutation,
     getAccessToken,
     options: {
       onSuccess: data => {
         const journalDate = data.delete_journals_by_pk?.date;
         const journalId = data.delete_journals_by_pk?.id;
-        
+
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },

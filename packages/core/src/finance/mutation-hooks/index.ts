@@ -1,12 +1,5 @@
 import { graphql } from '../../graphql';
-import {
-  CreateFinanceRecordMutation,
-  CreateFinanceRecordMutationVariables,
-  DeleteFinanceRecordMutation,
-  DeleteFinanceRecordMutationVariables,
-  UpdateFinanceRecordMutation,
-  UpdateFinanceRecordMutationVariables,
-} from '../../graphql/graphql';
+import { CreateFinanceRecordMutation } from '../../graphql/graphql';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
 
 const createRecord = graphql(/* GraphQL */ `
@@ -54,10 +47,7 @@ interface MutationProps {
 const useInsertFinanceTransaction = (props: MutationProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  const { mutateAsync: insertFinanceRecord } = useMutationRequest<
-    CreateFinanceRecordMutation,
-    CreateFinanceRecordMutationVariables
-  >({
+  const { mutateAsync: insertFinanceRecord } = useMutationRequest({
     document: createRecord,
     getAccessToken,
     options: {
@@ -75,10 +65,7 @@ const useInsertFinanceTransaction = (props: MutationProps) => {
 const useUpdateFinanceTransaction = (props: MutationProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  const { mutateAsync: updateFinanceRecord } = useMutationRequest<
-    UpdateFinanceRecordMutation,
-    UpdateFinanceRecordMutationVariables
-  >({
+  const { mutateAsync: updateFinanceRecord } = useMutationRequest({
     document: updateRecord,
     getAccessToken,
     options: {
@@ -95,10 +82,7 @@ const useUpdateFinanceTransaction = (props: MutationProps) => {
 const useDeleteFinanceTransaction = (props: MutationProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  const { mutateAsync: deleteFinanceRecord } = useMutationRequest<
-    DeleteFinanceRecordMutation,
-    DeleteFinanceRecordMutationVariables
-  >({
+  const { mutateAsync: deleteFinanceRecord } = useMutationRequest({
     document: deleteRecord,
     getAccessToken,
     options: {
