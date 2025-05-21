@@ -82,7 +82,7 @@ jobs:
 
           # Change to app directory and build
           cd apps/main
-          pnpm exec vite build
+          pnpm run build
 
           # Return to original directory
           cd $ORIGINAL_DIR
