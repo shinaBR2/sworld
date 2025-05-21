@@ -5,7 +5,42 @@ interface CountdownMock extends ReturnType<typeof vi.fn> {
 
 const mockValidateForm = vi.hoisted(() => vi.fn());
 const mockCanPlayUrls = vi.hoisted(() => vi.fn());
-const mockUseBulkConvertVideos = vi.hoisted(() => vi.fn());
+const mockUseBulkConvertVideos = vi.hoisted(() => {
+  // Store the latest onSuccess callback
+  let successCallback: ((data: any) => void) | undefined;
+
+  const mock = vi.fn().mockImplementation(options => {
+    // Capture the onSuccess callback when the hook is called
+    successCallback = options?.onSuccess;
+
+    // Return a mutateAsync that will call the success callback
+    const mutateAsync = vi.fn().mockImplementation(async variables => {
+      const result = {
+        insert_videos: {
+          returning: [{ id: '123', title: 'Test Video' }],
+        },
+      };
+
+      // Simulate async operation
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Call the success callback if it exists
+      if (successCallback) {
+        successCallback(result);
+      }
+
+      return result;
+    });
+
+    return { mutateAsync };
+  });
+
+  // Add a property to expose the success callback for testing
+  mock.getSuccessCallback = () => successCallback;
+
+  return mock;
+});
+const mockInvalidateQuery = vi.hoisted(() => vi.fn());
 const mockUseCountdown = vi.hoisted(() => {
   const mock = vi.fn() as CountdownMock;
   // Add properties to store callbacks for later use in tests
@@ -16,6 +51,7 @@ const mockUseCountdown = vi.hoisted(() => {
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { Videos_Insert_Input } from 'core/graphql/graphql';
 import { VideoUploadDialog } from './index';
 import { CLOSE_DELAY_MS } from './utils';
 import { texts } from './texts';
@@ -25,16 +61,31 @@ import { validateForm } from './validate';
 vi.mock('./utils', () => ({
   CLOSE_DELAY_MS: 2000,
   CREATE_NEW_PLAYLIST: 'tmp-id',
-  buildVariables: vi.fn().mockImplementation(state => ({
-    objects: [
-      {
-        title: state.title,
-        description: state.description,
-        slug: state.title.toLowerCase(),
-        video_url: state.url,
-      },
-    ],
-  })),
+  buildVariables: vi.fn().mockImplementation((state): { objects: Array<Videos_Insert_Input> } => {
+    const videoObject: Videos_Insert_Input = {
+      title: state.title,
+      description: state.description,
+      slug: state.title.toLowerCase(),
+      video_url: state.url,
+    };
+
+    const variables = {
+      objects: [videoObject],
+    };
+
+    if (state.playlistId) {
+      videoObject.playlist_videos = {
+        data: [
+          {
+            playlist_id: state.playlistId,
+            position: state.videoPositionInPlaylist || 0,
+          },
+        ],
+      };
+    }
+
+    return variables;
+  }),
   canPlayUrls: mockCanPlayUrls,
 }));
 
@@ -46,6 +97,12 @@ vi.mock('./validate', () => ({
 vi.mock('core/providers/auth', () => ({
   useAuthContext: vi.fn().mockReturnValue({
     getAccessToken: vi.fn().mockResolvedValue('mock-token'),
+  }),
+}));
+
+vi.mock('core/providers/query', () => ({
+  useQueryContext: vi.fn().mockReturnValue({
+    invalidateQuery: mockInvalidateQuery,
   }),
 }));
 
@@ -77,6 +134,15 @@ vi.mock('./dialog', () => ({
           onChange={onFormFieldChange('description')}
           disabled={state.isSubmitting}
         />
+        <select
+          data-testid="playlist-select"
+          onChange={onFormFieldChange('playlistId')}
+          value={state.playlistId}
+          disabled={state.isSubmitting}
+        >
+          <option value="">No playlist</option>
+          <option value="playlist-1">Playlist 1</option>
+        </select>
         <input
           type="checkbox"
           data-testid="keep-original-source"
@@ -121,20 +187,33 @@ describe('VideoUploadDialog', () => {
     mockCanPlayUrls.mockResolvedValue([{ url: 'https://example.com/video.mp4', isValid: true }]);
 
     // Setup mock implementation for bulk convert
-    mockBulkConvert = vi.fn().mockResolvedValue({
-      insert_videos: {
-        returning: [{ id: '123', title: 'Test Video' }],
-      },
+    mockBulkConvert = vi.fn().mockImplementation(async (variables: { objects: Array<Videos_Insert_Input> }) => {
+      const result = {
+        insert_videos: {
+          returning: [{ id: '123', title: 'Test Video' }],
+        },
+      };
+      return result;
     });
-    mockUseBulkConvertVideos.mockReturnValue({
-      mutateAsync: mockBulkConvert,
+    mockUseBulkConvertVideos.mockImplementation(options => {
+      return {
+        mutateAsync: async (variables: { objects: Array<Videos_Insert_Input> }) => {
+          const result = await mockBulkConvert(variables);
+          // Call the onSuccess callback with the result and variables
+          if (options?.onSuccess) {
+            options.onSuccess(result, variables);
+          }
+          return result;
+        },
+      };
     });
 
     // Setup mock implementation for countdown
-    mockUseCountdown.mockImplementation(({ onComplete, onTick }) => {
+    mockUseCountdown.mockImplementation(({ onComplete, onTick, enabled }) => {
       // Store callbacks for manual triggering in tests
       mockUseCountdown.onComplete = onComplete;
       mockUseCountdown.onTick = onTick;
+      return { enabled };
     });
   });
 
@@ -284,9 +363,20 @@ describe('VideoUploadDialog', () => {
   it('should handle unexpected API response', async () => {
     mockBulkConvert.mockResolvedValue({
       insert_videos: {
-        returning: [], // Empty array - unexpected response
+        returning: [],
       },
     });
+
+    // Update useBulkConvertVideos mock to pass the correct data structure
+    mockUseBulkConvertVideos.mockImplementation(options => ({
+      mutateAsync: async (variables: { objects: Array<Videos_Insert_Input> }) => {
+        const result = await mockBulkConvert(variables);
+        if (options?.onSuccess) {
+          options.onSuccess(result, variables);
+        }
+        return result;
+      },
+    }));
 
     renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
@@ -337,5 +427,76 @@ describe('VideoUploadDialog', () => {
     });
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('Closing in 2s');
+  });
+
+  it('should invalidate videos cache on successful submission', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if invalidateQuery was called with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+  });
+
+  it('should invalidate playlist-detail cache when a playlist is selected', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Select a playlist
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('playlist-select'), {
+        target: { value: 'playlist-1' },
+      });
+    });
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if both invalidateQuery calls were made with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['playlist-detail', 'playlist-1']);
+  });
+
+  it('should not invalidate playlist-detail cache when no playlist is selected', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    // Wait for the mutation and invalidation to complete
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Now check if invalidateQuery was called with the right arguments
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+
+    // And make sure it wasn't called with playlist-detail
+    const playlistDetailCalls = mockInvalidateQuery.mock.calls.filter(
+      call => call[0] && call[0][0] === 'playlist-detail'
+    );
+    expect(playlistDetailCalls.length).toBe(0);
   });
 });

@@ -1,10 +1,4 @@
 import { graphql } from '../../../graphql';
-import {
-  MarkNotificationAsReadMutation,
-  MarkNotificationAsReadMutationVariables,
-  MarkNotificationsAsReadMutation,
-  MarkNotificationsAsReadMutationVariables,
-} from '../../../graphql/graphql';
 import { useMutationRequest } from '../useMutation';
 
 const MARK_AS_READ_MUTATION = graphql(/* GraphQL */ `
@@ -37,10 +31,7 @@ interface UseMarkNotificationAsReadProps {
 const useMarkNotificationAsRead = (props: UseMarkNotificationAsReadProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  const { mutateAsync: markSingleAsRead } = useMutationRequest<
-    MarkNotificationAsReadMutation,
-    MarkNotificationAsReadMutationVariables
-  >({
+  const { mutateAsync: markSingleAsRead } = useMutationRequest({
     document: MARK_AS_READ_MUTATION,
     getAccessToken,
     options: {
@@ -52,10 +43,7 @@ const useMarkNotificationAsRead = (props: UseMarkNotificationAsReadProps) => {
     },
   });
 
-  const { mutateAsync: markAllAsRead } = useMutationRequest<
-    MarkNotificationsAsReadMutation,
-    MarkNotificationsAsReadMutationVariables
-  >({
+  const { mutateAsync: markAllAsRead } = useMutationRequest({
     document: MARK_NOTIFICATIONS_AS_READ_MUTATION,
     getAccessToken,
     options: {

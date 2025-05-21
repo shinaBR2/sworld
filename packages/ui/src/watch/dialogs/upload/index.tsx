@@ -8,6 +8,7 @@ import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
 import { useCountdown } from 'core/universal/hooks/useCooldown';
 import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
 import { validateForm } from './validate';
+import { useQueryContext } from 'core/providers/query';
 
 interface VideoUploadDialogProps {
   open: boolean;
@@ -38,8 +39,21 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
   });
 
   const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
   const { mutateAsync: bulkConvert } = useBulkConvertVideos({
     getAccessToken,
+    onSuccess: (_data, variables) => {
+      invalidateQuery(['videos']);
+
+      const firstVideo = variables.objects[0];
+      const playlistVideos = firstVideo?.playlist_videos;
+      const firstPlaylistVideo = playlistVideos?.data?.[0];
+      const playlistId = firstPlaylistVideo?.playlist_id;
+
+      if (typeof playlistId === 'string') {
+        invalidateQuery(['playlist-detail', playlistId]);
+      }
+    },
   });
 
   // TODO: handle loading + errors

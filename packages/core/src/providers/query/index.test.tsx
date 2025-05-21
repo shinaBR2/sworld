@@ -1,10 +1,19 @@
 // packages/core/src/providers/query/index.test.tsx
 import { describe, it, expect, vi } from 'vitest';
+import React from 'react';
 import { render, renderHook } from '@testing-library/react';
 import { useQueryContext, QueryProvider } from './index';
 import type { QueryContextValue } from './index';
-import { SubscriptionParams } from '../../universal/hooks/useSubscription';
 import { QueryClient } from '@tanstack/react-query';
+import { SubscriptionParams } from '../../universal/hooks/useSubscription';
+
+vi.mock('@tanstack/react-query', () => ({
+  QueryClient: vi.fn().mockImplementation(() => ({
+    removeQueries: vi.fn(),
+    refetchQueries: vi.fn(),
+  })),
+  QueryClientProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 vi.mock('@rollbar/react', () => ({
   useRollbar: () => ({
@@ -51,14 +60,6 @@ global.WebSocket = vi.fn().mockImplementation(() => ({
   readyState: WebSocket.OPEN,
 }));
 
-// Mock QueryClient's invalidateQueries method
-vi.mock('@tanstack/react-query', () => ({
-  QueryClient: vi.fn().mockImplementation(() => ({
-    invalidateQueries: vi.fn(),
-  })),
-  QueryClientProvider: ({ children }) => children,
-}));
-
 describe('Query Provider and Context', () => {
   const mockConfig = {
     hasuraUrl: 'wss://test-hasura.com/graphql',
@@ -94,6 +95,34 @@ describe('Query Provider and Context', () => {
     );
 
     expect(contextValue).toEqual(expectedContextValue);
+  });
+
+  it('should correctly handle invalidateQuery calls', () => {
+    const queryKey = ['test-key'];
+    const { result } = renderHook(() => useQueryContext(), {
+      wrapper: ({ children }) => <QueryProvider config={mockConfig}>{children}</QueryProvider>,
+    });
+
+    // Call invalidateQuery
+    result.current.invalidateQuery(queryKey);
+
+    // Get the mocked QueryClient instance
+    const queryClientInstance = vi.mocked(QueryClient).mock.results[0].value;
+
+    // Verify removeQueries was called first
+    expect(queryClientInstance.removeQueries).toHaveBeenCalledWith({ queryKey, exact: true });
+
+    // Verify refetchQueries was called with correct params
+    expect(queryClientInstance.refetchQueries).toHaveBeenCalledWith({
+      queryKey,
+      exact: true,
+      type: 'active',
+    });
+
+    // Verify order of operations
+    const calls = queryClientInstance.removeQueries.mock.invocationCallOrder[0];
+    const refetchCalls = queryClientInstance.refetchQueries.mock.invocationCallOrder[0];
+    expect(calls).toBeLessThan(refetchCalls);
   });
 
   it('should throw error when useQueryContext is used outside provider', () => {
@@ -214,34 +243,6 @@ describe('Query Provider and Context', () => {
         error: null,
       },
       invalidateQuery: expect.any(Function),
-    });
-  });
-
-  // Add new test for invalidateQuery function
-  it('should call queryClient.invalidateQueries when invalidateQuery is called', () => {
-    let contextValue: QueryContextValue | undefined;
-
-    const TestComponent = () => {
-      contextValue = useQueryContext();
-      return null;
-    };
-
-    render(
-      <QueryProvider config={mockConfig}>
-        <TestComponent />
-      </QueryProvider>
-    );
-
-    const queryKey = ['test-query'];
-    contextValue?.invalidateQuery(queryKey);
-
-    // Get the mocked QueryClient instance
-    const queryClientInstance = vi.mocked(QueryClient).mock.results[0].value;
-
-    // Check if invalidateQueries was called with the correct parameters
-    expect(queryClientInstance.invalidateQueries).toHaveBeenCalledWith({
-      queryKey,
-      refetchType: 'all',
     });
   });
 });
