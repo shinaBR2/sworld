@@ -77,16 +77,6 @@ jobs:
 
       - name: Build
         run: pnpm build --filter=main
-        # run: |
-        #   # Store original directory
-        #   ORIGINAL_DIR=$(pwd)
-
-        #   # Change to app directory and build
-        #   cd apps/main
-        #   pnpm run build
-
-        #   # Return to original directory
-        #   cd $ORIGINAL_DIR
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}

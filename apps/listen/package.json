@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@argos-ci/playwright": "^4.1.0",
+    "@codecov/vite-plugin": "^1.9.1",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@playwright/test": "^1.49.1",
     "@types/node": "^18.11.9",

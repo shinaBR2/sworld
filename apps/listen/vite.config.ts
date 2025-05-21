@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 /**
  * For debug production build
@@ -11,6 +12,8 @@ import { VitePWA } from 'vite-plugin-pwa';
     minifyWhitespace: false,
   },
  */
+
+const codecovToken = process.env.CODECOV_TOKEN;
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig({
@@ -92,6 +95,11 @@ export default defineConfig({
           },
         ],
       },
+    }),
+    codecovVitePlugin({
+      enableBundleAnalysis: !!codecovToken,
+      bundleName: 'listen',
+      uploadToken: codecovToken,
     }),
   ],
 });
