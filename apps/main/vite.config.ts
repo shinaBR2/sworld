@@ -1,16 +1,12 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig(({ mode }) => {
-  // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, process.cwd(), '');
   console.log('Build mode:', mode);
-  console.log('Process env CODECOV_TOKEN available:', !!process.env.CODECOV_TOKEN);
-  console.log('Process env CODECOV_TOKEN length:', process.env.CODECOV_TOKEN?.length ?? 0);
+  console.log('CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'available' : 'missing');
 
   return {
     server: {
