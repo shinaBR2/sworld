@@ -76,16 +76,7 @@ jobs:
         run: echo "CODECOV_TOKEN exists ${{ secrets.CODECOV_TOKEN != '' }}"
 
       - name: Build
-        run: |
-          # Store original directory
-          ORIGINAL_DIR=$(pwd)
-
-          # Change to app directory and build
-          cd apps/main
-          pnpm run build
-
-          # Return to original directory
-          cd $ORIGINAL_DIR
+        run: pnpm run build --filter=main
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
