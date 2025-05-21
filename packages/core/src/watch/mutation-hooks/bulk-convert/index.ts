@@ -37,7 +37,7 @@ interface UseBulkConvertVideosProps extends Pick<BulkConvertMutationOptions, 'on
 const useBulkConvertVideos = (props: UseBulkConvertVideosProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
-  return useMutationRequest<InsertVideosMutation, unknown, BulkConvertVariables>({
+  return useMutationRequest({
     document: bulkConvertMutation,
     getAccessToken,
     options: {
