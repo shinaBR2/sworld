@@ -8,7 +8,7 @@ console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig(({ mode }) => {
-  const env = Object.assign(process.env, loadEnv(mode, process.cwd()));
+  const env = Object.assign(process.env, loadEnv(mode, __dirname));
   console.log('env.CODECOV_TOKEN is', !!env.CODECOV_TOKEN);
 
   return {
