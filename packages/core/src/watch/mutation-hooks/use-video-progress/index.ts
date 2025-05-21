@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { graphql } from '../../../graphql';
-import { UpdateVideoProgressMutation } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-
-interface UpdateVideoProgressVars {
-  videoId: string;
-  progressSeconds: number;
-  lastWatchedAt: string;
-}
 
 const UPDATE_VIDEO_PROGRESS = graphql(/* GraphQL */ `
   mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {
@@ -79,7 +72,7 @@ const useVideoProgress = (props: UseVideoProgressProps) => {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const currentProgressRef = useRef<number>(0);
 
-  const { mutate } = useMutationRequest<UpdateVideoProgressMutation, UpdateVideoProgressVars>({
+  const { mutate } = useMutationRequest({
     document: UPDATE_VIDEO_PROGRESS,
     getAccessToken,
     options: {
