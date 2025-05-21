@@ -20,9 +20,9 @@ export default defineConfig({
     TanStackRouterVite(),
     react(),
     codecovVitePlugin({
-      enableBundleAnalysis: codecovToken !== undefined,
+      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
       bundleName: 'main',
-      uploadToken: codecovToken,
+      uploadToken: process.env.CODECOV_TOKEN,
     }),
   ],
   // https://stackoverflow.com/a/76694634/8270395
