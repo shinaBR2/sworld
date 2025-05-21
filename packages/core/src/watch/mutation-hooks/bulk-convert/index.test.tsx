@@ -67,7 +67,7 @@ describe('useBulkConvertVideos', () => {
       mutateAsync: vi.fn().mockImplementation(async variables => {
         const result = mockSuccessResponse;
         await Promise.resolve();
-        onSuccess(result);
+        onSuccess(result, variables, undefined);
         return result;
       }),
       mutate: vi.fn(),
@@ -90,7 +90,7 @@ describe('useBulkConvertVideos', () => {
 
     await result.current.mutateAsync(mockVariables);
 
-    expect(onSuccess).toHaveBeenCalledWith(mockSuccessResponse);
+    expect(onSuccess).toHaveBeenCalledWith(mockSuccessResponse, mockVariables, undefined);
     expect(onError).not.toHaveBeenCalled();
     expect(mockConsoleError).not.toHaveBeenCalled();
   });
