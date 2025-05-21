@@ -9,9 +9,8 @@ export default defineConfig(({ mode }) => {
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
   console.log('Build mode:', mode);
-  console.log('Env variables available:', Object.keys(env));
-  console.log('Codecov token available:', !!env.CODECOV_TOKEN);
-  console.log('Codecov token length:', env.CODECOV_TOKEN?.length ?? 0);
+  console.log('Process env CODECOV_TOKEN available:', !!process.env.CODECOV_TOKEN);
+  console.log('Process env CODECOV_TOKEN length:', process.env.CODECOV_TOKEN?.length ?? 0);
 
   return {
     server: {
@@ -26,9 +25,9 @@ export default defineConfig(({ mode }) => {
       TanStackRouterVite(),
       react(),
       codecovVitePlugin({
-        enableBundleAnalysis: env.CODECOV_TOKEN !== undefined,
+        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
         bundleName: 'main',
-        uploadToken: env.CODECOV_TOKEN,
+        uploadToken: process.env.CODECOV_TOKEN,
       }),
     ],
     // https://stackoverflow.com/a/76694634/8270395
