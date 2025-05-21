@@ -77,8 +77,9 @@ describe('SummaryCard', () => {
   it('displays a non-breaking space when count is 0', () => {
     render(<SummaryCard {...defaultProps} count={0} />);
 
-    // Use a more specific selector to find the paragraph element
-    const paragraph = screen.getByRole('paragraph');
+    const paragraph = screen.getByText(/^\s*$/, {
+      selector: 'p.MuiTypography-body2',
+    });
     expect(paragraph).toBeInTheDocument();
     expect(paragraph.textContent?.trim()).toBe('');
   });

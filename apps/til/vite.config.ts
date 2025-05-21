@@ -1,8 +1,10 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 // import { visualizer } from 'rollup-plugin-visualizer';
 
+const codecovToken = process.env.CODECOV_TOKEN;
 // https://vite.dev/config/
 export default defineConfig({
   server: {
@@ -41,6 +43,11 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     react(),
+    codecovVitePlugin({
+      enableBundleAnalysis: !!codecovToken,
+      bundleName: 'til',
+      uploadToken: codecovToken,
+    }),
     // visualizer({
     //   open: true,
     //   gzipSize: true,
