@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
-console.log('CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'available' : 'missing');
+const codecovToken = process.env.CODECOV_TOKEN;
+console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig({
@@ -19,9 +20,9 @@ export default defineConfig({
     TanStackRouterVite(),
     react(),
     codecovVitePlugin({
-      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      enableBundleAnalysis: codecovToken !== undefined,
       bundleName: 'main',
-      uploadToken: process.env.CODECOV_TOKEN,
+      uploadToken: codecovToken,
     }),
   ],
   // https://stackoverflow.com/a/76694634/8270395
