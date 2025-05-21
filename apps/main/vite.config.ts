@@ -10,44 +10,32 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-  server: {
-    port: 3000,
-    host: '0.0.0.0',
-  },
-  preview: {
-    port: 4000,
-    host: '0.0.0.0',
-  },
-  plugins: [
-    TanStackRouterVite(),
-    react(),
-    codecovVitePlugin({
-      enableBundleAnalysis: env.CODECOV_TOKEN !== undefined,
-      bundleName: 'main',
-      uploadToken: env.CODECOV_TOKEN,
-    }),
-  ],
-  // https://stackoverflow.com/a/76694634/8270395
-  build: {
-    sourcemap: true,
-    minify: 'esbuild',
-    chunkSizeWarningLimit: 100,
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-          return;
-        }
-        warn(warning);
-      },
-      output: {
-        manualChunks: id => {
-          if (id.includes('node_modules')) {
-            /** For error tracking, analytics */
-            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
-
-            if (id.includes('/echarts@')) return 'chart-vendor';
-
-            /**
+    server: {
+      port: 3000,
+      host: '0.0.0.0',
+    },
+    preview: {
+      port: 4000,
+      host: '0.0.0.0',
+    },
+    plugins: [
+      TanStackRouterVite(),
+      react(),
+      codecovVitePlugin({
+        enableBundleAnalysis: env.CODECOV_TOKEN !== undefined,
+        bundleName: 'main',
+        uploadToken: env.CODECOV_TOKEN,
+      }),
+    ],
+    // https://stackoverflow.com/a/76694634/8270395
+    build: {
+      sourcemap: true,
+      minify: 'esbuild',
+      chunkSizeWarningLimit: 100,
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return;
           }
           warn(warning);
         },
@@ -66,9 +54,9 @@ export default defineConfig(({ mode }) => {
 
               return 'vendor';
             }
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   };
 });

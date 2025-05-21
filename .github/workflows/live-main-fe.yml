@@ -83,6 +83,7 @@ jobs:
           VITE_MESSAGING_SENDER_ID: ${{ secrets.VITE_MESSAGING_SENDER_ID }}
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Deploy main
         uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
