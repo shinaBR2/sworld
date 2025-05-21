@@ -101,9 +101,9 @@ describe('useBulkConvertVideos', () => {
     const mockError = new Error('Conversion failed');
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async () => {
+      mutateAsync: vi.fn().mockImplementation(async variables => {
         await Promise.resolve();
-        onError(mockError);
+        onError(mockError, variables, undefined);
         console.error('Bulk convert videos failed:', mockError);
         throw mockError;
       }),
@@ -128,7 +128,7 @@ describe('useBulkConvertVideos', () => {
     await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow('Conversion failed');
 
     expect(onSuccess).not.toHaveBeenCalled();
-    expect(onError).toHaveBeenCalledWith(mockError);
+    expect(onError).toHaveBeenCalledWith(mockError, mockVariables, undefined);
     expect(mockConsoleError).toHaveBeenCalledWith('Bulk convert videos failed:', mockError);
   });
 
