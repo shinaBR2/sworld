@@ -1,36 +1,12 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
-import path from 'path';
+import { defineConfig } from 'vite';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 const codecovToken = process.env.CODECOV_TOKEN;
-console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
 export default defineConfig(({ mode }) => {
-  console.log('fuck this token', process.env.CODECOV_TOKEN);
-
-  const mainAppEnv = loadEnv(mode, path.resolve(process.cwd(), './apps/main'), '');
-  const allEnv = loadEnv(mode, process.cwd(), '');
-  const env = Object.assign(process.env, loadEnv(mode, __dirname, ''));
-  const env_2 = loadEnv(mode, path.resolve(__dirname, '../'), '');
-
-  console.log('Environment variables available to Vite:', Object.keys(mainAppEnv));
-  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
-
-  console.log('Environment variables available to Vite:', Object.keys(allEnv));
-  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
-
-  console.log('Environment variables available to Vite:', Object.keys(env));
-  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
-
-  console.log('Environment variables available to Vite:', Object.keys(env_2));
-  console.log('Process env contains CODECOV_TOKEN:', process.env.CODECOV_TOKEN ? 'Yes' : 'No');
-
-  console.log('env.CODECOV_TOKEN is', !!env.CODECOV_TOKEN);
-  console.log('env_2.CODECOV_TOKEN is', !!env_2.CODECOV_TOKEN);
-
   return {
     server: {
       port: 3000,
@@ -44,9 +20,9 @@ export default defineConfig(({ mode }) => {
       TanStackRouterVite(),
       react(),
       codecovVitePlugin({
-        enableBundleAnalysis: !!env.CODECOV_TOKEN,
+        enableBundleAnalysis: !!codecovToken,
         bundleName: 'main',
-        uploadToken: env.CODECOV_TOKEN,
+        uploadToken: codecovToken,
       }),
     ],
     // https://stackoverflow.com/a/76694634/8270395
