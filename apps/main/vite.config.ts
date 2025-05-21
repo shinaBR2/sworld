@@ -11,7 +11,7 @@ console.log('CODECOV_TOKEN:', codecovToken ? 'available' : 'missing');
 export default defineConfig(({ mode }) => {
   console.log('fuck this token', process.env.CODECOV_TOKEN);
 
-  const mainAppEnv = loadEnv(mode, path.resolve(__dirname, './apps/main'), '');
+  const mainAppEnv = loadEnv(mode, path.resolve(process.cwd(), './apps/main'), '');
   const allEnv = loadEnv(mode, process.cwd(), '');
   const env = Object.assign(process.env, loadEnv(mode, __dirname, ''));
   const env_2 = loadEnv(mode, path.resolve(__dirname, '../'), '');
