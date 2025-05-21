@@ -48,14 +48,27 @@ export default defineConfig(({ mode }) => {
             if (id.includes('/echarts@')) return 'chart-vendor';
 
             /**
-             * App broken if bundle mui separately
-             */
-            if (id.includes('react')) return 'react-vendor';
-
-            return 'vendor';
           }
+          warn(warning);
         },
-      },
-    },
-  }
+        output: {
+          manualChunks: id => {
+            if (id.includes('node_modules')) {
+              /** For error tracking, analytics */
+              if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
+
+              if (id.includes('/echarts@')) return 'chart-vendor';
+
+              /**
+               * App broken if bundle mui separately
+               */
+              if (id.includes('react')) return 'react-vendor';
+
+              return 'vendor';
+            }
+          }
+        }
+      }
+    }
+  };
 });
