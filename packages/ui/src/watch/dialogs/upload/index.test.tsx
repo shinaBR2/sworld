@@ -448,12 +448,12 @@ describe('VideoUploadDialog', () => {
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
   });
 
-  it('should invalidate playlist-detail cache when a playlist is selected', async () => {
+  it('should invalidate playlist-detail cache when a valid playlist is selected', async () => {
     renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
 
     await fillForm();
 
-    // Select a playlist
+    // Select a valid playlist (not CREATE_NEW_PLAYLIST)
     await act(async () => {
       fireEvent.change(screen.getByTestId('playlist-select'), {
         target: { value: 'playlist-1' },
@@ -470,9 +470,34 @@ describe('VideoUploadDialog', () => {
       expect(mockBulkConvert).toHaveBeenCalled();
     });
 
-    // Now check if both invalidateQuery calls were made with the right arguments
+    // Check if both invalidateQuery calls were made with the right arguments
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['playlist-detail', 'playlist-1']);
+  });
+
+  it('should not invalidate playlist-detail cache when CREATE_NEW_PLAYLIST is selected', async () => {
+    renderWithAct(<VideoUploadDialog open={true} onOpenChange={mockOnOpenChange} />);
+
+    await fillForm();
+
+    // Select CREATE_NEW_PLAYLIST
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('playlist-select'), {
+        target: { value: 'tmp-id' },
+      });
+    });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByTestId('submit-button'));
+    });
+
+    await waitFor(() => {
+      expect(mockBulkConvert).toHaveBeenCalled();
+    });
+
+    // Should only invalidate videos cache
+    expect(mockInvalidateQuery).toHaveBeenCalledWith(['videos']);
+    expect(mockInvalidateQuery).not.toHaveBeenCalledWith(['playlist-detail', 'tmp-id']);
   });
 
   it('should not invalidate playlist-detail cache when no playlist is selected', async () => {
