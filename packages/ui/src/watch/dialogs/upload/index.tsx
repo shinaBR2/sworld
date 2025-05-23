@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { buildVariables, CLOSE_DELAY_MS } from './utils';
+import { buildVariables, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST } from './utils';
 import { DialogState } from './types';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
@@ -50,7 +50,7 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       const firstPlaylistVideo = playlistVideos?.data?.[0];
       const playlistId = firstPlaylistVideo?.playlist_id;
 
-      if (typeof playlistId === 'string') {
+      if (typeof playlistId === 'string' && playlistId !== CREATE_NEW_PLAYLIST) {
         invalidateQuery(['playlist-detail', playlistId]);
       }
     },
