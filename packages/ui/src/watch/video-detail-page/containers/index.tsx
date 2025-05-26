@@ -5,6 +5,7 @@ import { VideoContainer } from '../../videos/video-container';
 import Typography from '@mui/material/Typography';
 import { RelatedList } from '../related-list';
 import { StyledRelatedContainer } from './styled';
+import React from 'react';
 
 const MainContent = (props: VideoDetailContainerProps) => {
   const { queryRs, activeVideoId } = props;
@@ -60,8 +61,10 @@ const MainContent = (props: VideoDetailContainerProps) => {
   );
 };
 
-const RelatedContent = (props: VideoDetailContainerProps) => {
-  const { queryRs, activeVideoId, LinkComponent } = props;
+const RelatedContent = (
+  props: VideoDetailContainerProps & { autoPlay: boolean; onAutoPlayChange: (checked: boolean) => void }
+) => {
+  const { queryRs, activeVideoId, LinkComponent, autoPlay, onAutoPlayChange } = props;
   const { videos, playlist, isLoading } = queryRs;
 
   if (isLoading) {
@@ -81,19 +84,29 @@ const RelatedContent = (props: VideoDetailContainerProps) => {
       title={playlist ? 'Same playlist' : 'Other videos'}
       activeId={videoDetail.id}
       LinkComponent={LinkComponent}
+      autoPlay={autoPlay}
+      onAutoPlayChange={onAutoPlayChange}
     />
   );
 };
 
 const VideoDetailContainer = (props: VideoDetailContainerProps) => {
+  const [autoPlay, setAutoPlay] = React.useState(true);
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
       <Grid container item alignItems="center" xs={12} sm={6} md={8} lg={9}>
-        <MainContent {...props} />
+        <MainContent
+          {...props}
+          onVideoEnded={nextVideo => {
+            if (autoPlay) {
+              props.onVideoEnded?.(nextVideo);
+            }
+          }}
+        />
       </Grid>
       <Grid container direction="column" item xs={12} sm={6} md={4} lg={3}>
         <StyledRelatedContainer>
-          <RelatedContent {...props} />
+          <RelatedContent {...props} autoPlay={autoPlay} onAutoPlayChange={setAutoPlay} />
         </StyledRelatedContainer>
       </Grid>
     </Grid>
