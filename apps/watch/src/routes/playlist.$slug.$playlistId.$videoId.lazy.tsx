@@ -8,15 +8,32 @@ import { AuthRoute } from 'ui/universal/authRoute';
 
 function VideoDetails() {
   const { playlistId, videoId } = Route.useParams();
+  const navigate = Route.useNavigate();
   const authContext = Auth.useAuthContext();
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
     id: playlistId,
   });
 
+  const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
+    navigate({
+      to: '/playlist/$slug/$playlistId/$videoId',
+      params: {
+        slug: nextVideo.slug,
+        playlistId: playlistId,
+        videoId: nextVideo.id
+      }
+    });
+  };
+
   return (
     <Layout>
-      <VideoDetailContainer queryRs={videoResult} activeVideoId={videoId} LinkComponent={Link} />
+      <VideoDetailContainer 
+        queryRs={videoResult} 
+        activeVideoId={videoId} 
+        LinkComponent={Link}
+        onVideoEnded={handleVideoEnded}
+      />
     </Layout>
   );
 }

@@ -32,6 +32,8 @@ interface VideoJsOptions {
 interface VideoJSProps {
   video: PlayableVideo;
   videoJsOptions: VideoJsOptions;
+  onEnded?: () => void;
+  onError?: (error: unknown) => void; // TODO handle error
 }
 
 // Thanks to
@@ -39,7 +41,7 @@ interface VideoJSProps {
 export const VideoJS = (props: VideoJSProps) => {
   const videoRef = useRef(null);
   const playerRef = useRef<Player | null>(null);
-  const { video, videoJsOptions } = props;
+  const { video, videoJsOptions, onEnded } = props;
 
   // This is IMPORTANT to memoize the options object
   // Otherwise, the player will be reinitialized on every render
@@ -98,7 +100,10 @@ export const VideoJS = (props: VideoJSProps) => {
         });
 
         player.on('pause', handlePause);
-        player.on('ended', handleEnded);
+        player.on('ended', () => {
+          handleEnded();
+          onEnded?.();
+        });
       }));
     } else {
       const player = playerRef.current;

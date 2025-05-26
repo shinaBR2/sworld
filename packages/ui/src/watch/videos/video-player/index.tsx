@@ -7,10 +7,12 @@ const VideoJS = lazy(() => import('./videojs'));
 
 interface VideoPlayerProps {
   video: PlayableVideo;
+  onEnded?: () => void;
+  onError?: (error: unknown) => void;
 }
 
 const VideoPlayer = (props: VideoPlayerProps) => {
-  const { video } = props;
+  const { video, onEnded, onError } = props;
 
   const videoJsOptions = {
     autoplay: false,
@@ -87,7 +89,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       })}
     >
       <Suspense fallback={<div>Loading player...</div>}>
-        <VideoJS video={video} videoJsOptions={videoJsOptions} />
+        <VideoJS video={video} videoJsOptions={videoJsOptions} onEnded={onEnded} onError={onError} />
       </Suspense>
     </Box>
   );

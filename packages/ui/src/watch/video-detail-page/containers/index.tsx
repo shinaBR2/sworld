@@ -24,6 +24,15 @@ const MainContent = (props: VideoDetailContainerProps) => {
     return null;
   }
 
+  const handleVideoEnd = () => {
+    const currentIndex = queryRs.videos.findIndex(video => video.id === activeVideoId);
+    const nextVideo = queryRs.videos[currentIndex + 1];
+
+    if (!nextVideo) return; // No more videos to play
+
+    props.onVideoEnded?.(nextVideo);
+  };
+
   return (
     <Grid item sx={{ width: '100%', px: 2 }}>
       <VideoContainer
@@ -31,6 +40,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
         onError={(err: unknown) => {
           console.log(err);
         }}
+        onEnded={handleVideoEnd}
       />
       <Typography
         component="h1"
