@@ -16,21 +16,22 @@ function VideoDetails() {
   });
 
   const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
+    console.log(`handle video ended ${nextVideo.id} ${playlistId} ${nextVideo.slug}`);
     navigate({
       to: '/playlist/$slug/$playlistId/$videoId',
       params: {
         slug: nextVideo.slug,
         playlistId: playlistId,
-        videoId: nextVideo.id
-      }
+        videoId: nextVideo.id,
+      },
     });
   };
 
   return (
     <Layout>
-      <VideoDetailContainer 
-        queryRs={videoResult} 
-        activeVideoId={videoId} 
+      <VideoDetailContainer
+        queryRs={videoResult}
+        activeVideoId={videoId}
         LinkComponent={Link}
         onVideoEnded={handleVideoEnded}
       />

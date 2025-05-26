@@ -44,7 +44,15 @@ const RelatedList = React.memo((props: RelatedListProps) => {
       {onAutoPlayChange && (
         <Box sx={{ px: 2, mb: 2 }}>
           <FormControlLabel
-            control={<Checkbox checked={autoPlay} onChange={(e) => onAutoPlayChange(e.target.checked)} />}
+            control={
+              <Checkbox
+                checked={autoPlay}
+                onChange={(e) => {
+                  console.log('Checkbox onChange:', e.target.checked);
+                  onAutoPlayChange(e.target.checked);
+                }}
+              />
+            }
             label="Auto-play next video"
           />
         </Box>

@@ -122,7 +122,6 @@ export const VideoJS = (props: VideoJSProps) => {
       }
     };
   }, [video.id]);
-
   useEffect(() => {
     return () => {
       cleanup();
