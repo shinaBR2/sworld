@@ -12,16 +12,42 @@ describe('VideoContainer', () => {
   const mockVideo: PlayableVideo = {
     id: '123',
     title: 'Test Video',
+    thumbnailUrl: 'https://example.com/thumb.jpg',
     source: 'https://example.com/video.mp4',
+    subtitles: [
+      {
+        id: '1',
+        label: 'English',
+        lang: 'en',
+        src: 'https://example.com/sub1.vtt',
+        isDefault: true,
+      },
+    ],
   };
 
-  it('should render VideoPlayer with correct props', () => {
+  it('should render VideoPlayer with all props', () => {
     const mockOnError = vi.fn();
-    render(<VideoContainer video={mockVideo} onError={mockOnError} />);
+    const mockOnEnded = vi.fn();
+    render(<VideoContainer video={mockVideo} onError={mockOnError} onEnded={mockOnEnded} />);
 
     expect(VideoPlayer).toHaveBeenCalledWith(
       expect.objectContaining({
         video: mockVideo,
+        onError: mockOnError,
+        onEnded: mockOnEnded,
+      }),
+      expect.any(Object)
+    );
+  });
+
+  it('should render VideoPlayer without optional props', () => {
+    render(<VideoContainer video={mockVideo} />);
+
+    expect(VideoPlayer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        video: mockVideo,
+        onError: undefined,
+        onEnded: undefined,
       }),
       expect.any(Object)
     );
