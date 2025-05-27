@@ -28,7 +28,6 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const { isLoading } = queryRs;
   const shouldPlayNextRef = React.useRef(autoPlay);
 
-  // Update ref whenever autoPlay prop changes
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
   }, [autoPlay]);
