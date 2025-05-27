@@ -148,4 +148,31 @@ describe('VideoJS', () => {
     rerender(<VideoJS {...props} video={{ ...props.video, source: 'new.mp4' }} />);
     await vi.waitFor(() => expect(getVideoPlayerOptions).toHaveBeenCalledTimes(2));
   });
+
+  it('should call onEnded callback when video ends', async () => {
+    const onEnded = vi.fn();
+    const props = {
+      video: { id: '123', source: 'test.mp4' } as PlayableVideo,
+      videoJsOptions: {},
+      onEnded,
+    };
+
+    render(<VideoJS {...props} />);
+    await vi.waitFor(() => {
+      expect(mockPlayer.on).toHaveBeenCalled();
+    });
+
+    // Get the ended callback
+    const callbacks = mockPlayer.on.mock.calls.reduce((acc: any, [event, callback]) => {
+      acc[event] = callback;
+      return acc;
+    }, {});
+
+    // Simulate video end
+    callbacks['ended']();
+
+    // Should call both the internal handler and the provided callback
+    expect(mockHandlers.handleEnded).toHaveBeenCalled();
+    expect(onEnded).toHaveBeenCalled();
+  });
 });
