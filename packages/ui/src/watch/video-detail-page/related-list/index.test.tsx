@@ -30,19 +30,49 @@ describe('RelatedList', () => {
   const mockVideos = [
     {
       id: '1',
+      type: 'video' as const,
       title: 'First Video',
       slug: 'first-video',
+      description: 'First video description',
       thumbnailUrl: 'first.jpg',
+      source: 'https://example.com/video1.mp4',
+      duration: 225,
+      createdAt: '2023-01-01',
       user: { username: 'user1' },
-      duration: '3:45',
+      lastWatchedAt: null,
+      progressSeconds: 0,
+      subtitles: [
+        {
+          id: '1',
+          label: 'English',
+          lang: 'en',
+          src: 'https://example.com/sub1.vtt',
+          isDefault: true,
+        },
+      ],
     },
     {
       id: '2',
+      type: 'video' as const,
       title: 'Second Video',
       slug: 'second-video',
+      description: 'Second video description',
       thumbnailUrl: 'second.jpg',
+      source: 'https://example.com/video2.mp4',
+      duration: 150,
+      createdAt: '2023-01-02',
       user: { username: 'user2' },
-      duration: '2:30',
+      lastWatchedAt: null,
+      progressSeconds: 0,
+      subtitles: [
+        {
+          id: '1',
+          label: 'English',
+          lang: 'en',
+          src: 'https://example.com/sub2.vtt',
+          isDefault: true,
+        },
+      ],
     },
   ];
 
@@ -96,8 +126,15 @@ describe('RelatedList', () => {
 
   it('should generate playlist route when playlist is provided', () => {
     const mockPlaylist = {
+      __typename: 'playlist' as const,
       id: 'playlist-1',
+      title: 'Test Playlist',
       slug: 'test-playlist',
+      createdAt: '2023-01-01',
+      description: 'Test playlist description',
+      thumbnailUrl: 'https://example.com/playlist.jpg',
+      user: { __typename: 'users' as const },
+      playlist_videos: [],
     };
 
     const mockLinkProps = {
@@ -138,5 +175,45 @@ describe('RelatedList', () => {
     const videoItem = screen.getByTestId('video-list-item');
     expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
     expect(generateVideoDetailRoute).toHaveBeenCalledWith({ id: mockVideos[0].id, slug: mockVideos[0].slug });
+  });
+
+  it('should render auto-play checkbox when onAutoPlayChange is provided', () => {
+    const onAutoPlayChange = vi.fn();
+    render(
+      <RelatedList
+        videos={mockVideos}
+        LinkComponent={MockLinkComponent}
+        autoPlay={true}
+        onAutoPlayChange={onAutoPlayChange}
+      />
+    );
+
+    const checkbox = screen.getByRole('checkbox', { name: /auto-play next video/i });
+    expect(checkbox).toBeInTheDocument();
+    expect(checkbox).toBeChecked();
+  });
+
+  it('should handle auto-play toggle', () => {
+    const onAutoPlayChange = vi.fn();
+    render(
+      <RelatedList
+        videos={mockVideos}
+        LinkComponent={MockLinkComponent}
+        autoPlay={true}
+        onAutoPlayChange={onAutoPlayChange}
+      />
+    );
+
+    const checkbox = screen.getByRole('checkbox', { name: /auto-play next video/i });
+    checkbox.click();
+
+    expect(onAutoPlayChange).toHaveBeenCalledWith(false);
+  });
+
+  it('should not render auto-play checkbox when onAutoPlayChange is not provided', () => {
+    render(<RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} autoPlay={true} />);
+
+    const checkbox = screen.queryByRole('checkbox', { name: /auto-play next video/i });
+    expect(checkbox).not.toBeInTheDocument();
   });
 });
