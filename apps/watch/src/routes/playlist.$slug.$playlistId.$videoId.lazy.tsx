@@ -16,7 +16,6 @@ function VideoDetails() {
   });
 
   const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
-    console.log(`handle video ended ${nextVideo.id} ${playlistId} ${nextVideo.slug}`);
     navigate({
       to: '/playlist/$slug/$playlistId/$videoId',
       params: {

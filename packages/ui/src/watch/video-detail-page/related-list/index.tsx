@@ -47,8 +47,7 @@ const RelatedList = React.memo((props: RelatedListProps) => {
             control={
               <Checkbox
                 checked={autoPlay}
-                onChange={(e) => {
-                  console.log('Checkbox onChange:', e.target.checked);
+                onChange={e => {
                   onAutoPlayChange(e.target.checked);
                 }}
               />
