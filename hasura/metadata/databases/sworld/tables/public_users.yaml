@@ -44,6 +44,20 @@ array_relationships:
         table:
           name: playlist
           schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: receiver_id
+        table:
+          name: shared_video_recipients
+          schema: public
+  - name: shared_videos
+    using:
+      foreign_key_constraint_on:
+        column: owner_id
+        table:
+          name: shared_videos
+          schema: public
   - name: user_video_histories
     using:
       foreign_key_constraint_on:
@@ -75,6 +89,14 @@ select_permissions:
         - updated_at
         - username
       filter:
-        id:
-          _eq: X-Hasura-User-Id
+        _or:
+          - id:
+              _eq: X-Hasura-User-Id
+          - shared_videos:
+              _and:
+                - active:
+                    _eq: true
+                - shared_video_recipients:
+                    receiver_id:
+                      _eq: X-Hasura-User-Id
     comment: Only select their own user profile based on `auth0_id`

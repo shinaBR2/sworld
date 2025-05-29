@@ -29,6 +29,13 @@ array_relationships:
         table:
           name: playlist_videos
           schema: public
+  - name: shared_videos
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: shared_videos
+          schema: public
 insert_permissions:
   - role: user
     permission:
@@ -72,6 +79,15 @@ select_permissions:
         - thumbnail_url
         - title
       filter:
-        user_id:
-          _eq: X-Hasura-User-Id
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - _and:
+              - shared_videos:
+                  active:
+                    _eq: true
+              - shared_videos:
+                  shared_video_recipients:
+                    receiver_id:
+                      _eq: X-Hasura-User-Id
     comment: ""

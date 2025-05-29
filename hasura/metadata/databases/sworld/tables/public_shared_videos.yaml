@@ -1,0 +1,40 @@
+table:
+  name: shared_videos
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    owner_id:
+      custom_name: ownerId
+    playlist_id:
+      custom_name: playlistId
+    updated_at:
+      custom_name: updatedAt
+    video_id:
+      custom_name: videoId
+  custom_column_names:
+    created_at: createdAt
+    owner_id: ownerId
+    playlist_id: playlistId
+    updated_at: updatedAt
+    video_id: videoId
+  custom_root_fields: {}
+object_relationships:
+  - name: playlist
+    using:
+      foreign_key_constraint_on: playlist_id
+  - name: user
+    using:
+      foreign_key_constraint_on: owner_id
+  - name: video
+    using:
+      foreign_key_constraint_on: video_id
+array_relationships:
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: shared_video_id
+        table:
+          name: shared_video_recipients
+          schema: public

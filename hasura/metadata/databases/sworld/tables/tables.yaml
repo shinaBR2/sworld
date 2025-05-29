@@ -8,6 +8,8 @@
 - "!include public_playlist.yaml"
 - "!include public_playlist_videos.yaml"
 - "!include public_posts.yaml"
+- "!include public_shared_video_recipients.yaml"
+- "!include public_shared_videos.yaml"
 - "!include public_subtitles.yaml"
 - "!include public_tags.yaml"
 - "!include public_tasks.yaml"

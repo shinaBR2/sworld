@@ -107,6 +107,16 @@ select_permissions:
               - video:
                   user_id:
                     _eq: X-Hasura-User-Id
+          - _and:
+              - playlist:
+                  shared_videos:
+                    shared_video_recipients:
+                      receiver_id:
+                        _eq: X-Hasura-User-Id
+              - playlist:
+                  shared_videos:
+                    active:
+                      _eq: true
       allow_aggregations: true
       query_root_fields: []
       subscription_root_fields: []

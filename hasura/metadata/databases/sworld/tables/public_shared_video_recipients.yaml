@@ -1,0 +1,26 @@
+table:
+  name: shared_video_recipients
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    receiver_id:
+      custom_name: receiverId
+    shared_video_id:
+      custom_name: sharedVideoId
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    receiver_id: receiverId
+    shared_video_id: sharedVideoId
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: shared_video
+    using:
+      foreign_key_constraint_on: shared_video_id
+  - name: user
+    using:
+      foreign_key_constraint_on: receiver_id
