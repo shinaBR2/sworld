@@ -5,11 +5,16 @@ import { VideoContainer } from '../../videos/video-container';
 import Typography from '@mui/material/Typography';
 import { RelatedList } from '../related-list';
 import { StyledRelatedContainer } from './styled';
-import { ShareDialog } from '../../dialogs/share';
+
 import { IconButton, Stack, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
-import React from 'react';
+import React, { Suspense } from 'react';
 
+const ShareDialog = React.lazy(() =>
+  import('../../dialogs/share').then(mod => ({
+    default: mod.ShareDialog,
+  }))
+);
 // We use a ref instead of state here because of how video.js event handlers work:
 //
 // 1. When video.js initializes, it sets up event handlers and keeps them for the entire
@@ -100,11 +105,13 @@ const MainContent = (props: VideoDetailContainerProps) => {
           </Tooltip>
         )}
       </Stack>
-      <ShareDialog
-        open={shareDialogOpen}
-        onClose={() => setShareDialogOpen(false)}
-        onShare={handleShare}
-      />
+      <Suspense fallback={null}>
+        <ShareDialog
+          open={shareDialogOpen}
+          onClose={() => setShareDialogOpen(false)}
+          onShare={handleShare}
+        />
+      </Suspense>
     </Grid>
   );
 };
@@ -149,11 +156,7 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
       <Grid container item alignItems="center" xs={12} sm={6} md={8} lg={9}>
-        <MainContent
-          {...props}
-          onVideoEnded={handleVideoEnded}
-          autoPlay={autoPlay}
-        />
+        <MainContent {...props} onVideoEnded={handleVideoEnded} autoPlay={autoPlay} />
       </Grid>
       <Grid container direction="column" item xs={12} sm={6} md={4} lg={3}>
         <StyledRelatedContainer>

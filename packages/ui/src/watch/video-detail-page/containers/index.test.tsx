@@ -193,7 +193,7 @@ describe('VideoDetailContainer', () => {
     ));
   });
 
-  it('should render loading skeletons when isLoading is true', () => {
+  it('should render loading skeletons when isLoading is true', async () => {
     const loadingProps = {
       ...defaultProps,
       queryRs: {
@@ -202,14 +202,18 @@ describe('VideoDetailContainer', () => {
       },
     };
 
-    renderWithTheme(<VideoDetailContainer {...loadingProps} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...loadingProps} />);
+    });
 
     expect(screen.getByTestId('main-content-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('related-content-skeleton')).toBeInTheDocument();
   });
 
-  it('should render video content and related list when data is loaded', () => {
-    renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+  it('should render video content and related list when data is loaded', async () => {
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+    });
 
     // Main content checks
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
@@ -225,7 +229,7 @@ describe('VideoDetailContainer', () => {
     expect(screen.getByTestId('related-list-count')).toHaveTextContent('3');
   });
 
-  it('should display "Same playlist" when playlist is provided', () => {
+  it('should display "Same playlist" when playlist is provided', async () => {
     const playlistProps: VideoDetailContainerProps = {
       ...defaultProps,
       queryRs: {
@@ -244,37 +248,43 @@ describe('VideoDetailContainer', () => {
       },
     };
 
-    renderWithTheme(<VideoDetailContainer {...playlistProps} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...playlistProps} />);
+    });
 
     expect(screen.getByTestId('related-list-title')).toHaveTextContent('Same playlist');
   });
 
-  it('should return null in MainContent when video is not found', () => {
+  it('should return null in MainContent when video is not found', async () => {
     const noVideoProps = {
       ...defaultProps,
       activeVideoId: 'nonexistent',
     };
 
-    renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
+    });
 
     // The component should return null for the main content
     expect(screen.queryByTestId('video-container')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
   });
 
-  it('should return null in RelatedContent when video is not found', () => {
+  it('should return null in RelatedContent when video is not found', async () => {
     const noVideoProps = {
       ...defaultProps,
       activeVideoId: 'nonexistent',
     };
 
-    renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
+    });
 
     // The component should return null for the related content
     expect(screen.queryByTestId('related-list')).not.toBeInTheDocument();
   });
 
-  it('should handle onError in VideoContainer', () => {
+  it('should handle onError in VideoContainer', async () => {
     // Create a spy on console.log
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -294,9 +304,11 @@ describe('VideoDetailContainer', () => {
     consoleSpy.mockRestore();
   });
 
-  it('should handle video end and auto-play next video', () => {
+  it('should handle video end and auto-play next video', async () => {
     const onVideoEnded = vi.fn();
-    renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
+    });
 
     // Simulate video end
     screen.getByTestId('video-container').click();
@@ -307,7 +319,9 @@ describe('VideoDetailContainer', () => {
 
   it('should handle auto-play toggle', async () => {
     const onVideoEnded = vi.fn();
-    renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
+    await act(async () => {
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
+    });
 
     // Auto-play should be enabled by default
     const checkbox = screen.getByTestId('related-list-autoplay');
@@ -332,20 +346,26 @@ describe('VideoDetailContainer', () => {
   });
 
   describe('share functionality', () => {
-    it('should not show share button when onShare prop is not provided', () => {
-      renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+    it('should not show share button when onShare prop is not provided', async () => {
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+      });
       expect(screen.queryByLabelText('Share video')).not.toBeInTheDocument();
     });
 
-    it('should show share button when onShare prop is provided', () => {
+    it('should show share button when onShare prop is provided', async () => {
       const onShare = vi.fn();
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      });
       expect(screen.getByLabelText('Share video')).toBeInTheDocument();
     });
 
     it('should open share dialog when share button is clicked', async () => {
       const onShare = vi.fn();
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      });
 
       const shareButton = screen.getByLabelText('Share video');
       await act(async () => {
@@ -358,7 +378,9 @@ describe('VideoDetailContainer', () => {
 
     it('should close share dialog when close button is clicked', async () => {
       const onShare = vi.fn();
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      });
 
       // Open dialog
       const shareButton = screen.getByLabelText('Share video');
@@ -378,7 +400,9 @@ describe('VideoDetailContainer', () => {
 
     it('should call onShare callback with emails when share is confirmed', async () => {
       const onShare = vi.fn();
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      });
 
       // Open dialog
       const shareButton = screen.getByLabelText('Share video');
