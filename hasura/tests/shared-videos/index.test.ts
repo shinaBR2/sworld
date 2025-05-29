@@ -14,18 +14,18 @@ import {
 } from "../create-role-test-suite";
 
 // Sample data for testing
-const sampleVideo = {
-  title: "Test Video",
-  description: "Test Description",
-  video_url: "https://example.com/video.mp4",
-  slug: `test-video-${Date.now()}`,
-  public: false,
-};
+// const sampleVideo = {
+//   title: "Test Video",
+//   description: "Test Description",
+//   video_url: "https://example.com/video.mp4",
+//   slug: `test-video-${Date.now()}`,
+//   public: false,
+// };
 
-const testState: {
-  videoId?: string;
-  sharedVideoId?: string;
-} = {};
+// const testState: {
+//   videoId?: string;
+//   sharedVideoId?: string;
+// } = {};
 
 // Anonymous user shouldn't be able to access shared videos
 const deniedSharedVideoQueries: QueryTestCase[] = [
