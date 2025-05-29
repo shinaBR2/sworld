@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { RelatedList } from '../related-list';
 import { StyledRelatedContainer } from './styled';
 import { ShareDialog } from '../../dialogs/share';
-import { IconButton, Stack, Tooltip, Checkbox, FormControlLabel } from '@mui/material';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import React from 'react';
 

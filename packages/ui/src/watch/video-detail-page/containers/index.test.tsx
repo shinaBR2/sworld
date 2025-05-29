@@ -1,6 +1,7 @@
 // src/components/video-detail-page/containers/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { VideoDetailContainer } from './index';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { VideoDetailContainerProps } from './types';
@@ -64,6 +65,23 @@ const mockVideoContainer = vi.fn().mockImplementation(({ video, onEnded }) => (
 vi.mock('../../videos/video-container', () => ({
   VideoContainer: (props: { video: MockVideo; onEnded?: () => void; onError?: (error: unknown) => void }) =>
     mockVideoContainer(props),
+}));
+
+vi.mock('../../dialogs/share', () => ({
+  ShareDialog: ({
+    open,
+    onClose,
+    onShare,
+  }: {
+    open: boolean;
+    onClose: () => void;
+    onShare: (emails: string[]) => void;
+  }) => (
+    <div data-testid="share-dialog" style={{ display: open ? 'block' : 'none' }}>
+      <button onClick={() => onShare(['test@example.com'])}>Share</button>
+      <button onClick={onClose}>Close</button>
+    </div>
+  ),
 }));
 
 vi.mock('../related-list', () => ({
@@ -198,6 +216,9 @@ describe('VideoDetailContainer', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Video 1');
     expect(screen.getByTestId('video-container')).toHaveTextContent('Video 1');
 
+    // Share button should not be present by default
+    expect(screen.queryByTitle('Share video')).not.toBeInTheDocument();
+
     // Related content checks
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
     expect(screen.getByTestId('related-list-title')).toHaveTextContent('Other videos');
@@ -284,17 +305,94 @@ describe('VideoDetailContainer', () => {
     expect(onVideoEnded).toHaveBeenCalledWith(mockVideos[1]);
   });
 
-  it('should handle auto-play toggle', () => {
-    renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+  it('should handle auto-play toggle', async () => {
+    const onVideoEnded = vi.fn();
+    renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
 
     // Auto-play should be enabled by default
     const checkbox = screen.getByTestId('related-list-autoplay');
     expect(checkbox).toBeChecked();
 
-    // Toggle auto-play
-    checkbox.click();
+    // Toggle auto-play off
+    await act(async () => {
+      fireEvent.click(checkbox);
+    });
 
     // Auto-play should now be disabled
     expect(checkbox).not.toBeChecked();
+
+    // Trigger video end to test auto-play behavior
+    const videoContainer = screen.getByTestId('video-container');
+    await act(async () => {
+      fireEvent.click(videoContainer);
+    });
+
+    // Should not auto-play next video since autoplay is off
+    expect(onVideoEnded).not.toHaveBeenCalled();
+  });
+
+  describe('share functionality', () => {
+    it('should not show share button when onShare prop is not provided', () => {
+      renderWithTheme(<VideoDetailContainer {...defaultProps} />);
+      expect(screen.queryByLabelText('Share video')).not.toBeInTheDocument();
+    });
+
+    it('should show share button when onShare prop is provided', () => {
+      const onShare = vi.fn();
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+      expect(screen.getByLabelText('Share video')).toBeInTheDocument();
+    });
+
+    it('should open share dialog when share button is clicked', async () => {
+      const onShare = vi.fn();
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+
+      const shareButton = screen.getByLabelText('Share video');
+      await act(async () => {
+        fireEvent.click(shareButton);
+      });
+
+      const shareDialog = screen.getByTestId('share-dialog');
+      expect(shareDialog).toHaveStyle({ display: 'block' });
+    });
+
+    it('should close share dialog when close button is clicked', async () => {
+      const onShare = vi.fn();
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+
+      // Open dialog
+      const shareButton = screen.getByLabelText('Share video');
+      await act(async () => {
+        fireEvent.click(shareButton);
+      });
+
+      // Close dialog
+      const closeButton = screen.getByText('Close');
+      await act(async () => {
+        fireEvent.click(closeButton);
+      });
+
+      const shareDialog = screen.getByTestId('share-dialog');
+      expect(shareDialog).toHaveStyle({ display: 'none' });
+    });
+
+    it('should call onShare callback with emails when share is confirmed', async () => {
+      const onShare = vi.fn();
+      renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
+
+      // Open dialog
+      const shareButton = screen.getByLabelText('Share video');
+      await act(async () => {
+        fireEvent.click(shareButton);
+      });
+
+      // Click share button in dialog
+      const dialogShareButton = screen.getByText('Share');
+      await act(async () => {
+        fireEvent.click(dialogShareButton);
+      });
+
+      expect(onShare).toHaveBeenCalledWith(['test@example.com']);
+    });
   });
 });
