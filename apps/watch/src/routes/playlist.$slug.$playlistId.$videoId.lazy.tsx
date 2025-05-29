@@ -2,7 +2,6 @@ import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Auth } from 'core';
 import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
-import { ShareDialog } from 'ui/watch/dialogs/share';
 import { Layout } from '../components/layout';
 import React from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
@@ -11,7 +10,6 @@ function VideoDetails() {
   const { playlistId, videoId } = Route.useParams();
   const navigate = Route.useNavigate();
   const authContext = Auth.useAuthContext();
-  const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
     id: playlistId,
@@ -40,10 +38,6 @@ function VideoDetails() {
         activeVideoId={videoId}
         LinkComponent={Link}
         onVideoEnded={handleVideoEnded}
-      />
-      <ShareDialog
-        open={shareDialogOpen}
-        onClose={() => setShareDialogOpen(false)}
         onShare={handleShare}
       />
     </Layout>
