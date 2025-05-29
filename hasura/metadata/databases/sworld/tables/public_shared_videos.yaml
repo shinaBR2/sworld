@@ -38,3 +38,41 @@ array_relationships:
         table:
           name: shared_video_recipients
           schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        owner_id:
+          _eq: X-Hasura-User-Id
+      set:
+        owner_id: x-hasura-User-Id
+      columns:
+        - active
+        - id
+        - playlist_id
+        - video_id
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - active
+        - id
+        - owner_id
+        - playlist_id
+        - updated_at
+        - video_id
+      filter:
+        owner_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - active
+      filter:
+        owner_id:
+          _eq: X-Hasura-User-Id
+      check: {}
+    comment: ""
