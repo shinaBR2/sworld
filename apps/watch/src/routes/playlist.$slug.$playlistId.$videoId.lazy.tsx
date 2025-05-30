@@ -1,4 +1,5 @@
 import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { lazy, useState } from 'react';
 import { Auth } from 'core';
 import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
 import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
@@ -7,7 +8,13 @@ import { Layout } from '../components/layout';
 import React from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 
+const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
+
 function VideoDetails(): JSX.Element {
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
   const { playlistId, videoId } = Route.useParams();
   const navigate = useNavigate();
   const authContext = Auth.useAuthContext();
@@ -19,11 +26,11 @@ function VideoDetails(): JSX.Element {
   const { mutate: shareVideos } = useShareVideos({
     getAccessToken: authContext.getAccessToken,
     onSuccess: () => {
-      // TODO: Show success toast or notification
+      setNotification({ message: 'Playlist shared successfully', severity: 'success' });
     },
     onError: error => {
-      console.error('Failed to share videos:', error);
-      // TODO: Show error toast or notification
+      console.error('Failed to share playlist:', error);
+      setNotification({ message: 'Failed to share playlist', severity: 'error' });
     },
   });
 
@@ -43,7 +50,7 @@ function VideoDetails(): JSX.Element {
       shareVideos(variables);
     } catch (error) {
       console.error('Failed to validate share data:', error);
-      // TODO: Show error toast or notification
+      setNotification({ message: 'Invalid share data', severity: 'error' });
     }
   };
 
@@ -60,6 +67,7 @@ function VideoDetails(): JSX.Element {
 
   return (
     <Layout>
+      {notification && <Notification notification={notification} onClose={() => setNotification(null)} />}
       <VideoDetailContainer
         queryRs={videoResult}
         activeVideoId={videoId}

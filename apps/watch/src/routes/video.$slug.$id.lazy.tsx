@@ -1,4 +1,5 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
+import { lazy, useState } from 'react';
 import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
@@ -7,7 +8,10 @@ import { useLoadVideoDetail } from 'core/watch/query-hooks/video-detail';
 import { useAuthContext } from 'core/providers/auth';
 import { AuthRoute } from 'ui/universal/authRoute';
 
+const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
+
 function VideoDetails() {
+  const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const { id: videoId } = Route.useParams();
   const navigate = Route.useNavigate();
   const authContext = useAuthContext();
@@ -18,8 +22,12 @@ function VideoDetails() {
 
   const { mutate: shareVideos } = useShareVideos({
     getAccessToken: authContext.getAccessToken,
+    onSuccess: () => {
+      setNotification({ message: 'Video shared successfully', severity: 'success' });
+    },
     onError: error => {
       console.error('Failed to share video:', error);
+      setNotification({ message: 'Failed to share video', severity: 'error' });
     },
   });
 
@@ -31,6 +39,7 @@ function VideoDetails() {
       shareVideos(variables);
     } catch (error) {
       console.error('Failed to validate share data:', error);
+      setNotification({ message: 'Invalid share data', severity: 'error' });
     }
   };
 
@@ -46,6 +55,7 @@ function VideoDetails() {
 
   return (
     <Layout>
+      {notification && <Notification notification={notification} onClose={() => setNotification(null)} />}
       <VideoDetailContainer
         queryRs={videoResult}
         activeVideoId={videoId}
