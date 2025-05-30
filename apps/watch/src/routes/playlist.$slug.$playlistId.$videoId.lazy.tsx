@@ -1,23 +1,50 @@
-import { createLazyFileRoute, Link } from '@tanstack/react-router';
+import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { Auth } from 'core';
 import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
+import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
 import React from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 
-function VideoDetails() {
+function VideoDetails(): JSX.Element {
   const { playlistId, videoId } = Route.useParams();
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
   const authContext = Auth.useAuthContext();
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
     id: playlistId,
   });
 
+  const { mutate: shareVideos } = useShareVideos({
+    getAccessToken: authContext.getAccessToken,
+    onSuccess: () => {
+      // TODO: Show success toast or notification
+    },
+    onError: error => {
+      console.error('Failed to share videos:', error);
+      // TODO: Show error toast or notification
+    },
+  });
+
   const handleShare = (emails: string[]) => {
-    // TODO: Implement share mutation
-    console.log('Sharing with emails:', emails);
+    if (!videoResult.videos?.length) return;
+
+    const videoIds = videoResult.videos.map(video => video.id);
+    try {
+      const {
+        playlistId: validPlaylistId,
+        videoIds: validVideoIds,
+        recipients: validRecipients,
+      } = formalize(playlistId, videoIds, emails);
+
+      const variables = buildVariables(validPlaylistId, validVideoIds, validRecipients);
+
+      shareVideos(variables);
+    } catch (error) {
+      console.error('Failed to validate share data:', error);
+      // TODO: Show error toast or notification
+    }
   };
 
   const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
