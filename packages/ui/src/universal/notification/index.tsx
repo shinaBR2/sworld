@@ -9,7 +9,6 @@ interface NotificationProps {
   onClose: () => void;
 }
 
-// Duplicated as packages/ui/src/journal/notification/index.tsx
 const Notification = (props: NotificationProps) => {
   const { notification, onClose } = props;
 
