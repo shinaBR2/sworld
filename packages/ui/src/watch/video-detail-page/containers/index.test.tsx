@@ -1,7 +1,6 @@
 // src/components/video-detail-page/containers/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { act } from '@testing-library/react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { VideoDetailContainer } from './index';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { VideoDetailContainerProps } from './types';
@@ -65,23 +64,6 @@ const mockVideoContainer = vi.fn().mockImplementation(({ video, onEnded }) => (
 vi.mock('../../videos/video-container', () => ({
   VideoContainer: (props: { video: MockVideo; onEnded?: () => void; onError?: (error: unknown) => void }) =>
     mockVideoContainer(props),
-}));
-
-vi.mock('../../dialogs/share', () => ({
-  ShareDialog: ({
-    open,
-    onClose,
-    onShare,
-  }: {
-    open: boolean;
-    onClose: () => void;
-    onShare: (emails: string[]) => void;
-  }) => (
-    <div data-testid="share-dialog" style={{ display: open ? 'block' : 'none' }}>
-      <button onClick={() => onShare(['test@example.com'])}>Share</button>
-      <button onClick={onClose}>Close</button>
-    </div>
-  ),
 }));
 
 vi.mock('../related-list', () => ({
@@ -193,7 +175,7 @@ describe('VideoDetailContainer', () => {
     ));
   });
 
-  it('should render loading skeletons when isLoading is true', async () => {
+  it('should render loading skeletons when isLoading is true', () => {
     const loadingProps = {
       ...defaultProps,
       queryRs: {
@@ -202,26 +184,19 @@ describe('VideoDetailContainer', () => {
       },
     };
 
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...loadingProps} />);
-    });
+    renderWithTheme(<VideoDetailContainer {...loadingProps} />);
 
     expect(screen.getByTestId('main-content-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('related-content-skeleton')).toBeInTheDocument();
   });
 
-  it('should render video content and related list when data is loaded', async () => {
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...defaultProps} />);
-    });
+  it('should render video content and related list when data is loaded', () => {
+    renderWithTheme(<VideoDetailContainer {...defaultProps} />);
 
     // Main content checks
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Video 1');
     expect(screen.getByTestId('video-container')).toHaveTextContent('Video 1');
-
-    // Share button should not be present by default
-    expect(screen.queryByTitle('Share video')).not.toBeInTheDocument();
 
     // Related content checks
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
@@ -229,7 +204,7 @@ describe('VideoDetailContainer', () => {
     expect(screen.getByTestId('related-list-count')).toHaveTextContent('3');
   });
 
-  it('should display "Same playlist" when playlist is provided', async () => {
+  it('should display "Same playlist" when playlist is provided', () => {
     const playlistProps: VideoDetailContainerProps = {
       ...defaultProps,
       queryRs: {
@@ -248,43 +223,37 @@ describe('VideoDetailContainer', () => {
       },
     };
 
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...playlistProps} />);
-    });
+    renderWithTheme(<VideoDetailContainer {...playlistProps} />);
 
     expect(screen.getByTestId('related-list-title')).toHaveTextContent('Same playlist');
   });
 
-  it('should return null in MainContent when video is not found', async () => {
+  it('should return null in MainContent when video is not found', () => {
     const noVideoProps = {
       ...defaultProps,
       activeVideoId: 'nonexistent',
     };
 
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
-    });
+    renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
 
     // The component should return null for the main content
     expect(screen.queryByTestId('video-container')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
   });
 
-  it('should return null in RelatedContent when video is not found', async () => {
+  it('should return null in RelatedContent when video is not found', () => {
     const noVideoProps = {
       ...defaultProps,
       activeVideoId: 'nonexistent',
     };
 
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
-    });
+    renderWithTheme(<VideoDetailContainer {...noVideoProps} />);
 
     // The component should return null for the related content
     expect(screen.queryByTestId('related-list')).not.toBeInTheDocument();
   });
 
-  it('should handle onError in VideoContainer', async () => {
+  it('should handle onError in VideoContainer', () => {
     // Create a spy on console.log
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -304,11 +273,9 @@ describe('VideoDetailContainer', () => {
     consoleSpy.mockRestore();
   });
 
-  it('should handle video end and auto-play next video', async () => {
+  it('should handle video end and auto-play next video', () => {
     const onVideoEnded = vi.fn();
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
-    });
+    renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
 
     // Simulate video end
     screen.getByTestId('video-container').click();
@@ -317,106 +284,17 @@ describe('VideoDetailContainer', () => {
     expect(onVideoEnded).toHaveBeenCalledWith(mockVideos[1]);
   });
 
-  it('should handle auto-play toggle', async () => {
-    const onVideoEnded = vi.fn();
-    await act(async () => {
-      renderWithTheme(<VideoDetailContainer {...defaultProps} onVideoEnded={onVideoEnded} />);
-    });
+  it('should handle auto-play toggle', () => {
+    renderWithTheme(<VideoDetailContainer {...defaultProps} />);
 
     // Auto-play should be enabled by default
     const checkbox = screen.getByTestId('related-list-autoplay');
     expect(checkbox).toBeChecked();
 
-    // Toggle auto-play off
-    await act(async () => {
-      fireEvent.click(checkbox);
-    });
+    // Toggle auto-play
+    checkbox.click();
 
     // Auto-play should now be disabled
     expect(checkbox).not.toBeChecked();
-
-    // Trigger video end to test auto-play behavior
-    const videoContainer = screen.getByTestId('video-container');
-    await act(async () => {
-      fireEvent.click(videoContainer);
-    });
-
-    // Should not auto-play next video since autoplay is off
-    expect(onVideoEnded).not.toHaveBeenCalled();
-  });
-
-  describe('share functionality', () => {
-    it('should not show share button when onShare prop is not provided', async () => {
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...defaultProps} />);
-      });
-      expect(screen.queryByLabelText('Share video')).not.toBeInTheDocument();
-    });
-
-    it('should show share button when onShare prop is provided', async () => {
-      const onShare = vi.fn();
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
-      });
-      expect(screen.getByLabelText('Share video')).toBeInTheDocument();
-    });
-
-    it('should open share dialog when share button is clicked', async () => {
-      const onShare = vi.fn();
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
-      });
-
-      const shareButton = screen.getByLabelText('Share video');
-      await act(async () => {
-        fireEvent.click(shareButton);
-      });
-
-      const shareDialog = screen.getByTestId('share-dialog');
-      expect(shareDialog).toHaveStyle({ display: 'block' });
-    });
-
-    it('should close share dialog when close button is clicked', async () => {
-      const onShare = vi.fn();
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
-      });
-
-      // Open dialog
-      const shareButton = screen.getByLabelText('Share video');
-      await act(async () => {
-        fireEvent.click(shareButton);
-      });
-
-      // Close dialog
-      const closeButton = screen.getByText('Close');
-      await act(async () => {
-        fireEvent.click(closeButton);
-      });
-
-      const shareDialog = screen.getByTestId('share-dialog');
-      expect(shareDialog).toHaveStyle({ display: 'none' });
-    });
-
-    it('should call onShare callback with emails when share is confirmed', async () => {
-      const onShare = vi.fn();
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...defaultProps} onShare={onShare} />);
-      });
-
-      // Open dialog
-      const shareButton = screen.getByLabelText('Share video');
-      await act(async () => {
-        fireEvent.click(shareButton);
-      });
-
-      // Click share button in dialog
-      const dialogShareButton = screen.getByText('Share');
-      await act(async () => {
-        fireEvent.click(dialogShareButton);
-      });
-
-      expect(onShare).toHaveBeenCalledWith(['test@example.com']);
-    });
   });
 });

@@ -5,16 +5,8 @@ import { VideoContainer } from '../../videos/video-container';
 import Typography from '@mui/material/Typography';
 import { RelatedList } from '../related-list';
 import { StyledRelatedContainer } from './styled';
+import React from 'react';
 
-import { IconButton, Stack, Tooltip } from '@mui/material';
-import ShareIcon from '@mui/icons-material/Share';
-import React, { Suspense } from 'react';
-
-const ShareDialog = React.lazy(() =>
-  import('../../dialogs/share').then(mod => ({
-    default: mod.ShareDialog,
-  }))
-);
 // We use a ref instead of state here because of how video.js event handlers work:
 //
 // 1. When video.js initializes, it sets up event handlers and keeps them for the entire
@@ -32,10 +24,9 @@ const ShareDialog = React.lazy(() =>
 // This is a common pattern when integrating React with external libraries that set up
 // long-lived event handlers.
 const MainContent = (props: VideoDetailContainerProps) => {
-  const { queryRs, activeVideoId, onVideoEnded, autoPlay, onShare } = props;
+  const { queryRs, activeVideoId, onVideoEnded, autoPlay } = props;
   const { isLoading } = queryRs;
   const shouldPlayNextRef = React.useRef(autoPlay);
-  const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
@@ -68,11 +59,6 @@ const MainContent = (props: VideoDetailContainerProps) => {
     }
   };
 
-  const handleShare = (emails: string[]) => {
-    onShare?.(emails);
-    setShareDialogOpen(false);
-  };
-
   return (
     <Grid item sx={{ width: '100%', px: 2 }}>
       <VideoContainer
@@ -82,36 +68,20 @@ const MainContent = (props: VideoDetailContainerProps) => {
         }}
         onEnded={handleVideoEnd}
       />
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
-        <Typography
-          component="h1"
-          variant="h4"
-          sx={{
-            flex: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {videoDetail.title}
-        </Typography>
-        {onShare && (
-          <Tooltip title="Share video">
-            <IconButton onClick={() => setShareDialogOpen(true)} size="small">
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Stack>
-      <Suspense fallback={null}>
-        <ShareDialog
-          open={shareDialogOpen}
-          onClose={() => setShareDialogOpen(false)}
-          onShare={handleShare}
-        />
-      </Suspense>
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          my: 2,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+        }}
+      >
+        {videoDetail.title}
+      </Typography>
     </Grid>
   );
 };
@@ -156,7 +126,13 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
       <Grid container item alignItems="center" xs={12} sm={6} md={8} lg={9}>
-        <MainContent {...props} onVideoEnded={handleVideoEnded} autoPlay={autoPlay} />
+        <MainContent
+          queryRs={props.queryRs}
+          activeVideoId={props.activeVideoId}
+          LinkComponent={props.LinkComponent}
+          onVideoEnded={handleVideoEnded}
+          autoPlay={autoPlay}
+        />
       </Grid>
       <Grid container direction="column" item xs={12} sm={6} md={4} lg={3}>
         <StyledRelatedContainer>

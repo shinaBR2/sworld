@@ -7,7 +7,6 @@ interface VideoDetailContainerProps extends Omit<RequiredLinkComponent, 'linkPro
   queryRs: ReturnType<typeof useLoadPlaylistDetail> | ReturnType<typeof useLoadVideoDetail>;
   activeVideoId: string;
   autoPlay?: boolean;
-  onShare?: (emails: string[]) => void;
 }
 
 export { type VideoDetailContainerProps };
