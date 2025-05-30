@@ -15,11 +15,6 @@ function VideoDetails() {
     id: videoId,
   });
 
-  const handleShare = (emails: string[]) => {
-    // TODO: Implement share mutation
-    console.log('Sharing with emails:', emails);
-  };
-
   const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
     navigate({
       to: '/video/$slug/$id',
@@ -37,7 +32,6 @@ function VideoDetails() {
         activeVideoId={videoId} 
         LinkComponent={Link}
         onVideoEnded={handleVideoEnded}
-        onShare={handleShare}
       />
     </Layout>
   );
