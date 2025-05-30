@@ -105,4 +105,26 @@ const slugify = (str: string): string => {
   return str;
 };
 
-export { compareString, slugify };
+// https://stackoverflow.com/questions/7905929/how-to-test-valid-uuid-guid
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isValidId = (id: string): boolean => {
+  if (typeof id !== 'string') {
+    return false;
+  }
+
+  const trimmedId = id.trim();
+
+  if (trimmedId.length === 0) {
+    return false;
+  }
+
+  return UUID_REGEX.test(trimmedId);
+};
+
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+export { compareString, slugify, isValidId, isValidEmail };

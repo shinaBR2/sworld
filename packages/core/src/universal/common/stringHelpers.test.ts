@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compareString, slugify } from './stringHelpers';
+import { compareString, slugify, isValidId, isValidEmail } from './stringHelpers';
 
 describe('compareString', () => {
   it('should return true for identical strings', () => {
@@ -95,5 +95,71 @@ describe('slugify', () => {
     const longString = 'a'.repeat(2048);
     const result = slugify(longString);
     expect(result.length).toBeLessThanOrEqual(2048);
+  });
+});
+
+describe('isValidId', () => {
+  it('should return true for valid UUIDs', () => {
+    expect(isValidId('123e4567-e89b-12d3-a456-426614174000')).toBe(true);
+    expect(isValidId('987fcdeb-51a2-4321-9b78-123456789012')).toBe(true);
+  });
+
+  it('should return false for invalid UUIDs', () => {
+    expect(isValidId('not-a-uuid')).toBe(false);
+    expect(isValidId('123e4567-e89b-12g3-a456-426614174000')).toBe(false); // invalid character 'g'
+    expect(isValidId('123e4567-e89b-62d3-a456-426614174000')).toBe(false); // invalid version
+    expect(isValidId('123e4567-e89b-12d3-c456-426614174000')).toBe(false); // invalid variant
+  });
+
+  it('should handle empty strings and whitespace', () => {
+    expect(isValidId('')).toBe(false);
+    expect(isValidId('   ')).toBe(false);
+    expect(isValidId('\t\n')).toBe(false);
+  });
+
+  it('should handle non-string inputs', () => {
+    expect(isValidId(null as unknown as string)).toBe(false);
+    expect(isValidId(undefined as unknown as string)).toBe(false);
+    expect(isValidId(123 as unknown as string)).toBe(false);
+    expect(isValidId({} as unknown as string)).toBe(false);
+  });
+
+  it('should handle strings with whitespace', () => {
+    expect(isValidId('  123e4567-e89b-12d3-a456-426614174000  ')).toBe(true);
+    expect(isValidId('\n123e4567-e89b-12d3-a456-426614174000\t')).toBe(true);
+  });
+});
+
+describe('isValidEmail', () => {
+  it('should return true for valid email addresses', () => {
+    expect(isValidEmail('test@example.com')).toBe(true);
+    expect(isValidEmail('user.name@domain.co.uk')).toBe(true);
+    expect(isValidEmail('user+tag@example.com')).toBe(true);
+    expect(isValidEmail('123@domain.com')).toBe(true);
+  });
+
+  it('should return false for invalid email addresses', () => {
+    expect(isValidEmail('not-an-email')).toBe(false);
+    expect(isValidEmail('@domain.com')).toBe(false);
+    expect(isValidEmail('user@')).toBe(false);
+    expect(isValidEmail('user@domain')).toBe(false);
+    expect(isValidEmail('user.domain.com')).toBe(false);
+  });
+
+  it('should handle empty strings and whitespace', () => {
+    expect(isValidEmail('')).toBe(false);
+    expect(isValidEmail('   ')).toBe(false);
+    expect(isValidEmail('\t\n')).toBe(false);
+  });
+
+  it('should handle strings with whitespace', () => {
+    expect(isValidEmail('  test@example.com  ')).toBe(false);
+    expect(isValidEmail('\ntest@example.com\t')).toBe(false);
+  });
+
+  it('should handle special characters in local part', () => {
+    expect(isValidEmail('user.name+tag@example.com')).toBe(true);
+    expect(isValidEmail('user-name@example.com')).toBe(true);
+    expect(isValidEmail('user_name@example.com')).toBe(true);
   });
 });
