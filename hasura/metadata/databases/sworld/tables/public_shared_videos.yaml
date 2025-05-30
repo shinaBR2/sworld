@@ -47,9 +47,9 @@ insert_permissions:
       set:
         owner_id: x-hasura-User-Id
       columns:
-        - active
         - id
         - playlist_id
+        - recipients
         - video_id
     comment: ""
 select_permissions:
@@ -71,6 +71,7 @@ update_permissions:
     permission:
       columns:
         - active
+        - recipients
       filter:
         owner_id:
           _eq: X-Hasura-User-Id
