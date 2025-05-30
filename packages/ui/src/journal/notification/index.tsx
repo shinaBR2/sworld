@@ -9,6 +9,7 @@ interface NotificationProps {
   onClose: () => void;
 }
 
+// TODO: move to core
 const Notification = (props: NotificationProps) => {
   const { notification, onClose } = props;
 
