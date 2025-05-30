@@ -2,6 +2,7 @@ import { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import { SharePlaylistMutation, SharePlaylistMutationVariables } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { buildVariables, formalize } from './utils';
 
 const shareVideosMutation = graphql(/* GraphQL */ `
   mutation SharePlaylist($objects: [shared_videos_insert_input!]!) {
@@ -49,4 +50,4 @@ const useShareVideos = (props: UseShareVideosProps) => {
   });
 };
 
-export { useShareVideos };
+export { useShareVideos, formalize, buildVariables };

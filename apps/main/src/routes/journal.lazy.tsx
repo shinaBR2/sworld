@@ -13,7 +13,7 @@ import { AuthRoute } from 'ui/universal/authRoute';
 
 const JournalDetail = lazy(() => import('ui/journal/journal-detail').then(m => ({ default: m.JournalDetail })));
 const EditDialog = lazy(() => import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialog })));
-const Notification = lazy(() => import('ui/journal/notification').then(m => ({ default: m.Notification })));
+const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
 
 const JournalPage = () => {
   const { getAccessToken } = useAuthContext();
