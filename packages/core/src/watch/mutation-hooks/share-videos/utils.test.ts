@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { formalize, buildVariables } from './utils';
 
+import { Shared_Videos_Insert_Input } from '../../../graphql/graphql';
+
 describe('formalize', () => {
   const validUUID = '123e4567-e89b-12d3-a456-426614174000';
   const validEmail = 'test@example.com';
 
-  it('should format valid inputs correctly', () => {
+  it('should format valid inputs with playlist correctly', () => {
     const result = formalize(validUUID, [validUUID, validUUID], [validEmail, 'user@domain.com']);
 
     expect(result).toEqual({
@@ -41,18 +43,29 @@ describe('formalize', () => {
 });
 
 describe('buildVariables', () => {
-  it('should build variables correctly', () => {
-    const playlistId = '123';
-    const videoIds = ['video1', 'video2'];
-    const recipients = ['test@example.com'];
+  const validUUID = '123e4567-e89b-12d3-a456-426614174000';
+  const validEmail = 'test@example.com';
 
-    const result = buildVariables(playlistId, videoIds, recipients);
+  it('should build variables for multiple videos with playlist', () => {
+    const result = buildVariables(validUUID, [validUUID, validUUID], [validEmail]);
 
     expect(result).toEqual({
       objects: [
-        { playlistId: '123', videoId: 'video1', recipients: ['test@example.com'] },
-        { playlistId: '123', videoId: 'video2', recipients: ['test@example.com'] },
+        { playlistId: validUUID, videoId: validUUID, recipients: [validEmail] },
+        { playlistId: validUUID, videoId: validUUID, recipients: [validEmail] },
       ],
+    });
+  });
+
+  it('should build variables for single video without playlist', () => {
+    const result = buildVariables(null, [validUUID], [validEmail]);
+
+    expect(result).toEqual({
+      objects: {
+        playlistId: undefined,
+        videoId: validUUID,
+        recipients: [validEmail],
+      } as Shared_Videos_Insert_Input,
     });
   });
 });
