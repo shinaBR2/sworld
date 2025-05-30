@@ -61,11 +61,13 @@ describe('buildVariables', () => {
     const result = buildVariables(null, [validUUID], [validEmail]);
 
     expect(result).toEqual({
-      objects: {
-        playlistId: undefined,
-        videoId: validUUID,
-        recipients: [validEmail],
-      } as Shared_Videos_Insert_Input,
+      objects: [
+        {
+          playlistId: undefined,
+          videoId: validUUID,
+          recipients: [validEmail],
+        },
+      ],
     });
   });
 });

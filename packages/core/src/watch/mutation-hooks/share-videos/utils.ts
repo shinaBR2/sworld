@@ -38,7 +38,7 @@ const buildVariables = (playlistId: string | null, videoIds: string[], recipient
   }));
 
   return {
-    objects: videoIds.length === 1 ? sharedVideos[0] : sharedVideos,
+    objects: sharedVideos,
   };
 };
 
