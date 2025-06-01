@@ -7,11 +7,11 @@ import { envConfig } from 'src/utils/envConfig';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
 import { ValidatedRequest } from 'src/utils/validator';
-import { WebhookRequest } from '../../schema';
+import { HasuraWebhookRequest } from 'src/schema/hasura';
 
 const fixVideosDuration = async (req: Request, res: Response) => {
   const { ioServiceUrl } = envConfig;
-  const { validatedData } = req as ValidatedRequest<WebhookRequest>;
+  const { validatedData } = req as ValidatedRequest<HasuraWebhookRequest>;
   const { signatureHeader } = validatedData;
 
   if (!verifySignature(signatureHeader)) {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { webhookSchema } from './schema';
+import { hashnodeWebhookSchema } from './hashnode';
 
-describe('webhookSchema', () => {
+describe('hashnodeWebhookSchema', () => {
   const validRequest = {
     headers: {
       'content-type': 'application/json',
@@ -35,7 +35,7 @@ describe('webhookSchema', () => {
         },
       };
 
-      const result = webhookSchema.parse(request);
+      const result = hashnodeWebhookSchema.parse(request);
       expect(result.body.data.eventType).toBe(eventType);
     });
   });
@@ -51,7 +51,7 @@ describe('webhookSchema', () => {
         },
       },
     };
-    expect(() => webhookSchema.parse(invalidRequest)).toThrow();
+    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
   });
 
   it('should fail when content-type is not application/json', () => {
@@ -59,7 +59,7 @@ describe('webhookSchema', () => {
       ...validRequest,
       headers: { ...validRequest.headers, 'content-type': 'text/plain' },
     };
-    expect(() => webhookSchema.parse(invalidRequest)).toThrow();
+    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
   });
 
   it('should fail when signature is missing', () => {
@@ -67,7 +67,7 @@ describe('webhookSchema', () => {
       ...validRequest,
       headers: { 'content-type': 'application/json' },
     };
-    expect(() => webhookSchema.parse(invalidRequest)).toThrow();
+    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
   });
 
   it('should fail with invalid UUID', () => {
@@ -78,7 +78,7 @@ describe('webhookSchema', () => {
         metadata: { uuid: 'not-a-uuid' },
       },
     };
-    expect(() => webhookSchema.parse(invalidRequest)).toThrow();
+    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
   });
 
   it('should fail when required body fields are missing', () => {
@@ -86,6 +86,6 @@ describe('webhookSchema', () => {
       ...validRequest,
       body: {},
     };
-    expect(() => webhookSchema.parse(invalidRequest)).toThrow();
+    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
   });
 });

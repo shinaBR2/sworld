@@ -39,7 +39,7 @@ const transformHeaders = (req: any) => ({
   body: req.body,
 });
 
-const webhookSchema = z.object(schema).transform(transformHeaders);
+const hashnodeWebhookSchema = z.object(schema).transform(transformHeaders);
 
-export type WebhookRequest = z.infer<typeof webhookSchema>;
-export { webhookSchema };
+export type HashnodeWebhookRequest = z.infer<typeof hashnodeWebhookSchema>;
+export { hashnodeWebhookSchema };

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { FixDurationHandlerSchema } from './schema';
+import { fixThumbnailHandlerSchema } from './index';
 
-describe('FixDurationHandlerSchema', () => {
+describe('FixThumbnailHandlerSchema', () => {
   const validRequest = {
     body: {
       id: '123e4567-e89b-12d3-a456-426614174000',
@@ -14,7 +14,7 @@ describe('FixDurationHandlerSchema', () => {
   };
 
   it('should validate valid request', () => {
-    const result = FixDurationHandlerSchema.parse(validRequest);
+    const result = fixThumbnailHandlerSchema.parse(validRequest);
     expect(result).toEqual(validRequest);
   });
 
@@ -23,7 +23,7 @@ describe('FixDurationHandlerSchema', () => {
       headers: validRequest.headers,
     };
 
-    expect(() => FixDurationHandlerSchema.parse(requestWithoutBody)).toThrow();
+    expect(() => fixThumbnailHandlerSchema.parse(requestWithoutBody)).toThrow();
   });
 
   it('should fail when id is missing', () => {
@@ -32,7 +32,7 @@ describe('FixDurationHandlerSchema', () => {
       body: {},
     };
 
-    expect(() => FixDurationHandlerSchema.parse(requestWithoutId)).toThrow();
+    expect(() => fixThumbnailHandlerSchema.parse(requestWithoutId)).toThrow();
   });
 
   it('should fail when headers are missing', () => {
@@ -40,6 +40,6 @@ describe('FixDurationHandlerSchema', () => {
       body: validRequest.body,
     };
 
-    expect(() => FixDurationHandlerSchema.parse(requestWithoutHeaders)).toThrow();
+    expect(() => fixThumbnailHandlerSchema.parse(requestWithoutHeaders)).toThrow();
   });
 });

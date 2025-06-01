@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
-import { ConvertRequest } from 'src/services/videos/convert/schema';
+import { ConvertRequest } from 'src/schema/videos/convert';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';

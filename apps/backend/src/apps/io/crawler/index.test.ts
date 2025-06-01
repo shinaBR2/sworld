@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Create mock functions
 const mockPost = vi.fn();
@@ -26,16 +26,12 @@ vi.mock('./routes/crawl', () => ({
   crawlHandler: 'mockCrawlHandler',
 }));
 
-vi.mock('./routes/crawl/schema', () => ({
+vi.mock('src/schema/videos/crawl', () => ({
   crawlHandlerSchema: 'mockSchema',
-  CrawlHandlerInput: {},
+  CrawlHandlerRequest: {},
 }));
 
 describe('crawlerRouter', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should set up router correctly', async () => {
     // Import the module under test
     const { crawlerRouter } = await import('./index');

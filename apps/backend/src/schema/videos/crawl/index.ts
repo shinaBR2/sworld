@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders } from '../../schema';
+import { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders } from 'src/schema/hasura';
+import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 
 const CrawlRequestSchema = z.object({
   id: z.string().uuid(),
@@ -31,7 +32,7 @@ const transformEvent = (event: z.infer<typeof CrawlEventSchema>) => {
   };
 };
 
-const CrawlSchema = z
+const crawlSchema = z
   .object({
     body: z.object({
       event: CrawlEventSchema,
@@ -43,5 +44,24 @@ const CrawlSchema = z
     event: transformEvent(req.body.event),
   }));
 
-export { CrawlEventSchema, CrawlRequestSchema, CrawlSchema };
-export type CrawlRequest = z.infer<typeof CrawlSchema>;
+const crawlHandlerSchema = z.object({
+  headers: taskHandlerHeaderSchema.passthrough(),
+  body: z.object({
+    data: z.object({
+      getSingleVideo: z.boolean(),
+      url: z.string().url(),
+      title: z.string().min(1),
+      slugPrefix: z.string().optional().default(''),
+      userId: z.string().uuid(),
+    }),
+    metadata: z.object({
+      id: hasuraEventMetadataSchema.shape.id,
+      spanId: hasuraEventMetadataSchema.shape.span_id,
+      traceId: hasuraEventMetadataSchema.shape.trace_id,
+    }),
+  }),
+});
+
+export { CrawlEventSchema, CrawlRequestSchema, crawlSchema, crawlHandlerSchema };
+export type CrawlRequest = z.infer<typeof crawlSchema>;
+export type CrawlHandlerRequest = z.infer<typeof crawlHandlerSchema>;

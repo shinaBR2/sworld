@@ -8,7 +8,7 @@ import { envConfig } from 'src/utils/envConfig';
 import { HTTP_ERRORS, VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { AppResponse } from 'src/utils/schema';
 import { ValidatedRequest } from 'src/utils/validator';
-import { WebhookRequest } from '../../schema';
+import { HashnodeWebhookRequest } from 'src/schema/hashnode';
 import { validateSignature } from '../../validator';
 
 const fetchPost = async (hId: string) => {
@@ -29,7 +29,7 @@ const fetchPost = async (hId: string) => {
 };
 
 const postEventsHandler = async (req: Request, res: Response) => {
-  const { validatedData } = req as ValidatedRequest<WebhookRequest>;
+  const { validatedData } = req as ValidatedRequest<HashnodeWebhookRequest>;
   const { signatureHeader, body } = validatedData;
 
   const validationResult = validateSignature({

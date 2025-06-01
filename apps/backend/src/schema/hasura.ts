@@ -24,7 +24,7 @@ const transformEventMetadata = (metadata: any) => ({
   traceId: metadata.trace_id,
 });
 
-const webhookSchema = z.object(schema).transform(transformHeaders);
+const hasuraWebhookSchema = z.object(schema).transform(transformHeaders);
 
-export type WebhookRequest = z.infer<typeof webhookSchema>;
-export { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders, webhookSchema };
+export type HasuraWebhookRequest = z.infer<typeof hasuraWebhookSchema>;
+export { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders, hasuraWebhookSchema };

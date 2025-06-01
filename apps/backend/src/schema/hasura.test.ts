@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
-import { hasuraEventMetadataSchema, transformEventMetadata, webhookSchema } from './schema';
+import { hasuraEventMetadataSchema, transformEventMetadata, hasuraWebhookSchema } from './hasura';
 
-describe('webhookSchema', () => {
+describe('hasuraWebhookSchema', () => {
   const validRequest = {
     headers: {
       'content-type': 'application/json',
@@ -12,7 +12,7 @@ describe('webhookSchema', () => {
   };
 
   it('should successfully transform valid request', () => {
-    const result = webhookSchema.parse(validRequest);
+    const result = hasuraWebhookSchema.parse(validRequest);
 
     expect(result).toEqual({
       contentTypeHeader: 'application/json',
@@ -30,7 +30,7 @@ describe('webhookSchema', () => {
       },
     };
 
-    const result = webhookSchema.parse(requestWithExtraHeaders);
+    const result = hasuraWebhookSchema.parse(requestWithExtraHeaders);
 
     expect(result).toEqual({
       contentTypeHeader: 'application/json',
@@ -45,7 +45,7 @@ describe('webhookSchema', () => {
       },
     };
 
-    expect(() => webhookSchema.parse(requestWithoutContentType)).toThrow(ZodError);
+    expect(() => hasuraWebhookSchema.parse(requestWithoutContentType)).toThrow(ZodError);
   });
 
   it('should fail when x-webhook-signature header is missing', () => {
@@ -55,13 +55,13 @@ describe('webhookSchema', () => {
       },
     };
 
-    expect(() => webhookSchema.parse(requestWithoutSignature)).toThrow(ZodError);
+    expect(() => hasuraWebhookSchema.parse(requestWithoutSignature)).toThrow(ZodError);
   });
 
   it('should fail when headers property is missing', () => {
     const requestWithoutHeaders = {};
 
-    expect(() => webhookSchema.parse(requestWithoutHeaders)).toThrow(ZodError);
+    expect(() => hasuraWebhookSchema.parse(requestWithoutHeaders)).toThrow(ZodError);
   });
 
   it('should handle null or undefined values appropriately', () => {
@@ -72,7 +72,7 @@ describe('webhookSchema', () => {
       },
     };
 
-    expect(() => webhookSchema.parse(requestWithNullValues)).toThrow(ZodError);
+    expect(() => hasuraWebhookSchema.parse(requestWithNullValues)).toThrow(ZodError);
   });
 
   it('should fail when headers is null', () => {
@@ -80,11 +80,11 @@ describe('webhookSchema', () => {
       headers: null,
     };
 
-    expect(() => webhookSchema.parse(requestWithNullHeaders)).toThrow(ZodError);
+    expect(() => hasuraWebhookSchema.parse(requestWithNullHeaders)).toThrow(ZodError);
   });
 
   it('should validate transformed output types', () => {
-    const result = webhookSchema.parse(validRequest);
+    const result = hasuraWebhookSchema.parse(validRequest);
 
     expect(typeof result.contentTypeHeader).toBe('string');
     expect(typeof result.signatureHeader).toBe('string');
