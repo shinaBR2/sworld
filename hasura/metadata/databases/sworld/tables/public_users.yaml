@@ -44,6 +44,13 @@ array_relationships:
         table:
           name: playlist
           schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: receiver_id
+        table:
+          name: shared_video_recipients
+          schema: public
   - name: user_video_histories
     using:
       foreign_key_constraint_on:
@@ -69,12 +76,13 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - created_at
-        - email
-        - id
-        - updated_at
         - username
       filter:
-        id:
-          _eq: X-Hasura-User-Id
-    comment: Only select their own user profile based on `auth0_id`
+        _or:
+          - id:
+              _eq: X-Hasura-User-Id
+          - playlists:
+              shared_video_recipients:
+                receiver_id:
+                  _eq: X-Hasura-User-Id
+    comment: Hasura doesn't support differentiating among multiple users with the same role. For now, leave the username available for the owner and those who are shared.
