@@ -1,1 +1,0 @@
-comment on column "public"."playlist"."shared_recipients" is E'List of shared recipients after validated by the system, should use this field to show for end users';
