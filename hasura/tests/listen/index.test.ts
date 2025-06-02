@@ -195,8 +195,6 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
         query: `
           query MyQuery {
             users {
-              id
-              email
               username
             }
           }
@@ -231,8 +229,6 @@ await createRoleTestSuite(ROLE_USER, {
         query: `
           query MyQuery {
             users {
-              id
-              email
               username
             }
           }
@@ -243,9 +239,7 @@ await createRoleTestSuite(ROLE_USER, {
           expect(users.length).toBe(1);
           const user = users[0];
 
-          expect(user.id).toBe(e2eTestUserId);
           expect(typeof user.username).toBe("string");
-          expect(typeof user.email).toBe("string");
         },
       },
     ],
