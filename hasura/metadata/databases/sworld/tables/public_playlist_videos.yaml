@@ -86,4 +86,5 @@ select_permissions:
               shared_video_recipients:
                 receiver_id:
                   _eq: X-Hasura-User-Id
+      allow_aggregations: true
     comment: ""
