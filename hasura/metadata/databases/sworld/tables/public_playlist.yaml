@@ -29,6 +29,13 @@ array_relationships:
         table:
           name: playlist_videos
           schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: shared_video_recipients
+          schema: public
 insert_permissions:
   - role: user
     permission:
@@ -40,6 +47,7 @@ insert_permissions:
       columns:
         - description
         - public
+        - shared_recipients
         - slug
         - thumbnail_url
         - title
@@ -63,15 +71,35 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - created_at
         - description
         - id
         - public
         - s_id
+        - shared_recipients
         - slug
         - thumbnail_url
+        - title
+        - user_id
+      filter:
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - shared_video_recipients:
+              receiver_id:
+                _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - description
+        - public
+        - shared_recipients
         - title
       filter:
         user_id:
           _eq: X-Hasura-User-Id
+      check: null
+      set:
+        user_id: x-hasura-
     comment: ""

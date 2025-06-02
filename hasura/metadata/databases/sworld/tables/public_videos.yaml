@@ -32,6 +32,13 @@ array_relationships:
         table:
           name: playlist_videos
           schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: shared_video_recipients
+          schema: public
   - name: subtitles
     using:
       foreign_key_constraint_on:
@@ -114,7 +121,6 @@ select_permissions:
         - description
         - duration
         - id
-        - public
         - s_id
         - slug
         - source
@@ -122,27 +128,12 @@ select_permissions:
         - thumbnail_url
         - title
       filter:
-        user_id:
-          _eq: X-Hasura-User-Id
-    comment: ""
-  - role: vip
-    permission:
-      columns:
-        - created_at
-        - description
-        - duration
-        - id
-        - keep_original_source
-        - public
-        - s_id
-        - slug
-        - source
-        - status
-        - thumbnail_url
-        - title
-      filter:
-        user_id:
-          _eq: X-Hasura-User-Id
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - shared_video_recipients:
+              receiver_id:
+                _eq: X-Hasura-User-Id
     comment: ""
 delete_permissions:
   - role: user

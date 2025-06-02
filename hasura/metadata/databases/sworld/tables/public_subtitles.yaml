@@ -41,19 +41,17 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - is_default
         - id
+        - is_default
         - lang
         - url
-        - video_id
       filter:
         _or:
           - video:
-              public:
-                _eq: true
-          - video:
               user_id:
                 _eq: X-Hasura-User-Id
-      query_root_fields: []
-      subscription_root_fields: []
+          - video:
+              shared_video_recipients:
+                receiver_id:
+                  _eq: X-Hasura-User-Id
     comment: ""
