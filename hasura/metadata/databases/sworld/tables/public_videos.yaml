@@ -153,12 +153,12 @@ event_triggers:
     definition:
       enable_manual: true
       insert:
-        columns: '*'
+        columns: "*"
     retry_conf:
       interval_sec: 10
       num_retries: 3
       timeout_sec: 300
-    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/convert'
+    webhook: "{{MAIN_WEBHOOK_DOMAIN}}/videos/convert"
     headers:
       - name: x-webhook-signature
         value_from_env: MAIN_WEBHOOK_SIGNATURE
