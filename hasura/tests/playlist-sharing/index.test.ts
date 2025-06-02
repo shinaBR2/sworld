@@ -8,7 +8,6 @@
 import { expect } from "vitest";
 import {
   createRoleTestSuite,
-  MutationTestCase,
   QueryTestCase,
   ROLE_ANONYMOUS,
   ROLE_USER,

@@ -5,7 +5,6 @@ import {
   ROLE_USER,
   createRoleTestSuite,
 } from "../create-role-test-suite";
-import { e2eTestUserId } from "../config";
 
 const userDeniedQueries = [
   {
