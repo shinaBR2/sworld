@@ -54,4 +54,6 @@ select_permissions:
               shared_video_recipients:
                 receiver_id:
                   _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields: []
     comment: ""

@@ -85,4 +85,4 @@ select_permissions:
               shared_video_recipients:
                 receiver_id:
                   _eq: X-Hasura-User-Id
-    comment: ""
+    comment: Hasura doesn't support differentiating among multiple users with the same role. For now, leave the username available for the owner and those who are shared.
