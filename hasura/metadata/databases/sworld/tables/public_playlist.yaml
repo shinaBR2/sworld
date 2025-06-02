@@ -7,6 +7,10 @@ configuration:
       custom_name: createdAt
     s_id:
       custom_name: sId
+    shared_recipients:
+      custom_name: sharedRecipients
+    shared_recipients_input:
+      custom_name: sharedRecipientsInput
     thumbnail_url:
       custom_name: thumbnailUrl
     updated_at:
@@ -14,6 +18,8 @@ configuration:
   custom_column_names:
     created_at: createdAt
     s_id: sId
+    shared_recipients: sharedRecipients
+    shared_recipients_input: sharedRecipientsInput
     thumbnail_url: thumbnailUrl
     updated_at: updatedAt
   custom_root_fields: {}
@@ -47,7 +53,7 @@ insert_permissions:
       columns:
         - description
         - public
-        - shared_recipients
+        - shared_recipients_input
         - slug
         - thumbnail_url
         - title
@@ -77,6 +83,7 @@ select_permissions:
         - public
         - s_id
         - shared_recipients
+        - shared_recipients_input
         - slug
         - thumbnail_url
         - title
@@ -95,7 +102,7 @@ update_permissions:
       columns:
         - description
         - public
-        - shared_recipients
+        - shared_recipients_input
         - title
       filter:
         user_id:

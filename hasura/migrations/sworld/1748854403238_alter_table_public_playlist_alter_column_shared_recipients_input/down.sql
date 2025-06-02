@@ -1,0 +1,1 @@
+comment on column "public"."playlist"."shared_recipients_input" is E'List of recipients from user input, not validated yet';
