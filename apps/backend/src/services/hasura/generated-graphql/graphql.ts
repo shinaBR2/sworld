@@ -9092,6 +9092,21 @@ export type UpdatePostMutation = {
   update_posts?: { __typename?: 'posts_mutation_response'; returning: Array<{ __typename?: 'posts'; id: any }> } | null;
 };
 
+export type InsertshareMutationVariables = Exact<{
+  objects: Array<Shared_Video_Recipients_Insert_Input> | Shared_Video_Recipients_Insert_Input;
+  playlistId: Scalars['uuid']['input'];
+  sharedRecipients: Scalars['jsonb']['input'];
+}>;
+
+export type InsertshareMutation = {
+  __typename?: 'mutation_root';
+  insert_shared_video_recipients?: {
+    __typename?: 'shared_video_recipients_mutation_response';
+    returning: Array<{ __typename?: 'shared_video_recipients'; id: any }>;
+  } | null;
+  update_playlist_by_pk?: { __typename?: 'playlist'; id: any; sharedRecipients?: any | null } | null;
+};
+
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
@@ -9183,6 +9198,25 @@ export const UpdatePostDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdatePostMutation, UpdatePostMutationVariables>;
+export const InsertshareDocument = new TypedDocumentString(`
+    mutation insertshare($objects: [shared_video_recipients_insert_input!]!, $playlistId: uuid!, $sharedRecipients: jsonb!) {
+  insert_shared_video_recipients(
+    objects: $objects
+    on_conflict: {constraint: shared_video_recipients_playlist_id_video_id_receiver_id_key, update_columns: []}
+  ) {
+    returning {
+      id
+    }
+  }
+  update_playlist_by_pk(
+    pk_columns: {id: $playlistId}
+    _set: {sharedRecipients: $sharedRecipients}
+  ) {
+    id
+    sharedRecipients
+  }
+}
+    `) as unknown as TypedDocumentString<InsertshareMutation, InsertshareMutationVariables>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {
