@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { graphql } from '../../generated-graphql';
 import { FinalizeVideoMutation, FinalizeVideoMutationVariables } from '../../generated-graphql/graphql';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 
 const FINALIZE_VIDEO = graphql(/* GraphQL */ `
   mutation FinalizeVideo(

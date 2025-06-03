@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { InsertPostMutation, Posts_Insert_Input } from '../../generated-graphql/graphql';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 import { insertPost } from './insert';
 
 // Mock GraphQL client
-vi.mock('../client', () => ({
+vi.mock('../../client', () => ({
   hasuraClient: {
     request: vi.fn(),
   },

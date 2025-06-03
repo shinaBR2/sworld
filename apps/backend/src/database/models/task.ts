@@ -16,6 +16,7 @@ enum TaskType {
   FIX_DURATION = 'fix_duration',
   /** ONE TIME JOB TO FIX VIDEO HAS MISSING THUMBNAIL  */
   FIX_THUMBNAIL = 'fix_thumbnail',
+  SHARE = 'share',
   CRAWL = 'crawl',
 }
 

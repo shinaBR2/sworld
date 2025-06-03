@@ -1,6 +1,6 @@
 import { graphql } from '../../generated-graphql';
 import { Posts_Set_Input, UpdatePostMutation } from '../../generated-graphql/graphql';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 
 const UPDATE_POST = graphql(/* GraphQL */ `
   mutation UpdatePost($hId: String!, $set: posts_set_input!) {

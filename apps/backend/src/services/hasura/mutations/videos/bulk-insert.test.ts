@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { InsertVideosMutation } from '../../generated-graphql/graphql';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 import { VideoInput, insertVideos } from './bulk-insert';
 
 // Mock GraphQL client
-vi.mock('../client', () => ({
+vi.mock('../../client', () => ({
   hasuraClient: {
     request: vi.fn(),
   },

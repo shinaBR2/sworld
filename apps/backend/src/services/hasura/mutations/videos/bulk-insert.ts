@@ -1,6 +1,6 @@
 import { graphql } from '../../generated-graphql';
 import { InsertVideosMutation, Videos_Insert_Input } from '../../generated-graphql/graphql';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 
 const BULK_INSERT_VIDEOS = graphql(/* GraphQL */ `
   mutation InsertVideos($objects: [videos_insert_input!]!) {

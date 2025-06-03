@@ -14,7 +14,9 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
+  date: { input: any; output: any };
   jsonb: { input: any; output: any };
+  numeric: { input: any; output: any };
   timestamptz: { input: any; output: any };
   uuid: { input: any; output: any };
 };
@@ -922,6 +924,19 @@ export enum Cursor_Ordering {
   Desc = 'DESC',
 }
 
+/** Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'. */
+export type Date_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['date']['input']>;
+  _gt?: InputMaybe<Scalars['date']['input']>;
+  _gte?: InputMaybe<Scalars['date']['input']>;
+  _in?: InputMaybe<Array<Scalars['date']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['date']['input']>;
+  _lte?: InputMaybe<Scalars['date']['input']>;
+  _neq?: InputMaybe<Scalars['date']['input']>;
+  _nin?: InputMaybe<Array<Scalars['date']['input']>>;
+};
+
 /** Feature flag system and we must leverage Hasura subscription to watch this */
 export type Feature_Flag = {
   __typename?: 'feature_flag';
@@ -1165,6 +1180,741 @@ export type Feature_Flag_Updates = {
   where: Feature_Flag_Bool_Exp;
 };
 
+/** Transactions for personal finance management */
+export type Finance_Transactions = {
+  __typename?: 'finance_transactions';
+  amount: Scalars['numeric']['output'];
+  /** Should be either must, nice or waste */
+  category: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  month: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  note?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+  year: Scalars['Int']['output'];
+};
+
+/** aggregated selection of "finance_transactions" */
+export type Finance_Transactions_Aggregate = {
+  __typename?: 'finance_transactions_aggregate';
+  aggregate?: Maybe<Finance_Transactions_Aggregate_Fields>;
+  nodes: Array<Finance_Transactions>;
+};
+
+export type Finance_Transactions_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Finance_Transactions_Aggregate_Bool_Exp_Count>;
+};
+
+export type Finance_Transactions_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Finance_Transactions_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "finance_transactions" */
+export type Finance_Transactions_Aggregate_Fields = {
+  __typename?: 'finance_transactions_aggregate_fields';
+  avg?: Maybe<Finance_Transactions_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Finance_Transactions_Max_Fields>;
+  min?: Maybe<Finance_Transactions_Min_Fields>;
+  stddev?: Maybe<Finance_Transactions_Stddev_Fields>;
+  stddev_pop?: Maybe<Finance_Transactions_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Finance_Transactions_Stddev_Samp_Fields>;
+  sum?: Maybe<Finance_Transactions_Sum_Fields>;
+  var_pop?: Maybe<Finance_Transactions_Var_Pop_Fields>;
+  var_samp?: Maybe<Finance_Transactions_Var_Samp_Fields>;
+  variance?: Maybe<Finance_Transactions_Variance_Fields>;
+};
+
+/** aggregate fields of "finance_transactions" */
+export type Finance_Transactions_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "finance_transactions" */
+export type Finance_Transactions_Aggregate_Order_By = {
+  avg?: InputMaybe<Finance_Transactions_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Finance_Transactions_Max_Order_By>;
+  min?: InputMaybe<Finance_Transactions_Min_Order_By>;
+  stddev?: InputMaybe<Finance_Transactions_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Finance_Transactions_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Finance_Transactions_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Finance_Transactions_Sum_Order_By>;
+  var_pop?: InputMaybe<Finance_Transactions_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Finance_Transactions_Var_Samp_Order_By>;
+  variance?: InputMaybe<Finance_Transactions_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "finance_transactions" */
+export type Finance_Transactions_Arr_Rel_Insert_Input = {
+  data: Array<Finance_Transactions_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Finance_Transactions_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Finance_Transactions_Avg_Fields = {
+  __typename?: 'finance_transactions_avg_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "finance_transactions" */
+export type Finance_Transactions_Avg_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "finance_transactions". All fields are combined with a logical 'AND'. */
+export type Finance_Transactions_Bool_Exp = {
+  _and?: InputMaybe<Array<Finance_Transactions_Bool_Exp>>;
+  _not?: InputMaybe<Finance_Transactions_Bool_Exp>;
+  _or?: InputMaybe<Array<Finance_Transactions_Bool_Exp>>;
+  amount?: InputMaybe<Numeric_Comparison_Exp>;
+  category?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  month?: InputMaybe<Int_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  note?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+  year?: InputMaybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "finance_transactions" */
+export enum Finance_Transactions_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  FinanceTransactionsPkey = 'finance_transactions_pkey',
+}
+
+/** input type for incrementing numeric columns in table "finance_transactions" */
+export type Finance_Transactions_Inc_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "finance_transactions" */
+export type Finance_Transactions_Insert_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate max on columns */
+export type Finance_Transactions_Max_Fields = {
+  __typename?: 'finance_transactions_max_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  /** Should be either must, nice or waste */
+  category?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  note?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by max() on columns of table "finance_transactions" */
+export type Finance_Transactions_Max_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Finance_Transactions_Min_Fields = {
+  __typename?: 'finance_transactions_min_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  /** Should be either must, nice or waste */
+  category?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  note?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by min() on columns of table "finance_transactions" */
+export type Finance_Transactions_Min_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "finance_transactions" */
+export type Finance_Transactions_Mutation_Response = {
+  __typename?: 'finance_transactions_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Finance_Transactions>;
+};
+
+/** on_conflict condition type for table "finance_transactions" */
+export type Finance_Transactions_On_Conflict = {
+  constraint: Finance_Transactions_Constraint;
+  update_columns?: Array<Finance_Transactions_Update_Column>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "finance_transactions". */
+export type Finance_Transactions_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: finance_transactions */
+export type Finance_Transactions_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "finance_transactions" */
+export enum Finance_Transactions_Select_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  Category = 'category',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Month = 'month',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+  /** column name */
+  Year = 'year',
+}
+
+/** input type for updating data in table "finance_transactions" */
+export type Finance_Transactions_Set_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Finance_Transactions_Stddev_Fields = {
+  __typename?: 'finance_transactions_stddev_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Finance_Transactions_Stddev_Pop_Fields = {
+  __typename?: 'finance_transactions_stddev_pop_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Pop_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Finance_Transactions_Stddev_Samp_Fields = {
+  __typename?: 'finance_transactions_stddev_samp_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "finance_transactions" */
+export type Finance_Transactions_Stddev_Samp_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "finance_transactions" */
+export type Finance_Transactions_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Finance_Transactions_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Finance_Transactions_Stream_Cursor_Value_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  month?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Finance_Transactions_Sum_Fields = {
+  __typename?: 'finance_transactions_sum_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  month?: Maybe<Scalars['Int']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "finance_transactions" */
+export type Finance_Transactions_Sum_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "finance_transactions" */
+export enum Finance_Transactions_Update_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  Category = 'category',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Month = 'month',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+  /** column name */
+  Year = 'year',
+}
+
+export type Finance_Transactions_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Finance_Transactions_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Finance_Transactions_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Finance_Transactions_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Finance_Transactions_Var_Pop_Fields = {
+  __typename?: 'finance_transactions_var_pop_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "finance_transactions" */
+export type Finance_Transactions_Var_Pop_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Finance_Transactions_Var_Samp_Fields = {
+  __typename?: 'finance_transactions_var_samp_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "finance_transactions" */
+export type Finance_Transactions_Var_Samp_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Finance_Transactions_Variance_Fields = {
+  __typename?: 'finance_transactions_variance_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+  month?: Maybe<Scalars['Float']['output']>;
+  year?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "finance_transactions" */
+export type Finance_Transactions_Variance_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  month?: InputMaybe<Order_By>;
+  year?: InputMaybe<Order_By>;
+};
+
+/** Daily journal */
+export type Journals = {
+  __typename?: 'journals';
+  content: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  date: Scalars['date']['output'];
+  id: Scalars['uuid']['output'];
+  mood: Scalars['String']['output'];
+  tags: Scalars['jsonb']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** Daily journal */
+export type JournalsTagsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "journals" */
+export type Journals_Aggregate = {
+  __typename?: 'journals_aggregate';
+  aggregate?: Maybe<Journals_Aggregate_Fields>;
+  nodes: Array<Journals>;
+};
+
+export type Journals_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Journals_Aggregate_Bool_Exp_Count>;
+};
+
+export type Journals_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Journals_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Journals_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "journals" */
+export type Journals_Aggregate_Fields = {
+  __typename?: 'journals_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Journals_Max_Fields>;
+  min?: Maybe<Journals_Min_Fields>;
+};
+
+/** aggregate fields of "journals" */
+export type Journals_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Journals_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "journals" */
+export type Journals_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Journals_Max_Order_By>;
+  min?: InputMaybe<Journals_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Journals_Append_Input = {
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** input type for inserting array relation for remote table "journals" */
+export type Journals_Arr_Rel_Insert_Input = {
+  data: Array<Journals_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "journals". All fields are combined with a logical 'AND'. */
+export type Journals_Bool_Exp = {
+  _and?: InputMaybe<Array<Journals_Bool_Exp>>;
+  _not?: InputMaybe<Journals_Bool_Exp>;
+  _or?: InputMaybe<Array<Journals_Bool_Exp>>;
+  content?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  date?: InputMaybe<Date_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  mood?: InputMaybe<String_Comparison_Exp>;
+  tags?: InputMaybe<Jsonb_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "journals" */
+export enum Journals_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  JournalsPkey = 'journals_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Journals_Delete_At_Path_Input = {
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Journals_Delete_Elem_Input = {
+  tags?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Journals_Delete_Key_Input = {
+  tags?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** input type for inserting data into table "journals" */
+export type Journals_Insert_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Journals_Max_Fields = {
+  __typename?: 'journals_max_fields';
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  date?: Maybe<Scalars['date']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mood?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "journals" */
+export type Journals_Max_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Journals_Min_Fields = {
+  __typename?: 'journals_min_fields';
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  date?: Maybe<Scalars['date']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mood?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "journals" */
+export type Journals_Min_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "journals" */
+export type Journals_Mutation_Response = {
+  __typename?: 'journals_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Journals>;
+};
+
+/** on_conflict condition type for table "journals" */
+export type Journals_On_Conflict = {
+  constraint: Journals_Constraint;
+  update_columns?: Array<Journals_Update_Column>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "journals". */
+export type Journals_Order_By = {
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mood?: InputMaybe<Order_By>;
+  tags?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: journals */
+export type Journals_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Journals_Prepend_Input = {
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** select columns of table "journals" */
+export enum Journals_Select_Column {
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Mood = 'mood',
+  /** column name */
+  Tags = 'tags',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+}
+
+/** input type for updating data in table "journals" */
+export type Journals_Set_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "journals" */
+export type Journals_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Journals_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Journals_Stream_Cursor_Value_Input = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  date?: InputMaybe<Scalars['date']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mood?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Scalars['jsonb']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "journals" */
+export enum Journals_Update_Column {
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Mood = 'mood',
+  /** column name */
+  Tags = 'tags',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+}
+
+export type Journals_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Journals_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Journals_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Journals_Bool_Exp;
+};
+
 export type Jsonb_Cast_Exp = {
   String?: InputMaybe<String_Comparison_Exp>;
 };
@@ -1212,6 +1962,14 @@ export type Mutation_Root = {
   delete_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** delete single row from the table: "feature_flag" */
   delete_feature_flag_by_pk?: Maybe<Feature_Flag>;
+  /** delete data from the table: "finance_transactions" */
+  delete_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
+  /** delete single row from the table: "finance_transactions" */
+  delete_finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** delete data from the table: "journals" */
+  delete_journals?: Maybe<Journals_Mutation_Response>;
+  /** delete single row from the table: "journals" */
+  delete_journals_by_pk?: Maybe<Journals>;
   /** delete data from the table: "notifications" */
   delete_notifications?: Maybe<Notifications_Mutation_Response>;
   /** delete single row from the table: "notifications" */
@@ -1228,6 +1986,10 @@ export type Mutation_Root = {
   delete_posts?: Maybe<Posts_Mutation_Response>;
   /** delete single row from the table: "posts" */
   delete_posts_by_pk?: Maybe<Posts>;
+  /** delete data from the table: "shared_video_recipients" */
+  delete_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
+  /** delete single row from the table: "shared_video_recipients" */
+  delete_shared_video_recipients_by_pk?: Maybe<Shared_Video_Recipients>;
   /** delete data from the table: "subtitles" */
   delete_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** delete single row from the table: "subtitles" */
@@ -1280,6 +2042,14 @@ export type Mutation_Root = {
   insert_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** insert a single row into the table: "feature_flag" */
   insert_feature_flag_one?: Maybe<Feature_Flag>;
+  /** insert data into the table: "finance_transactions" */
+  insert_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
+  /** insert a single row into the table: "finance_transactions" */
+  insert_finance_transactions_one?: Maybe<Finance_Transactions>;
+  /** insert data into the table: "journals" */
+  insert_journals?: Maybe<Journals_Mutation_Response>;
+  /** insert a single row into the table: "journals" */
+  insert_journals_one?: Maybe<Journals>;
   /** insert data into the table: "notifications" */
   insert_notifications?: Maybe<Notifications_Mutation_Response>;
   /** insert a single row into the table: "notifications" */
@@ -1296,6 +2066,10 @@ export type Mutation_Root = {
   insert_posts?: Maybe<Posts_Mutation_Response>;
   /** insert a single row into the table: "posts" */
   insert_posts_one?: Maybe<Posts>;
+  /** insert data into the table: "shared_video_recipients" */
+  insert_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
+  /** insert a single row into the table: "shared_video_recipients" */
+  insert_shared_video_recipients_one?: Maybe<Shared_Video_Recipients>;
   /** insert data into the table: "subtitles" */
   insert_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** insert a single row into the table: "subtitles" */
@@ -1356,6 +2130,18 @@ export type Mutation_Root = {
   update_feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** update multiples rows of table: "feature_flag" */
   update_feature_flag_many?: Maybe<Array<Maybe<Feature_Flag_Mutation_Response>>>;
+  /** update data of the table: "finance_transactions" */
+  update_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
+  /** update single row of the table: "finance_transactions" */
+  update_finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** update multiples rows of table: "finance_transactions" */
+  update_finance_transactions_many?: Maybe<Array<Maybe<Finance_Transactions_Mutation_Response>>>;
+  /** update data of the table: "journals" */
+  update_journals?: Maybe<Journals_Mutation_Response>;
+  /** update single row of the table: "journals" */
+  update_journals_by_pk?: Maybe<Journals>;
+  /** update multiples rows of table: "journals" */
+  update_journals_many?: Maybe<Array<Maybe<Journals_Mutation_Response>>>;
   /** update data of the table: "notifications" */
   update_notifications?: Maybe<Notifications_Mutation_Response>;
   /** update single row of the table: "notifications" */
@@ -1380,6 +2166,12 @@ export type Mutation_Root = {
   update_posts_by_pk?: Maybe<Posts>;
   /** update multiples rows of table: "posts" */
   update_posts_many?: Maybe<Array<Maybe<Posts_Mutation_Response>>>;
+  /** update data of the table: "shared_video_recipients" */
+  update_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
+  /** update single row of the table: "shared_video_recipients" */
+  update_shared_video_recipients_by_pk?: Maybe<Shared_Video_Recipients>;
+  /** update multiples rows of table: "shared_video_recipients" */
+  update_shared_video_recipients_many?: Maybe<Array<Maybe<Shared_Video_Recipients_Mutation_Response>>>;
   /** update data of the table: "subtitles" */
   update_subtitles?: Maybe<Subtitles_Mutation_Response>;
   /** update single row of the table: "subtitles" */
@@ -1478,6 +2270,26 @@ export type Mutation_RootDelete_Feature_Flag_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Finance_TransactionsArgs = {
+  where: Finance_Transactions_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Finance_Transactions_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_JournalsArgs = {
+  where: Journals_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Journals_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_NotificationsArgs = {
   where: Notifications_Bool_Exp;
 };
@@ -1515,6 +2327,16 @@ export type Mutation_RootDelete_PostsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Posts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Shared_Video_RecipientsArgs = {
+  where: Shared_Video_Recipients_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Shared_Video_Recipients_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -1658,6 +2480,30 @@ export type Mutation_RootInsert_Feature_Flag_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Finance_TransactionsArgs = {
+  objects: Array<Finance_Transactions_Insert_Input>;
+  on_conflict?: InputMaybe<Finance_Transactions_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Finance_Transactions_OneArgs = {
+  object: Finance_Transactions_Insert_Input;
+  on_conflict?: InputMaybe<Finance_Transactions_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_JournalsArgs = {
+  objects: Array<Journals_Insert_Input>;
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Journals_OneArgs = {
+  object: Journals_Insert_Input;
+  on_conflict?: InputMaybe<Journals_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_NotificationsArgs = {
   objects: Array<Notifications_Insert_Input>;
   on_conflict?: InputMaybe<Notifications_On_Conflict>;
@@ -1703,6 +2549,18 @@ export type Mutation_RootInsert_PostsArgs = {
 export type Mutation_RootInsert_Posts_OneArgs = {
   object: Posts_Insert_Input;
   on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Shared_Video_RecipientsArgs = {
+  objects: Array<Shared_Video_Recipients_Insert_Input>;
+  on_conflict?: InputMaybe<Shared_Video_Recipients_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Shared_Video_Recipients_OneArgs = {
+  object: Shared_Video_Recipients_Insert_Input;
+  on_conflict?: InputMaybe<Shared_Video_Recipients_On_Conflict>;
 };
 
 /** mutation root */
@@ -1892,6 +2750,52 @@ export type Mutation_RootUpdate_Feature_Flag_ManyArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Finance_TransactionsArgs = {
+  _inc?: InputMaybe<Finance_Transactions_Inc_Input>;
+  _set?: InputMaybe<Finance_Transactions_Set_Input>;
+  where: Finance_Transactions_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Finance_Transactions_By_PkArgs = {
+  _inc?: InputMaybe<Finance_Transactions_Inc_Input>;
+  _set?: InputMaybe<Finance_Transactions_Set_Input>;
+  pk_columns: Finance_Transactions_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Finance_Transactions_ManyArgs = {
+  updates: Array<Finance_Transactions_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_JournalsArgs = {
+  _append?: InputMaybe<Journals_Append_Input>;
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  _set?: InputMaybe<Journals_Set_Input>;
+  where: Journals_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Journals_By_PkArgs = {
+  _append?: InputMaybe<Journals_Append_Input>;
+  _delete_at_path?: InputMaybe<Journals_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Journals_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Journals_Delete_Key_Input>;
+  _prepend?: InputMaybe<Journals_Prepend_Input>;
+  _set?: InputMaybe<Journals_Set_Input>;
+  pk_columns: Journals_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Journals_ManyArgs = {
+  updates: Array<Journals_Updates>;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_NotificationsArgs = {
   _append?: InputMaybe<Notifications_Append_Input>;
   _delete_at_path?: InputMaybe<Notifications_Delete_At_Path_Input>;
@@ -1920,12 +2824,22 @@ export type Mutation_RootUpdate_Notifications_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_PlaylistArgs = {
+  _append?: InputMaybe<Playlist_Append_Input>;
+  _delete_at_path?: InputMaybe<Playlist_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Playlist_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Playlist_Delete_Key_Input>;
+  _prepend?: InputMaybe<Playlist_Prepend_Input>;
   _set?: InputMaybe<Playlist_Set_Input>;
   where: Playlist_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_By_PkArgs = {
+  _append?: InputMaybe<Playlist_Append_Input>;
+  _delete_at_path?: InputMaybe<Playlist_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Playlist_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Playlist_Delete_Key_Input>;
+  _prepend?: InputMaybe<Playlist_Prepend_Input>;
   _set?: InputMaybe<Playlist_Set_Input>;
   pk_columns: Playlist_Pk_Columns_Input;
 };
@@ -1971,6 +2885,23 @@ export type Mutation_RootUpdate_Posts_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Posts_ManyArgs = {
   updates: Array<Posts_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Video_RecipientsArgs = {
+  _set?: InputMaybe<Shared_Video_Recipients_Set_Input>;
+  where: Shared_Video_Recipients_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Video_Recipients_By_PkArgs = {
+  _set?: InputMaybe<Shared_Video_Recipients_Set_Input>;
+  pk_columns: Shared_Video_Recipients_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Video_Recipients_ManyArgs = {
+  updates: Array<Shared_Video_Recipients_Updates>;
 };
 
 /** mutation root */
@@ -2472,6 +3403,19 @@ export type Notifications_Updates = {
   where: Notifications_Bool_Exp;
 };
 
+/** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
+export type Numeric_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['numeric']['input']>;
+  _gt?: InputMaybe<Scalars['numeric']['input']>;
+  _gte?: InputMaybe<Scalars['numeric']['input']>;
+  _in?: InputMaybe<Array<Scalars['numeric']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['numeric']['input']>;
+  _lte?: InputMaybe<Scalars['numeric']['input']>;
+  _neq?: InputMaybe<Scalars['numeric']['input']>;
+  _nin?: InputMaybe<Array<Scalars['numeric']['input']>>;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in ascending order, nulls last */
@@ -2501,6 +3445,14 @@ export type Playlist = {
   public: Scalars['Boolean']['output'];
   /** Short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: Maybe<Scalars['jsonb']['output']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: Maybe<Scalars['jsonb']['output']>;
+  /** An array relationship */
+  shared_video_recipients: Array<Shared_Video_Recipients>;
+  /** An aggregate relationship */
+  shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
   slug: Scalars['String']['output'];
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
@@ -2526,6 +3478,34 @@ export type PlaylistPlaylist_Videos_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistSharedRecipientsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistSharedRecipientsInputArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistShared_Video_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistShared_Video_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
 };
 
 /** aggregated selection of "playlist" */
@@ -2583,6 +3563,14 @@ export type Playlist_Aggregate_Order_By = {
   min?: InputMaybe<Playlist_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Playlist_Append_Input = {
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
 /** input type for inserting array relation for remote table "playlist" */
 export type Playlist_Arr_Rel_Insert_Input = {
   data: Array<Playlist_Insert_Input>;
@@ -2602,6 +3590,10 @@ export type Playlist_Bool_Exp = {
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
   sId?: InputMaybe<String_Comparison_Exp>;
+  sharedRecipients?: InputMaybe<Jsonb_Comparison_Exp>;
+  sharedRecipientsInput?: InputMaybe<Jsonb_Comparison_Exp>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
@@ -2620,6 +3612,30 @@ export enum Playlist_Constraint {
   PlaylistUserIdSlugKey = 'playlist_user_id_slug_key',
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Playlist_Delete_At_Path_Input = {
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Playlist_Delete_Elem_Input = {
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['Int']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Playlist_Delete_Key_Input = {
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['String']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** input type for inserting data into table "playlist" */
 export type Playlist_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -2629,6 +3645,11 @@ export type Playlist_Insert_Input = {
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** Short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2726,6 +3747,9 @@ export type Playlist_Order_By = {
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
+  sharedRecipients?: InputMaybe<Order_By>;
+  sharedRecipientsInput?: InputMaybe<Order_By>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -2737,6 +3761,14 @@ export type Playlist_Order_By = {
 /** primary key columns input for table: playlist */
 export type Playlist_Pk_Columns_Input = {
   id: Scalars['uuid']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Playlist_Prepend_Input = {
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** select columns of table "playlist" */
@@ -2751,6 +3783,10 @@ export enum Playlist_Select_Column {
   Public = 'public',
   /** column name */
   SId = 'sId',
+  /** column name */
+  SharedRecipients = 'sharedRecipients',
+  /** column name */
+  SharedRecipientsInput = 'sharedRecipientsInput',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -2783,6 +3819,10 @@ export type Playlist_Set_Input = {
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** Short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2806,6 +3846,10 @@ export type Playlist_Stream_Cursor_Value_Input = {
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** Short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
+  sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
+  /** List of recipient emails from user input, not validated yet. End user can update this. */
+  sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -2826,6 +3870,10 @@ export enum Playlist_Update_Column {
   /** column name */
   SId = 'sId',
   /** column name */
+  SharedRecipients = 'sharedRecipients',
+  /** column name */
+  SharedRecipientsInput = 'sharedRecipientsInput',
+  /** column name */
   Slug = 'slug',
   /** column name */
   ThumbnailUrl = 'thumbnailUrl',
@@ -2838,6 +3886,16 @@ export enum Playlist_Update_Column {
 }
 
 export type Playlist_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Playlist_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Playlist_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Playlist_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Playlist_Delete_Key_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Playlist_Prepend_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Playlist_Set_Input>;
   /** filter the rows which have to be updated */
@@ -2949,6 +4007,8 @@ export type Playlist_Videos_Bool_Exp = {
 export enum Playlist_Videos_Constraint {
   /** unique or primary key constraint on columns "video_id", "playlist_id" */
   PlaylistVideosPkey = 'playlist_videos_pkey',
+  /** unique or primary key constraint on columns "video_id", "playlist_id" */
+  PlaylistVideosPlaylistIdVideoIdKey = 'playlist_videos_playlist_id_video_id_key',
 }
 
 /** input type for incrementing numeric columns in table "playlist_videos" */
@@ -3493,6 +4553,18 @@ export type Query_Root = {
   /** fetch data from the table: "feature_flag" using primary key columns */
   feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** An array relationship */
+  finance_transactions: Array<Finance_Transactions>;
+  /** An aggregate relationship */
+  finance_transactions_aggregate: Finance_Transactions_Aggregate;
+  /** fetch data from the table: "finance_transactions" using primary key columns */
+  finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** An array relationship */
+  journals: Array<Journals>;
+  /** An aggregate relationship */
+  journals_aggregate: Journals_Aggregate;
+  /** fetch data from the table: "journals" using primary key columns */
+  journals_by_pk?: Maybe<Journals>;
+  /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
   notifications_aggregate: Notifications_Aggregate;
@@ -3516,6 +4588,12 @@ export type Query_Root = {
   posts_aggregate: Posts_Aggregate;
   /** fetch data from the table: "posts" using primary key columns */
   posts_by_pk?: Maybe<Posts>;
+  /** An array relationship */
+  shared_video_recipients: Array<Shared_Video_Recipients>;
+  /** An aggregate relationship */
+  shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
+  /** fetch data from the table: "shared_video_recipients" using primary key columns */
+  shared_video_recipients_by_pk?: Maybe<Shared_Video_Recipients>;
   /** An array relationship */
   subtitles: Array<Subtitles>;
   /** An aggregate relationship */
@@ -3653,6 +4731,46 @@ export type Query_RootFeature_Flag_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+export type Query_RootFinance_TransactionsArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+export type Query_RootFinance_Transactions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+export type Query_RootFinance_Transactions_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Query_RootJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+export type Query_RootJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+export type Query_RootJournals_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
 export type Query_RootNotificationsArgs = {
   distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3731,6 +4849,26 @@ export type Query_RootPosts_AggregateArgs = {
 };
 
 export type Query_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Query_RootShared_Video_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+export type Query_RootShared_Video_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+export type Query_RootShared_Video_Recipients_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -3915,6 +5053,287 @@ export type Query_RootVideos_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+/** Each video can share for many users, one user can see many shared videos */
+export type Shared_Video_Recipients = {
+  __typename?: 'shared_video_recipients';
+  createdAt: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  /** An object relationship */
+  playlist: Playlist;
+  playlistId: Scalars['uuid']['output'];
+  /** An object relationship */
+  receiver: Users;
+  receiverId: Scalars['uuid']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  video: Videos;
+  videoId: Scalars['uuid']['output'];
+  viewed: Scalars['Boolean']['output'];
+};
+
+/** aggregated selection of "shared_video_recipients" */
+export type Shared_Video_Recipients_Aggregate = {
+  __typename?: 'shared_video_recipients_aggregate';
+  aggregate?: Maybe<Shared_Video_Recipients_Aggregate_Fields>;
+  nodes: Array<Shared_Video_Recipients>;
+};
+
+export type Shared_Video_Recipients_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp_Count>;
+};
+
+export type Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Shared_Video_Recipients_Select_Column_Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Shared_Video_Recipients_Select_Column_Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Shared_Video_Recipients_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "shared_video_recipients" */
+export type Shared_Video_Recipients_Aggregate_Fields = {
+  __typename?: 'shared_video_recipients_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Shared_Video_Recipients_Max_Fields>;
+  min?: Maybe<Shared_Video_Recipients_Min_Fields>;
+};
+
+/** aggregate fields of "shared_video_recipients" */
+export type Shared_Video_Recipients_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "shared_video_recipients" */
+export type Shared_Video_Recipients_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Shared_Video_Recipients_Max_Order_By>;
+  min?: InputMaybe<Shared_Video_Recipients_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "shared_video_recipients" */
+export type Shared_Video_Recipients_Arr_Rel_Insert_Input = {
+  data: Array<Shared_Video_Recipients_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Shared_Video_Recipients_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "shared_video_recipients". All fields are combined with a logical 'AND'. */
+export type Shared_Video_Recipients_Bool_Exp = {
+  _and?: InputMaybe<Array<Shared_Video_Recipients_Bool_Exp>>;
+  _not?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  _or?: InputMaybe<Array<Shared_Video_Recipients_Bool_Exp>>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  playlist?: InputMaybe<Playlist_Bool_Exp>;
+  playlistId?: InputMaybe<Uuid_Comparison_Exp>;
+  receiver?: InputMaybe<Users_Bool_Exp>;
+  receiverId?: InputMaybe<Uuid_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  video?: InputMaybe<Videos_Bool_Exp>;
+  videoId?: InputMaybe<Uuid_Comparison_Exp>;
+  viewed?: InputMaybe<Boolean_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "shared_video_recipients" */
+export enum Shared_Video_Recipients_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  SharedVideoRecipientsPkey = 'shared_video_recipients_pkey',
+  /** unique or primary key constraint on columns "receiver_id", "video_id", "playlist_id" */
+  SharedVideoRecipientsPlaylistIdVideoIdReceiverIdKey = 'shared_video_recipients_playlist_id_video_id_receiver_id_key',
+}
+
+/** input type for inserting data into table "shared_video_recipients" */
+export type Shared_Video_Recipients_Insert_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist?: InputMaybe<Playlist_Obj_Rel_Insert_Input>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  receiver?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
+  videoId?: InputMaybe<Scalars['uuid']['input']>;
+  viewed?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate max on columns */
+export type Shared_Video_Recipients_Max_Fields = {
+  __typename?: 'shared_video_recipients_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  playlistId?: Maybe<Scalars['uuid']['output']>;
+  receiverId?: Maybe<Scalars['uuid']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  videoId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "shared_video_recipients" */
+export type Shared_Video_Recipients_Max_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  receiverId?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  videoId?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Shared_Video_Recipients_Min_Fields = {
+  __typename?: 'shared_video_recipients_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  playlistId?: Maybe<Scalars['uuid']['output']>;
+  receiverId?: Maybe<Scalars['uuid']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  videoId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "shared_video_recipients" */
+export type Shared_Video_Recipients_Min_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  receiverId?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  videoId?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "shared_video_recipients" */
+export type Shared_Video_Recipients_Mutation_Response = {
+  __typename?: 'shared_video_recipients_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Shared_Video_Recipients>;
+};
+
+/** on_conflict condition type for table "shared_video_recipients" */
+export type Shared_Video_Recipients_On_Conflict = {
+  constraint: Shared_Video_Recipients_Constraint;
+  update_columns?: Array<Shared_Video_Recipients_Update_Column>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "shared_video_recipients". */
+export type Shared_Video_Recipients_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlist?: InputMaybe<Playlist_Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  receiver?: InputMaybe<Users_Order_By>;
+  receiverId?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  video?: InputMaybe<Videos_Order_By>;
+  videoId?: InputMaybe<Order_By>;
+  viewed?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: shared_video_recipients */
+export type Shared_Video_Recipients_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "shared_video_recipients" */
+export enum Shared_Video_Recipients_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  ReceiverId = 'receiverId',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  Viewed = 'viewed',
+}
+
+/** select "shared_video_recipients_aggregate_bool_exp_bool_and_arguments_columns" columns of table "shared_video_recipients" */
+export enum Shared_Video_Recipients_Select_Column_Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Viewed = 'viewed',
+}
+
+/** select "shared_video_recipients_aggregate_bool_exp_bool_or_arguments_columns" columns of table "shared_video_recipients" */
+export enum Shared_Video_Recipients_Select_Column_Shared_Video_Recipients_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Viewed = 'viewed',
+}
+
+/** input type for updating data in table "shared_video_recipients" */
+export type Shared_Video_Recipients_Set_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  videoId?: InputMaybe<Scalars['uuid']['input']>;
+  viewed?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Streaming cursor of the table "shared_video_recipients" */
+export type Shared_Video_Recipients_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Shared_Video_Recipients_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Shared_Video_Recipients_Stream_Cursor_Value_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  videoId?: InputMaybe<Scalars['uuid']['input']>;
+  viewed?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** update columns of table "shared_video_recipients" */
+export enum Shared_Video_Recipients_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  ReceiverId = 'receiverId',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  Viewed = 'viewed',
+}
+
+export type Shared_Video_Recipients_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Shared_Video_Recipients_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Shared_Video_Recipients_Bool_Exp;
+};
+
 export type Subscription_Root = {
   __typename?: 'subscription_root';
   /** An array relationship */
@@ -3950,6 +5369,22 @@ export type Subscription_Root = {
   /** fetch data from the table in a streaming manner: "feature_flag" */
   feature_flag_stream: Array<Feature_Flag>;
   /** An array relationship */
+  finance_transactions: Array<Finance_Transactions>;
+  /** An aggregate relationship */
+  finance_transactions_aggregate: Finance_Transactions_Aggregate;
+  /** fetch data from the table: "finance_transactions" using primary key columns */
+  finance_transactions_by_pk?: Maybe<Finance_Transactions>;
+  /** fetch data from the table in a streaming manner: "finance_transactions" */
+  finance_transactions_stream: Array<Finance_Transactions>;
+  /** An array relationship */
+  journals: Array<Journals>;
+  /** An aggregate relationship */
+  journals_aggregate: Journals_Aggregate;
+  /** fetch data from the table: "journals" using primary key columns */
+  journals_by_pk?: Maybe<Journals>;
+  /** fetch data from the table in a streaming manner: "journals" */
+  journals_stream: Array<Journals>;
+  /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
   notifications_aggregate: Notifications_Aggregate;
@@ -3981,6 +5416,14 @@ export type Subscription_Root = {
   posts_by_pk?: Maybe<Posts>;
   /** fetch data from the table in a streaming manner: "posts" */
   posts_stream: Array<Posts>;
+  /** An array relationship */
+  shared_video_recipients: Array<Shared_Video_Recipients>;
+  /** An aggregate relationship */
+  shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
+  /** fetch data from the table: "shared_video_recipients" using primary key columns */
+  shared_video_recipients_by_pk?: Maybe<Shared_Video_Recipients>;
+  /** fetch data from the table in a streaming manner: "shared_video_recipients" */
+  shared_video_recipients_stream: Array<Shared_Video_Recipients>;
   /** An array relationship */
   subtitles: Array<Subtitles>;
   /** An aggregate relationship */
@@ -4160,6 +5603,58 @@ export type Subscription_RootFeature_Flag_StreamArgs = {
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
 };
 
+export type Subscription_RootFinance_TransactionsArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+export type Subscription_RootFinance_Transactions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+export type Subscription_RootFinance_Transactions_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootFinance_Transactions_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Finance_Transactions_Stream_Cursor_Input>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+export type Subscription_RootJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+export type Subscription_RootJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+export type Subscription_RootJournals_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootJournals_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Journals_Stream_Cursor_Input>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
 export type Subscription_RootNotificationsArgs = {
   distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -4263,6 +5758,32 @@ export type Subscription_RootPosts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Posts_Stream_Cursor_Input>>;
   where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Video_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Video_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Video_Recipients_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootShared_Video_Recipients_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Shared_Video_Recipients_Stream_Cursor_Input>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
 };
 
 export type Subscription_RootSubtitlesArgs = {
@@ -5953,7 +7474,15 @@ export type Users = {
   crawl_requests_aggregate: Crawl_Requests_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email: Scalars['String']['output'];
+  /** An array relationship */
+  finance_transactions: Array<Finance_Transactions>;
+  /** An aggregate relationship */
+  finance_transactions_aggregate: Finance_Transactions_Aggregate;
   id: Scalars['uuid']['output'];
+  /** An array relationship */
+  journals: Array<Journals>;
+  /** An aggregate relationship */
+  journals_aggregate: Journals_Aggregate;
   /** An array relationship */
   notifications: Array<Notifications>;
   /** An aggregate relationship */
@@ -5962,6 +7491,10 @@ export type Users = {
   playlists: Array<Playlist>;
   /** An aggregate relationship */
   playlists_aggregate: Playlist_Aggregate;
+  /** An array relationship */
+  shared_video_recipients: Array<Shared_Video_Recipients>;
+  /** An aggregate relationship */
+  shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   user_video_histories: Array<User_Video_History>;
@@ -6015,6 +7548,42 @@ export type UsersCrawl_Requests_AggregateArgs = {
 };
 
 /** columns and relationships of "users" */
+export type UsersFinance_TransactionsArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersFinance_Transactions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transactions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transactions_Order_By>>;
+  where?: InputMaybe<Finance_Transactions_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersJournalsArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersJournals_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Journals_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Journals_Order_By>>;
+  where?: InputMaybe<Journals_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
 export type UsersNotificationsArgs = {
   distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -6048,6 +7617,24 @@ export type UsersPlaylists_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Order_By>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersShared_Video_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersShared_Video_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
 };
 
 /** columns and relationships of "users" */
@@ -6137,11 +7724,17 @@ export type Users_Bool_Exp = {
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
+  finance_transactions?: InputMaybe<Finance_Transactions_Bool_Exp>;
+  finance_transactions_aggregate?: InputMaybe<Finance_Transactions_Aggregate_Bool_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  journals?: InputMaybe<Journals_Bool_Exp>;
+  journals_aggregate?: InputMaybe<Journals_Aggregate_Bool_Exp>;
   notifications?: InputMaybe<Notifications_Bool_Exp>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Bool_Exp>;
   playlists?: InputMaybe<Playlist_Bool_Exp>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Bool_Exp>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   user_video_histories?: InputMaybe<User_Video_History_Bool_Exp>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Bool_Exp>;
@@ -6171,9 +7764,12 @@ export type Users_Insert_Input = {
   crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  finance_transactions?: InputMaybe<Finance_Transactions_Arr_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  journals?: InputMaybe<Journals_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<Notifications_Arr_Rel_Insert_Input>;
   playlists?: InputMaybe<Playlist_Arr_Rel_Insert_Input>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   user_video_histories?: InputMaybe<User_Video_History_Arr_Rel_Insert_Input>;
   username?: InputMaybe<Scalars['String']['input']>;
@@ -6233,9 +7829,12 @@ export type Users_Order_By = {
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
+  finance_transactions_aggregate?: InputMaybe<Finance_Transactions_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
+  journals_aggregate?: InputMaybe<Journals_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Order_By>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Order_By>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Order_By>;
   username?: InputMaybe<Order_By>;
@@ -6752,6 +8351,8 @@ export type Videos = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id: Scalars['uuid']['output'];
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: Maybe<Scalars['Boolean']['output']>;
   /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
@@ -6759,6 +8360,12 @@ export type Videos = {
   public: Scalars['Boolean']['output'];
   /** short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
+  /** An array relationship */
+  shared_video_recipients: Array<Shared_Video_Recipients>;
+  /** An aggregate relationship */
+  shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
+  /** When this field is true, do not convert, import hls, do nothing, just keep the video status as is */
+  skip_process: Scalars['Boolean']['output'];
   slug: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -6804,6 +8411,24 @@ export type VideosPlaylist_Videos_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Videos_Order_By>>;
   where?: InputMaybe<Playlist_Videos_Bool_Exp>;
+};
+
+/** columns and relationships of "videos" */
+export type VideosShared_Video_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+};
+
+/** columns and relationships of "videos" */
+export type VideosShared_Video_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Video_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
 };
 
 /** columns and relationships of "videos" */
@@ -6978,10 +8603,14 @@ export type Videos_Bool_Exp = {
   description?: InputMaybe<String_Comparison_Exp>;
   duration?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  keepOriginalSource?: InputMaybe<Boolean_Comparison_Exp>;
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
   sId?: InputMaybe<String_Comparison_Exp>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
+  skip_process?: InputMaybe<Boolean_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   source?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
@@ -7024,10 +8653,15 @@ export type Videos_Insert_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
+  /** When this field is true, do not convert, import hls, do nothing, just keep the video status as is */
+  skip_process?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7151,9 +8785,12 @@ export type Videos_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  keepOriginalSource?: InputMaybe<Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
+  shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
+  skip_process?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
@@ -7186,9 +8823,13 @@ export enum Videos_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
   /** column name */
   SId = 'sId',
+  /** column name */
+  SkipProcess = 'skip_process',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -7212,13 +8853,21 @@ export enum Videos_Select_Column {
 /** select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
+  /** column name */
+  SkipProcess = 'skip_process',
 }
 
 /** select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "videos" */
 export enum Videos_Select_Column_Videos_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
+  /** column name */
+  SkipProcess = 'skip_process',
 }
 
 /** input type for updating data in table "videos" */
@@ -7227,9 +8876,13 @@ export type Videos_Set_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  /** When this field is true, do not convert, import hls, do nothing, just keep the video status as is */
+  skip_process?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7294,9 +8947,13 @@ export type Videos_Stream_Cursor_Value_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  /** When this field is true, keep the source field as video_url without any video processing */
+  keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
+  /** When this field is true, do not convert, import hls, do nothing, just keep the video status as is */
+  skip_process?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -7332,9 +8989,13 @@ export enum Videos_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  KeepOriginalSource = 'keepOriginalSource',
+  /** column name */
   Public = 'public',
   /** column name */
   SId = 'sId',
+  /** column name */
+  SkipProcess = 'skip_process',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -7461,6 +9122,23 @@ export type FinalizeVideoMutation = {
   update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
 };
 
+export type PlaylistDetailQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+export type PlaylistDetailQuery = {
+  __typename?: 'query_root';
+  playlist_by_pk?: {
+    __typename?: 'playlist';
+    playlist_videos: Array<{
+      __typename?: 'playlist_videos';
+      video: { __typename?: 'videos'; id: any; status?: string | null };
+    }>;
+  } | null;
+  users: Array<{ __typename?: 'users'; id: any; email: string; username?: string | null }>;
+};
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -7532,3 +9210,20 @@ export const FinalizeVideoDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FinalizeVideoMutation, FinalizeVideoMutationVariables>;
+export const PlaylistDetailDocument = new TypedDocumentString(`
+    query PlaylistDetail($id: uuid!, $emails: [String!]!) {
+  playlist_by_pk(id: $id) {
+    playlist_videos(where: {video: {status: {_eq: "ready"}}}) {
+      video {
+        id
+        status
+      }
+    }
+  }
+  users(where: {email: {_in: $emails}}) {
+    id
+    email
+    username
+  }
+}
+    `) as unknown as TypedDocumentString<PlaylistDetailQuery, PlaylistDetailQueryVariables>;

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 import { updatePost } from './update';
 
-vi.mock('../client', () => ({
+vi.mock('../../client', () => ({
   hasuraClient: {
     request: vi.fn(),
   },

@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
 import { describe, expect, it, vi } from 'vitest';
-import { hasuraClient } from '../client';
+import { hasuraClient } from '../../client';
 import { finishVideoProcess } from './finalize';
 
-vi.mock('../client', () => ({
+vi.mock('../../client', () => ({
   hasuraClient: {
     request: vi.fn(),
   },

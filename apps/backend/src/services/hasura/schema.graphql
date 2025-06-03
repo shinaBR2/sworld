@@ -1003,6 +1003,23 @@ enum cursor_ordering {
   DESC
 }
 
+scalar date
+
+"""
+Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'.
+"""
+input date_comparison_exp {
+  _eq: date
+  _gt: date
+  _gte: date
+  _in: [date!]
+  _is_null: Boolean
+  _lt: date
+  _lte: date
+  _neq: date
+  _nin: [date!]
+}
+
 """
 Feature flag system and we must leverage Hasura subscription to watch this
 """
@@ -1272,6 +1289,801 @@ input feature_flag_updates {
   where: feature_flag_bool_exp!
 }
 
+"""Transactions for personal finance management"""
+type finance_transactions {
+  amount: numeric!
+  """Should be either must, nice or waste"""
+  category: String!
+  createdAt: timestamptz!
+  id: uuid!
+  month: Int!
+  name: String!
+  note: String
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+  year: Int!
+}
+
+"""
+aggregated selection of "finance_transactions"
+"""
+type finance_transactions_aggregate {
+  aggregate: finance_transactions_aggregate_fields
+  nodes: [finance_transactions!]!
+}
+
+input finance_transactions_aggregate_bool_exp {
+  count: finance_transactions_aggregate_bool_exp_count
+}
+
+input finance_transactions_aggregate_bool_exp_count {
+  arguments: [finance_transactions_select_column!]
+  distinct: Boolean
+  filter: finance_transactions_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "finance_transactions"
+"""
+type finance_transactions_aggregate_fields {
+  avg: finance_transactions_avg_fields
+  count(columns: [finance_transactions_select_column!], distinct: Boolean): Int!
+  max: finance_transactions_max_fields
+  min: finance_transactions_min_fields
+  stddev: finance_transactions_stddev_fields
+  stddev_pop: finance_transactions_stddev_pop_fields
+  stddev_samp: finance_transactions_stddev_samp_fields
+  sum: finance_transactions_sum_fields
+  var_pop: finance_transactions_var_pop_fields
+  var_samp: finance_transactions_var_samp_fields
+  variance: finance_transactions_variance_fields
+}
+
+"""
+order by aggregate values of table "finance_transactions"
+"""
+input finance_transactions_aggregate_order_by {
+  avg: finance_transactions_avg_order_by
+  count: order_by
+  max: finance_transactions_max_order_by
+  min: finance_transactions_min_order_by
+  stddev: finance_transactions_stddev_order_by
+  stddev_pop: finance_transactions_stddev_pop_order_by
+  stddev_samp: finance_transactions_stddev_samp_order_by
+  sum: finance_transactions_sum_order_by
+  var_pop: finance_transactions_var_pop_order_by
+  var_samp: finance_transactions_var_samp_order_by
+  variance: finance_transactions_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "finance_transactions"
+"""
+input finance_transactions_arr_rel_insert_input {
+  data: [finance_transactions_insert_input!]!
+  """upsert condition"""
+  on_conflict: finance_transactions_on_conflict
+}
+
+"""aggregate avg on columns"""
+type finance_transactions_avg_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by avg() on columns of table "finance_transactions"
+"""
+input finance_transactions_avg_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "finance_transactions". All fields are combined with a logical 'AND'.
+"""
+input finance_transactions_bool_exp {
+  _and: [finance_transactions_bool_exp!]
+  _not: finance_transactions_bool_exp
+  _or: [finance_transactions_bool_exp!]
+  amount: numeric_comparison_exp
+  category: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  month: Int_comparison_exp
+  name: String_comparison_exp
+  note: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+  year: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "finance_transactions"
+"""
+enum finance_transactions_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  finance_transactions_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "finance_transactions"
+"""
+input finance_transactions_inc_input {
+  amount: numeric
+  month: Int
+  year: Int
+}
+
+"""
+input type for inserting data into table "finance_transactions"
+"""
+input finance_transactions_insert_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate max on columns"""
+type finance_transactions_max_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""
+order by max() on columns of table "finance_transactions"
+"""
+input finance_transactions_max_order_by {
+  amount: order_by
+  """Should be either must, nice or waste"""
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user_id: order_by
+  year: order_by
+}
+
+"""aggregate min on columns"""
+type finance_transactions_min_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""
+order by min() on columns of table "finance_transactions"
+"""
+input finance_transactions_min_order_by {
+  amount: order_by
+  """Should be either must, nice or waste"""
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user_id: order_by
+  year: order_by
+}
+
+"""
+response of any mutation on the table "finance_transactions"
+"""
+type finance_transactions_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [finance_transactions!]!
+}
+
+"""
+on_conflict condition type for table "finance_transactions"
+"""
+input finance_transactions_on_conflict {
+  constraint: finance_transactions_constraint!
+  update_columns: [finance_transactions_update_column!]! = []
+  where: finance_transactions_bool_exp
+}
+
+"""Ordering options when selecting data from "finance_transactions"."""
+input finance_transactions_order_by {
+  amount: order_by
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  month: order_by
+  name: order_by
+  note: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+  year: order_by
+}
+
+"""primary key columns input for table: finance_transactions"""
+input finance_transactions_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "finance_transactions"
+"""
+enum finance_transactions_select_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  month
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  year
+}
+
+"""
+input type for updating data in table "finance_transactions"
+"""
+input finance_transactions_set_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate stddev on columns"""
+type finance_transactions_stddev_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by stddev() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type finance_transactions_stddev_pop_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by stddev_pop() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_pop_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type finance_transactions_stddev_samp_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by stddev_samp() on columns of table "finance_transactions"
+"""
+input finance_transactions_stddev_samp_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""
+Streaming cursor of the table "finance_transactions"
+"""
+input finance_transactions_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: finance_transactions_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input finance_transactions_stream_cursor_value_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  month: Int
+  name: String
+  note: String
+  updatedAt: timestamptz
+  user_id: uuid
+  year: Int
+}
+
+"""aggregate sum on columns"""
+type finance_transactions_sum_fields {
+  amount: numeric
+  month: Int
+  year: Int
+}
+
+"""
+order by sum() on columns of table "finance_transactions"
+"""
+input finance_transactions_sum_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""
+update columns of table "finance_transactions"
+"""
+enum finance_transactions_update_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  month
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  year
+}
+
+input finance_transactions_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: finance_transactions_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: finance_transactions_set_input
+  """filter the rows which have to be updated"""
+  where: finance_transactions_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type finance_transactions_var_pop_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by var_pop() on columns of table "finance_transactions"
+"""
+input finance_transactions_var_pop_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""aggregate var_samp on columns"""
+type finance_transactions_var_samp_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by var_samp() on columns of table "finance_transactions"
+"""
+input finance_transactions_var_samp_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""aggregate variance on columns"""
+type finance_transactions_variance_fields {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+"""
+order by variance() on columns of table "finance_transactions"
+"""
+input finance_transactions_variance_order_by {
+  amount: order_by
+  month: order_by
+  year: order_by
+}
+
+"""Daily journal"""
+type journals {
+  content: String!
+  createdAt: timestamptz!
+  date: date!
+  id: uuid!
+  mood: String!
+  tags(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "journals"
+"""
+type journals_aggregate {
+  aggregate: journals_aggregate_fields
+  nodes: [journals!]!
+}
+
+input journals_aggregate_bool_exp {
+  count: journals_aggregate_bool_exp_count
+}
+
+input journals_aggregate_bool_exp_count {
+  arguments: [journals_select_column!]
+  distinct: Boolean
+  filter: journals_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "journals"
+"""
+type journals_aggregate_fields {
+  count(columns: [journals_select_column!], distinct: Boolean): Int!
+  max: journals_max_fields
+  min: journals_min_fields
+}
+
+"""
+order by aggregate values of table "journals"
+"""
+input journals_aggregate_order_by {
+  count: order_by
+  max: journals_max_order_by
+  min: journals_min_order_by
+}
+
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input journals_append_input {
+  tags: jsonb
+}
+
+"""
+input type for inserting array relation for remote table "journals"
+"""
+input journals_arr_rel_insert_input {
+  data: [journals_insert_input!]!
+  """upsert condition"""
+  on_conflict: journals_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "journals". All fields are combined with a logical 'AND'.
+"""
+input journals_bool_exp {
+  _and: [journals_bool_exp!]
+  _not: journals_bool_exp
+  _or: [journals_bool_exp!]
+  content: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  date: date_comparison_exp
+  id: uuid_comparison_exp
+  mood: String_comparison_exp
+  tags: jsonb_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "journals"
+"""
+enum journals_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  journals_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input journals_delete_at_path_input {
+  tags: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input journals_delete_elem_input {
+  tags: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input journals_delete_key_input {
+  tags: String
+}
+
+"""
+input type for inserting data into table "journals"
+"""
+input journals_insert_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type journals_max_fields {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "journals"
+"""
+input journals_max_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type journals_min_fields {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "journals"
+"""
+input journals_min_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  updatedAt: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "journals"
+"""
+type journals_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [journals!]!
+}
+
+"""
+on_conflict condition type for table "journals"
+"""
+input journals_on_conflict {
+  constraint: journals_constraint!
+  update_columns: [journals_update_column!]! = []
+  where: journals_bool_exp
+}
+
+"""Ordering options when selecting data from "journals"."""
+input journals_order_by {
+  content: order_by
+  createdAt: order_by
+  date: order_by
+  id: order_by
+  mood: order_by
+  tags: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: journals"""
+input journals_pk_columns_input {
+  id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input journals_prepend_input {
+  tags: jsonb
+}
+
+"""
+select columns of table "journals"
+"""
+enum journals_select_column {
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  date
+  """column name"""
+  id
+  """column name"""
+  mood
+  """column name"""
+  tags
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "journals"
+"""
+input journals_set_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "journals"
+"""
+input journals_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: journals_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input journals_stream_cursor_value_input {
+  content: String
+  createdAt: timestamptz
+  date: date
+  id: uuid
+  mood: String
+  tags: jsonb
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+update columns of table "journals"
+"""
+enum journals_update_column {
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  date
+  """column name"""
+  id
+  """column name"""
+  mood
+  """column name"""
+  tags
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input journals_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: journals_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: journals_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: journals_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: journals_delete_key_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: journals_prepend_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: journals_set_input
+  """filter the rows which have to be updated"""
+  where: journals_bool_exp!
+}
+
 scalar jsonb
 
 input jsonb_cast_exp {
@@ -1351,6 +2163,28 @@ type mutation_root {
   """
   delete_feature_flag_by_pk(id: uuid!): feature_flag
   """
+  delete data from the table: "finance_transactions"
+  """
+  delete_finance_transactions(
+    """filter the rows which have to be deleted"""
+    where: finance_transactions_bool_exp!
+  ): finance_transactions_mutation_response
+  """
+  delete single row from the table: "finance_transactions"
+  """
+  delete_finance_transactions_by_pk(id: uuid!): finance_transactions
+  """
+  delete data from the table: "journals"
+  """
+  delete_journals(
+    """filter the rows which have to be deleted"""
+    where: journals_bool_exp!
+  ): journals_mutation_response
+  """
+  delete single row from the table: "journals"
+  """
+  delete_journals_by_pk(id: uuid!): journals
+  """
   delete data from the table: "notifications"
   """
   delete_notifications(
@@ -1394,6 +2228,17 @@ type mutation_root {
   delete single row from the table: "posts"
   """
   delete_posts_by_pk(id: uuid!): posts
+  """
+  delete data from the table: "shared_video_recipients"
+  """
+  delete_shared_video_recipients(
+    """filter the rows which have to be deleted"""
+    where: shared_video_recipients_bool_exp!
+  ): shared_video_recipients_mutation_response
+  """
+  delete single row from the table: "shared_video_recipients"
+  """
+  delete_shared_video_recipients_by_pk(id: uuid!): shared_video_recipients
   """
   delete data from the table: "subtitles"
   """
@@ -1566,6 +2411,42 @@ type mutation_root {
     on_conflict: feature_flag_on_conflict
   ): feature_flag
   """
+  insert data into the table: "finance_transactions"
+  """
+  insert_finance_transactions(
+    """the rows to be inserted"""
+    objects: [finance_transactions_insert_input!]!
+    """upsert condition"""
+    on_conflict: finance_transactions_on_conflict
+  ): finance_transactions_mutation_response
+  """
+  insert a single row into the table: "finance_transactions"
+  """
+  insert_finance_transactions_one(
+    """the row to be inserted"""
+    object: finance_transactions_insert_input!
+    """upsert condition"""
+    on_conflict: finance_transactions_on_conflict
+  ): finance_transactions
+  """
+  insert data into the table: "journals"
+  """
+  insert_journals(
+    """the rows to be inserted"""
+    objects: [journals_insert_input!]!
+    """upsert condition"""
+    on_conflict: journals_on_conflict
+  ): journals_mutation_response
+  """
+  insert a single row into the table: "journals"
+  """
+  insert_journals_one(
+    """the row to be inserted"""
+    object: journals_insert_input!
+    """upsert condition"""
+    on_conflict: journals_on_conflict
+  ): journals
+  """
   insert data into the table: "notifications"
   """
   insert_notifications(
@@ -1637,6 +2518,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: posts_on_conflict
   ): posts
+  """
+  insert data into the table: "shared_video_recipients"
+  """
+  insert_shared_video_recipients(
+    """the rows to be inserted"""
+    objects: [shared_video_recipients_insert_input!]!
+    """upsert condition"""
+    on_conflict: shared_video_recipients_on_conflict
+  ): shared_video_recipients_mutation_response
+  """
+  insert a single row into the table: "shared_video_recipients"
+  """
+  insert_shared_video_recipients_one(
+    """the row to be inserted"""
+    object: shared_video_recipients_insert_input!
+    """upsert condition"""
+    on_conflict: shared_video_recipients_on_conflict
+  ): shared_video_recipients
   """
   insert data into the table: "subtitles"
   """
@@ -1928,6 +2827,90 @@ type mutation_root {
     updates: [feature_flag_updates!]!
   ): [feature_flag_mutation_response]
   """
+  update data of the table: "finance_transactions"
+  """
+  update_finance_transactions(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transactions_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transactions_set_input
+    """filter the rows which have to be updated"""
+    where: finance_transactions_bool_exp!
+  ): finance_transactions_mutation_response
+  """
+  update single row of the table: "finance_transactions"
+  """
+  update_finance_transactions_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transactions_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transactions_set_input
+    pk_columns: finance_transactions_pk_columns_input!
+  ): finance_transactions
+  """
+  update multiples rows of table: "finance_transactions"
+  """
+  update_finance_transactions_many(
+    """updates to execute, in order"""
+    updates: [finance_transactions_updates!]!
+  ): [finance_transactions_mutation_response]
+  """
+  update data of the table: "journals"
+  """
+  update_journals(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: journals_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: journals_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: journals_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: journals_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: journals_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: journals_set_input
+    """filter the rows which have to be updated"""
+    where: journals_bool_exp!
+  ): journals_mutation_response
+  """
+  update single row of the table: "journals"
+  """
+  update_journals_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: journals_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: journals_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: journals_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: journals_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: journals_prepend_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: journals_set_input
+    pk_columns: journals_pk_columns_input!
+  ): journals
+  """
+  update multiples rows of table: "journals"
+  """
+  update_journals_many(
+    """updates to execute, in order"""
+    updates: [journals_updates!]!
+  ): [journals_mutation_response]
+  """
   update data of the table: "notifications"
   """
   update_notifications(
@@ -1987,6 +2970,22 @@ type mutation_root {
   update data of the table: "playlist"
   """
   update_playlist(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: playlist_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: playlist_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: playlist_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: playlist_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: playlist_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: playlist_set_input
     """filter the rows which have to be updated"""
@@ -1996,6 +2995,22 @@ type mutation_root {
   update single row of the table: "playlist"
   """
   update_playlist_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: playlist_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: playlist_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: playlist_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: playlist_delete_key_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: playlist_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: playlist_set_input
     pk_columns: playlist_pk_columns_input!
@@ -2063,6 +3078,30 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [posts_updates!]!
   ): [posts_mutation_response]
+  """
+  update data of the table: "shared_video_recipients"
+  """
+  update_shared_video_recipients(
+    """sets the columns of the filtered rows to the given values"""
+    _set: shared_video_recipients_set_input
+    """filter the rows which have to be updated"""
+    where: shared_video_recipients_bool_exp!
+  ): shared_video_recipients_mutation_response
+  """
+  update single row of the table: "shared_video_recipients"
+  """
+  update_shared_video_recipients_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: shared_video_recipients_set_input
+    pk_columns: shared_video_recipients_pk_columns_input!
+  ): shared_video_recipients
+  """
+  update multiples rows of table: "shared_video_recipients"
+  """
+  update_shared_video_recipients_many(
+    """updates to execute, in order"""
+    updates: [shared_video_recipients_updates!]!
+  ): [shared_video_recipients_mutation_response]
   """
   update data of the table: "subtitles"
   """
@@ -2687,6 +3726,23 @@ input notifications_updates {
   where: notifications_bool_exp!
 }
 
+scalar numeric
+
+"""
+Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'.
+"""
+input numeric_comparison_exp {
+  _eq: numeric
+  _gt: numeric
+  _gte: numeric
+  _in: [numeric!]
+  _is_null: Boolean
+  _lt: numeric
+  _lte: numeric
+  _neq: numeric
+  _nin: [numeric!]
+}
+
 """column ordering options"""
 enum order_by {
   """in ascending order, nulls last"""
@@ -2737,6 +3793,46 @@ type playlist {
   public: Boolean!
   """Short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  """An array relationship"""
+  shared_video_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
+  """An aggregate relationship"""
+  shared_video_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): shared_video_recipients_aggregate!
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -2799,6 +3895,18 @@ input playlist_aggregate_order_by {
   min: playlist_min_order_by
 }
 
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input playlist_append_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+}
+
 """
 input type for inserting array relation for remote table "playlist"
 """
@@ -2822,6 +3930,10 @@ input playlist_bool_exp {
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
   sId: String_comparison_exp
+  sharedRecipients: jsonb_comparison_exp
+  sharedRecipientsInput: jsonb_comparison_exp
+  shared_video_recipients: shared_video_recipients_bool_exp
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -2849,6 +3961,48 @@ enum playlist_constraint {
 }
 
 """
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input playlist_delete_at_path_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: [String!]
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input playlist_delete_elem_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: Int
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input playlist_delete_key_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: String
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: String
+}
+
+"""
 input type for inserting data into table "playlist"
 """
 input playlist_insert_input {
@@ -2859,6 +4013,15 @@ input playlist_insert_input {
   public: Boolean
   """Short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+  shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   slug: String
   thumbnailUrl: String
   title: String
@@ -2963,6 +4126,9 @@ input playlist_order_by {
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
+  sharedRecipients: order_by
+  sharedRecipientsInput: order_by
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -2974,6 +4140,18 @@ input playlist_order_by {
 """primary key columns input for table: playlist"""
 input playlist_pk_columns_input {
   id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input playlist_prepend_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
 }
 
 """
@@ -2990,6 +4168,10 @@ enum playlist_select_column {
   public
   """column name"""
   sId
+  """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
   """column name"""
   slug
   """column name"""
@@ -3028,6 +4210,14 @@ input playlist_set_input {
   public: Boolean
   """Short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   slug: String
   thumbnailUrl: String
   title: String
@@ -3053,6 +4243,14 @@ input playlist_stream_cursor_value_input {
   public: Boolean
   """Short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   slug: String
   thumbnailUrl: String
   title: String
@@ -3075,6 +4273,10 @@ enum playlist_update_column {
   """column name"""
   sId
   """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
+  """column name"""
   slug
   """column name"""
   thumbnailUrl
@@ -3087,6 +4289,22 @@ enum playlist_update_column {
 }
 
 input playlist_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: playlist_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: playlist_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: playlist_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: playlist_delete_key_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: playlist_prepend_input
   """sets the columns of the filtered rows to the given values"""
   _set: playlist_set_input
   """filter the rows which have to be updated"""
@@ -3204,6 +4422,10 @@ enum playlist_videos_constraint {
   unique or primary key constraint on columns "video_id", "playlist_id"
   """
   playlist_videos_pkey
+  """
+  unique or primary key constraint on columns "video_id", "playlist_id"
+  """
+  playlist_videos_playlist_id_video_id_key
 }
 
 """
@@ -3871,6 +5093,64 @@ type query_root {
   """fetch data from the table: "feature_flag" using primary key columns"""
   feature_flag_by_pk(id: uuid!): feature_flag
   """An array relationship"""
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """An aggregate relationship"""
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
+  """
+  fetch data from the table: "finance_transactions" using primary key columns
+  """
+  finance_transactions_by_pk(id: uuid!): finance_transactions
+  """An array relationship"""
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """An aggregate relationship"""
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
+  """fetch data from the table: "journals" using primary key columns"""
+  journals_by_pk(id: uuid!): journals
+  """An array relationship"""
   notifications(
     """distinct select on columns"""
     distinct_on: [notifications_select_column!]
@@ -3990,6 +5270,36 @@ type query_root {
   ): posts_aggregate!
   """fetch data from the table: "posts" using primary key columns"""
   posts_by_pk(id: uuid!): posts
+  """An array relationship"""
+  shared_video_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
+  """An aggregate relationship"""
+  shared_video_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): shared_video_recipients_aggregate!
+  """
+  fetch data from the table: "shared_video_recipients" using primary key columns
+  """
+  shared_video_recipients_by_pk(id: uuid!): shared_video_recipients
   """An array relationship"""
   subtitles(
     """distinct select on columns"""
@@ -4266,6 +5576,315 @@ type query_root {
   videos_by_pk(id: uuid!): videos
 }
 
+"""
+Each video can share for many users, one user can see many shared videos
+"""
+type shared_video_recipients {
+  createdAt: timestamptz!
+  id: uuid!
+  """An object relationship"""
+  playlist: playlist!
+  playlistId: uuid!
+  """An object relationship"""
+  receiver: users!
+  receiverId: uuid!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  video: videos!
+  videoId: uuid!
+  viewed: Boolean!
+}
+
+"""
+aggregated selection of "shared_video_recipients"
+"""
+type shared_video_recipients_aggregate {
+  aggregate: shared_video_recipients_aggregate_fields
+  nodes: [shared_video_recipients!]!
+}
+
+input shared_video_recipients_aggregate_bool_exp {
+  bool_and: shared_video_recipients_aggregate_bool_exp_bool_and
+  bool_or: shared_video_recipients_aggregate_bool_exp_bool_or
+  count: shared_video_recipients_aggregate_bool_exp_count
+}
+
+input shared_video_recipients_aggregate_bool_exp_bool_and {
+  arguments: shared_video_recipients_select_column_shared_video_recipients_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: shared_video_recipients_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input shared_video_recipients_aggregate_bool_exp_bool_or {
+  arguments: shared_video_recipients_select_column_shared_video_recipients_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: shared_video_recipients_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input shared_video_recipients_aggregate_bool_exp_count {
+  arguments: [shared_video_recipients_select_column!]
+  distinct: Boolean
+  filter: shared_video_recipients_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "shared_video_recipients"
+"""
+type shared_video_recipients_aggregate_fields {
+  count(columns: [shared_video_recipients_select_column!], distinct: Boolean): Int!
+  max: shared_video_recipients_max_fields
+  min: shared_video_recipients_min_fields
+}
+
+"""
+order by aggregate values of table "shared_video_recipients"
+"""
+input shared_video_recipients_aggregate_order_by {
+  count: order_by
+  max: shared_video_recipients_max_order_by
+  min: shared_video_recipients_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "shared_video_recipients"
+"""
+input shared_video_recipients_arr_rel_insert_input {
+  data: [shared_video_recipients_insert_input!]!
+  """upsert condition"""
+  on_conflict: shared_video_recipients_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "shared_video_recipients". All fields are combined with a logical 'AND'.
+"""
+input shared_video_recipients_bool_exp {
+  _and: [shared_video_recipients_bool_exp!]
+  _not: shared_video_recipients_bool_exp
+  _or: [shared_video_recipients_bool_exp!]
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  playlist: playlist_bool_exp
+  playlistId: uuid_comparison_exp
+  receiver: users_bool_exp
+  receiverId: uuid_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  video: videos_bool_exp
+  videoId: uuid_comparison_exp
+  viewed: Boolean_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "shared_video_recipients"
+"""
+enum shared_video_recipients_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  shared_video_recipients_pkey
+  """
+  unique or primary key constraint on columns "receiver_id", "video_id", "playlist_id"
+  """
+  shared_video_recipients_playlist_id_video_id_receiver_id_key
+}
+
+"""
+input type for inserting data into table "shared_video_recipients"
+"""
+input shared_video_recipients_insert_input {
+  createdAt: timestamptz
+  id: uuid
+  playlist: playlist_obj_rel_insert_input
+  playlistId: uuid
+  receiver: users_obj_rel_insert_input
+  receiverId: uuid
+  updatedAt: timestamptz
+  video: videos_obj_rel_insert_input
+  videoId: uuid
+  viewed: Boolean
+}
+
+"""aggregate max on columns"""
+type shared_video_recipients_max_fields {
+  createdAt: timestamptz
+  id: uuid
+  playlistId: uuid
+  receiverId: uuid
+  updatedAt: timestamptz
+  videoId: uuid
+}
+
+"""
+order by max() on columns of table "shared_video_recipients"
+"""
+input shared_video_recipients_max_order_by {
+  createdAt: order_by
+  id: order_by
+  playlistId: order_by
+  receiverId: order_by
+  updatedAt: order_by
+  videoId: order_by
+}
+
+"""aggregate min on columns"""
+type shared_video_recipients_min_fields {
+  createdAt: timestamptz
+  id: uuid
+  playlistId: uuid
+  receiverId: uuid
+  updatedAt: timestamptz
+  videoId: uuid
+}
+
+"""
+order by min() on columns of table "shared_video_recipients"
+"""
+input shared_video_recipients_min_order_by {
+  createdAt: order_by
+  id: order_by
+  playlistId: order_by
+  receiverId: order_by
+  updatedAt: order_by
+  videoId: order_by
+}
+
+"""
+response of any mutation on the table "shared_video_recipients"
+"""
+type shared_video_recipients_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [shared_video_recipients!]!
+}
+
+"""
+on_conflict condition type for table "shared_video_recipients"
+"""
+input shared_video_recipients_on_conflict {
+  constraint: shared_video_recipients_constraint!
+  update_columns: [shared_video_recipients_update_column!]! = []
+  where: shared_video_recipients_bool_exp
+}
+
+"""Ordering options when selecting data from "shared_video_recipients"."""
+input shared_video_recipients_order_by {
+  createdAt: order_by
+  id: order_by
+  playlist: playlist_order_by
+  playlistId: order_by
+  receiver: users_order_by
+  receiverId: order_by
+  updatedAt: order_by
+  video: videos_order_by
+  videoId: order_by
+  viewed: order_by
+}
+
+"""primary key columns input for table: shared_video_recipients"""
+input shared_video_recipients_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "shared_video_recipients"
+"""
+enum shared_video_recipients_select_column {
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  playlistId
+  """column name"""
+  receiverId
+  """column name"""
+  updatedAt
+  """column name"""
+  videoId
+  """column name"""
+  viewed
+}
+
+"""
+select "shared_video_recipients_aggregate_bool_exp_bool_and_arguments_columns" columns of table "shared_video_recipients"
+"""
+enum shared_video_recipients_select_column_shared_video_recipients_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  viewed
+}
+
+"""
+select "shared_video_recipients_aggregate_bool_exp_bool_or_arguments_columns" columns of table "shared_video_recipients"
+"""
+enum shared_video_recipients_select_column_shared_video_recipients_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  viewed
+}
+
+"""
+input type for updating data in table "shared_video_recipients"
+"""
+input shared_video_recipients_set_input {
+  createdAt: timestamptz
+  id: uuid
+  playlistId: uuid
+  receiverId: uuid
+  updatedAt: timestamptz
+  videoId: uuid
+  viewed: Boolean
+}
+
+"""
+Streaming cursor of the table "shared_video_recipients"
+"""
+input shared_video_recipients_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: shared_video_recipients_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input shared_video_recipients_stream_cursor_value_input {
+  createdAt: timestamptz
+  id: uuid
+  playlistId: uuid
+  receiverId: uuid
+  updatedAt: timestamptz
+  videoId: uuid
+  viewed: Boolean
+}
+
+"""
+update columns of table "shared_video_recipients"
+"""
+enum shared_video_recipients_update_column {
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  playlistId
+  """column name"""
+  receiverId
+  """column name"""
+  updatedAt
+  """column name"""
+  videoId
+  """column name"""
+  viewed
+}
+
+input shared_video_recipients_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: shared_video_recipients_set_input
+  """filter the rows which have to be updated"""
+  where: shared_video_recipients_bool_exp!
+}
+
 type subscription_root {
   """An array relationship"""
   audio_tags(
@@ -4427,6 +6046,86 @@ type subscription_root {
     """filter the rows returned"""
     where: feature_flag_bool_exp
   ): [feature_flag!]!
+  """An array relationship"""
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """An aggregate relationship"""
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
+  """
+  fetch data from the table: "finance_transactions" using primary key columns
+  """
+  finance_transactions_by_pk(id: uuid!): finance_transactions
+  """
+  fetch data from the table in a streaming manner: "finance_transactions"
+  """
+  finance_transactions_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [finance_transactions_stream_cursor_input]!
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """An array relationship"""
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """An aggregate relationship"""
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
+  """fetch data from the table: "journals" using primary key columns"""
+  journals_by_pk(id: uuid!): journals
+  """
+  fetch data from the table in a streaming manner: "journals"
+  """
+  journals_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [journals_stream_cursor_input]!
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -4591,6 +6290,47 @@ type subscription_root {
     """filter the rows returned"""
     where: posts_bool_exp
   ): [posts!]!
+  """An array relationship"""
+  shared_video_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
+  """An aggregate relationship"""
+  shared_video_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): shared_video_recipients_aggregate!
+  """
+  fetch data from the table: "shared_video_recipients" using primary key columns
+  """
+  shared_video_recipients_by_pk(id: uuid!): shared_video_recipients
+  """
+  fetch data from the table in a streaming manner: "shared_video_recipients"
+  """
+  shared_video_recipients_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [shared_video_recipients_stream_cursor_input]!
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
   """An array relationship"""
   subtitles(
     """distinct select on columns"""
@@ -6580,7 +8320,59 @@ type users {
   ): crawl_requests_aggregate!
   created_at: timestamptz
   email: String!
+  """An array relationship"""
+  finance_transactions(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): [finance_transactions!]!
+  """An aggregate relationship"""
+  finance_transactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transactions_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transactions_order_by!]
+    """filter the rows returned"""
+    where: finance_transactions_bool_exp
+  ): finance_transactions_aggregate!
   id: uuid!
+  """An array relationship"""
+  journals(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): [journals!]!
+  """An aggregate relationship"""
+  journals_aggregate(
+    """distinct select on columns"""
+    distinct_on: [journals_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [journals_order_by!]
+    """filter the rows returned"""
+    where: journals_bool_exp
+  ): journals_aggregate!
   """An array relationship"""
   notifications(
     """distinct select on columns"""
@@ -6633,6 +8425,32 @@ type users {
     """filter the rows returned"""
     where: playlist_bool_exp
   ): playlist_aggregate!
+  """An array relationship"""
+  shared_video_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
+  """An aggregate relationship"""
+  shared_video_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): shared_video_recipients_aggregate!
   updated_at: timestamptz
   """An array relationship"""
   user_video_histories(
@@ -6746,11 +8564,17 @@ input users_bool_exp {
   crawl_requests_aggregate: crawl_requests_aggregate_bool_exp
   created_at: timestamptz_comparison_exp
   email: String_comparison_exp
+  finance_transactions: finance_transactions_bool_exp
+  finance_transactions_aggregate: finance_transactions_aggregate_bool_exp
   id: uuid_comparison_exp
+  journals: journals_bool_exp
+  journals_aggregate: journals_aggregate_bool_exp
   notifications: notifications_bool_exp
   notifications_aggregate: notifications_aggregate_bool_exp
   playlists: playlist_bool_exp
   playlists_aggregate: playlist_aggregate_bool_exp
+  shared_video_recipients: shared_video_recipients_bool_exp
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   updated_at: timestamptz_comparison_exp
   user_video_histories: user_video_history_bool_exp
   user_video_histories_aggregate: user_video_history_aggregate_bool_exp
@@ -6792,9 +8616,12 @@ input users_insert_input {
   crawl_requests: crawl_requests_arr_rel_insert_input
   created_at: timestamptz
   email: String
+  finance_transactions: finance_transactions_arr_rel_insert_input
   id: uuid
+  journals: journals_arr_rel_insert_input
   notifications: notifications_arr_rel_insert_input
   playlists: playlist_arr_rel_insert_input
+  shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   updated_at: timestamptz
   user_video_histories: user_video_history_arr_rel_insert_input
   username: String
@@ -6857,9 +8684,12 @@ input users_order_by {
   crawl_requests_aggregate: crawl_requests_aggregate_order_by
   created_at: order_by
   email: order_by
+  finance_transactions_aggregate: finance_transactions_aggregate_order_by
   id: order_by
+  journals_aggregate: journals_aggregate_order_by
   notifications_aggregate: notifications_aggregate_order_by
   playlists_aggregate: playlist_aggregate_order_by
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   updated_at: order_by
   user_video_histories_aggregate: user_video_history_aggregate_order_by
   username: order_by
@@ -7433,6 +9263,10 @@ type videos {
   description: String
   duration: Int
   id: uuid!
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   """An array relationship"""
   playlist_videos(
     """distinct select on columns"""
@@ -7462,6 +9296,36 @@ type videos {
   public: Boolean!
   """short id like Youtube video id"""
   sId: String
+  """An array relationship"""
+  shared_video_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): [shared_video_recipients!]!
+  """An aggregate relationship"""
+  shared_video_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_video_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_video_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_video_recipients_bool_exp
+  ): shared_video_recipients_aggregate!
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean!
   slug: String!
   source: String
   status: String
@@ -7682,10 +9546,14 @@ input videos_bool_exp {
   description: String_comparison_exp
   duration: Int_comparison_exp
   id: uuid_comparison_exp
+  keepOriginalSource: Boolean_comparison_exp
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
   sId: String_comparison_exp
+  shared_video_recipients: shared_video_recipients_bool_exp
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
+  skip_process: Boolean_comparison_exp
   slug: String_comparison_exp
   source: String_comparison_exp
   status: String_comparison_exp
@@ -7740,10 +9608,19 @@ input videos_insert_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  shared_video_recipients: shared_video_recipients_arr_rel_insert_input
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -7874,9 +9751,12 @@ input videos_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  keepOriginalSource: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
+  shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
+  skip_process: order_by
   slug: order_by
   source: order_by
   status: order_by
@@ -7911,9 +9791,13 @@ enum videos_select_column {
   """column name"""
   id
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
   """column name"""
   sId
+  """column name"""
+  skip_process
   """column name"""
   slug
   """column name"""
@@ -7939,7 +9823,11 @@ select "videos_aggregate_bool_exp_bool_and_arguments_columns" columns of table "
 """
 enum videos_select_column_videos_aggregate_bool_exp_bool_and_arguments_columns {
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
+  """column name"""
+  skip_process
 }
 
 """
@@ -7947,7 +9835,11 @@ select "videos_aggregate_bool_exp_bool_or_arguments_columns" columns of table "v
 """
 enum videos_select_column_videos_aggregate_bool_exp_bool_or_arguments_columns {
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
+  """column name"""
+  skip_process
 }
 
 """
@@ -7958,9 +9850,17 @@ input videos_set_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -8030,9 +9930,17 @@ input videos_stream_cursor_value_input {
   description: String
   duration: Int
   id: uuid
+  """
+  When this field is true, keep the source field as video_url without any video processing
+  """
+  keepOriginalSource: Boolean
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  When this field is true, do not convert, import hls, do nothing, just keep the video status as is
+  """
+  skip_process: Boolean
   slug: String
   source: String
   status: String
@@ -8071,9 +9979,13 @@ enum videos_update_column {
   """column name"""
   id
   """column name"""
+  keepOriginalSource
+  """column name"""
   public
   """column name"""
   sId
+  """column name"""
+  skip_process
   """column name"""
   slug
   """column name"""
