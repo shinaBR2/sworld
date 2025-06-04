@@ -1,6 +1,6 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { lazy, useState } from 'react';
-import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
+// import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
 import React from 'react';
@@ -23,27 +23,29 @@ function VideoDetails() {
     id: videoId,
   });
 
-  const { mutate: shareVideos } = useShareVideos({
-    getAccessToken: authContext.getAccessToken,
-    onSuccess: () => {
-      setNotification({ message: 'Video shared successfully', severity: 'success' });
-    },
-    onError: error => {
-      console.error('Failed to share video:', error);
-      setNotification({ message: 'Failed to share video', severity: 'error' });
-    },
-  });
+  // const { mutate: shareVideos } = useShareVideos({
+  //   getAccessToken: authContext.getAccessToken,
+  //   onSuccess: () => {
+  //     setNotification({ message: 'Video shared successfully', severity: 'success' });
+  //   },
+  //   onError: error => {
+  //     console.error('Failed to share video:', error);
+  //     setNotification({ message: 'Failed to share video', severity: 'error' });
+  //   },
+  // });
 
-  const handleShare = (emails: string[]) => {
-    try {
-      const { recipients } = formalize(null, emails);
-      const variables = buildVariables(null, recipients);
+  const handleShare = (_emails: string[]) => {
+    // TODO: implement share video
+    return;
+    // try {
+    //   const { recipients } = formalize(null, emails);
+    //   const variables = buildVariables(null, recipients);
 
-      shareVideos(variables);
-    } catch (error) {
-      console.error('Failed to validate share data:', error);
-      setNotification({ message: 'Invalid share data', severity: 'error' });
-    }
+    //   shareVideos(variables);
+    // } catch (error) {
+    //   console.error('Failed to validate share data:', error);
+    //   setNotification({ message: 'Invalid share data', severity: 'error' });
+    // }
   };
 
   const handleVideoEnded = (nextVideo: { id: string; slug: string }) => {
