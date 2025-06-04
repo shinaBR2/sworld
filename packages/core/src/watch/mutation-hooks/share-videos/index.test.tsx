@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type FC, type PropsWithChildren } from 'react';
-import { useShareVideos } from './';
+import { useSharePlaylist } from './';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 import { SharePlaylistMutation } from '../../../graphql/graphql';
 
@@ -33,22 +33,13 @@ const createWrapper = () => {
 describe('useShareVideos', () => {
   const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
   const mockVariables = {
-    objects: [
-      {
-        video_id: 'video-1',
-        playlist_id: 'playlist-1',
-        recipients: ['user1@example.com', 'user2@example.com'],
-      },
-    ],
+    id: 'playlist-1',
+    emails: ['user1@example.com', 'user2@example.com'],
   };
 
   const mockSuccessResponse = {
-    insert_shared_videos: {
-      returning: [
-        {
-          id: '1',
-        },
-      ],
+    update_playlist_by_pk: {
+      id: 'playlist-1',
     },
   };
 
@@ -75,7 +66,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -112,7 +103,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -140,7 +131,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -161,8 +152,7 @@ describe('useShareVideos', () => {
       mutateAsync: vi.fn().mockImplementation(async variables => {
         const result = mockSuccessResponse;
         await Promise.resolve();
-        const firstShare = result.insert_shared_videos.returning[0];
-        expect(firstShare.id).toBeDefined();
+        expect(result.update_playlist_by_pk.id).toBeDefined();
         capturedData = result;
         onSuccess(result);
         return result;
@@ -175,7 +165,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
           onSuccess: (data: SharePlaylistMutation) => {
             onSuccess(data);
@@ -202,7 +192,7 @@ describe('useShareVideos', () => {
 
     renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -212,7 +202,7 @@ describe('useShareVideos', () => {
 
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        document: expect.stringContaining('mutation SharePlaylist($objects: [shared_videos_insert_input!]!)'),
+        document: expect.stringContaining('mutation sharePlaylist($id: uuid!, $emails: jsonb)'),
       })
     );
   });
