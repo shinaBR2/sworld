@@ -1,32 +1,30 @@
 import { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
-import { SharePlaylistMutation, SharePlaylistMutationVariables } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 import { buildVariables, formalize } from './utils';
+import { SharePlaylistMutation, SharePlaylistMutationVariables } from '../../../graphql/graphql';
 
-const shareVideosMutation = graphql(/* GraphQL */ `
-  mutation SharePlaylist($objects: [shared_videos_insert_input!]!) {
-    insert_shared_videos(objects: $objects) {
-      returning {
-        id
-      }
+const sharePlaylistMutation = graphql(/* GraphQL */ `
+  mutation sharePlaylist($id: uuid!, $emails: jsonb) {
+    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {
+      id
     }
   }
 `);
 
-type ShareVideosMutationOptions = UseMutationOptions<
+type SharePlaylistMutationOptions = UseMutationOptions<
   SharePlaylistMutation,
   unknown,
   SharePlaylistMutationVariables,
   unknown
 >;
 
-interface UseShareVideosProps extends Pick<ShareVideosMutationOptions, 'onSuccess' | 'onError'> {
+interface UseSharePlaylistProps extends Pick<SharePlaylistMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
 }
 
 // Example usage
-// const { mutate: shareVideos } = useShareVideos({
+// const { mutate: shareVideos } = useSharePlaylist({
 //   getAccessToken: async () => 'your-token-here',
 //   onSuccess: (data, variables) => {
 //     console.log('Videos shared:', data.insert_shared_videos.returning)
@@ -34,20 +32,20 @@ interface UseShareVideosProps extends Pick<ShareVideosMutationOptions, 'onSucces
 //   }
 // })
 
-const useShareVideos = (props: UseShareVideosProps) => {
+const useSharePlaylist = (props: UseSharePlaylistProps) => {
   const { getAccessToken, onSuccess, onError } = props;
 
   return useMutationRequest({
-    document: shareVideosMutation,
+    document: sharePlaylistMutation,
     getAccessToken,
     options: {
       onSuccess,
       onError: (error: unknown, variables: SharePlaylistMutationVariables, context: unknown) => {
-        console.error('Share videos failed:', error);
+        console.error('Share playlist failed:', error);
         onError?.(error, variables, context);
       },
     },
   });
 };
 
-export { useShareVideos, formalize, buildVariables };
+export { useSharePlaylist, formalize, buildVariables };

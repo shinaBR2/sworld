@@ -2,7 +2,7 @@ import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { lazy, useState } from 'react';
 import { Auth } from 'core';
 import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
-import { useShareVideos, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
+import { useSharePlaylist, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
 import React from 'react';
@@ -23,7 +23,7 @@ function VideoDetails(): JSX.Element {
     id: playlistId,
   });
 
-  const { mutate: shareVideos } = useShareVideos({
+  const { mutate: sharePlaylist } = useSharePlaylist({
     getAccessToken: authContext.getAccessToken,
     onSuccess: () => {
       setNotification({ message: 'Playlist shared successfully', severity: 'success' });
@@ -37,17 +37,12 @@ function VideoDetails(): JSX.Element {
   const handleShare = (emails: string[]) => {
     if (!videoResult.videos?.length) return;
 
-    const videoIds = videoResult.videos.map(video => video.id);
     try {
-      const {
-        playlistId: validPlaylistId,
-        videoIds: validVideoIds,
-        recipients: validRecipients,
-      } = formalize(playlistId, videoIds, emails);
+      const { playlistId: validPlaylistId, recipients: validRecipients } = formalize(playlistId, emails);
 
-      const variables = buildVariables(validPlaylistId, validVideoIds, validRecipients);
+      const variables = buildVariables(validPlaylistId, validRecipients);
 
-      shareVideos(variables);
+      sharePlaylist(variables);
     } catch (error) {
       console.error('Failed to validate share data:', error);
       setNotification({ message: 'Invalid share data', severity: 'error' });
