@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type FC, type PropsWithChildren } from 'react';
 import { useShareVideos } from './';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-import { SharePlaylistMutation } from '../../../graphql/graphql';
+import { ShareVideoMutation } from '../../../graphql/graphql';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -33,22 +33,13 @@ const createWrapper = () => {
 describe('useShareVideos', () => {
   const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
   const mockVariables = {
-    objects: [
-      {
-        video_id: 'video-1',
-        playlist_id: 'playlist-1',
-        recipients: ['user1@example.com', 'user2@example.com'],
-      },
-    ],
+    id: 'playlist-1',
+    emails: ['user1@example.com', 'user2@example.com'],
   };
 
   const mockSuccessResponse = {
-    insert_shared_videos: {
-      returning: [
-        {
-          id: '1',
-        },
-      ],
+    update_playlist_by_pk: {
+      id: 'playlist-1',
     },
   };
 
@@ -155,14 +146,13 @@ describe('useShareVideos', () => {
 
   it('should properly type the response data', async () => {
     const onSuccess = vi.fn();
-    let capturedData: SharePlaylistMutation | null = null;
+    let capturedData: ShareVideoMutation | null = null;
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
       mutateAsync: vi.fn().mockImplementation(async variables => {
         const result = mockSuccessResponse;
         await Promise.resolve();
-        const firstShare = result.insert_shared_videos.returning[0];
-        expect(firstShare.id).toBeDefined();
+        expect(result.update_playlist_by_pk.id).toBeDefined();
         capturedData = result;
         onSuccess(result);
         return result;
@@ -177,7 +167,7 @@ describe('useShareVideos', () => {
       () =>
         useShareVideos({
           getAccessToken: mockGetAccessToken,
-          onSuccess: (data: SharePlaylistMutation) => {
+          onSuccess: (data: ShareVideoMutation) => {
             onSuccess(data);
           },
         }),
@@ -212,7 +202,7 @@ describe('useShareVideos', () => {
 
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        document: expect.stringContaining('mutation SharePlaylist($objects: [shared_videos_insert_input!]!)'),
+        document: expect.stringContaining('mutation shareVideo($id: uuid!, $emails: jsonb)'),
       })
     );
   });

@@ -1,25 +1,18 @@
 import { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
-import { SharePlaylistMutation, SharePlaylistMutationVariables } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 import { buildVariables, formalize } from './utils';
+import { ShareVideoMutation, ShareVideoMutationVariables } from '../../../graphql/graphql';
 
 const shareVideosMutation = graphql(/* GraphQL */ `
-  mutation SharePlaylist($objects: [shared_videos_insert_input!]!) {
-    insert_shared_videos(objects: $objects) {
-      returning {
-        id
-      }
+  mutation shareVideo($id: uuid!, $emails: jsonb) {
+    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {
+      id
     }
   }
 `);
 
-type ShareVideosMutationOptions = UseMutationOptions<
-  SharePlaylistMutation,
-  unknown,
-  SharePlaylistMutationVariables,
-  unknown
->;
+type ShareVideosMutationOptions = UseMutationOptions<ShareVideoMutation, unknown, ShareVideoMutationVariables, unknown>;
 
 interface UseShareVideosProps extends Pick<ShareVideosMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
@@ -42,7 +35,7 @@ const useShareVideos = (props: UseShareVideosProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: (error: unknown, variables: SharePlaylistMutationVariables, context: unknown) => {
+      onError: (error: unknown, variables: ShareVideoMutationVariables, context: unknown) => {
         console.error('Share videos failed:', error);
         onError?.(error, variables, context);
       },
