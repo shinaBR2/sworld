@@ -146,7 +146,7 @@ describe('useShareVideos', () => {
 
   it('should properly type the response data', async () => {
     const onSuccess = vi.fn();
-    let capturedData: ShareVideoMutation | null = null;
+    let capturedData: SharePlaylistMutation | null = null;
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
       mutateAsync: vi.fn().mockImplementation(async variables => {
