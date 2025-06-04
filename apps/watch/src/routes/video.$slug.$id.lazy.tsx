@@ -11,7 +11,10 @@ import { AuthRoute } from 'ui/universal/authRoute';
 const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
 
 function VideoDetails() {
-  const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' | 'warning' | 'info' } | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
   const { id: videoId } = Route.useParams();
   const navigate = Route.useNavigate();
   const authContext = useAuthContext();
@@ -33,8 +36,8 @@ function VideoDetails() {
 
   const handleShare = (emails: string[]) => {
     try {
-      const { recipients } = formalize(null, [videoId], emails);
-      const variables = buildVariables(null, [videoId], recipients);
+      const { recipients } = formalize(null, emails);
+      const variables = buildVariables(null, recipients);
 
       shareVideos(variables);
     } catch (error) {

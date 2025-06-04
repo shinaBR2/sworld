@@ -37,15 +37,10 @@ function VideoDetails(): JSX.Element {
   const handleShare = (emails: string[]) => {
     if (!videoResult.videos?.length) return;
 
-    const videoIds = videoResult.videos.map(video => video.id);
     try {
-      const {
-        playlistId: validPlaylistId,
-        videoIds: validVideoIds,
-        recipients: validRecipients,
-      } = formalize(playlistId, videoIds, emails);
+      const { playlistId: validPlaylistId, recipients: validRecipients } = formalize(playlistId, emails);
 
-      const variables = buildVariables(validPlaylistId, validVideoIds, validRecipients);
+      const variables = buildVariables(validPlaylistId, validRecipients);
 
       shareVideos(variables);
     } catch (error) {
