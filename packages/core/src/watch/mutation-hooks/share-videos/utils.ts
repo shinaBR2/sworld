@@ -1,7 +1,7 @@
 import { isValidId, isValidEmail } from '../../../universal/common/stringHelpers';
 
 const formalize = (playlistId: string | null, recipients: string[]) => {
-  if (playlistId !== null && !isValidId(playlistId)) {
+  if (!playlistId || !isValidId(playlistId)) {
     throw new Error('Invalid playlist ID');
   }
 
@@ -14,14 +14,14 @@ const formalize = (playlistId: string | null, recipients: string[]) => {
   }
 
   return {
-    playlistId: playlistId ? playlistId.trim() : null,
+    playlistId,
     recipients: recipients.map(email => email.trim()),
   };
 };
 
 const buildVariables = (playlistId: string | null, emails: string[]) => {
   return {
-    id: playlistId === null ? undefined : playlistId,
+    id: playlistId,
     emails,
   };
 };

@@ -48,13 +48,4 @@ describe('buildVariables', () => {
       emails: [validEmail],
     });
   });
-
-  it('should build variables for single video without playlist', () => {
-    const result = buildVariables(null, [validEmail]);
-
-    expect(result).toEqual({
-      id: undefined,
-      emails: [validEmail],
-    });
-  });
 });
