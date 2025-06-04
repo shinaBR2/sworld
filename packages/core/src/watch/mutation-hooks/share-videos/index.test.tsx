@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type FC, type PropsWithChildren } from 'react';
-import { useShareVideos } from './';
+import { useSharePlaylist } from './';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-import { ShareVideoMutation } from '../../../graphql/graphql';
+import { SharePlaylistMutation } from '../../../graphql/graphql';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -66,7 +66,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -103,7 +103,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -131,7 +131,7 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -165,9 +165,9 @@ describe('useShareVideos', () => {
 
     const { result } = renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
-          onSuccess: (data: ShareVideoMutation) => {
+          onSuccess: (data: SharePlaylistMutation) => {
             onSuccess(data);
           },
         }),
@@ -192,7 +192,7 @@ describe('useShareVideos', () => {
 
     renderHook(
       () =>
-        useShareVideos({
+        useSharePlaylist({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -202,7 +202,7 @@ describe('useShareVideos', () => {
 
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        document: expect.stringContaining('mutation shareVideo($id: uuid!, $emails: jsonb)'),
+        document: expect.stringContaining('mutation sharePlaylist($id: uuid!, $emails: jsonb)'),
       })
     );
   });

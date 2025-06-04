@@ -9537,13 +9537,13 @@ export type InsertVideosMutationVariables = Exact<{
 
 export type InsertVideosMutation = { __typename?: 'mutation_root', insert_videos?: { __typename?: 'videos_mutation_response', returning: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null }> } | null };
 
-export type ShareVideoMutationVariables = Exact<{
+export type SharePlaylistMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   emails?: InputMaybe<Scalars['jsonb']['input']>;
 }>;
 
 
-export type ShareVideoMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+export type SharePlaylistMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
 
 export type UpdateVideoProgressMutationVariables = Exact<{
   videoId: Scalars['uuid']['input'];
@@ -10068,8 +10068,8 @@ export const InsertVideosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<InsertVideosMutation, InsertVideosMutationVariables>;
-export const ShareVideoDocument = new TypedDocumentString(`
-    mutation shareVideo($id: uuid!, $emails: jsonb) {
+export const SharePlaylistDocument = new TypedDocumentString(`
+    mutation sharePlaylist($id: uuid!, $emails: jsonb) {
   update_playlist_by_pk(
     pk_columns: {id: $id}
     _set: {sharedRecipientsInput: $emails}
@@ -10077,7 +10077,7 @@ export const ShareVideoDocument = new TypedDocumentString(`
     id
   }
 }
-    `) as unknown as TypedDocumentString<ShareVideoMutation, ShareVideoMutationVariables>;
+    `) as unknown as TypedDocumentString<SharePlaylistMutation, SharePlaylistMutationVariables>;
 export const UpdateVideoProgressDocument = new TypedDocumentString(`
     mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {
   insert_user_video_history_one(
