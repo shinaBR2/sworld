@@ -132,7 +132,7 @@ select_permissions:
           - user_id:
               _eq: X-Hasura-User-Id
           - shared_video_recipients:
-              receiver_id:
+              recipient_id:
                 _eq: X-Hasura-User-Id
     comment: ""
 delete_permissions:
