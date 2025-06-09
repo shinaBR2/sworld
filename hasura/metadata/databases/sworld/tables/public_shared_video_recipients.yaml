@@ -9,6 +9,8 @@ configuration:
       custom_name: playlistId
     receiver_id:
       custom_name: receiverId
+    recipient_id:
+      custom_name: recipientId
     updated_at:
       custom_name: updatedAt
     video_id:
@@ -17,6 +19,7 @@ configuration:
     created_at: createdAt
     playlist_id: playlistId
     receiver_id: receiverId
+    recipient_id: recipientId
     updated_at: updatedAt
     video_id: videoId
   custom_root_fields: {}
