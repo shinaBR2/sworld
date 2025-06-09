@@ -5,8 +5,6 @@ configuration:
   column_config:
     created_at:
       custom_name: createdAt
-    playlist_id:
-      custom_name: playlistId
     receiver_id:
       custom_name: receiverId
     recipient_id:
@@ -17,16 +15,12 @@ configuration:
       custom_name: videoId
   custom_column_names:
     created_at: createdAt
-    playlist_id: playlistId
     receiver_id: receiverId
     recipient_id: recipientId
     updated_at: updatedAt
     video_id: videoId
   custom_root_fields: {}
 object_relationships:
-  - name: playlist
-    using:
-      foreign_key_constraint_on: playlist_id
   - name: receiver
     using:
       foreign_key_constraint_on: receiver_id

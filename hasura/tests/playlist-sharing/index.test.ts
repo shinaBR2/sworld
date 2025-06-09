@@ -23,7 +23,7 @@ const deniedAnonymousQueries: QueryTestCase[] = [
           id
           playlistId
           videoId
-          receiverId
+          recipientId
           viewed
         }
       }
@@ -72,7 +72,7 @@ const deniedUserQueries: QueryTestCase[] = [
           id
           playlistId
           videoId
-          receiverId
+          recipientId
           viewed
         }
       }

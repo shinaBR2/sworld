@@ -42,13 +42,6 @@ array_relationships:
         table:
           name: shared_playlist_recipients
           schema: public
-  - name: shared_video_recipients
-    using:
-      foreign_key_constraint_on:
-        column: playlist_id
-        table:
-          name: shared_video_recipients
-          schema: public
 insert_permissions:
   - role: user
     permission:
@@ -99,8 +92,8 @@ select_permissions:
         _or:
           - user_id:
               _eq: X-Hasura-User-Id
-          - shared_video_recipients:
-              receiver_id:
+          - shared_playlist_recipients:
+              recipient_id:
                 _eq: X-Hasura-User-Id
     comment: ""
 update_permissions:

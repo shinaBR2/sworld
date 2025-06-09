@@ -83,8 +83,8 @@ select_permissions:
               user_id:
                 _eq: X-Hasura-User-Id
           - playlist:
-              shared_video_recipients:
-                receiver_id:
+              shared_playlist_recipients:
+                recipient_id:
                   _eq: X-Hasura-User-Id
       allow_aggregations: true
       query_root_fields: []

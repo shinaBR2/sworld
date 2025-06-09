@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- DELETE FROM shared_video_recipients
+-- WHERE playlist_id IS NOT NULL;
