@@ -54,7 +54,7 @@ array_relationships:
   - name: shared_video_recipients
     using:
       foreign_key_constraint_on:
-        column: receiver_id
+        column: recipient_id
         table:
           name: shared_video_recipients
           schema: public

@@ -52,7 +52,7 @@ select_permissions:
                 _eq: X-Hasura-User-Id
           - video:
               shared_video_recipients:
-                receiver_id:
+                recipient_id:
                   _eq: X-Hasura-User-Id
       query_root_fields: []
       subscription_root_fields: []
