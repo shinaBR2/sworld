@@ -5,7 +5,7 @@ import { crawlHandler } from './routes/crawl';
 import { fixVideosDuration } from './routes/fix-videos-duration';
 import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
 import { streamToStorage } from './routes/stream-to-storage';
-import { shareVideoHandler } from './routes/share';
+import { sharePlaylistHandler } from './routes/share';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];
@@ -53,7 +53,7 @@ vi.mock('./routes/crawl', () => ({
 }));
 
 vi.mock('./routes/share', () => ({
-  shareVideoHandler: vi.fn(),
+  sharePlaylistHandler: vi.fn(),
 }));
 
 describe('videosRouter', () => {
@@ -133,17 +133,17 @@ describe('videosRouter', () => {
     expect(crawlRoute?.middlewares[1]).toBe(crawlHandler);
   });
 
-  it('should set up /share route with correct middleware and handler', async () => {
+  it('should set up /share-playlist route with correct middleware and handler', async () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const shareRoute = routeHandlers.find(h => h.path === '/share');
+    const shareRoute = routeHandlers.find(h => h.path === '/share-playlist');
     expect(shareRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
     expect(shareRoute?.middlewares).toHaveLength(2);
 
-    // Verify the shareVideoHandler is set
-    expect(shareRoute?.middlewares[1]).toBe(shareVideoHandler);
+    // Verify the sharePlaylistHandler is set
+    expect(shareRoute?.middlewares[1]).toBe(sharePlaylistHandler);
   });
 });

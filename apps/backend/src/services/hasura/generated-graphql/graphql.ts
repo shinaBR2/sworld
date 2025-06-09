@@ -1986,6 +1986,10 @@ export type Mutation_Root = {
   delete_posts?: Maybe<Posts_Mutation_Response>;
   /** delete single row from the table: "posts" */
   delete_posts_by_pk?: Maybe<Posts>;
+  /** delete data from the table: "shared_playlist_recipients" */
+  delete_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
+  /** delete single row from the table: "shared_playlist_recipients" */
+  delete_shared_playlist_recipients_by_pk?: Maybe<Shared_Playlist_Recipients>;
   /** delete data from the table: "shared_video_recipients" */
   delete_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
   /** delete single row from the table: "shared_video_recipients" */
@@ -2066,6 +2070,10 @@ export type Mutation_Root = {
   insert_posts?: Maybe<Posts_Mutation_Response>;
   /** insert a single row into the table: "posts" */
   insert_posts_one?: Maybe<Posts>;
+  /** insert data into the table: "shared_playlist_recipients" */
+  insert_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
+  /** insert a single row into the table: "shared_playlist_recipients" */
+  insert_shared_playlist_recipients_one?: Maybe<Shared_Playlist_Recipients>;
   /** insert data into the table: "shared_video_recipients" */
   insert_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
   /** insert a single row into the table: "shared_video_recipients" */
@@ -2166,6 +2174,12 @@ export type Mutation_Root = {
   update_posts_by_pk?: Maybe<Posts>;
   /** update multiples rows of table: "posts" */
   update_posts_many?: Maybe<Array<Maybe<Posts_Mutation_Response>>>;
+  /** update data of the table: "shared_playlist_recipients" */
+  update_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
+  /** update single row of the table: "shared_playlist_recipients" */
+  update_shared_playlist_recipients_by_pk?: Maybe<Shared_Playlist_Recipients>;
+  /** update multiples rows of table: "shared_playlist_recipients" */
+  update_shared_playlist_recipients_many?: Maybe<Array<Maybe<Shared_Playlist_Recipients_Mutation_Response>>>;
   /** update data of the table: "shared_video_recipients" */
   update_shared_video_recipients?: Maybe<Shared_Video_Recipients_Mutation_Response>;
   /** update single row of the table: "shared_video_recipients" */
@@ -2327,6 +2341,16 @@ export type Mutation_RootDelete_PostsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Posts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Shared_Playlist_RecipientsArgs = {
+  where: Shared_Playlist_Recipients_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Shared_Playlist_Recipients_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -2549,6 +2573,18 @@ export type Mutation_RootInsert_PostsArgs = {
 export type Mutation_RootInsert_Posts_OneArgs = {
   object: Posts_Insert_Input;
   on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Shared_Playlist_RecipientsArgs = {
+  objects: Array<Shared_Playlist_Recipients_Insert_Input>;
+  on_conflict?: InputMaybe<Shared_Playlist_Recipients_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Shared_Playlist_Recipients_OneArgs = {
+  object: Shared_Playlist_Recipients_Insert_Input;
+  on_conflict?: InputMaybe<Shared_Playlist_Recipients_On_Conflict>;
 };
 
 /** mutation root */
@@ -2885,6 +2921,23 @@ export type Mutation_RootUpdate_Posts_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Posts_ManyArgs = {
   updates: Array<Posts_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Playlist_RecipientsArgs = {
+  _set?: InputMaybe<Shared_Playlist_Recipients_Set_Input>;
+  where: Shared_Playlist_Recipients_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Playlist_Recipients_By_PkArgs = {
+  _set?: InputMaybe<Shared_Playlist_Recipients_Set_Input>;
+  pk_columns: Shared_Playlist_Recipients_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Shared_Playlist_Recipients_ManyArgs = {
+  updates: Array<Shared_Playlist_Recipients_Updates>;
 };
 
 /** mutation root */
@@ -3450,6 +3503,10 @@ export type Playlist = {
   /** List of recipient emails from user input, not validated yet. End user can update this. */
   sharedRecipientsInput?: Maybe<Scalars['jsonb']['output']>;
   /** An array relationship */
+  shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
+  /** An aggregate relationship */
+  shared_playlist_recipients_aggregate: Shared_Playlist_Recipients_Aggregate;
+  /** An array relationship */
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
   shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
@@ -3488,6 +3545,24 @@ export type PlaylistSharedRecipientsArgs = {
 /** Playlist contain set of videos or audios */
 export type PlaylistSharedRecipientsInputArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistShared_Playlist_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistShared_Playlist_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
 };
 
 /** Playlist contain set of videos or audios */
@@ -3592,6 +3667,8 @@ export type Playlist_Bool_Exp = {
   sId?: InputMaybe<String_Comparison_Exp>;
   sharedRecipients?: InputMaybe<Jsonb_Comparison_Exp>;
   sharedRecipientsInput?: InputMaybe<Jsonb_Comparison_Exp>;
+  shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+  shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
@@ -3649,6 +3726,7 @@ export type Playlist_Insert_Input = {
   sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
   sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
+  shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
@@ -3749,6 +3827,7 @@ export type Playlist_Order_By = {
   sId?: InputMaybe<Order_By>;
   sharedRecipients?: InputMaybe<Order_By>;
   sharedRecipientsInput?: InputMaybe<Order_By>;
+  shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
@@ -4589,6 +4668,12 @@ export type Query_Root = {
   /** fetch data from the table: "posts" using primary key columns */
   posts_by_pk?: Maybe<Posts>;
   /** An array relationship */
+  shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
+  /** An aggregate relationship */
+  shared_playlist_recipients_aggregate: Shared_Playlist_Recipients_Aggregate;
+  /** fetch data from the table: "shared_playlist_recipients" using primary key columns */
+  shared_playlist_recipients_by_pk?: Maybe<Shared_Playlist_Recipients>;
+  /** An array relationship */
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
   shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
@@ -4852,6 +4937,26 @@ export type Query_RootPosts_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+export type Query_RootShared_Playlist_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+export type Query_RootShared_Playlist_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+export type Query_RootShared_Playlist_Recipients_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
 export type Query_RootShared_Video_RecipientsArgs = {
   distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -5053,6 +5158,230 @@ export type Query_RootVideos_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
+/** This table tell us what playlist is shared to whom. All videos in the playlist should be shared, not selective */
+export type Shared_Playlist_Recipients = {
+  __typename?: 'shared_playlist_recipients';
+  created_at: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  /** An object relationship */
+  playlist: Playlist;
+  playlistId: Scalars['uuid']['output'];
+  recipientId: Scalars['uuid']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+};
+
+/** aggregated selection of "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Aggregate = {
+  __typename?: 'shared_playlist_recipients_aggregate';
+  aggregate?: Maybe<Shared_Playlist_Recipients_Aggregate_Fields>;
+  nodes: Array<Shared_Playlist_Recipients>;
+};
+
+export type Shared_Playlist_Recipients_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp_Count>;
+};
+
+export type Shared_Playlist_Recipients_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Aggregate_Fields = {
+  __typename?: 'shared_playlist_recipients_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Shared_Playlist_Recipients_Max_Fields>;
+  min?: Maybe<Shared_Playlist_Recipients_Min_Fields>;
+};
+
+/** aggregate fields of "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Shared_Playlist_Recipients_Max_Order_By>;
+  min?: InputMaybe<Shared_Playlist_Recipients_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Arr_Rel_Insert_Input = {
+  data: Array<Shared_Playlist_Recipients_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Shared_Playlist_Recipients_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "shared_playlist_recipients". All fields are combined with a logical 'AND'. */
+export type Shared_Playlist_Recipients_Bool_Exp = {
+  _and?: InputMaybe<Array<Shared_Playlist_Recipients_Bool_Exp>>;
+  _not?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+  _or?: InputMaybe<Array<Shared_Playlist_Recipients_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  playlist?: InputMaybe<Playlist_Bool_Exp>;
+  playlistId?: InputMaybe<Uuid_Comparison_Exp>;
+  recipientId?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "shared_playlist_recipients" */
+export enum Shared_Playlist_Recipients_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  SharedPlaylistRecipientsPkey = 'shared_playlist_recipients_pkey',
+  /** unique or primary key constraint on columns "recipient_id", "playlist_id" */
+  SharedPlaylistRecipientsPlaylistIdRecipientIdKey = 'shared_playlist_recipients_playlist_id_recipient_id_key',
+}
+
+/** input type for inserting data into table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist?: InputMaybe<Playlist_Obj_Rel_Insert_Input>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Shared_Playlist_Recipients_Max_Fields = {
+  __typename?: 'shared_playlist_recipients_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  playlistId?: Maybe<Scalars['uuid']['output']>;
+  recipientId?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by max() on columns of table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  recipientId?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Shared_Playlist_Recipients_Min_Fields = {
+  __typename?: 'shared_playlist_recipients_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  playlistId?: Maybe<Scalars['uuid']['output']>;
+  recipientId?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by min() on columns of table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  recipientId?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Mutation_Response = {
+  __typename?: 'shared_playlist_recipients_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Shared_Playlist_Recipients>;
+};
+
+/** on_conflict condition type for table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_On_Conflict = {
+  constraint: Shared_Playlist_Recipients_Constraint;
+  update_columns?: Array<Shared_Playlist_Recipients_Update_Column>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "shared_playlist_recipients". */
+export type Shared_Playlist_Recipients_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  playlist?: InputMaybe<Playlist_Order_By>;
+  playlistId?: InputMaybe<Order_By>;
+  recipientId?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+};
+
+/** primary key columns input for table: shared_playlist_recipients */
+export type Shared_Playlist_Recipients_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "shared_playlist_recipients" */
+export enum Shared_Playlist_Recipients_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  RecipientId = 'recipientId',
+  /** column name */
+  UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** Streaming cursor of the table "shared_playlist_recipients" */
+export type Shared_Playlist_Recipients_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Shared_Playlist_Recipients_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Shared_Playlist_Recipients_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  playlistId?: InputMaybe<Scalars['uuid']['input']>;
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** update columns of table "shared_playlist_recipients" */
+export enum Shared_Playlist_Recipients_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  RecipientId = 'recipientId',
+  /** column name */
+  UpdatedAt = 'updated_at',
+}
+
+export type Shared_Playlist_Recipients_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Shared_Playlist_Recipients_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Shared_Playlist_Recipients_Bool_Exp;
+};
+
 /** Each video can share for many users, one user can see many shared videos */
 export type Shared_Video_Recipients = {
   __typename?: 'shared_video_recipients';
@@ -5064,6 +5393,8 @@ export type Shared_Video_Recipients = {
   /** An object relationship */
   receiver: Users;
   receiverId: Scalars['uuid']['output'];
+  /** Just renamed from old receiver_id column */
+  recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
   video: Videos;
@@ -5144,6 +5475,7 @@ export type Shared_Video_Recipients_Bool_Exp = {
   playlistId?: InputMaybe<Uuid_Comparison_Exp>;
   receiver?: InputMaybe<Users_Bool_Exp>;
   receiverId?: InputMaybe<Uuid_Comparison_Exp>;
+  recipientId?: InputMaybe<Uuid_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   video?: InputMaybe<Videos_Bool_Exp>;
   videoId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -5166,6 +5498,8 @@ export type Shared_Video_Recipients_Insert_Input = {
   playlistId?: InputMaybe<Scalars['uuid']['input']>;
   receiver?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
   videoId?: InputMaybe<Scalars['uuid']['input']>;
@@ -5179,6 +5513,8 @@ export type Shared_Video_Recipients_Max_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   playlistId?: Maybe<Scalars['uuid']['output']>;
   receiverId?: Maybe<Scalars['uuid']['output']>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   videoId?: Maybe<Scalars['uuid']['output']>;
 };
@@ -5189,6 +5525,8 @@ export type Shared_Video_Recipients_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   playlistId?: InputMaybe<Order_By>;
   receiverId?: InputMaybe<Order_By>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   videoId?: InputMaybe<Order_By>;
 };
@@ -5200,6 +5538,8 @@ export type Shared_Video_Recipients_Min_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   playlistId?: Maybe<Scalars['uuid']['output']>;
   receiverId?: Maybe<Scalars['uuid']['output']>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   videoId?: Maybe<Scalars['uuid']['output']>;
 };
@@ -5210,6 +5550,8 @@ export type Shared_Video_Recipients_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   playlistId?: InputMaybe<Order_By>;
   receiverId?: InputMaybe<Order_By>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   videoId?: InputMaybe<Order_By>;
 };
@@ -5238,6 +5580,7 @@ export type Shared_Video_Recipients_Order_By = {
   playlistId?: InputMaybe<Order_By>;
   receiver?: InputMaybe<Users_Order_By>;
   receiverId?: InputMaybe<Order_By>;
+  recipientId?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   video?: InputMaybe<Videos_Order_By>;
   videoId?: InputMaybe<Order_By>;
@@ -5259,6 +5602,8 @@ export enum Shared_Video_Recipients_Select_Column {
   PlaylistId = 'playlistId',
   /** column name */
   ReceiverId = 'receiverId',
+  /** column name */
+  RecipientId = 'recipientId',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
@@ -5285,6 +5630,8 @@ export type Shared_Video_Recipients_Set_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   playlistId?: InputMaybe<Scalars['uuid']['input']>;
   receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   videoId?: InputMaybe<Scalars['uuid']['input']>;
   viewed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -5304,6 +5651,8 @@ export type Shared_Video_Recipients_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   playlistId?: InputMaybe<Scalars['uuid']['input']>;
   receiverId?: InputMaybe<Scalars['uuid']['input']>;
+  /** Just renamed from old receiver_id column */
+  recipientId?: InputMaybe<Scalars['uuid']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   videoId?: InputMaybe<Scalars['uuid']['input']>;
   viewed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -5319,6 +5668,8 @@ export enum Shared_Video_Recipients_Update_Column {
   PlaylistId = 'playlistId',
   /** column name */
   ReceiverId = 'receiverId',
+  /** column name */
+  RecipientId = 'recipientId',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
@@ -5416,6 +5767,14 @@ export type Subscription_Root = {
   posts_by_pk?: Maybe<Posts>;
   /** fetch data from the table in a streaming manner: "posts" */
   posts_stream: Array<Posts>;
+  /** An array relationship */
+  shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
+  /** An aggregate relationship */
+  shared_playlist_recipients_aggregate: Shared_Playlist_Recipients_Aggregate;
+  /** fetch data from the table: "shared_playlist_recipients" using primary key columns */
+  shared_playlist_recipients_by_pk?: Maybe<Shared_Playlist_Recipients>;
+  /** fetch data from the table in a streaming manner: "shared_playlist_recipients" */
+  shared_playlist_recipients_stream: Array<Shared_Playlist_Recipients>;
   /** An array relationship */
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
@@ -5758,6 +6117,32 @@ export type Subscription_RootPosts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Posts_Stream_Cursor_Input>>;
   where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Playlist_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Playlist_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+export type Subscription_RootShared_Playlist_Recipients_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootShared_Playlist_Recipients_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Shared_Playlist_Recipients_Stream_Cursor_Input>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
 };
 
 export type Subscription_RootShared_Video_RecipientsArgs = {
@@ -7492,6 +7877,10 @@ export type Users = {
   /** An aggregate relationship */
   playlists_aggregate: Playlist_Aggregate;
   /** An array relationship */
+  shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
+  /** An aggregate relationship */
+  shared_playlist_recipients_aggregate: Shared_Playlist_Recipients_Aggregate;
+  /** An array relationship */
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
   shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
@@ -7620,6 +8009,24 @@ export type UsersPlaylists_AggregateArgs = {
 };
 
 /** columns and relationships of "users" */
+export type UsersShared_Playlist_RecipientsArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersShared_Playlist_Recipients_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Shared_Playlist_Recipients_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Shared_Playlist_Recipients_Order_By>>;
+  where?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
 export type UsersShared_Video_RecipientsArgs = {
   distinct_on?: InputMaybe<Array<Shared_Video_Recipients_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -7733,6 +8140,8 @@ export type Users_Bool_Exp = {
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Bool_Exp>;
   playlists?: InputMaybe<Playlist_Bool_Exp>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Bool_Exp>;
+  shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
+  shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -7769,6 +8178,7 @@ export type Users_Insert_Input = {
   journals?: InputMaybe<Journals_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<Notifications_Arr_Rel_Insert_Input>;
   playlists?: InputMaybe<Playlist_Arr_Rel_Insert_Input>;
+  shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   user_video_histories?: InputMaybe<User_Video_History_Arr_Rel_Insert_Input>;
@@ -7834,6 +8244,7 @@ export type Users_Order_By = {
   journals_aggregate?: InputMaybe<Journals_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Order_By>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Order_By>;
+  shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Order_By>;
@@ -9092,17 +9503,17 @@ export type UpdatePostMutation = {
   update_posts?: { __typename?: 'posts_mutation_response'; returning: Array<{ __typename?: 'posts'; id: any }> } | null;
 };
 
-export type InsertshareMutationVariables = Exact<{
-  objects: Array<Shared_Video_Recipients_Insert_Input> | Shared_Video_Recipients_Insert_Input;
+export type SharePlaylistMutationVariables = Exact<{
+  objects: Array<Shared_Playlist_Recipients_Insert_Input> | Shared_Playlist_Recipients_Insert_Input;
   playlistId: Scalars['uuid']['input'];
   sharedRecipients: Scalars['jsonb']['input'];
 }>;
 
-export type InsertshareMutation = {
+export type SharePlaylistMutation = {
   __typename?: 'mutation_root';
-  insert_shared_video_recipients?: {
-    __typename?: 'shared_video_recipients_mutation_response';
-    returning: Array<{ __typename?: 'shared_video_recipients'; id: any }>;
+  insert_shared_playlist_recipients?: {
+    __typename?: 'shared_playlist_recipients_mutation_response';
+    returning: Array<{ __typename?: 'shared_playlist_recipients'; id: any }>;
   } | null;
   update_playlist_by_pk?: { __typename?: 'playlist'; id: any; sharedRecipients?: any | null } | null;
 };
@@ -9198,11 +9609,11 @@ export const UpdatePostDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdatePostMutation, UpdatePostMutationVariables>;
-export const InsertshareDocument = new TypedDocumentString(`
-    mutation insertshare($objects: [shared_video_recipients_insert_input!]!, $playlistId: uuid!, $sharedRecipients: jsonb!) {
-  insert_shared_video_recipients(
+export const SharePlaylistDocument = new TypedDocumentString(`
+    mutation sharePlaylist($objects: [shared_playlist_recipients_insert_input!]!, $playlistId: uuid!, $sharedRecipients: jsonb!) {
+  insert_shared_playlist_recipients(
     objects: $objects
-    on_conflict: {constraint: shared_video_recipients_playlist_id_video_id_receiver_id_key, update_columns: []}
+    on_conflict: {constraint: shared_playlist_recipients_playlist_id_recipient_id_key, update_columns: []}
   ) {
     returning {
       id
@@ -9216,7 +9627,7 @@ export const InsertshareDocument = new TypedDocumentString(`
     sharedRecipients
   }
 }
-    `) as unknown as TypedDocumentString<InsertshareMutation, InsertshareMutationVariables>;
+    `) as unknown as TypedDocumentString<SharePlaylistMutation, SharePlaylistMutationVariables>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {

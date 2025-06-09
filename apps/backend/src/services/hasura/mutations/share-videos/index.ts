@@ -1,20 +1,20 @@
 import { graphql } from '../../generated-graphql';
 import {
-  InsertshareMutation,
-  InsertshareMutationVariables,
-  Shared_Video_Recipients_Insert_Input,
+  SharePlaylistMutation,
+  SharePlaylistMutationVariables,
+  Shared_Playlist_Recipients_Insert_Input,
 } from '../../generated-graphql/graphql';
 import { hasuraClient } from '../../client';
 
-const INSERT_SHARED_VIDEO_RECIPIENTS = graphql(/* GraphQL */ `
-  mutation insertshare(
-    $objects: [shared_video_recipients_insert_input!]!
+const SHARE_PLAYLIST_MUTATION = graphql(/* GraphQL */ `
+  mutation sharePlaylist(
+    $objects: [shared_playlist_recipients_insert_input!]!
     $playlistId: uuid!
     $sharedRecipients: jsonb!
   ) {
-    insert_shared_video_recipients(
+    insert_shared_playlist_recipients(
       objects: $objects
-      on_conflict: { constraint: shared_video_recipients_playlist_id_video_id_receiver_id_key, update_columns: [] }
+      on_conflict: { constraint: shared_playlist_recipients_playlist_id_recipient_id_key, update_columns: [] }
     ) {
       returning {
         id
@@ -27,12 +27,12 @@ const INSERT_SHARED_VIDEO_RECIPIENTS = graphql(/* GraphQL */ `
   }
 `);
 
-const insertSharedVideoRecipients = async (
-  objects: Array<Shared_Video_Recipients_Insert_Input>,
+const sharePlaylist = async (
+  objects: Array<Shared_Playlist_Recipients_Insert_Input>,
   playlistId: string,
   emails: string[]
 ): Promise<{
-  insert_shared_video_recipients: { returning: Array<{ id: string }> };
+  insert_shared_playlist_recipients: { returning: Array<{ id: string }> };
   update_playlist_by_pk: { id: string; sharedRecipients: string[] };
 }> => {
   const variables = {
@@ -41,17 +41,17 @@ const insertSharedVideoRecipients = async (
     sharedRecipients: emails,
   };
 
-  const response = await hasuraClient.request<InsertshareMutation, InsertshareMutationVariables>({
-    document: INSERT_SHARED_VIDEO_RECIPIENTS.toString(),
+  const response = await hasuraClient.request<SharePlaylistMutation, SharePlaylistMutationVariables>({
+    document: SHARE_PLAYLIST_MUTATION.toString(),
     variables: variables,
   });
-  if (!response.insert_shared_video_recipients || !response.update_playlist_by_pk) {
-    throw new Error('Failed to insert shared video recipients or update playlist');
+  if (!response.insert_shared_playlist_recipients || !response.update_playlist_by_pk) {
+    throw new Error('Failed to insert shared playlist recipients or update playlist');
   }
 
   return {
-    insert_shared_video_recipients: {
-      returning: response.insert_shared_video_recipients.returning.map(record => ({
+    insert_shared_playlist_recipients: {
+      returning: response.insert_shared_playlist_recipients.returning.map(record => ({
         id: String(record.id),
       })),
     },
@@ -62,4 +62,4 @@ const insertSharedVideoRecipients = async (
   };
 };
 
-export { insertSharedVideoRecipients };
+export { sharePlaylist };

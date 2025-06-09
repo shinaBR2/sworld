@@ -8,7 +8,7 @@ import { HasuraWebhookRequest, hasuraWebhookSchema } from 'src/schema/hasura';
 import { ConvertRequest, convertSchema } from 'src/schema/videos/convert';
 import { CrawlRequest, crawlSchema } from 'src/schema/videos/crawl';
 import { ShareRequest, shareSchema } from 'src/schema/videos/share';
-import { shareVideoHandler } from './routes/share';
+import { sharePlaylistHandler } from './routes/share';
 
 const videosRouter: Router = express.Router();
 
@@ -24,6 +24,6 @@ videosRouter.post(
   fixVideosThumbnail
 );
 videosRouter.post('/crawl', validateRequest<CrawlRequest>(crawlSchema), crawlHandler);
-videosRouter.post('/share', validateRequest<ShareRequest>(shareSchema), shareVideoHandler);
+videosRouter.post('/share-playlist', validateRequest<ShareRequest>(shareSchema), sharePlaylistHandler);
 
 export { videosRouter };
