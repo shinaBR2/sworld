@@ -51,6 +51,13 @@ array_relationships:
         table:
           name: shared_playlist_recipients
           schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: recipient_id
+        table:
+          name: shared_video_recipients
+          schema: public
   - name: user_video_histories
     using:
       foreign_key_constraint_on:
