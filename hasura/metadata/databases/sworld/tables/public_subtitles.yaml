@@ -54,6 +54,12 @@ select_permissions:
               shared_video_recipients:
                 recipient_id:
                   _eq: X-Hasura-User-Id
+          - video:
+              playlist_videos:
+                playlist:
+                  shared_playlist_recipients:
+                    recipient_id:
+                      _eq: X-Hasura-User-Id
       query_root_fields: []
       subscription_root_fields: []
     comment: ""

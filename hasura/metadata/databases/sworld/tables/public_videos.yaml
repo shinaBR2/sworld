@@ -134,6 +134,11 @@ select_permissions:
           - shared_video_recipients:
               recipient_id:
                 _eq: X-Hasura-User-Id
+          - playlist_videos:
+              playlist:
+                shared_playlist_recipients:
+                  recipient_id:
+                    _eq: X-Hasura-User-Id
     comment: ""
 delete_permissions:
   - role: user

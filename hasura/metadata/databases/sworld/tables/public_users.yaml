@@ -92,4 +92,7 @@ select_permissions:
               shared_playlist_recipients:
                 recipient_id:
                   _eq: X-Hasura-User-Id
+          - shared_video_recipients:
+              recipient_id:
+                _eq: X-Hasura-User-Id
     comment: Hasura doesn't support differentiating among multiple users with the same role. For now, leave the username available for the owner and those who are shared.
