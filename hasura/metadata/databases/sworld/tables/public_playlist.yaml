@@ -117,7 +117,7 @@ update_permissions:
       check: null
     comment: ""
 event_triggers:
-  - name: share_video
+  - name: share_playlist
     definition:
       enable_manual: true
       update:
@@ -127,7 +127,32 @@ event_triggers:
       interval_sec: 10
       num_retries: 0
       timeout_sec: 60
-    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share'
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share-playlist'
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+  - name: share_video
+    definition:
+      enable_manual: true
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share-video'
     headers:
       - name: x-webhook-signature
         value_from_env: MAIN_WEBHOOK_SIGNATURE
