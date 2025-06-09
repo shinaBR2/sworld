@@ -1,0 +1,10 @@
+table:
+  name: shared_playlist_recipients
+  schema: public
+object_relationships:
+  - name: playlist
+    using:
+      foreign_key_constraint_on: playlist_id
+  - name: user
+    using:
+      foreign_key_constraint_on: recipient_id
