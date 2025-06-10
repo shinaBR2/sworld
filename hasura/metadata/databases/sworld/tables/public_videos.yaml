@@ -9,6 +9,10 @@ configuration:
       custom_name: keepOriginalSource
     s_id:
       custom_name: sId
+    shared_recipients:
+      custom_name: sharedRecipients
+    shared_recipients_input:
+      custom_name: sharedRecipientsInput
     thumbnail_url:
       custom_name: thumbnailUrl
     updated_at:
@@ -17,6 +21,8 @@ configuration:
     created_at: createdAt
     keep_original_source: keepOriginalSource
     s_id: sId
+    shared_recipients: sharedRecipients
+    shared_recipients_input: sharedRecipientsInput
     thumbnail_url: thumbnailUrl
     updated_at: updatedAt
   custom_root_fields: {}
@@ -139,6 +145,20 @@ select_permissions:
                 shared_playlist_recipients:
                   recipient_id:
                     _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - description
+        - shared_recipients_input
+        - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
     comment: ""
 delete_permissions:
   - role: user
