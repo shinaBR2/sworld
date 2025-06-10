@@ -3395,8 +3395,24 @@ type mutation_root {
   update data of the table: "videos"
   """
   update_videos(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: videos_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: videos_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: videos_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: videos_delete_key_input
     """increments the numeric columns with given value of the filtered values"""
     _inc: videos_inc_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: videos_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: videos_set_input
     """filter the rows which have to be updated"""
@@ -3406,8 +3422,24 @@ type mutation_root {
   update single row of the table: "videos"
   """
   update_videos_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: videos_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: videos_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: videos_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: videos_delete_key_input
     """increments the numeric columns with given value of the filtered values"""
     _inc: videos_inc_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: videos_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: videos_set_input
     pk_columns: videos_pk_columns_input!
@@ -3886,32 +3918,6 @@ type playlist {
     """filter the rows returned"""
     where: shared_playlist_recipients_bool_exp
   ): shared_playlist_recipients_aggregate!
-  """An array relationship"""
-  shared_video_recipients(
-    """distinct select on columns"""
-    distinct_on: [shared_video_recipients_select_column!]
-    """limit the number of rows returned"""
-    limit: Int
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-    """sort the rows by one or more columns"""
-    order_by: [shared_video_recipients_order_by!]
-    """filter the rows returned"""
-    where: shared_video_recipients_bool_exp
-  ): [shared_video_recipients!]!
-  """An aggregate relationship"""
-  shared_video_recipients_aggregate(
-    """distinct select on columns"""
-    distinct_on: [shared_video_recipients_select_column!]
-    """limit the number of rows returned"""
-    limit: Int
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-    """sort the rows by one or more columns"""
-    order_by: [shared_video_recipients_order_by!]
-    """filter the rows returned"""
-    where: shared_video_recipients_bool_exp
-  ): shared_video_recipients_aggregate!
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -4013,8 +4019,6 @@ input playlist_bool_exp {
   sharedRecipientsInput: jsonb_comparison_exp
   shared_playlist_recipients: shared_playlist_recipients_bool_exp
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
-  shared_video_recipients: shared_video_recipients_bool_exp
-  shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -4103,7 +4107,6 @@ input playlist_insert_input {
   """
   sharedRecipientsInput: jsonb
   shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
-  shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   slug: String
   thumbnailUrl: String
   title: String
@@ -4211,7 +4214,6 @@ input playlist_order_by {
   sharedRecipients: order_by
   sharedRecipientsInput: order_by
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
-  shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -5946,11 +5948,7 @@ type shared_video_recipients {
   createdAt: timestamptz!
   id: uuid!
   """An object relationship"""
-  playlist: playlist!
-  playlistId: uuid!
-  """An object relationship"""
-  receiver: users!
-  receiverId: uuid!
+  recipient: users
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz!
@@ -6031,10 +6029,7 @@ input shared_video_recipients_bool_exp {
   _or: [shared_video_recipients_bool_exp!]
   createdAt: timestamptz_comparison_exp
   id: uuid_comparison_exp
-  playlist: playlist_bool_exp
-  playlistId: uuid_comparison_exp
-  receiver: users_bool_exp
-  receiverId: uuid_comparison_exp
+  recipient: users_bool_exp
   recipientId: uuid_comparison_exp
   updatedAt: timestamptz_comparison_exp
   video: videos_bool_exp
@@ -6051,9 +6046,9 @@ enum shared_video_recipients_constraint {
   """
   shared_video_recipients_pkey
   """
-  unique or primary key constraint on columns "receiver_id", "video_id", "playlist_id"
+  unique or primary key constraint on columns "video_id", "recipient_id"
   """
-  shared_video_recipients_playlist_id_video_id_receiver_id_key
+  shared_video_recipients_video_id_recipient_id_key
 }
 
 """
@@ -6062,10 +6057,7 @@ input type for inserting data into table "shared_video_recipients"
 input shared_video_recipients_insert_input {
   createdAt: timestamptz
   id: uuid
-  playlist: playlist_obj_rel_insert_input
-  playlistId: uuid
-  receiver: users_obj_rel_insert_input
-  receiverId: uuid
+  recipient: users_obj_rel_insert_input
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz
@@ -6078,8 +6070,6 @@ input shared_video_recipients_insert_input {
 type shared_video_recipients_max_fields {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz
@@ -6092,8 +6082,6 @@ order by max() on columns of table "shared_video_recipients"
 input shared_video_recipients_max_order_by {
   createdAt: order_by
   id: order_by
-  playlistId: order_by
-  receiverId: order_by
   """Just renamed from old receiver_id column"""
   recipientId: order_by
   updatedAt: order_by
@@ -6104,8 +6092,6 @@ input shared_video_recipients_max_order_by {
 type shared_video_recipients_min_fields {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz
@@ -6118,8 +6104,6 @@ order by min() on columns of table "shared_video_recipients"
 input shared_video_recipients_min_order_by {
   createdAt: order_by
   id: order_by
-  playlistId: order_by
-  receiverId: order_by
   """Just renamed from old receiver_id column"""
   recipientId: order_by
   updatedAt: order_by
@@ -6149,10 +6133,7 @@ input shared_video_recipients_on_conflict {
 input shared_video_recipients_order_by {
   createdAt: order_by
   id: order_by
-  playlist: playlist_order_by
-  playlistId: order_by
-  receiver: users_order_by
-  receiverId: order_by
+  recipient: users_order_by
   recipientId: order_by
   updatedAt: order_by
   video: videos_order_by
@@ -6173,10 +6154,6 @@ enum shared_video_recipients_select_column {
   createdAt
   """column name"""
   id
-  """column name"""
-  playlistId
-  """column name"""
-  receiverId
   """column name"""
   recipientId
   """column name"""
@@ -6209,8 +6186,6 @@ input type for updating data in table "shared_video_recipients"
 input shared_video_recipients_set_input {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz
@@ -6232,8 +6207,6 @@ input shared_video_recipients_stream_cursor_input {
 input shared_video_recipients_stream_cursor_value_input {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
   """Just renamed from old receiver_id column"""
   recipientId: uuid
   updatedAt: timestamptz
@@ -6249,10 +6222,6 @@ enum shared_video_recipients_update_column {
   createdAt
   """column name"""
   id
-  """column name"""
-  playlistId
-  """column name"""
-  receiverId
   """column name"""
   recipientId
   """column name"""
@@ -9752,6 +9721,20 @@ type videos {
   public: Boolean!
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput(
+    """JSON select path"""
+    path: String
+  ): jsonb
   """An array relationship"""
   shared_video_recipients(
     """distinct select on columns"""
@@ -9968,6 +9951,18 @@ input videos_aggregate_order_by {
   variance: videos_variance_order_by
 }
 
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input videos_append_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+}
+
 """
 input type for inserting array relation for remote table "videos"
 """
@@ -10007,6 +10002,8 @@ input videos_bool_exp {
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
   sId: String_comparison_exp
+  sharedRecipients: jsonb_comparison_exp
+  sharedRecipientsInput: jsonb_comparison_exp
   shared_video_recipients: shared_video_recipients_bool_exp
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   skip_process: Boolean_comparison_exp
@@ -10049,6 +10046,48 @@ enum videos_constraint {
 }
 
 """
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input videos_delete_at_path_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: [String!]
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input videos_delete_elem_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: Int
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input videos_delete_key_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: String
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: String
+}
+
+"""
 input type for incrementing numeric columns in table "videos"
 """
 input videos_inc_input {
@@ -10072,6 +10111,14 @@ input videos_insert_input {
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
@@ -10211,6 +10258,8 @@ input videos_order_by {
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
+  sharedRecipients: order_by
+  sharedRecipientsInput: order_by
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   skip_process: order_by
   slug: order_by
@@ -10234,6 +10283,18 @@ input videos_pk_columns_input {
   id: uuid!
 }
 
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input videos_prepend_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+}
+
 """
 select columns of table "videos"
 """
@@ -10252,6 +10313,10 @@ enum videos_select_column {
   public
   """column name"""
   sId
+  """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
   """column name"""
   skip_process
   """column name"""
@@ -10313,6 +10378,14 @@ input videos_set_input {
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
   """
@@ -10394,6 +10467,14 @@ input videos_stream_cursor_value_input {
   """short id like Youtube video id"""
   sId: String
   """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+  """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
   """
   skip_process: Boolean
@@ -10441,6 +10522,10 @@ enum videos_update_column {
   """column name"""
   sId
   """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
+  """column name"""
   skip_process
   """column name"""
   slug
@@ -10463,8 +10548,24 @@ enum videos_update_column {
 }
 
 input videos_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: videos_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: videos_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: videos_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: videos_delete_key_input
   """increments the numeric columns with given value of the filtered values"""
   _inc: videos_inc_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: videos_prepend_input
   """sets the columns of the filtered rows to the given values"""
   _set: videos_set_input
   """filter the rows which have to be updated"""

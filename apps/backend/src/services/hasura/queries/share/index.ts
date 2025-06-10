@@ -1,6 +1,11 @@
 import { hasuraClient } from '../../client';
 import { graphql } from '../../generated-graphql';
-import { PlaylistDetailQuery, PlaylistDetailQueryVariables } from '../../generated-graphql/graphql';
+import {
+  PlaylistDetailQuery,
+  PlaylistDetailQueryVariables,
+  UsersQuery,
+  UsersQueryVariables,
+} from '../../generated-graphql/graphql';
 
 const GET_PLAYLIST_VIDEOS = graphql(/* GraphQL */ `
   query PlaylistDetail($id: uuid!, $emails: [String!]!) {
@@ -12,6 +17,16 @@ const GET_PLAYLIST_VIDEOS = graphql(/* GraphQL */ `
         }
       }
     }
+    users(where: { email: { _in: $emails } }) {
+      id
+      email
+      username
+    }
+  }
+`);
+
+const GET_USERS = graphql(/* GraphQL */ `
+  query Users($emails: [String!]!) {
     users(where: { email: { _in: $emails } }) {
       id
       email
@@ -33,4 +48,16 @@ const getPlaylistVideos = async (id: string, emails: string[]): Promise<Playlist
   return response;
 };
 
-export { getPlaylistVideos };
+const getUsers = async (emails: string[]): Promise<UsersQuery> => {
+  const variables = {
+    emails,
+  };
+
+  const response = await hasuraClient.request<UsersQuery, UsersQueryVariables>({
+    document: GET_USERS.toString(),
+    variables: variables,
+  });
+  return response;
+};
+
+export { getPlaylistVideos, getUsers };

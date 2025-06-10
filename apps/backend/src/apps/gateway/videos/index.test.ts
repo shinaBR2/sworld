@@ -5,7 +5,8 @@ import { crawlHandler } from './routes/crawl';
 import { fixVideosDuration } from './routes/fix-videos-duration';
 import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
 import { streamToStorage } from './routes/stream-to-storage';
-import { sharePlaylistHandler } from './routes/share';
+import { sharePlaylistHandler } from './routes/share-playlist';
+import { shareVideoHandler } from './routes/share-video';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];
@@ -52,8 +53,11 @@ vi.mock('./routes/crawl', () => ({
   crawlHandler: vi.fn(),
 }));
 
-vi.mock('./routes/share', () => ({
+vi.mock('./routes/share-playlist', () => ({
   sharePlaylistHandler: vi.fn(),
+}));
+vi.mock('./routes/share-video', () => ({
+  shareVideoHandler: vi.fn(),
 }));
 
 describe('videosRouter', () => {
@@ -66,7 +70,7 @@ describe('videosRouter', () => {
   it('should validate all requests', async () => {
     await import('./index');
     // Check validation middleware was called
-    expect(validateRequest).toHaveBeenCalledTimes(5); // Updated to 5 for all endpoints
+    expect(validateRequest).toHaveBeenCalledTimes(6); // Updated to 5 for all endpoints
     const calls = (validateRequest as any).mock.calls;
     expect(calls[0][0]).toBeDefined(); // Check convert route schema
     expect(calls[1][0]).toBeDefined(); // Check fix-videos-duration route schema
@@ -145,5 +149,19 @@ describe('videosRouter', () => {
 
     // Verify the sharePlaylistHandler is set
     expect(shareRoute?.middlewares[1]).toBe(sharePlaylistHandler);
+  });
+
+  it('should set up /share-video route with correct middleware and handler', async () => {
+    const { videosRouter } = await import('./index');
+    expect(videosRouter).toBeDefined();
+
+    const shareRoute = routeHandlers.find(h => h.path === '/share-video');
+    expect(shareRoute).toBeDefined();
+
+    // Should have 2 middlewares: validation and handler
+    expect(shareRoute?.middlewares).toHaveLength(2);
+
+    // Verify the shareVideoHandler is set
+    expect(shareRoute?.middlewares[1]).toBe(shareVideoHandler);
   });
 });
