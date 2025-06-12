@@ -2,7 +2,7 @@ import { isValidId, isValidEmail } from '../../../universal/common/stringHelpers
 
 const formalize = (entityId: string | null, recipients: string[]) => {
   if (!entityId || !isValidId(entityId)) {
-    throw new Error('Invalid playlist ID');
+    throw new Error('Invalid entity ID');
   }
 
   if (!Array.isArray(recipients) || recipients.length === 0) {
@@ -19,7 +19,7 @@ const formalize = (entityId: string | null, recipients: string[]) => {
   };
 };
 
-const buildVariables = (entityId: string | null, emails: string[]) => {
+const buildVariables = (entityId: string, emails: string[]) => {
   return {
     id: entityId,
     emails,

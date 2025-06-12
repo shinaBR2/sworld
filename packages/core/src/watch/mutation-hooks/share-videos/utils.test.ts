@@ -14,8 +14,8 @@ describe('formalize', () => {
     });
   });
 
-  it('should throw error for invalid playlist ID', () => {
-    expect(() => formalize('invalid-id', [validEmail])).toThrow('Invalid playlist ID');
+  it('should throw error for invalid entity ID', () => {
+    expect(() => formalize('invalid-id', [validEmail])).toThrow('Invalid entity ID');
   });
 
   it('should throw error for empty recipients array', () => {
