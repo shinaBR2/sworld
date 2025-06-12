@@ -38,9 +38,9 @@ function VideoDetails(): JSX.Element {
     if (!videoResult.videos?.length) return;
 
     try {
-      const { playlistId: validPlaylistId, recipients: validRecipients } = formalize(playlistId, emails);
+      const { entityId, recipients } = formalize(playlistId, emails);
 
-      const variables = buildVariables(validPlaylistId, validRecipients);
+      const variables = buildVariables(entityId, recipients);
 
       sharePlaylist(variables);
     } catch (error) {
