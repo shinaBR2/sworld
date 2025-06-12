@@ -2229,6 +2229,17 @@ type mutation_root {
   """
   delete_posts_by_pk(id: uuid!): posts
   """
+  delete data from the table: "shared_playlist_recipients"
+  """
+  delete_shared_playlist_recipients(
+    """filter the rows which have to be deleted"""
+    where: shared_playlist_recipients_bool_exp!
+  ): shared_playlist_recipients_mutation_response
+  """
+  delete single row from the table: "shared_playlist_recipients"
+  """
+  delete_shared_playlist_recipients_by_pk(id: uuid!): shared_playlist_recipients
+  """
   delete data from the table: "shared_video_recipients"
   """
   delete_shared_video_recipients(
@@ -2518,6 +2529,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: posts_on_conflict
   ): posts
+  """
+  insert data into the table: "shared_playlist_recipients"
+  """
+  insert_shared_playlist_recipients(
+    """the rows to be inserted"""
+    objects: [shared_playlist_recipients_insert_input!]!
+    """upsert condition"""
+    on_conflict: shared_playlist_recipients_on_conflict
+  ): shared_playlist_recipients_mutation_response
+  """
+  insert a single row into the table: "shared_playlist_recipients"
+  """
+  insert_shared_playlist_recipients_one(
+    """the row to be inserted"""
+    object: shared_playlist_recipients_insert_input!
+    """upsert condition"""
+    on_conflict: shared_playlist_recipients_on_conflict
+  ): shared_playlist_recipients
   """
   insert data into the table: "shared_video_recipients"
   """
@@ -3079,6 +3108,30 @@ type mutation_root {
     updates: [posts_updates!]!
   ): [posts_mutation_response]
   """
+  update data of the table: "shared_playlist_recipients"
+  """
+  update_shared_playlist_recipients(
+    """sets the columns of the filtered rows to the given values"""
+    _set: shared_playlist_recipients_set_input
+    """filter the rows which have to be updated"""
+    where: shared_playlist_recipients_bool_exp!
+  ): shared_playlist_recipients_mutation_response
+  """
+  update single row of the table: "shared_playlist_recipients"
+  """
+  update_shared_playlist_recipients_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: shared_playlist_recipients_set_input
+    pk_columns: shared_playlist_recipients_pk_columns_input!
+  ): shared_playlist_recipients
+  """
+  update multiples rows of table: "shared_playlist_recipients"
+  """
+  update_shared_playlist_recipients_many(
+    """updates to execute, in order"""
+    updates: [shared_playlist_recipients_updates!]!
+  ): [shared_playlist_recipients_mutation_response]
+  """
   update data of the table: "shared_video_recipients"
   """
   update_shared_video_recipients(
@@ -3342,8 +3395,24 @@ type mutation_root {
   update data of the table: "videos"
   """
   update_videos(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: videos_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: videos_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: videos_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: videos_delete_key_input
     """increments the numeric columns with given value of the filtered values"""
     _inc: videos_inc_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: videos_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: videos_set_input
     """filter the rows which have to be updated"""
@@ -3353,8 +3422,24 @@ type mutation_root {
   update single row of the table: "videos"
   """
   update_videos_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: videos_append_input
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: videos_delete_at_path_input
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: videos_delete_elem_input
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: videos_delete_key_input
     """increments the numeric columns with given value of the filtered values"""
     _inc: videos_inc_input
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: videos_prepend_input
     """sets the columns of the filtered rows to the given values"""
     _set: videos_set_input
     pk_columns: videos_pk_columns_input!
@@ -3808,31 +3893,31 @@ type playlist {
     path: String
   ): jsonb
   """An array relationship"""
-  shared_video_recipients(
+  shared_playlist_recipients(
     """distinct select on columns"""
-    distinct_on: [shared_video_recipients_select_column!]
+    distinct_on: [shared_playlist_recipients_select_column!]
     """limit the number of rows returned"""
     limit: Int
     """skip the first n rows. Use only with order_by"""
     offset: Int
     """sort the rows by one or more columns"""
-    order_by: [shared_video_recipients_order_by!]
+    order_by: [shared_playlist_recipients_order_by!]
     """filter the rows returned"""
-    where: shared_video_recipients_bool_exp
-  ): [shared_video_recipients!]!
+    where: shared_playlist_recipients_bool_exp
+  ): [shared_playlist_recipients!]!
   """An aggregate relationship"""
-  shared_video_recipients_aggregate(
+  shared_playlist_recipients_aggregate(
     """distinct select on columns"""
-    distinct_on: [shared_video_recipients_select_column!]
+    distinct_on: [shared_playlist_recipients_select_column!]
     """limit the number of rows returned"""
     limit: Int
     """skip the first n rows. Use only with order_by"""
     offset: Int
     """sort the rows by one or more columns"""
-    order_by: [shared_video_recipients_order_by!]
+    order_by: [shared_playlist_recipients_order_by!]
     """filter the rows returned"""
-    where: shared_video_recipients_bool_exp
-  ): shared_video_recipients_aggregate!
+    where: shared_playlist_recipients_bool_exp
+  ): shared_playlist_recipients_aggregate!
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -3932,8 +4017,8 @@ input playlist_bool_exp {
   sId: String_comparison_exp
   sharedRecipients: jsonb_comparison_exp
   sharedRecipientsInput: jsonb_comparison_exp
-  shared_video_recipients: shared_video_recipients_bool_exp
-  shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
+  shared_playlist_recipients: shared_playlist_recipients_bool_exp
+  shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -4021,7 +4106,7 @@ input playlist_insert_input {
   List of recipient emails from user input, not validated yet. End user can update this.
   """
   sharedRecipientsInput: jsonb
-  shared_video_recipients: shared_video_recipients_arr_rel_insert_input
+  shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
   slug: String
   thumbnailUrl: String
   title: String
@@ -4128,7 +4213,7 @@ input playlist_order_by {
   sId: order_by
   sharedRecipients: order_by
   sharedRecipientsInput: order_by
-  shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
+  shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -5271,6 +5356,36 @@ type query_root {
   """fetch data from the table: "posts" using primary key columns"""
   posts_by_pk(id: uuid!): posts
   """An array relationship"""
+  shared_playlist_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): [shared_playlist_recipients!]!
+  """An aggregate relationship"""
+  shared_playlist_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): shared_playlist_recipients_aggregate!
+  """
+  fetch data from the table: "shared_playlist_recipients" using primary key columns
+  """
+  shared_playlist_recipients_by_pk(id: uuid!): shared_playlist_recipients
+  """An array relationship"""
   shared_video_recipients(
     """distinct select on columns"""
     distinct_on: [shared_video_recipients_select_column!]
@@ -5577,17 +5692,265 @@ type query_root {
 }
 
 """
+This table tell us what playlist is shared to whom. All videos in the playlist should be shared, not selective
+"""
+type shared_playlist_recipients {
+  created_at: timestamptz!
+  id: uuid!
+  """An object relationship"""
+  playlist: playlist!
+  playlistId: uuid!
+  recipientId: uuid!
+  updated_at: timestamptz!
+  """An object relationship"""
+  user: users!
+}
+
+"""
+aggregated selection of "shared_playlist_recipients"
+"""
+type shared_playlist_recipients_aggregate {
+  aggregate: shared_playlist_recipients_aggregate_fields
+  nodes: [shared_playlist_recipients!]!
+}
+
+input shared_playlist_recipients_aggregate_bool_exp {
+  count: shared_playlist_recipients_aggregate_bool_exp_count
+}
+
+input shared_playlist_recipients_aggregate_bool_exp_count {
+  arguments: [shared_playlist_recipients_select_column!]
+  distinct: Boolean
+  filter: shared_playlist_recipients_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "shared_playlist_recipients"
+"""
+type shared_playlist_recipients_aggregate_fields {
+  count(columns: [shared_playlist_recipients_select_column!], distinct: Boolean): Int!
+  max: shared_playlist_recipients_max_fields
+  min: shared_playlist_recipients_min_fields
+}
+
+"""
+order by aggregate values of table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_aggregate_order_by {
+  count: order_by
+  max: shared_playlist_recipients_max_order_by
+  min: shared_playlist_recipients_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_arr_rel_insert_input {
+  data: [shared_playlist_recipients_insert_input!]!
+  """upsert condition"""
+  on_conflict: shared_playlist_recipients_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "shared_playlist_recipients". All fields are combined with a logical 'AND'.
+"""
+input shared_playlist_recipients_bool_exp {
+  _and: [shared_playlist_recipients_bool_exp!]
+  _not: shared_playlist_recipients_bool_exp
+  _or: [shared_playlist_recipients_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  playlist: playlist_bool_exp
+  playlistId: uuid_comparison_exp
+  recipientId: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  user: users_bool_exp
+}
+
+"""
+unique or primary key constraints on table "shared_playlist_recipients"
+"""
+enum shared_playlist_recipients_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  shared_playlist_recipients_pkey
+  """
+  unique or primary key constraint on columns "recipient_id", "playlist_id"
+  """
+  shared_playlist_recipients_playlist_id_recipient_id_key
+}
+
+"""
+input type for inserting data into table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_insert_input {
+  created_at: timestamptz
+  id: uuid
+  playlist: playlist_obj_rel_insert_input
+  playlistId: uuid
+  recipientId: uuid
+  updated_at: timestamptz
+  user: users_obj_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type shared_playlist_recipients_max_fields {
+  created_at: timestamptz
+  id: uuid
+  playlistId: uuid
+  recipientId: uuid
+  updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_max_order_by {
+  created_at: order_by
+  id: order_by
+  playlistId: order_by
+  recipientId: order_by
+  updated_at: order_by
+}
+
+"""aggregate min on columns"""
+type shared_playlist_recipients_min_fields {
+  created_at: timestamptz
+  id: uuid
+  playlistId: uuid
+  recipientId: uuid
+  updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_min_order_by {
+  created_at: order_by
+  id: order_by
+  playlistId: order_by
+  recipientId: order_by
+  updated_at: order_by
+}
+
+"""
+response of any mutation on the table "shared_playlist_recipients"
+"""
+type shared_playlist_recipients_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [shared_playlist_recipients!]!
+}
+
+"""
+on_conflict condition type for table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_on_conflict {
+  constraint: shared_playlist_recipients_constraint!
+  update_columns: [shared_playlist_recipients_update_column!]! = []
+  where: shared_playlist_recipients_bool_exp
+}
+
+"""
+Ordering options when selecting data from "shared_playlist_recipients".
+"""
+input shared_playlist_recipients_order_by {
+  created_at: order_by
+  id: order_by
+  playlist: playlist_order_by
+  playlistId: order_by
+  recipientId: order_by
+  updated_at: order_by
+  user: users_order_by
+}
+
+"""primary key columns input for table: shared_playlist_recipients"""
+input shared_playlist_recipients_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "shared_playlist_recipients"
+"""
+enum shared_playlist_recipients_select_column {
+  """column name"""
+  created_at
+  """column name"""
+  id
+  """column name"""
+  playlistId
+  """column name"""
+  recipientId
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_set_input {
+  created_at: timestamptz
+  id: uuid
+  playlistId: uuid
+  recipientId: uuid
+  updated_at: timestamptz
+}
+
+"""
+Streaming cursor of the table "shared_playlist_recipients"
+"""
+input shared_playlist_recipients_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: shared_playlist_recipients_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input shared_playlist_recipients_stream_cursor_value_input {
+  created_at: timestamptz
+  id: uuid
+  playlistId: uuid
+  recipientId: uuid
+  updated_at: timestamptz
+}
+
+"""
+update columns of table "shared_playlist_recipients"
+"""
+enum shared_playlist_recipients_update_column {
+  """column name"""
+  created_at
+  """column name"""
+  id
+  """column name"""
+  playlistId
+  """column name"""
+  recipientId
+  """column name"""
+  updated_at
+}
+
+input shared_playlist_recipients_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: shared_playlist_recipients_set_input
+  """filter the rows which have to be updated"""
+  where: shared_playlist_recipients_bool_exp!
+}
+
+"""
 Each video can share for many users, one user can see many shared videos
 """
 type shared_video_recipients {
   createdAt: timestamptz!
   id: uuid!
   """An object relationship"""
-  playlist: playlist!
-  playlistId: uuid!
-  """An object relationship"""
-  receiver: users!
-  receiverId: uuid!
+  recipient: users
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz!
   """An object relationship"""
   video: videos!
@@ -5666,10 +6029,8 @@ input shared_video_recipients_bool_exp {
   _or: [shared_video_recipients_bool_exp!]
   createdAt: timestamptz_comparison_exp
   id: uuid_comparison_exp
-  playlist: playlist_bool_exp
-  playlistId: uuid_comparison_exp
-  receiver: users_bool_exp
-  receiverId: uuid_comparison_exp
+  recipient: users_bool_exp
+  recipientId: uuid_comparison_exp
   updatedAt: timestamptz_comparison_exp
   video: videos_bool_exp
   videoId: uuid_comparison_exp
@@ -5685,9 +6046,9 @@ enum shared_video_recipients_constraint {
   """
   shared_video_recipients_pkey
   """
-  unique or primary key constraint on columns "receiver_id", "video_id", "playlist_id"
+  unique or primary key constraint on columns "video_id", "recipient_id"
   """
-  shared_video_recipients_playlist_id_video_id_receiver_id_key
+  shared_video_recipients_video_id_recipient_id_key
 }
 
 """
@@ -5696,10 +6057,9 @@ input type for inserting data into table "shared_video_recipients"
 input shared_video_recipients_insert_input {
   createdAt: timestamptz
   id: uuid
-  playlist: playlist_obj_rel_insert_input
-  playlistId: uuid
-  receiver: users_obj_rel_insert_input
-  receiverId: uuid
+  recipient: users_obj_rel_insert_input
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz
   video: videos_obj_rel_insert_input
   videoId: uuid
@@ -5710,8 +6070,8 @@ input shared_video_recipients_insert_input {
 type shared_video_recipients_max_fields {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz
   videoId: uuid
 }
@@ -5722,8 +6082,8 @@ order by max() on columns of table "shared_video_recipients"
 input shared_video_recipients_max_order_by {
   createdAt: order_by
   id: order_by
-  playlistId: order_by
-  receiverId: order_by
+  """Just renamed from old receiver_id column"""
+  recipientId: order_by
   updatedAt: order_by
   videoId: order_by
 }
@@ -5732,8 +6092,8 @@ input shared_video_recipients_max_order_by {
 type shared_video_recipients_min_fields {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz
   videoId: uuid
 }
@@ -5744,8 +6104,8 @@ order by min() on columns of table "shared_video_recipients"
 input shared_video_recipients_min_order_by {
   createdAt: order_by
   id: order_by
-  playlistId: order_by
-  receiverId: order_by
+  """Just renamed from old receiver_id column"""
+  recipientId: order_by
   updatedAt: order_by
   videoId: order_by
 }
@@ -5773,10 +6133,8 @@ input shared_video_recipients_on_conflict {
 input shared_video_recipients_order_by {
   createdAt: order_by
   id: order_by
-  playlist: playlist_order_by
-  playlistId: order_by
-  receiver: users_order_by
-  receiverId: order_by
+  recipient: users_order_by
+  recipientId: order_by
   updatedAt: order_by
   video: videos_order_by
   videoId: order_by
@@ -5797,9 +6155,7 @@ enum shared_video_recipients_select_column {
   """column name"""
   id
   """column name"""
-  playlistId
-  """column name"""
-  receiverId
+  recipientId
   """column name"""
   updatedAt
   """column name"""
@@ -5830,8 +6186,8 @@ input type for updating data in table "shared_video_recipients"
 input shared_video_recipients_set_input {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz
   videoId: uuid
   viewed: Boolean
@@ -5851,8 +6207,8 @@ input shared_video_recipients_stream_cursor_input {
 input shared_video_recipients_stream_cursor_value_input {
   createdAt: timestamptz
   id: uuid
-  playlistId: uuid
-  receiverId: uuid
+  """Just renamed from old receiver_id column"""
+  recipientId: uuid
   updatedAt: timestamptz
   videoId: uuid
   viewed: Boolean
@@ -5867,9 +6223,7 @@ enum shared_video_recipients_update_column {
   """column name"""
   id
   """column name"""
-  playlistId
-  """column name"""
-  receiverId
+  recipientId
   """column name"""
   updatedAt
   """column name"""
@@ -6290,6 +6644,47 @@ type subscription_root {
     """filter the rows returned"""
     where: posts_bool_exp
   ): [posts!]!
+  """An array relationship"""
+  shared_playlist_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): [shared_playlist_recipients!]!
+  """An aggregate relationship"""
+  shared_playlist_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): shared_playlist_recipients_aggregate!
+  """
+  fetch data from the table: "shared_playlist_recipients" using primary key columns
+  """
+  shared_playlist_recipients_by_pk(id: uuid!): shared_playlist_recipients
+  """
+  fetch data from the table in a streaming manner: "shared_playlist_recipients"
+  """
+  shared_playlist_recipients_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [shared_playlist_recipients_stream_cursor_input]!
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): [shared_playlist_recipients!]!
   """An array relationship"""
   shared_video_recipients(
     """distinct select on columns"""
@@ -8426,6 +8821,32 @@ type users {
     where: playlist_bool_exp
   ): playlist_aggregate!
   """An array relationship"""
+  shared_playlist_recipients(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): [shared_playlist_recipients!]!
+  """An aggregate relationship"""
+  shared_playlist_recipients_aggregate(
+    """distinct select on columns"""
+    distinct_on: [shared_playlist_recipients_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [shared_playlist_recipients_order_by!]
+    """filter the rows returned"""
+    where: shared_playlist_recipients_bool_exp
+  ): shared_playlist_recipients_aggregate!
+  """An array relationship"""
   shared_video_recipients(
     """distinct select on columns"""
     distinct_on: [shared_video_recipients_select_column!]
@@ -8573,6 +8994,8 @@ input users_bool_exp {
   notifications_aggregate: notifications_aggregate_bool_exp
   playlists: playlist_bool_exp
   playlists_aggregate: playlist_aggregate_bool_exp
+  shared_playlist_recipients: shared_playlist_recipients_bool_exp
+  shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
   shared_video_recipients: shared_video_recipients_bool_exp
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   updated_at: timestamptz_comparison_exp
@@ -8621,6 +9044,7 @@ input users_insert_input {
   journals: journals_arr_rel_insert_input
   notifications: notifications_arr_rel_insert_input
   playlists: playlist_arr_rel_insert_input
+  shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
   shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   updated_at: timestamptz
   user_video_histories: user_video_history_arr_rel_insert_input
@@ -8689,6 +9113,7 @@ input users_order_by {
   journals_aggregate: journals_aggregate_order_by
   notifications_aggregate: notifications_aggregate_order_by
   playlists_aggregate: playlist_aggregate_order_by
+  shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   updated_at: order_by
   user_video_histories_aggregate: user_video_history_aggregate_order_by
@@ -9296,6 +9721,20 @@ type videos {
   public: Boolean!
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput(
+    """JSON select path"""
+    path: String
+  ): jsonb
   """An array relationship"""
   shared_video_recipients(
     """distinct select on columns"""
@@ -9512,6 +9951,18 @@ input videos_aggregate_order_by {
   variance: videos_variance_order_by
 }
 
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input videos_append_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+}
+
 """
 input type for inserting array relation for remote table "videos"
 """
@@ -9551,6 +10002,8 @@ input videos_bool_exp {
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
   sId: String_comparison_exp
+  sharedRecipients: jsonb_comparison_exp
+  sharedRecipientsInput: jsonb_comparison_exp
   shared_video_recipients: shared_video_recipients_bool_exp
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
   skip_process: Boolean_comparison_exp
@@ -9593,6 +10046,48 @@ enum videos_constraint {
 }
 
 """
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input videos_delete_at_path_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: [String!]
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input videos_delete_elem_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: Int
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input videos_delete_key_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: String
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: String
+}
+
+"""
 input type for incrementing numeric columns in table "videos"
 """
 input videos_inc_input {
@@ -9616,6 +10111,14 @@ input videos_insert_input {
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
@@ -9755,6 +10258,8 @@ input videos_order_by {
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
+  sharedRecipients: order_by
+  sharedRecipientsInput: order_by
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   skip_process: order_by
   slug: order_by
@@ -9778,6 +10283,18 @@ input videos_pk_columns_input {
   id: uuid!
 }
 
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input videos_prepend_input {
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+}
+
 """
 select columns of table "videos"
 """
@@ -9796,6 +10313,10 @@ enum videos_select_column {
   public
   """column name"""
   sId
+  """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
   """column name"""
   skip_process
   """column name"""
@@ -9857,6 +10378,14 @@ input videos_set_input {
   public: Boolean
   """short id like Youtube video id"""
   sId: String
+  """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
   """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
   """
@@ -9938,6 +10467,14 @@ input videos_stream_cursor_value_input {
   """short id like Youtube video id"""
   sId: String
   """
+  List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
+  """
+  sharedRecipients: jsonb
+  """
+  List of recipient emails from user input, not validated yet. End user can update this.
+  """
+  sharedRecipientsInput: jsonb
+  """
   When this field is true, do not convert, import hls, do nothing, just keep the video status as is
   """
   skip_process: Boolean
@@ -9985,6 +10522,10 @@ enum videos_update_column {
   """column name"""
   sId
   """column name"""
+  sharedRecipients
+  """column name"""
+  sharedRecipientsInput
+  """column name"""
   skip_process
   """column name"""
   slug
@@ -10007,8 +10548,24 @@ enum videos_update_column {
 }
 
 input videos_updates {
+  """append existing jsonb value of filtered columns with new jsonb value"""
+  _append: videos_append_input
+  """
+  delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+  """
+  _delete_at_path: videos_delete_at_path_input
+  """
+  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  """
+  _delete_elem: videos_delete_elem_input
+  """
+  delete key/value pair or string element. key/value pairs are matched based on their key value
+  """
+  _delete_key: videos_delete_key_input
   """increments the numeric columns with given value of the filtered values"""
   _inc: videos_inc_input
+  """prepend existing jsonb value of filtered columns with new jsonb value"""
+  _prepend: videos_prepend_input
   """sets the columns of the filtered rows to the given values"""
   _set: videos_set_input
   """filter the rows which have to be updated"""
