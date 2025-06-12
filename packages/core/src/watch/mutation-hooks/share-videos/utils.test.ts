@@ -9,7 +9,7 @@ describe('formalize', () => {
     const result = formalize(validUUID, [validEmail, 'user@domain.com']);
 
     expect(result).toEqual({
-      playlistId: validUUID,
+      entityId: validUUID,
       recipients: [validEmail, 'user@domain.com'],
     });
   });

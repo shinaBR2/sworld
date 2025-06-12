@@ -1,7 +1,7 @@
 import { isValidId, isValidEmail } from '../../../universal/common/stringHelpers';
 
-const formalize = (playlistId: string | null, recipients: string[]) => {
-  if (!playlistId || !isValidId(playlistId)) {
+const formalize = (entityId: string | null, recipients: string[]) => {
+  if (!entityId || !isValidId(entityId)) {
     throw new Error('Invalid playlist ID');
   }
 
@@ -14,14 +14,14 @@ const formalize = (playlistId: string | null, recipients: string[]) => {
   }
 
   return {
-    playlistId,
+    entityId,
     recipients: recipients.map(email => email.trim()),
   };
 };
 
-const buildVariables = (playlistId: string | null, emails: string[]) => {
+const buildVariables = (entityId: string | null, emails: string[]) => {
   return {
-    id: playlistId,
+    id: entityId,
     emails,
   };
 };
