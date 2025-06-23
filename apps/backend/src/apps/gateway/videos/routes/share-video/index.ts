@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { AppError, AppResponse } from 'src/utils/schema';
-import { ValidatedRequest, isValidEmail } from 'src/utils/validator';
+import { ValidatedRequest } from 'src/utils/validator';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { ShareRequest } from 'src/schema/videos/share';
 import { getUsers } from 'src/services/hasura/queries/share';
 import { shareVideo } from 'src/services/hasura/mutations/share-videos';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { isValidEmail } from 'src/utils/validators/email';
 
 const shareVideoHandler = async (req: Request, res: Response) => {
   const { validatedData } = req as ValidatedRequest<ShareRequest>;
