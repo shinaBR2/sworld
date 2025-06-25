@@ -77,6 +77,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
     "@tanstack/react-router": "^1.78.2",
+    "@videojs/http-streaming": "^3.15.0",
     "core": "workspace:*",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
