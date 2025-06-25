@@ -48,7 +48,7 @@ describe('VideoPlayer', () => {
         vhs: {
           overrideNative: false,
         },
-        nativeAudioTracks: false,
+        nativeAudioTracks: true,
         nativeVideoTracks: false,
       },
     });

@@ -24,7 +24,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       vhs: {
         overrideNative: false,
       },
-      nativeAudioTracks: false,
+      nativeAudioTracks: true,
       nativeVideoTracks: false,
     },
     userActions: {
