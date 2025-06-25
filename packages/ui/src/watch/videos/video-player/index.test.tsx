@@ -46,7 +46,7 @@ describe('VideoPlayer', () => {
       aspectRatio: '16:9',
       html5: {
         vhs: {
-          overrideNative: true,
+          overrideNative: false,
         },
         nativeAudioTracks: false,
         nativeVideoTracks: false,
