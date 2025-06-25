@@ -142,7 +142,9 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('loadedmetadata', () => {
           debugLog('Metadata loaded');
 
+          // @ts-ignore
           const audioTracks = player.audioTracks();
+          // @ts-ignore
           const videoTracks = player.videoTracks();
 
           debugLog('Audio tracks info:', {
@@ -201,13 +203,14 @@ export const VideoJS = (props: VideoJSProps) => {
         });
 
         // Error handling with detailed logging
-        player.on('error', error => {
+        player.on('error', (error: any) => {
           const playerError = player.error();
           debugLog('Player error occurred:', {
             error,
             playerError,
             code: playerError?.code,
             message: playerError?.message,
+            // @ts-ignore
             type: playerError?.type,
           });
         });
