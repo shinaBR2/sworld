@@ -118,25 +118,6 @@ export const VideoJS = (props: VideoJSProps) => {
           currentTime: player.currentTime(),
         });
 
-        // Debug HLS/VHS info
-        setTimeout(() => {
-          try {
-            // @ts-ignore - accessing internal VHS properties
-            const vhs = player.tech()?.vhs;
-            if (vhs) {
-              debugLog('VHS/HLS info:', {
-                version: vhs.version,
-                stats: vhs.stats,
-                playlists: vhs.playlists,
-              });
-            } else {
-              debugLog('No VHS found - using native HLS or different tech');
-            }
-          } catch (e) {
-            debugLog('Error accessing VHS info:', e);
-          }
-        }, 1000);
-
         // Audio tracks debugging
         player.on('loadedmetadata', () => {
           debugLog('Metadata loaded');

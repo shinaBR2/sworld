@@ -45,11 +45,9 @@ describe('VideoPlayer', () => {
       fluid: true,
       aspectRatio: '16:9',
       html5: {
-        vhs: {
-          overrideNative: false,
-        },
-        nativeAudioTracks: true,
-        nativeVideoTracks: false,
+        vhs: false,
+        // nativeAudioTracks: true,
+        // nativeVideoTracks: false,
       },
     });
 
