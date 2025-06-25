@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 import videojs from 'video.js';
-import '@videojs/http-streaming';
 import type Player from 'video.js/dist/types/player';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import { useAuthContext } from 'core/providers/auth';
