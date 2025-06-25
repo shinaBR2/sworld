@@ -14,6 +14,14 @@ const mockPlayer = {
   currentTime: vi.fn(() => 10),
   autoplay: vi.fn(),
   src: vi.fn(),
+  readyState: vi.fn(() => 4),
+  paused: vi.fn(() => false),
+  muted: vi.fn(() => false),
+  play: vi.fn(),
+  pause: vi.fn(),
+  duration: vi.fn(() => 60),
+  volume: vi.fn(() => 1),
+  trigger: vi.fn(),
 };
 
 vi.mock('video.js', () => {
@@ -162,14 +170,13 @@ describe('VideoJS', () => {
       expect(mockPlayer.on).toHaveBeenCalled();
     });
 
-    // Get the ended callback
-    const callbacks = mockPlayer.on.mock.calls.reduce((acc: any, [event, callback]) => {
-      acc[event] = callback;
-      return acc;
-    }, {});
-
-    // Simulate video end
-    callbacks['ended']();
+    // Find the ended event handler and call it
+    const endedCallback = mockPlayer.on.mock.calls.find(([event]) => event === 'ended')?.[1];
+    if (!endedCallback) {
+      throw new Error('Ended event handler not found');
+    }
+    // Call the ended callback
+    endedCallback();
 
     // Should call both the internal handler and the provided callback
     expect(mockHandlers.handleEnded).toHaveBeenCalled();
