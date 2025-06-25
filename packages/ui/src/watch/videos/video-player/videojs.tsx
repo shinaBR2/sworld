@@ -37,6 +37,10 @@ interface VideoJSProps {
   onError?: (error: unknown) => void; // TODO handle error
 }
 
+const debugLog = (message: string, data?: any) => {
+  console.log(`[VideoJS Debug] ${message}`, data || '');
+};
+
 // Thanks to
 // https://github.com/cadenzah/videojs-react-enhanced/blob/master/lib/utils/initializeEventListeners.ts
 export const VideoJS = (props: VideoJSProps) => {
@@ -104,6 +108,122 @@ export const VideoJS = (props: VideoJSProps) => {
         player.on('ended', () => {
           handleEnded();
           onEnded?.();
+        });
+
+        debugLog('Player ready state:', {
+          readyState: player.readyState(),
+          paused: player.paused(),
+          muted: player.muted(),
+          volume: player.volume(),
+          duration: player.duration(),
+          currentTime: player.currentTime(),
+        });
+
+        // Debug HLS/VHS info
+        setTimeout(() => {
+          try {
+            // @ts-ignore - accessing internal VHS properties
+            const vhs = player.tech()?.vhs;
+            if (vhs) {
+              debugLog('VHS/HLS info:', {
+                version: vhs.version,
+                stats: vhs.stats,
+                playlists: vhs.playlists,
+              });
+            } else {
+              debugLog('No VHS found - using native HLS or different tech');
+            }
+          } catch (e) {
+            debugLog('Error accessing VHS info:', e);
+          }
+        }, 1000);
+
+        // Audio tracks debugging
+        player.on('loadedmetadata', () => {
+          debugLog('Metadata loaded');
+
+          const audioTracks = player.audioTracks();
+          const videoTracks = player.videoTracks();
+
+          debugLog('Audio tracks info:', {
+            count: audioTracks.length,
+            tracks: Array.from({ length: audioTracks.length }, (_, i) => ({
+              index: i,
+              enabled: audioTracks[i].enabled,
+              kind: audioTracks[i].kind,
+              label: audioTracks[i].label,
+              language: audioTracks[i].language,
+            })),
+          });
+
+          debugLog('Video tracks info:', {
+            count: videoTracks.length,
+            tracks: Array.from({ length: videoTracks.length }, (_, i) => ({
+              index: i,
+              selected: videoTracks[i].selected,
+              kind: videoTracks[i].kind,
+              label: videoTracks[i].label,
+            })),
+          });
+
+          // Force enable audio tracks if none are enabled
+          let hasEnabledAudio = false;
+          for (let i = 0; i < audioTracks.length; i++) {
+            if (audioTracks[i].enabled) {
+              hasEnabledAudio = true;
+              break;
+            }
+          }
+
+          if (!hasEnabledAudio && audioTracks.length > 0) {
+            debugLog('No audio tracks enabled, enabling first track');
+            audioTracks[0].enabled = true;
+          }
+        });
+
+        // Debug all player events
+        const debugEvents = [
+          'loadstart',
+          'loadeddata',
+          'canplay',
+          'canplaythrough',
+          'playing',
+          'waiting',
+          'seeking',
+          'seeked',
+          'ended',
+          'error',
+          'abort',
+          'emptied',
+          'stalled',
+          'suspend',
+          'volumechange',
+          'ratechange',
+        ];
+
+        debugEvents.forEach(eventName => {
+          player.on(eventName, () => {
+            debugLog(`Event: ${eventName}`, {
+              currentTime: player.currentTime(),
+              duration: player.duration(),
+              paused: player.paused(),
+              muted: player.muted(),
+              volume: player.volume(),
+              readyState: player.readyState(),
+            });
+          });
+        });
+
+        // Error handling with detailed logging
+        player.on('error', error => {
+          const playerError = player.error();
+          debugLog('Player error occurred:', {
+            error,
+            playerError,
+            code: playerError?.code,
+            message: playerError?.message,
+            type: playerError?.type,
+          });
         });
       }));
     } else {
