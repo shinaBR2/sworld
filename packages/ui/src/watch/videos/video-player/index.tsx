@@ -23,7 +23,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     html5: {
       vhs: false,
     },
-    techOrder: ['html5'],
     userActions: {
       hotkeys: function (event: KeyboardEvent) {
         const player = this; // Get player instance

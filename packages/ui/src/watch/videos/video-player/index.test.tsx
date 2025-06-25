@@ -49,7 +49,6 @@ describe('VideoPlayer', () => {
         // nativeAudioTracks: true,
         // nativeVideoTracks: false,
       },
-      techOrder: ['html5'],
     });
 
     const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
