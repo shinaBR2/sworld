@@ -45,12 +45,11 @@ describe('VideoPlayer', () => {
       fluid: true,
       aspectRatio: '16:9',
       html5: {
-        vhs: {
-          overrideNative: false,
-        },
-        nativeAudioTracks: true,
-        nativeVideoTracks: false,
+        vhs: false,
+        // nativeAudioTracks: true,
+        // nativeVideoTracks: false,
       },
+      techOrder: ['html5'],
     });
 
     const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];

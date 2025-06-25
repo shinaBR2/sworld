@@ -121,21 +121,36 @@ export const VideoJS = (props: VideoJSProps) => {
         // Debug HLS/VHS info
         setTimeout(() => {
           try {
-            // @ts-ignore - accessing internal VHS properties
+            // @ts-ignore
             const vhs = player.tech()?.vhs;
-            if (vhs) {
-              debugLog('VHS/HLS info:', {
-                version: vhs.version,
-                stats: vhs.stats,
-                playlists: vhs.playlists,
+            if (vhs && vhs.masterPlaylistController_) {
+              const media = vhs.masterPlaylistController_.media();
+
+              // THIS is what we need - codec information
+              debugLog('ACTUAL USEFUL VHS DEBUG:', {
+                // Audio codec info
+                audioCodec: media?.attributes?.CODECS,
+                hasAudio: media?.attributes?.AUDIO,
+
+                // What VHS thinks about audio
+                sourceBuffer: vhs.masterPlaylistController_.sourceUpdater_,
+                mediaSource: vhs.masterPlaylistController_.mediaSource,
               });
-            } else {
-              debugLog('No VHS found - using native HLS or different tech');
+
+              // Check if VHS is actually creating audio source buffers
+              const sourceUpdater = vhs.masterPlaylistController_.sourceUpdater_;
+              if (sourceUpdater) {
+                debugLog('Source buffers:', {
+                  audioBuffer: sourceUpdater.audioBuffer,
+                  videoBuffer: sourceUpdater.videoBuffer,
+                  audioDisabled: sourceUpdater.audioDisabled,
+                });
+              }
             }
           } catch (e) {
-            debugLog('Error accessing VHS info:', e);
+            debugLog('VHS debug failed:', e);
           }
-        }, 1000);
+        }, 2000);
 
         // Audio tracks debugging
         player.on('loadedmetadata', () => {
