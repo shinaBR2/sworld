@@ -165,20 +165,6 @@ export const VideoJS = (props: VideoJSProps) => {
               label: videoTracks[i].label,
             })),
           });
-
-          // Force enable audio tracks if none are enabled
-          let hasEnabledAudio = false;
-          for (let i = 0; i < audioTracks.length; i++) {
-            if (audioTracks[i].enabled) {
-              hasEnabledAudio = true;
-              break;
-            }
-          }
-
-          if (!hasEnabledAudio && audioTracks.length > 0) {
-            debugLog('No audio tracks enabled, enabling first track');
-            audioTracks[0].enabled = true;
-          }
         });
 
         // Debug all player events
