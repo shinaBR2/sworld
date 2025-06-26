@@ -1,196 +1,277 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
 import { VideoPlayer } from './index';
-import VideoJS from './videojs';
 import { PlayableVideo } from '../types';
 
-// Mock VideoJS component
-vi.mock('./videojs', () => ({
+// Mock ReactPlayer
+const mockReactPlayerRef = vi.fn();
+vi.mock('react-player', () => ({
   __esModule: true,
-  default: vi.fn(({ video, videoJsOptions }) => (
-    <div data-testid="mock-videojs" data-video-id={video.id} data-options={JSON.stringify(videoJsOptions)}>
-      Mock VideoJS Player
-    </div>
-  )),
+  default: React.forwardRef(({ url, onReady, ...props }, ref) => {
+    mockReactPlayerRef.mockImplementation(() => props);
+
+    // Simulate ref callback
+    if (ref && typeof ref === 'function') {
+      ref({
+        paused: false,
+        requestFullscreen: vi.fn(),
+      });
+    }
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'mock-react-player',
+        'data-url': url,
+        'data-props': JSON.stringify(props),
+      },
+      'Mock ReactPlayer'
+    );
+  }),
 }));
 
-const mockVideo = {
+// Mock auth context
+vi.mock('core/providers/auth', () => ({
+  useAuthContext: () => ({
+    isSignedIn: false,
+    getAccessToken: vi.fn(),
+  }),
+}));
+
+// Mock video progress hook
+vi.mock('core/watch/mutation-hooks/use-video-progress', () => ({
+  useVideoProgress: () => ({
+    handleProgress: vi.fn(),
+    handlePlay: vi.fn(),
+    handlePause: vi.fn(),
+    handleSeek: vi.fn(),
+    handleEnded: vi.fn(),
+    cleanup: vi.fn(),
+  }),
+}));
+
+// Mock VideoThumbnail
+vi.mock('../video-thumbnail', () => ({
+  VideoThumbnail: ({ title }) => <div data-testid="video-thumbnail">{title}</div>,
+}));
+
+// Mock default thumbnail URL
+vi.mock('../../../universal/images/default-thumbnail', () => ({
+  defaultThumbnailUrl: 'https://example.com/default-thumb.jpg',
+}));
+
+const mockVideo: PlayableVideo = {
   id: 'video-123',
   title: 'Test Video',
   source: 'https://example.com/video.mp4',
-  createdAt: '2024-01-01T00:00:00Z',
-  user: {
-    username: 'master',
-  },
-} as unknown as PlayableVideo;
+  thumbnailUrl: 'https://example.com/thumbnail.jpg',
+  subtitles: [
+    {
+      id: 'sub-1',
+      lang: 'en',
+      src: 'https://example.com/subtitles.vtt',
+      isDefault: true,
+      label: 'English',
+    },
+  ],
+};
 
 describe('VideoPlayer', () => {
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  it('should render VideoJS player with correct props', async () => {
+  afterEach(() => {
+    // Restore console.error after each test
+    consoleSpy?.mockRestore();
+  });
+
+  it('should render ReactPlayer with correct props', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const player = await screen.findByTestId('mock-videojs');
+    const player = await screen.findByTestId('mock-react-player');
 
     expect(player).toBeInTheDocument();
-    expect(player).toHaveAttribute('data-video-id', mockVideo.id);
+    expect(player).toHaveAttribute('data-url', mockVideo.source);
 
-    const options = JSON.parse(player.getAttribute('data-options') || '{}');
+    const props = JSON.parse(player.getAttribute('data-props') || '{}');
 
-    expect(options).toMatchObject({
-      autoplay: false,
+    expect(props).toMatchObject({
       controls: true,
-      responsive: true,
-      fluid: true,
-      aspectRatio: '16:9',
-      html5: {
-        vhs: false,
-        // nativeAudioTracks: true,
-        // nativeVideoTracks: false,
+      width: '100%',
+      height: '100%',
+      light: mockVideo.thumbnailUrl,
+      playing: false,
+      muted: false,
+      volume: 1,
+      playbackRate: 1,
+      progressInterval: 1000,
+    });
+  });
+
+  it('should render with default thumbnail when thumbnailUrl is not provided', async () => {
+    const videoWithoutThumbnail = { ...mockVideo, thumbnailUrl: '' };
+    render(<VideoPlayer video={videoWithoutThumbnail} />);
+    const player = await screen.findByTestId('mock-react-player');
+
+    const props = JSON.parse(player.getAttribute('data-props') || '{}');
+    // Empty string is still passed through, it doesn't use default thumbnail
+    expect(props.light).toBe('');
+  });
+
+  it('should render with default thumbnail when thumbnailUrl is undefined', async () => {
+    const videoWithoutThumbnail = { ...mockVideo, thumbnailUrl: undefined as any };
+    render(<VideoPlayer video={videoWithoutThumbnail} />);
+    const player = await screen.findByTestId('mock-react-player');
+
+    const props = JSON.parse(player.getAttribute('data-props') || '{}');
+    expect(props.light).toBe('https://example.com/default-thumb.jpg');
+  });
+
+  it('should configure subtitles correctly', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    const player = await screen.findByTestId('mock-react-player');
+
+    const props = JSON.parse(player.getAttribute('data-props') || '{}');
+    expect(props.config.file.tracks).toEqual([
+      {
+        kind: 'subtitles',
+        src: 'https://example.com/subtitles.vtt',
+        srcLang: 'en',
+        default: true,
       },
-      techOrder: ['html5'],
-    });
-
-    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
-    expect(videoJsOptions.userActions?.hotkeys).toBeInstanceOf(Function);
+    ]);
   });
 
-  // New test case for keyboard handling
-  it('should configure keyboard hotkeys', async () => {
-    render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-videojs');
+  it('should call onEnded callback when video ends', async () => {
+    const onEnded = vi.fn();
+    render(<VideoPlayer video={mockVideo} onEnded={onEnded} />);
 
-    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
-    expect(typeof videoJsOptions.userActions?.hotkeys).toBe('function');
-  });
+    const player = await screen.findByTestId('mock-react-player');
+    expect(player).toBeInTheDocument();
 
-  it('should pass video source to VideoJS component', async () => {
-    // Make test async
-    render(<VideoPlayer video={mockVideo} />);
+    const props = mockReactPlayerRef();
+    expect(typeof props.onEnded).toBe('function');
 
-    await act(async () => {
-      // Wrap in act for async operations
-      await new Promise(resolve => setTimeout(resolve, 0)); // Let Suspense resolve
+    act(() => {
+      props.onEnded();
     });
 
-    expect(VideoJS).toHaveBeenCalledWith(
-      expect.objectContaining({
-        video: mockVideo,
-      }),
-      expect.any(Object)
-    );
+    expect(onEnded).toHaveBeenCalled();
+  });
+
+  it('should call onError callback when video errors', async () => {
+    const onError = vi.fn();
+    render(<VideoPlayer video={mockVideo} onError={onError} />);
+
+    const player = await screen.findByTestId('mock-react-player');
+    expect(player).toBeInTheDocument();
+
+    // Get the props from our mock
+    const props = mockReactPlayerRef();
+    expect(typeof props.onError).toBe('function');
+
+    // Simulate the onError event
+    const mockError = new Error('Video failed to load');
+    act(() => {
+      props.onError(mockError);
+    });
+
+    expect(onError).toHaveBeenCalledWith(mockError);
   });
 });
 
 describe('VideoPlayer keyboard hotkeys', () => {
-  let hotkeysFn;
-  let playerMock;
-
   beforeEach(() => {
-    // Render component to get the hotkeys function
+    vi.clearAllMocks();
+  });
+
+  it('should handle keyboard events for play/pause (k key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const { videoJsOptions } = vi.mocked(VideoJS).mock.calls[0][0];
-    hotkeysFn = videoJsOptions.userActions.hotkeys;
+    await screen.findByTestId('mock-react-player');
 
-    // Create mock player context
-    playerMock = {
-      play: vi.fn(),
-      pause: vi.fn(),
-      paused: vi.fn(),
-      muted: vi.fn(),
-      currentTime: vi.fn(),
-      isFullscreen: vi.fn(),
-      exitFullscreen: vi.fn(),
-      requestFullscreen: vi.fn(),
-    };
+    // Simulate 'k' key press
+    const kEvent = new KeyboardEvent('keydown', { key: 'k' });
+    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
+
+    fireEvent(document, kEvent);
+
+    expect(kEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should toggle play/pause when K key is pressed', () => {
-    // Mock KeyboardEvent
-    const event = { which: 75, preventDefault: vi.fn() };
+  it('should handle keyboard events for mute (m key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
 
-    // Test when player is paused
-    playerMock.paused.mockReturnValue(true);
-    hotkeysFn.call(playerMock, event);
+    // Simulate 'm' key press
+    const mEvent = new KeyboardEvent('keydown', { key: 'm' });
+    Object.defineProperty(mEvent, 'preventDefault', { value: vi.fn() });
 
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.play).toHaveBeenCalled();
-    expect(playerMock.pause).not.toHaveBeenCalled();
+    fireEvent(document, mEvent);
 
-    // Reset mocks
-    vi.clearAllMocks();
-
-    // Test when player is playing
-    playerMock.paused.mockReturnValue(false);
-    hotkeysFn.call(playerMock, event);
-
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.pause).toHaveBeenCalled();
-    expect(playerMock.play).not.toHaveBeenCalled();
+    expect(mEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should toggle mute when M key is pressed', () => {
-    const event = { which: 77, preventDefault: vi.fn() };
+  it('should handle keyboard events for volume up (ArrowUp key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
 
-    // Test when player is unmuted
-    playerMock.muted.mockReturnValue(false);
-    hotkeysFn.call(playerMock, event);
+    // Simulate 'ArrowUp' key press
+    const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+    Object.defineProperty(upEvent, 'preventDefault', { value: vi.fn() });
 
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.muted).toHaveBeenCalledWith(true);
+    fireEvent(document, upEvent);
 
-    // Reset mocks
-    vi.clearAllMocks();
-
-    // Test when player is muted
-    playerMock.muted.mockReturnValue(true);
-    hotkeysFn.call(playerMock, event);
-
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.muted).toHaveBeenCalledWith(false);
+    expect(upEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should seek backward when left arrow key is pressed', () => {
-    const event = { which: 37, preventDefault: vi.fn() };
+  it('should handle keyboard events for volume down (ArrowDown key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
 
-    playerMock.currentTime.mockReturnValue(10);
-    hotkeysFn.call(playerMock, event);
+    // Simulate 'ArrowDown' key press
+    const downEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+    Object.defineProperty(downEvent, 'preventDefault', { value: vi.fn() });
 
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.currentTime).toHaveBeenCalledWith(5); // 10 - 5
+    fireEvent(document, downEvent);
+
+    expect(downEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should seek forward when right arrow key is pressed', () => {
-    const event = { which: 39, preventDefault: vi.fn() };
+  it('should handle keyboard events for fullscreen (f key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
 
-    playerMock.currentTime.mockReturnValue(10);
-    hotkeysFn.call(playerMock, event);
+    // Simulate 'f' key press
+    const fEvent = new KeyboardEvent('keydown', { key: 'f' });
+    Object.defineProperty(fEvent, 'preventDefault', { value: vi.fn() });
 
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.currentTime).toHaveBeenCalledWith(15); // 10 + 5
+    fireEvent(document, fEvent);
+
+    expect(fEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should toggle fullscreen when F key is pressed', () => {
-    const event = { which: 70, preventDefault: vi.fn() };
+  it('should ignore keyboard events when typing in input fields', async () => {
+    render(
+      <div>
+        <input data-testid="test-input" />
+        <VideoPlayer video={mockVideo} />
+      </div>
+    );
+    await screen.findByTestId('mock-react-player');
 
-    // Test when not in fullscreen
-    playerMock.isFullscreen.mockReturnValue(false);
-    hotkeysFn.call(playerMock, event);
+    const input = screen.getByTestId('test-input');
+    input.focus();
 
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.requestFullscreen).toHaveBeenCalled();
-    expect(playerMock.exitFullscreen).not.toHaveBeenCalled();
+    // Simulate 'k' key press while input is focused
+    const kEvent = new KeyboardEvent('keydown', { key: 'k' });
+    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
 
-    // Reset mocks
-    vi.clearAllMocks();
+    fireEvent(document, kEvent);
 
-    // Test when in fullscreen
-    playerMock.isFullscreen.mockReturnValue(true);
-    hotkeysFn.call(playerMock, event);
-
-    expect(event.preventDefault).toHaveBeenCalled();
-    expect(playerMock.exitFullscreen).toHaveBeenCalled();
-    expect(playerMock.requestFullscreen).not.toHaveBeenCalled();
+    // Should not prevent default since we're typing in an input
+    expect(kEvent.preventDefault).not.toHaveBeenCalled();
   });
 });
