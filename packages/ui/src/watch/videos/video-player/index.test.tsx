@@ -1,13 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { VideoPlayer } from './index';
 import { PlayableVideo } from '../types';
 
 // Mock ReactPlayer
+const mockReactPlayerRef = vi.fn();
 vi.mock('react-player', () => ({
   __esModule: true,
   default: React.forwardRef(({ url, onReady, ...props }, ref) => {
+    mockReactPlayerRef.mockImplementation(() => props);
+
     // Simulate ref callback
     if (ref && typeof ref === 'function') {
       ref({
@@ -15,11 +18,15 @@ vi.mock('react-player', () => ({
         requestFullscreen: vi.fn(),
       });
     }
-    return React.createElement('div', {
-      'data-testid': 'mock-react-player',
-      'data-url': url,
-      'data-props': JSON.stringify(props),
-    }, 'Mock ReactPlayer');
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'mock-react-player',
+        'data-url': url,
+        'data-props': JSON.stringify(props),
+      },
+      'Mock ReactPlayer'
+    );
   }),
 }));
 
@@ -70,8 +77,16 @@ const mockVideo: PlayableVideo = {
 };
 
 describe('VideoPlayer', () => {
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    // Restore console.error after each test
+    consoleSpy?.mockRestore();
   });
 
   it('should render ReactPlayer with correct props', async () => {
@@ -134,20 +149,37 @@ describe('VideoPlayer', () => {
     const onEnded = vi.fn();
     render(<VideoPlayer video={mockVideo} onEnded={onEnded} />);
 
-    // Note: In a real test, you would simulate the onEnded event from ReactPlayer
-    // This is just checking that the prop is passed correctly
     const player = await screen.findByTestId('mock-react-player');
     expect(player).toBeInTheDocument();
+
+    const props = mockReactPlayerRef();
+    expect(typeof props.onEnded).toBe('function');
+
+    act(() => {
+      props.onEnded();
+    });
+
+    expect(onEnded).toHaveBeenCalled();
   });
 
   it('should call onError callback when video errors', async () => {
     const onError = vi.fn();
     render(<VideoPlayer video={mockVideo} onError={onError} />);
 
-    // Note: In a real test, you would simulate the onError event from ReactPlayer
-    // This is just checking that the prop is passed correctly
     const player = await screen.findByTestId('mock-react-player');
     expect(player).toBeInTheDocument();
+
+    // Get the props from our mock
+    const props = mockReactPlayerRef();
+    expect(typeof props.onError).toBe('function');
+
+    // Simulate the onError event
+    const mockError = new Error('Video failed to load');
+    act(() => {
+      props.onError(mockError);
+    });
+
+    expect(onError).toHaveBeenCalledWith(mockError);
   });
 });
 

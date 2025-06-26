@@ -122,7 +122,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
   const handleError = useCallback(
     (error: unknown) => {
-      console.log(`errorr`, error);
       onError?.(error);
     },
     [onError]
