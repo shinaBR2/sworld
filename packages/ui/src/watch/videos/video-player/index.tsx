@@ -43,12 +43,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const setPlayerRef = useCallback((player: any) => {
     if (!player) return;
 
-    console.log('What is player?', player);
-    console.log('Type:', typeof player);
-    console.log('Constructor:', player?.constructor?.name);
-    console.log('Has currentTime?', 'currentTime' in player);
-    console.log('Has getCurrentTime?', 'getCurrentTime' in player);
-
     playerRef.current = player;
   }, []);
 
