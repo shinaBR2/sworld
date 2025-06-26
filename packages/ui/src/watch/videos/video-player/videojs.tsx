@@ -6,7 +6,7 @@ import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import { useAuthContext } from 'core/providers/auth';
 import { PlayableVideo } from '../types';
 import { getVideoPlayerOptions } from './utils';
-import 'video.js/dist/video-js.css';
+// import 'video.js/dist/video-js.css';
 
 /**
  * videojs has no exported type
