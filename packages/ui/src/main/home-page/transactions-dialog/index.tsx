@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { CategoryType } from 'core/finance';
+import { formatNumber } from 'core/universal/common';
 
 interface Transaction {
   id: string;
@@ -135,7 +136,7 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                     </Typography>
                   </Box>
                   <Typography variant="subtitle1" fontWeight="bold">
-                    ${transaction.amount.toFixed(2)}
+                    {formatNumber(transaction.amount)}
                   </Typography>
                 </Box>
               </Box>

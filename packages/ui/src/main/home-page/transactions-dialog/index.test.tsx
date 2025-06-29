@@ -78,9 +78,9 @@ describe('TransactionsDialog', () => {
     expect(screen.getByText('Fast Food')).toBeInTheDocument();
 
     // Check amounts are displayed
-    expect(screen.getByText('$50.25')).toBeInTheDocument();
-    expect(screen.getByText('$25.99')).toBeInTheDocument();
-    expect(screen.getByText('$15.75')).toBeInTheDocument();
+    expect(screen.getByText('50.25')).toBeInTheDocument();
+    expect(screen.getByText('25.99')).toBeInTheDocument();
+    expect(screen.getByText('15.75')).toBeInTheDocument();
   });
 
   it('filters transactions based on selected category', () => {
@@ -135,9 +135,9 @@ describe('TransactionsDialog', () => {
   it('renders with AppBar in mobile view', () => {
     // Set to mobile view for this test
     isMobileView = true;
-    
+
     renderWithTheme();
-    
+
     // In mobile view, we should have a toolbar
     const toolbar = document.querySelector('.MuiToolbar-root');
     expect(toolbar).toBeInTheDocument();
