@@ -5,6 +5,7 @@ import * as echarts from 'echarts/core';
 import { PieChart } from 'echarts/charts';
 import { TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
+import { formatNumber } from 'core/universal/common';
 
 echarts.use([PieChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -79,7 +80,7 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
         trigger: 'item',
         formatter: (params: any) => {
           const { name, value, percent } = params;
-          return `${name}: $${value.toFixed(2)} (${percent.toFixed(1)}%)`;
+          return `${name}: ${formatNumber(value)} (${percent}%)`;
         },
         backgroundColor: isDarkMode ? '#1e1e1e' : 'white',
         borderColor: isDarkMode ? '#333' : '#ddd',
@@ -173,7 +174,7 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
           Total
         </Typography>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          ${total.toFixed(2)}
+          {formatNumber(total)}
         </Typography>
       </Box>
     </Box>
