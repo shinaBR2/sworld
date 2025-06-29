@@ -51,7 +51,7 @@ describe('SummaryCard', () => {
     render(<SummaryCard {...defaultProps} />);
 
     const amount = screen.getByTestId('styled-amount');
-    expect(amount).toHaveTextContent('$123.45');
+    expect(amount).toHaveTextContent('123.45');
   });
 
   it('displays the correct category icon and title', () => {

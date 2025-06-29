@@ -12,11 +12,13 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { CategoryType } from 'core/finance';
+import { formatNumber } from 'core/universal/common';
 
 interface Transaction {
   id: string;
   name: string;
   amount: number;
+  note?: string | null;
   month: number;
   year: number;
   category: string;
@@ -104,40 +106,54 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                   py: 2,
                   px: 3,
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  flexDirection: 'column',
                   borderBottom: `1px solid ${theme.palette.divider}`,
                 }}
               >
-                <Box>
-                  <Typography variant="subtitle1">{transaction.name}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(transaction.createdAt).toLocaleDateString()}
-                  </Typography>
-                </Box>
                 <Box
                   sx={{
                     display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    gap: 2,
                   }}
                 >
-                  <Box
-                    sx={{
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: 1,
-                      backgroundColor: getCategoryColor(transaction.category as CategoryType),
-                    }}
-                  >
-                    <Typography variant="body2" fontSize="0.75rem">
-                      {getCategoryLabel(transaction.category as CategoryType).split(' ')[0]}
+                  <Box>
+                    <Typography variant="subtitle1">{transaction.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(transaction.createdAt).toLocaleDateString()}
                     </Typography>
                   </Box>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    ${transaction.amount.toFixed(2)}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: 1,
+                        backgroundColor: getCategoryColor(transaction.category as CategoryType),
+                      }}
+                    >
+                      <Typography variant="body2" fontSize="0.75rem">
+                        {getCategoryLabel(transaction.category as CategoryType).split(' ')[0]}
+                      </Typography>
+                    </Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {formatNumber(transaction.amount)}
+                    </Typography>
+                  </Box>
                 </Box>
+                {transaction.note && (
+                  <Box sx={{ mt: 2, p: 1.5, backgroundColor: theme.palette.grey[50], borderRadius: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {transaction.note}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             ))}
           </Box>

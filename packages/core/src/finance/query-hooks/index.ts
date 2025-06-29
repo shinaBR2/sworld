@@ -9,6 +9,7 @@ const transactionsByPeriodQuery = graphql(/* GraphQL */ `
       id
       name
       amount
+      note
       month
       year
       category

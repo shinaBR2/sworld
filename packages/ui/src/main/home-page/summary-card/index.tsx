@@ -1,6 +1,7 @@
 import { CardContent, Typography } from '@mui/material';
 import { StyledCard, StyledAmount, StyledCategoryName, StyledCategoryWrapper } from './styled';
 import { getCategoryIcon, getCategoryTitle } from './utils';
+import { formatNumber } from 'core/universal/common';
 import { CategoryType } from 'core/finance';
 import { SummaryCardSkeleton } from './skeleton';
 
@@ -31,7 +32,7 @@ const SummaryCard = (props: SummaryCardProps) => {
         </StyledCategoryWrapper>
 
         <StyledAmount variant="h4" component="div">
-          ${amount.toFixed(2)}
+          {formatNumber(amount)}
         </StyledAmount>
 
         <Typography variant="body2" color="text.secondary">

@@ -92,7 +92,7 @@ describe('DonutChart', () => {
     const totalText = screen.getByText('Total');
     expect(totalText).toBeInTheDocument();
 
-    const totalAmount = screen.getByText('$175.00');
+    const totalAmount = screen.getByText('175');
     expect(totalAmount).toBeInTheDocument();
   });
 
@@ -105,7 +105,7 @@ describe('DonutChart', () => {
     renderComponent({ data: dataWithTotal });
 
     // Total should still be $175.00, not including the 'total' category
-    const totalAmount = screen.getByText('$175.00');
+    const totalAmount = screen.getByText('175');
     expect(totalAmount).toBeInTheDocument();
   });
 
