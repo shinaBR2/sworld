@@ -30,3 +30,49 @@ object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - book_id
+        - current_page
+        - last_read_at
+        - percentage
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - book_id
+        - current_page
+        - id
+        - last_read_at
+        - percentage
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+      query_root_fields:
+        - select
+        - select_aggregate
+      subscription_root_fields: []
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - current_page
+        - last_read_at
+        - percentage
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
