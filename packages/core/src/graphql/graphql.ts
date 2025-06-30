@@ -623,6 +623,472 @@ export type Audios_Updates = {
   where: Audios_Bool_Exp;
 };
 
+/** columns and relationships of "books" */
+export type Books = {
+  __typename?: 'books';
+  createdAt: Scalars['timestamptz']['output'];
+  /** User input url, NOT validated yet */
+  fileUrl: Scalars['String']['output'];
+  id: Scalars['uuid']['output'];
+  /** An array relationship */
+  reading_progresses: Array<Reading_Progresses>;
+  /** An aggregate relationship */
+  reading_progresses_aggregate: Reading_Progresses_Aggregate;
+  /** Final URL for the book, validated, end user can not update this field */
+  source: Scalars['String']['output'];
+  /** Could be either "ready" or "processing" */
+  status: Scalars['String']['output'];
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  totalPages: Scalars['Int']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  /** Uploader, not the author of the book */
+  userId: Scalars['uuid']['output'];
+};
+
+
+/** columns and relationships of "books" */
+export type BooksReading_ProgressesArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+/** columns and relationships of "books" */
+export type BooksReading_Progresses_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+/** aggregated selection of "books" */
+export type Books_Aggregate = {
+  __typename?: 'books_aggregate';
+  aggregate?: Maybe<Books_Aggregate_Fields>;
+  nodes: Array<Books>;
+};
+
+export type Books_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Books_Aggregate_Bool_Exp_Count>;
+};
+
+export type Books_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Books_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Books_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "books" */
+export type Books_Aggregate_Fields = {
+  __typename?: 'books_aggregate_fields';
+  avg?: Maybe<Books_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Books_Max_Fields>;
+  min?: Maybe<Books_Min_Fields>;
+  stddev?: Maybe<Books_Stddev_Fields>;
+  stddev_pop?: Maybe<Books_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Books_Stddev_Samp_Fields>;
+  sum?: Maybe<Books_Sum_Fields>;
+  var_pop?: Maybe<Books_Var_Pop_Fields>;
+  var_samp?: Maybe<Books_Var_Samp_Fields>;
+  variance?: Maybe<Books_Variance_Fields>;
+};
+
+
+/** aggregate fields of "books" */
+export type Books_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Books_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "books" */
+export type Books_Aggregate_Order_By = {
+  avg?: InputMaybe<Books_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Books_Max_Order_By>;
+  min?: InputMaybe<Books_Min_Order_By>;
+  stddev?: InputMaybe<Books_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Books_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Books_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Books_Sum_Order_By>;
+  var_pop?: InputMaybe<Books_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Books_Var_Samp_Order_By>;
+  variance?: InputMaybe<Books_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "books" */
+export type Books_Arr_Rel_Insert_Input = {
+  data: Array<Books_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Books_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Books_Avg_Fields = {
+  __typename?: 'books_avg_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "books" */
+export type Books_Avg_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "books". All fields are combined with a logical 'AND'. */
+export type Books_Bool_Exp = {
+  _and?: InputMaybe<Array<Books_Bool_Exp>>;
+  _not?: InputMaybe<Books_Bool_Exp>;
+  _or?: InputMaybe<Array<Books_Bool_Exp>>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  fileUrl?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  reading_progresses?: InputMaybe<Reading_Progresses_Bool_Exp>;
+  reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Bool_Exp>;
+  source?: InputMaybe<String_Comparison_Exp>;
+  status?: InputMaybe<String_Comparison_Exp>;
+  thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  totalPages?: InputMaybe<Int_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  userId?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "books" */
+export enum Books_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  BooksPkey = 'books_pkey'
+}
+
+/** input type for incrementing numeric columns in table "books" */
+export type Books_Inc_Input = {
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "books" */
+export type Books_Insert_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** User input url, NOT validated yet */
+  fileUrl?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  reading_progresses?: InputMaybe<Reading_Progresses_Arr_Rel_Insert_Input>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: InputMaybe<Scalars['String']['input']>;
+  /** Could be either "ready" or "processing" */
+  status?: InputMaybe<Scalars['String']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  /** Uploader, not the author of the book */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Books_Max_Fields = {
+  __typename?: 'books_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** User input url, NOT validated yet */
+  fileUrl?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: Maybe<Scalars['String']['output']>;
+  /** Could be either "ready" or "processing" */
+  status?: Maybe<Scalars['String']['output']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** Uploader, not the author of the book */
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "books" */
+export type Books_Max_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  /** User input url, NOT validated yet */
+  fileUrl?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: InputMaybe<Order_By>;
+  /** Could be either "ready" or "processing" */
+  status?: InputMaybe<Order_By>;
+  thumbnailUrl?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  /** Uploader, not the author of the book */
+  userId?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Books_Min_Fields = {
+  __typename?: 'books_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** User input url, NOT validated yet */
+  fileUrl?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: Maybe<Scalars['String']['output']>;
+  /** Could be either "ready" or "processing" */
+  status?: Maybe<Scalars['String']['output']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** Uploader, not the author of the book */
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "books" */
+export type Books_Min_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  /** User input url, NOT validated yet */
+  fileUrl?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: InputMaybe<Order_By>;
+  /** Could be either "ready" or "processing" */
+  status?: InputMaybe<Order_By>;
+  thumbnailUrl?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  /** Uploader, not the author of the book */
+  userId?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "books" */
+export type Books_Mutation_Response = {
+  __typename?: 'books_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Books>;
+};
+
+/** input type for inserting object relation for remote table "books" */
+export type Books_Obj_Rel_Insert_Input = {
+  data: Books_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Books_On_Conflict>;
+};
+
+/** on_conflict condition type for table "books" */
+export type Books_On_Conflict = {
+  constraint: Books_Constraint;
+  update_columns?: Array<Books_Update_Column>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "books". */
+export type Books_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  fileUrl?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Order_By>;
+  source?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  thumbnailUrl?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: books */
+export type Books_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "books" */
+export enum Books_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  FileUrl = 'fileUrl',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Source = 'source',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  ThumbnailUrl = 'thumbnailUrl',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  TotalPages = 'totalPages',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "books" */
+export type Books_Set_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** User input url, NOT validated yet */
+  fileUrl?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: InputMaybe<Scalars['String']['input']>;
+  /** Could be either "ready" or "processing" */
+  status?: InputMaybe<Scalars['String']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Uploader, not the author of the book */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Books_Stddev_Fields = {
+  __typename?: 'books_stddev_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "books" */
+export type Books_Stddev_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Books_Stddev_Pop_Fields = {
+  __typename?: 'books_stddev_pop_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "books" */
+export type Books_Stddev_Pop_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Books_Stddev_Samp_Fields = {
+  __typename?: 'books_stddev_samp_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "books" */
+export type Books_Stddev_Samp_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "books" */
+export type Books_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Books_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Books_Stream_Cursor_Value_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** User input url, NOT validated yet */
+  fileUrl?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  /** Final URL for the book, validated, end user can not update this field */
+  source?: InputMaybe<Scalars['String']['input']>;
+  /** Could be either "ready" or "processing" */
+  status?: InputMaybe<Scalars['String']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  /** Uploader, not the author of the book */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Books_Sum_Fields = {
+  __typename?: 'books_sum_fields';
+  totalPages?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "books" */
+export type Books_Sum_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "books" */
+export enum Books_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  FileUrl = 'fileUrl',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Source = 'source',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  ThumbnailUrl = 'thumbnailUrl',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  TotalPages = 'totalPages',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+export type Books_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Books_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Books_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Books_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Books_Var_Pop_Fields = {
+  __typename?: 'books_var_pop_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "books" */
+export type Books_Var_Pop_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Books_Var_Samp_Fields = {
+  __typename?: 'books_var_samp_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "books" */
+export type Books_Var_Samp_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Books_Variance_Fields = {
+  __typename?: 'books_variance_fields';
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "books" */
+export type Books_Variance_Order_By = {
+  totalPages?: InputMaybe<Order_By>;
+};
+
 /** Requests to crawl content from any sources */
 export type Crawl_Requests = {
   __typename?: 'crawl_requests';
@@ -1964,6 +2430,10 @@ export type Mutation_Root = {
   delete_audios?: Maybe<Audios_Mutation_Response>;
   /** delete single row from the table: "audios" */
   delete_audios_by_pk?: Maybe<Audios>;
+  /** delete data from the table: "books" */
+  delete_books?: Maybe<Books_Mutation_Response>;
+  /** delete single row from the table: "books" */
+  delete_books_by_pk?: Maybe<Books>;
   /** delete data from the table: "crawl_requests" */
   delete_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
   /** delete single row from the table: "crawl_requests" */
@@ -1996,6 +2466,10 @@ export type Mutation_Root = {
   delete_posts?: Maybe<Posts_Mutation_Response>;
   /** delete single row from the table: "posts" */
   delete_posts_by_pk?: Maybe<Posts>;
+  /** delete data from the table: "reading_progresses" */
+  delete_reading_progresses?: Maybe<Reading_Progresses_Mutation_Response>;
+  /** delete single row from the table: "reading_progresses" */
+  delete_reading_progresses_by_pk?: Maybe<Reading_Progresses>;
   /** delete data from the table: "shared_playlist_recipients" */
   delete_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
   /** delete single row from the table: "shared_playlist_recipients" */
@@ -2048,6 +2522,10 @@ export type Mutation_Root = {
   insert_audios?: Maybe<Audios_Mutation_Response>;
   /** insert a single row into the table: "audios" */
   insert_audios_one?: Maybe<Audios>;
+  /** insert data into the table: "books" */
+  insert_books?: Maybe<Books_Mutation_Response>;
+  /** insert a single row into the table: "books" */
+  insert_books_one?: Maybe<Books>;
   /** insert data into the table: "crawl_requests" */
   insert_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
   /** insert a single row into the table: "crawl_requests" */
@@ -2080,6 +2558,10 @@ export type Mutation_Root = {
   insert_posts?: Maybe<Posts_Mutation_Response>;
   /** insert a single row into the table: "posts" */
   insert_posts_one?: Maybe<Posts>;
+  /** insert data into the table: "reading_progresses" */
+  insert_reading_progresses?: Maybe<Reading_Progresses_Mutation_Response>;
+  /** insert a single row into the table: "reading_progresses" */
+  insert_reading_progresses_one?: Maybe<Reading_Progresses>;
   /** insert data into the table: "shared_playlist_recipients" */
   insert_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
   /** insert a single row into the table: "shared_playlist_recipients" */
@@ -2136,6 +2618,12 @@ export type Mutation_Root = {
   update_audios_by_pk?: Maybe<Audios>;
   /** update multiples rows of table: "audios" */
   update_audios_many?: Maybe<Array<Maybe<Audios_Mutation_Response>>>;
+  /** update data of the table: "books" */
+  update_books?: Maybe<Books_Mutation_Response>;
+  /** update single row of the table: "books" */
+  update_books_by_pk?: Maybe<Books>;
+  /** update multiples rows of table: "books" */
+  update_books_many?: Maybe<Array<Maybe<Books_Mutation_Response>>>;
   /** update data of the table: "crawl_requests" */
   update_crawl_requests?: Maybe<Crawl_Requests_Mutation_Response>;
   /** update single row of the table: "crawl_requests" */
@@ -2184,6 +2672,12 @@ export type Mutation_Root = {
   update_posts_by_pk?: Maybe<Posts>;
   /** update multiples rows of table: "posts" */
   update_posts_many?: Maybe<Array<Maybe<Posts_Mutation_Response>>>;
+  /** update data of the table: "reading_progresses" */
+  update_reading_progresses?: Maybe<Reading_Progresses_Mutation_Response>;
+  /** update single row of the table: "reading_progresses" */
+  update_reading_progresses_by_pk?: Maybe<Reading_Progresses>;
+  /** update multiples rows of table: "reading_progresses" */
+  update_reading_progresses_many?: Maybe<Array<Maybe<Reading_Progresses_Mutation_Response>>>;
   /** update data of the table: "shared_playlist_recipients" */
   update_shared_playlist_recipients?: Maybe<Shared_Playlist_Recipients_Mutation_Response>;
   /** update single row of the table: "shared_playlist_recipients" */
@@ -2274,6 +2768,18 @@ export type Mutation_RootDelete_AudiosArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Audios_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_BooksArgs = {
+  where: Books_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Books_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -2371,6 +2877,18 @@ export type Mutation_RootDelete_PostsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Posts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Reading_ProgressesArgs = {
+  where: Reading_Progresses_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Reading_Progresses_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -2537,6 +3055,20 @@ export type Mutation_RootInsert_Audios_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_BooksArgs = {
+  objects: Array<Books_Insert_Input>;
+  on_conflict?: InputMaybe<Books_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Books_OneArgs = {
+  object: Books_Insert_Input;
+  on_conflict?: InputMaybe<Books_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Crawl_RequestsArgs = {
   objects: Array<Crawl_Requests_Insert_Input>;
   on_conflict?: InputMaybe<Crawl_Requests_On_Conflict>;
@@ -2645,6 +3177,20 @@ export type Mutation_RootInsert_PostsArgs = {
 export type Mutation_RootInsert_Posts_OneArgs = {
   object: Posts_Insert_Input;
   on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Reading_ProgressesArgs = {
+  objects: Array<Reading_Progresses_Insert_Input>;
+  on_conflict?: InputMaybe<Reading_Progresses_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Reading_Progresses_OneArgs = {
+  object: Reading_Progresses_Insert_Input;
+  on_conflict?: InputMaybe<Reading_Progresses_On_Conflict>;
 };
 
 
@@ -2839,6 +3385,28 @@ export type Mutation_RootUpdate_Audios_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Audios_ManyArgs = {
   updates: Array<Audios_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_BooksArgs = {
+  _inc?: InputMaybe<Books_Inc_Input>;
+  _set?: InputMaybe<Books_Set_Input>;
+  where: Books_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Books_By_PkArgs = {
+  _inc?: InputMaybe<Books_Inc_Input>;
+  _set?: InputMaybe<Books_Set_Input>;
+  pk_columns: Books_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Books_ManyArgs = {
+  updates: Array<Books_Updates>;
 };
 
 
@@ -3045,6 +3613,28 @@ export type Mutation_RootUpdate_Posts_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Posts_ManyArgs = {
   updates: Array<Posts_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Reading_ProgressesArgs = {
+  _inc?: InputMaybe<Reading_Progresses_Inc_Input>;
+  _set?: InputMaybe<Reading_Progresses_Set_Input>;
+  where: Reading_Progresses_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Reading_Progresses_By_PkArgs = {
+  _inc?: InputMaybe<Reading_Progresses_Inc_Input>;
+  _set?: InputMaybe<Reading_Progresses_Set_Input>;
+  pk_columns: Reading_Progresses_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Reading_Progresses_ManyArgs = {
+  updates: Array<Reading_Progresses_Updates>;
 };
 
 
@@ -4772,6 +5362,12 @@ export type Query_Root = {
   /** fetch data from the table: "audios" using primary key columns */
   audios_by_pk?: Maybe<Audios>;
   /** An array relationship */
+  books: Array<Books>;
+  /** An aggregate relationship */
+  books_aggregate: Books_Aggregate;
+  /** fetch data from the table: "books" using primary key columns */
+  books_by_pk?: Maybe<Books>;
+  /** An array relationship */
   crawl_requests: Array<Crawl_Requests>;
   /** An aggregate relationship */
   crawl_requests_aggregate: Crawl_Requests_Aggregate;
@@ -4819,6 +5415,12 @@ export type Query_Root = {
   posts_aggregate: Posts_Aggregate;
   /** fetch data from the table: "posts" using primary key columns */
   posts_by_pk?: Maybe<Posts>;
+  /** An array relationship */
+  reading_progresses: Array<Reading_Progresses>;
+  /** An aggregate relationship */
+  reading_progresses_aggregate: Reading_Progresses_Aggregate;
+  /** fetch data from the table: "reading_progresses" using primary key columns */
+  reading_progresses_by_pk?: Maybe<Reading_Progresses>;
   /** An array relationship */
   shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
   /** An aggregate relationship */
@@ -4931,6 +5533,29 @@ export type Query_RootAudios_AggregateArgs = {
 
 
 export type Query_RootAudios_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootBooksArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+
+export type Query_RootBooks_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+
+export type Query_RootBooks_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -5116,6 +5741,29 @@ export type Query_RootPosts_AggregateArgs = {
 
 
 export type Query_RootPosts_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootReading_ProgressesArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+export type Query_RootReading_Progresses_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+export type Query_RootReading_Progresses_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -5371,6 +6019,456 @@ export type Query_RootVideos_AggregateArgs = {
 
 export type Query_RootVideos_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+/** Track how far end user read a book */
+export type Reading_Progresses = {
+  __typename?: 'reading_progresses';
+  /** An object relationship */
+  book: Books;
+  bookId: Scalars['uuid']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  currentPage: Scalars['Int']['output'];
+  id: Scalars['uuid']['output'];
+  lastReadAt: Scalars['timestamptz']['output'];
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Int']['output']>;
+  totalPages: Scalars['Int']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  userId: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "reading_progresses" */
+export type Reading_Progresses_Aggregate = {
+  __typename?: 'reading_progresses_aggregate';
+  aggregate?: Maybe<Reading_Progresses_Aggregate_Fields>;
+  nodes: Array<Reading_Progresses>;
+};
+
+export type Reading_Progresses_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Reading_Progresses_Aggregate_Bool_Exp_Count>;
+};
+
+export type Reading_Progresses_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Reading_Progresses_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "reading_progresses" */
+export type Reading_Progresses_Aggregate_Fields = {
+  __typename?: 'reading_progresses_aggregate_fields';
+  avg?: Maybe<Reading_Progresses_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Reading_Progresses_Max_Fields>;
+  min?: Maybe<Reading_Progresses_Min_Fields>;
+  stddev?: Maybe<Reading_Progresses_Stddev_Fields>;
+  stddev_pop?: Maybe<Reading_Progresses_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Reading_Progresses_Stddev_Samp_Fields>;
+  sum?: Maybe<Reading_Progresses_Sum_Fields>;
+  var_pop?: Maybe<Reading_Progresses_Var_Pop_Fields>;
+  var_samp?: Maybe<Reading_Progresses_Var_Samp_Fields>;
+  variance?: Maybe<Reading_Progresses_Variance_Fields>;
+};
+
+
+/** aggregate fields of "reading_progresses" */
+export type Reading_Progresses_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "reading_progresses" */
+export type Reading_Progresses_Aggregate_Order_By = {
+  avg?: InputMaybe<Reading_Progresses_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Reading_Progresses_Max_Order_By>;
+  min?: InputMaybe<Reading_Progresses_Min_Order_By>;
+  stddev?: InputMaybe<Reading_Progresses_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Reading_Progresses_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Reading_Progresses_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Reading_Progresses_Sum_Order_By>;
+  var_pop?: InputMaybe<Reading_Progresses_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Reading_Progresses_Var_Samp_Order_By>;
+  variance?: InputMaybe<Reading_Progresses_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "reading_progresses" */
+export type Reading_Progresses_Arr_Rel_Insert_Input = {
+  data: Array<Reading_Progresses_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Reading_Progresses_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Reading_Progresses_Avg_Fields = {
+  __typename?: 'reading_progresses_avg_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "reading_progresses" */
+export type Reading_Progresses_Avg_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "reading_progresses". All fields are combined with a logical 'AND'. */
+export type Reading_Progresses_Bool_Exp = {
+  _and?: InputMaybe<Array<Reading_Progresses_Bool_Exp>>;
+  _not?: InputMaybe<Reading_Progresses_Bool_Exp>;
+  _or?: InputMaybe<Array<Reading_Progresses_Bool_Exp>>;
+  book?: InputMaybe<Books_Bool_Exp>;
+  bookId?: InputMaybe<Uuid_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  currentPage?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  lastReadAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  percentage?: InputMaybe<Numeric_Comparison_Exp>;
+  readingTimeMinutes?: InputMaybe<Int_Comparison_Exp>;
+  totalPages?: InputMaybe<Int_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  userId?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "reading_progresses" */
+export enum Reading_Progresses_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  ReadingProgressesPkey = 'reading_progresses_pkey',
+  /** unique or primary key constraint on columns "user_id", "book_id" */
+  ReadingProgressesUserIdBookIdKey = 'reading_progresses_user_id_book_id_key'
+}
+
+/** input type for incrementing numeric columns in table "reading_progresses" */
+export type Reading_Progresses_Inc_Input = {
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
+  readingTimeMinutes?: InputMaybe<Scalars['Int']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "reading_progresses" */
+export type Reading_Progresses_Insert_Input = {
+  book?: InputMaybe<Books_Obj_Rel_Insert_Input>;
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  lastReadAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  readingTimeMinutes?: InputMaybe<Scalars['Int']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Reading_Progresses_Max_Fields = {
+  __typename?: 'reading_progresses_max_fields';
+  bookId?: Maybe<Scalars['uuid']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  currentPage?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lastReadAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Int']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "reading_progresses" */
+export type Reading_Progresses_Max_Order_By = {
+  bookId?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  currentPage?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lastReadAt?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Reading_Progresses_Min_Fields = {
+  __typename?: 'reading_progresses_min_fields';
+  bookId?: Maybe<Scalars['uuid']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  currentPage?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  lastReadAt?: Maybe<Scalars['timestamptz']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Int']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "reading_progresses" */
+export type Reading_Progresses_Min_Order_By = {
+  bookId?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  currentPage?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lastReadAt?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "reading_progresses" */
+export type Reading_Progresses_Mutation_Response = {
+  __typename?: 'reading_progresses_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Reading_Progresses>;
+};
+
+/** on_conflict condition type for table "reading_progresses" */
+export type Reading_Progresses_On_Conflict = {
+  constraint: Reading_Progresses_Constraint;
+  update_columns?: Array<Reading_Progresses_Update_Column>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "reading_progresses". */
+export type Reading_Progresses_Order_By = {
+  book?: InputMaybe<Books_Order_By>;
+  bookId?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  currentPage?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lastReadAt?: InputMaybe<Order_By>;
+  percentage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: reading_progresses */
+export type Reading_Progresses_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "reading_progresses" */
+export enum Reading_Progresses_Select_Column {
+  /** column name */
+  BookId = 'bookId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  CurrentPage = 'currentPage',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastReadAt = 'lastReadAt',
+  /** column name */
+  ReadingTimeMinutes = 'readingTimeMinutes',
+  /** column name */
+  TotalPages = 'totalPages',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "reading_progresses" */
+export type Reading_Progresses_Set_Input = {
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  lastReadAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  readingTimeMinutes?: InputMaybe<Scalars['Int']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Reading_Progresses_Stddev_Fields = {
+  __typename?: 'reading_progresses_stddev_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "reading_progresses" */
+export type Reading_Progresses_Stddev_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Reading_Progresses_Stddev_Pop_Fields = {
+  __typename?: 'reading_progresses_stddev_pop_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "reading_progresses" */
+export type Reading_Progresses_Stddev_Pop_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Reading_Progresses_Stddev_Samp_Fields = {
+  __typename?: 'reading_progresses_stddev_samp_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "reading_progresses" */
+export type Reading_Progresses_Stddev_Samp_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "reading_progresses" */
+export type Reading_Progresses_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Reading_Progresses_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Reading_Progresses_Stream_Cursor_Value_Input = {
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  lastReadAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  readingTimeMinutes?: InputMaybe<Scalars['Int']['input']>;
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Reading_Progresses_Sum_Fields = {
+  __typename?: 'reading_progresses_sum_fields';
+  currentPage?: Maybe<Scalars['Int']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Int']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "reading_progresses" */
+export type Reading_Progresses_Sum_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "reading_progresses" */
+export enum Reading_Progresses_Update_Column {
+  /** column name */
+  BookId = 'bookId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  CurrentPage = 'currentPage',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastReadAt = 'lastReadAt',
+  /** column name */
+  ReadingTimeMinutes = 'readingTimeMinutes',
+  /** column name */
+  TotalPages = 'totalPages',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+export type Reading_Progresses_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Reading_Progresses_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Reading_Progresses_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Reading_Progresses_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Reading_Progresses_Var_Pop_Fields = {
+  __typename?: 'reading_progresses_var_pop_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "reading_progresses" */
+export type Reading_Progresses_Var_Pop_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Reading_Progresses_Var_Samp_Fields = {
+  __typename?: 'reading_progresses_var_samp_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "reading_progresses" */
+export type Reading_Progresses_Var_Samp_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Reading_Progresses_Variance_Fields = {
+  __typename?: 'reading_progresses_variance_fields';
+  currentPage?: Maybe<Scalars['Float']['output']>;
+  /** Calculate percentage based on other column values */
+  percentage?: Maybe<Scalars['numeric']['output']>;
+  readingTimeMinutes?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "reading_progresses" */
+export type Reading_Progresses_Variance_Order_By = {
+  currentPage?: InputMaybe<Order_By>;
+  readingTimeMinutes?: InputMaybe<Order_By>;
+  totalPages?: InputMaybe<Order_By>;
 };
 
 /** This table tell us what playlist is shared to whom. All videos in the playlist should be shared, not selective */
@@ -5888,6 +6986,14 @@ export type Subscription_Root = {
   /** fetch data from the table in a streaming manner: "audios" */
   audios_stream: Array<Audios>;
   /** An array relationship */
+  books: Array<Books>;
+  /** An aggregate relationship */
+  books_aggregate: Books_Aggregate;
+  /** fetch data from the table: "books" using primary key columns */
+  books_by_pk?: Maybe<Books>;
+  /** fetch data from the table in a streaming manner: "books" */
+  books_stream: Array<Books>;
+  /** An array relationship */
   crawl_requests: Array<Crawl_Requests>;
   /** An aggregate relationship */
   crawl_requests_aggregate: Crawl_Requests_Aggregate;
@@ -5951,6 +7057,14 @@ export type Subscription_Root = {
   posts_by_pk?: Maybe<Posts>;
   /** fetch data from the table in a streaming manner: "posts" */
   posts_stream: Array<Posts>;
+  /** An array relationship */
+  reading_progresses: Array<Reading_Progresses>;
+  /** An aggregate relationship */
+  reading_progresses_aggregate: Reading_Progresses_Aggregate;
+  /** fetch data from the table: "reading_progresses" using primary key columns */
+  reading_progresses_by_pk?: Maybe<Reading_Progresses>;
+  /** fetch data from the table in a streaming manner: "reading_progresses" */
+  reading_progresses_stream: Array<Reading_Progresses>;
   /** An array relationship */
   shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
   /** An aggregate relationship */
@@ -6100,6 +7214,36 @@ export type Subscription_RootAudios_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Audios_Stream_Cursor_Input>>;
   where?: InputMaybe<Audios_Bool_Exp>;
+};
+
+
+export type Subscription_RootBooksArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+
+export type Subscription_RootBooks_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+
+export type Subscription_RootBooks_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootBooks_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Books_Stream_Cursor_Input>>;
+  where?: InputMaybe<Books_Bool_Exp>;
 };
 
 
@@ -6341,6 +7485,36 @@ export type Subscription_RootPosts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Posts_Stream_Cursor_Input>>;
   where?: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+export type Subscription_RootReading_ProgressesArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+export type Subscription_RootReading_Progresses_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+export type Subscription_RootReading_Progresses_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootReading_Progresses_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Reading_Progresses_Stream_Cursor_Input>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
 };
 
 
@@ -8132,6 +9306,10 @@ export type Users = {
   audios_aggregate: Audios_Aggregate;
   auth0_id: Scalars['String']['output'];
   /** An array relationship */
+  books: Array<Books>;
+  /** An aggregate relationship */
+  books_aggregate: Books_Aggregate;
+  /** An array relationship */
   crawl_requests: Array<Crawl_Requests>;
   /** An aggregate relationship */
   crawl_requests_aggregate: Crawl_Requests_Aggregate;
@@ -8154,6 +9332,10 @@ export type Users = {
   playlists: Array<Playlist>;
   /** An aggregate relationship */
   playlists_aggregate: Playlist_Aggregate;
+  /** An array relationship */
+  reading_progresses: Array<Reading_Progresses>;
+  /** An aggregate relationship */
+  reading_progresses_aggregate: Reading_Progresses_Aggregate;
   /** An array relationship */
   shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
   /** An aggregate relationship */
@@ -8196,6 +9378,26 @@ export type UsersAudios_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Audios_Order_By>>;
   where?: InputMaybe<Audios_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersBooksArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersBooks_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Books_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Books_Order_By>>;
+  where?: InputMaybe<Books_Bool_Exp>;
 };
 
 
@@ -8296,6 +9498,26 @@ export type UsersPlaylists_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Order_By>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersReading_ProgressesArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersReading_Progresses_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Reading_Progresses_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Reading_Progresses_Order_By>>;
+  where?: InputMaybe<Reading_Progresses_Bool_Exp>;
 };
 
 
@@ -8428,6 +9650,8 @@ export type Users_Bool_Exp = {
   audios?: InputMaybe<Audios_Bool_Exp>;
   audios_aggregate?: InputMaybe<Audios_Aggregate_Bool_Exp>;
   auth0_id?: InputMaybe<String_Comparison_Exp>;
+  books?: InputMaybe<Books_Bool_Exp>;
+  books_aggregate?: InputMaybe<Books_Aggregate_Bool_Exp>;
   crawl_requests?: InputMaybe<Crawl_Requests_Bool_Exp>;
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -8441,6 +9665,8 @@ export type Users_Bool_Exp = {
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Bool_Exp>;
   playlists?: InputMaybe<Playlist_Bool_Exp>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Bool_Exp>;
+  reading_progresses?: InputMaybe<Reading_Progresses_Bool_Exp>;
+  reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Bool_Exp>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
@@ -8471,6 +9697,7 @@ export enum Users_Constraint {
 export type Users_Insert_Input = {
   audios?: InputMaybe<Audios_Arr_Rel_Insert_Input>;
   auth0_id?: InputMaybe<Scalars['String']['input']>;
+  books?: InputMaybe<Books_Arr_Rel_Insert_Input>;
   crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
@@ -8479,6 +9706,7 @@ export type Users_Insert_Input = {
   journals?: InputMaybe<Journals_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<Notifications_Arr_Rel_Insert_Input>;
   playlists?: InputMaybe<Playlist_Arr_Rel_Insert_Input>;
+  reading_progresses?: InputMaybe<Reading_Progresses_Arr_Rel_Insert_Input>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -8537,6 +9765,7 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   audios_aggregate?: InputMaybe<Audios_Aggregate_Order_By>;
   auth0_id?: InputMaybe<Order_By>;
+  books_aggregate?: InputMaybe<Books_Aggregate_Order_By>;
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
@@ -8545,6 +9774,7 @@ export type Users_Order_By = {
   journals_aggregate?: InputMaybe<Journals_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<Notifications_Aggregate_Order_By>;
   playlists_aggregate?: InputMaybe<Playlist_Aggregate_Order_By>;
+  reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Order_By>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
@@ -9953,6 +11183,31 @@ export type GetJournalByIdQueryVariables = Exact<{
 
 export type GetJournalByIdQuery = { __typename?: 'query_root', journals_by_pk?: { __typename?: 'journals', id: any, user_id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any } | null };
 
+export type UpsertReadingProgressMutationVariables = Exact<{
+  bookId: Scalars['uuid']['input'];
+  currentPage: Scalars['Int']['input'];
+  totalPages?: InputMaybe<Scalars['Int']['input']>;
+  readingTimeMinutes?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type UpsertReadingProgressMutation = { __typename?: 'mutation_root', insert_reading_progresses_one?: { __typename?: 'reading_progresses', id: any, currentPage: number, percentage?: any | null, lastReadAt: any } | null };
+
+export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: any, title: string, thumbnailUrl?: string | null, source: string, totalPages: number, createdAt: any, reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, readingTimeMinutes?: number | null, lastReadAt: any, createdAt: any }> }> };
+
+export type GetCurrentReadingQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCurrentReadingQuery = { __typename?: 'query_root', reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, lastReadAt: any, book: { __typename?: 'books', id: any, title: string, totalPages: number, thumbnailUrl?: string | null } }> };
+
+export type GetReadingStatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetReadingStatsQuery = { __typename?: 'query_root', books_aggregate: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, completed_books: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, currently_reading: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, reading_time_this_month: { __typename?: 'reading_progresses_aggregate', aggregate?: { __typename?: 'reading_progresses_aggregate_fields', sum?: { __typename?: 'reading_progresses_sum_fields', readingTimeMinutes?: number | null } | null } | null } };
+
 export type GetAudiosAndFeelingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -10422,6 +11677,93 @@ export const GetJournalByIdDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetJournalByIdQuery, GetJournalByIdQueryVariables>;
+export const UpsertReadingProgressDocument = new TypedDocumentString(`
+    mutation UpsertReadingProgress($bookId: uuid!, $currentPage: Int!, $totalPages: Int, $readingTimeMinutes: Int) {
+  insert_reading_progresses_one(
+    object: {bookId: $bookId, currentPage: $currentPage, totalPages: $totalPages, readingTimeMinutes: $readingTimeMinutes, lastReadAt: "now()"}
+    on_conflict: {constraint: reading_progresses_user_id_book_id_key, update_columns: [currentPage, readingTimeMinutes, lastReadAt]}
+  ) {
+    id
+    currentPage
+    percentage
+    lastReadAt
+  }
+}
+    `) as unknown as TypedDocumentString<UpsertReadingProgressMutation, UpsertReadingProgressMutationVariables>;
+export const GetBooksDocument = new TypedDocumentString(`
+    query GetBooks {
+  books {
+    id
+    title
+    thumbnailUrl
+    source
+    totalPages
+    createdAt
+    reading_progresses {
+      id
+      currentPage
+      totalPages
+      percentage
+      readingTimeMinutes
+      lastReadAt
+      createdAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetBooksQuery, GetBooksQueryVariables>;
+export const GetCurrentReadingDocument = new TypedDocumentString(`
+    query GetCurrentReading {
+  reading_progresses(
+    where: {percentage: {_gt: 0, _lt: 100}}
+    order_by: {lastReadAt: desc}
+    limit: 1
+  ) {
+    id
+    currentPage
+    totalPages
+    percentage
+    lastReadAt
+    book {
+      id
+      title
+      totalPages
+      thumbnailUrl
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetCurrentReadingQuery, GetCurrentReadingQueryVariables>;
+export const GetReadingStatsDocument = new TypedDocumentString(`
+    query GetReadingStats {
+  books_aggregate {
+    aggregate {
+      count
+    }
+  }
+  completed_books: books_aggregate(
+    where: {reading_progresses: {percentage: {_gte: 100}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  currently_reading: books_aggregate(
+    where: {reading_progresses: {percentage: {_gt: 0, _lt: 100}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  reading_time_this_month: reading_progresses_aggregate(
+    where: {lastReadAt: {_gte: "2024-01-01"}}
+  ) {
+    aggregate {
+      sum {
+        readingTimeMinutes
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetReadingStatsQuery, GetReadingStatsQueryVariables>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {
