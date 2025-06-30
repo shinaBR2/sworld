@@ -1,0 +1,32 @@
+table:
+  name: reading_progresses
+  schema: public
+configuration:
+  column_config:
+    book_id:
+      custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    current_page:
+      custom_name: currentPage
+    last_read_at:
+      custom_name: lastReadAt
+    updated_at:
+      custom_name: updatedAt
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    book_id: bookId
+    created_at: createdAt
+    current_page: currentPage
+    last_read_at: lastReadAt
+    updated_at: updatedAt
+    user_id: userId
+  custom_root_fields: {}
+object_relationships:
+  - name: book
+    using:
+      foreign_key_constraint_on: book_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id

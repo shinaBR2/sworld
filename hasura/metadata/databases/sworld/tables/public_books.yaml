@@ -24,6 +24,14 @@ object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+array_relationships:
+  - name: reading_progresses
+    using:
+      foreign_key_constraint_on:
+        column: book_id
+        table:
+          name: reading_progresses
+          schema: public
 select_permissions:
   - role: user
     permission:
