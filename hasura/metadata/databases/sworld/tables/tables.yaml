@@ -9,6 +9,7 @@
 - "!include public_playlist.yaml"
 - "!include public_playlist_videos.yaml"
 - "!include public_posts.yaml"
+- "!include public_reading_progresses.yaml"
 - "!include public_shared_playlist_recipients.yaml"
 - "!include public_shared_video_recipients.yaml"
 - "!include public_subtitles.yaml"

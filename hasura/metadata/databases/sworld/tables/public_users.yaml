@@ -51,6 +51,13 @@ array_relationships:
         table:
           name: playlist
           schema: public
+  - name: reading_progresses
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: reading_progresses
+          schema: public
   - name: shared_playlist_recipients
     using:
       foreign_key_constraint_on:
