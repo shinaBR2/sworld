@@ -55,7 +55,7 @@ describe('useBooks', () => {
     const { result } = renderHook(() => useBooks());
 
     expect(useRequest).toHaveBeenCalledWith({
-      queryKey: ['books', 50, 0, 'all'],
+      queryKey: ['books'],
       document: expect.anything(),
     });
 

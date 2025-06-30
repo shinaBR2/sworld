@@ -50,7 +50,7 @@ const useSaveProgress = (props: MutationProps) => {
         onSuccess?.(data);
       },
       onError: error => {
-        console.error('Create journal failed:', error);
+        console.error('Save progress failed:', error);
         onError?.(error);
       },
     },

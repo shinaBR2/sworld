@@ -55,9 +55,9 @@ const transform = (books: GetBooksQuery['books']): BookWithProgress[] => {
   });
 };
 
-export const useBooks = ({ limit = 50, offset = 0, filter = 'all' }: UseBooksProps = {}) => {
+export const useBooks = () => {
   const { data, isLoading, error } = useRequest({
-    queryKey: ['books', limit, offset, filter],
+    queryKey: ['books'],
     document: GET_BOOKS,
     // transform: (data) => {
     //   const transformedBooks = transform(data.books);
