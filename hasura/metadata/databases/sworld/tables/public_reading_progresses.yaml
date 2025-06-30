@@ -63,9 +63,12 @@ select_permissions:
     permission:
       columns:
         - book_id
+        - created_at
         - current_page
         - id
         - last_read_at
+        - reading_time_minutes
+        - total_pages
       computed_fields:
         - percentage
       filter:

@@ -9,6 +9,8 @@ configuration:
       custom_name: fileUrl
     thumbnail_url:
       custom_name: thumbnailUrl
+    total_pages:
+      custom_name: totalPages
     updated_at:
       custom_name: updatedAt
     user_id:
@@ -17,6 +19,7 @@ configuration:
     created_at: createdAt
     file_url: fileUrl
     thumbnail_url: thumbnailUrl
+    total_pages: totalPages
     updated_at: updatedAt
     user_id: userId
   custom_root_fields: {}
@@ -36,12 +39,14 @@ select_permissions:
   - role: user
     permission:
       columns:
+        - author
         - created_at
         - id
         - source
         - status
         - thumbnail_url
         - title
+        - total_pages
       filter:
         user_id:
           _eq: X-Hasura-User-Id
