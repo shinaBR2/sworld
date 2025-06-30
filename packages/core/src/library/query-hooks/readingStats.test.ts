@@ -28,9 +28,11 @@ describe('useReadingStats', () => {
 
     const { result } = renderHook(() => useReadingStats());
 
+    const monthStart = `${new Date().toISOString().slice(0, 7)}-01`;
     expect(useRequest).toHaveBeenCalledWith({
-      queryKey: ['reading-stats'],
+      queryKey: ['reading-stats', monthStart],
       document: expect.anything(),
+      variables: { monthStart },
     });
 
     expect(result.current.data).toEqual({

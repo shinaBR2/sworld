@@ -3,7 +3,7 @@ import { useRequest } from '../../universal/hooks/use-request';
 import { GetReadingStatsQuery } from '../../graphql/graphql';
 
 const GET_READING_STATS = graphql(/* GraphQL */ `
-  query GetReadingStats {
+  query GetReadingStats($monthStart: timestamptz!) {
     books_aggregate {
       aggregate {
         count
@@ -19,7 +19,7 @@ const GET_READING_STATS = graphql(/* GraphQL */ `
         count
       }
     }
-    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: "2024-01-01" } }) {
+    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: $monthStart } }) {
       aggregate {
         sum {
           readingTimeMinutes
@@ -45,9 +45,11 @@ const transform = (data: GetReadingStatsQuery) => {
 };
 
 const useReadingStats = () => {
+  const monthStart = `${new Date().toISOString().slice(0, 7)}-01`;
   const { data, isLoading, error } = useRequest({
-    queryKey: ['reading-stats'],
+    queryKey: ['reading-stats', monthStart],
     document: GET_READING_STATS,
+    variables: { monthStart },
   });
 
   return {

@@ -11217,7 +11217,9 @@ export type GetCurrentReadingQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCurrentReadingQuery = { __typename?: 'query_root', reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, lastReadAt: any, book: { __typename?: 'books', id: any, title: string, author: string, totalPages: number, thumbnailUrl?: string | null } }> };
 
-export type GetReadingStatsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetReadingStatsQueryVariables = Exact<{
+  monthStart: Scalars['timestamptz']['input'];
+}>;
 
 
 export type GetReadingStatsQuery = { __typename?: 'query_root', books_aggregate: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, completed_books: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, currently_reading: { __typename?: 'books_aggregate', aggregate?: { __typename?: 'books_aggregate_fields', count: number } | null }, reading_time_this_month: { __typename?: 'reading_progresses_aggregate', aggregate?: { __typename?: 'reading_progresses_aggregate_fields', sum?: { __typename?: 'reading_progresses_sum_fields', readingTimeMinutes?: number | null } | null } | null } };
@@ -11749,7 +11751,7 @@ export const GetCurrentReadingDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<GetCurrentReadingQuery, GetCurrentReadingQueryVariables>;
 export const GetReadingStatsDocument = new TypedDocumentString(`
-    query GetReadingStats {
+    query GetReadingStats($monthStart: timestamptz!) {
   books_aggregate {
     aggregate {
       count
@@ -11770,7 +11772,7 @@ export const GetReadingStatsDocument = new TypedDocumentString(`
     }
   }
   reading_time_this_month: reading_progresses_aggregate(
-    where: {lastReadAt: {_gte: "2024-01-01"}}
+    where: {lastReadAt: {_gte: $monthStart}}
   ) {
     aggregate {
       sum {
