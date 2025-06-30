@@ -16,6 +16,7 @@ describe('useBooks', () => {
     {
       id: '1',
       title: 'Book 1',
+      author: 'Author 1',
       thumbnailUrl: 'url1',
       source: 'source1',
       totalPages: 300,
@@ -35,6 +36,7 @@ describe('useBooks', () => {
     {
       id: '2',
       title: 'Book 2',
+      author: 'Author 2',
       thumbnailUrl: 'url2',
       source: 'source2',
       totalPages: 200,

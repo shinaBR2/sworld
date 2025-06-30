@@ -626,6 +626,7 @@ export type Audios_Updates = {
 /** columns and relationships of "books" */
 export type Books = {
   __typename?: 'books';
+  author: Scalars['String']['output'];
   createdAt: Scalars['timestamptz']['output'];
   /** User input url, NOT validated yet */
   fileUrl: Scalars['String']['output'];
@@ -747,6 +748,7 @@ export type Books_Bool_Exp = {
   _and?: InputMaybe<Array<Books_Bool_Exp>>;
   _not?: InputMaybe<Books_Bool_Exp>;
   _or?: InputMaybe<Array<Books_Bool_Exp>>;
+  author?: InputMaybe<String_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   fileUrl?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -775,6 +777,7 @@ export type Books_Inc_Input = {
 
 /** input type for inserting data into table "books" */
 export type Books_Insert_Input = {
+  author?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   /** User input url, NOT validated yet */
   fileUrl?: InputMaybe<Scalars['String']['input']>;
@@ -796,6 +799,7 @@ export type Books_Insert_Input = {
 /** aggregate max on columns */
 export type Books_Max_Fields = {
   __typename?: 'books_max_fields';
+  author?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   /** User input url, NOT validated yet */
   fileUrl?: Maybe<Scalars['String']['output']>;
@@ -814,6 +818,7 @@ export type Books_Max_Fields = {
 
 /** order by max() on columns of table "books" */
 export type Books_Max_Order_By = {
+  author?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   /** User input url, NOT validated yet */
   fileUrl?: InputMaybe<Order_By>;
@@ -833,6 +838,7 @@ export type Books_Max_Order_By = {
 /** aggregate min on columns */
 export type Books_Min_Fields = {
   __typename?: 'books_min_fields';
+  author?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   /** User input url, NOT validated yet */
   fileUrl?: Maybe<Scalars['String']['output']>;
@@ -851,6 +857,7 @@ export type Books_Min_Fields = {
 
 /** order by min() on columns of table "books" */
 export type Books_Min_Order_By = {
+  author?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   /** User input url, NOT validated yet */
   fileUrl?: InputMaybe<Order_By>;
@@ -892,6 +899,7 @@ export type Books_On_Conflict = {
 
 /** Ordering options when selecting data from "books". */
 export type Books_Order_By = {
+  author?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   fileUrl?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -913,6 +921,8 @@ export type Books_Pk_Columns_Input = {
 
 /** select columns of table "books" */
 export enum Books_Select_Column {
+  /** column name */
+  Author = 'author',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -937,6 +947,7 @@ export enum Books_Select_Column {
 
 /** input type for updating data in table "books" */
 export type Books_Set_Input = {
+  author?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   /** User input url, NOT validated yet */
   fileUrl?: InputMaybe<Scalars['String']['input']>;
@@ -996,6 +1007,7 @@ export type Books_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Books_Stream_Cursor_Value_Input = {
+  author?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   /** User input url, NOT validated yet */
   fileUrl?: InputMaybe<Scalars['String']['input']>;
@@ -1025,6 +1037,8 @@ export type Books_Sum_Order_By = {
 
 /** update columns of table "books" */
 export enum Books_Update_Column {
+  /** column name */
+  Author = 'author',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -11196,7 +11210,7 @@ export type UpsertReadingProgressMutation = { __typename?: 'mutation_root', inse
 export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: any, title: string, thumbnailUrl?: string | null, source: string, totalPages: number, createdAt: any, reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, readingTimeMinutes?: number | null, lastReadAt: any, createdAt: any }> }> };
+export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: any, title: string, author: string, thumbnailUrl?: string | null, source: string, totalPages: number, createdAt: any, reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, readingTimeMinutes?: number | null, lastReadAt: any, createdAt: any }> }> };
 
 export type GetCurrentReadingQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11695,6 +11709,7 @@ export const GetBooksDocument = new TypedDocumentString(`
   books {
     id
     title
+    author
     thumbnailUrl
     source
     totalPages

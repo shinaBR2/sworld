@@ -7,6 +7,7 @@ const GET_BOOKS = graphql(/* GraphQL */ `
     books {
       id
       title
+      author
       thumbnailUrl
       source
       totalPages

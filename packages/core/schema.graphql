@@ -678,6 +678,7 @@ input audios_updates {
 columns and relationships of "books"
 """
 type books {
+  author: String!
   createdAt: timestamptz!
   """User input url, NOT validated yet"""
   fileUrl: String!
@@ -805,6 +806,7 @@ input books_bool_exp {
   _and: [books_bool_exp!]
   _not: books_bool_exp
   _or: [books_bool_exp!]
+  author: String_comparison_exp
   createdAt: timestamptz_comparison_exp
   fileUrl: String_comparison_exp
   id: uuid_comparison_exp
@@ -841,6 +843,7 @@ input books_inc_input {
 input type for inserting data into table "books"
 """
 input books_insert_input {
+  author: String
   createdAt: timestamptz
   """User input url, NOT validated yet"""
   fileUrl: String
@@ -863,6 +866,7 @@ input books_insert_input {
 
 """aggregate max on columns"""
 type books_max_fields {
+  author: String
   createdAt: timestamptz
   """User input url, NOT validated yet"""
   fileUrl: String
@@ -885,6 +889,7 @@ type books_max_fields {
 order by max() on columns of table "books"
 """
 input books_max_order_by {
+  author: order_by
   createdAt: order_by
   """User input url, NOT validated yet"""
   fileUrl: order_by
@@ -905,6 +910,7 @@ input books_max_order_by {
 
 """aggregate min on columns"""
 type books_min_fields {
+  author: String
   createdAt: timestamptz
   """User input url, NOT validated yet"""
   fileUrl: String
@@ -927,6 +933,7 @@ type books_min_fields {
 order by min() on columns of table "books"
 """
 input books_min_order_by {
+  author: order_by
   createdAt: order_by
   """User input url, NOT validated yet"""
   fileUrl: order_by
@@ -975,6 +982,7 @@ input books_on_conflict {
 
 """Ordering options when selecting data from "books"."""
 input books_order_by {
+  author: order_by
   createdAt: order_by
   fileUrl: order_by
   id: order_by
@@ -998,6 +1006,8 @@ input books_pk_columns_input {
 select columns of table "books"
 """
 enum books_select_column {
+  """column name"""
+  author
   """column name"""
   createdAt
   """column name"""
@@ -1024,6 +1034,7 @@ enum books_select_column {
 input type for updating data in table "books"
 """
 input books_set_input {
+  author: String
   createdAt: timestamptz
   """User input url, NOT validated yet"""
   fileUrl: String
@@ -1090,6 +1101,7 @@ input books_stream_cursor_input {
 
 """Initial value of the column from where the streaming should start"""
 input books_stream_cursor_value_input {
+  author: String
   createdAt: timestamptz
   """User input url, NOT validated yet"""
   fileUrl: String
@@ -1124,6 +1136,8 @@ input books_sum_order_by {
 update columns of table "books"
 """
 enum books_update_column {
+  """column name"""
+  author
   """column name"""
   createdAt
   """column name"""
