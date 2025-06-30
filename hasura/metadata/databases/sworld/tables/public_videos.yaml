@@ -186,7 +186,7 @@ event_triggers:
       timeout_sec: 60
     webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share-video'
     headers:
-      - name: "x-webhook-signature\t"
+      - name: x-webhook-signature
         value_from_env: MAIN_WEBHOOK_SIGNATURE
       - name: Content-Type
         value: application/json
