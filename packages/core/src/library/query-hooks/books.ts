@@ -25,12 +25,6 @@ const GET_BOOKS = graphql(/* GraphQL */ `
   }
 `);
 
-interface UseBooksProps {
-  limit?: number;
-  offset?: number;
-  filter?: 'all' | 'completed' | 'reading' | 'recent';
-}
-
 type BookWithProgress = GetBooksQuery['books'][0] & {
   currentProgress?: GetBooksQuery['books'][0]['reading_progresses'][0];
   progressPercentage: number;
