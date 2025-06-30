@@ -11,6 +11,10 @@ configuration:
       custom_name: currentPage
     last_read_at:
       custom_name: lastReadAt
+    reading_time_minutes:
+      custom_name: readingTimeMinutes
+    total_pages:
+      custom_name: totalPages
     updated_at:
       custom_name: updatedAt
     user_id:
@@ -20,6 +24,8 @@ configuration:
     created_at: createdAt
     current_page: currentPage
     last_read_at: lastReadAt
+    reading_time_minutes: readingTimeMinutes
+    total_pages: totalPages
     updated_at: updatedAt
     user_id: userId
   custom_root_fields: {}
@@ -30,6 +36,13 @@ object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+computed_fields:
+  - name: percentage
+    definition:
+      function:
+        name: reading_progresses_percentage
+        schema: public
+    comment: Calculate percentage based on other column values
 insert_permissions:
   - role: user
     permission:
@@ -42,7 +55,6 @@ insert_permissions:
         - book_id
         - current_page
         - last_read_at
-        - percentage
     comment: ""
 select_permissions:
   - role: user
@@ -52,6 +64,7 @@ select_permissions:
         - current_page
         - id
         - last_read_at
+      computed_fields:
         - percentage
       filter:
         user_id:
@@ -68,7 +81,6 @@ update_permissions:
       columns:
         - current_page
         - last_read_at
-        - percentage
       filter:
         user_id:
           _eq: X-Hasura-User-Id
