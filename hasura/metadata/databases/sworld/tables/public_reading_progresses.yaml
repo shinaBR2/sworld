@@ -55,6 +55,8 @@ insert_permissions:
         - book_id
         - current_page
         - last_read_at
+        - reading_time_minutes
+        - total_pages
     comment: ""
 select_permissions:
   - role: user
@@ -81,6 +83,7 @@ update_permissions:
       columns:
         - current_page
         - last_read_at
+        - reading_time_minutes
       filter:
         user_id:
           _eq: X-Hasura-User-Id
