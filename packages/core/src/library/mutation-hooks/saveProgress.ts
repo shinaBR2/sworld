@@ -3,7 +3,7 @@ import { useAuthContext } from '../../providers/auth';
 import { useQueryContext } from '../../providers/query';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
 
-const UPSERT_READING_PROGRESS = graphql(/* GraphQL */ `
+const saveProgressMutation = graphql(/* GraphQL */ `
   mutation UpsertReadingProgress($bookId: uuid!, $currentPage: Int!, $totalPages: Int, $readingTimeMinutes: Int) {
     insert_reading_progresses_one(
       object: {
@@ -37,7 +37,7 @@ const useSaveProgress = (props: MutationProps) => {
   const { onSuccess, onError } = props;
 
   const { mutateAsync: saveProgress } = useMutationRequest({
-    document: UPSERT_READING_PROGRESS,
+    document: saveProgressMutation,
     getAccessToken,
     options: {
       onSuccess: (data, variables) => {
