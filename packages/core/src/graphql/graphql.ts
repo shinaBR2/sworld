@@ -11215,7 +11215,7 @@ export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typena
 export type GetCurrentReadingQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentReadingQuery = { __typename?: 'query_root', reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, lastReadAt: any, book: { __typename?: 'books', id: any, title: string, totalPages: number, thumbnailUrl?: string | null } }> };
+export type GetCurrentReadingQuery = { __typename?: 'query_root', reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, lastReadAt: any, book: { __typename?: 'books', id: any, title: string, author: string, totalPages: number, thumbnailUrl?: string | null } }> };
 
 export type GetReadingStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11741,6 +11741,7 @@ export const GetCurrentReadingDocument = new TypedDocumentString(`
     book {
       id
       title
+      author
       totalPages
       thumbnailUrl
     }

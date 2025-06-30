@@ -13,6 +13,7 @@ const GET_CURRENT_READING = graphql(`
       book {
         id
         title
+        author
         totalPages
         thumbnailUrl
       }
@@ -43,6 +44,7 @@ const transform = (data: GetCurrentReadingQuery) => {
   return {
     id: progress.book.id,
     title: progress.book.title,
+    author: progress.book.author,
     currentPage: progress.currentPage,
     totalPages: progress.totalPages || progress.book.totalPages || 0,
     lastReadAt: lastReadText,
