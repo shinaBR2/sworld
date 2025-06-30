@@ -6,7 +6,7 @@ import {
   // ROLE_ANONYMOUS,
   ROLE_USER,
 } from "../create-role-test-suite";
-import { e2eTestUserId } from "../config";
+// import { e2eTestUserId } from "../config";
 
 // Allowed queries for anonymous users
 // const allowedQueries: QueryTestCase[] = [
