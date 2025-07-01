@@ -23,7 +23,7 @@
   "scripts": {
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts",
     "watch-codegen": "dotenvx run -- graphql-codegen --config codegen.ts --watch",
-    "build": "rm -rf dist && NODE_OPTIONS=--max_old_space_size=8192 tsup",
+    "build": "rm -rf dist && tsup",
     "build-watch": "tsup --watch --no-dts",
     "clean": "rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
