@@ -83,7 +83,7 @@ const ContinueReadingSkeleton = () => {
                     width="100%"
                     height="100%"
                     aria-hidden="true"
-                    data-testid="book-title-skeleton"
+                    data-testid="book-author-skeleton"
                     sx={{ mb: 0.5 }}
                   />
                 </Box>
