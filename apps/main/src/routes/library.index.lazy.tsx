@@ -42,13 +42,13 @@ const LibraryPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [filter, setFilter] = useState<'all' | 'completed' | 'reading' | 'recent'>('all');
   // const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   // Fetch data using our hooks
-  const { data: books = [], isLoading: booksLoading, error: booksError } = useBooks();
+  const { data: books = [], isLoading: booksLoading } = useBooks();
 
   const { data: stats, isLoading: statsLoading } = useReadingStats();
   const { data: currentBook, isLoading: currentBookLoading } = useCurrentReading();
@@ -90,7 +90,7 @@ const LibraryPage: React.FC = () => {
   const handleBookClick = (book: BookWithProgress) => {
     // Navigate to book reader
     navigate({
-      to: '/reader/$bookId',
+      to: '/library/$bookId',
       params: { bookId: book.id },
     });
   };
@@ -98,18 +98,19 @@ const LibraryPage: React.FC = () => {
   const handleContinueReading = (book: CurrentBook) => {
     // Navigate to continue reading
     navigate({
-      to: '/reader/$bookId',
+      to: '/library/$bookId',
       params: { bookId: book.id },
     });
   };
 
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter as typeof filter);
-    setPage(0); // Reset page when filter changes
+    // setPage(0); // Reset page when filter changes
   };
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1);
+    // setPage(prev => prev + 1);
+    // TODO: Implement load more functionality
   };
 
   // Transform current book data for the component
@@ -189,7 +190,7 @@ const LibraryPage: React.FC = () => {
   );
 };
 
-export const Route = createLazyFileRoute('/library')({
+export const Route = createLazyFileRoute('/library/')({
   component: () => {
     return (
       <AuthRoute>
