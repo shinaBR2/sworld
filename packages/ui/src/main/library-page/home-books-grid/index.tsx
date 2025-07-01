@@ -10,7 +10,6 @@ import {
   Button,
   Skeleton,
   Card,
-  CardContent,
 } from '@mui/material';
 import { GridView as GridIcon, List as ListIcon } from '@mui/icons-material';
 import { BookCard } from '../book-card';
