@@ -90,7 +90,7 @@ const LibraryPage: React.FC = () => {
   const handleBookClick = (book: BookWithProgress) => {
     // Navigate to book reader
     navigate({
-      to: '/library/$bookId',
+      to: '/library/books/$bookId',
       params: { bookId: book.id },
     });
   };
@@ -98,7 +98,7 @@ const LibraryPage: React.FC = () => {
   const handleContinueReading = (book: CurrentBook) => {
     // Navigate to continue reading
     navigate({
-      to: '/library/$bookId',
+      to: '/library/books/$bookId',
       params: { bookId: book.id },
     });
   };
