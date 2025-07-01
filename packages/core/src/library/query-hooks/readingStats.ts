@@ -42,6 +42,7 @@ const transform = (data: GetReadingStatsQuery) => {
     completedBooks,
     currentlyReading,
     readingTimeThisMonth,
+    wishlist: 0,
   };
 };
 

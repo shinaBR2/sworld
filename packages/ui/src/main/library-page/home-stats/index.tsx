@@ -8,7 +8,8 @@ import {
 } from '@mui/icons-material';
 
 interface StatsData {
-  completed: number;
+  totalBooks?: number;
+  completedBooks: number;
   currentlyReading: number;
   readingTimeThisMonth: number;
   wishlist: number;
@@ -16,12 +17,12 @@ interface StatsData {
 
 interface StatsGridProps {
   isLoading: boolean;
-  stats: StatsData;
+  stats: StatsData | null;
 }
 
 const statItems = [
   {
-    key: 'completed',
+    key: 'completedBooks',
     label: 'Books Completed',
     icon: CheckIcon,
     color: '#16a34a',
@@ -87,7 +88,7 @@ const StatsGridSkeleton = () => {
                   <Skeleton
                     variant="text"
                     width={40}
-                    height="1.5rem"
+                    height="1.7rem"
                     aria-hidden="true"
                     data-testid={`stats-value-skeleton-${item.key}`}
                     sx={{ mb: '4px', mx: 'auto' }}
@@ -117,7 +118,7 @@ const StatsGridSkeleton = () => {
 const StatsGrid: React.FC<StatsGridProps> = props => {
   const { isLoading, stats } = props;
 
-  if (isLoading || false) {
+  if (isLoading) {
     return <StatsGridSkeleton />;
   }
 
@@ -126,7 +127,7 @@ const StatsGrid: React.FC<StatsGridProps> = props => {
       <Grid container spacing={{ xs: 2, md: 3 }}>
         {statItems.map(item => {
           const IconComponent = item.icon;
-          const value = stats[item.key];
+          const value = stats?.[item.key] ?? 0;
 
           return (
             <Grid item xs={6} md={3} key={item.key}>
