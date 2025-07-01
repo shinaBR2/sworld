@@ -32,6 +32,7 @@ describe('useReadingStats', () => {
     expect(useRequest).toHaveBeenCalledWith({
       queryKey: ['reading-stats', monthStart],
       document: expect.anything(),
+      getAccessToken: expect.any(Function),
       variables: { monthStart },
     });
 
@@ -40,6 +41,7 @@ describe('useReadingStats', () => {
       completedBooks: 4,
       currentlyReading: 2,
       readingTimeThisMonth: 123,
+      wishlist: 0,
     });
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
@@ -62,6 +64,7 @@ describe('useReadingStats', () => {
       completedBooks: 0,
       currentlyReading: 0,
       readingTimeThisMonth: 0,
+      wishlist: 0,
     });
   });
 

@@ -40,6 +40,7 @@ describe('useCurrentReading', () => {
     expect(useRequest).toHaveBeenCalledWith({
       queryKey: ['current-reading'],
       document: expect.anything(),
+      getAccessToken: expect.any(Function),
     });
 
     expect(result.current.data).toMatchObject({

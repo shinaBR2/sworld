@@ -14,8 +14,6 @@ const ReadingContent = (props: ReadingContentProps) => {
     <Box
       id="pdf-container"
       sx={{
-        // pt: '80px',
-        // pb: '80px',
         px: 2,
         display: 'flex',
         flexDirection: 'column',
@@ -81,66 +79,6 @@ const ReadingContent = (props: ReadingContentProps) => {
           />
         </Box>
       )}
-      {/* {!error && pdfUrl && (
-        <Document
-          file={pdfUrl}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={onDocumentLoadError}
-          loading={null}
-          error={null}
-          options={
-            {
-              // Add CORS headers for GCP Cloud Storage
-              // httpHeaders: {
-              //   'Access-Control-Allow-Origin': '*',
-              // },
-              // Enable text selection
-              // enableTextSelection: true,
-            }
-          }
-        >
-          <Page
-            pageNumber={currentPage}
-            scale={scale}
-            width={pageWidth}
-            onLoadSuccess={onPageLoadSuccess}
-            renderTextLayer={true}
-            renderAnnotationLayer={true}
-            loading={
-              <Box
-                sx={{
-                  width: pageWidth,
-                  height: pageWidth * 1.414, // A4 aspect ratio
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  bgcolor: 'background.paper',
-                  border: 1,
-                  borderColor: 'divider',
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            }
-            error={
-              <Box
-                sx={{
-                  width: pageWidth,
-                  height: 200,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  bgcolor: 'background.paper',
-                  border: 1,
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography color="error">Failed to load page</Typography>
-              </Box>
-            }
-          />
-        </Document>
-      )} */}
     </Box>
   );
 };

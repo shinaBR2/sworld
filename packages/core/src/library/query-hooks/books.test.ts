@@ -57,6 +57,7 @@ describe('useBooks', () => {
     expect(useRequest).toHaveBeenCalledWith({
       queryKey: ['books'],
       document: expect.anything(),
+      getAccessToken: expect.any(Function),
     });
 
     // Check transformation

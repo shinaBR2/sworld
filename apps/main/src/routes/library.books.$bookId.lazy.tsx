@@ -4,6 +4,7 @@ import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { ReadingContent } from 'ui/main/library-page/reading-content';
 import { useBookById } from 'core/library/query-hooks';
 import { Layout } from '../components/layout';
+import { AuthRoute } from 'ui/universal/authRoute';
 
 interface BookReaderPageProps {
   bookTitle?: string;
@@ -41,5 +42,11 @@ const BookReaderPage: React.FC<BookReaderPageProps> = () => {
 };
 
 export const Route = createLazyFileRoute('/library/books/$bookId')({
-  component: BookReaderPage,
+  component: () => {
+    return (
+      <AuthRoute>
+        <BookReaderPage />
+      </AuthRoute>
+    );
+  },
 });
