@@ -76,10 +76,10 @@ const LibraryPage: React.FC = () => {
     }
   };
 
-  const handleAddBook = () => {
-    // TODO: Open add book dialog or navigate to add book page
-    console.log('Add book clicked');
-  };
+  // const handleAddBook = () => {
+  //   // TODO: Open add book dialog or navigate to add book page
+  //   console.log('Add book clicked');
+  // };
 
   // const handleSearch = (query: string) => {
   //   setSearchQuery(query);
