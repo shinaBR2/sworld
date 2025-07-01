@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { Box } from 'ui/universal/containers/generic';
 import { ReadingHeader } from 'ui/main/library-page/reading-header';
+import { ReadingNav } from 'ui/main/library-page/reading-nav';
 
 interface BookReaderPageProps {
   bookTitle?: string;
@@ -101,8 +102,6 @@ The search for meaning is ultimately a search for our place in this larger human
         goToPage={goToPage}
       />
 
-      {/* Settings Drawer */}
-
       {/* Book Content */}
       {/* <Box
         sx={{
@@ -149,6 +148,14 @@ The search for meaning is ultimately a search for our place in this larger human
       </Box> */}
 
       {/* Footer Navigation */}
+      <ReadingNav
+        isMenuOpen={isMenuOpen}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        readingProgress={readingProgress}
+        prevPage={prevPage}
+        nextPage={nextPage}
+      />
       {/* <Paper
         elevation={0}
         sx={{
