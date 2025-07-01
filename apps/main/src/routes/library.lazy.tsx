@@ -10,6 +10,7 @@ import { StatsGrid } from 'ui/main/library-page/home-stats';
 import { BooksGrid } from 'ui/main/library-page/home-books-grid';
 import { MobileNavigation } from 'ui/main/library-page/mobile-nav';
 import { FullWidthContainer } from 'ui/universal';
+import { Layout } from '../components/layout';
 
 // Helper function to generate consistent gradients based on book ID
 const gradients = [
@@ -134,14 +135,6 @@ const LibraryPage: React.FC = () => {
     coverGradient: getCoverGradient(book.id), // Generate consistent gradient based on ID
   }));
 
-  // Default stats if still loading
-  const displayStats = stats || {
-    completed: 0,
-    currentlyReading: 0,
-    readingTimeThisMonth: 0,
-    wishlist: 0,
-  };
-
   // Show error state
   // if (booksError) {
   //   return (
@@ -152,45 +145,47 @@ const LibraryPage: React.FC = () => {
   // }
 
   return (
-    <FullWidthContainer>
-      {/* Header */}
-      {/* <ReadHeader
+    <Layout>
+      <FullWidthContainer>
+        {/* Header */}
+        {/* <ReadHeader
         currentTab={currentTab}
         onTabChange={handleTabChange}
         onAddBook={handleAddBook}
         onSearch={handleSearch}
       /> */}
 
-      {/* Main Content */}
-      <Container maxWidth="xl" sx={{ py: 4, pb: isMobile ? 10 : 4 }}>
-        {/* Welcome Section */}
-        <Welcome />
+        {/* Main Content */}
+        <Container maxWidth="xl" sx={{ py: 4, pb: isMobile ? 10 : 4 }}>
+          {/* Welcome Section */}
+          <Welcome />
 
-        {/* Continue Reading */}
-        <ContinueReading
-          isLoading={currentBookLoading}
-          book={transformedCurrentBook}
-          onBookClick={handleContinueReading}
-        />
+          {/* Continue Reading */}
+          <ContinueReading
+            isLoading={currentBookLoading}
+            book={transformedCurrentBook}
+            onBookClick={handleContinueReading}
+          />
 
-        {/* Stats Grid */}
-        <StatsGrid stats={displayStats} />
+          {/* Stats Grid */}
+          <StatsGrid isLoading={statsLoading} stats={stats} />
 
-        {/* Books Grid */}
-        <BooksGrid
-          books={transformedBooks || []}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          onBookClick={handleBookClick}
-          onLoadMore={handleLoadMore}
-          hasMore={books?.length === 24} // Assume more if we got a full page
-          loading={booksLoading}
-        />
-      </Container>
+          {/* Books Grid */}
+          <BooksGrid
+            books={transformedBooks}
+            filter={filter}
+            onFilterChange={handleFilterChange}
+            onBookClick={handleBookClick}
+            onLoadMore={handleLoadMore}
+            hasMore={books?.length === 24} // Assume more if we got a full page
+            isLoading={booksLoading}
+          />
+        </Container>
 
-      {/* Mobile Navigation */}
-      <MobileNavigation value={currentTab} onChange={handleTabChange} />
-    </FullWidthContainer>
+        {/* Mobile Navigation */}
+        <MobileNavigation value={currentTab} onChange={handleTabChange} />
+      </FullWidthContainer>
+    </Layout>
   );
 };
 
