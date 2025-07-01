@@ -67,22 +67,26 @@ const ContinueReadingSkeleton = () => {
 
               {/* Book Info Skeleton */}
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Skeleton
-                  variant="text"
-                  width="80%"
-                  height={{ xs: 28, sm: 32 }}
-                  aria-hidden="true"
-                  data-testid="book-title-skeleton"
-                  sx={{ mb: 0.5 }}
-                />
-                <Skeleton
-                  variant="text"
-                  width="60%"
-                  height={{ xs: 18, sm: 20 }}
-                  aria-hidden="true"
-                  data-testid="book-author-skeleton"
-                  sx={{ mb: { xs: 1, sm: 1.5 } }}
-                />
+                <Box sx={{ height: { xs: 28, sm: 32 }, width: '80%' }}>
+                  <Skeleton
+                    variant="text"
+                    width="100%"
+                    height="100%"
+                    aria-hidden="true"
+                    data-testid="book-title-skeleton"
+                    sx={{ mb: 0.5 }}
+                  />
+                </Box>
+                <Box sx={{ height: { xs: 28, sm: 32 }, width: '60%' }}>
+                  <Skeleton
+                    variant="text"
+                    width="100%"
+                    height="100%"
+                    aria-hidden="true"
+                    data-testid="book-title-skeleton"
+                    sx={{ mb: 0.5 }}
+                  />
+                </Box>
 
                 {/* Mobile: Last read skeleton */}
                 <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 1 }}>
