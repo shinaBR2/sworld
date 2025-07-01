@@ -1,5 +1,6 @@
 import { graphql } from '../../graphql';
 import { GetBooksQuery } from '../../graphql/graphql';
+import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 
 const GET_BOOKS = graphql(/* GraphQL */ `
@@ -50,8 +51,10 @@ const transform = (books: GetBooksQuery['books']): BookWithProgress[] => {
 };
 
 export const useBooks = () => {
+  const { getAccessToken } = useAuthContext();
   const { data, isLoading, error } = useRequest({
     queryKey: ['books'],
+    getAccessToken,
     document: GET_BOOKS,
     // transform: (data) => {
     //   const transformedBooks = transform(data.books);

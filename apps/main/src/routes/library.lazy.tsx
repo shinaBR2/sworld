@@ -1,6 +1,15 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import React, { useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { useBooks, useReadingStats, useCurrentReading } from 'core/library/query-hooks';
+import { useIsMobile } from 'ui/universal/responsive';
+import { Container } from 'ui/universal/containers/generic';
+import { Welcome } from 'ui/main/library-page/home-welcome';
+import { ContinueReading } from 'ui/main/library-page/home-continue-reading';
+import { StatsGrid } from 'ui/main/library-page/home-stats';
+import { BooksGrid } from 'ui/main/library-page/home-books-grid';
+import { MobileNavigation } from 'ui/main/library-page/mobile-nav';
+import { FullWidthContainer } from 'ui/universal';
 
 // Helper function to generate consistent gradients based on book ID
 const gradients = [
@@ -31,23 +40,14 @@ const getCoverGradient = (bookId: string): string => {
 const LibraryPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [filter, setFilter] = useState<'all' | 'completed' | 'reading' | 'recent'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
 
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useIsMobile();
 
   // Fetch data using our hooks
-  const {
-    data: books = [],
-    isLoading: booksLoading,
-    error: booksError,
-  } = useBooks({
-    filter,
-    limit: 24,
-    offset: page * 24,
-  });
+  const { data: books = [], isLoading: booksLoading, error: booksError } = useBooks();
 
   const { data: stats, isLoading: statsLoading } = useReadingStats();
   const { data: currentBook, isLoading: currentBookLoading } = useCurrentReading();
@@ -80,11 +80,11 @@ const LibraryPage: React.FC = () => {
     console.log('Add book clicked');
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    // TODO: Implement search functionality
-    console.log('Search:', query);
-  };
+  // const handleSearch = (query: string) => {
+  //   setSearchQuery(query);
+  //   // TODO: Implement search functionality
+  //   console.log('Search:', query);
+  // };
 
   const handleBookClick = (book: BookWithProgress) => {
     // Navigate to book reader
@@ -124,7 +124,7 @@ const LibraryPage: React.FC = () => {
     : undefined;
 
   // Transform books data for the component
-  const transformedBooks = books.map(book => ({
+  const transformedBooks = books?.map(book => ({
     id: book.id,
     title: book.title,
     author: book.author || 'Unknown Author',
@@ -142,86 +142,55 @@ const LibraryPage: React.FC = () => {
     wishlist: 0,
   };
 
-  // Show loading state
-  if (booksLoading && page === 0) {
-    return (
-      <Box
-        sx={{
-          bgcolor: 'background.default',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   // Show error state
-  if (booksError) {
-    return (
-      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', p: 4 }}>
-        <Alert severity="error">Failed to load your library. Please try again later.</Alert>
-      </Box>
-    );
-  }
+  // if (booksError) {
+  //   return (
+  //     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', p: 4 }}>
+  //       <Alert severity="error">Failed to load your library. Please try again later.</Alert>
+  //     </Box>
+  //   );
+  // }
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+    <FullWidthContainer>
       {/* Header */}
-      <ReadHeader
+      {/* <ReadHeader
         currentTab={currentTab}
         onTabChange={handleTabChange}
         onAddBook={handleAddBook}
         onSearch={handleSearch}
-      />
+      /> */}
 
       {/* Main Content */}
       <Container maxWidth="xl" sx={{ py: 4, pb: isMobile ? 10 : 4 }}>
         {/* Welcome Section */}
-        <Box sx={{ mb: 4 }}>
-          <Box
-            component="h2"
-            sx={{
-              fontSize: '1.875rem',
-              fontWeight: 700,
-              mb: 1,
-              color: 'text.primary',
-              m: 0,
-            }}
-          >
-            Welcome back, John!
-          </Box>
-          <Box component="p" sx={{ color: 'text.secondary', m: 0 }}>
-            Continue your reading journey or discover something new.
-          </Box>
-        </Box>
+        <Welcome />
 
         {/* Continue Reading */}
-        {!currentBookLoading && transformedCurrentBook && (
-          <ContinueReading book={transformedCurrentBook} onBookClick={handleContinueReading} />
-        )}
+        <ContinueReading
+          isLoading={currentBookLoading}
+          book={transformedCurrentBook}
+          onBookClick={handleContinueReading}
+        />
 
         {/* Stats Grid */}
         <StatsGrid stats={displayStats} />
 
         {/* Books Grid */}
         <BooksGrid
-          books={transformedBooks}
+          books={transformedBooks || []}
           filter={filter}
           onFilterChange={handleFilterChange}
           onBookClick={handleBookClick}
           onLoadMore={handleLoadMore}
-          hasMore={books.length === 24} // Assume more if we got a full page
+          hasMore={books?.length === 24} // Assume more if we got a full page
           loading={booksLoading}
         />
       </Container>
 
       {/* Mobile Navigation */}
       <MobileNavigation value={currentTab} onChange={handleTabChange} />
-    </Box>
+    </FullWidthContainer>
   );
 };
 
