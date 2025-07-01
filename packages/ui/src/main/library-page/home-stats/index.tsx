@@ -87,14 +87,10 @@ const StatsGridSkeleton = () => {
                   <Skeleton
                     variant="text"
                     width={40}
-                    height={28}
+                    height="1.5rem"
                     aria-hidden="true"
                     data-testid={`stats-value-skeleton-${item.key}`}
-                    sx={{
-                      fontSize: '1.5rem',
-                      mb: 0.5,
-                      mx: 'auto',
-                    }}
+                    sx={{ mb: '4px', mx: 'auto' }}
                   />
 
                   {/* Label skeleton */}
@@ -121,7 +117,7 @@ const StatsGridSkeleton = () => {
 const StatsGrid: React.FC<StatsGridProps> = props => {
   const { isLoading, stats } = props;
 
-  if (isLoading) {
+  if (isLoading || false) {
     return <StatsGridSkeleton />;
   }
 
