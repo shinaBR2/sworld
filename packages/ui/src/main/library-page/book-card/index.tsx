@@ -95,9 +95,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
           <Box
             sx={{
               position: 'absolute',
-              bottom: 1,
-              left: 1,
-              right: 1,
+              bottom: 8,
+              left: 8,
+              right: 8,
               height: 4,
               bgcolor: 'rgba(255, 255, 255, 0.9)',
               borderRadius: 0.5,
