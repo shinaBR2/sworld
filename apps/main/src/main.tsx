@@ -57,11 +57,7 @@ const AppWrapper = () => {
       <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
         <AuthProvider config={auth0Config}>
           <QueryProvider config={queryConfig}>
-            <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={postHogOptions}>
-              <UniversalMinimalismThemeProvider>
-                <AppWithPostHog />
-              </UniversalMinimalismThemeProvider>
-            </PostHogProvider>
+            <AppWithPostHog />
           </QueryProvider>
         </AuthProvider>
       </ErrorBoundary>
