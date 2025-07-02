@@ -93,6 +93,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
         {/* Progress Bar */}
         {book.progress && book.progress > 0 && !book.isCompleted && (
           <Box
+            data-testid="book-progress-bar"
             sx={{
               position: 'absolute',
               bottom: 8,
