@@ -11,6 +11,7 @@ import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
 import { PostHogProvider } from 'posthog-js/react';
 
+const postHogApiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const postHogOptions = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
 };
@@ -31,7 +32,23 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <UniversalMinimalismThemeProvider>
+      <RouterProvider router={router} />
+    </UniversalMinimalismThemeProvider>
+  );
+};
+
+const AppWithPostHog = () => {
+  if (!postHogApiKey) {
+    return <App />;
+  }
+
+  return (
+    <PostHogProvider apiKey={postHogApiKey} options={postHogOptions}>
+      <App />
+    </PostHogProvider>
+  );
 };
 
 const AppWrapper = () => {
@@ -42,7 +59,7 @@ const AppWrapper = () => {
           <QueryProvider config={queryConfig}>
             <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={postHogOptions}>
               <UniversalMinimalismThemeProvider>
-                <App />
+                <AppWithPostHog />
               </UniversalMinimalismThemeProvider>
             </PostHogProvider>
           </QueryProvider>

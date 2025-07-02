@@ -84,6 +84,8 @@ jobs:
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
           VITE_MEASUREMENT_ID: ${{ secrets.VITE_MEASUREMENT_ID }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          VITE_PUBLIC_POSTHOG_KEY: ${{ vars.VITE_PUBLIC_POSTHOG_KEY }}
+          VITE_PUBLIC_POSTHOG_HOST: ${{ vars.VITE_PUBLIC_POSTHOG_HOST }}
       - name: Deploy main
         uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
