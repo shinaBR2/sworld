@@ -19,6 +19,8 @@ import { Route as rootRoute } from './routes/__root'
 const JournalLazyImport = createFileRoute('/journal')()
 const FinanceLazyImport = createFileRoute('/finance')()
 const IndexLazyImport = createFileRoute('/')()
+const LibraryIndexLazyImport = createFileRoute('/library/')()
+const LibraryBooksBookIdLazyImport = createFileRoute('/library/books/$bookId')()
 
 // Create/Update Routes
 
@@ -39,6 +41,20 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const LibraryIndexLazyRoute = LibraryIndexLazyImport.update({
+  id: '/library/',
+  path: '/library/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/library.index.lazy').then((d) => d.Route))
+
+const LibraryBooksBookIdLazyRoute = LibraryBooksBookIdLazyImport.update({
+  id: '/library/books/$bookId',
+  path: '/library/books/$bookId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/library.books.$bookId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -65,6 +81,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalLazyImport
       parentRoute: typeof rootRoute
     }
+    '/library/': {
+      id: '/library/'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/library/books/$bookId': {
+      id: '/library/books/$bookId'
+      path: '/library/books/$bookId'
+      fullPath: '/library/books/$bookId'
+      preLoaderRoute: typeof LibraryBooksBookIdLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -74,12 +104,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/journal': typeof JournalLazyRoute
+  '/library': typeof LibraryIndexLazyRoute
+  '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/journal': typeof JournalLazyRoute
+  '/library': typeof LibraryIndexLazyRoute
+  '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute
 }
 
 export interface FileRoutesById {
@@ -87,14 +121,27 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/journal': typeof JournalLazyRoute
+  '/library/': typeof LibraryIndexLazyRoute
+  '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/finance' | '/journal'
+  fullPaths:
+    | '/'
+    | '/finance'
+    | '/journal'
+    | '/library'
+    | '/library/books/$bookId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/finance' | '/journal'
-  id: '__root__' | '/' | '/finance' | '/journal'
+  to: '/' | '/finance' | '/journal' | '/library' | '/library/books/$bookId'
+  id:
+    | '__root__'
+    | '/'
+    | '/finance'
+    | '/journal'
+    | '/library/'
+    | '/library/books/$bookId'
   fileRoutesById: FileRoutesById
 }
 
@@ -102,12 +149,16 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   FinanceLazyRoute: typeof FinanceLazyRoute
   JournalLazyRoute: typeof JournalLazyRoute
+  LibraryIndexLazyRoute: typeof LibraryIndexLazyRoute
+  LibraryBooksBookIdLazyRoute: typeof LibraryBooksBookIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   FinanceLazyRoute: FinanceLazyRoute,
   JournalLazyRoute: JournalLazyRoute,
+  LibraryIndexLazyRoute: LibraryIndexLazyRoute,
+  LibraryBooksBookIdLazyRoute: LibraryBooksBookIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,7 +173,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/finance",
-        "/journal"
+        "/journal",
+        "/library/",
+        "/library/books/$bookId"
       ]
     },
     "/": {
@@ -133,6 +186,12 @@ export const routeTree = rootRoute
     },
     "/journal": {
       "filePath": "journal.lazy.tsx"
+    },
+    "/library/": {
+      "filePath": "library.index.lazy.tsx"
+    },
+    "/library/books/$bookId": {
+      "filePath": "library.books.$bookId.lazy.tsx"
     }
   }
 }

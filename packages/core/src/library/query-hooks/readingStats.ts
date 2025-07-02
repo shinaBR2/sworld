@@ -1,6 +1,7 @@
 import { graphql } from '../../graphql';
 import { useRequest } from '../../universal/hooks/use-request';
 import { GetReadingStatsQuery } from '../../graphql/graphql';
+import { useAuthContext } from '../../providers/auth';
 
 const GET_READING_STATS = graphql(/* GraphQL */ `
   query GetReadingStats($monthStart: timestamptz!) {
@@ -41,13 +42,16 @@ const transform = (data: GetReadingStatsQuery) => {
     completedBooks,
     currentlyReading,
     readingTimeThisMonth,
+    wishlist: 0,
   };
 };
 
 const useReadingStats = () => {
+  const { getAccessToken } = useAuthContext();
   const monthStart = `${new Date().toISOString().slice(0, 7)}-01`;
   const { data, isLoading, error } = useRequest({
     queryKey: ['reading-stats', monthStart],
+    getAccessToken,
     document: GET_READING_STATS,
     variables: { monthStart },
   });
