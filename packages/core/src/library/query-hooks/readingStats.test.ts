@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
 import { useReadingStats } from './readingStats';
+import { UseQueryResult } from '@tanstack/react-query';
 
 vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -24,7 +25,7 @@ describe('useReadingStats', () => {
       data: mockData,
       isLoading: false,
       error: null,
-    });
+    } as unknown as UseQueryResult<typeof mockData, Error>);
 
     const { result } = renderHook(() => useReadingStats());
 
@@ -57,7 +58,7 @@ describe('useReadingStats', () => {
       },
       isLoading: false,
       error: null,
-    });
+    } as UseQueryResult<typeof mockData, Error>);
     const { result } = renderHook(() => useReadingStats());
     expect(result.current.data).toEqual({
       totalBooks: 0,
@@ -73,7 +74,7 @@ describe('useReadingStats', () => {
       data: null,
       isLoading: true,
       error: null,
-    });
+    } as unknown as UseQueryResult<typeof mockData, Error>);
     const { result } = renderHook(() => useReadingStats());
     expect(result.current).toEqual({ data: null, isLoading: true, error: null });
   });
@@ -84,7 +85,7 @@ describe('useReadingStats', () => {
       data: null,
       isLoading: false,
       error,
-    });
+    } as unknown as UseQueryResult<typeof mockData, Error>);
     const { result } = renderHook(() => useReadingStats());
     expect(result.current).toEqual({ data: null, isLoading: false, error });
   });
