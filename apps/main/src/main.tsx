@@ -9,6 +9,12 @@ import { auth0Config, queryConfig, rollbarConfig, validateEnvVars } from './conf
 import { ErrorBoundary } from 'core/universal/error-boundary';
 import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
+import { PostHogProvider } from 'posthog-js/react';
+
+const postHogApiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+const postHogOptions = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+};
 
 validateEnvVars();
 
@@ -26,7 +32,23 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <UniversalMinimalismThemeProvider>
+      <RouterProvider router={router} />
+    </UniversalMinimalismThemeProvider>
+  );
+};
+
+const AppWithPostHog = () => {
+  if (!postHogApiKey) {
+    return <App />;
+  }
+
+  return (
+    <PostHogProvider apiKey={postHogApiKey} options={postHogOptions}>
+      <App />
+    </PostHogProvider>
+  );
 };
 
 const AppWrapper = () => {
@@ -35,9 +57,7 @@ const AppWrapper = () => {
       <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
         <AuthProvider config={auth0Config}>
           <QueryProvider config={queryConfig}>
-            <UniversalMinimalismThemeProvider>
-              <App />
-            </UniversalMinimalismThemeProvider>
+            <AppWithPostHog />
           </QueryProvider>
         </AuthProvider>
       </ErrorBoundary>
