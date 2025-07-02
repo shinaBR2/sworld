@@ -1,11 +1,12 @@
 import React from 'react';
-import { BottomNavigation, BottomNavigationAction, useMediaQuery, useTheme } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import {
   LibraryBooks as LibraryIcon,
   MenuBook as ReadingIcon,
   Favorite as WishlistIcon,
   BarChart as StatsIcon,
 } from '@mui/icons-material';
+import { useIsMobile } from '../../../universal/responsive';
 
 interface MobileNavigationProps {
   value?: number;
@@ -15,8 +16,7 @@ interface MobileNavigationProps {
 const MobileNavigation: React.FC<MobileNavigationProps> = props => {
   const { value = 0, onChange } = props;
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useIsMobile();
 
   if (!isMobile) return null;
 
