@@ -9,6 +9,11 @@ import { auth0Config, queryConfig, rollbarConfig, validateEnvVars } from './conf
 import { ErrorBoundary } from 'core/universal/error-boundary';
 import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
+import { PostHogProvider } from 'posthog-js/react';
+
+const postHogOptions = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+};
 
 validateEnvVars();
 
@@ -35,9 +40,11 @@ const AppWrapper = () => {
       <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
         <AuthProvider config={auth0Config}>
           <QueryProvider config={queryConfig}>
-            <UniversalMinimalismThemeProvider>
-              <App />
-            </UniversalMinimalismThemeProvider>
+            <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={postHogOptions}>
+              <UniversalMinimalismThemeProvider>
+                <App />
+              </UniversalMinimalismThemeProvider>
+            </PostHogProvider>
           </QueryProvider>
         </AuthProvider>
       </ErrorBoundary>
