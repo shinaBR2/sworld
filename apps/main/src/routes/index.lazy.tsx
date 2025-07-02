@@ -18,11 +18,12 @@ const landingItems = [
     to: appConfig.sites.watch,
     isExternal: true,
   },
-  // {
-  //   icon: '📖',
-  //   title: 'Read',
-  //   to: '/read',
-  // },
+  {
+    icon: '📖',
+    title: 'Library',
+    to: '/library',
+    isExternal: false,
+  },
   // {
   //   icon: '🎮',
   //   title: 'Play',

@@ -11207,6 +11207,13 @@ export type UpsertReadingProgressMutationVariables = Exact<{
 
 export type UpsertReadingProgressMutation = { __typename?: 'mutation_root', insert_reading_progresses_one?: { __typename?: 'reading_progresses', id: any, currentPage: number, percentage?: any | null, lastReadAt: any } | null };
 
+export type GetBookByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type GetBookByIdQuery = { __typename?: 'query_root', books_by_pk?: { __typename?: 'books', id: any, title: string, author: string, thumbnailUrl?: string | null, source: string, totalPages: number, createdAt: any, reading_progresses: Array<{ __typename?: 'reading_progresses', id: any, currentPage: number, totalPages: number, percentage?: any | null, readingTimeMinutes?: number | null, lastReadAt: any, createdAt: any }> } | null };
+
 export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -11706,6 +11713,28 @@ export const UpsertReadingProgressDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpsertReadingProgressMutation, UpsertReadingProgressMutationVariables>;
+export const GetBookByIdDocument = new TypedDocumentString(`
+    query GetBookById($id: uuid!) {
+  books_by_pk(id: $id) {
+    id
+    title
+    author
+    thumbnailUrl
+    source
+    totalPages
+    createdAt
+    reading_progresses {
+      id
+      currentPage
+      totalPages
+      percentage
+      readingTimeMinutes
+      lastReadAt
+      createdAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetBookByIdQuery, GetBookByIdQueryVariables>;
 export const GetBooksDocument = new TypedDocumentString(`
     query GetBooks {
   books {

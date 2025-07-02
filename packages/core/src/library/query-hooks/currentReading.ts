@@ -1,5 +1,6 @@
 import { graphql } from '../../graphql';
 import { GetCurrentReadingQuery } from '../../graphql/graphql';
+import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 
 const GET_CURRENT_READING = graphql(`
@@ -53,8 +54,10 @@ const transform = (data: GetCurrentReadingQuery) => {
 };
 
 const useCurrentReading = () => {
+  const { getAccessToken } = useAuthContext();
   const { data, isLoading, error } = useRequest({
     queryKey: ['current-reading'],
+    getAccessToken,
     document: GET_CURRENT_READING,
   });
 
