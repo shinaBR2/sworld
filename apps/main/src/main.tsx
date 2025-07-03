@@ -14,6 +14,7 @@ import { PostHogProvider } from 'posthog-js/react';
 const postHogApiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const postHogOptions = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+  ui_host: import.meta.env.VITE_PUBLIC_POSTHOG_UI_HOST,
 };
 
 validateEnvVars();
