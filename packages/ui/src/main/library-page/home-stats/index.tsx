@@ -43,7 +43,7 @@ const statItems = [
     icon: ScheduleIcon,
     color: '#9333ea',
     bgcolor: '#f3e8ff',
-    suffix: 'm',
+    suffix: 'h',
   },
   {
     key: 'wishlist',
@@ -127,7 +127,11 @@ const StatsGrid: React.FC<StatsGridProps> = props => {
       <Grid container spacing={{ xs: 2, md: 3 }}>
         {statItems.map(item => {
           const IconComponent = item.icon;
-          const value = stats?.[item.key] ?? 0;
+          let value = stats?.[item.key] ?? 0;
+          // Convert minutes to hours for readingTimeThisMonth
+          if (item.key === 'readingTimeThisMonth') {
+            value = Math.round(value / 60);
+          }
 
           return (
             <Grid item xs={6} md={3} key={item.key}>

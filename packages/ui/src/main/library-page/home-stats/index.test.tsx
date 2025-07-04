@@ -39,7 +39,7 @@ describe('StatsGrid', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('Currently Reading')).toBeInTheDocument();
     // This Month (should include suffix 'h')
-    expect(screen.getByText('8m')).toBeInTheDocument();
+    expect(screen.getByText('0h')).toBeInTheDocument();
     expect(screen.getByText('This Month')).toBeInTheDocument();
     // Wishlist
     expect(screen.getByText('2')).toBeInTheDocument();
@@ -53,5 +53,58 @@ describe('StatsGrid', () => {
     expect(screen.getByText('Currently Reading')).toBeInTheDocument();
     expect(screen.getByText('This Month')).toBeInTheDocument();
     expect(screen.getByText('Wishlist')).toBeInTheDocument();
+  });
+
+  it('should show readingTimeThisMonth in hours (rounded)', () => {
+    render(
+      <StatsGrid
+        isLoading={false}
+        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 120, wishlist: 0 }}
+      />
+    );
+    expect(screen.getByText('2h')).toBeInTheDocument();
+  });
+
+  it('should round readingTimeThisMonth correctly (61 min → 1h)', () => {
+    render(
+      <StatsGrid
+        isLoading={false}
+        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 61, wishlist: 0 }}
+      />
+    );
+    expect(screen.getByText('1h')).toBeInTheDocument();
+  });
+
+  it('should round readingTimeThisMonth correctly (89 min → 1h)', () => {
+    render(
+      <StatsGrid
+        isLoading={false}
+        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 89, wishlist: 0 }}
+      />
+    );
+    expect(screen.getByText('1h')).toBeInTheDocument();
+  });
+
+  it('should show 0h for 0 minutes', () => {
+    render(
+      <StatsGrid
+        isLoading={false}
+        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 0, wishlist: 0 }}
+      />
+    );
+    // There may be multiple '0h', ensure at least one is present
+    const zeroHours = screen.getAllByText('0h');
+    expect(zeroHours.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should show 0h for negative minutes', () => {
+    render(
+      <StatsGrid
+        isLoading={false}
+        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: -10, wishlist: 0 }}
+      />
+    );
+    const zeroHoursNeg = screen.getAllByText('0h');
+    expect(zeroHoursNeg.length).toBeGreaterThanOrEqual(1);
   });
 });
