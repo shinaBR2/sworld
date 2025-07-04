@@ -36,8 +36,27 @@ describe('ReadingContent', () => {
     expect(iframe?.getAttribute('src')).toBe('https://example.com/test.pdf');
   });
 
-  it('does not render iframe if no pdfUrl', () => {
+  it('shows info alert if no pdfUrl (empty string)', () => {
     render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={''} />);
-    expect(document.querySelector('iframe')).not.toBeInTheDocument();
+    expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
+    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+  });
+
+  it('shows info alert if no pdfUrl (whitespace)', () => {
+    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={'   '} />);
+    expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
+    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+  });
+
+  it('shows info alert if no pdfUrl (null)', () => {
+    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={null} />);
+    expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
+    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+  });
+
+  it('shows info alert if no pdfUrl (undefined)', () => {
+    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={undefined} />);
+    expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
+    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
   });
 });

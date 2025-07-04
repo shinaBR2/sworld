@@ -3,12 +3,13 @@ import { Box, CircularProgress, Typography, Alert, Button } from '@mui/material'
 interface ReadingContentProps {
   isLoading: boolean;
   error?: string | null;
-  pdfUrl: string;
+  pdfUrl?: string | null;
   onErrorClick: () => void;
 }
 
 const ReadingContent = (props: ReadingContentProps) => {
   const { isLoading, error, pdfUrl, onErrorClick } = props;
+  const notAvailable = !error && !isLoading && (!pdfUrl || pdfUrl.trim() === '');
 
   return (
     <Box
@@ -53,6 +54,24 @@ const ReadingContent = (props: ReadingContentProps) => {
           <Button variant="outlined" onClick={onErrorClick} fullWidth>
             Reload
           </Button>
+        </Box>
+      )}
+
+      {notAvailable && (
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 600,
+            mt: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <Alert severity="info" sx={{ width: '100%' }}>
+            This book is not available to read online.
+          </Alert>
         </Box>
       )}
 
