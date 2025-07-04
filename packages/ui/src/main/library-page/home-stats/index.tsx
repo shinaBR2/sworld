@@ -43,7 +43,7 @@ const statItems = [
     icon: ScheduleIcon,
     color: '#9333ea',
     bgcolor: '#f3e8ff',
-    suffix: 'h',
+    suffix: 'm',
   },
   {
     key: 'wishlist',

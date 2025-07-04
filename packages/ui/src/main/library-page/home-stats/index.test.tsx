@@ -39,7 +39,7 @@ describe('StatsGrid', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('Currently Reading')).toBeInTheDocument();
     // This Month (should include suffix 'h')
-    expect(screen.getByText('8h')).toBeInTheDocument();
+    expect(screen.getByText('8m')).toBeInTheDocument();
     expect(screen.getByText('This Month')).toBeInTheDocument();
     // Wishlist
     expect(screen.getByText('2')).toBeInTheDocument();
