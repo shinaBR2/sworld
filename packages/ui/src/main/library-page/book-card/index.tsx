@@ -11,6 +11,7 @@ interface BookCardProps {
     isCompleted?: boolean;
     isNew?: boolean;
     coverGradient?: string;
+    thumbnailUrl?: string;
   };
   onClick?: (book: BookCardProps['book']) => void;
 }
@@ -46,7 +47,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
           borderRadius: 1,
           mb: 1.5,
           overflow: 'hidden',
-          background: gradient,
+          background: book.thumbnailUrl ? 'none' : gradient,
+          backgroundImage: book.thumbnailUrl ? `url(${book.thumbnailUrl})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           '&:hover .cover-overlay': {
             opacity: 1,

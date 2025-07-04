@@ -22,6 +22,7 @@ interface Book {
   isCompleted?: boolean;
   isNew?: boolean;
   coverGradient?: string;
+  thumbnailUrl?: string;
 }
 
 interface BooksGridProps {
