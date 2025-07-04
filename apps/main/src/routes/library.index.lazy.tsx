@@ -134,6 +134,7 @@ const LibraryPage: React.FC = () => {
     isCompleted: book.isCompleted,
     isNew: book.isNew,
     coverGradient: getCoverGradient(book.id), // Generate consistent gradient based on ID
+    thumbnailUrl: book.thumbnailUrl,
   }));
 
   // Show error state
