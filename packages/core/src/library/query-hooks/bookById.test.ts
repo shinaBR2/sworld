@@ -42,7 +42,7 @@ describe('useBookById', () => {
       data: { books_by_pk: mockBook },
       isLoading: false,
       error: null,
-    });
+    } as unknown as ReturnType<typeof useRequest>);
 
     const { result } = renderHook(() => useBookById('book-1'));
     expect(useRequest).toHaveBeenCalledWith({
@@ -61,7 +61,7 @@ describe('useBookById', () => {
       data: null,
       isLoading: true,
       error: null,
-    });
+    } as unknown as ReturnType<typeof useRequest>);
     const { result } = renderHook(() => useBookById('book-2'));
     expect(result.current).toEqual({ data: null, isLoading: true, error: null });
   });
@@ -72,7 +72,7 @@ describe('useBookById', () => {
       data: null,
       isLoading: false,
       error,
-    });
+    } as unknown as ReturnType<typeof useRequest>);
     const { result } = renderHook(() => useBookById('book-3'));
     expect(result.current).toEqual({ data: null, isLoading: false, error });
   });
@@ -82,7 +82,7 @@ describe('useBookById', () => {
       data: { books_by_pk: null },
       isLoading: false,
       error: null,
-    });
+    } as unknown as ReturnType<typeof useRequest>);
     const { result } = renderHook(() => useBookById('book-404'));
     expect(result.current.data).toEqual({ books_by_pk: null });
   });
