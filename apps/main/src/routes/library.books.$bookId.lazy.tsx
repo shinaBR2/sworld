@@ -31,8 +31,7 @@ const BookReaderPage: React.FC<BookReaderPageProps> = () => {
         <ReadingContent
           isLoading={isLoading}
           error={error?.message}
-          // pdfUrl={data?.books_by_pk?.source || ''}
-          pdfUrl={null}
+          pdfUrl={data?.books_by_pk?.source || ''}
           onErrorClick={() => {
             window.location.reload();
           }}
