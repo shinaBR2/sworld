@@ -17,6 +17,7 @@ const envConfig = {
   hashnodeWebhookSecret: process.env.HASHNODE_WEBHOOK_SECRET,
   hashnodeEndpoint: process.env.HASHNODE_ENDPOINT,
   hashnodePersonalToken: process.env.HASHNODE_PERSONAL_TOKEN,
+  mainSiteUrl: process.env.MAIN_SITE_URL,
 };
 
 export { envConfig };

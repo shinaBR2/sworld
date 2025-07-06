@@ -26,6 +26,7 @@ describe('envConfig', () => {
       'hashnodeWebhookSecret',
       'hashnodeEndpoint',
       'hashnodePersonalToken',
+      'mainSiteUrl',
     ];
 
     expectedKeys.forEach(key => {

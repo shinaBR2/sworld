@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { Context, Next } from 'hono';
 import { type ZodError, type ZodSchema, z } from 'zod';
 import { ServiceResponse } from '../schema';
+import { getClientIP } from '../ip';
 
 // Framework-agnostic validation context
 interface ValidationContext {
@@ -9,6 +10,8 @@ interface ValidationContext {
   query: Record<string, any>;
   body: any;
   headers: Record<string, string>;
+  ip: string;
+  userAgent?: string;
 }
 
 // Framework-agnostic validation result
@@ -63,7 +66,11 @@ const expressValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
       query: req.query,
       body: req.body,
       headers: req.headers as Record<string, string>,
+      ip: getClientIP(req.headers as Record<string, string>),
+      userAgent: req.headers['user-agent'],
     };
+
+    // console.log(context);
 
     const result = validateData(schema, context);
 
@@ -95,6 +102,8 @@ const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
         query,
         body,
         headers,
+        ip: getClientIP(headers),
+        userAgent: headers['user-agent'],
       };
 
       const result = validateData(schema, context);

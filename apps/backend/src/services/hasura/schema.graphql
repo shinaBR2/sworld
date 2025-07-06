@@ -27,6 +27,30 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
+input CreateDeviceRequestInput {
+  extensionId: String!
+}
+
+type CreateDeviceRequestOutput {
+  deviceCode: String!
+  expiresIn: Int!
+  interval: Int!
+  userCode: String!
+  verificationUri: String!
+  verificationUriComplete: String!
+}
+
+type CreateDeviceRequestResponse {
+  data: CreateDeviceRequestOutput
+  error: DeviceRequestError
+  success: Boolean!
+}
+
+type DeviceRequestError {
+  code: String!
+  message: String!
+}
+
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -674,6 +698,553 @@ input audios_updates {
   where: audios_bool_exp!
 }
 
+"""
+columns and relationships of "books"
+"""
+type books {
+  author: String!
+  createdAt: timestamptz!
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid!
+  """An array relationship"""
+  reading_progresses(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): [reading_progresses!]!
+  """An aggregate relationship"""
+  reading_progresses_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): reading_progresses_aggregate!
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String!
+  thumbnailUrl: String
+  title: String!
+  totalPages: Int!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  """Uploader, not the author of the book"""
+  userId: uuid!
+}
+
+"""
+aggregated selection of "books"
+"""
+type books_aggregate {
+  aggregate: books_aggregate_fields
+  nodes: [books!]!
+}
+
+input books_aggregate_bool_exp {
+  count: books_aggregate_bool_exp_count
+}
+
+input books_aggregate_bool_exp_count {
+  arguments: [books_select_column!]
+  distinct: Boolean
+  filter: books_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "books"
+"""
+type books_aggregate_fields {
+  avg: books_avg_fields
+  count(columns: [books_select_column!], distinct: Boolean): Int!
+  max: books_max_fields
+  min: books_min_fields
+  stddev: books_stddev_fields
+  stddev_pop: books_stddev_pop_fields
+  stddev_samp: books_stddev_samp_fields
+  sum: books_sum_fields
+  var_pop: books_var_pop_fields
+  var_samp: books_var_samp_fields
+  variance: books_variance_fields
+}
+
+"""
+order by aggregate values of table "books"
+"""
+input books_aggregate_order_by {
+  avg: books_avg_order_by
+  count: order_by
+  max: books_max_order_by
+  min: books_min_order_by
+  stddev: books_stddev_order_by
+  stddev_pop: books_stddev_pop_order_by
+  stddev_samp: books_stddev_samp_order_by
+  sum: books_sum_order_by
+  var_pop: books_var_pop_order_by
+  var_samp: books_var_samp_order_by
+  variance: books_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "books"
+"""
+input books_arr_rel_insert_input {
+  data: [books_insert_input!]!
+  """upsert condition"""
+  on_conflict: books_on_conflict
+}
+
+"""aggregate avg on columns"""
+type books_avg_fields {
+  totalPages: Float
+}
+
+"""
+order by avg() on columns of table "books"
+"""
+input books_avg_order_by {
+  totalPages: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "books". All fields are combined with a logical 'AND'.
+"""
+input books_bool_exp {
+  _and: [books_bool_exp!]
+  _not: books_bool_exp
+  _or: [books_bool_exp!]
+  author: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  fileUrl: String_comparison_exp
+  id: uuid_comparison_exp
+  reading_progresses: reading_progresses_bool_exp
+  reading_progresses_aggregate: reading_progresses_aggregate_bool_exp
+  source: String_comparison_exp
+  status: String_comparison_exp
+  thumbnailUrl: String_comparison_exp
+  title: String_comparison_exp
+  totalPages: Int_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  userId: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "books"
+"""
+enum books_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  books_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "books"
+"""
+input books_inc_input {
+  totalPages: Int
+}
+
+"""
+input type for inserting data into table "books"
+"""
+input books_insert_input {
+  author: String
+  createdAt: timestamptz
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid
+  reading_progresses: reading_progresses_arr_rel_insert_input
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String
+  thumbnailUrl: String
+  title: String
+  totalPages: Int
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  """Uploader, not the author of the book"""
+  userId: uuid
+}
+
+"""aggregate max on columns"""
+type books_max_fields {
+  author: String
+  createdAt: timestamptz
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String
+  thumbnailUrl: String
+  title: String
+  totalPages: Int
+  updatedAt: timestamptz
+  """Uploader, not the author of the book"""
+  userId: uuid
+}
+
+"""
+order by max() on columns of table "books"
+"""
+input books_max_order_by {
+  author: order_by
+  createdAt: order_by
+  """User input url, NOT validated yet"""
+  fileUrl: order_by
+  id: order_by
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: order_by
+  """
+  Could be either "ready" or "processing"
+  """
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  """Uploader, not the author of the book"""
+  userId: order_by
+}
+
+"""aggregate min on columns"""
+type books_min_fields {
+  author: String
+  createdAt: timestamptz
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String
+  thumbnailUrl: String
+  title: String
+  totalPages: Int
+  updatedAt: timestamptz
+  """Uploader, not the author of the book"""
+  userId: uuid
+}
+
+"""
+order by min() on columns of table "books"
+"""
+input books_min_order_by {
+  author: order_by
+  createdAt: order_by
+  """User input url, NOT validated yet"""
+  fileUrl: order_by
+  id: order_by
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: order_by
+  """
+  Could be either "ready" or "processing"
+  """
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  """Uploader, not the author of the book"""
+  userId: order_by
+}
+
+"""
+response of any mutation on the table "books"
+"""
+type books_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [books!]!
+}
+
+"""
+input type for inserting object relation for remote table "books"
+"""
+input books_obj_rel_insert_input {
+  data: books_insert_input!
+  """upsert condition"""
+  on_conflict: books_on_conflict
+}
+
+"""
+on_conflict condition type for table "books"
+"""
+input books_on_conflict {
+  constraint: books_constraint!
+  update_columns: [books_update_column!]! = []
+  where: books_bool_exp
+}
+
+"""Ordering options when selecting data from "books"."""
+input books_order_by {
+  author: order_by
+  createdAt: order_by
+  fileUrl: order_by
+  id: order_by
+  reading_progresses_aggregate: reading_progresses_aggregate_order_by
+  source: order_by
+  status: order_by
+  thumbnailUrl: order_by
+  title: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  user: users_order_by
+  userId: order_by
+}
+
+"""primary key columns input for table: books"""
+input books_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "books"
+"""
+enum books_select_column {
+  """column name"""
+  author
+  """column name"""
+  createdAt
+  """column name"""
+  fileUrl
+  """column name"""
+  id
+  """column name"""
+  source
+  """column name"""
+  status
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  totalPages
+  """column name"""
+  updatedAt
+  """column name"""
+  userId
+}
+
+"""
+input type for updating data in table "books"
+"""
+input books_set_input {
+  author: String
+  createdAt: timestamptz
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String
+  thumbnailUrl: String
+  title: String
+  totalPages: Int
+  updatedAt: timestamptz
+  """Uploader, not the author of the book"""
+  userId: uuid
+}
+
+"""aggregate stddev on columns"""
+type books_stddev_fields {
+  totalPages: Float
+}
+
+"""
+order by stddev() on columns of table "books"
+"""
+input books_stddev_order_by {
+  totalPages: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type books_stddev_pop_fields {
+  totalPages: Float
+}
+
+"""
+order by stddev_pop() on columns of table "books"
+"""
+input books_stddev_pop_order_by {
+  totalPages: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type books_stddev_samp_fields {
+  totalPages: Float
+}
+
+"""
+order by stddev_samp() on columns of table "books"
+"""
+input books_stddev_samp_order_by {
+  totalPages: order_by
+}
+
+"""
+Streaming cursor of the table "books"
+"""
+input books_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: books_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input books_stream_cursor_value_input {
+  author: String
+  createdAt: timestamptz
+  """User input url, NOT validated yet"""
+  fileUrl: String
+  id: uuid
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
+  """
+  Could be either "ready" or "processing"
+  """
+  status: String
+  thumbnailUrl: String
+  title: String
+  totalPages: Int
+  updatedAt: timestamptz
+  """Uploader, not the author of the book"""
+  userId: uuid
+}
+
+"""aggregate sum on columns"""
+type books_sum_fields {
+  totalPages: Int
+}
+
+"""
+order by sum() on columns of table "books"
+"""
+input books_sum_order_by {
+  totalPages: order_by
+}
+
+"""
+update columns of table "books"
+"""
+enum books_update_column {
+  """column name"""
+  author
+  """column name"""
+  createdAt
+  """column name"""
+  fileUrl
+  """column name"""
+  id
+  """column name"""
+  source
+  """column name"""
+  status
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  title
+  """column name"""
+  totalPages
+  """column name"""
+  updatedAt
+  """column name"""
+  userId
+}
+
+input books_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: books_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: books_set_input
+  """filter the rows which have to be updated"""
+  where: books_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type books_var_pop_fields {
+  totalPages: Float
+}
+
+"""
+order by var_pop() on columns of table "books"
+"""
+input books_var_pop_order_by {
+  totalPages: order_by
+}
+
+"""aggregate var_samp on columns"""
+type books_var_samp_fields {
+  totalPages: Float
+}
+
+"""
+order by var_samp() on columns of table "books"
+"""
+input books_var_samp_order_by {
+  totalPages: order_by
+}
+
+"""aggregate variance on columns"""
+type books_variance_fields {
+  totalPages: Float
+}
+
+"""
+order by variance() on columns of table "books"
+"""
+input books_variance_order_by {
+  totalPages: order_by
+}
+
 """Requests to crawl content from any sources"""
 type crawl_requests {
   created_at: timestamptz!
@@ -1018,6 +1589,347 @@ input date_comparison_exp {
   _lte: date
   _neq: date
   _nin: [date!]
+}
+
+"""
+Requests to authentication from other sources than the web apps, can be extensions, smart tivi apps, etc.
+"""
+type device_requests {
+  authorizedAt: timestamptz
+  createdAt: timestamptz!
+  deviceCode: String!
+  expiresAt: timestamptz!
+  extensionId: String!
+  id: uuid!
+  ipAddress: inet!
+  status: String!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users
+  userAgent: String!
+  userCode: String!
+  user_id: uuid
+}
+
+"""
+aggregated selection of "device_requests"
+"""
+type device_requests_aggregate {
+  aggregate: device_requests_aggregate_fields
+  nodes: [device_requests!]!
+}
+
+input device_requests_aggregate_bool_exp {
+  count: device_requests_aggregate_bool_exp_count
+}
+
+input device_requests_aggregate_bool_exp_count {
+  arguments: [device_requests_select_column!]
+  distinct: Boolean
+  filter: device_requests_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "device_requests"
+"""
+type device_requests_aggregate_fields {
+  count(columns: [device_requests_select_column!], distinct: Boolean): Int!
+  max: device_requests_max_fields
+  min: device_requests_min_fields
+}
+
+"""
+order by aggregate values of table "device_requests"
+"""
+input device_requests_aggregate_order_by {
+  count: order_by
+  max: device_requests_max_order_by
+  min: device_requests_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "device_requests"
+"""
+input device_requests_arr_rel_insert_input {
+  data: [device_requests_insert_input!]!
+  """upsert condition"""
+  on_conflict: device_requests_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "device_requests". All fields are combined with a logical 'AND'.
+"""
+input device_requests_bool_exp {
+  _and: [device_requests_bool_exp!]
+  _not: device_requests_bool_exp
+  _or: [device_requests_bool_exp!]
+  authorizedAt: timestamptz_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  deviceCode: String_comparison_exp
+  expiresAt: timestamptz_comparison_exp
+  extensionId: String_comparison_exp
+  id: uuid_comparison_exp
+  ipAddress: inet_comparison_exp
+  status: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  userAgent: String_comparison_exp
+  userCode: String_comparison_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "device_requests"
+"""
+enum device_requests_constraint {
+  """
+  unique or primary key constraint on columns "device_code"
+  """
+  device_requests_device_code_key
+  """
+  unique or primary key constraint on columns "id"
+  """
+  device_requests_pkey
+  """
+  unique or primary key constraint on columns "user_code"
+  """
+  device_requests_user_code_key
+}
+
+"""
+input type for inserting data into table "device_requests"
+"""
+input device_requests_insert_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type device_requests_max_fields {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "device_requests"
+"""
+input device_requests_max_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  status: order_by
+  updatedAt: order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type device_requests_min_fields {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "device_requests"
+"""
+input device_requests_min_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  status: order_by
+  updatedAt: order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "device_requests"
+"""
+type device_requests_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [device_requests!]!
+}
+
+"""
+on_conflict condition type for table "device_requests"
+"""
+input device_requests_on_conflict {
+  constraint: device_requests_constraint!
+  update_columns: [device_requests_update_column!]! = []
+  where: device_requests_bool_exp
+}
+
+"""Ordering options when selecting data from "device_requests"."""
+input device_requests_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  ipAddress: order_by
+  status: order_by
+  updatedAt: order_by
+  user: users_order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: device_requests"""
+input device_requests_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "device_requests"
+"""
+enum device_requests_select_column {
+  """column name"""
+  authorizedAt
+  """column name"""
+  createdAt
+  """column name"""
+  deviceCode
+  """column name"""
+  expiresAt
+  """column name"""
+  extensionId
+  """column name"""
+  id
+  """column name"""
+  ipAddress
+  """column name"""
+  status
+  """column name"""
+  updatedAt
+  """column name"""
+  userAgent
+  """column name"""
+  userCode
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "device_requests"
+"""
+input device_requests_set_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "device_requests"
+"""
+input device_requests_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: device_requests_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input device_requests_stream_cursor_value_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+update columns of table "device_requests"
+"""
+enum device_requests_update_column {
+  """column name"""
+  authorizedAt
+  """column name"""
+  createdAt
+  """column name"""
+  deviceCode
+  """column name"""
+  expiresAt
+  """column name"""
+  extensionId
+  """column name"""
+  id
+  """column name"""
+  ipAddress
+  """column name"""
+  status
+  """column name"""
+  updatedAt
+  """column name"""
+  userAgent
+  """column name"""
+  userCode
+  """column name"""
+  user_id
+}
+
+input device_requests_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: device_requests_set_input
+  """filter the rows which have to be updated"""
+  where: device_requests_bool_exp!
 }
 
 """
@@ -1759,6 +2671,23 @@ input finance_transactions_variance_order_by {
   year: order_by
 }
 
+scalar inet
+
+"""
+Boolean expression to compare columns of type "inet". All fields are combined with logical 'AND'.
+"""
+input inet_comparison_exp {
+  _eq: inet
+  _gt: inet
+  _gte: inet
+  _in: [inet!]
+  _is_null: Boolean
+  _lt: inet
+  _lte: inet
+  _neq: inet
+  _nin: [inet!]
+}
+
 """Daily journal"""
 type journals {
   content: String!
@@ -2119,6 +3048,10 @@ input jsonb_comparison_exp {
 """mutation root"""
 type mutation_root {
   """
+  Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
+  """
+  createDeviceRequest(input: CreateDeviceRequestInput!): CreateDeviceRequestResponse!
+  """
   delete data from the table: "audio_tags"
   """
   delete_audio_tags(
@@ -2141,6 +3074,17 @@ type mutation_root {
   """
   delete_audios_by_pk(id: uuid!): audios
   """
+  delete data from the table: "books"
+  """
+  delete_books(
+    """filter the rows which have to be deleted"""
+    where: books_bool_exp!
+  ): books_mutation_response
+  """
+  delete single row from the table: "books"
+  """
+  delete_books_by_pk(id: uuid!): books
+  """
   delete data from the table: "crawl_requests"
   """
   delete_crawl_requests(
@@ -2151,6 +3095,17 @@ type mutation_root {
   delete single row from the table: "crawl_requests"
   """
   delete_crawl_requests_by_pk(id: uuid!): crawl_requests
+  """
+  delete data from the table: "device_requests"
+  """
+  delete_device_requests(
+    """filter the rows which have to be deleted"""
+    where: device_requests_bool_exp!
+  ): device_requests_mutation_response
+  """
+  delete single row from the table: "device_requests"
+  """
+  delete_device_requests_by_pk(id: uuid!): device_requests
   """
   delete data from the table: "feature_flag"
   """
@@ -2228,6 +3183,17 @@ type mutation_root {
   delete single row from the table: "posts"
   """
   delete_posts_by_pk(id: uuid!): posts
+  """
+  delete data from the table: "reading_progresses"
+  """
+  delete_reading_progresses(
+    """filter the rows which have to be deleted"""
+    where: reading_progresses_bool_exp!
+  ): reading_progresses_mutation_response
+  """
+  delete single row from the table: "reading_progresses"
+  """
+  delete_reading_progresses_by_pk(id: uuid!): reading_progresses
   """
   delete data from the table: "shared_playlist_recipients"
   """
@@ -2386,6 +3352,24 @@ type mutation_root {
     on_conflict: audios_on_conflict
   ): audios
   """
+  insert data into the table: "books"
+  """
+  insert_books(
+    """the rows to be inserted"""
+    objects: [books_insert_input!]!
+    """upsert condition"""
+    on_conflict: books_on_conflict
+  ): books_mutation_response
+  """
+  insert a single row into the table: "books"
+  """
+  insert_books_one(
+    """the row to be inserted"""
+    object: books_insert_input!
+    """upsert condition"""
+    on_conflict: books_on_conflict
+  ): books
+  """
   insert data into the table: "crawl_requests"
   """
   insert_crawl_requests(
@@ -2403,6 +3387,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: crawl_requests_on_conflict
   ): crawl_requests
+  """
+  insert data into the table: "device_requests"
+  """
+  insert_device_requests(
+    """the rows to be inserted"""
+    objects: [device_requests_insert_input!]!
+    """upsert condition"""
+    on_conflict: device_requests_on_conflict
+  ): device_requests_mutation_response
+  """
+  insert a single row into the table: "device_requests"
+  """
+  insert_device_requests_one(
+    """the row to be inserted"""
+    object: device_requests_insert_input!
+    """upsert condition"""
+    on_conflict: device_requests_on_conflict
+  ): device_requests
   """
   insert data into the table: "feature_flag"
   """
@@ -2529,6 +3531,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: posts_on_conflict
   ): posts
+  """
+  insert data into the table: "reading_progresses"
+  """
+  insert_reading_progresses(
+    """the rows to be inserted"""
+    objects: [reading_progresses_insert_input!]!
+    """upsert condition"""
+    on_conflict: reading_progresses_on_conflict
+  ): reading_progresses_mutation_response
+  """
+  insert a single row into the table: "reading_progresses"
+  """
+  insert_reading_progresses_one(
+    """the row to be inserted"""
+    object: reading_progresses_insert_input!
+    """upsert condition"""
+    on_conflict: reading_progresses_on_conflict
+  ): reading_progresses
   """
   insert data into the table: "shared_playlist_recipients"
   """
@@ -2776,6 +3796,34 @@ type mutation_root {
     updates: [audios_updates!]!
   ): [audios_mutation_response]
   """
+  update data of the table: "books"
+  """
+  update_books(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: books_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: books_set_input
+    """filter the rows which have to be updated"""
+    where: books_bool_exp!
+  ): books_mutation_response
+  """
+  update single row of the table: "books"
+  """
+  update_books_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: books_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: books_set_input
+    pk_columns: books_pk_columns_input!
+  ): books
+  """
+  update multiples rows of table: "books"
+  """
+  update_books_many(
+    """updates to execute, in order"""
+    updates: [books_updates!]!
+  ): [books_mutation_response]
+  """
   update data of the table: "crawl_requests"
   """
   update_crawl_requests(
@@ -2799,6 +3847,30 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [crawl_requests_updates!]!
   ): [crawl_requests_mutation_response]
+  """
+  update data of the table: "device_requests"
+  """
+  update_device_requests(
+    """sets the columns of the filtered rows to the given values"""
+    _set: device_requests_set_input
+    """filter the rows which have to be updated"""
+    where: device_requests_bool_exp!
+  ): device_requests_mutation_response
+  """
+  update single row of the table: "device_requests"
+  """
+  update_device_requests_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: device_requests_set_input
+    pk_columns: device_requests_pk_columns_input!
+  ): device_requests
+  """
+  update multiples rows of table: "device_requests"
+  """
+  update_device_requests_many(
+    """updates to execute, in order"""
+    updates: [device_requests_updates!]!
+  ): [device_requests_mutation_response]
   """
   update data of the table: "feature_flag"
   """
@@ -3107,6 +4179,34 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [posts_updates!]!
   ): [posts_mutation_response]
+  """
+  update data of the table: "reading_progresses"
+  """
+  update_reading_progresses(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: reading_progresses_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: reading_progresses_set_input
+    """filter the rows which have to be updated"""
+    where: reading_progresses_bool_exp!
+  ): reading_progresses_mutation_response
+  """
+  update single row of the table: "reading_progresses"
+  """
+  update_reading_progresses_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: reading_progresses_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: reading_progresses_set_input
+    pk_columns: reading_progresses_pk_columns_input!
+  ): reading_progresses
+  """
+  update multiples rows of table: "reading_progresses"
+  """
+  update_reading_progresses_many(
+    """updates to execute, in order"""
+    updates: [reading_progresses_updates!]!
+  ): [reading_progresses_mutation_response]
   """
   update data of the table: "shared_playlist_recipients"
   """
@@ -5118,6 +6218,34 @@ type query_root {
   """fetch data from the table: "audios" using primary key columns"""
   audios_by_pk(id: uuid!): audios
   """An array relationship"""
+  books(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): [books!]!
+  """An aggregate relationship"""
+  books_aggregate(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): books_aggregate!
+  """fetch data from the table: "books" using primary key columns"""
+  books_by_pk(id: uuid!): books
+  """An array relationship"""
   crawl_requests(
     """distinct select on columns"""
     distinct_on: [crawl_requests_select_column!]
@@ -5145,6 +6273,34 @@ type query_root {
   ): crawl_requests_aggregate!
   """fetch data from the table: "crawl_requests" using primary key columns"""
   crawl_requests_by_pk(id: uuid!): crawl_requests
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
+  """fetch data from the table: "device_requests" using primary key columns"""
+  device_requests_by_pk(id: uuid!): device_requests
   """
   fetch data from the table: "feature_flag"
   """
@@ -5355,6 +6511,36 @@ type query_root {
   ): posts_aggregate!
   """fetch data from the table: "posts" using primary key columns"""
   posts_by_pk(id: uuid!): posts
+  """An array relationship"""
+  reading_progresses(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): [reading_progresses!]!
+  """An aggregate relationship"""
+  reading_progresses_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): reading_progresses_aggregate!
+  """
+  fetch data from the table: "reading_progresses" using primary key columns
+  """
+  reading_progresses_by_pk(id: uuid!): reading_progresses
   """An array relationship"""
   shared_playlist_recipients(
     """distinct select on columns"""
@@ -5689,6 +6875,487 @@ type query_root {
   ): videos_aggregate!
   """fetch data from the table: "videos" using primary key columns"""
   videos_by_pk(id: uuid!): videos
+}
+
+"""Track how far end user read a book"""
+type reading_progresses {
+  """An object relationship"""
+  book: books!
+  bookId: uuid!
+  createdAt: timestamptz!
+  currentPage: Int!
+  id: uuid!
+  lastReadAt: timestamptz!
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Int
+  totalPages: Int!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  userId: uuid!
+}
+
+"""
+aggregated selection of "reading_progresses"
+"""
+type reading_progresses_aggregate {
+  aggregate: reading_progresses_aggregate_fields
+  nodes: [reading_progresses!]!
+}
+
+input reading_progresses_aggregate_bool_exp {
+  count: reading_progresses_aggregate_bool_exp_count
+}
+
+input reading_progresses_aggregate_bool_exp_count {
+  arguments: [reading_progresses_select_column!]
+  distinct: Boolean
+  filter: reading_progresses_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "reading_progresses"
+"""
+type reading_progresses_aggregate_fields {
+  avg: reading_progresses_avg_fields
+  count(columns: [reading_progresses_select_column!], distinct: Boolean): Int!
+  max: reading_progresses_max_fields
+  min: reading_progresses_min_fields
+  stddev: reading_progresses_stddev_fields
+  stddev_pop: reading_progresses_stddev_pop_fields
+  stddev_samp: reading_progresses_stddev_samp_fields
+  sum: reading_progresses_sum_fields
+  var_pop: reading_progresses_var_pop_fields
+  var_samp: reading_progresses_var_samp_fields
+  variance: reading_progresses_variance_fields
+}
+
+"""
+order by aggregate values of table "reading_progresses"
+"""
+input reading_progresses_aggregate_order_by {
+  avg: reading_progresses_avg_order_by
+  count: order_by
+  max: reading_progresses_max_order_by
+  min: reading_progresses_min_order_by
+  stddev: reading_progresses_stddev_order_by
+  stddev_pop: reading_progresses_stddev_pop_order_by
+  stddev_samp: reading_progresses_stddev_samp_order_by
+  sum: reading_progresses_sum_order_by
+  var_pop: reading_progresses_var_pop_order_by
+  var_samp: reading_progresses_var_samp_order_by
+  variance: reading_progresses_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "reading_progresses"
+"""
+input reading_progresses_arr_rel_insert_input {
+  data: [reading_progresses_insert_input!]!
+  """upsert condition"""
+  on_conflict: reading_progresses_on_conflict
+}
+
+"""aggregate avg on columns"""
+type reading_progresses_avg_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by avg() on columns of table "reading_progresses"
+"""
+input reading_progresses_avg_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "reading_progresses". All fields are combined with a logical 'AND'.
+"""
+input reading_progresses_bool_exp {
+  _and: [reading_progresses_bool_exp!]
+  _not: reading_progresses_bool_exp
+  _or: [reading_progresses_bool_exp!]
+  book: books_bool_exp
+  bookId: uuid_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  currentPage: Int_comparison_exp
+  id: uuid_comparison_exp
+  lastReadAt: timestamptz_comparison_exp
+  percentage: numeric_comparison_exp
+  readingTimeMinutes: Int_comparison_exp
+  totalPages: Int_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  userId: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "reading_progresses"
+"""
+enum reading_progresses_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  reading_progresses_pkey
+  """
+  unique or primary key constraint on columns "user_id", "book_id"
+  """
+  reading_progresses_user_id_book_id_key
+}
+
+"""
+input type for incrementing numeric columns in table "reading_progresses"
+"""
+input reading_progresses_inc_input {
+  currentPage: Int
+  readingTimeMinutes: Int
+  totalPages: Int
+}
+
+"""
+input type for inserting data into table "reading_progresses"
+"""
+input reading_progresses_insert_input {
+  book: books_obj_rel_insert_input
+  bookId: uuid
+  createdAt: timestamptz
+  currentPage: Int
+  id: uuid
+  lastReadAt: timestamptz
+  readingTimeMinutes: Int
+  totalPages: Int
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  userId: uuid
+}
+
+"""aggregate max on columns"""
+type reading_progresses_max_fields {
+  bookId: uuid
+  createdAt: timestamptz
+  currentPage: Int
+  id: uuid
+  lastReadAt: timestamptz
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Int
+  totalPages: Int
+  updatedAt: timestamptz
+  userId: uuid
+}
+
+"""
+order by max() on columns of table "reading_progresses"
+"""
+input reading_progresses_max_order_by {
+  bookId: order_by
+  createdAt: order_by
+  currentPage: order_by
+  id: order_by
+  lastReadAt: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  userId: order_by
+}
+
+"""aggregate min on columns"""
+type reading_progresses_min_fields {
+  bookId: uuid
+  createdAt: timestamptz
+  currentPage: Int
+  id: uuid
+  lastReadAt: timestamptz
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Int
+  totalPages: Int
+  updatedAt: timestamptz
+  userId: uuid
+}
+
+"""
+order by min() on columns of table "reading_progresses"
+"""
+input reading_progresses_min_order_by {
+  bookId: order_by
+  createdAt: order_by
+  currentPage: order_by
+  id: order_by
+  lastReadAt: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  userId: order_by
+}
+
+"""
+response of any mutation on the table "reading_progresses"
+"""
+type reading_progresses_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [reading_progresses!]!
+}
+
+"""
+on_conflict condition type for table "reading_progresses"
+"""
+input reading_progresses_on_conflict {
+  constraint: reading_progresses_constraint!
+  update_columns: [reading_progresses_update_column!]! = []
+  where: reading_progresses_bool_exp
+}
+
+"""Ordering options when selecting data from "reading_progresses"."""
+input reading_progresses_order_by {
+  book: books_order_by
+  bookId: order_by
+  createdAt: order_by
+  currentPage: order_by
+  id: order_by
+  lastReadAt: order_by
+  percentage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+  updatedAt: order_by
+  user: users_order_by
+  userId: order_by
+}
+
+"""primary key columns input for table: reading_progresses"""
+input reading_progresses_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "reading_progresses"
+"""
+enum reading_progresses_select_column {
+  """column name"""
+  bookId
+  """column name"""
+  createdAt
+  """column name"""
+  currentPage
+  """column name"""
+  id
+  """column name"""
+  lastReadAt
+  """column name"""
+  readingTimeMinutes
+  """column name"""
+  totalPages
+  """column name"""
+  updatedAt
+  """column name"""
+  userId
+}
+
+"""
+input type for updating data in table "reading_progresses"
+"""
+input reading_progresses_set_input {
+  bookId: uuid
+  createdAt: timestamptz
+  currentPage: Int
+  id: uuid
+  lastReadAt: timestamptz
+  readingTimeMinutes: Int
+  totalPages: Int
+  updatedAt: timestamptz
+  userId: uuid
+}
+
+"""aggregate stddev on columns"""
+type reading_progresses_stddev_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by stddev() on columns of table "reading_progresses"
+"""
+input reading_progresses_stddev_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type reading_progresses_stddev_pop_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by stddev_pop() on columns of table "reading_progresses"
+"""
+input reading_progresses_stddev_pop_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type reading_progresses_stddev_samp_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by stddev_samp() on columns of table "reading_progresses"
+"""
+input reading_progresses_stddev_samp_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""
+Streaming cursor of the table "reading_progresses"
+"""
+input reading_progresses_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: reading_progresses_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input reading_progresses_stream_cursor_value_input {
+  bookId: uuid
+  createdAt: timestamptz
+  currentPage: Int
+  id: uuid
+  lastReadAt: timestamptz
+  readingTimeMinutes: Int
+  totalPages: Int
+  updatedAt: timestamptz
+  userId: uuid
+}
+
+"""aggregate sum on columns"""
+type reading_progresses_sum_fields {
+  currentPage: Int
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Int
+  totalPages: Int
+}
+
+"""
+order by sum() on columns of table "reading_progresses"
+"""
+input reading_progresses_sum_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""
+update columns of table "reading_progresses"
+"""
+enum reading_progresses_update_column {
+  """column name"""
+  bookId
+  """column name"""
+  createdAt
+  """column name"""
+  currentPage
+  """column name"""
+  id
+  """column name"""
+  lastReadAt
+  """column name"""
+  readingTimeMinutes
+  """column name"""
+  totalPages
+  """column name"""
+  updatedAt
+  """column name"""
+  userId
+}
+
+input reading_progresses_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: reading_progresses_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: reading_progresses_set_input
+  """filter the rows which have to be updated"""
+  where: reading_progresses_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type reading_progresses_var_pop_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by var_pop() on columns of table "reading_progresses"
+"""
+input reading_progresses_var_pop_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""aggregate var_samp on columns"""
+type reading_progresses_var_samp_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by var_samp() on columns of table "reading_progresses"
+"""
+input reading_progresses_var_samp_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
+}
+
+"""aggregate variance on columns"""
+type reading_progresses_variance_fields {
+  currentPage: Float
+  """Calculate percentage based on other column values"""
+  percentage: numeric
+  readingTimeMinutes: Float
+  totalPages: Float
+}
+
+"""
+order by variance() on columns of table "reading_progresses"
+"""
+input reading_progresses_variance_order_by {
+  currentPage: order_by
+  readingTimeMinutes: order_by
+  totalPages: order_by
 }
 
 """
@@ -6319,6 +7986,45 @@ type subscription_root {
     where: audios_bool_exp
   ): [audios!]!
   """An array relationship"""
+  books(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): [books!]!
+  """An aggregate relationship"""
+  books_aggregate(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): books_aggregate!
+  """fetch data from the table: "books" using primary key columns"""
+  books_by_pk(id: uuid!): books
+  """
+  fetch data from the table in a streaming manner: "books"
+  """
+  books_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [books_stream_cursor_input]!
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): [books!]!
+  """An array relationship"""
   crawl_requests(
     """distinct select on columns"""
     distinct_on: [crawl_requests_select_column!]
@@ -6357,6 +8063,45 @@ type subscription_root {
     """filter the rows returned"""
     where: crawl_requests_bool_exp
   ): [crawl_requests!]!
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
+  """fetch data from the table: "device_requests" using primary key columns"""
+  device_requests_by_pk(id: uuid!): device_requests
+  """
+  fetch data from the table in a streaming manner: "device_requests"
+  """
+  device_requests_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [device_requests_stream_cursor_input]!
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
   """
   fetch data from the table: "feature_flag"
   """
@@ -6644,6 +8389,47 @@ type subscription_root {
     """filter the rows returned"""
     where: posts_bool_exp
   ): [posts!]!
+  """An array relationship"""
+  reading_progresses(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): [reading_progresses!]!
+  """An aggregate relationship"""
+  reading_progresses_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): reading_progresses_aggregate!
+  """
+  fetch data from the table: "reading_progresses" using primary key columns
+  """
+  reading_progresses_by_pk(id: uuid!): reading_progresses
+  """
+  fetch data from the table in a streaming manner: "reading_progresses"
+  """
+  reading_progresses_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [reading_progresses_stream_cursor_input]!
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): [reading_progresses!]!
   """An array relationship"""
   shared_playlist_recipients(
     """distinct select on columns"""
@@ -8688,6 +10474,32 @@ type users {
   ): audios_aggregate!
   auth0_id: String!
   """An array relationship"""
+  books(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): [books!]!
+  """An aggregate relationship"""
+  books_aggregate(
+    """distinct select on columns"""
+    distinct_on: [books_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [books_order_by!]
+    """filter the rows returned"""
+    where: books_bool_exp
+  ): books_aggregate!
+  """An array relationship"""
   crawl_requests(
     """distinct select on columns"""
     distinct_on: [crawl_requests_select_column!]
@@ -8714,6 +10526,32 @@ type users {
     where: crawl_requests_bool_exp
   ): crawl_requests_aggregate!
   created_at: timestamptz
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
   email: String!
   """An array relationship"""
   finance_transactions(
@@ -8820,6 +10658,32 @@ type users {
     """filter the rows returned"""
     where: playlist_bool_exp
   ): playlist_aggregate!
+  """An array relationship"""
+  reading_progresses(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): [reading_progresses!]!
+  """An aggregate relationship"""
+  reading_progresses_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reading_progresses_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [reading_progresses_order_by!]
+    """filter the rows returned"""
+    where: reading_progresses_bool_exp
+  ): reading_progresses_aggregate!
   """An array relationship"""
   shared_playlist_recipients(
     """distinct select on columns"""
@@ -8981,9 +10845,13 @@ input users_bool_exp {
   audios: audios_bool_exp
   audios_aggregate: audios_aggregate_bool_exp
   auth0_id: String_comparison_exp
+  books: books_bool_exp
+  books_aggregate: books_aggregate_bool_exp
   crawl_requests: crawl_requests_bool_exp
   crawl_requests_aggregate: crawl_requests_aggregate_bool_exp
   created_at: timestamptz_comparison_exp
+  device_requests: device_requests_bool_exp
+  device_requests_aggregate: device_requests_aggregate_bool_exp
   email: String_comparison_exp
   finance_transactions: finance_transactions_bool_exp
   finance_transactions_aggregate: finance_transactions_aggregate_bool_exp
@@ -8994,6 +10862,8 @@ input users_bool_exp {
   notifications_aggregate: notifications_aggregate_bool_exp
   playlists: playlist_bool_exp
   playlists_aggregate: playlist_aggregate_bool_exp
+  reading_progresses: reading_progresses_bool_exp
+  reading_progresses_aggregate: reading_progresses_aggregate_bool_exp
   shared_playlist_recipients: shared_playlist_recipients_bool_exp
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
   shared_video_recipients: shared_video_recipients_bool_exp
@@ -9036,14 +10906,17 @@ input type for inserting data into table "users"
 input users_insert_input {
   audios: audios_arr_rel_insert_input
   auth0_id: String
+  books: books_arr_rel_insert_input
   crawl_requests: crawl_requests_arr_rel_insert_input
   created_at: timestamptz
+  device_requests: device_requests_arr_rel_insert_input
   email: String
   finance_transactions: finance_transactions_arr_rel_insert_input
   id: uuid
   journals: journals_arr_rel_insert_input
   notifications: notifications_arr_rel_insert_input
   playlists: playlist_arr_rel_insert_input
+  reading_progresses: reading_progresses_arr_rel_insert_input
   shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
   shared_video_recipients: shared_video_recipients_arr_rel_insert_input
   updated_at: timestamptz
@@ -9105,14 +10978,17 @@ input users_on_conflict {
 input users_order_by {
   audios_aggregate: audios_aggregate_order_by
   auth0_id: order_by
+  books_aggregate: books_aggregate_order_by
   crawl_requests_aggregate: crawl_requests_aggregate_order_by
   created_at: order_by
+  device_requests_aggregate: device_requests_aggregate_order_by
   email: order_by
   finance_transactions_aggregate: finance_transactions_aggregate_order_by
   id: order_by
   journals_aggregate: journals_aggregate_order_by
   notifications_aggregate: notifications_aggregate_order_by
   playlists_aggregate: playlist_aggregate_order_by
+  reading_progresses_aggregate: reading_progresses_aggregate_order_by
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
   updated_at: order_by

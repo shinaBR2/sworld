@@ -18,6 +18,10 @@ vi.mock('./hashnode', () => ({
   hashnodeRouter: 'mockHashnodeRouter',
 }));
 
+vi.mock('./auth', () => ({
+  authRouter: 'mockAuthRouter',
+}));
+
 // Mock base app
 const mockSet = vi.fn();
 const mockUse = vi.fn();
@@ -56,6 +60,13 @@ describe('app', () => {
     expect(videoRouteCall).toBeTruthy();
   });
 
+  it('should set up auth route', async () => {
+    await import('./index');
+    const useCalls = mockUse.mock.calls;
+    const authRouteCall = useCalls.find(call => call[0] === '/auth' && call[1] === 'mockAuthRouter');
+    expect(authRouteCall).toBeTruthy();
+  });
+
   it('should set up hashnode route', async () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
@@ -69,6 +80,7 @@ describe('app', () => {
 
     // Find the indexes of our middleware
     const videosRouterCallIndex = calls.findIndex(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
+    const authRouterCallIndex = calls.findIndex(call => call[0] === '/auth' && call[1] === 'mockAuthRouter');
     const hashnodeRouterCallIndex = calls.findIndex(
       call => call[0] === '/hashnode' && call[1] === 'mockHashnodeRouter'
     );
@@ -76,11 +88,13 @@ describe('app', () => {
 
     // All middleware should be found
     expect(videosRouterCallIndex).not.toBe(-1);
+    expect(authRouterCallIndex).not.toBe(-1);
     expect(hashnodeRouterCallIndex).not.toBe(-1);
     expect(errorHandlerCallIndex).not.toBe(-1);
 
     // Error handler should be after routes
     expect(errorHandlerCallIndex).toBeGreaterThan(videosRouterCallIndex);
+    expect(errorHandlerCallIndex).toBeGreaterThan(authRouterCallIndex);
     expect(errorHandlerCallIndex).toBeGreaterThan(hashnodeRouterCallIndex);
   });
 

@@ -19,6 +19,8 @@ describe('validateData', () => {
     params: z.object({
       id: z.string(),
     }),
+    ip: z.string(),
+    userAgent: z.string().optional(),
   });
 
   it('should validate valid data successfully', () => {
@@ -27,6 +29,8 @@ describe('validateData', () => {
       query: { filter: 'active' },
       headers: { 'content-type': 'application/json' },
       params: { id: '123' },
+      ip: '203.0.113.195',
+      userAgent: 'TestAgent/1.0',
     };
 
     const result = validateData(testSchema, context);
@@ -40,6 +44,8 @@ describe('validateData', () => {
       query: { filter: 123 }, // filter should be string
       headers: { 'content-type': '' }, // empty string
       params: {}, // missing id
+      ip: '203.0.113.195',
+      userAgent: 'TestAgent/1.0',
     };
 
     const result = validateData(testSchema, context);
@@ -58,6 +64,8 @@ describe('expressValidateRequest', () => {
     params: z.record(z.string()),
     query: z.record(z.any()),
     headers: z.record(z.string()),
+    ip: z.string(),
+    userAgent: z.string().optional(),
   });
 
   let mockReq: Partial<Request>;
@@ -69,7 +77,10 @@ describe('expressValidateRequest', () => {
       body: { name: 'John' },
       params: {},
       query: {},
-      headers: {},
+      headers: {
+        'x-forwarded-for': '203.0.113.195',
+        'user-agent': 'TestAgent/1.0',
+      },
     };
     mockRes = {
       status: vi.fn().mockReturnThis(),
@@ -88,7 +99,12 @@ describe('expressValidateRequest', () => {
       body: { name: 'John' },
       params: {},
       query: {},
-      headers: {},
+      headers: {
+        'x-forwarded-for': '203.0.113.195',
+        'user-agent': 'TestAgent/1.0',
+      },
+      ip: '203.0.113.195',
+      userAgent: 'TestAgent/1.0',
     });
   });
 

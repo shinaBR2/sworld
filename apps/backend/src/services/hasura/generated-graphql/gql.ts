@@ -13,6 +13,7 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+  '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n': typeof types.CreateDeviceRequestDocument;
   '\n  mutation DeletePost($hId: String!) {\n    delete_posts(where: { hId: { _eq: $hId } }) {\n      returning {\n        id\n      }\n    }\n  }\n': typeof types.DeletePostDocument;
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n    }\n  }\n': typeof types.InsertPostDocument;
   '\n  mutation UpdatePost($hId: String!, $set: posts_set_input!) {\n    update_posts(where: { hId: { _eq: $hId } }, _set: $set) {\n      returning {\n        id\n      }\n    }\n  }\n': typeof types.UpdatePostDocument;
@@ -24,6 +25,8 @@ type Documents = {
   '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n': typeof types.UsersDocument;
 };
 const documents: Documents = {
+  '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n':
+    types.CreateDeviceRequestDocument,
   '\n  mutation DeletePost($hId: String!) {\n    delete_posts(where: { hId: { _eq: $hId } }) {\n      returning {\n        id\n      }\n    }\n  }\n':
     types.DeletePostDocument,
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n    }\n  }\n':
@@ -44,6 +47,12 @@ const documents: Documents = {
     types.UsersDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n'
+): typeof import('./graphql').CreateDeviceRequestDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
