@@ -23,6 +23,13 @@ array_relationships:
         table:
           name: crawl_requests
           schema: public
+  - name: device_requests
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: device_requests
+          schema: public
   - name: finance_transactions
     using:
       foreign_key_constraint_on:
