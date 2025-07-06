@@ -1,0 +1,30 @@
+type Mutation {
+  createDeviceRequest(
+    input: CreateDeviceRequestInput!
+  ): CreateDeviceRequestResponse!
+}
+
+input CreateDeviceRequestInput {
+  extensionId: String!
+}
+
+type CreateDeviceRequestOutput {
+  deviceCode: String!
+  userCode: String!
+  verificationUri: String!
+  verificationUriComplete: String!
+  expiresIn: Int!
+  interval: Int!
+}
+
+type DeviceRequestError {
+  code: String!
+  message: String!
+}
+
+type CreateDeviceRequestResponse {
+  success: Boolean!
+  data: CreateDeviceRequestOutput
+  error: DeviceRequestError
+}
+
