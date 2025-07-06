@@ -3,6 +3,7 @@ actions:
     definition:
       kind: synchronous
       handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
       headers:
         - name: X-Hasura-Action
           value: createDeviceRequest
