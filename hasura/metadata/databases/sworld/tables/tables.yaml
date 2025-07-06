@@ -2,6 +2,7 @@
 - "!include public_audios.yaml"
 - "!include public_books.yaml"
 - "!include public_crawl_requests.yaml"
+- "!include public_device_requests.yaml"
 - "!include public_feature_flag.yaml"
 - "!include public_finance_transactions.yaml"
 - "!include public_journals.yaml"
