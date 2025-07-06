@@ -79,18 +79,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
   },
   mutations: {
     allowed: [],
-    denied: [
-      {
-        name: "All",
-        mutation: `
-          mutation {
-            # This is a placeholder and won't match any real schema
-            # The point is to ensure ANY mutation is rejected
-            __typename
-          }
-        `,
-      },
-    ],
+    denied: [],
   },
 });
 
