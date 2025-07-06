@@ -2,7 +2,7 @@ actions:
   - name: createDeviceRequest
     definition:
       kind: synchronous
-      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      handler: https://995e-27-69-164-114.ngrok-free.app
       headers:
         - name: X-Hasura-Action
           value: createDeviceRequest
