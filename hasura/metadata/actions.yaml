@@ -1,6 +1,28 @@
-actions: []
+actions:
+  - name: createDeviceRequest
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      headers:
+        - name: X-Hasura-Action
+          value: createDeviceRequest
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device'
+        version: 2
+    permissions:
+      - role: anonymous
+    comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: CreateDeviceRequestInput
+  objects:
+    - name: CreateDeviceRequestOutput
+    - name: DeviceRequestError
+    - name: CreateDeviceRequestResponse
   scalars: []
