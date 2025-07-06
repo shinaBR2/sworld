@@ -14,6 +14,8 @@ actions:
         template_engine: Kriti
         url: '{{$base_url}}/auth/device'
         version: 2
+    permissions:
+      - role: anonymous
     comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
 custom_types:
   enums: []
