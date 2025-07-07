@@ -1,0 +1,43 @@
+table:
+  name: book_comments
+  schema: public
+configuration:
+  column_config:
+    book_id:
+      custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    book_id: bookId
+    created_at: createdAt
+    user_id: userId
+  custom_root_fields: {}
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - book_id
+        - content
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - book_id
+        - content
+        - created_at
+        - id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      query_root_fields:
+        - select
+      subscription_root_fields: []
+    comment: ""
