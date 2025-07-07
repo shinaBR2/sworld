@@ -1,5 +1,6 @@
 - "!include public_audio_tags.yaml"
 - "!include public_audios.yaml"
+- "!include public_book_comments.yaml"
 - "!include public_books.yaml"
 - "!include public_crawl_requests.yaml"
 - "!include public_device_requests.yaml"
