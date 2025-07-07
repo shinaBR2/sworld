@@ -1,6 +1,19 @@
 table:
   name: book_comments
   schema: public
+configuration:
+  column_config:
+    book_id:
+      custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    book_id: bookId
+    created_at: createdAt
+    user_id: userId
+  custom_root_fields: {}
 insert_permissions:
   - role: user
     permission:

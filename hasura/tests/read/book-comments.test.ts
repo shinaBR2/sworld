@@ -13,10 +13,10 @@ const allowedUserQueries: QueryTestCase[] = [
     name: "Get book comments",
     query: `
       query GetBookComments($bookId: uuid!) {
-        book_comments(where: { book_id: { _eq: $bookId } }) {
+        book_comments(where: { bookId: { _eq: $bookId } }) {
           id
           content
-          created_at
+          createdAt
         }
       }
     `,
@@ -31,7 +31,7 @@ const allowedUserQueries: QueryTestCase[] = [
         const comment = response.book_comments[0];
         expect(comment).toHaveProperty("id");
         expect(comment).toHaveProperty("content");
-        expect(comment).toHaveProperty("created_at");
+        expect(comment).toHaveProperty("createdAt");
       }
     },
   },
@@ -46,16 +46,16 @@ const deniedMutations: MutationTestCase[] = [
         insert_book_comments_one(object: $object) {
           id
           content
-          book_id
-          user_id
+          bookId
+          userId
         }
       }
     `,
     variables: {
       object: {
         content: "Test comment",
-        book_id: "123e4567-e89b-12d3-a456-426614174000",
-        user_id: "123e4567-e89b-12d3-a456-426614174001",
+        bookId: "123e4567-e89b-12d3-a456-426614174000",
+        userId: "123e4567-e89b-12d3-a456-426614174001",
       },
     },
   },
@@ -66,6 +66,7 @@ const deniedMutations: MutationTestCase[] = [
         update_book_comments_by_pk(pk_columns: { id: $id }, _set: $updates) {
           id
           content
+          createdAt
         }
       }
     `,
@@ -103,6 +104,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
             book_comments {
               id
               content
+              createdAt
             }
           }
         `,
