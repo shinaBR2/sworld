@@ -292,7 +292,6 @@ describe('VideoDetailContainer', () => {
   });
 
   it('should handle video errors', async () => {
-    const props = createProps();
     mockVideoContainer.mockImplementation(({ onError }) => {
       // Simulate an error after a small delay to test the error handling
       setTimeout(() => {
