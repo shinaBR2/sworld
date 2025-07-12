@@ -83,7 +83,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
 
   const { mutateAsync: saveSubtitle } = useSaveSubtitle({
     getAccessToken,
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       console.log('Subtitle saved successfully:', data);
       // TODO: Add success notification
     },
