@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Chip from '@mui/material/Chip';
 import React, { Suspense } from 'react';
 import { getDisplayLanguage } from './utils';
+import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
 
 const ShareDialog = React.lazy(() =>
   import('../../dialogs/share').then(mod => ({
@@ -77,10 +78,40 @@ const MainContent = (props: VideoDetailContainerProps) => {
     [onShare]
   );
 
-  const handleSaveSubtitle = React.useCallback((url: string) => {
-    console.log('Saving subtitle URL:', url);
-    setIsSubtitleDialogOpen(false);
-  }, []);
+  const { mutateAsync: saveSubtitle } = useSaveSubtitle({
+    getAccessToken: async () => {
+      // TODO: Replace with actual token retrieval
+      return 'test-token';
+    },
+    onSuccess: (data, variables) => {
+      console.log('Subtitle saved successfully:', data);
+      // TODO: Add success notification
+    },
+    onError: error => {
+      console.error('Failed to save subtitle:', error);
+      // TODO: Add error notification
+    },
+  });
+
+  const handleSaveSubtitle = React.useCallback(
+    async (url: string) => {
+      // TODO: handle caes multiple subtitles
+      if (!videoDetail?.subtitles?.[0]?.id) {
+        console.error('No subtitle ID found');
+        return;
+      }
+
+      await saveSubtitle({
+        id: videoDetail.subtitles[0].id,
+        object: {
+          urlInput: url,
+        },
+      });
+
+      setIsSubtitleDialogOpen(false);
+    },
+    [saveSubtitle, videoDetail?.subtitles]
+  );
 
   // Conditional rendering after all hooks
   if (isLoading) {
