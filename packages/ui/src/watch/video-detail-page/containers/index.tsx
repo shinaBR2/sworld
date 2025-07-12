@@ -9,7 +9,9 @@ import { StyledRelatedContainer } from './styled';
 import { IconButton, Stack, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
+import Chip from '@mui/material/Chip';
 import React, { Suspense } from 'react';
+import { getDisplayLanguage } from './utils';
 
 const ShareDialog = React.lazy(() =>
   import('../../dialogs/share').then(mod => ({
@@ -130,6 +132,30 @@ const MainContent = (props: VideoDetailContainerProps) => {
           </IconButton>
         </Tooltip>
       </Stack>
+
+      {videoDetail.subtitles && videoDetail.subtitles.length > 0 && (
+        <Stack direction="row" spacing={1} sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mr: 0.5 }}>
+            Subtitle(s):
+          </Typography>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
+            {videoDetail.subtitles.map(subtitle => (
+              <Chip
+                key={subtitle.id}
+                label={getDisplayLanguage(subtitle.lang)}
+                size="small"
+                variant="outlined"
+                sx={{
+                  '& .MuiChip-label': {
+                    textTransform: 'capitalize',
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+      )}
+
       <Suspense fallback={null}>
         <ShareDialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} onShare={handleShare} />
         <SubtitleDialog
