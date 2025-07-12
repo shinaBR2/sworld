@@ -104,7 +104,7 @@ const buildVariables = (dialogState: DialogState) => {
     variables.objects[0].subtitles = {
       data: [
         {
-          url: subtitle,
+          urlInput: subtitle,
           lang: 'vi',
           isDefault: true,
         },
