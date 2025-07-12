@@ -1,10 +1,11 @@
 // src/components/video-detail-page/containers/index.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { act } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { VideoDetailContainer } from './index';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { VideoDetailContainerProps } from './types';
+import userEvent from '@testing-library/user-event';
 
 type MockVideo = {
   id: string;
@@ -433,6 +434,35 @@ describe('VideoDetailContainer', () => {
       });
 
       expect(onShare).toHaveBeenCalledWith(['test@example.com']);
+    });
+  });
+
+  describe('subtitle editing', () => {
+    it('renders subtitle chips for available subtitles', () => {
+      renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      expect(screen.getByText('English')).toBeInTheDocument();
+    });
+
+    it('opens subtitle dialog when edit button is clicked', async () => {
+      renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      userEvent.click(screen.getByRole('button', { name: /edit subtitle/i }));
+      expect(await screen.findByTestId('subtitle-dialog')).toBeInTheDocument();
+    });
+
+    it('calls useSaveSubtitle and closes dialog on save', async () => {
+      renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      userEvent.click(screen.getByRole('button', { name: /edit subtitle/i }));
+      await screen.findByTestId('save-subtitle-button');
+      userEvent.click(screen.getByTestId('save-subtitle-button'));
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({
+          id: 'sub-1',
+          object: {
+            urlInput: 'https://example.com/updated-subtitle.vtt',
+          },
+        });
+        expect(screen.queryByTestId('subtitle-dialog')).toBeNull();
+      });
     });
   });
 });
