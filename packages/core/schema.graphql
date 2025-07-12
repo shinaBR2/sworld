@@ -27,6 +27,30 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
+input CreateDeviceRequestInput {
+  extensionId: String!
+}
+
+type CreateDeviceRequestOutput {
+  deviceCode: String!
+  expiresIn: Int!
+  interval: Int!
+  userCode: String!
+  verificationUri: String!
+  verificationUriComplete: String!
+}
+
+type CreateDeviceRequestResponse {
+  data: CreateDeviceRequestOutput
+  error: DeviceRequestError
+  success: Boolean!
+}
+
+type DeviceRequestError {
+  code: String!
+  message: String!
+}
+
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -675,13 +699,266 @@ input audios_updates {
 }
 
 """
+columns and relationships of "book_comments"
+"""
+type book_comments {
+  bookId: uuid!
+  content: String!
+  createdAt: timestamptz!
+  id: uuid!
+  updated_at: timestamptz!
+  """An object relationship"""
+  user: users!
+  userId: uuid!
+}
+
+"""
+aggregated selection of "book_comments"
+"""
+type book_comments_aggregate {
+  aggregate: book_comments_aggregate_fields
+  nodes: [book_comments!]!
+}
+
+input book_comments_aggregate_bool_exp {
+  count: book_comments_aggregate_bool_exp_count
+}
+
+input book_comments_aggregate_bool_exp_count {
+  arguments: [book_comments_select_column!]
+  distinct: Boolean
+  filter: book_comments_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "book_comments"
+"""
+type book_comments_aggregate_fields {
+  count(columns: [book_comments_select_column!], distinct: Boolean): Int!
+  max: book_comments_max_fields
+  min: book_comments_min_fields
+}
+
+"""
+order by aggregate values of table "book_comments"
+"""
+input book_comments_aggregate_order_by {
+  count: order_by
+  max: book_comments_max_order_by
+  min: book_comments_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "book_comments"
+"""
+input book_comments_arr_rel_insert_input {
+  data: [book_comments_insert_input!]!
+  """upsert condition"""
+  on_conflict: book_comments_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "book_comments". All fields are combined with a logical 'AND'.
+"""
+input book_comments_bool_exp {
+  _and: [book_comments_bool_exp!]
+  _not: book_comments_bool_exp
+  _or: [book_comments_bool_exp!]
+  bookId: uuid_comparison_exp
+  content: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  user: users_bool_exp
+  userId: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "book_comments"
+"""
+enum book_comments_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  book_comments_pkey
+}
+
+"""
+input type for inserting data into table "book_comments"
+"""
+input book_comments_insert_input {
+  bookId: uuid
+  content: String
+  createdAt: timestamptz
+  id: uuid
+  updated_at: timestamptz
+  user: users_obj_rel_insert_input
+  userId: uuid
+}
+
+"""aggregate max on columns"""
+type book_comments_max_fields {
+  bookId: uuid
+  content: String
+  createdAt: timestamptz
+  id: uuid
+  updated_at: timestamptz
+  userId: uuid
+}
+
+"""
+order by max() on columns of table "book_comments"
+"""
+input book_comments_max_order_by {
+  bookId: order_by
+  content: order_by
+  createdAt: order_by
+  id: order_by
+  updated_at: order_by
+  userId: order_by
+}
+
+"""aggregate min on columns"""
+type book_comments_min_fields {
+  bookId: uuid
+  content: String
+  createdAt: timestamptz
+  id: uuid
+  updated_at: timestamptz
+  userId: uuid
+}
+
+"""
+order by min() on columns of table "book_comments"
+"""
+input book_comments_min_order_by {
+  bookId: order_by
+  content: order_by
+  createdAt: order_by
+  id: order_by
+  updated_at: order_by
+  userId: order_by
+}
+
+"""
+response of any mutation on the table "book_comments"
+"""
+type book_comments_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [book_comments!]!
+}
+
+"""
+on_conflict condition type for table "book_comments"
+"""
+input book_comments_on_conflict {
+  constraint: book_comments_constraint!
+  update_columns: [book_comments_update_column!]! = []
+  where: book_comments_bool_exp
+}
+
+"""Ordering options when selecting data from "book_comments"."""
+input book_comments_order_by {
+  bookId: order_by
+  content: order_by
+  createdAt: order_by
+  id: order_by
+  updated_at: order_by
+  user: users_order_by
+  userId: order_by
+}
+
+"""primary key columns input for table: book_comments"""
+input book_comments_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "book_comments"
+"""
+enum book_comments_select_column {
+  """column name"""
+  bookId
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  updated_at
+  """column name"""
+  userId
+}
+
+"""
+input type for updating data in table "book_comments"
+"""
+input book_comments_set_input {
+  bookId: uuid
+  content: String
+  createdAt: timestamptz
+  id: uuid
+  updated_at: timestamptz
+  userId: uuid
+}
+
+"""
+Streaming cursor of the table "book_comments"
+"""
+input book_comments_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: book_comments_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input book_comments_stream_cursor_value_input {
+  bookId: uuid
+  content: String
+  createdAt: timestamptz
+  id: uuid
+  updated_at: timestamptz
+  userId: uuid
+}
+
+"""
+update columns of table "book_comments"
+"""
+enum book_comments_update_column {
+  """column name"""
+  bookId
+  """column name"""
+  content
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  updated_at
+  """column name"""
+  userId
+}
+
+input book_comments_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: book_comments_set_input
+  """filter the rows which have to be updated"""
+  where: book_comments_bool_exp!
+}
+
+"""
 columns and relationships of "books"
 """
 type books {
   author: String!
   createdAt: timestamptz!
   """User input url, NOT validated yet"""
-  fileUrl: String!
+  fileUrl: String
   id: uuid!
   """An array relationship"""
   reading_progresses(
@@ -709,8 +986,10 @@ type books {
     """filter the rows returned"""
     where: reading_progresses_bool_exp
   ): reading_progresses_aggregate!
-  """Final URL for the book, validated, end user can not update this field"""
-  source: String!
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
+  source: String
   """
   Could be either "ready" or "processing"
   """
@@ -849,7 +1128,9 @@ input books_insert_input {
   fileUrl: String
   id: uuid
   reading_progresses: reading_progresses_arr_rel_insert_input
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: String
   """
   Could be either "ready" or "processing"
@@ -871,7 +1152,9 @@ type books_max_fields {
   """User input url, NOT validated yet"""
   fileUrl: String
   id: uuid
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: String
   """
   Could be either "ready" or "processing"
@@ -894,7 +1177,9 @@ input books_max_order_by {
   """User input url, NOT validated yet"""
   fileUrl: order_by
   id: order_by
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: order_by
   """
   Could be either "ready" or "processing"
@@ -915,7 +1200,9 @@ type books_min_fields {
   """User input url, NOT validated yet"""
   fileUrl: String
   id: uuid
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: String
   """
   Could be either "ready" or "processing"
@@ -938,7 +1225,9 @@ input books_min_order_by {
   """User input url, NOT validated yet"""
   fileUrl: order_by
   id: order_by
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: order_by
   """
   Could be either "ready" or "processing"
@@ -1039,7 +1328,9 @@ input books_set_input {
   """User input url, NOT validated yet"""
   fileUrl: String
   id: uuid
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: String
   """
   Could be either "ready" or "processing"
@@ -1106,7 +1397,9 @@ input books_stream_cursor_value_input {
   """User input url, NOT validated yet"""
   fileUrl: String
   id: uuid
-  """Final URL for the book, validated, end user can not update this field"""
+  """
+  Final URL for the book, validated, end user can not update this field. This can be null for offline books
+  """
   source: String
   """
   Could be either "ready" or "processing"
@@ -1549,6 +1842,347 @@ input date_comparison_exp {
   _lte: date
   _neq: date
   _nin: [date!]
+}
+
+"""
+Requests to authentication from other sources than the web apps, can be extensions, smart tivi apps, etc.
+"""
+type device_requests {
+  authorizedAt: timestamptz
+  createdAt: timestamptz!
+  deviceCode: String!
+  expiresAt: timestamptz!
+  extensionId: String!
+  id: uuid!
+  ipAddress: inet!
+  status: String!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users
+  userAgent: String!
+  userCode: String!
+  user_id: uuid
+}
+
+"""
+aggregated selection of "device_requests"
+"""
+type device_requests_aggregate {
+  aggregate: device_requests_aggregate_fields
+  nodes: [device_requests!]!
+}
+
+input device_requests_aggregate_bool_exp {
+  count: device_requests_aggregate_bool_exp_count
+}
+
+input device_requests_aggregate_bool_exp_count {
+  arguments: [device_requests_select_column!]
+  distinct: Boolean
+  filter: device_requests_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "device_requests"
+"""
+type device_requests_aggregate_fields {
+  count(columns: [device_requests_select_column!], distinct: Boolean): Int!
+  max: device_requests_max_fields
+  min: device_requests_min_fields
+}
+
+"""
+order by aggregate values of table "device_requests"
+"""
+input device_requests_aggregate_order_by {
+  count: order_by
+  max: device_requests_max_order_by
+  min: device_requests_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "device_requests"
+"""
+input device_requests_arr_rel_insert_input {
+  data: [device_requests_insert_input!]!
+  """upsert condition"""
+  on_conflict: device_requests_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "device_requests". All fields are combined with a logical 'AND'.
+"""
+input device_requests_bool_exp {
+  _and: [device_requests_bool_exp!]
+  _not: device_requests_bool_exp
+  _or: [device_requests_bool_exp!]
+  authorizedAt: timestamptz_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  deviceCode: String_comparison_exp
+  expiresAt: timestamptz_comparison_exp
+  extensionId: String_comparison_exp
+  id: uuid_comparison_exp
+  ipAddress: inet_comparison_exp
+  status: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  userAgent: String_comparison_exp
+  userCode: String_comparison_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "device_requests"
+"""
+enum device_requests_constraint {
+  """
+  unique or primary key constraint on columns "device_code"
+  """
+  device_requests_device_code_key
+  """
+  unique or primary key constraint on columns "id"
+  """
+  device_requests_pkey
+  """
+  unique or primary key constraint on columns "user_code"
+  """
+  device_requests_user_code_key
+}
+
+"""
+input type for inserting data into table "device_requests"
+"""
+input device_requests_insert_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type device_requests_max_fields {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "device_requests"
+"""
+input device_requests_max_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  status: order_by
+  updatedAt: order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type device_requests_min_fields {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "device_requests"
+"""
+input device_requests_min_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  status: order_by
+  updatedAt: order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "device_requests"
+"""
+type device_requests_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [device_requests!]!
+}
+
+"""
+on_conflict condition type for table "device_requests"
+"""
+input device_requests_on_conflict {
+  constraint: device_requests_constraint!
+  update_columns: [device_requests_update_column!]! = []
+  where: device_requests_bool_exp
+}
+
+"""Ordering options when selecting data from "device_requests"."""
+input device_requests_order_by {
+  authorizedAt: order_by
+  createdAt: order_by
+  deviceCode: order_by
+  expiresAt: order_by
+  extensionId: order_by
+  id: order_by
+  ipAddress: order_by
+  status: order_by
+  updatedAt: order_by
+  user: users_order_by
+  userAgent: order_by
+  userCode: order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: device_requests"""
+input device_requests_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "device_requests"
+"""
+enum device_requests_select_column {
+  """column name"""
+  authorizedAt
+  """column name"""
+  createdAt
+  """column name"""
+  deviceCode
+  """column name"""
+  expiresAt
+  """column name"""
+  extensionId
+  """column name"""
+  id
+  """column name"""
+  ipAddress
+  """column name"""
+  status
+  """column name"""
+  updatedAt
+  """column name"""
+  userAgent
+  """column name"""
+  userCode
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "device_requests"
+"""
+input device_requests_set_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "device_requests"
+"""
+input device_requests_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: device_requests_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input device_requests_stream_cursor_value_input {
+  authorizedAt: timestamptz
+  createdAt: timestamptz
+  deviceCode: String
+  expiresAt: timestamptz
+  extensionId: String
+  id: uuid
+  ipAddress: inet
+  status: String
+  updatedAt: timestamptz
+  userAgent: String
+  userCode: String
+  user_id: uuid
+}
+
+"""
+update columns of table "device_requests"
+"""
+enum device_requests_update_column {
+  """column name"""
+  authorizedAt
+  """column name"""
+  createdAt
+  """column name"""
+  deviceCode
+  """column name"""
+  expiresAt
+  """column name"""
+  extensionId
+  """column name"""
+  id
+  """column name"""
+  ipAddress
+  """column name"""
+  status
+  """column name"""
+  updatedAt
+  """column name"""
+  userAgent
+  """column name"""
+  userCode
+  """column name"""
+  user_id
+}
+
+input device_requests_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: device_requests_set_input
+  """filter the rows which have to be updated"""
+  where: device_requests_bool_exp!
 }
 
 """
@@ -2290,6 +2924,23 @@ input finance_transactions_variance_order_by {
   year: order_by
 }
 
+scalar inet
+
+"""
+Boolean expression to compare columns of type "inet". All fields are combined with logical 'AND'.
+"""
+input inet_comparison_exp {
+  _eq: inet
+  _gt: inet
+  _gte: inet
+  _in: [inet!]
+  _is_null: Boolean
+  _lt: inet
+  _lte: inet
+  _neq: inet
+  _nin: [inet!]
+}
+
 """Daily journal"""
 type journals {
   content: String!
@@ -2650,6 +3301,10 @@ input jsonb_comparison_exp {
 """mutation root"""
 type mutation_root {
   """
+  Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
+  """
+  createDeviceRequest(input: CreateDeviceRequestInput!): CreateDeviceRequestResponse!
+  """
   delete data from the table: "audio_tags"
   """
   delete_audio_tags(
@@ -2672,6 +3327,17 @@ type mutation_root {
   """
   delete_audios_by_pk(id: uuid!): audios
   """
+  delete data from the table: "book_comments"
+  """
+  delete_book_comments(
+    """filter the rows which have to be deleted"""
+    where: book_comments_bool_exp!
+  ): book_comments_mutation_response
+  """
+  delete single row from the table: "book_comments"
+  """
+  delete_book_comments_by_pk(id: uuid!): book_comments
+  """
   delete data from the table: "books"
   """
   delete_books(
@@ -2693,6 +3359,17 @@ type mutation_root {
   delete single row from the table: "crawl_requests"
   """
   delete_crawl_requests_by_pk(id: uuid!): crawl_requests
+  """
+  delete data from the table: "device_requests"
+  """
+  delete_device_requests(
+    """filter the rows which have to be deleted"""
+    where: device_requests_bool_exp!
+  ): device_requests_mutation_response
+  """
+  delete single row from the table: "device_requests"
+  """
+  delete_device_requests_by_pk(id: uuid!): device_requests
   """
   delete data from the table: "feature_flag"
   """
@@ -2939,6 +3616,24 @@ type mutation_root {
     on_conflict: audios_on_conflict
   ): audios
   """
+  insert data into the table: "book_comments"
+  """
+  insert_book_comments(
+    """the rows to be inserted"""
+    objects: [book_comments_insert_input!]!
+    """upsert condition"""
+    on_conflict: book_comments_on_conflict
+  ): book_comments_mutation_response
+  """
+  insert a single row into the table: "book_comments"
+  """
+  insert_book_comments_one(
+    """the row to be inserted"""
+    object: book_comments_insert_input!
+    """upsert condition"""
+    on_conflict: book_comments_on_conflict
+  ): book_comments
+  """
   insert data into the table: "books"
   """
   insert_books(
@@ -2974,6 +3669,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: crawl_requests_on_conflict
   ): crawl_requests
+  """
+  insert data into the table: "device_requests"
+  """
+  insert_device_requests(
+    """the rows to be inserted"""
+    objects: [device_requests_insert_input!]!
+    """upsert condition"""
+    on_conflict: device_requests_on_conflict
+  ): device_requests_mutation_response
+  """
+  insert a single row into the table: "device_requests"
+  """
+  insert_device_requests_one(
+    """the row to be inserted"""
+    object: device_requests_insert_input!
+    """upsert condition"""
+    on_conflict: device_requests_on_conflict
+  ): device_requests
   """
   insert data into the table: "feature_flag"
   """
@@ -3365,6 +4078,30 @@ type mutation_root {
     updates: [audios_updates!]!
   ): [audios_mutation_response]
   """
+  update data of the table: "book_comments"
+  """
+  update_book_comments(
+    """sets the columns of the filtered rows to the given values"""
+    _set: book_comments_set_input
+    """filter the rows which have to be updated"""
+    where: book_comments_bool_exp!
+  ): book_comments_mutation_response
+  """
+  update single row of the table: "book_comments"
+  """
+  update_book_comments_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: book_comments_set_input
+    pk_columns: book_comments_pk_columns_input!
+  ): book_comments
+  """
+  update multiples rows of table: "book_comments"
+  """
+  update_book_comments_many(
+    """updates to execute, in order"""
+    updates: [book_comments_updates!]!
+  ): [book_comments_mutation_response]
+  """
   update data of the table: "books"
   """
   update_books(
@@ -3416,6 +4153,30 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [crawl_requests_updates!]!
   ): [crawl_requests_mutation_response]
+  """
+  update data of the table: "device_requests"
+  """
+  update_device_requests(
+    """sets the columns of the filtered rows to the given values"""
+    _set: device_requests_set_input
+    """filter the rows which have to be updated"""
+    where: device_requests_bool_exp!
+  ): device_requests_mutation_response
+  """
+  update single row of the table: "device_requests"
+  """
+  update_device_requests_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: device_requests_set_input
+    pk_columns: device_requests_pk_columns_input!
+  ): device_requests
+  """
+  update multiples rows of table: "device_requests"
+  """
+  update_device_requests_many(
+    """updates to execute, in order"""
+    updates: [device_requests_updates!]!
+  ): [device_requests_mutation_response]
   """
   update data of the table: "feature_flag"
   """
@@ -5763,6 +6524,34 @@ type query_root {
   """fetch data from the table: "audios" using primary key columns"""
   audios_by_pk(id: uuid!): audios
   """An array relationship"""
+  book_comments(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): [book_comments!]!
+  """An aggregate relationship"""
+  book_comments_aggregate(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): book_comments_aggregate!
+  """fetch data from the table: "book_comments" using primary key columns"""
+  book_comments_by_pk(id: uuid!): book_comments
+  """An array relationship"""
   books(
     """distinct select on columns"""
     distinct_on: [books_select_column!]
@@ -5818,6 +6607,34 @@ type query_root {
   ): crawl_requests_aggregate!
   """fetch data from the table: "crawl_requests" using primary key columns"""
   crawl_requests_by_pk(id: uuid!): crawl_requests
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
+  """fetch data from the table: "device_requests" using primary key columns"""
+  device_requests_by_pk(id: uuid!): device_requests
   """
   fetch data from the table: "feature_flag"
   """
@@ -7503,6 +8320,45 @@ type subscription_root {
     where: audios_bool_exp
   ): [audios!]!
   """An array relationship"""
+  book_comments(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): [book_comments!]!
+  """An aggregate relationship"""
+  book_comments_aggregate(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): book_comments_aggregate!
+  """fetch data from the table: "book_comments" using primary key columns"""
+  book_comments_by_pk(id: uuid!): book_comments
+  """
+  fetch data from the table in a streaming manner: "book_comments"
+  """
+  book_comments_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [book_comments_stream_cursor_input]!
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): [book_comments!]!
+  """An array relationship"""
   books(
     """distinct select on columns"""
     distinct_on: [books_select_column!]
@@ -7580,6 +8436,45 @@ type subscription_root {
     """filter the rows returned"""
     where: crawl_requests_bool_exp
   ): [crawl_requests!]!
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
+  """fetch data from the table: "device_requests" using primary key columns"""
+  device_requests_by_pk(id: uuid!): device_requests
+  """
+  fetch data from the table in a streaming manner: "device_requests"
+  """
+  device_requests_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [device_requests_stream_cursor_input]!
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
   """
   fetch data from the table: "feature_flag"
   """
@@ -8373,6 +9268,8 @@ type subtitles {
   lang: String!
   updated_at: timestamptz!
   url: String!
+  """User input, not validated yet"""
+  urlInput: String
   """An object relationship"""
   video: videos!
   video_id: uuid!
@@ -8453,6 +9350,7 @@ input subtitles_bool_exp {
   lang: String_comparison_exp
   updated_at: timestamptz_comparison_exp
   url: String_comparison_exp
+  urlInput: String_comparison_exp
   video: videos_bool_exp
   video_id: uuid_comparison_exp
 }
@@ -8477,6 +9375,8 @@ input subtitles_insert_input {
   lang: String
   updated_at: timestamptz
   url: String
+  """User input, not validated yet"""
+  urlInput: String
   video: videos_obj_rel_insert_input
   video_id: uuid
 }
@@ -8488,6 +9388,8 @@ type subtitles_max_fields {
   lang: String
   updated_at: timestamptz
   url: String
+  """User input, not validated yet"""
+  urlInput: String
   video_id: uuid
 }
 
@@ -8500,6 +9402,8 @@ input subtitles_max_order_by {
   lang: order_by
   updated_at: order_by
   url: order_by
+  """User input, not validated yet"""
+  urlInput: order_by
   video_id: order_by
 }
 
@@ -8510,6 +9414,8 @@ type subtitles_min_fields {
   lang: String
   updated_at: timestamptz
   url: String
+  """User input, not validated yet"""
+  urlInput: String
   video_id: uuid
 }
 
@@ -8522,6 +9428,8 @@ input subtitles_min_order_by {
   lang: order_by
   updated_at: order_by
   url: order_by
+  """User input, not validated yet"""
+  urlInput: order_by
   video_id: order_by
 }
 
@@ -8552,6 +9460,7 @@ input subtitles_order_by {
   lang: order_by
   updated_at: order_by
   url: order_by
+  urlInput: order_by
   video: videos_order_by
   video_id: order_by
 }
@@ -8577,6 +9486,8 @@ enum subtitles_select_column {
   updated_at
   """column name"""
   url
+  """column name"""
+  urlInput
   """column name"""
   video_id
 }
@@ -8607,6 +9518,8 @@ input subtitles_set_input {
   lang: String
   updated_at: timestamptz
   url: String
+  """User input, not validated yet"""
+  urlInput: String
   video_id: uuid
 }
 
@@ -8628,6 +9541,8 @@ input subtitles_stream_cursor_value_input {
   lang: String
   updated_at: timestamptz
   url: String
+  """User input, not validated yet"""
+  urlInput: String
   video_id: uuid
 }
 
@@ -8647,6 +9562,8 @@ enum subtitles_update_column {
   updated_at
   """column name"""
   url
+  """column name"""
+  urlInput
   """column name"""
   video_id
 }
@@ -9952,6 +10869,32 @@ type users {
   ): audios_aggregate!
   auth0_id: String!
   """An array relationship"""
+  book_comments(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): [book_comments!]!
+  """An aggregate relationship"""
+  book_comments_aggregate(
+    """distinct select on columns"""
+    distinct_on: [book_comments_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [book_comments_order_by!]
+    """filter the rows returned"""
+    where: book_comments_bool_exp
+  ): book_comments_aggregate!
+  """An array relationship"""
   books(
     """distinct select on columns"""
     distinct_on: [books_select_column!]
@@ -10004,6 +10947,32 @@ type users {
     where: crawl_requests_bool_exp
   ): crawl_requests_aggregate!
   created_at: timestamptz
+  """An array relationship"""
+  device_requests(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): [device_requests!]!
+  """An aggregate relationship"""
+  device_requests_aggregate(
+    """distinct select on columns"""
+    distinct_on: [device_requests_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [device_requests_order_by!]
+    """filter the rows returned"""
+    where: device_requests_bool_exp
+  ): device_requests_aggregate!
   email: String!
   """An array relationship"""
   finance_transactions(
@@ -10297,11 +11266,15 @@ input users_bool_exp {
   audios: audios_bool_exp
   audios_aggregate: audios_aggregate_bool_exp
   auth0_id: String_comparison_exp
+  book_comments: book_comments_bool_exp
+  book_comments_aggregate: book_comments_aggregate_bool_exp
   books: books_bool_exp
   books_aggregate: books_aggregate_bool_exp
   crawl_requests: crawl_requests_bool_exp
   crawl_requests_aggregate: crawl_requests_aggregate_bool_exp
   created_at: timestamptz_comparison_exp
+  device_requests: device_requests_bool_exp
+  device_requests_aggregate: device_requests_aggregate_bool_exp
   email: String_comparison_exp
   finance_transactions: finance_transactions_bool_exp
   finance_transactions_aggregate: finance_transactions_aggregate_bool_exp
@@ -10356,9 +11329,11 @@ input type for inserting data into table "users"
 input users_insert_input {
   audios: audios_arr_rel_insert_input
   auth0_id: String
+  book_comments: book_comments_arr_rel_insert_input
   books: books_arr_rel_insert_input
   crawl_requests: crawl_requests_arr_rel_insert_input
   created_at: timestamptz
+  device_requests: device_requests_arr_rel_insert_input
   email: String
   finance_transactions: finance_transactions_arr_rel_insert_input
   id: uuid
@@ -10427,9 +11402,11 @@ input users_on_conflict {
 input users_order_by {
   audios_aggregate: audios_aggregate_order_by
   auth0_id: order_by
+  book_comments_aggregate: book_comments_aggregate_order_by
   books_aggregate: books_aggregate_order_by
   crawl_requests_aggregate: crawl_requests_aggregate_order_by
   created_at: order_by
+  device_requests_aggregate: device_requests_aggregate_order_by
   email: order_by
   finance_transactions_aggregate: finance_transactions_aggregate_order_by
   id: order_by

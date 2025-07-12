@@ -411,7 +411,7 @@ describe('buildVariables', () => {
           subtitles: {
             data: [
               {
-                url: 'https://example.com/subtitle.vtt',
+                urlInput: 'https://example.com/subtitle.vtt',
                 lang: 'vi',
                 isDefault: true,
               },
@@ -477,7 +477,7 @@ describe('buildVariables', () => {
           subtitles: {
             data: [
               {
-                url: 'https://example.com/subtitle.vtt',
+                urlInput: 'https://example.com/subtitle.vtt',
                 lang: 'vi',
                 isDefault: true,
               },
