@@ -153,6 +153,7 @@ event_triggers:
                 "lang": {{$body.event.data.new.lang}},
                 "url": {{$body.event.data.new.url_input}},
                 "videoId": {{$body.event.data.new.video_id}},
+                "userId": {{$body.event.data.new.user_id}},
                 "updatedAt": {{$body.event.data.new.updated_at}},
                 "createdAt": {{$body.event.data.new.created_at}}
               },
