@@ -9271,6 +9271,10 @@ type subtitles {
   """User input, not validated yet"""
   urlInput: String
   """An object relationship"""
+  user: users
+  """Owner, who create the subtitle"""
+  userId: uuid
+  """An object relationship"""
   video: videos!
   video_id: uuid!
 }
@@ -9351,6 +9355,8 @@ input subtitles_bool_exp {
   updated_at: timestamptz_comparison_exp
   url: String_comparison_exp
   urlInput: String_comparison_exp
+  user: users_bool_exp
+  userId: uuid_comparison_exp
   video: videos_bool_exp
   video_id: uuid_comparison_exp
 }
@@ -9377,6 +9383,9 @@ input subtitles_insert_input {
   url: String
   """User input, not validated yet"""
   urlInput: String
+  user: users_obj_rel_insert_input
+  """Owner, who create the subtitle"""
+  userId: uuid
   video: videos_obj_rel_insert_input
   video_id: uuid
 }
@@ -9390,6 +9399,8 @@ type subtitles_max_fields {
   url: String
   """User input, not validated yet"""
   urlInput: String
+  """Owner, who create the subtitle"""
+  userId: uuid
   video_id: uuid
 }
 
@@ -9404,6 +9415,8 @@ input subtitles_max_order_by {
   url: order_by
   """User input, not validated yet"""
   urlInput: order_by
+  """Owner, who create the subtitle"""
+  userId: order_by
   video_id: order_by
 }
 
@@ -9416,6 +9429,8 @@ type subtitles_min_fields {
   url: String
   """User input, not validated yet"""
   urlInput: String
+  """Owner, who create the subtitle"""
+  userId: uuid
   video_id: uuid
 }
 
@@ -9430,6 +9445,8 @@ input subtitles_min_order_by {
   url: order_by
   """User input, not validated yet"""
   urlInput: order_by
+  """Owner, who create the subtitle"""
+  userId: order_by
   video_id: order_by
 }
 
@@ -9461,6 +9478,8 @@ input subtitles_order_by {
   updated_at: order_by
   url: order_by
   urlInput: order_by
+  user: users_order_by
+  userId: order_by
   video: videos_order_by
   video_id: order_by
 }
@@ -9488,6 +9507,8 @@ enum subtitles_select_column {
   url
   """column name"""
   urlInput
+  """column name"""
+  userId
   """column name"""
   video_id
 }
@@ -9520,6 +9541,8 @@ input subtitles_set_input {
   url: String
   """User input, not validated yet"""
   urlInput: String
+  """Owner, who create the subtitle"""
+  userId: uuid
   video_id: uuid
 }
 
@@ -9543,6 +9566,8 @@ input subtitles_stream_cursor_value_input {
   url: String
   """User input, not validated yet"""
   urlInput: String
+  """Owner, who create the subtitle"""
+  userId: uuid
   video_id: uuid
 }
 
@@ -9564,6 +9589,8 @@ enum subtitles_update_column {
   url
   """column name"""
   urlInput
+  """column name"""
+  userId
   """column name"""
   video_id
 }
@@ -11157,6 +11184,32 @@ type users {
     """filter the rows returned"""
     where: shared_video_recipients_bool_exp
   ): shared_video_recipients_aggregate!
+  """An array relationship"""
+  subtitles(
+    """distinct select on columns"""
+    distinct_on: [subtitles_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [subtitles_order_by!]
+    """filter the rows returned"""
+    where: subtitles_bool_exp
+  ): [subtitles!]!
+  """An aggregate relationship"""
+  subtitles_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subtitles_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [subtitles_order_by!]
+    """filter the rows returned"""
+    where: subtitles_bool_exp
+  ): subtitles_aggregate!
   updated_at: timestamptz
   """An array relationship"""
   user_video_histories(
@@ -11291,6 +11344,8 @@ input users_bool_exp {
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
   shared_video_recipients: shared_video_recipients_bool_exp
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_bool_exp
+  subtitles: subtitles_bool_exp
+  subtitles_aggregate: subtitles_aggregate_bool_exp
   updated_at: timestamptz_comparison_exp
   user_video_histories: user_video_history_bool_exp
   user_video_histories_aggregate: user_video_history_aggregate_bool_exp
@@ -11343,6 +11398,7 @@ input users_insert_input {
   reading_progresses: reading_progresses_arr_rel_insert_input
   shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
   shared_video_recipients: shared_video_recipients_arr_rel_insert_input
+  subtitles: subtitles_arr_rel_insert_input
   updated_at: timestamptz
   user_video_histories: user_video_history_arr_rel_insert_input
   username: String
@@ -11416,6 +11472,7 @@ input users_order_by {
   reading_progresses_aggregate: reading_progresses_aggregate_order_by
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
   shared_video_recipients_aggregate: shared_video_recipients_aggregate_order_by
+  subtitles_aggregate: subtitles_aggregate_order_by
   updated_at: order_by
   user_video_histories_aggregate: user_video_history_aggregate_order_by
   username: order_by

@@ -8,11 +8,22 @@ import { StyledRelatedContainer } from './styled';
 
 import { IconButton, Stack, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
+import EditIcon from '@mui/icons-material/Edit';
+import Chip from '@mui/material/Chip';
 import React, { Suspense } from 'react';
+import { getDisplayLanguage } from './utils';
+import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+import { useAuthContext } from 'core/providers/auth';
 
 const ShareDialog = React.lazy(() =>
   import('../../dialogs/share').then(mod => ({
     default: mod.ShareDialog,
+  }))
+);
+
+const SubtitleDialog = React.lazy(() =>
+  import('../../dialogs/subtitle').then(mod => ({
+    default: mod.SubtitleDialog,
   }))
 );
 // We use a ref instead of state here because of how video.js event handlers work:
@@ -31,16 +42,78 @@ const ShareDialog = React.lazy(() =>
 //
 // This is a common pattern when integrating React with external libraries that set up
 // long-lived event handlers.
+
 const MainContent = (props: VideoDetailContainerProps) => {
   const { queryRs, activeVideoId, onVideoEnded, autoPlay, onShare } = props;
-  const { isLoading } = queryRs;
+  const { isLoading, videos } = queryRs;
+
+  const { getAccessToken } = useAuthContext();
+
+  // All hooks at the top
   const shouldPlayNextRef = React.useRef(autoPlay);
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
+  const [isSubtitleDialogOpen, setIsSubtitleDialogOpen] = React.useState(false);
+
+  const videoDetail = React.useMemo(() => videos.find(video => video.id === activeVideoId), [videos, activeVideoId]);
 
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
   }, [autoPlay]);
 
+  const handleVideoEnd = React.useCallback(() => {
+    if (!onVideoEnded || !videoDetail) return;
+
+    const currentIndex = videos.findIndex(video => video.id === activeVideoId);
+    const nextVideo = videos[currentIndex + 1];
+
+    if (!nextVideo) return;
+
+    if (shouldPlayNextRef.current) {
+      onVideoEnded(nextVideo);
+    }
+  }, [onVideoEnded, videos, activeVideoId, videoDetail]);
+
+  const handleShare = React.useCallback(
+    (emails: string[]) => {
+      onShare?.(emails);
+      setShareDialogOpen(false);
+    },
+    [onShare]
+  );
+
+  const { mutateAsync: saveSubtitle } = useSaveSubtitle({
+    getAccessToken,
+    onSuccess: (data) => {
+      console.log('Subtitle saved successfully:', data);
+      // TODO: Add success notification
+    },
+    onError: error => {
+      console.error('Failed to save subtitle:', error);
+      // TODO: Add error notification
+    },
+  });
+
+  const handleSaveSubtitle = React.useCallback(
+    async (url: string) => {
+      // TODO: handle caes multiple subtitles
+      if (!videoDetail?.subtitles?.[0]?.id) {
+        console.error('No subtitle ID found');
+        return;
+      }
+
+      await saveSubtitle({
+        id: videoDetail.subtitles[0].id,
+        object: {
+          urlInput: url,
+        },
+      });
+
+      setIsSubtitleDialogOpen(false);
+    },
+    [saveSubtitle, videoDetail?.subtitles]
+  );
+
+  // Conditional rendering after all hooks
   if (isLoading) {
     return (
       <Grid item sx={{ width: '100%', px: 2 }}>
@@ -49,29 +122,9 @@ const MainContent = (props: VideoDetailContainerProps) => {
     );
   }
 
-  const videoDetail = queryRs.videos.find(video => video.id === activeVideoId);
   if (!videoDetail) {
-    // TODO: handle error
     return null;
   }
-
-  const handleVideoEnd = () => {
-    if (!onVideoEnded) return;
-
-    const currentIndex = queryRs.videos.findIndex(video => video.id === activeVideoId);
-    const nextVideo = queryRs.videos[currentIndex + 1];
-
-    if (!nextVideo) return;
-
-    if (shouldPlayNextRef.current) {
-      onVideoEnded(nextVideo);
-    }
-  };
-
-  const handleShare = (emails: string[]) => {
-    onShare?.(emails);
-    setShareDialogOpen(false);
-  };
 
   return (
     <Grid item sx={{ width: '100%', px: 2 }}>
@@ -104,12 +157,43 @@ const MainContent = (props: VideoDetailContainerProps) => {
             </IconButton>
           </Tooltip>
         )}
+        <Tooltip title="Edit subtitle">
+          <IconButton onClick={() => setIsSubtitleDialogOpen(true)} size="small" sx={{ ml: 1 }}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
       </Stack>
+
+      {videoDetail.subtitles && videoDetail.subtitles.length > 0 && (
+        <Stack direction="row" spacing={1} sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mr: 0.5 }}>
+            Subtitle(s):
+          </Typography>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
+            {videoDetail.subtitles.map(subtitle => (
+              <Chip
+                key={subtitle.id}
+                label={getDisplayLanguage(subtitle.lang)}
+                size="small"
+                variant="outlined"
+                sx={{
+                  '& .MuiChip-label': {
+                    textTransform: 'capitalize',
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+      )}
+
       <Suspense fallback={null}>
-        <ShareDialog
-          open={shareDialogOpen}
-          onClose={() => setShareDialogOpen(false)}
-          onShare={handleShare}
+        <ShareDialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} onShare={handleShare} />
+        <SubtitleDialog
+          open={isSubtitleDialogOpen}
+          onClose={() => setIsSubtitleDialogOpen(false)}
+          onSave={handleSaveSubtitle}
+          currentUrl={videoDetail.subtitles?.[0]?.src}
         />
       </Suspense>
     </Grid>
