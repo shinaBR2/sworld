@@ -21,6 +21,7 @@ type Documents = {
   '\n  mutation shareVideo($objects: [shared_video_recipients_insert_input!]!, $videoId: uuid!, $sharedRecipients: jsonb!) {\n    insert_shared_video_recipients(\n      objects: $objects\n      on_conflict: { constraint: shared_video_recipients_video_id_recipient_id_key, update_columns: [] }\n    ) {\n      returning {\n        id\n      }\n    }\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: { sharedRecipients: $sharedRecipients }) {\n      id\n      sharedRecipients\n    }\n  }\n': typeof types.ShareVideoDocument;
   '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n': typeof types.InsertVideosDocument;
   '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n': typeof types.FinalizeVideoDocument;
+  '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n': typeof types.SaveSubtitleDocument;
   '\n  query PlaylistDetail($id: uuid!, $emails: [String!]!) {\n    playlist_by_pk(id: $id) {\n      playlist_videos(where: { video: { status: { _eq: "ready" } } }) {\n        video {\n          id\n          status\n        }\n      }\n    }\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n': typeof types.PlaylistDetailDocument;
   '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n': typeof types.UsersDocument;
 };
@@ -41,6 +42,8 @@ const documents: Documents = {
     types.InsertVideosDocument,
   '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n':
     types.FinalizeVideoDocument,
+  '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n':
+    types.SaveSubtitleDocument,
   '\n  query PlaylistDetail($id: uuid!, $emails: [String!]!) {\n    playlist_by_pk(id: $id) {\n      playlist_videos(where: { video: { status: { _eq: "ready" } } }) {\n        video {\n          id\n          status\n        }\n      }\n    }\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n':
     types.PlaylistDetailDocument,
   '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n':
@@ -95,6 +98,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n'
 ): typeof import('./graphql').FinalizeVideoDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n'
+): typeof import('./graphql').SaveSubtitleDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { validateRequest } from 'src/utils/validator';
-// import { validateRequest as newValidateRequest } from 'src/utils/validators/request';
+import { validateRequest as newValidateRequest } from 'src/utils/validators/request';
 import { crawlHandler } from './routes/crawl';
 import { fixVideosDuration } from './routes/fix-videos-duration';
 import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
@@ -11,7 +11,9 @@ import { CrawlRequest, crawlSchema } from 'src/schema/videos/crawl';
 import { ShareRequest, shareSchema } from 'src/schema/videos/share';
 import { sharePlaylistHandler } from './routes/share-playlist';
 import { shareVideoHandler } from './routes/share-video';
-// import { requestHandler } from 'src/utils/requestHandler';
+import { SubtitleCreatedRequest, subtitleCreatedSchema } from 'src/schema/videos/subtitle-created';
+import { requestHandler } from 'src/utils/requestHandler';
+import { subtitleCreatedHandler } from './routes/subtitle-created';
 
 const videosRouter: Router = express.Router();
 
@@ -29,6 +31,20 @@ videosRouter.post(
 videosRouter.post('/crawl', validateRequest<CrawlRequest>(crawlSchema), crawlHandler);
 videosRouter.post('/share-playlist', validateRequest<ShareRequest>(shareSchema), sharePlaylistHandler);
 videosRouter.post('/share-video', validateRequest<ShareRequest>(shareSchema), shareVideoHandler);
+videosRouter.post(
+  '/subtitle-created',
+  newValidateRequest<SubtitleCreatedRequest>(subtitleCreatedSchema),
+  requestHandler(async context => {
+    const { validatedData } = context;
+    const result = await subtitleCreatedHandler(validatedData);
+
+    return {
+      success: true,
+      message: 'ok',
+      dataObject: result,
+    };
+  })
+);
 // videosRouter.post(
 //   '/test',
 //   newValidateRequest(shareSchema),

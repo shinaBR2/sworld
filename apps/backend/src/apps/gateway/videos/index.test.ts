@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { validateRequest } from 'src/utils/validator';
+import { validateRequest as newValidateRequest } from 'src/utils/validators/request';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { crawlHandler } from './routes/crawl';
 import { fixVideosDuration } from './routes/fix-videos-duration';
@@ -7,6 +8,7 @@ import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
 import { streamToStorage } from './routes/stream-to-storage';
 import { sharePlaylistHandler } from './routes/share-playlist';
 import { shareVideoHandler } from './routes/share-video';
+import { subtitleCreatedHandler } from './routes/subtitle-created';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 let routeHandlers: { path: string; middlewares: Middleware[] }[] = [];
@@ -28,12 +30,18 @@ vi.mock('express', () => {
   };
 });
 
+// Mock the validator modules
 vi.mock('src/utils/validator', () => ({
-  validateRequest: vi.fn().mockImplementation(schema => {
-    return (req: any, res: any, next: any) => {
-      req.validatedData = req.body;
-      next();
-    };
+  validateRequest: vi.fn().mockImplementation(schema => (req: any, res: any, next: any) => {
+    req.validatedData = req.body;
+    next();
+  }),
+}));
+
+vi.mock('src/utils/validators/request', () => ({
+  validateRequest: vi.fn().mockImplementation(schema => (req: any, res: any, next: any) => {
+    req.validatedData = req.body;
+    next();
   }),
 }));
 
@@ -60,6 +68,10 @@ vi.mock('./routes/share-video', () => ({
   shareVideoHandler: vi.fn(),
 }));
 
+vi.mock('./routes/subtitle-created', () => ({
+  subtitleCreatedHandler: vi.fn(),
+}));
+
 describe('videosRouter', () => {
   beforeEach(() => {
     routeHandlers = [];
@@ -69,14 +81,26 @@ describe('videosRouter', () => {
 
   it('should validate all requests', async () => {
     await import('./index');
-    // Check validation middleware was called
-    expect(validateRequest).toHaveBeenCalledTimes(6); // Updated to 5 for all endpoints
-    const calls = (validateRequest as any).mock.calls;
-    expect(calls[0][0]).toBeDefined(); // Check convert route schema
-    expect(calls[1][0]).toBeDefined(); // Check fix-videos-duration route schema
-    expect(calls[2][0]).toBeDefined(); // Check fix-videos-thumbnail route schema
-    expect(calls[3][0]).toBeDefined(); // Check crawl route schema
-    expect(calls[4][0]).toBeDefined(); // Check share route schema
+
+    // Check validation middleware was called for all endpoints
+    // 6 endpoints use validateRequest, 1 uses newValidateRequest
+    expect(validateRequest).toHaveBeenCalledTimes(6);
+
+    // Get the mock implementation from the request validator
+    const { validateRequest: mockNewValidateRequest } = await import('src/utils/validators/request');
+    expect(mockNewValidateRequest).toHaveBeenCalledTimes(1);
+
+    // Check that all validation functions were called with a schema
+    const validateCalls = (validateRequest as any).mock.calls;
+    const newValidateCalls = (mockNewValidateRequest as any).mock.calls;
+
+    // Check that all validation calls have a schema defined
+    [...validateCalls, ...newValidateCalls].forEach(call => {
+      expect(call[0]).toBeDefined();
+    });
+
+    // Check that we have the right number of validations in total
+    expect(validateCalls.length + newValidateCalls.length).toBe(7);
   });
 
   it('should set up /convert route with correct middleware and handler', async () => {
@@ -163,5 +187,31 @@ describe('videosRouter', () => {
 
     // Verify the shareVideoHandler is set
     expect(shareRoute?.middlewares[1]).toBe(shareVideoHandler);
+  });
+
+  it('should set up /subtitle-created route with correct middleware and handler', async () => {
+    const { videosRouter } = await import('./index');
+    expect(videosRouter).toBeDefined();
+
+    const subtitleRoute = routeHandlers.find(h => h.path === '/subtitle-created');
+    expect(subtitleRoute).toBeDefined();
+
+    // Should have 2 middlewares: validation and handler
+    expect(subtitleRoute?.middlewares).toHaveLength(2);
+
+    // Verify the request handler is set up correctly
+    const mockReq = { body: {} };
+    const mockRes = { json: vi.fn() };
+    const mockNext = vi.fn();
+
+    // Call the handler
+    await subtitleRoute?.middlewares[1](mockReq as any, mockRes as any, mockNext);
+
+    // Verify the handler was called with validated data
+    expect(mockRes.json).toHaveBeenCalledWith({
+      success: true,
+      message: 'ok',
+      dataObject: undefined, // Since we're mocking the handler
+    });
   });
 });

@@ -647,6 +647,237 @@ export type Audios_Updates = {
   where: Audios_Bool_Exp;
 };
 
+/** columns and relationships of "book_comments" */
+export type Book_Comments = {
+  __typename?: 'book_comments';
+  bookId: Scalars['uuid']['output'];
+  content: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  updated_at: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  userId: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "book_comments" */
+export type Book_Comments_Aggregate = {
+  __typename?: 'book_comments_aggregate';
+  aggregate?: Maybe<Book_Comments_Aggregate_Fields>;
+  nodes: Array<Book_Comments>;
+};
+
+export type Book_Comments_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Book_Comments_Aggregate_Bool_Exp_Count>;
+};
+
+export type Book_Comments_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Book_Comments_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "book_comments" */
+export type Book_Comments_Aggregate_Fields = {
+  __typename?: 'book_comments_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Book_Comments_Max_Fields>;
+  min?: Maybe<Book_Comments_Min_Fields>;
+};
+
+/** aggregate fields of "book_comments" */
+export type Book_Comments_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "book_comments" */
+export type Book_Comments_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Book_Comments_Max_Order_By>;
+  min?: InputMaybe<Book_Comments_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "book_comments" */
+export type Book_Comments_Arr_Rel_Insert_Input = {
+  data: Array<Book_Comments_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Book_Comments_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "book_comments". All fields are combined with a logical 'AND'. */
+export type Book_Comments_Bool_Exp = {
+  _and?: InputMaybe<Array<Book_Comments_Bool_Exp>>;
+  _not?: InputMaybe<Book_Comments_Bool_Exp>;
+  _or?: InputMaybe<Array<Book_Comments_Bool_Exp>>;
+  bookId?: InputMaybe<Uuid_Comparison_Exp>;
+  content?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  userId?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "book_comments" */
+export enum Book_Comments_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  BookCommentsPkey = 'book_comments_pkey',
+}
+
+/** input type for inserting data into table "book_comments" */
+export type Book_Comments_Insert_Input = {
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Book_Comments_Max_Fields = {
+  __typename?: 'book_comments_max_fields';
+  bookId?: Maybe<Scalars['uuid']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "book_comments" */
+export type Book_Comments_Max_Order_By = {
+  bookId?: InputMaybe<Order_By>;
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Book_Comments_Min_Fields = {
+  __typename?: 'book_comments_min_fields';
+  bookId?: Maybe<Scalars['uuid']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  userId?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "book_comments" */
+export type Book_Comments_Min_Order_By = {
+  bookId?: InputMaybe<Order_By>;
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "book_comments" */
+export type Book_Comments_Mutation_Response = {
+  __typename?: 'book_comments_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Book_Comments>;
+};
+
+/** on_conflict condition type for table "book_comments" */
+export type Book_Comments_On_Conflict = {
+  constraint: Book_Comments_Constraint;
+  update_columns?: Array<Book_Comments_Update_Column>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "book_comments". */
+export type Book_Comments_Order_By = {
+  bookId?: InputMaybe<Order_By>;
+  content?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  userId?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: book_comments */
+export type Book_Comments_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "book_comments" */
+export enum Book_Comments_Select_Column {
+  /** column name */
+  BookId = 'bookId',
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId',
+}
+
+/** input type for updating data in table "book_comments" */
+export type Book_Comments_Set_Input = {
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "book_comments" */
+export type Book_Comments_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Book_Comments_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Book_Comments_Stream_Cursor_Value_Input = {
+  bookId?: InputMaybe<Scalars['uuid']['input']>;
+  content?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  userId?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "book_comments" */
+export enum Book_Comments_Update_Column {
+  /** column name */
+  BookId = 'bookId',
+  /** column name */
+  Content = 'content',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId',
+}
+
+export type Book_Comments_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Book_Comments_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Book_Comments_Bool_Exp;
+};
+
 /** columns and relationships of "books" */
 export type Books = {
   __typename?: 'books';
@@ -2789,6 +3020,10 @@ export type Mutation_Root = {
   delete_audios?: Maybe<Audios_Mutation_Response>;
   /** delete single row from the table: "audios" */
   delete_audios_by_pk?: Maybe<Audios>;
+  /** delete data from the table: "book_comments" */
+  delete_book_comments?: Maybe<Book_Comments_Mutation_Response>;
+  /** delete single row from the table: "book_comments" */
+  delete_book_comments_by_pk?: Maybe<Book_Comments>;
   /** delete data from the table: "books" */
   delete_books?: Maybe<Books_Mutation_Response>;
   /** delete single row from the table: "books" */
@@ -2885,6 +3120,10 @@ export type Mutation_Root = {
   insert_audios?: Maybe<Audios_Mutation_Response>;
   /** insert a single row into the table: "audios" */
   insert_audios_one?: Maybe<Audios>;
+  /** insert data into the table: "book_comments" */
+  insert_book_comments?: Maybe<Book_Comments_Mutation_Response>;
+  /** insert a single row into the table: "book_comments" */
+  insert_book_comments_one?: Maybe<Book_Comments>;
   /** insert data into the table: "books" */
   insert_books?: Maybe<Books_Mutation_Response>;
   /** insert a single row into the table: "books" */
@@ -2985,6 +3224,12 @@ export type Mutation_Root = {
   update_audios_by_pk?: Maybe<Audios>;
   /** update multiples rows of table: "audios" */
   update_audios_many?: Maybe<Array<Maybe<Audios_Mutation_Response>>>;
+  /** update data of the table: "book_comments" */
+  update_book_comments?: Maybe<Book_Comments_Mutation_Response>;
+  /** update single row of the table: "book_comments" */
+  update_book_comments_by_pk?: Maybe<Book_Comments>;
+  /** update multiples rows of table: "book_comments" */
+  update_book_comments_many?: Maybe<Array<Maybe<Book_Comments_Mutation_Response>>>;
   /** update data of the table: "books" */
   update_books?: Maybe<Books_Mutation_Response>;
   /** update single row of the table: "books" */
@@ -3142,6 +3387,16 @@ export type Mutation_RootDelete_AudiosArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Audios_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Book_CommentsArgs = {
+  where: Book_Comments_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Book_Comments_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -3389,6 +3644,18 @@ export type Mutation_RootInsert_AudiosArgs = {
 export type Mutation_RootInsert_Audios_OneArgs = {
   object: Audios_Insert_Input;
   on_conflict?: InputMaybe<Audios_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Book_CommentsArgs = {
+  objects: Array<Book_Comments_Insert_Input>;
+  on_conflict?: InputMaybe<Book_Comments_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Book_Comments_OneArgs = {
+  object: Book_Comments_Insert_Input;
+  on_conflict?: InputMaybe<Book_Comments_On_Conflict>;
 };
 
 /** mutation root */
@@ -3687,6 +3954,23 @@ export type Mutation_RootUpdate_Audios_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Audios_ManyArgs = {
   updates: Array<Audios_Updates>;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Book_CommentsArgs = {
+  _set?: InputMaybe<Book_Comments_Set_Input>;
+  where: Book_Comments_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Book_Comments_By_PkArgs = {
+  _set?: InputMaybe<Book_Comments_Set_Input>;
+  pk_columns: Book_Comments_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Book_Comments_ManyArgs = {
+  updates: Array<Book_Comments_Updates>;
 };
 
 /** mutation root */
@@ -5607,6 +5891,12 @@ export type Query_Root = {
   /** fetch data from the table: "audios" using primary key columns */
   audios_by_pk?: Maybe<Audios>;
   /** An array relationship */
+  book_comments: Array<Book_Comments>;
+  /** An aggregate relationship */
+  book_comments_aggregate: Book_Comments_Aggregate;
+  /** fetch data from the table: "book_comments" using primary key columns */
+  book_comments_by_pk?: Maybe<Book_Comments>;
+  /** An array relationship */
   books: Array<Books>;
   /** An aggregate relationship */
   books_aggregate: Books_Aggregate;
@@ -5778,6 +6068,26 @@ export type Query_RootAudios_AggregateArgs = {
 };
 
 export type Query_RootAudios_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Query_RootBook_CommentsArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+export type Query_RootBook_Comments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+export type Query_RootBook_Comments_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -7185,6 +7495,14 @@ export type Subscription_Root = {
   /** fetch data from the table in a streaming manner: "audios" */
   audios_stream: Array<Audios>;
   /** An array relationship */
+  book_comments: Array<Book_Comments>;
+  /** An aggregate relationship */
+  book_comments_aggregate: Book_Comments_Aggregate;
+  /** fetch data from the table: "book_comments" using primary key columns */
+  book_comments_by_pk?: Maybe<Book_Comments>;
+  /** fetch data from the table in a streaming manner: "book_comments" */
+  book_comments_stream: Array<Book_Comments>;
+  /** An array relationship */
   books: Array<Books>;
   /** An aggregate relationship */
   books_aggregate: Books_Aggregate;
@@ -7413,6 +7731,32 @@ export type Subscription_RootAudios_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Audios_Stream_Cursor_Input>>;
   where?: InputMaybe<Audios_Bool_Exp>;
+};
+
+export type Subscription_RootBook_CommentsArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+export type Subscription_RootBook_Comments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+export type Subscription_RootBook_Comments_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootBook_Comments_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Book_Comments_Stream_Cursor_Input>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
 };
 
 export type Subscription_RootBooksArgs = {
@@ -7998,6 +8342,12 @@ export type Subtitles = {
   lang: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
   url: Scalars['String']['output'];
+  /** User input, not validated yet */
+  urlInput?: Maybe<Scalars['String']['output']>;
+  /** An object relationship */
+  user?: Maybe<Users>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
   /** An object relationship */
   video: Videos;
   video_id: Scalars['uuid']['output'];
@@ -8076,6 +8426,9 @@ export type Subtitles_Bool_Exp = {
   lang?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   url?: InputMaybe<String_Comparison_Exp>;
+  urlInput?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  userId?: InputMaybe<Uuid_Comparison_Exp>;
   video?: InputMaybe<Videos_Bool_Exp>;
   video_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
@@ -8094,6 +8447,11 @@ export type Subtitles_Insert_Input = {
   lang?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
+  /** User input, not validated yet */
+  urlInput?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
@@ -8106,6 +8464,10 @@ export type Subtitles_Max_Fields = {
   lang?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   url?: Maybe<Scalars['String']['output']>;
+  /** User input, not validated yet */
+  urlInput?: Maybe<Scalars['String']['output']>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
   video_id?: Maybe<Scalars['uuid']['output']>;
 };
 
@@ -8116,6 +8478,10 @@ export type Subtitles_Max_Order_By = {
   lang?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   url?: InputMaybe<Order_By>;
+  /** User input, not validated yet */
+  urlInput?: InputMaybe<Order_By>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
 
@@ -8127,6 +8493,10 @@ export type Subtitles_Min_Fields = {
   lang?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   url?: Maybe<Scalars['String']['output']>;
+  /** User input, not validated yet */
+  urlInput?: Maybe<Scalars['String']['output']>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
   video_id?: Maybe<Scalars['uuid']['output']>;
 };
 
@@ -8137,6 +8507,10 @@ export type Subtitles_Min_Order_By = {
   lang?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   url?: InputMaybe<Order_By>;
+  /** User input, not validated yet */
+  urlInput?: InputMaybe<Order_By>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
 
@@ -8164,6 +8538,9 @@ export type Subtitles_Order_By = {
   lang?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   url?: InputMaybe<Order_By>;
+  urlInput?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  userId?: InputMaybe<Order_By>;
   video?: InputMaybe<Videos_Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
@@ -8188,6 +8565,10 @@ export enum Subtitles_Select_Column {
   /** column name */
   Url = 'url',
   /** column name */
+  UrlInput = 'urlInput',
+  /** column name */
+  UserId = 'userId',
+  /** column name */
   VideoId = 'video_id',
 }
 
@@ -8211,6 +8592,10 @@ export type Subtitles_Set_Input = {
   lang?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
+  /** User input, not validated yet */
+  urlInput?: InputMaybe<Scalars['String']['input']>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -8230,6 +8615,10 @@ export type Subtitles_Stream_Cursor_Value_Input = {
   lang?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
+  /** User input, not validated yet */
+  urlInput?: InputMaybe<Scalars['String']['input']>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -8247,6 +8636,10 @@ export enum Subtitles_Update_Column {
   UpdatedAt = 'updated_at',
   /** column name */
   Url = 'url',
+  /** column name */
+  UrlInput = 'urlInput',
+  /** column name */
+  UserId = 'userId',
   /** column name */
   VideoId = 'video_id',
 }
@@ -9437,6 +9830,10 @@ export type Users = {
   audios_aggregate: Audios_Aggregate;
   auth0_id: Scalars['String']['output'];
   /** An array relationship */
+  book_comments: Array<Book_Comments>;
+  /** An aggregate relationship */
+  book_comments_aggregate: Book_Comments_Aggregate;
+  /** An array relationship */
   books: Array<Books>;
   /** An aggregate relationship */
   books_aggregate: Books_Aggregate;
@@ -9479,6 +9876,10 @@ export type Users = {
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
   shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   user_video_histories: Array<User_Video_History>;
@@ -9511,6 +9912,24 @@ export type UsersAudios_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Audios_Order_By>>;
   where?: InputMaybe<Audios_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersBook_CommentsArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersBook_Comments_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Book_Comments_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Book_Comments_Order_By>>;
+  where?: InputMaybe<Book_Comments_Bool_Exp>;
 };
 
 /** columns and relationships of "users" */
@@ -9694,6 +10113,24 @@ export type UsersShared_Video_Recipients_AggregateArgs = {
 };
 
 /** columns and relationships of "users" */
+export type UsersSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
+export type UsersSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+/** columns and relationships of "users" */
 export type UsersUser_Video_HistoriesArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -9776,6 +10213,8 @@ export type Users_Bool_Exp = {
   audios?: InputMaybe<Audios_Bool_Exp>;
   audios_aggregate?: InputMaybe<Audios_Aggregate_Bool_Exp>;
   auth0_id?: InputMaybe<String_Comparison_Exp>;
+  book_comments?: InputMaybe<Book_Comments_Bool_Exp>;
+  book_comments_aggregate?: InputMaybe<Book_Comments_Aggregate_Bool_Exp>;
   books?: InputMaybe<Books_Bool_Exp>;
   books_aggregate?: InputMaybe<Books_Aggregate_Bool_Exp>;
   crawl_requests?: InputMaybe<Crawl_Requests_Bool_Exp>;
@@ -9799,6 +10238,8 @@ export type Users_Bool_Exp = {
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
+  subtitles?: InputMaybe<Subtitles_Bool_Exp>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   user_video_histories?: InputMaybe<User_Video_History_Bool_Exp>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Bool_Exp>;
@@ -9825,6 +10266,7 @@ export enum Users_Constraint {
 export type Users_Insert_Input = {
   audios?: InputMaybe<Audios_Arr_Rel_Insert_Input>;
   auth0_id?: InputMaybe<Scalars['String']['input']>;
+  book_comments?: InputMaybe<Book_Comments_Arr_Rel_Insert_Input>;
   books?: InputMaybe<Books_Arr_Rel_Insert_Input>;
   crawl_requests?: InputMaybe<Crawl_Requests_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -9838,6 +10280,7 @@ export type Users_Insert_Input = {
   reading_progresses?: InputMaybe<Reading_Progresses_Arr_Rel_Insert_Input>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
+  subtitles?: InputMaybe<Subtitles_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   user_video_histories?: InputMaybe<User_Video_History_Arr_Rel_Insert_Input>;
   username?: InputMaybe<Scalars['String']['input']>;
@@ -9894,6 +10337,7 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   audios_aggregate?: InputMaybe<Audios_Aggregate_Order_By>;
   auth0_id?: InputMaybe<Order_By>;
+  book_comments_aggregate?: InputMaybe<Book_Comments_Aggregate_Order_By>;
   books_aggregate?: InputMaybe<Books_Aggregate_Order_By>;
   crawl_requests_aggregate?: InputMaybe<Crawl_Requests_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
@@ -9907,6 +10351,7 @@ export type Users_Order_By = {
   reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Order_By>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Order_By>;
   username?: InputMaybe<Order_By>;
@@ -11321,6 +11766,16 @@ export type FinalizeVideoMutation = {
   update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
 };
 
+export type SaveSubtitleMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  object: Subtitles_Set_Input;
+}>;
+
+export type SaveSubtitleMutation = {
+  __typename?: 'mutation_root';
+  update_subtitles_by_pk?: { __typename?: 'subtitles'; id: any } | null;
+};
+
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
   emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
@@ -11465,6 +11920,13 @@ export const FinalizeVideoDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FinalizeVideoMutation, FinalizeVideoMutationVariables>;
+export const SaveSubtitleDocument = new TypedDocumentString(`
+    mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
+  update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<SaveSubtitleMutation, SaveSubtitleMutationVariables>;
 export const PlaylistDetailDocument = new TypedDocumentString(`
     query PlaylistDetail($id: uuid!, $emails: [String!]!) {
   playlist_by_pk(id: $id) {
