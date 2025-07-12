@@ -8725,6 +8725,10 @@ export type Subtitles = {
   /** User input, not validated yet */
   urlInput?: Maybe<Scalars['String']['output']>;
   /** An object relationship */
+  user?: Maybe<Users>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
+  /** An object relationship */
   video: Videos;
   video_id: Scalars['uuid']['output'];
 };
@@ -8804,6 +8808,8 @@ export type Subtitles_Bool_Exp = {
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   url?: InputMaybe<String_Comparison_Exp>;
   urlInput?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  userId?: InputMaybe<Uuid_Comparison_Exp>;
   video?: InputMaybe<Videos_Bool_Exp>;
   video_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
@@ -8824,6 +8830,9 @@ export type Subtitles_Insert_Input = {
   url?: InputMaybe<Scalars['String']['input']>;
   /** User input, not validated yet */
   urlInput?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video?: InputMaybe<Videos_Obj_Rel_Insert_Input>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
@@ -8838,6 +8847,8 @@ export type Subtitles_Max_Fields = {
   url?: Maybe<Scalars['String']['output']>;
   /** User input, not validated yet */
   urlInput?: Maybe<Scalars['String']['output']>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
   video_id?: Maybe<Scalars['uuid']['output']>;
 };
 
@@ -8850,6 +8861,8 @@ export type Subtitles_Max_Order_By = {
   url?: InputMaybe<Order_By>;
   /** User input, not validated yet */
   urlInput?: InputMaybe<Order_By>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
 
@@ -8863,6 +8876,8 @@ export type Subtitles_Min_Fields = {
   url?: Maybe<Scalars['String']['output']>;
   /** User input, not validated yet */
   urlInput?: Maybe<Scalars['String']['output']>;
+  /** Owner, who create the subtitle */
+  userId?: Maybe<Scalars['uuid']['output']>;
   video_id?: Maybe<Scalars['uuid']['output']>;
 };
 
@@ -8875,6 +8890,8 @@ export type Subtitles_Min_Order_By = {
   url?: InputMaybe<Order_By>;
   /** User input, not validated yet */
   urlInput?: InputMaybe<Order_By>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
 
@@ -8903,6 +8920,8 @@ export type Subtitles_Order_By = {
   updated_at?: InputMaybe<Order_By>;
   url?: InputMaybe<Order_By>;
   urlInput?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  userId?: InputMaybe<Order_By>;
   video?: InputMaybe<Videos_Order_By>;
   video_id?: InputMaybe<Order_By>;
 };
@@ -8929,6 +8948,8 @@ export enum Subtitles_Select_Column {
   /** column name */
   UrlInput = 'urlInput',
   /** column name */
+  UserId = 'userId',
+  /** column name */
   VideoId = 'video_id'
 }
 
@@ -8954,6 +8975,8 @@ export type Subtitles_Set_Input = {
   url?: InputMaybe<Scalars['String']['input']>;
   /** User input, not validated yet */
   urlInput?: InputMaybe<Scalars['String']['input']>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -8975,6 +8998,8 @@ export type Subtitles_Stream_Cursor_Value_Input = {
   url?: InputMaybe<Scalars['String']['input']>;
   /** User input, not validated yet */
   urlInput?: InputMaybe<Scalars['String']['input']>;
+  /** Owner, who create the subtitle */
+  userId?: InputMaybe<Scalars['uuid']['input']>;
   video_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -8994,6 +9019,8 @@ export enum Subtitles_Update_Column {
   Url = 'url',
   /** column name */
   UrlInput = 'urlInput',
+  /** column name */
+  UserId = 'userId',
   /** column name */
   VideoId = 'video_id'
 }
@@ -10239,6 +10266,10 @@ export type Users = {
   shared_video_recipients: Array<Shared_Video_Recipients>;
   /** An aggregate relationship */
   shared_video_recipients_aggregate: Shared_Video_Recipients_Aggregate;
+  /** An array relationship */
+  subtitles: Array<Subtitles>;
+  /** An aggregate relationship */
+  subtitles_aggregate: Subtitles_Aggregate;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   user_video_histories: Array<User_Video_History>;
@@ -10497,6 +10528,26 @@ export type UsersShared_Video_Recipients_AggregateArgs = {
 
 
 /** columns and relationships of "users" */
+export type UsersSubtitlesArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersSubtitles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Subtitles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Subtitles_Order_By>>;
+  where?: InputMaybe<Subtitles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
 export type UsersUser_Video_HistoriesArgs = {
   distinct_on?: InputMaybe<Array<User_Video_History_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -10610,6 +10661,8 @@ export type Users_Bool_Exp = {
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Bool_Exp>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Bool_Exp>;
+  subtitles?: InputMaybe<Subtitles_Bool_Exp>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   user_video_histories?: InputMaybe<User_Video_History_Bool_Exp>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Bool_Exp>;
@@ -10650,6 +10703,7 @@ export type Users_Insert_Input = {
   reading_progresses?: InputMaybe<Reading_Progresses_Arr_Rel_Insert_Input>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
   shared_video_recipients?: InputMaybe<Shared_Video_Recipients_Arr_Rel_Insert_Input>;
+  subtitles?: InputMaybe<Subtitles_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   user_video_histories?: InputMaybe<User_Video_History_Arr_Rel_Insert_Input>;
   username?: InputMaybe<Scalars['String']['input']>;
@@ -10720,6 +10774,7 @@ export type Users_Order_By = {
   reading_progresses_aggregate?: InputMaybe<Reading_Progresses_Aggregate_Order_By>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
   shared_video_recipients_aggregate?: InputMaybe<Shared_Video_Recipients_Aggregate_Order_By>;
+  subtitles_aggregate?: InputMaybe<Subtitles_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_video_histories_aggregate?: InputMaybe<User_Video_History_Aggregate_Order_By>;
   username?: InputMaybe<Order_By>;
@@ -12213,6 +12268,14 @@ export type InsertVideosMutationVariables = Exact<{
 
 export type InsertVideosMutation = { __typename?: 'mutation_root', insert_videos?: { __typename?: 'videos_mutation_response', returning: Array<{ __typename?: 'videos', id: any, title: string, description?: string | null }> } | null };
 
+export type SaveSubtitleMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  object: Subtitles_Set_Input;
+}>;
+
+
+export type SaveSubtitleMutation = { __typename?: 'mutation_root', update_subtitles_by_pk?: { __typename?: 'subtitles', id: any } | null };
+
 export type SharePlaylistMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   emails?: InputMaybe<Scalars['jsonb']['input']>;
@@ -12864,6 +12927,13 @@ export const InsertVideosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<InsertVideosMutation, InsertVideosMutationVariables>;
+export const SaveSubtitleDocument = new TypedDocumentString(`
+    mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
+  update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<SaveSubtitleMutation, SaveSubtitleMutationVariables>;
 export const SharePlaylistDocument = new TypedDocumentString(`
     mutation sharePlaylist($id: uuid!, $emails: jsonb) {
   update_playlist_by_pk(
