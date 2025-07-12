@@ -13,6 +13,7 @@ import Chip from '@mui/material/Chip';
 import React, { Suspense } from 'react';
 import { getDisplayLanguage } from './utils';
 import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+import { useAuthContext } from 'core/providers/auth';
 
 const ShareDialog = React.lazy(() =>
   import('../../dialogs/share').then(mod => ({
@@ -45,6 +46,8 @@ const SubtitleDialog = React.lazy(() =>
 const MainContent = (props: VideoDetailContainerProps) => {
   const { queryRs, activeVideoId, onVideoEnded, autoPlay, onShare } = props;
   const { isLoading, videos } = queryRs;
+
+  const { getAccessToken } = useAuthContext();
 
   // All hooks at the top
   const shouldPlayNextRef = React.useRef(autoPlay);
@@ -79,10 +82,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
   );
 
   const { mutateAsync: saveSubtitle } = useSaveSubtitle({
-    getAccessToken: async () => {
-      // TODO: Replace with actual token retrieval
-      return 'test-token';
-    },
+    getAccessToken,
     onSuccess: (data, variables) => {
       console.log('Subtitle saved successfully:', data);
       // TODO: Add success notification
