@@ -1,3 +1,5 @@
+import { config } from '../config';
+
 console.log('Background script starting...');
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -9,12 +11,9 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-  console.log(`Received message from ${sender.origin}`);
-  if (!sender.origin?.includes('localhost') && sender.origin !== 'https://shinabr2.com') {
+  if (sender.origin !== config.allowedOrigin) {
     return;
   }
-
-  console.log(`Message type: ${message.type} and token: ${message.token}`);
 
   if (message.type === 'AUTH_TOKEN') {
     chrome.storage.local.set({ auth0Token: message.token });
