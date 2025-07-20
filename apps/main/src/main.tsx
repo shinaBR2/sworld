@@ -5,7 +5,7 @@ import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { ErrorFallback } from 'ui/universal/error-boundary';
-import { auth0Config, queryConfig, rollbarConfig, validateEnvVars } from './config';
+import { auth0Config, extensionId, queryConfig, rollbarConfig, validateEnvVars } from './config';
 import { ErrorBoundary } from 'core/universal/error-boundary';
 import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
@@ -56,7 +56,7 @@ const AppWrapper = () => {
   return (
     <StrictMode>
       <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
-        <AuthProvider config={auth0Config}>
+        <AuthProvider config={auth0Config} extensionId={extensionId}>
           <QueryProvider config={queryConfig}>
             <AppWithPostHog />
           </QueryProvider>
