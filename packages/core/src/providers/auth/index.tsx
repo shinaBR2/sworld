@@ -1,6 +1,6 @@
 import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { getClaims, notifyExtension, transformUser } from './helpers';
+import { getClaims, notifyExtensionTokenChange, transformUser } from './helpers';
 import { CustomUser } from './types';
 
 interface AuthContextValue {
@@ -79,7 +79,7 @@ const AuthContextProvider: FC<{
           setIsSignedIn(true);
           setUser(transformUser(userId, auth0User));
           setIsLoading(false);
-          notifyExtension(token);
+          notifyExtensionTokenChange(token);
         }
       } catch (error) {
         console.error('Session validation failed:', error);

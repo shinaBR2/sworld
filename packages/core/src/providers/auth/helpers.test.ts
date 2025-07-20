@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getClaims, transformUser, notifyExtension } from './helpers';
+import { getClaims, transformUser, notifyExtensionTokenChange } from './helpers';
 import { User } from '@auth0/auth0-react';
 
 // Define Chrome extension types
@@ -133,7 +133,7 @@ describe('transformUser', () => {
   });
 });
 
-describe('notifyExtension', () => {
+describe('notifyExtensionTokenChange', () => {
   it('should send message to extension when chrome.runtime is available', () => {
     const testToken = 'test-token';
     const sendMessageMock = vi.fn((_id, _message, callback) => {
@@ -149,7 +149,7 @@ describe('notifyExtension', () => {
       },
     };
 
-    notifyExtension(testToken);
+    notifyExtensionTokenChange(testToken);
 
     expect(sendMessageMock).toHaveBeenCalledWith(
       'egfcglaomminlahocafmecmilaplbock',
@@ -162,7 +162,7 @@ describe('notifyExtension', () => {
     // @ts-ignore - intentionally removing chrome for test
     delete global.window.chrome;
 
-    expect(() => notifyExtension('test-token')).not.toThrow();
+    expect(() => notifyExtensionTokenChange('test-token')).not.toThrow();
   });
 
   it('should handle errors from chrome.runtime.sendMessage', () => {
@@ -181,7 +181,7 @@ describe('notifyExtension', () => {
       },
     };
 
-    notifyExtension(testToken);
+    notifyExtensionTokenChange(testToken);
 
     // Wait for any async operations
     return new Promise<void>(resolve => {

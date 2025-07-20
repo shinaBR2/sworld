@@ -38,7 +38,7 @@ const transformUser = (id: string, auth0User: User | undefined): CustomUser | nu
   };
 };
 
-const notifyExtension = (token: string) => {
+const notifyExtensionTokenChange = (token: string) => {
   if (typeof chrome !== 'undefined' && chrome.runtime) {
     chrome.runtime.sendMessage('egfcglaomminlahocafmecmilaplbock', { type: 'AUTH_TOKEN', token }, () => {
       // Ignore errors - extension might not be installed
@@ -49,4 +49,4 @@ const notifyExtension = (token: string) => {
   }
 };
 
-export { getClaims, transformUser, notifyExtension };
+export { getClaims, transformUser, notifyExtensionTokenChange };
