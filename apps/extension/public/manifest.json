@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Sworld extension",
+  "version": "1.0.0",
+  "permissions": ["storage"],
+  "externally_connectable": {
+    "matches": ["https://shinabr2.com/*", "http://localhost:3000/*"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
