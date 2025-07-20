@@ -1,0 +1,18 @@
+{
+  "exclude": ["node_modules"],
+  "extends": "tsconfig/vite.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "types": ["chrome", "vite/client"],
+    "lib": ["dom", "es2017"],
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "paths": {
+      "ui": ["../../packages/ui/src"],
+      "ui/*": ["../../packages/ui/src/*"],
+      "core": ["../../packages/core/src"],
+      "core/*": ["../../packages/core/src/*"]
+    }
+  },
+  "include": ["src"]
+}
