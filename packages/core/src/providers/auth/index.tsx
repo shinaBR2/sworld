@@ -1,6 +1,6 @@
 import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { getClaims, notifyExtensionTokenChange, transformUser } from './helpers';
+import { getClaims, notifyExtensionLogOut, notifyExtensionTokenChange, transformUser } from './helpers';
 import { CustomUser } from './types';
 
 interface AuthContextValue {
@@ -23,6 +23,7 @@ interface Auth0Config {
 
 interface Props {
   config: Auth0Config;
+  extensionId?: string;
   children: React.ReactNode;
 }
 
@@ -38,7 +39,8 @@ const AuthContext = createContext<AuthContextValue>({
 
 const AuthContextProvider: FC<{
   children: React.ReactNode;
-}> = ({ children }) => {
+  extensionId?: string;
+}> = ({ children, extensionId }) => {
   const {
     isAuthenticated,
     isLoading: auth0Loading,
@@ -79,7 +81,10 @@ const AuthContextProvider: FC<{
           setIsSignedIn(true);
           setUser(transformUser(userId, auth0User));
           setIsLoading(false);
-          notifyExtensionTokenChange(token);
+
+          if (extensionId) {
+            notifyExtensionTokenChange(token);
+          }
         }
       } catch (error) {
         console.error('Session validation failed:', error);
@@ -95,15 +100,19 @@ const AuthContextProvider: FC<{
         setIsLoading(false);
       }
     }
-  }, [isAuthenticated, auth0Loading, getAccessTokenSilently]);
+  }, [isAuthenticated, auth0Loading, extensionId, getAccessTokenSilently]);
 
-  const handleSignOut = useCallback(() => {
-    logout({
+  const handleSignOut = useCallback(async () => {
+    await logout({
       logoutParams: {
         returnTo: window.location.origin,
       },
     });
-  }, [logout]);
+
+    if (extensionId) {
+      notifyExtensionLogOut();
+    }
+  }, [logout, extensionId]);
 
   const contextValue: AuthContextValue = {
     isSignedIn,
@@ -118,7 +127,7 @@ const AuthContextProvider: FC<{
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
-const AuthProvider: FC<Props> = ({ config, children }) => {
+const AuthProvider: FC<Props> = ({ config, extensionId, children }) => {
   return (
     <Auth0Provider
       domain={config.domain}
@@ -130,7 +139,7 @@ const AuthProvider: FC<Props> = ({ config, children }) => {
       cookieDomain={config.cookieDomain}
       cacheLocation="localstorage"
     >
-      <AuthContextProvider>{children}</AuthContextProvider>
+      <AuthContextProvider extensionId={extensionId}>{children}</AuthContextProvider>
     </Auth0Provider>
   );
 };
