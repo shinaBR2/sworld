@@ -502,6 +502,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.6.1(@testing-library/dom@10.4.0)
+      '@types/chrome':
+        specifier: ^0.0.268
+        version: 0.0.268
       '@types/react':
         specifier: ^18.0.25
         version: 18.3.18
@@ -546,7 +549,7 @@ importers:
         version: 8.10.0(eslint@8.57.1)
       eslint-config-turbo:
         specifier: latest
-        version: 2.5.4(eslint@8.57.1)(turbo@2.4.4)
+        version: 2.5.5(eslint@8.57.1)(turbo@2.4.4)
       eslint-plugin-jsx-a11y:
         specifier: ^6.7.1
         version: 6.10.2(eslint@8.57.1)
@@ -558,7 +561,7 @@ importers:
     dependencies:
       eslint-config-turbo:
         specifier: latest
-        version: 2.5.4(eslint@8.57.1)(turbo@2.4.4)
+        version: 2.5.5(eslint@8.57.1)(turbo@2.4.4)
 
   packages/jest-dom-preset:
     dependencies:
@@ -6784,8 +6787,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.5.4:
-    resolution: {integrity: sha512-OpjpDLXIaus0N/Y+pMj17K430xjpd6WTo0xPUESqYZ9BkMngv2n0ZdjktgJTbJVnDmK7gHrXgJAljtdIMcYBIg==}
+  eslint-config-turbo@2.5.5:
+    resolution: {integrity: sha512-23lKrCr66HQR62aa94n2dBGUUFz0GzM6N1KwmcREZHxomZ5Ik2rDm00wAz95lOEkhzSt6IaxW00Uz0az/Fcq5Q==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -6802,8 +6805,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-turbo@2.5.4:
-    resolution: {integrity: sha512-IZsW61DFj5mLMMaCJxhh1VE4HvNhfdnHnAaXajgne+LUzdyHk2NvYT0ECSa/1SssArcqgTvV74MrLL68hWLLFw==}
+  eslint-plugin-turbo@2.5.5:
+    resolution: {integrity: sha512-IlN65X6W7rgK88u5xl1xC+7FIGKA7eyaca0yxZQ9CBNV6keAaqtjZQLw8ZfXdv7T+MzTLYkYOeOHAv8yCRUx4Q==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -19709,10 +19712,10 @@ snapshots:
     dependencies:
       eslint: 8.57.1
 
-  eslint-config-turbo@2.5.4(eslint@8.57.1)(turbo@2.4.4):
+  eslint-config-turbo@2.5.5(eslint@8.57.1)(turbo@2.4.4):
     dependencies:
       eslint: 8.57.1
-      eslint-plugin-turbo: 2.5.4(eslint@8.57.1)(turbo@2.4.4)
+      eslint-plugin-turbo: 2.5.5(eslint@8.57.1)(turbo@2.4.4)
       turbo: 2.4.4
 
   eslint-plugin-jsx-a11y@6.10.2(eslint@8.57.1):
@@ -19756,7 +19759,7 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-turbo@2.5.4(eslint@8.57.1)(turbo@2.4.4):
+  eslint-plugin-turbo@2.5.5(eslint@8.57.1)(turbo@2.4.4):
     dependencies:
       dotenv: 16.0.3
       eslint: 8.57.1
