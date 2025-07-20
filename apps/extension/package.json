@@ -8,12 +8,13 @@
     "build": "vite build"
   },
   "dependencies": {
+    "core": "workspace:*",
     "react": "^18",
     "react-dom": "^18",
-    "core": "workspace:*",
     "ui": "workspace:*"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.3",
     "@types/chrome": "^0.0.268",
     "@vitejs/plugin-react": "^4.2.0",
     "typescript": "^5.6.2",
