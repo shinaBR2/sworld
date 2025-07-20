@@ -1,4 +1,5 @@
 import { config } from '../config';
+import { setItem } from 'core/universal/extension/storage';
 
 console.log('Background script starting...');
 
@@ -10,13 +11,13 @@ chrome.runtime.onStartup.addListener(() => {
   console.log('Extension startup');
 });
 
-chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
   if (sender.origin !== config.allowedOrigin) {
     return;
   }
 
   if (message.type === 'AUTH_TOKEN') {
-    chrome.storage.local.set({ auth0Token: message.token });
+    await setItem('auth0Token', message.token);
     sendResponse({ success: true });
   }
 });

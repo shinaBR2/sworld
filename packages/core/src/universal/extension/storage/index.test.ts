@@ -1,27 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { setItem, getItems, removeItems } from './index';
 
-// Define the Chrome storage API types
-interface ChromeStorageArea {
-  set: (items: Record<string, any>, callback?: () => void) => void;
-  get: (keys: string | string[] | Record<string, any>, callback: (items: Record<string, any>) => void) => void;
-  remove: (keys: string | string[], callback?: () => void) => void;
-}
-
-interface ChromeStorage {
-  local: ChromeStorageArea;
-}
-
-interface Chrome {
-  storage: ChromeStorage;
-}
-
-declare global {
-  // eslint-disable-next-line no-var
-  var chrome: Chrome;
-}
-
-// Create mock storage implementation
 function createMockStorage() {
   return {
     set: vi.fn().mockImplementation((items: Record<string, any>) => {
