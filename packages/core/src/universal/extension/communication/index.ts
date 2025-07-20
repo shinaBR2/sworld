@@ -13,7 +13,6 @@ interface NotifyExtensionParams<T> {
  */
 const notifyExtension = <T>({ id, type, data }: NotifyExtensionParams<T>) => {
   if (typeof chrome !== 'undefined' && chrome.runtime) {
-    // TODO read extension id from config
     chrome.runtime.sendMessage(id, { type, data }, () => {
       // Ignore errors - extension might not be installed
       if (chrome.runtime.lastError) {

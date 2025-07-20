@@ -1,5 +1,6 @@
 const hasuraGraphqlUrl = `${import.meta.env.VITE_HASURA_DOMAIN}/v1/graphql`;
 
+const extensionId = import.meta.env.VITE_EXTENSION_ID;
 const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
@@ -42,4 +43,4 @@ const validateEnvVars = () => {
   }
 };
 
-export { appConfig, auth0Config, queryConfig, rollbarConfig, validateEnvVars };
+export { appConfig, extensionId, auth0Config, queryConfig, rollbarConfig, validateEnvVars };

@@ -1,5 +1,5 @@
 import { config } from '../config';
-import { setItem } from 'core/universal/extension/storage';
+import { setItem, removeItems } from 'core/universal/extension/storage';
 
 console.log('Background script starting...');
 
@@ -16,8 +16,17 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
     return;
   }
 
-  if (message.type === 'AUTH_TOKEN') {
-    await setItem('auth0Token', message.token);
+  const { type, data } = message;
+
+  if (type === 'AUTH_TOKEN') {
+    await setItem('auth0Token', data);
     sendResponse({ success: true });
+    return;
+  }
+
+  if (type === 'LOGOUT') {
+    await removeItems(['auth0Token']);
+    sendResponse({ success: true });
+    return;
   }
 });
