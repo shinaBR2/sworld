@@ -79,6 +79,16 @@ const AuthContextProvider: FC<{
           setIsSignedIn(true);
           setUser(transformUser(userId, auth0User));
           setIsLoading(false);
+
+          console.log(`should print this shit`);
+          if (typeof chrome !== 'undefined' && chrome.runtime) {
+            chrome.runtime.sendMessage('egfcglaomminlahocafmecmilaplbock', { type: 'AUTH_TOKEN', token }, () => {
+              // Ignore errors - extension might not be installed
+              if (chrome.runtime.lastError) {
+                console.log('Extension not available');
+              }
+            });
+          }
         }
       } catch (error) {
         console.error('Session validation failed:', error);
