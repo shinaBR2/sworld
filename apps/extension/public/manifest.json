@@ -7,7 +7,8 @@
     "matches": ["https://shinabr2.com/*", "http://localhost:3000/*"]
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
     "default_popup": "popup.html"
