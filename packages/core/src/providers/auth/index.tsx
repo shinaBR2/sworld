@@ -79,8 +79,6 @@ const AuthContextProvider: FC<{
           setIsSignedIn(true);
           setUser(transformUser(userId, auth0User));
           setIsLoading(false);
-
-          console.log(`should print this shit`);
           notifyExtension(token);
         }
       } catch (error) {
