@@ -1,7 +1,8 @@
 import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { getClaims, notifyExtensionLogOut, notifyExtensionTokenChange, transformUser } from './helpers';
+import { getClaims, transformUser } from './helpers';
 import { CustomUser } from './types';
+import { notifyExtension } from '../../universal/extension/communication';
 
 interface AuthContextValue {
   isSignedIn: boolean;
@@ -83,7 +84,11 @@ const AuthContextProvider: FC<{
           setIsLoading(false);
 
           if (extensionId) {
-            notifyExtensionTokenChange(token);
+            notifyExtension({
+              id: extensionId,
+              type: 'AUTH_TOKEN',
+              data: token,
+            });
           }
         }
       } catch (error) {
@@ -110,7 +115,10 @@ const AuthContextProvider: FC<{
     });
 
     if (extensionId) {
-      notifyExtensionLogOut();
+      notifyExtension({
+        id: extensionId,
+        type: 'LOGOUT',
+      });
     }
   }, [logout, extensionId]);
 
