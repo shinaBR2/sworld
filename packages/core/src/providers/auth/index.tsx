@@ -1,6 +1,6 @@
 import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { getClaims, transformUser } from './helpers';
+import { getClaims, notifyExtension, transformUser } from './helpers';
 import { CustomUser } from './types';
 
 interface AuthContextValue {
@@ -81,14 +81,7 @@ const AuthContextProvider: FC<{
           setIsLoading(false);
 
           console.log(`should print this shit`);
-          if (typeof chrome !== 'undefined' && chrome.runtime) {
-            chrome.runtime.sendMessage('egfcglaomminlahocafmecmilaplbock', { type: 'AUTH_TOKEN', token }, () => {
-              // Ignore errors - extension might not be installed
-              if (chrome.runtime.lastError) {
-                console.log('Extension not available');
-              }
-            });
-          }
+          notifyExtension(token);
         }
       } catch (error) {
         console.error('Session validation failed:', error);

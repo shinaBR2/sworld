@@ -38,4 +38,15 @@ const transformUser = (id: string, auth0User: User | undefined): CustomUser | nu
   };
 };
 
-export { getClaims, transformUser };
+const notifyExtension = (token: string) => {
+  if (typeof chrome !== 'undefined' && chrome.runtime) {
+    chrome.runtime.sendMessage('egfcglaomminlahocafmecmilaplbock', { type: 'AUTH_TOKEN', token }, () => {
+      // Ignore errors - extension might not be installed
+      if (chrome.runtime.lastError) {
+        console.log('Extension not available');
+      }
+    });
+  }
+};
+
+export { getClaims, transformUser, notifyExtension };
