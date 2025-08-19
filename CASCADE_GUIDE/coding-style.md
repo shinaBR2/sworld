@@ -41,7 +41,7 @@ const func2 = () => {}
 const MyType = {}
 
 
-export { func1, func2, MyType }
+export { func1, func2, type MyType }
 
 
 // ❌ BAD - Multiple exports throughout file
