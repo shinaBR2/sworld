@@ -104,10 +104,17 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
     <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
+          bgcolor: 'background.paper',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           mb: 2,
+          borderBottom: theme => `1px solid ${theme.palette.divider}`,
+          pt: 0.5,
+          pb: 0.5,
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -116,23 +123,9 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           </IconButton>
           <Typography variant="h6">{journal ? 'Edit Entry' : 'New Entry'}</Typography>
         </Box>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          disabled={!content.trim() || isSaving}
-          sx={{
-            bgcolor: 'primary.main',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
-          }}
-        >
-          {isSaving ? 'Saving...' : 'Save'}
-        </Button>
       </Box>
 
+      {/* Non-scrollable date + mood controls */}
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TextField
           type="date"
@@ -188,83 +181,106 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
         </ToggleButtonGroup>
       </Box>
 
-      <TextField
-        multiline
-        fullWidth
-        minRows={10}
-        maxRows={20}
-        placeholder="What's on your mind today?"
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        sx={{
-          mb: 2,
-          flex: 1,
-          '& .MuiOutlinedInput-root': {
-            height: '100%',
-            alignItems: 'flex-start',
-          },
-          '& .MuiOutlinedInput-input': {
-            height: '100%',
-            overflow: 'auto',
-          },
-        }}
-      />
+      {/* Scrollable content area */}
+      <Box sx={{ flex: 1, overflow: 'auto', pb: { xs: '84px', sm: '76px' } }}>
+        <TextField
+          multiline
+          fullWidth
+          minRows={10}
+          placeholder="What's on your mind today?"
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          sx={{ mb: 2 }}
+        />
 
-      <Box sx={{ mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <LocalOfferIcon sx={{ fontSize: 16, color: '#666' }} />
-          <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
-            Add tags
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <LocalOfferIcon sx={{ fontSize: 16, color: '#666' }} />
+            <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
+              Add tags
+            </Typography>
+          </Box>
+
+          <Paper
+            sx={{
+              p: 1,
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 0.5,
+              mb: 1,
+            }}
+            variant="outlined"
+          >
+            {tags.map(tag => (
+              <Chip
+                key={tag}
+                label={tag}
+                size="small"
+                onDelete={() => handleRemoveTag(tag)}
+                sx={{
+                  bgcolor: 'primary.light',
+                  color: 'primary.main',
+                  '& .MuiChip-deleteIcon': {
+                    color: 'primary.main',
+                    '&:hover': {
+                      color: 'primary.dark',
+                    },
+                  },
+                }}
+              />
+            ))}
+
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, minWidth: 100 }}>
+              <InputBase
+                placeholder="New tag..."
+                value={newTag}
+                onChange={e => setNewTag(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                sx={{ ml: 1, flex: 1, fontSize: '0.875rem' }}
+              />
+              <IconButton size="small" onClick={handleAddTag} disabled={!newTag.trim()} sx={{ p: 0.5 }}>
+                <AddIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Paper>
+
+          <Typography variant="caption" color="text.secondary">
+            Press Enter to add a tag
           </Typography>
         </Box>
+      </Box>
 
-        <Paper
+      {/* Sticky bottom action bar */}
+      <Box
+        sx={{
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 2,
+          bgcolor: 'background.paper',
+          borderTop: theme => `1px solid ${theme.palette.divider}`,
+          pt: 1,
+          pb: 'max(8px, env(safe-area-inset-bottom))',
+          display: 'flex',
+          gap: 1,
+        }}
+      >
+        <Button onClick={onBackClick} variant="outlined" color="inherit" fullWidth>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          disabled={!content.trim() || isSaving}
+          fullWidth
           sx={{
-            p: 1,
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 0.5,
-            mb: 1,
+            bgcolor: 'primary.main',
+            '&:hover': { bgcolor: 'primary.dark' },
           }}
-          variant="outlined"
         >
-          {tags.map(tag => (
-            <Chip
-              key={tag}
-              label={tag}
-              size="small"
-              onDelete={() => handleRemoveTag(tag)}
-              sx={{
-                bgcolor: 'primary.light',
-                color: 'primary.main',
-                '& .MuiChip-deleteIcon': {
-                  color: 'primary.main',
-                  '&:hover': {
-                    color: 'primary.dark',
-                  },
-                },
-              }}
-            />
-          ))}
-
-          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, minWidth: 100 }}>
-            <InputBase
-              placeholder="New tag..."
-              value={newTag}
-              onChange={e => setNewTag(e.target.value)}
-              onKeyDown={handleTagKeyDown}
-              sx={{ ml: 1, flex: 1, fontSize: '0.875rem' }}
-            />
-            <IconButton size="small" onClick={handleAddTag} disabled={!newTag.trim()} sx={{ p: 0.5 }}>
-              <AddIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        </Paper>
-
-        <Typography variant="caption" color="text.secondary">
-          Press Enter to add a tag
-        </Typography>
+          {isSaving ? 'Saving...' : 'Save'}
+        </Button>
       </Box>
     </Box>
   );

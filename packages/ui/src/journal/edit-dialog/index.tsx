@@ -2,6 +2,7 @@ import { JournalEdit } from '../journal-edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { Journal } from 'core/journal';
+import { useIsMobile } from '../../universal/responsive';
 
 interface EditDialogProps {
   open: boolean;
@@ -15,18 +16,33 @@ interface EditDialogProps {
 
 const EditDialog = (props: EditDialogProps) => {
   const { open, onClose, journalDetail, isLoadingDetail, createJournal, updateJournal, onSave } = props;
+  const isMobile = useIsMobile();
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      // Prevent closing when clicking backdrop or pressing ESC to avoid losing content
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+          return;
+        }
+        onClose();
+      }}
+      disableEscapeKeyDown
+      keepMounted
       fullWidth
+      fullScreen={isMobile}
       maxWidth="sm"
       PaperProps={{
-        sx: { height: '80vh' },
+        sx: {
+          height: isMobile ? '100vh' : '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: isMobile ? 0 : undefined,
+        },
       }}
     >
-      <DialogContent sx={{ p: 0, height: '100%' }}>
+      <DialogContent sx={{ p: 0, height: '100%', flex: 1, overflow: 'auto' }}>
         <JournalEdit
           journal={journalDetail}
           isLoading={isLoadingDetail}
@@ -40,3 +56,4 @@ const EditDialog = (props: EditDialogProps) => {
 };
 
 export { EditDialog };
+
