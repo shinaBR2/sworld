@@ -34,7 +34,6 @@ describe('EditDialog', () => {
   const defaultProps = {
     open: true,
     onClose: vi.fn(),
-    selectedJournal: null,
     journalDetail: null,
     isLoadingDetail: false,
     createJournal: { isPending: false },
@@ -51,7 +50,10 @@ describe('EditDialog', () => {
   it('does not render when closed', () => {
     render(<EditDialog {...{ ...defaultProps, open: false }} />);
 
-    expect(screen.queryByTestId('journal-edit')).not.toBeInTheDocument();
+    // With keepMounted, content stays in the DOM but should not be visible
+    const content = screen.getByTestId('journal-edit');
+    expect(content).toBeInTheDocument();
+    expect(content).not.toBeVisible();
   });
 
   it('passes journalDetail to JournalEdit when available', () => {
@@ -61,8 +63,8 @@ describe('EditDialog', () => {
     expect(journalData.textContent).toContain(mockJournal.id);
   });
 
-  it('sets isLoading correctly when loading detail for selected journal', () => {
-    render(<EditDialog {...{ ...defaultProps, selectedJournal: mockJournal, isLoadingDetail: true }} />);
+  it('sets isLoading correctly when isLoadingDetail is true', () => {
+    render(<EditDialog {...{ ...defaultProps, isLoadingDetail: true }} />);
 
     const loadingState = screen.getByTestId('loading-state');
     expect(loadingState.textContent).toBe('true');
