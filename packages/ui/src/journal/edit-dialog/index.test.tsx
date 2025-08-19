@@ -105,7 +105,10 @@ describe('EditDialog', () => {
     const onClose = vi.fn();
     render(<EditDialog {...{ ...defaultProps, onClose }} />);
 
-    fireEvent.keyDown(document.body, { key: 'Escape' });
+    const dialog = screen.getByRole('dialog');
+    dialog.focus(); // Focus the dialog to ensure it receives the key event
+
+    fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(onClose).not.toHaveBeenCalled();
   });
 
@@ -113,9 +116,9 @@ describe('EditDialog', () => {
     const onClose = vi.fn();
     render(<EditDialog {...{ ...defaultProps, onClose }} />);
 
-    // The backdrop is the first child of the dialog's container element
-    const dialog = screen.getByRole('dialog');
-    const backdrop = dialog.parentElement?.firstChild;
+    // The backdrop is rendered at the document root by MUI
+    const backdrop = document.querySelector('.MuiBackdrop-root');
+    expect(backdrop).toBeInTheDocument();
 
     if (backdrop) {
       fireEvent.click(backdrop);
