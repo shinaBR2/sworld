@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { EditDialog } from './index';
 import { Journal } from 'core/journal';
@@ -34,7 +34,6 @@ describe('EditDialog', () => {
   const defaultProps = {
     open: true,
     onClose: vi.fn(),
-    selectedJournal: null,
     journalDetail: null,
     isLoadingDetail: false,
     createJournal: { isPending: false },
@@ -51,7 +50,10 @@ describe('EditDialog', () => {
   it('does not render when closed', () => {
     render(<EditDialog {...{ ...defaultProps, open: false }} />);
 
-    expect(screen.queryByTestId('journal-edit')).not.toBeInTheDocument();
+    // With keepMounted, content stays in the DOM but should not be visible
+    const content = screen.getByTestId('journal-edit');
+    expect(content).toBeInTheDocument();
+    expect(content).not.toBeVisible();
   });
 
   it('passes journalDetail to JournalEdit when available', () => {
@@ -61,8 +63,8 @@ describe('EditDialog', () => {
     expect(journalData.textContent).toContain(mockJournal.id);
   });
 
-  it('sets isLoading correctly when loading detail for selected journal', () => {
-    render(<EditDialog {...{ ...defaultProps, selectedJournal: mockJournal, isLoadingDetail: true }} />);
+  it('sets isLoading correctly when isLoadingDetail is true', () => {
+    render(<EditDialog {...{ ...defaultProps, isLoadingDetail: true }} />);
 
     const loadingState = screen.getByTestId('loading-state');
     expect(loadingState.textContent).toBe('true');
@@ -97,5 +99,31 @@ describe('EditDialog', () => {
     screen.getByTestId('save-button').click();
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith({ id: 'test-id' });
+  });
+
+  it('does not call onClose on escape key press', () => {
+    const onClose = vi.fn();
+    render(<EditDialog {...{ ...defaultProps, onClose }} />);
+
+    const dialog = screen.getByRole('dialog');
+    dialog.focus(); // Focus the dialog to ensure it receives the key event
+
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('does not call onClose on backdrop click', () => {
+    const onClose = vi.fn();
+    render(<EditDialog {...{ ...defaultProps, onClose }} />);
+
+    // The backdrop is rendered at the document root by MUI
+    const backdrop = document.querySelector('.MuiBackdrop-root');
+    expect(backdrop).toBeInTheDocument();
+
+    if (backdrop) {
+      fireEvent.click(backdrop);
+    }
+
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
