@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { EditDialog } from './index';
 import { Journal } from 'core/journal';
@@ -99,5 +99,28 @@ describe('EditDialog', () => {
     screen.getByTestId('save-button').click();
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith({ id: 'test-id' });
+  });
+
+  it('does not call onClose on escape key press', () => {
+    const onClose = vi.fn();
+    render(<EditDialog {...{ ...defaultProps, onClose }} />);
+
+    fireEvent.keyDown(document.body, { key: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('does not call onClose on backdrop click', () => {
+    const onClose = vi.fn();
+    render(<EditDialog {...{ ...defaultProps, onClose }} />);
+
+    // The backdrop is the first child of the dialog's container element
+    const dialog = screen.getByRole('dialog');
+    const backdrop = dialog.parentElement?.firstChild;
+
+    if (backdrop) {
+      fireEvent.click(backdrop);
+    }
+
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
