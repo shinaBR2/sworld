@@ -182,15 +182,43 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
       </Box>
 
       {/* Scrollable content area */}
-      <Box sx={{ flex: 1, overflow: 'auto', pb: { xs: '84px', sm: '76px' } }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflow: 'auto',
+          pb: { xs: '84px', sm: '76px' },
+          display: 'flex',
+          flexDirection: 'column',
+          // Custom scrollbar styling
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: theme => theme.palette.action.hover,
+            borderRadius: '3px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: theme => theme.palette.action.disabled,
+          },
+        }}
+      >
         <TextField
           multiline
           fullWidth
-          minRows={10}
           placeholder="What's on your mind today?"
           value={content}
           onChange={e => setContent(e.target.value)}
-          sx={{ mb: 2 }}
+          sx={{
+            mb: 2,
+            flex: 1, // Allow TextField to grow and fill space
+            '& .MuiOutlinedInput-root': {
+              height: '100%',
+              alignItems: 'flex-start',
+            },
+          }}
         />
 
         <Box sx={{ mb: 2 }}>
