@@ -1,6 +1,29 @@
-import { describe, it, expect } from 'vitest';
-import { getClaims, transformUser } from './helpers';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { getClaims, transformUser, notifyExtensionTokenChange } from './helpers';
 import { User } from '@auth0/auth0-react';
+
+// Define Chrome extension types
+declare global {
+  interface Window {
+    chrome?: {
+      runtime?: {
+        sendMessage?: (extensionId: string, message: any, responseCallback?: (response: any) => void) => void;
+        lastError?: { message: string } | null;
+      };
+    };
+  }
+}
+
+// Setup and teardown for chrome mock
+beforeEach(() => {
+  // Reset window.chrome before each test
+  delete (global.window as any).chrome;
+  vi.clearAllMocks();
+});
+
+afterEach(() => {
+  delete (global.window as any).chrome;
+});
 
 describe('getClaims', () => {
   it('should extract Hasura claims from a valid JWT token', () => {
@@ -91,5 +114,21 @@ describe('transformUser', () => {
 
     const result = transformUser('123', auth0User);
     expect(result).toBeNull();
+  });
+
+  it('should handle partial user data', () => {
+    const auth0User: Partial<User> = {
+      sub: 'auth0|123',
+      name: 'Test User',
+      // Missing email and picture
+    };
+
+    const result = transformUser('123', auth0User as User);
+    expect(result).toEqual({
+      id: '123',
+      email: undefined,
+      name: 'Test User',
+      picture: undefined,
+    });
   });
 });

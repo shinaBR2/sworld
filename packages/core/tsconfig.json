@@ -4,6 +4,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "lib": ["dom", "es2017"],
+    "types": ["chrome"],
     "plugins": [
       {
         "name": "@0no-co/graphqlsp",
