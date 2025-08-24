@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { TypedDocumentString } from '../../graphql/graphql';
 import { useQueryContext } from '../../providers/query';
+import { useAuthContext } from '../../providers/auth';
+import { isTokenExpired } from '../graphql/errors';
 
 interface UseRequestProps<TData, TVariables> {
   queryKey: unknown[];
@@ -14,19 +16,20 @@ interface UseRequestProps<TData, TVariables> {
 
 const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseRequestProps<TData, TVariables>) => {
   const { queryKey, getAccessToken, document, variables, staleTime = 5 * 60 * 1000, enabled = true } = props;
-
+  const { isSignedIn, signOut } = useAuthContext();
   const { hasuraUrl } = useQueryContext();
 
-  return useQuery<TData>({
+  return useQuery<TData, Error>({
     queryKey,
-    queryFn: async () => {
+    queryFn: async (): Promise<TData> => {
       let headers: Record<string, string> = {
         'content-type': 'application/json',
       };
 
-      if (typeof getAccessToken !== 'undefined') {
+      if (isSignedIn && typeof getAccessToken !== "undefined") {
         try {
           const token = await getAccessToken();
+
 
           if (!token) {
             throw new Error('Invalid access token');
@@ -43,14 +46,17 @@ const useRequest = <TData = unknown, TVariables extends object = {}>(props: UseR
       }
 
       try {
-        return request({
+        return await request({
           url: hasuraUrl,
           document: document.toString(),
           requestHeaders: headers,
           variables,
         });
       } catch (error) {
-        console.error('GraphQL request failed:', error);
+        if (isTokenExpired(error)) {
+          signOut();
+          throw new Error('Session expired. Please sign in again.');
+        }
         throw error;
       }
     },
