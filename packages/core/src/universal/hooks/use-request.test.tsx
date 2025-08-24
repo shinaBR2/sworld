@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRequest } from './use-request';
 import request from 'graphql-request';
 import { useQueryContext } from '../../providers/query';
+import { TypedDocumentString } from '../../graphql/graphql';
+import { isTokenExpired } from '../graphql/errors';
+import { useAuthContext } from '../../providers/auth';
 
 vi.mock('graphql-request', () => ({
   default: vi.fn(),
@@ -11,6 +14,14 @@ vi.mock('graphql-request', () => ({
 
 vi.mock('../../providers/query', () => ({
   useQueryContext: vi.fn(),
+}));
+
+vi.mock('../graphql/errors', () => ({
+  isTokenExpired: vi.fn(),
+}));
+
+vi.mock('../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
 }));
 
 describe('useRequest', () => {
@@ -25,7 +36,11 @@ describe('useRequest', () => {
 
   const mockHasuraUrl = 'https://test-hasura.com/graphql';
   const mockToken = 'test-token';
-  const mockDocument = 'query { test }';
+  // Create a mock TypedDocumentString
+  const mockDocument = {
+    toString: () => 'query { test }',
+    __apiType: 'query',
+  } as unknown as TypedDocumentString<{ test: string }, {}>;
   const mockVariables = { id: '123' };
   const mockResponse = { data: { test: 'success' } };
   const mockGetAccessToken = vi.fn().mockResolvedValue(mockToken);
@@ -41,9 +56,22 @@ describe('useRequest', () => {
     vi.mocked(useQueryContext).mockReturnValue({
       hasuraUrl: mockHasuraUrl,
     });
+
+    // Set up default auth context mock
+    vi.mocked(useAuthContext).mockReturnValue({
+      isSignedIn: true,
+      signOut: vi.fn(),
+      isLoading: false,
+      user: null,
+      isAdmin: false,
+      signIn: vi.fn(),
+      getAccessToken: mockGetAccessToken,
+    });
+
     // Reset mocks to their default successful state
     mockGetAccessToken.mockResolvedValue(mockToken);
     vi.mocked(request).mockResolvedValue(mockResponse);
+    vi.mocked(isTokenExpired).mockReturnValue(false);
   });
 
   it('should fetch data anonymously', async () => {
@@ -66,7 +94,7 @@ describe('useRequest', () => {
     expect(result.current.data).toEqual(mockResponse);
     expect(request).toHaveBeenCalledWith({
       url: mockHasuraUrl,
-      document: mockDocument,
+      document: mockDocument.toString(),
       requestHeaders: {
         'content-type': 'application/json',
       },
@@ -96,7 +124,7 @@ describe('useRequest', () => {
     expect(mockGetAccessToken).toHaveBeenCalledOnce();
     expect(request).toHaveBeenCalledWith({
       url: mockHasuraUrl,
-      document: mockDocument,
+      document: mockDocument.toString(),
       requestHeaders: {
         'content-type': 'application/json',
         Authorization: `Bearer ${mockToken}`,
@@ -131,6 +159,52 @@ describe('useRequest', () => {
     expect(console.error).toHaveBeenCalledWith('Authentication failed:', tokenError);
   });
 
+  it('should handle token expiration', async () => {
+    const expiredTokenError = new Error('Token expired');
+    vi.mocked(request).mockRejectedValueOnce(expiredTokenError);
+    vi.mocked(isTokenExpired).mockReturnValueOnce(true);
+    
+    const mockSignOut = vi.fn();
+    
+    // Create a test document with the correct type
+    const testDocument = {
+      toString: () => 'query { test }',
+      __apiType: 'query',
+    } as unknown as TypedDocumentString<{ test: string }, {}>;
+    
+    // Mock the auth context
+    vi.mocked(useAuthContext).mockReturnValueOnce({
+      isSignedIn: true,
+      signOut: mockSignOut,
+      // Add other required properties from AuthContextValue
+      isLoading: false,
+      user: null,
+      isAdmin: false,
+      signIn: vi.fn(),
+      getAccessToken: vi.fn(),
+    });
+
+    const { result } = renderHook(
+      () =>
+        useRequest({
+          queryKey: ['test-expired-token'],
+          getAccessToken: mockGetAccessToken,
+          document: testDocument,
+        }),
+      { wrapper }
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.isError).toBe(true);
+      },
+      { timeout: 2000 }
+    );
+
+    expect(mockSignOut).toHaveBeenCalled();
+    expect(result.current.error?.message).toBe('Session expired. Please sign in again.');
+  });
+
   it('should handle request error', async () => {
     const requestError = new Error('Request failed');
     vi.mocked(request).mockRejectedValueOnce(requestError);
@@ -160,7 +234,10 @@ describe('useRequest', () => {
         useRequest({
           queryKey: ['settings'],
           getAccessToken: mockGetAccessToken,
-          document: 'query GetSettings { settings { theme } }',
+          document: {
+            toString: () => 'query GetSettings { settings { theme } }',
+            __apiType: 'query',
+          } as unknown as TypedDocumentString<{ settings: { theme: string } }, {}>,
         }),
       { wrapper }
     );
