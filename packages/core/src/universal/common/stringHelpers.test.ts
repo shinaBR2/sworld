@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { compareString, slugify, isValidId, isValidEmail } from './stringHelpers';
+import { describe, expect, it } from 'vitest';
+import {
+  compareString,
+  isValidEmail,
+  isValidId,
+  slugify,
+} from './stringHelpers';
 
 describe('compareString', () => {
   it('should return true for identical strings', () => {
@@ -24,8 +29,15 @@ describe('compareString', () => {
     expect(compareString('test', null as unknown as string)).toBe(false);
     expect(compareString(undefined as unknown as string, 'test')).toBe(false);
     expect(compareString('test', undefined as unknown as string)).toBe(false);
-    expect(compareString(null as unknown as string, null as unknown as string)).toBe(false);
-    expect(compareString(undefined as unknown as string, undefined as unknown as string)).toBe(false);
+    expect(
+      compareString(null as unknown as string, null as unknown as string),
+    ).toBe(false);
+    expect(
+      compareString(
+        undefined as unknown as string,
+        undefined as unknown as string,
+      ),
+    ).toBe(false);
   });
 
   it('should handle strings with special characters', () => {
@@ -80,7 +92,9 @@ describe('slugify', () => {
   });
 
   it('should handle Vietnamese characters', () => {
-    expect(slugify('một khúc hồng trần quyết')).toBe('mot-khuc-hong-tran-quyet');
+    expect(slugify('một khúc hồng trần quyết')).toBe(
+      'mot-khuc-hong-tran-quyet',
+    );
     expect(slugify('Đà Nẵng')).toBe('da-nang');
     expect(slugify('Hà Nội')).toBe('ha-noi');
     expect(slugify('Hồ Chí Minh')).toBe('ho-chi-minh');
@@ -137,7 +151,9 @@ describe('isValidEmail', () => {
     expect(isValidEmail('user+tag@example.com')).toBe(true);
     expect(isValidEmail('123@domain.com')).toBe(true);
     expect(isValidEmail('very.common@example.com')).toBe(true);
-    expect(isValidEmail('disposable.style.email.with+tag@example.com')).toBe(true);
+    expect(isValidEmail('disposable.style.email.with+tag@example.com')).toBe(
+      true,
+    );
     expect(isValidEmail('other.email-with-hyphen@example.com')).toBe(true);
   });
 

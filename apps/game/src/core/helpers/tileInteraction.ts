@@ -1,5 +1,5 @@
-import { GridEngine } from 'grid-engine';
-import { Tilemaps, Input } from 'phaser';
+import type { GridEngine } from 'grid-engine';
+import type { Input, Tilemaps } from 'phaser';
 
 interface CheckTileInteractionParams {
   gridEngine: GridEngine;
@@ -11,7 +11,14 @@ interface CheckTileInteractionParams {
 }
 
 const checkTileInteraction = (params: CheckTileInteractionParams): boolean => {
-  const { gridEngine, layer, propertyKey, characterId = 'player', onInteract, interactKey } = params;
+  const {
+    gridEngine,
+    layer,
+    propertyKey,
+    characterId = 'player',
+    onInteract,
+    interactKey,
+  } = params;
 
   const position = gridEngine.getPosition(characterId);
   const facing = gridEngine.getFacingDirection(characterId);

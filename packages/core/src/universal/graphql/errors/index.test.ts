@@ -1,14 +1,14 @@
-import { describe, expect, it } from "vitest";
-import { isTokenExpired } from "./index";
+import { describe, expect, it } from 'vitest';
+import { isTokenExpired } from './index';
 
-describe("isTokenExpired", () => {
-  it("should return true when error contains invalid-jwt code", () => {
+describe('isTokenExpired', () => {
+  it('should return true when error contains invalid-jwt code', () => {
     const error = {
       response: {
         errors: [
           {
             extensions: {
-              code: "invalid-jwt",
+              code: 'invalid-jwt',
             },
           },
         ],
@@ -20,18 +20,18 @@ describe("isTokenExpired", () => {
     expect(result).toBe(true);
   });
 
-  it("should return false when error contains different error codes", () => {
+  it('should return false when error contains different error codes', () => {
     const error = {
       response: {
         errors: [
           {
             extensions: {
-              code: "validation-failed",
+              code: 'validation-failed',
             },
           },
           {
             extensions: {
-              code: "unauthorized",
+              code: 'unauthorized',
             },
           },
         ],
@@ -43,23 +43,23 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return true when one of multiple errors contains invalid-jwt", () => {
+  it('should return true when one of multiple errors contains invalid-jwt', () => {
     const error = {
       response: {
         errors: [
           {
             extensions: {
-              code: "validation-failed",
+              code: 'validation-failed',
             },
           },
           {
             extensions: {
-              code: "invalid-jwt",
+              code: 'invalid-jwt',
             },
           },
           {
             extensions: {
-              code: "unauthorized",
+              code: 'unauthorized',
             },
           },
         ],
@@ -71,9 +71,9 @@ describe("isTokenExpired", () => {
     expect(result).toBe(true);
   });
 
-  it("should return false when error.response is undefined", () => {
+  it('should return false when error.response is undefined', () => {
     const error = {
-      message: "Network error",
+      message: 'Network error',
     };
 
     const result = isTokenExpired(error);
@@ -81,7 +81,7 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return false when error.response.errors is undefined", () => {
+  it('should return false when error.response.errors is undefined', () => {
     const error = {
       response: {
         data: null,
@@ -93,7 +93,7 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return false when error.response.errors is empty array", () => {
+  it('should return false when error.response.errors is empty array', () => {
     const error = {
       response: {
         errors: [],
@@ -105,12 +105,12 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return false when error.response.errors contains objects without extensions", () => {
+  it('should return false when error.response.errors contains objects without extensions', () => {
     const error = {
       response: {
         errors: [
           {
-            message: "Some error without extensions",
+            message: 'Some error without extensions',
           },
         ],
       },
@@ -121,13 +121,13 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return false when error.response.errors contains objects with extensions but no code", () => {
+  it('should return false when error.response.errors contains objects with extensions but no code', () => {
     const error = {
       response: {
         errors: [
           {
             extensions: {
-              path: "user.id",
+              path: 'user.id',
             },
           },
         ],
@@ -139,19 +139,19 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should return false when error is null", () => {
+  it('should return false when error is null', () => {
     const result = isTokenExpired(null);
 
     expect(result).toBe(false);
   });
 
-  it("should return false when error is undefined", () => {
+  it('should return false when error is undefined', () => {
     const result = isTokenExpired(undefined);
 
     expect(result).toBe(false);
   });
 
-  it("should return false when error is an empty object", () => {
+  it('should return false when error is an empty object', () => {
     const error = {};
 
     const result = isTokenExpired(error);
@@ -159,10 +159,10 @@ describe("isTokenExpired", () => {
     expect(result).toBe(false);
   });
 
-  it("should handle malformed error structures gracefully", () => {
+  it('should handle malformed error structures gracefully', () => {
     const error = {
       response: {
-        errors: "not an array",
+        errors: 'not an array',
       },
     };
 

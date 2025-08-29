@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import type { SAudioPlayerAudioItem } from 'core';
+import { describe, expect, it, vi } from 'vitest';
 import PlayingList from './playing-list';
-import { SAudioPlayerAudioItem } from 'core';
 
 // Mock audio items for testing
 const mockAudioItems: SAudioPlayerAudioItem[] = [
@@ -29,7 +29,13 @@ describe('PlayingList Component', () => {
   });
 
   it('renders list of audio tracks correctly', () => {
-    render(<PlayingList audioList={mockAudioItems} currentId="" onItemSelect={vi.fn()} />);
+    render(
+      <PlayingList
+        audioList={mockAudioItems}
+        currentId=""
+        onItemSelect={vi.fn()}
+      />,
+    );
 
     // Check if both song names are rendered
     expect(screen.getByText('Test Song 1')).toBeInTheDocument();
@@ -41,7 +47,13 @@ describe('PlayingList Component', () => {
   });
 
   it('highlights currently playing track', () => {
-    render(<PlayingList audioList={mockAudioItems} currentId="1" onItemSelect={vi.fn()} />);
+    render(
+      <PlayingList
+        audioList={mockAudioItems}
+        currentId="1"
+        onItemSelect={vi.fn()}
+      />,
+    );
 
     // Find the list items
     const listItems = screen.getAllByRole('button');
@@ -60,7 +72,11 @@ describe('PlayingList Component', () => {
     const mockOnItemSelect = vi.fn();
 
     const { container } = render(
-      <PlayingList audioList={mockAudioItems} currentId="" onItemSelect={mockOnItemSelect} />
+      <PlayingList
+        audioList={mockAudioItems}
+        currentId=""
+        onItemSelect={mockOnItemSelect}
+      />,
     );
     const trackButtons = screen.getAllByRole('button');
 
@@ -74,7 +90,13 @@ describe('PlayingList Component', () => {
   });
 
   it('renders ResponsiveAvatar for each track', () => {
-    render(<PlayingList audioList={mockAudioItems} currentId="" onItemSelect={vi.fn()} />);
+    render(
+      <PlayingList
+        audioList={mockAudioItems}
+        currentId=""
+        onItemSelect={vi.fn()}
+      />,
+    );
 
     // Check that images are rendered
     const avatars = screen.getAllByRole('img');

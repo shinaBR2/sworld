@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface MainContainerProps {
   children: ReactNode;

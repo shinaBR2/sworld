@@ -1,9 +1,9 @@
+import GoogleIcon from '@mui/icons-material/Google';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import GoogleIcon from '@mui/icons-material/Google';
 
 export interface LoginDialogProps {
   onAction?: () => void;
@@ -29,7 +29,12 @@ export const LoginDialog = (props: LoginDialogProps) => {
           }}
         >
           <Typography variant="h5">{texts.welcome}</Typography>
-          <Button variant="outlined" startIcon={<GoogleIcon />} sx={{ width: '100%', py: 1 }} onClick={onAction}>
+          <Button
+            variant="outlined"
+            startIcon={<GoogleIcon />}
+            sx={{ width: '100%', py: 1 }}
+            onClick={onAction}
+          >
             {texts.cta}
           </Button>
         </Box>

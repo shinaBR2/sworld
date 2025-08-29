@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Notification } from './index';
 
 describe('Notification', () => {
@@ -30,15 +30,23 @@ describe('Notification', () => {
   });
 
   it('renders notifications with different severities', () => {
-    const severities: Array<'success' | 'error' | 'warning' | 'info'> = ['success', 'error', 'warning', 'info'];
+    const severities: Array<'success' | 'error' | 'warning' | 'info'> = [
+      'success',
+      'error',
+      'warning',
+      'info',
+    ];
 
-    severities.forEach(severity => {
+    severities.forEach((severity) => {
       const { rerender } = render(
-        <Notification notification={{ ...mockNotification, severity }} onClose={defaultProps.onClose} />
+        <Notification
+          notification={{ ...mockNotification, severity }}
+          onClose={defaultProps.onClose}
+        />,
       );
 
       expect(screen.getByRole('alert')).toHaveClass(
-        `MuiAlert-color${severity.charAt(0).toUpperCase() + severity.slice(1)}`
+        `MuiAlert-color${severity.charAt(0).toUpperCase() + severity.slice(1)}`,
       );
       rerender(<></>);
     });

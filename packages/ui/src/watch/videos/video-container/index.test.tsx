@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { VideoContainer } from './index';
+import { describe, expect, it, vi } from 'vitest';
+import type { PlayableVideo } from '../types';
 import { VideoPlayer } from '../video-player';
-import { PlayableVideo } from '../types';
+import { VideoContainer } from './index';
 
 vi.mock('../video-player', () => ({
   VideoPlayer: vi.fn().mockReturnValue(<div data-testid="video-player" />),
@@ -28,7 +28,13 @@ describe('VideoContainer', () => {
   it('should render VideoPlayer with all props', () => {
     const mockOnError = vi.fn();
     const mockOnEnded = vi.fn();
-    render(<VideoContainer video={mockVideo} onError={mockOnError} onEnded={mockOnEnded} />);
+    render(
+      <VideoContainer
+        video={mockVideo}
+        onError={mockOnError}
+        onEnded={mockOnEnded}
+      />,
+    );
 
     expect(VideoPlayer).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -36,7 +42,7 @@ describe('VideoContainer', () => {
         onError: mockOnError,
         onEnded: mockOnEnded,
       }),
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -49,7 +55,7 @@ describe('VideoContainer', () => {
         onError: undefined,
         onEnded: undefined,
       }),
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 });

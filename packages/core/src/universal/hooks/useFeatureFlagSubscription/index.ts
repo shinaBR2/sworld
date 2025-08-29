@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { graphql } from '../../../graphql';
-import { FeatureFlagsSubscription } from '../../../graphql/graphql';
+import type { FeatureFlagsSubscription } from '../../../graphql/graphql';
 import { useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 import { checkFeatureFlag } from './helpers';
@@ -29,11 +29,14 @@ export function useFeatureFlagSubscription(url: string) {
       return null;
     }
 
-    return subscription.data.feature_flag.reduce<FeatureFlagsData>((acc, flag) => {
-      acc[flag.name] = checkFeatureFlag(flag.conditions, user?.id || '');
+    return subscription.data.feature_flag.reduce<FeatureFlagsData>(
+      (acc, flag) => {
+        acc[flag.name] = checkFeatureFlag(flag.conditions, user?.id || '');
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {},
+    );
   }, [subscription.data, user?.id]);
 
   return {

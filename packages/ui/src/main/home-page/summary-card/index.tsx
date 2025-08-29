@@ -1,9 +1,14 @@
 import { CardContent, Typography } from '@mui/material';
-import { StyledCard, StyledAmount, StyledCategoryName, StyledCategoryWrapper } from './styled';
-import { getCategoryIcon, getCategoryTitle } from './utils';
+import type { CategoryType } from 'core/finance';
 import { formatNumber } from 'core/universal/common';
-import { CategoryType } from 'core/finance';
 import { SummaryCardSkeleton } from './skeleton';
+import {
+  StyledAmount,
+  StyledCard,
+  StyledCategoryName,
+  StyledCategoryWrapper,
+} from './styled';
+import { getCategoryIcon, getCategoryTitle } from './utils';
 
 export interface SummaryCardProps {
   isLoading: boolean;
@@ -15,18 +20,31 @@ export interface SummaryCardProps {
 }
 
 const SummaryCard = (props: SummaryCardProps) => {
-  const { isLoading, category, amount, count = 0, onClick, selected = false } = props;
+  const {
+    isLoading,
+    category,
+    amount,
+    count = 0,
+    onClick,
+    selected = false,
+  } = props;
 
   if (isLoading) {
     return <SummaryCardSkeleton />;
   }
 
   return (
-    <StyledCard category={category as CategoryType} selected={selected} onClick={onClick}>
+    <StyledCard
+      category={category as CategoryType}
+      selected={selected}
+      onClick={onClick}
+    >
       <CardContent>
         <StyledCategoryWrapper>
           <StyledCategoryName variant="h6" component="div">
-            <span style={{ marginRight: '8px' }}>{getCategoryIcon(category as CategoryType)}</span>
+            <span style={{ marginRight: '8px' }}>
+              {getCategoryIcon(category as CategoryType)}
+            </span>
             {getCategoryTitle(category as CategoryType)}
           </StyledCategoryName>
         </StyledCategoryWrapper>
@@ -36,7 +54,9 @@ const SummaryCard = (props: SummaryCardProps) => {
         </StyledAmount>
 
         <Typography variant="body2" color="text.secondary">
-          {count > 0 ? `${count} transaction${count !== 1 ? 's' : ''}` : '\u00A0'}
+          {count > 0
+            ? `${count} transaction${count !== 1 ? 's' : ''}`
+            : '\u00A0'}
         </Typography>
       </CardContent>
     </StyledCard>

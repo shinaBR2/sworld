@@ -1,8 +1,8 @@
+import { createTheme, ThemeProvider } from '@mui/material';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { SpendingBreakdown } from './index';
-import { ThemeProvider, createTheme } from '@mui/material';
 
 // Mock the DonutChart component
 vi.mock('./donut-chart', () => ({
@@ -12,7 +12,10 @@ vi.mock('./donut-chart', () => ({
       <div data-testid="donut-data">{JSON.stringify(data)}</div>
       <div data-testid="donut-selected">{selectedCategory || 'none'}</div>
       {onCategoryClick && (
-        <button data-testid="category-click-button" onClick={() => onCategoryClick('must')}>
+        <button
+          data-testid="category-click-button"
+          onClick={() => onCategoryClick('must')}
+        >
           Click Category
         </button>
       )}
@@ -32,7 +35,9 @@ describe('SpendingBreakdown', () => {
 
   const mockHandleCategoryClick = vi.fn();
 
-  const renderComponent = (props: Partial<Parameters<typeof SpendingBreakdown>[0]> = {}) => {
+  const renderComponent = (
+    props: Partial<Parameters<typeof SpendingBreakdown>[0]> = {},
+  ) => {
     return render(
       <ThemeProvider theme={theme}>
         <SpendingBreakdown
@@ -41,7 +46,7 @@ describe('SpendingBreakdown', () => {
           handleCategoryClick={mockHandleCategoryClick}
           {...props}
         />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   };
 
@@ -76,7 +81,9 @@ describe('SpendingBreakdown', () => {
     const donutData = screen.getByTestId('donut-data');
     const parsedData = JSON.parse(donutData.textContent || '[]');
     expect(parsedData.length).toBe(3); // 4 items - 1 (total) = 3
-    expect(parsedData.find((item: any) => item.category === 'total')).toBeUndefined();
+    expect(
+      parsedData.find((item: any) => item.category === 'total'),
+    ).toBeUndefined();
   });
 
   it('passes selectedCategory to DonutChart', () => {

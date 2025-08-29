@@ -1,26 +1,46 @@
-import React, { useState, lazy, Suspense } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { useLoadJournalById, useLoadJournalsByMonth } from 'core/journal/query-hooks';
-import { useCreateJournal, useUpdateJournal, useDeleteJournal } from 'core/journal/mutation-hooks';
-import { getCurrentMonthYear } from 'core/universal/common';
-import { JournalList } from 'ui/journal/journal-list';
-import { Container } from 'ui/universal/containers/generic';
+import type { Journal } from 'core/journal';
+import {
+  useCreateJournal,
+  useDeleteJournal,
+  useUpdateJournal,
+} from 'core/journal/mutation-hooks';
+import {
+  useLoadJournalById,
+  useLoadJournalsByMonth,
+} from 'core/journal/query-hooks';
 import { useAuthContext } from 'core/providers/auth';
-import { Journal } from 'core/journal';
-import { Layout } from '../components/layout';
+import { getCurrentMonthYear } from 'core/universal/common';
+import React, { lazy, Suspense, useState } from 'react';
 import { FabButton } from 'ui/journal/fab-button';
+import { JournalList } from 'ui/journal/journal-list';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { Container } from 'ui/universal/containers/generic';
+import { Layout } from '../components/layout';
 
-const JournalDetail = lazy(() => import('ui/journal/journal-detail').then(m => ({ default: m.JournalDetail })));
-const EditDialog = lazy(() => import('ui/journal/edit-dialog').then(m => ({ default: m.EditDialog })));
-const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
+const JournalDetail = lazy(() =>
+  import('ui/journal/journal-detail').then((m) => ({
+    default: m.JournalDetail,
+  })),
+);
+const EditDialog = lazy(() =>
+  import('ui/journal/edit-dialog').then((m) => ({ default: m.EditDialog })),
+);
+const Notification = lazy(() =>
+  import('ui/universal/notification').then((m) => ({
+    default: m.Notification,
+  })),
+);
 
 const JournalPage = () => {
   const { getAccessToken } = useAuthContext();
   const [view, setView] = useState<'list' | 'detail' | 'edit'>('list');
   const [selectedJournal, setSelectedJournal] = useState<Journal | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' } | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error';
+  } | null>(null);
 
   // Date navigation state
   const defaultDate = getCurrentMonthYear();
@@ -28,23 +48,28 @@ const JournalPage = () => {
   const [year, setYear] = useState(defaultDate.year);
 
   // Data loading hooks
-  const { data: journalData, isLoading: isLoadingJournals } = useLoadJournalsByMonth({
-    getAccessToken,
-    month,
-    year,
-  });
+  const { data: journalData, isLoading: isLoadingJournals } =
+    useLoadJournalsByMonth({
+      getAccessToken,
+      month,
+      year,
+    });
 
-  const { data: journalDetail, isLoading: isLoadingDetail } = useLoadJournalById({
-    getAccessToken,
-    id: selectedJournal?.id,
-  });
+  const { data: journalDetail, isLoading: isLoadingDetail } =
+    useLoadJournalById({
+      getAccessToken,
+      id: selectedJournal?.id,
+    });
 
   // Mutation hooks
   const createJournal = useCreateJournal({
     onSuccess: () => {
       setDialogOpen(false);
       setView('list');
-      setNotification({ message: 'Journal entry created successfully', severity: 'success' });
+      setNotification({
+        message: 'Journal entry created successfully',
+        severity: 'success',
+      });
     },
   });
 
@@ -52,7 +77,10 @@ const JournalPage = () => {
     onSuccess: () => {
       setDialogOpen(false);
       setView('detail');
-      setNotification({ message: 'Journal entry updated successfully', severity: 'success' });
+      setNotification({
+        message: 'Journal entry updated successfully',
+        severity: 'success',
+      });
     },
   });
 
@@ -61,7 +89,10 @@ const JournalPage = () => {
       setDialogOpen(false);
       setView('list');
       setSelectedJournal(null);
-      setNotification({ message: 'Journal entry deleted successfully', severity: 'success' });
+      setNotification({
+        message: 'Journal entry deleted successfully',
+        severity: 'success',
+      });
     },
   });
 
@@ -87,7 +118,9 @@ const JournalPage = () => {
 
   const handleDelete = async () => {
     if (selectedJournal?.id) {
-      if (window.confirm('Are you sure you want to delete this journal entry?')) {
+      if (
+        window.confirm('Are you sure you want to delete this journal entry?')
+      ) {
         await deleteJournal({ id: selectedJournal.id });
       }
     }
@@ -135,7 +168,12 @@ const JournalPage = () => {
         return (
           <JournalList
             journals={journalData?.journals || []}
-            stats={journalData?.stats || { categories: [], oldest: { month: 0, year: 0 } }}
+            stats={
+              journalData?.stats || {
+                categories: [],
+                oldest: { month: 0, year: 0 },
+              }
+            }
             isLoading={isLoadingJournals}
             month={month}
             year={year}
@@ -171,7 +209,12 @@ const JournalPage = () => {
 
         {/* Notifications */}
         <Suspense fallback={null}>
-          {notification && <Notification notification={notification} onClose={handleCloseNotification} />}
+          {notification && (
+            <Notification
+              notification={notification}
+              onClose={handleCloseNotification}
+            />
+          )}
         </Suspense>
       </Container>
     </Layout>

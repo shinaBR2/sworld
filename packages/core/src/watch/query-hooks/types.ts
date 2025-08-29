@@ -1,4 +1,7 @@
-import { transformPlaylistFragment, transformVideoFragment } from './transformers';
+import type {
+  transformPlaylistFragment,
+  transformVideoFragment,
+} from './transformers';
 
 const MEDIA_TYPES = {
   VIDEO: 'video',

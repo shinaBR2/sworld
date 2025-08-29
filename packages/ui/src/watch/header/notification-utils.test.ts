@@ -19,7 +19,9 @@ describe('getNotificationMessage', () => {
   });
 
   it('should use fallback title when video data is missing', () => {
-    const result = getNotificationMessage({ type: NOTIFICATION_TYPES.VIDEO_READY } as any);
+    const result = getNotificationMessage({
+      type: NOTIFICATION_TYPES.VIDEO_READY,
+    } as any);
     expect(result).toBe('"Unknown Video Title" is ready to watch');
   });
 

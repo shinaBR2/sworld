@@ -18,4 +18,4 @@ interface DialogState {
   keepDialogOpen?: boolean;
 }
 
-export { type DialogState, type ValidationResult };
+export type { DialogState, ValidationResult };

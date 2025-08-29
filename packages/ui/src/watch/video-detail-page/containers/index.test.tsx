@@ -1,11 +1,17 @@
 // src/components/video-detail-page/containers/index.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { act, waitFor } from '@testing-library/react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { VideoDetailContainer } from './index';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import type { VideoDetailContainerProps } from './types';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { VideoDetailContainer } from './index';
+import type { VideoDetailContainerProps } from './types';
 
 type MockVideo = {
   id: string;
@@ -20,7 +26,13 @@ type MockVideo = {
   user: { username: string };
   lastWatchedAt: string | null;
   progressSeconds: number;
-  subtitles: Array<{ id: string; lang: string; src: string; isDefault: boolean; label: string }>;
+  subtitles: Array<{
+    id: string;
+    lang: string;
+    src: string;
+    isDefault: boolean;
+    label: string;
+  }>;
 };
 
 // Mock dependencies
@@ -30,7 +42,13 @@ vi.mock('./skeleton', () => ({
 }));
 
 vi.mock('@mui/material/FormControlLabel', () => ({
-  default: ({ control, label }: { control: React.ReactNode; label: React.ReactNode }) => (
+  default: ({
+    control,
+    label,
+  }: {
+    control: React.ReactNode;
+    label: React.ReactNode;
+  }) => (
     <div data-testid="form-control-label">
       {control}
       <span>{label}</span>
@@ -50,7 +68,7 @@ vi.mock('@mui/material/Checkbox', () => ({
       type="checkbox"
       data-testid="auto-play-checkbox"
       checked={checked}
-      onChange={e => onChange({ target: { checked: e.target.checked } })}
+      onChange={(e) => onChange({ target: { checked: e.target.checked } })}
     />
   ),
 }));
@@ -64,8 +82,11 @@ const mockVideoContainer = vi.fn().mockImplementation(({ video, onEnded }) => (
 
 // Mock the VideoContainer module
 vi.mock('../../videos/video-container', () => ({
-  VideoContainer: (props: { video: MockVideo; onEnded?: () => void; onError?: (error: unknown) => void }) =>
-    mockVideoContainer(props),
+  VideoContainer: (props: {
+    video: MockVideo;
+    onEnded?: () => void;
+    onError?: (error: unknown) => void;
+  }) => mockVideoContainer(props),
 }));
 
 vi.mock('../../dialogs/share', () => ({
@@ -78,7 +99,10 @@ vi.mock('../../dialogs/share', () => ({
     onClose: () => void;
     onShare: (emails: string[]) => void;
   }) => (
-    <div data-testid="share-dialog" style={{ display: open ? 'block' : 'none' }}>
+    <div
+      data-testid="share-dialog"
+      style={{ display: open ? 'block' : 'none' }}
+    >
       <button onClick={() => onShare(['test@example.com'])}>Share</button>
       <button onClick={onClose}>Close</button>
     </div>
@@ -105,7 +129,7 @@ vi.mock('../related-list', () => ({
           type="checkbox"
           data-testid="related-list-autoplay"
           checked={autoPlay}
-          onChange={e => onAutoPlayChange(e.target.checked)}
+          onChange={(e) => onAutoPlayChange(e.target.checked)}
         />
       )}
     </div>
@@ -131,11 +155,20 @@ vi.mock('core/watch/mutation-hooks/save-subtitle', () => ({
 
 // Mock the SubtitleDialog component
 vi.mock('../../dialogs/subtitle', () => ({
-  SubtitleDialog: ({ open, onSave }: { open: boolean; onSave: (url: string) => void }) => {
+  SubtitleDialog: ({
+    open,
+    onSave,
+  }: {
+    open: boolean;
+    onSave: (url: string) => void;
+  }) => {
     if (!open) return null;
     return (
       <div data-testid="subtitle-dialog">
-        <button onClick={() => onSave('https://example.com/updated-subtitle.vtt')} data-testid="save-subtitle-button">
+        <button
+          onClick={() => onSave('https://example.com/updated-subtitle.vtt')}
+          data-testid="save-subtitle-button"
+        >
           Save Subtitle
         </button>
       </div>
@@ -143,7 +176,13 @@ vi.mock('../../dialogs/subtitle', () => ({
   },
 }));
 
-const mockLinkComponent = ({ to, children }: { to: string; children: React.ReactNode }) => <a href={to}>{children}</a>;
+const mockLinkComponent = ({
+  to,
+  children,
+}: {
+  to: string;
+  children: React.ReactNode;
+}) => <a href={to}>{children}</a>;
 
 const theme = createTheme();
 
@@ -177,9 +216,15 @@ const renderWithTheme = (ui: React.ReactElement) => {
 };
 
 describe('VideoDetailContainer', () => {
-  const mockVideos = [createMockVideo('1', 0), createMockVideo('2', 1), createMockVideo('3', 2)];
+  const mockVideos = [
+    createMockVideo('1', 0),
+    createMockVideo('2', 1),
+    createMockVideo('3', 2),
+  ];
 
-  const createProps = (overrides: Partial<VideoDetailContainerProps> = {}): VideoDetailContainerProps => ({
+  const createProps = (
+    overrides: Partial<VideoDetailContainerProps> = {},
+  ): VideoDetailContainerProps => ({
     activeVideoId: 'video1',
     queryRs: {
       isLoading: false,
@@ -226,7 +271,9 @@ describe('VideoDetailContainer', () => {
 
     // Main content checks
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Video 1');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Video 1',
+    );
     expect(screen.getByTestId('video-container')).toHaveTextContent('Video 1');
 
     // Share button should not be present by default
@@ -234,7 +281,9 @@ describe('VideoDetailContainer', () => {
 
     // Related content checks
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
-    expect(screen.getByTestId('related-list-title')).toHaveTextContent('Other videos');
+    expect(screen.getByTestId('related-list-title')).toHaveTextContent(
+      'Other videos',
+    );
     expect(screen.getByTestId('related-list-count')).toHaveTextContent('3');
   });
 
@@ -262,7 +311,9 @@ describe('VideoDetailContainer', () => {
       renderWithTheme(<VideoDetailContainer {...playlistProps} />);
     });
 
-    expect(screen.getByTestId('related-list-title')).toHaveTextContent('Same playlist');
+    expect(screen.getByTestId('related-list-title')).toHaveTextContent(
+      'Same playlist',
+    );
   });
 
   it('should return null in MainContent when video is not found', async () => {
@@ -306,7 +357,7 @@ describe('VideoDetailContainer', () => {
     renderWithTheme(<VideoDetailContainer {...createProps()} />);
 
     // Wait for the error to be handled asynchronously
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise((resolve) => setTimeout(resolve, 150));
 
     // The error is handled by the VideoPlayer component, but we're just verifying
     // that the error handling doesn't crash the component
@@ -325,7 +376,9 @@ describe('VideoDetailContainer', () => {
     fireEvent.click(screen.getByTestId('video-container'));
 
     // Should trigger onVideoEnded with next video
-    expect(onVideoEnded).toHaveBeenCalledWith(expect.objectContaining({ id: 'video2' }));
+    expect(onVideoEnded).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'video2' }),
+    );
   });
 
   it('should handle auto-play toggle', async () => {

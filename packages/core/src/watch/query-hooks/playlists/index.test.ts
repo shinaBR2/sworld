@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadPlaylists } from './index';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { useLoadPlaylists } from './index';
 
 // Mock dependencies
 vi.mock('../../../universal/hooks/use-request', () => ({
@@ -28,7 +28,7 @@ describe('useLoadPlaylists', () => {
     renderHook(() =>
       useLoadPlaylists({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(useRequest).toHaveBeenCalledWith({
@@ -47,7 +47,7 @@ describe('useLoadPlaylists', () => {
     const { result } = renderHook(() =>
       useLoadPlaylists({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -66,7 +66,7 @@ describe('useLoadPlaylists', () => {
     const { result } = renderHook(() =>
       useLoadPlaylists({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -85,7 +85,7 @@ describe('useLoadPlaylists', () => {
     const { result } = renderHook(() =>
       useLoadPlaylists({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -106,7 +106,7 @@ describe('useLoadPlaylists', () => {
     const { result } = renderHook(() =>
       useLoadPlaylists({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({

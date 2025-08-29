@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { ReadingContent } from './index';
 
 describe('ReadingContent', () => {
@@ -19,7 +19,12 @@ describe('ReadingContent', () => {
   it('renders error state with reload button', () => {
     const onErrorClick = vi.fn();
     render(
-      <ReadingContent {...defaultProps} isLoading={false} error={'Failed to load PDF'} onErrorClick={onErrorClick} />
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={'Failed to load PDF'}
+        onErrorClick={onErrorClick}
+      />,
     );
     expect(screen.getByText('Failed to load PDF')).toBeInTheDocument();
     const reloadButton = screen.getByRole('button', { name: /reload/i });
@@ -29,7 +34,14 @@ describe('ReadingContent', () => {
   });
 
   it('renders PDF iframe when loaded and no error', () => {
-    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl="https://example.com/test.pdf" />);
+    render(
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={null}
+        pdfUrl="https://example.com/test.pdf"
+      />,
+    );
     // Should render an iframe with the correct src
     const iframe = document.querySelector('iframe');
     expect(iframe).toBeInTheDocument();
@@ -37,26 +49,62 @@ describe('ReadingContent', () => {
   });
 
   it('shows info alert if no pdfUrl (empty string)', () => {
-    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={''} />);
+    render(
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={null}
+        pdfUrl={''}
+      />,
+    );
     expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
-    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This book is not available to read online.'),
+    ).toBeInTheDocument();
   });
 
   it('shows info alert if no pdfUrl (whitespace)', () => {
-    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={'   '} />);
+    render(
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={null}
+        pdfUrl={'   '}
+      />,
+    );
     expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
-    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This book is not available to read online.'),
+    ).toBeInTheDocument();
   });
 
   it('shows info alert if no pdfUrl (null)', () => {
-    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={null} />);
+    render(
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={null}
+        pdfUrl={null}
+      />,
+    );
     expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
-    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This book is not available to read online.'),
+    ).toBeInTheDocument();
   });
 
   it('shows info alert if no pdfUrl (undefined)', () => {
-    render(<ReadingContent {...defaultProps} isLoading={false} error={null} pdfUrl={undefined} />);
+    render(
+      <ReadingContent
+        {...defaultProps}
+        isLoading={false}
+        error={null}
+        pdfUrl={undefined}
+      />,
+    );
     expect(screen.queryByRole('iframe')).not.toBeInTheDocument();
-    expect(screen.getByText('This book is not available to read online.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This book is not available to read online.'),
+    ).toBeInTheDocument();
   });
 });

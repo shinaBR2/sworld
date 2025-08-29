@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { SubmitButton } from './submit-button';
 import { texts } from './texts';
 
@@ -28,7 +28,9 @@ describe('SubmitButton', () => {
     render(<SubmitButton {...defaultProps} isSubmitting={true} />);
 
     expect(elements.progressBar()).toBeInTheDocument();
-    expect(elements.button()).toHaveTextContent(texts.form.submitButton.submitting);
+    expect(elements.button()).toHaveTextContent(
+      texts.form.submitButton.submitting,
+    );
     expect(elements.button()).toBeDisabled();
     expect(elements.button()).toHaveAttribute('aria-busy', 'true');
   });
@@ -57,7 +59,9 @@ describe('SubmitButton', () => {
 
     // Transition to submitting
     rerender(<SubmitButton {...defaultProps} isSubmitting={true} />);
-    expect(elements.button()).toHaveTextContent(texts.form.submitButton.submitting);
+    expect(elements.button()).toHaveTextContent(
+      texts.form.submitButton.submitting,
+    );
     expect(elements.progressBar()).toBeInTheDocument();
 
     // Transition back to default

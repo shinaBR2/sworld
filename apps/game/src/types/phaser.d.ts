@@ -14,7 +14,13 @@ declare namespace Phaser.Physics.Matter {
     }
 
     interface Bodies {
-      rectangle: (x: number, y: number, width: number, height: number, options?: any) => Body;
+      rectangle: (
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        options?: any,
+      ) => Body;
       circle: (x: number, y: number, radius: number, options?: any) => Body;
       // add other methods you need
     }

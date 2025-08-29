@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionsDialog } from './index';
-import { ThemeProvider, createTheme } from '@mui/material';
 
 // Mock the useMediaQuery hook
 let isMobileView = false;
@@ -55,7 +55,7 @@ describe('TransactionsDialog', () => {
     return render(
       <ThemeProvider theme={createTheme()}>
         <TransactionsDialog {...defaultProps} {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   };
 
@@ -98,7 +98,9 @@ describe('TransactionsDialog', () => {
       transactions: [mockTransactions[1], mockTransactions[2]], // Only nice and waste transactions
     });
 
-    expect(screen.getByText('No expenses found for this category')).toBeInTheDocument();
+    expect(
+      screen.getByText('No expenses found for this category'),
+    ).toBeInTheDocument();
   });
 
   it('calls onClose when close button is clicked', () => {
@@ -124,9 +126,11 @@ describe('TransactionsDialog', () => {
 
     // This will depend on the locale of the test environment
     // For US locale, it would be something like:
-    const dateStrings = mockTransactions.map(t => new Date(t.createdAt).toLocaleDateString());
+    const dateStrings = mockTransactions.map((t) =>
+      new Date(t.createdAt).toLocaleDateString(),
+    );
 
-    dateStrings.forEach(dateString => {
+    dateStrings.forEach((dateString) => {
       expect(screen.getByText(dateString)).toBeInTheDocument();
     });
   });

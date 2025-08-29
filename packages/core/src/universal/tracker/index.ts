@@ -1,5 +1,5 @@
-import { AppError } from '../error-boundary/app-error';
 import { useRollbar } from '@rollbar/react';
+import type { AppError } from '../error-boundary/app-error';
 
 interface ErrorTag {
   key: string;

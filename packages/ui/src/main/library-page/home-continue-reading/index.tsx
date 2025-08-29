@@ -1,5 +1,12 @@
-import { Box, Card, CardContent, Typography, LinearProgress, Skeleton } from '@mui/material';
 import { MenuBook as BookIcon } from '@mui/icons-material';
+import {
+  Box,
+  Card,
+  CardContent,
+  LinearProgress,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 
 // TODO infer from GraphQL
 interface Book {
@@ -136,7 +143,13 @@ const ContinueReadingSkeleton = () => {
             </Box>
 
             {/* Last Read Skeleton - Desktop only */}
-            <Box sx={{ display: { xs: 'none', sm: 'block' }, textAlign: 'right', flexShrink: 0 }}>
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                textAlign: 'right',
+                flexShrink: 0,
+              }}
+            >
               <Skeleton
                 variant="text"
                 width={60}
@@ -173,7 +186,14 @@ const ContinueReadingEmpty = () => {
         }}
       >
         <CardContent sx={{ p: 3, textAlign: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 80 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: 80,
+            }}
+          >
             <Box>
               <Box
                 sx={{
@@ -191,7 +211,12 @@ const ContinueReadingEmpty = () => {
                 <BookIcon sx={{ fontSize: 24, color: 'grey.500' }} />
               </Box>
 
-              <Typography variant="h4" fontSize="1.125rem" fontWeight="medium" sx={{ mb: 0.5 }}>
+              <Typography
+                variant="h4"
+                fontSize="1.125rem"
+                fontWeight="medium"
+                sx={{ mb: 0.5 }}
+              >
                 No books in progress
               </Typography>
               <Typography color="text.secondary" fontSize="0.875rem">
@@ -205,7 +230,11 @@ const ContinueReadingEmpty = () => {
   );
 };
 
-const ContinueReading: React.FC<ContinueReadingProps> = ({ isLoading, book, onBookClick }) => {
+const ContinueReading: React.FC<ContinueReadingProps> = ({
+  isLoading,
+  book,
+  onBookClick,
+}) => {
   if (isLoading) {
     return <ContinueReadingSkeleton />;
   }
@@ -289,7 +318,11 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({ isLoading, book, onBo
 
                 {/* Mobile: Last read info - shown here for better mobile layout */}
                 <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 1 }}>
-                  <Typography variant="body2" color="text.secondary" fontSize="0.8125rem">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontSize="0.8125rem"
+                  >
                     Last read {book.lastReadAt}
                   </Typography>
                 </Box>
@@ -330,11 +363,26 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({ isLoading, book, onBo
             </Box>
 
             {/* Last Read - Desktop only */}
-            <Box sx={{ display: { xs: 'none', sm: 'block' }, textAlign: 'right', flexShrink: 0 }}>
-              <Typography variant="body2" color="text.secondary" fontSize="0.875rem" sx={{ mb: 0.5 }}>
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                textAlign: 'right',
+                flexShrink: 0,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontSize="0.875rem"
+                sx={{ mb: 0.5 }}
+              >
                 Last read
               </Typography>
-              <Typography variant="body2" fontWeight="medium" fontSize="0.875rem">
+              <Typography
+                variant="body2"
+                fontWeight="medium"
+                fontSize="0.875rem"
+              >
                 {book.lastReadAt}
               </Typography>
             </Box>

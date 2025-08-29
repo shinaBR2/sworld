@@ -1,7 +1,8 @@
 // https://shiki.style/guide/best-performance
-import { codeToHtml } from 'shiki';
+
 import parse from 'html-react-parser';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { codeToHtml } from 'shiki';
 
 interface CodeBlockProps {
   code: string;

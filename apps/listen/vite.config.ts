@@ -1,7 +1,7 @@
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 /**
  * For debug production build
@@ -34,7 +34,7 @@ export default defineConfig({
         warn(warning);
       },
       output: {
-        manualChunks: id => {
+        manualChunks: (id) => {
           if (id.includes('node_modules')) {
             /**
              * App broken if bundle mui separately
@@ -65,7 +65,11 @@ export default defineConfig({
     // }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-icon-180x180.png', 'masked-icon.svg'],
+      includeAssets: [
+        'favicon.ico',
+        'apple-icon-180x180.png',
+        'masked-icon.svg',
+      ],
       manifest: {
         name: 'Listen',
         short_name: 'Listen',

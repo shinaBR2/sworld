@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { IRefPhaserGame, PhaserGame } from './PhaserGame';
+import { type IRefPhaserGame, PhaserGame } from './PhaserGame';
 
 interface GameContainerProps {
   config: Phaser.Types.Core.GameConfig;
@@ -15,7 +15,11 @@ const GameContainer = (props: GameContainerProps) => {
 
   return (
     <div id="game-container">
-      <PhaserGame config={config} ref={phaserRef} currentActiveScene={currentScene} />
+      <PhaserGame
+        config={config}
+        ref={phaserRef}
+        currentActiveScene={currentScene}
+      />
     </div>
   );
 };

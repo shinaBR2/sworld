@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ShareDialog } from './dialog';
 
 describe('ShareDialog', () => {
@@ -11,7 +11,9 @@ describe('ShareDialog', () => {
   });
 
   it('should render when open is true', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     expect(screen.getByText('Share Video')).toBeInTheDocument();
     expect(screen.getByLabelText('Email addresses')).toBeInTheDocument();
@@ -20,7 +22,9 @@ describe('ShareDialog', () => {
   });
 
   it('should not call onShare when no emails are entered', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     fireEvent.click(screen.getByText('Share'));
 
@@ -29,7 +33,9 @@ describe('ShareDialog', () => {
   });
 
   it('should handle single email input', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     const input = screen.getByLabelText('Email addresses');
     fireEvent.change(input, { target: { value: 'test@example.com' } });
@@ -40,20 +46,30 @@ describe('ShareDialog', () => {
   });
 
   it('should handle multiple email inputs', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     const input = screen.getByLabelText('Email addresses');
     fireEvent.change(input, {
-      target: { value: 'test1@example.com, test2@example.com, test3@example.com' },
+      target: {
+        value: 'test1@example.com, test2@example.com, test3@example.com',
+      },
     });
     fireEvent.click(screen.getByText('Share'));
 
-    expect(mockOnShare).toHaveBeenCalledWith(['test1@example.com', 'test2@example.com', 'test3@example.com']);
+    expect(mockOnShare).toHaveBeenCalledWith([
+      'test1@example.com',
+      'test2@example.com',
+      'test3@example.com',
+    ]);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('should handle emails with extra spaces', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     const input = screen.getByLabelText('Email addresses');
     fireEvent.change(input, {
@@ -61,12 +77,17 @@ describe('ShareDialog', () => {
     });
     fireEvent.click(screen.getByText('Share'));
 
-    expect(mockOnShare).toHaveBeenCalledWith(['test1@example.com', 'test2@example.com']);
+    expect(mockOnShare).toHaveBeenCalledWith([
+      'test1@example.com',
+      'test2@example.com',
+    ]);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('should close dialog when Cancel is clicked', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     fireEvent.click(screen.getByText('Cancel'));
 
@@ -75,15 +96,23 @@ describe('ShareDialog', () => {
   });
 
   it('should filter out empty emails', () => {
-    render(<ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />);
+    render(
+      <ShareDialog open={true} onClose={mockOnClose} onShare={mockOnShare} />,
+    );
 
     const input = screen.getByLabelText('Email addresses');
     fireEvent.change(input, {
-      target: { value: 'test1@example.com,, test2@example.com,  , test3@example.com,' },
+      target: {
+        value: 'test1@example.com,, test2@example.com,  , test3@example.com,',
+      },
     });
     fireEvent.click(screen.getByText('Share'));
 
-    expect(mockOnShare).toHaveBeenCalledWith(['test1@example.com', 'test2@example.com', 'test3@example.com']);
+    expect(mockOnShare).toHaveBeenCalledWith([
+      'test1@example.com',
+      'test2@example.com',
+      'test3@example.com',
+    ]);
     expect(mockOnClose).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, beforeEach } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { StatsGrid } from './index';
 
 const mockStats = {
@@ -20,14 +21,30 @@ describe('StatsGrid', () => {
     render(<StatsGrid isLoading={true} stats={null} />);
     expect(screen.getByLabelText('Stats section loading')).toBeInTheDocument();
     // Skeletons for each stat
-    expect(screen.getByTestId('stats-value-skeleton-completedBooks')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-value-skeleton-currentlyReading')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-value-skeleton-readingTimeThisMonth')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-value-skeleton-wishlist')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-label-skeleton-completedBooks')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-label-skeleton-currentlyReading')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-label-skeleton-readingTimeThisMonth')).toBeInTheDocument();
-    expect(screen.getByTestId('stats-label-skeleton-wishlist')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-value-skeleton-completedBooks'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-value-skeleton-currentlyReading'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-value-skeleton-readingTimeThisMonth'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-value-skeleton-wishlist'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-label-skeleton-completedBooks'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-label-skeleton-currentlyReading'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-label-skeleton-readingTimeThisMonth'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('stats-label-skeleton-wishlist'),
+    ).toBeInTheDocument();
   });
 
   it('should render all stat cards with correct values and labels', () => {
@@ -59,8 +76,13 @@ describe('StatsGrid', () => {
     render(
       <StatsGrid
         isLoading={false}
-        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 120, wishlist: 0 }}
-      />
+        stats={{
+          completedBooks: 0,
+          currentlyReading: 0,
+          readingTimeThisMonth: 120,
+          wishlist: 0,
+        }}
+      />,
     );
     expect(screen.getByText('2h')).toBeInTheDocument();
   });
@@ -69,8 +91,13 @@ describe('StatsGrid', () => {
     render(
       <StatsGrid
         isLoading={false}
-        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 61, wishlist: 0 }}
-      />
+        stats={{
+          completedBooks: 0,
+          currentlyReading: 0,
+          readingTimeThisMonth: 61,
+          wishlist: 0,
+        }}
+      />,
     );
     expect(screen.getByText('1h')).toBeInTheDocument();
   });
@@ -79,8 +106,13 @@ describe('StatsGrid', () => {
     render(
       <StatsGrid
         isLoading={false}
-        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 89, wishlist: 0 }}
-      />
+        stats={{
+          completedBooks: 0,
+          currentlyReading: 0,
+          readingTimeThisMonth: 89,
+          wishlist: 0,
+        }}
+      />,
     );
     expect(screen.getByText('1h')).toBeInTheDocument();
   });
@@ -89,8 +121,13 @@ describe('StatsGrid', () => {
     render(
       <StatsGrid
         isLoading={false}
-        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: 0, wishlist: 0 }}
-      />
+        stats={{
+          completedBooks: 0,
+          currentlyReading: 0,
+          readingTimeThisMonth: 0,
+          wishlist: 0,
+        }}
+      />,
     );
     // There may be multiple '0h', ensure at least one is present
     const zeroHours = screen.getAllByText('0h');
@@ -101,8 +138,13 @@ describe('StatsGrid', () => {
     render(
       <StatsGrid
         isLoading={false}
-        stats={{ completedBooks: 0, currentlyReading: 0, readingTimeThisMonth: -10, wishlist: 0 }}
-      />
+        stats={{
+          completedBooks: 0,
+          currentlyReading: 0,
+          readingTimeThisMonth: -10,
+          wishlist: 0,
+        }}
+      />,
     );
     const zeroHoursNeg = screen.getAllByText('0h');
     expect(zeroHoursNeg.length).toBeGreaterThanOrEqual(1);

@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 // Mock the VideoListItemSkeleton component
 vi.mock('../../videos/list-item/skeleton', () => ({
@@ -49,7 +49,9 @@ describe('RelatedContentSkeleton', () => {
     renderWithTheme(<RelatedContentSkeleton />);
 
     // Verify 6 video list item skeletons are rendered
-    const videoItemSkeletons = screen.getAllByTestId('video-list-item-skeleton');
+    const videoItemSkeletons = screen.getAllByTestId(
+      'video-list-item-skeleton',
+    );
     expect(videoItemSkeletons).toHaveLength(6);
   });
 });

@@ -1,8 +1,8 @@
-import { StyledComponent } from '@emotion/styled';
-import Box, { BoxProps } from '@mui/material/Box';
+import type { StyledComponent } from '@emotion/styled';
+import Box, { type BoxProps } from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
 // Constants
 export const THUMBNAIL_HEIGHT = 64;
@@ -16,25 +16,28 @@ export const thumbnailImgStyle: CSSProperties = {
 };
 
 // Styled components
-const ListItemContainer: StyledComponent<BoxProps & { isActive?: boolean }> = styled(Box, {
-  shouldForwardProp: prop => prop !== 'isActive',
-})<BoxProps & { isActive?: boolean }>(({ theme, isActive }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1),
-  paddingLeft: 0,
-  paddingRight: 0,
-  backgroundColor: isActive ? theme.palette.action.selected : 'transparent',
-  borderLeft: isActive ? `4px solid ${theme.palette.primary.main}` : '4px solid transparent',
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-    '& .play-icon': {
-      opacity: 1,
+const ListItemContainer: StyledComponent<BoxProps & { isActive?: boolean }> =
+  styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isActive',
+  })<BoxProps & { isActive?: boolean }>(({ theme, isActive }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: 0,
+    paddingRight: 0,
+    backgroundColor: isActive ? theme.palette.action.selected : 'transparent',
+    borderLeft: isActive
+      ? `4px solid ${theme.palette.primary.main}`
+      : '4px solid transparent',
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+      '& .play-icon': {
+        opacity: 1,
+      },
     },
-  },
-}));
+  }));
 
 const ThumbnailContainer = styled(Box)({
   position: 'relative',

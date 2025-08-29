@@ -1,30 +1,29 @@
-import Grid from '@mui/material/Grid';
-import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';
-import { VideoDetailContainerProps } from './types';
-import { VideoContainer } from '../../videos/video-container';
-import Typography from '@mui/material/Typography';
-import { RelatedList } from '../related-list';
-import { StyledRelatedContainer } from './styled';
-
-import { IconButton, Stack, Tooltip } from '@mui/material';
-import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
+import ShareIcon from '@mui/icons-material/Share';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
-import React, { Suspense } from 'react';
-import { getDisplayLanguage } from './utils';
-import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import { useAuthContext } from 'core/providers/auth';
+import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+import React, { Suspense } from 'react';
+import { VideoContainer } from '../../videos/video-container';
+import { RelatedList } from '../related-list';
+import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';
+import { StyledRelatedContainer } from './styled';
+import type { VideoDetailContainerProps } from './types';
+import { getDisplayLanguage } from './utils';
 
 const ShareDialog = React.lazy(() =>
-  import('../../dialogs/share').then(mod => ({
+  import('../../dialogs/share').then((mod) => ({
     default: mod.ShareDialog,
-  }))
+  })),
 );
 
 const SubtitleDialog = React.lazy(() =>
-  import('../../dialogs/subtitle').then(mod => ({
+  import('../../dialogs/subtitle').then((mod) => ({
     default: mod.SubtitleDialog,
-  }))
+  })),
 );
 // We use a ref instead of state here because of how video.js event handlers work:
 //
@@ -54,7 +53,10 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [isSubtitleDialogOpen, setIsSubtitleDialogOpen] = React.useState(false);
 
-  const videoDetail = React.useMemo(() => videos.find(video => video.id === activeVideoId), [videos, activeVideoId]);
+  const videoDetail = React.useMemo(
+    () => videos.find((video) => video.id === activeVideoId),
+    [videos, activeVideoId],
+  );
 
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
@@ -63,7 +65,9 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const handleVideoEnd = React.useCallback(() => {
     if (!onVideoEnded || !videoDetail) return;
 
-    const currentIndex = videos.findIndex(video => video.id === activeVideoId);
+    const currentIndex = videos.findIndex(
+      (video) => video.id === activeVideoId,
+    );
     const nextVideo = videos[currentIndex + 1];
 
     if (!nextVideo) return;
@@ -78,7 +82,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
       onShare?.(emails);
       setShareDialogOpen(false);
     },
-    [onShare]
+    [onShare],
   );
 
   const { mutateAsync: saveSubtitle } = useSaveSubtitle({
@@ -87,7 +91,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
       console.log('Subtitle saved successfully:', data);
       // TODO: Add success notification
     },
-    onError: error => {
+    onError: (error) => {
       console.error('Failed to save subtitle:', error);
       // TODO: Add error notification
     },
@@ -110,7 +114,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
 
       setIsSubtitleDialogOpen(false);
     },
-    [saveSubtitle, videoDetail?.subtitles]
+    [saveSubtitle, videoDetail?.subtitles],
   );
 
   // Conditional rendering after all hooks
@@ -158,19 +162,31 @@ const MainContent = (props: VideoDetailContainerProps) => {
           </Tooltip>
         )}
         <Tooltip title="Edit subtitle">
-          <IconButton onClick={() => setIsSubtitleDialogOpen(true)} size="small" sx={{ ml: 1 }}>
+          <IconButton
+            onClick={() => setIsSubtitleDialogOpen(true)}
+            size="small"
+            sx={{ ml: 1 }}
+          >
             <EditIcon />
           </IconButton>
         </Tooltip>
       </Stack>
 
       {videoDetail.subtitles && videoDetail.subtitles.length > 0 && (
-        <Stack direction="row" spacing={1} sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap', gap: 1 }}
+        >
           <Typography variant="body2" color="text.secondary" sx={{ mr: 0.5 }}>
             Subtitle(s):
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
-            {videoDetail.subtitles.map(subtitle => (
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ flexWrap: 'wrap', gap: 0.5 }}
+          >
+            {videoDetail.subtitles.map((subtitle) => (
               <Chip
                 key={subtitle.id}
                 label={getDisplayLanguage(subtitle.lang)}
@@ -188,7 +204,11 @@ const MainContent = (props: VideoDetailContainerProps) => {
       )}
 
       <Suspense fallback={null}>
-        <ShareDialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} onShare={handleShare} />
+        <ShareDialog
+          open={shareDialogOpen}
+          onClose={() => setShareDialogOpen(false)}
+          onShare={handleShare}
+        />
         <SubtitleDialog
           open={isSubtitleDialogOpen}
           onClose={() => setIsSubtitleDialogOpen(false)}
@@ -201,16 +221,22 @@ const MainContent = (props: VideoDetailContainerProps) => {
 };
 
 const RelatedContent = (
-  props: VideoDetailContainerProps & { autoPlay: boolean; onAutoPlayChange: (checked: boolean) => void }
+  props: VideoDetailContainerProps & {
+    autoPlay: boolean;
+    onAutoPlayChange: (checked: boolean) => void;
+  },
 ) => {
-  const { queryRs, activeVideoId, LinkComponent, autoPlay, onAutoPlayChange } = props;
+  const { queryRs, activeVideoId, LinkComponent, autoPlay, onAutoPlayChange } =
+    props;
   const { videos, playlist, isLoading } = queryRs;
 
   if (isLoading) {
     return <RelatedContentSkeleton />;
   }
 
-  const videoDetail = queryRs.videos.find(video => video.id === activeVideoId);
+  const videoDetail = queryRs.videos.find(
+    (video) => video.id === activeVideoId,
+  );
   if (!videoDetail) {
     // TODO: handle error
     return null;
@@ -240,11 +266,19 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
       <Grid container item alignItems="center" xs={12} sm={6} md={8} lg={9}>
-        <MainContent {...props} onVideoEnded={handleVideoEnded} autoPlay={autoPlay} />
+        <MainContent
+          {...props}
+          onVideoEnded={handleVideoEnded}
+          autoPlay={autoPlay}
+        />
       </Grid>
       <Grid container direction="column" item xs={12} sm={6} md={4} lg={3}>
         <StyledRelatedContainer>
-          <RelatedContent {...props} autoPlay={autoPlay} onAutoPlayChange={setAutoPlay} />
+          <RelatedContent
+            {...props}
+            autoPlay={autoPlay}
+            onAutoPlayChange={setAutoPlay}
+          />
         </StyledRelatedContainer>
       </Grid>
     </Grid>

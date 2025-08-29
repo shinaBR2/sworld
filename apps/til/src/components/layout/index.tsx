@@ -1,9 +1,9 @@
+import { Link } from '@tanstack/react-router';
+import type React from 'react';
+import { Header } from 'ui/til/header';
+import type { MuiStyledProps } from 'ui/universal';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { appConfig } from '../../config';
-import { Header } from 'ui/til/header';
-import { Link } from '@tanstack/react-router';
-import React from 'react';
-import { MuiStyledProps } from 'ui/universal';
 
 interface LayoutProps extends MuiStyledProps {
   children: React.ReactNode;

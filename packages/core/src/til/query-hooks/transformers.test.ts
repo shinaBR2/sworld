@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PostQuery } from '../../graphql/graphql';
+import type { PostQuery } from '../../graphql/graphql';
 import { transformPost } from './transformers';
 
 describe('transformPost', () => {

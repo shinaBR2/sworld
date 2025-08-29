@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import GameContainer from '../../core/GameContainer';
 import { EventBus } from '../../core/EventBus';
-import { RESULT_SAVED } from './events/Events';
+import GameContainer from '../../core/GameContainer';
 import config from './config';
+import { RESULT_SAVED } from './events/Events';
 
 const Game = () => {
   useEffect(() => {
     EventBus.on(RESULT_SAVED, (data: any) => {
-      // @ts-ignore
+      // @ts-expect-error
       const currentData = localStorage.getItem(RESULT_SAVED);
 
       if (!currentData) {

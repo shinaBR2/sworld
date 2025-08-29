@@ -1,6 +1,11 @@
 import { CardContent, Skeleton, Typography } from '@mui/material';
-import { CategoryType } from 'core/finance';
-import { StyledAmount, StyledCard, StyledCategoryName, StyledCategoryWrapper } from './styled';
+import type { CategoryType } from 'core/finance';
+import {
+  StyledAmount,
+  StyledCard,
+  StyledCategoryName,
+  StyledCategoryWrapper,
+} from './styled';
 
 const SummaryCardSkeleton = () => {
   return (
@@ -8,7 +13,12 @@ const SummaryCardSkeleton = () => {
       <CardContent>
         <StyledCategoryWrapper>
           <StyledCategoryName variant="h6" component="div">
-            <Skeleton variant="circular" width={24} height={24} sx={{ marginRight: '8px' }} />
+            <Skeleton
+              variant="circular"
+              width={24}
+              height={24}
+              sx={{ marginRight: '8px' }}
+            />
             <Skeleton width={40} />
           </StyledCategoryName>
         </StyledCategoryWrapper>

@@ -1,6 +1,6 @@
-import React from 'react';
 import { Grid } from '@mui/material';
-import { LandingCard, LandingCardProps } from '../landing-card';
+import type React from 'react';
+import { LandingCard, type LandingCardProps } from '../landing-card';
 
 interface LandingGridProps {
   items: Array<Omit<LandingCardProps, 'LinkComponent'> & { to?: string }>;
@@ -10,7 +10,7 @@ interface LandingGridProps {
 const LandingGrid = ({ items, LinkComponent }: LandingGridProps) => {
   return (
     <Grid container spacing={2} my={2}>
-      {items.map(item => (
+      {items.map((item) => (
         <Grid item xs={6} md={3} key={item.to}>
           <LandingCard
             icon={item.icon}

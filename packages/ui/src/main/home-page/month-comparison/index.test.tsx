@@ -1,7 +1,7 @@
+import { createTheme, ThemeProvider } from '@mui/material';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MonthComparison } from './index';
-import { ThemeProvider, createTheme } from '@mui/material';
 
 describe('MonthComparison', () => {
   const theme = createTheme();
@@ -12,11 +12,13 @@ describe('MonthComparison', () => {
     { month: '2023-03', displayMonth: 'Mar', total: 120 },
   ];
 
-  const renderComponent = (props: Partial<Parameters<typeof MonthComparison>[0]> = {}) => {
+  const renderComponent = (
+    props: Partial<Parameters<typeof MonthComparison>[0]> = {},
+  ) => {
     return render(
       <ThemeProvider theme={theme}>
         <MonthComparison data={mockData} currentMonthIndex={2} {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   };
 
@@ -52,7 +54,9 @@ describe('MonthComparison', () => {
   });
 
   it('does not show percentage change when there is only one month of data', () => {
-    const singleMonthData = [{ month: '2023-01', displayMonth: 'Jan', total: 100 }];
+    const singleMonthData = [
+      { month: '2023-01', displayMonth: 'Jan', total: 100 },
+    ];
 
     renderComponent({ data: singleMonthData, currentMonthIndex: 0 });
 

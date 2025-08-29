@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import { HomeContainer } from './index';
-import { VideoSkeleton } from '../../videos/video-card/skeleton';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '../../videos/video-card';
+import { VideoSkeleton } from '../../videos/video-card/skeleton';
+import { HomeContainer } from './index';
 
 vi.mock('../../videos/video-card/skeleton', () => ({
   VideoSkeleton: vi.fn(() => <div>VideoSkeleton</div>),
@@ -37,7 +37,7 @@ describe('HomeContainer', () => {
           videos: [],
         }}
         LinkComponent={MockLink}
-      />
+      />,
     );
 
     expect(VideoSkeleton).toHaveBeenCalledTimes(12);
@@ -56,7 +56,7 @@ describe('HomeContainer', () => {
           videos: mockVideos,
         }}
         LinkComponent={MockLink}
-      />
+      />,
     );
 
     expect(VideoCard).toHaveBeenCalledTimes(2);
@@ -66,7 +66,7 @@ describe('HomeContainer', () => {
         asLink: true,
         LinkComponent: MockLink,
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -78,7 +78,7 @@ describe('HomeContainer', () => {
           videos: [],
         }}
         LinkComponent={MockLink}
-      />
+      />,
     );
 
     expect(VideoCard).not.toHaveBeenCalled();

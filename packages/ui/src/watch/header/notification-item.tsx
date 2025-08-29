@@ -1,8 +1,17 @@
-import { RequiredLinkComponent } from '../videos/types';
-import { NOTIFICATION_TYPES, NOTIFICATION_ICONS, NotificationType } from './types';
-import { NOTIFICATION_TEXTS } from './texts';
-import { NotificationMenuItem, NotificationBox, NotificationTitle, NotificationMessage } from './styled';
+import type { RequiredLinkComponent } from '../videos/types';
 import { getNotificationMessage } from './notification-utils';
+import {
+  NotificationBox,
+  NotificationMenuItem,
+  NotificationMessage,
+  NotificationTitle,
+} from './styled';
+import { NOTIFICATION_TEXTS } from './texts';
+import {
+  NOTIFICATION_ICONS,
+  NOTIFICATION_TYPES,
+  type NotificationType,
+} from './types';
 
 interface NotificationItemProps {
   notification: NotificationType;
@@ -19,7 +28,9 @@ const NotificationItem = ({ notification, onClick }: NotificationItemProps) => {
           <NotificationTitle isRead={!!notification.readAt}>
             {NOTIFICATION_ICONS[notification.type]} {texts.title}
           </NotificationTitle>
-          <NotificationMessage>{getNotificationMessage(notification)}</NotificationMessage>
+          <NotificationMessage>
+            {getNotificationMessage(notification)}
+          </NotificationMessage>
         </>
       );
     }
@@ -27,9 +38,12 @@ const NotificationItem = ({ notification, onClick }: NotificationItemProps) => {
     return (
       <>
         <NotificationTitle isRead={!!notification.readAt}>
-          {NOTIFICATION_ICONS[NOTIFICATION_TYPES.DEFAULT]} {NOTIFICATION_TEXTS[NOTIFICATION_TYPES.DEFAULT].title}
+          {NOTIFICATION_ICONS[NOTIFICATION_TYPES.DEFAULT]}{' '}
+          {NOTIFICATION_TEXTS[NOTIFICATION_TYPES.DEFAULT].title}
         </NotificationTitle>
-        <NotificationMessage>{getNotificationMessage(notification)}</NotificationMessage>
+        <NotificationMessage>
+          {getNotificationMessage(notification)}
+        </NotificationMessage>
       </>
     );
   };

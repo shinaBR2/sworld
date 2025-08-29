@@ -1,8 +1,8 @@
+import { createTheme, ThemeProvider } from '@mui/material';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddExpenseButton } from './index';
-import { ThemeProvider, createTheme } from '@mui/material';
 
 // Mock the theme for testing
 const theme = createTheme();
@@ -19,7 +19,7 @@ describe('AddExpenseButton', () => {
     return render(
       <ThemeProvider theme={theme}>
         <AddExpenseButton onAddExpense={mockOnAddExpense} {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   };
 
@@ -155,7 +155,7 @@ describe('AddExpenseButton', () => {
   it('displays loading state during form submission', async () => {
     // Mock a delayed response
     const delayedMock = vi.fn().mockImplementation(() => {
-      return new Promise(resolve => setTimeout(resolve, 100));
+      return new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     renderComponent({ onAddExpense: delayedMock });
@@ -184,7 +184,7 @@ describe('AddExpenseButton', () => {
       () => {
         expect(screen.queryByText('Adding...')).not.toBeInTheDocument();
       },
-      { timeout: 200 }
+      { timeout: 200 },
     );
   });
 
@@ -195,8 +195,11 @@ describe('AddExpenseButton', () => {
     // Test bottom-center position
     rerender(
       <ThemeProvider theme={theme}>
-        <AddExpenseButton onAddExpense={mockOnAddExpense} position="bottom-center" />
-      </ThemeProvider>
+        <AddExpenseButton
+          onAddExpense={mockOnAddExpense}
+          position="bottom-center"
+        />
+      </ThemeProvider>,
     );
 
     // The position styles are applied internally, so we're just checking

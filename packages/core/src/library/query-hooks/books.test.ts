@@ -88,7 +88,11 @@ describe('useBooks', () => {
       error: null,
     });
     const { result } = renderHook(() => useBooks());
-    expect(result.current).toEqual({ data: null, isLoading: true, error: null });
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
   });
 
   it('should handle error state', () => {

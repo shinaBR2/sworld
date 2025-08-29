@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { VideoThumbnail } from './index';
+import { describe, expect, it } from 'vitest';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import { VideoThumbnail } from './index';
 
 describe('VideoThumbnail', () => {
   it('should render with provided source', () => {

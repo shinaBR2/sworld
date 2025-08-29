@@ -1,6 +1,6 @@
+import Box from '@mui/material/Box';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ResponsiveImage } from './image';
-import Box from '@mui/material/Box';
 
 /**
  * ResponsiveImage is a versatile image component with built-in
@@ -30,7 +30,8 @@ const meta: Meta<typeof ResponsiveImage> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A flexible responsive image component with Cloudinary optimization.',
+        component:
+          'A flexible responsive image component with Cloudinary optimization.',
       },
     },
   },
@@ -49,7 +50,8 @@ const meta: Meta<typeof ResponsiveImage> = {
     },
     sizes: {
       control: 'text',
-      description: 'Sizes attribute for responsive images (especially useful for Cloudinary)',
+      description:
+        'Sizes attribute for responsive images (especially useful for Cloudinary)',
       defaultValue: undefined,
     },
     widths: {
@@ -76,7 +78,7 @@ export const CloudinaryImage: Story = {
     alt: 'Cloudinary Responsive Image',
     className: 'max-w-full',
   },
-  render: args => (
+  render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
       <Box px={2}>
@@ -87,7 +89,8 @@ export const CloudinaryImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates a Cloudinary image with automatic responsive capabilities.',
+        story:
+          'Demonstrates a Cloudinary image with automatic responsive capabilities.',
       },
     },
   },
@@ -101,7 +104,7 @@ export const StandardImage: Story = {
     alt: 'Standard Image',
     className: 'max-w-full',
   },
-  render: args => (
+  render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
       <Box px={2}>
@@ -128,7 +131,7 @@ export const CustomSizesImage: Story = {
     widths: [300, 600],
     className: 'max-w-full',
   },
-  render: args => (
+  render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
       <Box px={2}>
@@ -139,7 +142,8 @@ export const CustomSizesImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Illustrates how to use custom sizes and widths for more precise responsive behavior.',
+        story:
+          'Illustrates how to use custom sizes and widths for more precise responsive behavior.',
       },
     },
   },
@@ -157,7 +161,7 @@ export const ImageWithAdditionalProps: Story = {
       decoding: 'async',
     },
   },
-  render: args => (
+  render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
       <p>Image with additional img element props</p>
@@ -166,7 +170,8 @@ export const ImageWithAdditionalProps: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates passing additional props to the underlying img element.',
+        story:
+          'Demonstrates passing additional props to the underlying img element.',
       },
     },
   },
@@ -178,7 +183,7 @@ export const NoSourceImage: Story = {
   args: {
     alt: 'No Source Image',
   },
-  render: args => (
+  render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
       <Box px={2}>
@@ -189,7 +194,8 @@ export const NoSourceImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Demonstrates the component's behavior when no source is provided.",
+        story:
+          "Demonstrates the component's behavior when no source is provided.",
       },
     },
   },

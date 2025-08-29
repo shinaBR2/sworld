@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthContextValue, useAuthContext } from '../../../providers/auth';
+import { type AuthContextValue, useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 import { useNotificationsSubscription } from './index';
 
@@ -26,8 +26,8 @@ describe('useNotificationsSubscription', () => {
       metadata: {},
       video: {
         id: 'video1',
-        title: 'Test Title'
-      }
+        title: 'Test Title',
+      },
     },
   ];
 

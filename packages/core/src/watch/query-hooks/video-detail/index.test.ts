@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadVideoDetail } from './index';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { MEDIA_TYPES } from '../types';
+import { useLoadVideoDetail } from './index';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),

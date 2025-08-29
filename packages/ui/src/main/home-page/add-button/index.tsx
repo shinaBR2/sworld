@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import { Add as AddIcon } from '@mui/icons-material';
 import {
-  Fab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
+  Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fab,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   FormHelperText,
   InputAdornment,
-  Zoom,
-  Box,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
   useMediaQuery,
   useTheme,
+  Zoom,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
-import { CategoryType } from 'core/finance';
+import type { CategoryType } from 'core/finance';
+import type React from 'react';
+import { useState } from 'react';
 
 type ExpenseFormData = {
   name: string;
@@ -33,7 +34,10 @@ interface AddExpenseButtonProps {
   position?: 'bottom-right' | 'bottom-center';
 }
 
-const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpenseButtonProps) => {
+const AddExpenseButton = ({
+  onAddExpense,
+  position = 'bottom-right',
+}: AddExpenseButtonProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -66,15 +70,17 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
     }, 300);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>,
+  ) => {
     const { name, value } = e.target;
 
     if (name) {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
 
       // Clear the error for this field if it exists
       if (errors[name as keyof typeof errors]) {
-        setErrors(prev => ({ ...prev, [name]: undefined }));
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
       }
     }
   };
@@ -154,7 +160,7 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
           color="primary"
           aria-label="add expense"
           onClick={handleClickOpen}
-          // @ts-ignore
+          // @ts-expect-error
           sx={{
             ...getPositionStyle(),
             zIndex: theme.zIndex.speedDial,
@@ -208,7 +214,9 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
                 sx={{ width: '50%' }}
                 type="number"
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
                 }}
                 value={formData.amount}
                 onChange={handleChange}
@@ -217,20 +225,26 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
                 disabled={loading}
               />
 
-              <FormControl sx={{ width: '50%' }} error={!!errors.category} disabled={loading}>
+              <FormControl
+                sx={{ width: '50%' }}
+                error={!!errors.category}
+                disabled={loading}
+              >
                 <InputLabel id="category-label">Category</InputLabel>
                 <Select
                   labelId="category-label"
                   name="category"
                   value={formData.category}
                   label="Category"
-                  onChange={e => handleChange(e as any)}
+                  onChange={(e) => handleChange(e as any)}
                 >
                   <MenuItem value="must">Must</MenuItem>
                   <MenuItem value="nice">Nice</MenuItem>
                   <MenuItem value="waste">Waste</MenuItem>
                 </Select>
-                {errors.category && <FormHelperText>{errors.category}</FormHelperText>}
+                {errors.category && (
+                  <FormHelperText>{errors.category}</FormHelperText>
+                )}
               </FormControl>
             </Box>
           </Box>
@@ -239,7 +253,12 @@ const AddExpenseButton = ({ onAddExpense, position = 'bottom-right' }: AddExpens
           <Button onClick={handleClose} disabled={loading} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading} color="primary">
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            disabled={loading}
+            color="primary"
+          >
             {loading ? 'Adding...' : 'Add Expense'}
           </Button>
         </DialogActions>

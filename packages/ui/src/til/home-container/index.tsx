@@ -1,11 +1,11 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { texts } from './texts';
-import { useLoadPosts } from 'core/til/query-hooks/posts';
-import { SkeletonPostCard } from '../posts/post-card/skeleton';
-import { RequiredLinkComponent } from '../../watch/videos/types';
-import { PostCard } from '../posts/post-card';
 import { Link } from '@tanstack/react-router';
+import type { useLoadPosts } from 'core/til/query-hooks/posts';
+import type { RequiredLinkComponent } from '../../watch/videos/types';
+import { PostCard } from '../posts/post-card';
+import { SkeletonPostCard } from '../posts/post-card/skeleton';
+import { texts } from './texts';
 
 const Loading = () => {
   return (
@@ -30,12 +30,15 @@ const HomeContainer = (props: HomeContainerProps) => {
   const { posts, isLoading } = queryRs;
 
   return (
-    <Container maxWidth={false} sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}>
+    <Container
+      maxWidth={false}
+      sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}
+    >
       {isLoading ? (
         <Loading />
       ) : posts.length > 0 ? (
         <Grid container spacing={2}>
-          {posts.map(p => (
+          {posts.map((p) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
               <PostCard post={p} LinkComponent={Link} />
             </Grid>

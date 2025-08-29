@@ -9,7 +9,7 @@ const meta: Meta<typeof VideoCard> = {
     layout: 'centered',
   },
   decorators: [
-    Story => (
+    (Story) => (
       <Box width={'400px'}>
         <Story />
       </Box>
@@ -27,7 +27,8 @@ export const Default: Story = {
     video: {
       id: '2e061abc-3dfe-47d7-b266-edc890f69e9c',
       title: 'Title',
-      source: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      source:
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       // thumbnailUrl: 'https://example.com/video-thumbnail.png',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',
@@ -43,7 +44,8 @@ export const WithThumbnail: Story = {
     video: {
       id: '2e061abc-3dfe-47d7-b266-edc890f69e9c',
       title: 'Title',
-      source: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      source:
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       thumbnailUrl: 'https://picsum.photos/536/354',
       // slug: 'video-slug',
       createdAt: '2024-12-15T04:32:47.424952+00:00',

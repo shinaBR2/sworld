@@ -1,11 +1,11 @@
-import React from 'react';
+import type React from 'react';
 import {
-  StyledCard,
+  CardContentBox,
+  DescriptionTypography,
   IconContainer,
   IconTypography,
+  StyledCard,
   TitleTypography,
-  DescriptionTypography,
-  CardContentBox,
 } from './styled';
 
 interface LandingCardProps {
@@ -18,7 +18,15 @@ interface LandingCardProps {
   color?: string;
 }
 
-const LandingCard = ({ icon, title, LinkComponent, to, isExternal, description, color }: LandingCardProps) => {
+const LandingCard = ({
+  icon,
+  title,
+  LinkComponent,
+  to,
+  isExternal,
+  description,
+  color,
+}: LandingCardProps) => {
   const CardContent = () => (
     <>
       <IconContainer customColor={color}>
@@ -27,13 +35,22 @@ const LandingCard = ({ icon, title, LinkComponent, to, isExternal, description, 
         </IconTypography>
       </IconContainer>
       <TitleTypography variant="h6">{title}</TitleTypography>
-      {description && <DescriptionTypography variant="body2">{description}</DescriptionTypography>}
+      {description && (
+        <DescriptionTypography variant="body2">
+          {description}
+        </DescriptionTypography>
+      )}
     </>
   );
 
   if (isExternal) {
     return (
-      <a href={to} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+      <a
+        href={to}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: 'none' }}
+      >
         <StyledCard>
           <CardContentBox>
             <CardContent />

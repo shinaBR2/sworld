@@ -1,7 +1,7 @@
 import { graphql } from '../../graphql';
-import { useRequest } from '../../universal/hooks/use-request';
-import { GetReadingStatsQuery } from '../../graphql/graphql';
+import type { GetReadingStatsQuery } from '../../graphql/graphql';
 import { useAuthContext } from '../../providers/auth';
+import { useRequest } from '../../universal/hooks/use-request';
 
 const GET_READING_STATS = graphql(/* GraphQL */ `
   query GetReadingStats($monthStart: timestamptz!) {
@@ -31,11 +31,17 @@ const GET_READING_STATS = graphql(/* GraphQL */ `
 `);
 
 const transform = (data: GetReadingStatsQuery) => {
-  const { books_aggregate, completed_books, currently_reading, reading_time_this_month } = data;
+  const {
+    books_aggregate,
+    completed_books,
+    currently_reading,
+    reading_time_this_month,
+  } = data;
   const totalBooks = books_aggregate.aggregate?.count || 0;
   const completedBooks = completed_books.aggregate?.count || 0;
   const currentlyReading = currently_reading.aggregate?.count || 0;
-  const readingTimeThisMonth = reading_time_this_month.aggregate?.sum?.readingTimeMinutes || 0;
+  const readingTimeThisMonth =
+    reading_time_this_month.aggregate?.sum?.readingTimeMinutes || 0;
 
   return {
     totalBooks,

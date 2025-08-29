@@ -23,7 +23,7 @@ const MainContentSkeleton = () => {
         aria-busy={true}
         variant="text"
         width="50%"
-        sx={theme => ({
+        sx={(theme) => ({
           ...theme.typography.h4,
           my: 2, // px doesn't work
         })}

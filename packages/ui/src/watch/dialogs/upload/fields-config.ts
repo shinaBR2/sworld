@@ -1,4 +1,4 @@
-import { TextFieldVariants } from '@mui/material/TextField';
+import type { TextFieldVariants } from '@mui/material/TextField';
 import { texts } from './texts';
 
 const getFormFieldStaticConfigs = () => {

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadPlaylistDetail } from './index';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { MEDIA_TYPES } from '../types';
+import { useLoadPlaylistDetail } from './index';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -91,7 +91,7 @@ describe('useLoadPlaylistDetail', () => {
       useLoadPlaylistDetail({
         id: 'playlist-123',
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(useRequest).toHaveBeenCalledWith({
@@ -112,7 +112,7 @@ describe('useLoadPlaylistDetail', () => {
       useLoadPlaylistDetail({
         id: 'playlist-123',
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -135,7 +135,7 @@ describe('useLoadPlaylistDetail', () => {
       useLoadPlaylistDetail({
         id: 'playlist-123',
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -156,7 +156,7 @@ describe('useLoadPlaylistDetail', () => {
       useLoadPlaylistDetail({
         id: 'playlist-123',
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -178,7 +178,7 @@ describe('useLoadPlaylistDetail', () => {
       useLoadPlaylistDetail({
         id: 'playlist-123',
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({

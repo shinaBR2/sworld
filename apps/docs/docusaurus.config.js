@@ -1,7 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-// @ts-ignore
+// @ts-expect-error
 import { themes } from 'prism-react-renderer';
 
 const lightCodeTheme = themes.github;

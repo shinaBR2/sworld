@@ -1,4 +1,4 @@
-import { useLoadJournalById } from './query-hooks';
+import type { useLoadJournalById } from './query-hooks';
 
 type MoodType = 'happy' | 'neutral' | 'sad';
 
@@ -17,4 +17,4 @@ interface JournalStats {
   };
 }
 
-export { type Journal, type JournalStats, type JournalStatsCategory, type MoodType };
+export type { Journal, JournalStats, JournalStatsCategory, MoodType };

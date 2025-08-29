@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type FC, type PropsWithChildren } from 'react';
-import { useSaveSubtitle } from './';
+import { renderHook } from '@testing-library/react';
+import type { FC, PropsWithChildren } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { useSaveSubtitle } from './';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -11,7 +11,9 @@ vi.mock('../../../universal/hooks/useMutation', () => ({
 }));
 
 // Mock console.error
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+const mockConsoleError = vi
+  .spyOn(console, 'error')
+  .mockImplementation(() => undefined);
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -55,7 +57,7 @@ describe('useSaveSubtitle', () => {
     const onError = vi.fn();
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async variables => {
+      mutateAsync: vi.fn().mockImplementation(async (variables) => {
         const result = mockSuccessResponse;
         await Promise.resolve();
         onSuccess(result, variables, undefined);
@@ -76,12 +78,16 @@ describe('useSaveSubtitle', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     await result.current.mutateAsync(mockVariables);
 
-    expect(onSuccess).toHaveBeenCalledWith(mockSuccessResponse, mockVariables, undefined);
+    expect(onSuccess).toHaveBeenCalledWith(
+      mockSuccessResponse,
+      mockVariables,
+      undefined,
+    );
     expect(onError).not.toHaveBeenCalled();
     expect(mockConsoleError).not.toHaveBeenCalled();
   });
@@ -92,7 +98,7 @@ describe('useSaveSubtitle', () => {
     const mockError = new Error('Save failed');
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async variables => {
+      mutateAsync: vi.fn().mockImplementation(async (variables) => {
         await Promise.resolve();
         onError(mockError, variables, undefined);
         console.error('Save subtitle failed:', mockError);
@@ -113,14 +119,19 @@ describe('useSaveSubtitle', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
-    await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow('Save failed');
+    await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow(
+      'Save failed',
+    );
 
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith(mockError, mockVariables, undefined);
-    expect(mockConsoleError).toHaveBeenCalledWith('Save subtitle failed:', mockError);
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'Save subtitle failed:',
+      mockError,
+    );
   });
 
   it('should work without optional callbacks', async () => {
@@ -139,7 +150,7 @@ describe('useSaveSubtitle', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const response = await result.current.mutateAsync(mockVariables);
@@ -163,13 +174,15 @@ describe('useSaveSubtitle', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        document: expect.stringContaining('mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!)'),
-      })
+        document: expect.stringContaining(
+          'mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!)',
+        ),
+      }),
     );
   });
 });

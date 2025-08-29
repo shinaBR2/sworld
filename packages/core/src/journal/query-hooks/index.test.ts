@@ -8,7 +8,9 @@ vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
 }));
 
-const mockAccessToken = vi.fn().mockImplementation(() => Promise.resolve('test-token'));
+const mockAccessToken = vi
+  .fn()
+  .mockImplementation(() => Promise.resolve('test-token'));
 
 describe('Journal Query Hooks', () => {
   beforeEach(() => {
@@ -44,7 +46,7 @@ describe('Journal Query Hooks', () => {
           getAccessToken: mockAccessToken,
           month: 1,
           year: 2023,
-        })
+        }),
       );
 
       // In the 'should fetch and transform data correctly' test case
@@ -88,7 +90,7 @@ describe('Journal Query Hooks', () => {
           getAccessToken: mockAccessToken,
           month: 1,
           year: 2023,
-        })
+        }),
       );
 
       expect(result.current).toEqual({
@@ -111,7 +113,7 @@ describe('Journal Query Hooks', () => {
           getAccessToken: mockAccessToken,
           month: 1,
           year: 2023,
-        })
+        }),
       );
 
       expect(result.current).toEqual({
@@ -143,7 +145,7 @@ describe('Journal Query Hooks', () => {
         useLoadJournalById({
           getAccessToken: mockAccessToken,
           id: '1',
-        })
+        }),
       );
 
       expect(useRequest).toHaveBeenCalledWith({
@@ -172,7 +174,7 @@ describe('Journal Query Hooks', () => {
         useLoadJournalById({
           getAccessToken: mockAccessToken,
           id: '',
-        })
+        }),
       );
 
       expect(useRequest).toHaveBeenCalledWith({
@@ -201,7 +203,7 @@ describe('Journal Query Hooks', () => {
         useLoadJournalById({
           getAccessToken: mockAccessToken,
           id: '1',
-        })
+        }),
       );
 
       expect(result.current).toEqual({
@@ -222,7 +224,7 @@ describe('Journal Query Hooks', () => {
         useLoadJournalById({
           getAccessToken: mockAccessToken,
           id: '1',
-        })
+        }),
       );
 
       expect(result.current).toEqual({
@@ -244,7 +246,7 @@ describe('Journal Query Hooks', () => {
         useLoadJournalById({
           getAccessToken: mockAccessToken,
           id: '1',
-        })
+        }),
       );
 
       expect(result.current).toEqual({

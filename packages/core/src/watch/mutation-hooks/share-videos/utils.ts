@@ -1,4 +1,7 @@
-import { isValidId, isValidEmail } from '../../../universal/common/stringHelpers';
+import {
+  isValidEmail,
+  isValidId,
+} from '../../../universal/common/stringHelpers';
 
 const formalize = (entityId: string | null, recipients: string[]) => {
   if (!entityId || !isValidId(entityId)) {
@@ -9,13 +12,13 @@ const formalize = (entityId: string | null, recipients: string[]) => {
     throw new Error('Recipients must be a non-empty array');
   }
 
-  if (recipients.some(email => !isValidEmail(email))) {
+  if (recipients.some((email) => !isValidEmail(email))) {
     throw new Error('Invalid email address found in recipients');
   }
 
   return {
     entityId,
-    recipients: recipients.map(email => email.trim()),
+    recipients: recipients.map((email) => email.trim()),
   };
 };
 

@@ -11,8 +11,9 @@ export class MatterGravityFixPlugin extends Phaser.Plugins.ScenePlugin {
     This does the trick to fix the gravity issue. It overrides the _bodiesApplyGravity function in the `Matter.Engine` class.
   */
   applyGravityFix(Matter) {
-    Matter.Engine._bodiesApplyGravity = function (bodies, gravity) {
-      var gravityScale = typeof gravity.scale !== 'undefined' ? gravity.scale : 0.001,
+    Matter.Engine._bodiesApplyGravity = (bodies, gravity) => {
+      var gravityScale =
+          typeof gravity.scale !== 'undefined' ? gravity.scale : 0.001,
         bodiesLength = bodies.length;
 
       if ((gravity.x === 0 && gravity.y === 0) || gravityScale === 0) {

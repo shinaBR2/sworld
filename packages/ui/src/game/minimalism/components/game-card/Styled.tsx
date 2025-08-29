@@ -1,6 +1,6 @@
-import Card from '@mui/material/Card';
-import { CardProps } from '@mui/material';
 import styled from '@emotion/styled';
+import type { CardProps } from '@mui/material';
+import Card from '@mui/material/Card';
 
 const StyledCard = styled(Card)<CardProps>(() => {
   return {

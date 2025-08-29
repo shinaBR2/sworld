@@ -1,8 +1,8 @@
-import { Boot } from './scenes/Boot';
-import { GameOver } from './scenes/GameOver';
-import { Game as MainGame } from './scenes/Game';
-import { MainMenu } from './scenes/MainMenu';
 import { AUTO, Game } from 'phaser';
+import { Boot } from './scenes/Boot';
+import { Game as MainGame } from './scenes/Game';
+import { GameOver } from './scenes/GameOver';
+import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { VirtualHouse } from './scenes/VirtualHouse';
 

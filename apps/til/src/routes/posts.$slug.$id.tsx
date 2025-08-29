@@ -45,7 +45,11 @@ function RouteComponent() {
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <PostMetadata title={title} readTimeInMinutes={readTimeInMinutes} sx={{ my: 3 }} />
+        <PostMetadata
+          title={title}
+          readTimeInMinutes={readTimeInMinutes}
+          sx={{ my: 3 }}
+        />
         <PostContent>
           <MarkdownContent content={mContent} />
         </PostContent>

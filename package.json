@@ -17,7 +17,7 @@
     "predev:main": "cp .env.development.local apps/main/.env.development.local",
     "dev:main": "pnpm run predev:main && turbo run dev --filter=main --filter=core --filter=ui --no-cache --parallel --continue",
     "dev:docs": "turbo run dev --filter=docs",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "biome format --write",
     "lint": "turbo run lint",
     "test": "turbo run test"
   },

@@ -1,7 +1,8 @@
 import { useAuthContext } from 'core/providers/auth';
-import React, { ReactNode } from 'react';
-import LoadingBackdrop from '../LoadingBackdrop';
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { LoginDialog } from '../dialogs/login';
+import LoadingBackdrop from '../LoadingBackdrop';
 
 interface AuthRouteProps {
   children: ReactNode;

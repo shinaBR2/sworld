@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Header } from './index';
 
 // Mock child components
@@ -30,7 +30,9 @@ describe('Header', () => {
   const MockLink = () => <div>MockLink</div>;
 
   it('renders header structure correctly', () => {
-    const { container } = render(<Header sites={mockSites} LinkComponent={MockLink} />);
+    const { container } = render(
+      <Header sites={mockSites} LinkComponent={MockLink} />,
+    );
 
     // Verify AppBar structure
     const appBar = container.querySelector('.MuiAppBar-root');
@@ -43,7 +45,9 @@ describe('Header', () => {
   });
 
   it('passes correct props to child components', () => {
-    const { getByTestId, getByText } = render(<Header sites={mockSites} LinkComponent={MockLink} />);
+    const { getByTestId, getByText } = render(
+      <Header sites={mockSites} LinkComponent={MockLink} />,
+    );
 
     // Verify Logo component
     expect(getByText('MockLink')).toBeInTheDocument();

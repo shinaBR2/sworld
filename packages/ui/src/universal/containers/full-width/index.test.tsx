@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { FullWidthContainer } from './index';
 
 describe('FullWidthContainer', () => {
@@ -7,7 +7,7 @@ describe('FullWidthContainer', () => {
     render(
       <FullWidthContainer>
         <div data-testid="test-child">Test Content</div>
-      </FullWidthContainer>
+      </FullWidthContainer>,
     );
 
     const childElement = screen.getByTestId('test-child');
@@ -23,7 +23,7 @@ describe('FullWidthContainer', () => {
     const { container } = render(
       <FullWidthContainer sx={customSx}>
         <div>Test Content</div>
-      </FullWidthContainer>
+      </FullWidthContainer>,
     );
 
     // Get the Box component (first child of container)
@@ -43,7 +43,7 @@ describe('FullWidthContainer', () => {
     const { container } = render(
       <FullWidthContainer>
         <div>Test Content</div>
-      </FullWidthContainer>
+      </FullWidthContainer>,
     );
 
     const boxElement = container.firstChild;

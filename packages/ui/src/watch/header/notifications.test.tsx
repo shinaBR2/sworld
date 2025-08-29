@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import Notifications from './notifications';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useAuthContext } from 'core/providers/auth';
 import { useQueryContext } from 'core/providers/query';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import Notifications from './notifications';
 import { NotificationsMenu } from './notifications-menu';
 
 // Update auth mock to provide full context structure
@@ -55,8 +55,20 @@ vi.mock('./notifications-menu', () => ({
 describe('Notifications', () => {
   const LinkComponent = () => <div>Mock Link</div>;
   const mockNotifications = [
-    { id: '1', type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
-    { id: '2', type: 'default', title: 'Test 2', message: 'Message 2', readAt: '2023-01-01' },
+    {
+      id: '1',
+      type: 'default',
+      title: 'Test 1',
+      message: 'Message 1',
+      readAt: null,
+    },
+    {
+      id: '2',
+      type: 'default',
+      title: 'Test 2',
+      message: 'Message 2',
+      readAt: '2023-01-01',
+    },
   ];
 
   // Update failing test cases
@@ -98,13 +110,15 @@ describe('Notifications', () => {
     let onCloseHandler: (() => void) | null = null;
 
     // Override the NotificationsMenu mock to capture the onClose handler
-    vi.mocked(NotificationsMenu).mockImplementation(props => {
+    vi.mocked(NotificationsMenu).mockImplementation((props) => {
       onCloseHandler = props.onClose;
       return <div data-testid="mock-notifications-menu" />;
     });
 
     // Render the component
-    const { rerender } = render(<Notifications LinkComponent={LinkComponent} />);
+    const { rerender } = render(
+      <Notifications LinkComponent={LinkComponent} />,
+    );
 
     // Open menu
     const button = screen.getByRole('button');
@@ -127,7 +141,9 @@ describe('Notifications', () => {
 
     // Now check that the menu is closed
     expect(button).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByTestId('mock-notifications-menu')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('mock-notifications-menu'),
+    ).not.toBeInTheDocument();
   });
 
   // Update test cases to use full mock structure

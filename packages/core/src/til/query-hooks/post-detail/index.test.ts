@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 import { useLoadPostDetail } from './index';
@@ -41,7 +41,10 @@ describe('useLoadPostDetail', () => {
       data: { posts_by_pk: mockPostData },
       isLoading: false,
     });
-    (transformPost as Mock).mockImplementation(data => ({ ...data, transformed: true }));
+    (transformPost as Mock).mockImplementation((data) => ({
+      ...data,
+      transformed: true,
+    }));
 
     const { post } = useLoadPostDetail('123');
     expect(transformPost).toHaveBeenCalledWith(mockPostData);

@@ -1,17 +1,17 @@
+import { Close as CloseIcon } from '@mui/icons-material';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Typography,
+  AppBar,
   Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Toolbar,
+  Typography,
   useMediaQuery,
   useTheme,
-  AppBar,
-  Toolbar,
 } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
-import { CategoryType } from 'core/finance';
+import type { CategoryType } from 'core/finance';
 import { formatNumber } from 'core/universal/common';
 
 interface Transaction {
@@ -58,22 +58,39 @@ const getCategoryColor = (category: CategoryType): string => {
   }
 };
 
-const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: TransactionsDialogProps) => {
+const TransactionsDialog = ({
+  open,
+  onClose,
+  transactions,
+  selectedCategory,
+}: TransactionsDialogProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Filter transactions based on selected category
   const filteredTransactions =
     selectedCategory && selectedCategory !== 'total'
-      ? transactions.filter(t => t.category === selectedCategory)
+      ? transactions.filter((t) => t.category === selectedCategory)
       : transactions;
 
   return (
-    <Dialog open={open} onClose={onClose} fullScreen={isMobile} fullWidth maxWidth="sm" scroll="paper">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={isMobile}
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+    >
       {isMobile ? (
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={onClose} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={onClose}
+              aria-label="close"
+            >
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
@@ -82,7 +99,13 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
           </Toolbar>
         </AppBar>
       ) : (
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Typography variant="h6" component="div">
             {getCategoryLabel(selectedCategory)}
           </Typography>
@@ -95,11 +118,13 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
       <DialogContent dividers sx={{ p: 0 }}>
         {filteredTransactions.length === 0 ? (
           <Box sx={{ py: 4, textAlign: 'center' }}>
-            <Typography color="text.secondary">No expenses found for this category</Typography>
+            <Typography color="text.secondary">
+              No expenses found for this category
+            </Typography>
           </Box>
         ) : (
           <Box sx={{ maxHeight: isMobile ? 'none' : '70vh' }}>
-            {filteredTransactions.map(transaction => (
+            {filteredTransactions.map((transaction) => (
               <Box
                 key={transaction.id}
                 sx={{
@@ -118,7 +143,9 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                   }}
                 >
                   <Box>
-                    <Typography variant="subtitle1">{transaction.name}</Typography>
+                    <Typography variant="subtitle1">
+                      {transaction.name}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {new Date(transaction.createdAt).toLocaleDateString()}
                     </Typography>
@@ -135,11 +162,17 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 1,
-                        backgroundColor: getCategoryColor(transaction.category as CategoryType),
+                        backgroundColor: getCategoryColor(
+                          transaction.category as CategoryType,
+                        ),
                       }}
                     >
                       <Typography variant="body2" fontSize="0.75rem">
-                        {getCategoryLabel(transaction.category as CategoryType).split(' ')[0]}
+                        {
+                          getCategoryLabel(
+                            transaction.category as CategoryType,
+                          ).split(' ')[0]
+                        }
                       </Typography>
                     </Box>
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -148,7 +181,14 @@ const TransactionsDialog = ({ open, onClose, transactions, selectedCategory }: T
                   </Box>
                 </Box>
                 {transaction.note && (
-                  <Box sx={{ mt: 2, p: 1.5, backgroundColor: theme.palette.grey[50], borderRadius: 1 }}>
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 1.5,
+                      backgroundColor: theme.palette.grey[50],
+                      borderRadius: 1,
+                    }}
+                  >
                     <Typography variant="body2" color="text.secondary">
                       {transaction.note}
                     </Typography>

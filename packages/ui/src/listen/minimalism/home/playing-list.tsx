@@ -5,7 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { SAudioPlayerAudioItem } from 'core';
+import type { SAudioPlayerAudioItem } from 'core';
 import { ResponsiveAvatar } from '../../../universal';
 
 interface PlayingListItemProps {
@@ -40,12 +40,20 @@ const Item = (props: ItemProps) => {
       <ListItemText
         primary={name}
         secondary={
-          <Stack component="span" direction="row" spacing={1} alignItems="center">
+          <Stack
+            component="span"
+            direction="row"
+            spacing={1}
+            alignItems="center"
+          >
             <Typography component="span" variant="body2">
               {artistName}
             </Typography>
             {isPlaying && (
-              <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+              <Box
+                component="span"
+                sx={{ display: 'inline-flex', alignItems: 'center' }}
+              >
                 • Now Playing
               </Box>
             )}
@@ -74,10 +82,17 @@ const PlayingList = (props: PlayingListItemProps) => {
 
   return (
     <List role="list" aria-label="playing list">
-      {audioList.map(a => {
+      {audioList.map((a) => {
         const { id } = a;
 
-        return <Item key={id} audio={a} isPlaying={id === currentId} onSelect={onItemSelect} />;
+        return (
+          <Item
+            key={id}
+            audio={a}
+            isPlaying={id === currentId}
+            onSelect={onItemSelect}
+          />
+        );
       })}
     </List>
   );

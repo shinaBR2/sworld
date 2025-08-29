@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { buildVariables, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST } from './utils';
-import { DialogState } from './types';
+import { useAuthContext } from 'core/providers/auth';
+import { useQueryContext } from 'core/providers/query';
+import { useCountdown } from 'core/universal/hooks/useCooldown';
+import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
+import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import type React from 'react';
+import { useState } from 'react';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
-import { useAuthContext } from 'core/providers/auth';
-import { useBulkConvertVideos } from 'core/watch/mutation-hooks/bulk-convert';
-import { useCountdown } from 'core/universal/hooks/useCooldown';
-import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import type { DialogState } from './types';
+import { buildVariables, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST } from './utils';
 import { validateForm } from './validate';
-import { useQueryContext } from 'core/providers/query';
 
 interface VideoUploadDialogProps {
   open: boolean;
@@ -50,7 +51,10 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
       const firstPlaylistVideo = playlistVideos?.data?.[0];
       const playlistId = firstPlaylistVideo?.playlist_id;
 
-      if (typeof playlistId === 'string' && playlistId !== CREATE_NEW_PLAYLIST) {
+      if (
+        typeof playlistId === 'string' &&
+        playlistId !== CREATE_NEW_PLAYLIST
+      ) {
         invalidateQuery(['playlist-detail', playlistId]);
       }
     },
@@ -65,23 +69,27 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     onOpenChange(false);
   };
 
-  const onFormFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = field === 'keepOriginalSource' || field === 'keepDialogOpen' ? e.target.checked : e.target.value;
+  const onFormFieldChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue =
+        field === 'keepOriginalSource' || field === 'keepDialogOpen'
+          ? e.target.checked
+          : e.target.value;
 
-    setState(prev => ({
-      ...prev,
-      [field]: newValue,
-      error: null,
-    }));
-  };
+      setState((prev) => ({
+        ...prev,
+        [field]: newValue,
+        error: null,
+      }));
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, isSubmitting: true, error: null }));
+    setState((prev) => ({ ...prev, isSubmitting: true, error: null }));
 
     const error = validateForm(state);
     if (error) {
-      return setState(prev => ({
+      return setState((prev) => ({
         ...prev,
         isSubmitting: false,
         error,
@@ -94,14 +102,14 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
 
       if (response.insert_videos?.returning.length !== 1) {
         // Unknown error
-        return setState(prev => ({
+        return setState((prev) => ({
           ...prev,
           isSubmitting: false,
           error: texts.errors.failedToSave,
         }));
       }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...defaultState,
         error: '', // Trigger cooldown
         closeDialogCountdown: CLOSE_DELAY_MS / 1000,
@@ -110,16 +118,24 @@ const VideoUploadDialog = ({ open, onOpenChange }: VideoUploadDialogProps) => {
     } catch (error) {
       // TODO
       // Determine retry ability
-      const errorMessage = error instanceof Error ? error.message : texts.errors.unexpected;
-      setState(prev => ({ ...prev, isSubmitting: false, error: errorMessage }));
+      const errorMessage =
+        error instanceof Error ? error.message : texts.errors.unexpected;
+      setState((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        error: errorMessage,
+      }));
     }
   };
 
   useCountdown({
     duration: CLOSE_DELAY_MS / 1000,
-    enabled: state.error === '' && !!state.closeDialogCountdown && !state.keepDialogOpen,
+    enabled:
+      state.error === '' &&
+      !!state.closeDialogCountdown &&
+      !state.keepDialogOpen,
     onTick: (remaining: number) => {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         closeDialogCountdown: remaining,
       }));

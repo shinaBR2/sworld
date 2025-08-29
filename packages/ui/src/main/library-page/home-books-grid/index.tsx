@@ -1,17 +1,17 @@
-import React from 'react';
+import { GridView as GridIcon, List as ListIcon } from '@mui/icons-material';
 import {
   Box,
-  Grid,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  IconButton,
   Button,
-  Skeleton,
   Card,
+  FormControl,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Skeleton,
+  Typography,
 } from '@mui/material';
-import { GridView as GridIcon, List as ListIcon } from '@mui/icons-material';
+import type React from 'react';
 import { BookCard } from '../book-card';
 
 interface Book {
@@ -108,8 +108,20 @@ const BooksGridSkeleton = ({ count = 12 }: { count?: number }) => {
 
           {/* View Toggle Skeleton */}
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Skeleton variant="circular" width={32} height={32} aria-hidden="true" data-testid="grid-view-skeleton" />
-            <Skeleton variant="circular" width={32} height={32} aria-hidden="true" data-testid="list-view-skeleton" />
+            <Skeleton
+              variant="circular"
+              width={32}
+              height={32}
+              aria-hidden="true"
+              data-testid="grid-view-skeleton"
+            />
+            <Skeleton
+              variant="circular"
+              width={32}
+              height={32}
+              aria-hidden="true"
+              data-testid="list-view-skeleton"
+            />
           </Box>
         </Box>
       </Box>
@@ -197,7 +209,12 @@ const BooksGridEmpty = () => {
           📚
         </Box>
 
-        <Typography variant="h4" fontSize="1.25rem" fontWeight="medium" sx={{ mb: 1 }}>
+        <Typography
+          variant="h4"
+          fontSize="1.25rem"
+          fontWeight="medium"
+          sx={{ mb: 1 }}
+        >
           No books in your library
         </Typography>
         <Typography color="text.secondary" fontSize="0.875rem">
@@ -208,8 +225,16 @@ const BooksGridEmpty = () => {
   );
 };
 
-const BooksGrid: React.FC<BooksGridProps> = props => {
-  const { books, filter = 'all', onFilterChange, onBookClick, onLoadMore, hasMore = false, isLoading = false } = props;
+const BooksGrid: React.FC<BooksGridProps> = (props) => {
+  const {
+    books,
+    filter = 'all',
+    onFilterChange,
+    onBookClick,
+    onLoadMore,
+    hasMore = false,
+    isLoading = false,
+  } = props;
 
   if (isLoading) {
     return <BooksGridSkeleton count={12} />;
@@ -236,7 +261,10 @@ const BooksGrid: React.FC<BooksGridProps> = props => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <FormControl size="small" sx={{ minWidth: 150 }}>
-            <Select value={filter} onChange={e => onFilterChange?.(e.target.value)}>
+            <Select
+              value={filter}
+              onChange={(e) => onFilterChange?.(e.target.value)}
+            >
               <MenuItem value="all">All Books</MenuItem>
               <MenuItem value="recent">Recently Added</MenuItem>
               <MenuItem value="reading">Currently Reading</MenuItem>
@@ -270,7 +298,7 @@ const BooksGrid: React.FC<BooksGridProps> = props => {
 
       {/* Books Grid */}
       <Grid container spacing={{ xs: 2, md: 3 }}>
-        {books?.map(book => (
+        {books?.map((book) => (
           <Grid item xs={6} sm={4} md={3} lg={2} key={book.id}>
             <BookCard book={book} onClick={onBookClick} />
           </Grid>

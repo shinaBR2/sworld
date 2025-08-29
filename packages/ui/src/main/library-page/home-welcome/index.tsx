@@ -20,7 +20,13 @@ const Welcome = () => {
             }}
           />
         </Box>
-        <Skeleton variant="text" width={320} height={24} aria-hidden="true" data-testid="welcome-subtitle-skeleton" />
+        <Skeleton
+          variant="text"
+          width={320}
+          height={24}
+          aria-hidden="true"
+          data-testid="welcome-subtitle-skeleton"
+        />
       </Box>
     );
   }

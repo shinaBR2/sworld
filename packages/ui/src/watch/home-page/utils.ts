@@ -1,7 +1,10 @@
 import { AppError } from 'core/universal';
 import { MEDIA_TYPES } from 'core/watch/query-hooks';
-import { useLoadVideos } from 'core/watch/query-hooks/videos';
-import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
+import type { useLoadVideos } from 'core/watch/query-hooks/videos';
+import {
+  generateVideoDetailRoute,
+  generateVideoInPlaylistRoute,
+} from 'core/watch/routes';
 
 /**
  * Generates link props based on the media type (video or playlist).

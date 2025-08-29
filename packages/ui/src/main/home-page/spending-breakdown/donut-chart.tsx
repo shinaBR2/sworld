@@ -1,11 +1,11 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
-import { CategoryType } from 'core/finance';
-import ReactEChartsCore from 'echarts-for-react/lib/core';
-import * as echarts from 'echarts/core';
-import { PieChart } from 'echarts/charts';
-import { TooltipComponent, LegendComponent } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
+import type { CategoryType } from 'core/finance';
 import { formatNumber } from 'core/universal/common';
+import { PieChart } from 'echarts/charts';
+import { LegendComponent, TooltipComponent } from 'echarts/components';
+import * as echarts from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import ReactEChartsCore from 'echarts-for-react/lib/core';
 
 echarts.use([PieChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -52,26 +52,35 @@ const getCategoryTitle = (category: CategoryType) => {
   }
 };
 
-const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: DonutChartProps) => {
+const DonutChart = ({
+  isLoading,
+  data,
+  onCategoryClick,
+  selectedCategory,
+}: DonutChartProps) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
   // Filter out any 'total' category and zero values for chart display
   const chartData = data
-    .filter(item => item.category !== 'total' && item.amount > 0)
-    .map(item => ({
+    .filter((item) => item.category !== 'total' && item.amount > 0)
+    .map((item) => ({
       value: item.amount,
       name: getCategoryTitle(item.category),
       category: item.category,
       // Reduce opacity for non-selected categories if a category is selected
       itemStyle: {
         color: getCategoryColor(item.category),
-        opacity: selectedCategory && item.category !== selectedCategory ? 0.6 : 1,
+        opacity:
+          selectedCategory && item.category !== selectedCategory ? 0.6 : 1,
       },
     }));
 
   // Calculate the total for the center text
-  const total = data.reduce((sum, item) => (item.category !== 'total' ? sum + item.amount : sum), 0);
+  const total = data.reduce(
+    (sum, item) => (item.category !== 'total' ? sum + item.amount : sum),
+    0,
+  );
 
   // Generate ECharts option
   const getOption = () => {
@@ -144,7 +153,12 @@ const DonutChart = ({ isLoading, data, onCategoryClick, selectedCategory }: Donu
         aria-label="Loading"
         aria-busy="true"
       >
-        <Skeleton variant="circular" width={196} height={196} sx={{ mx: 'auto' }} />
+        <Skeleton
+          variant="circular"
+          width={196}
+          height={196}
+          sx={{ mx: 'auto' }}
+        />
       </Box>
     );
   }

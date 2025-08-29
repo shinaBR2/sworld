@@ -9,7 +9,7 @@ const meta: Meta<typeof PlayingListSkeleton> = {
     layout: 'centered',
   },
   decorators: [
-    Story => (
+    (Story) => (
       <Box width={'600px'}>
         <Story />
       </Box>

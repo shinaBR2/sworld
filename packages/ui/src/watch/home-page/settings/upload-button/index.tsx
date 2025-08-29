@@ -7,9 +7,9 @@ import { Query } from 'core';
 import { lazy, Suspense, useState } from 'react';
 
 const VideoUploadDialog = lazy(() =>
-  import('../../../dialogs/upload').then(module => ({
+  import('../../../dialogs/upload').then((module) => ({
     default: module.VideoUploadDialog,
-  }))
+  })),
 );
 
 const UploadButton = () => {
@@ -20,7 +20,12 @@ const UploadButton = () => {
 
   if (isLoading) {
     return (
-      <ListItemButton disabled aria-disabled="true" aria-label="Upload button loading" role="button">
+      <ListItemButton
+        disabled
+        aria-disabled="true"
+        aria-label="Upload button loading"
+        role="button"
+      >
         <ListItemIcon>
           <Skeleton
             variant="circular"
@@ -30,7 +35,15 @@ const UploadButton = () => {
             data-testid="upload-button-skeleton-icon"
           />
         </ListItemIcon>
-        <ListItemText primary={<Skeleton width={80} aria-hidden="true" data-testid="upload-button-skeleton-text" />} />
+        <ListItemText
+          primary={
+            <Skeleton
+              width={80}
+              aria-hidden="true"
+              data-testid="upload-button-skeleton-text"
+            />
+          }
+        />
       </ListItemButton>
     );
   }

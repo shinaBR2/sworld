@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { VideoDetailQuery } from '../../../graphql/graphql';
+import type { VideoDetailQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformVideoFragment } from '../transformers';
 
@@ -29,7 +29,10 @@ interface LoadVideoDetailProps {
 const useLoadVideoDetail = (props: LoadVideoDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<VideoDetailQuery, { id: string }>({
+  const { data, isLoading, error } = useRequest<
+    VideoDetailQuery,
+    { id: string }
+  >({
     queryKey: ['video-detail', id],
     getAccessToken,
     document: videoDetailQuery,

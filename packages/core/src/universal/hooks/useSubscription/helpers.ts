@@ -22,7 +22,10 @@ const createExponentialBackoff = (params?: CreateExponentialBackoffParams) => {
   return {
     shouldRetry: () => retryCount < maxRetries,
     getNextDelay: () => {
-      const delay = Math.min(maxDelay, baseDelay * Math.pow(2, retryCount) * (1 + Math.random()));
+      const delay = Math.min(
+        maxDelay,
+        baseDelay * 2 ** retryCount * (1 + Math.random()),
+      );
       retryCount++;
       return delay;
     },

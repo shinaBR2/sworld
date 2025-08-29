@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Typography, Chip } from '@mui/material';
 import { PlayArrow as PlayIcon } from '@mui/icons-material';
+import { Box, Chip, Typography } from '@mui/material';
+import type React from 'react';
 
 interface BookCardProps {
   book: {
@@ -26,7 +26,9 @@ const defaultGradients = [
 ];
 
 const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
-  const gradient = book.coverGradient || defaultGradients[Math.floor(Math.random() * defaultGradients.length)];
+  const gradient =
+    book.coverGradient ||
+    defaultGradients[Math.floor(Math.random() * defaultGradients.length)];
 
   return (
     <Box
@@ -48,7 +50,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
           mb: 1.5,
           overflow: 'hidden',
           background: book.thumbnailUrl ? 'none' : gradient,
-          backgroundImage: book.thumbnailUrl ? `url(${book.thumbnailUrl})` : undefined,
+          backgroundImage: book.thumbnailUrl
+            ? `url(${book.thumbnailUrl})`
+            : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -96,30 +100,32 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
         )}
 
         {/* Progress Bar */}
-        {typeof book.progress === 'number' && book.progress > 0 && !book.isCompleted && (
-          <Box
-            data-testid="book-progress-bar"
-            sx={{
-              position: 'absolute',
-              bottom: 8,
-              left: 8,
-              right: 8,
-              height: 4,
-              bgcolor: 'rgba(255, 255, 255, 0.9)',
-              borderRadius: 0.5,
-              overflow: 'hidden',
-            }}
-          >
+        {typeof book.progress === 'number' &&
+          book.progress > 0 &&
+          !book.isCompleted && (
             <Box
+              data-testid="book-progress-bar"
               sx={{
-                height: '100%',
-                bgcolor: 'primary.main',
+                position: 'absolute',
+                bottom: 8,
+                left: 8,
+                right: 8,
+                height: 4,
+                bgcolor: 'rgba(255, 255, 255, 0.9)',
                 borderRadius: 0.5,
-                width: `${book.progress}%`,
+                overflow: 'hidden',
               }}
-            />
-          </Box>
-        )}
+            >
+              <Box
+                sx={{
+                  height: '100%',
+                  bgcolor: 'primary.main',
+                  borderRadius: 0.5,
+                  width: `${book.progress}%`,
+                }}
+              />
+            </Box>
+          )}
       </Box>
 
       {/* Book Info */}

@@ -1,6 +1,6 @@
-import { describe, expect, jest, it, beforeEach } from '@jest/globals';
-import { Direction, GridEngine } from 'grid-engine';
-import { Tilemaps, Input } from 'phaser';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { Direction, GridEngine } from 'grid-engine';
+import type { Input, Tilemaps } from 'phaser';
 import { checkTileInteraction } from './tileInteraction';
 
 describe('checkTileInteraction', () => {
@@ -44,7 +44,7 @@ describe('checkTileInteraction', () => {
     // Arrange
     mockGridEngine.getPosition.mockReturnValue({ x: 0, y: 0 });
     mockGridEngine.getFacingDirection.mockReturnValue('right' as Direction);
-    // @ts-ignore
+    // @ts-expect-error
     mockLayer.getTileAt.mockReturnValue(null);
 
     // Act

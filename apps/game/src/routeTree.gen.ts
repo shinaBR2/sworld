@@ -25,13 +25,13 @@ const GameSlugRoute = GameSlugImport.update({
   id: '/$gameSlug',
   path: '/$gameSlug',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$gameSlug.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/$gameSlug.lazy').then((d) => d.Route));
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then(d => d.Route));
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 // Populate the FileRoutesByPath interface
 
@@ -91,7 +91,9 @@ const rootRouteChildren: RootRouteChildren = {
   GameSlugRoute: GameSlugRoute,
 };
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {

@@ -1,7 +1,11 @@
 /* istanbul ignore file */
 
-import useSAudioPlayer, { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode } from './useSAudioPlayer';
 import { useCountdown } from './useCooldown';
+import useSAudioPlayer, {
+  type SAudioPlayerAudioItem,
+  type SAudioPlayerInputs,
+  type SAudioPlayerLoopMode,
+} from './useSAudioPlayer';
 
 export type { SAudioPlayerInputs, SAudioPlayerAudioItem, SAudioPlayerLoopMode };
 

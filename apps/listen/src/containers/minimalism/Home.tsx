@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { appConfig } from '../../config';
-
-import { LoadingBackdrop, FullWidthContainer } from 'ui/universal';
-import { MainContainer, Header, FeelingList } from 'ui/listen/minimalism';
-import { useAuthContext } from 'core/providers/auth';
 import { listenQueryHooks } from 'core';
+import { useAuthContext } from 'core/providers/auth';
+import React, { useState } from 'react';
+import { FeelingList, Header, MainContainer } from 'ui/listen/minimalism';
+import { FullWidthContainer, LoadingBackdrop } from 'ui/universal';
+import { appConfig } from '../../config';
 
 interface ContentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,15 +11,15 @@ interface ContentProps {
 }
 
 const SettingsPanel = React.lazy(() =>
-  import('ui/listen/minimalism/home/settings').then(mod => ({
+  import('ui/listen/minimalism/home/settings').then((mod) => ({
     default: mod.SettingsPanel,
-  }))
+  })),
 );
 
 const AudioList = React.lazy(() =>
-  import('ui/listen/minimalism').then(mod => ({
+  import('ui/listen/minimalism').then((mod) => ({
     default: mod.AudioList,
-  }))
+  })),
 );
 
 const Content = (props: ContentProps) => {
@@ -29,9 +28,17 @@ const Content = (props: ContentProps) => {
 
   return (
     <>
-      <FeelingList activeId={activeFeelingId} onSelect={setActiveFeelingId} queryRs={queryRs} />
+      <FeelingList
+        activeId={activeFeelingId}
+        onSelect={setActiveFeelingId}
+        queryRs={queryRs}
+      />
       <React.Suspense fallback={<div />}>
-        <AudioList queryRs={queryRs} list={queryRs.data?.audios ?? []} activeFeelingId={activeFeelingId} />
+        <AudioList
+          queryRs={queryRs}
+          list={queryRs.data?.audios ?? []}
+          activeFeelingId={activeFeelingId}
+        />
       </React.Suspense>
     </>
   );
@@ -53,7 +60,13 @@ const AuthenticatedContent = () => {
 };
 
 const Home = () => {
-  const { isSignedIn, isLoading: authLoading, signIn, signOut, user } = useAuthContext();
+  const {
+    isSignedIn,
+    isLoading: authLoading,
+    signIn,
+    signOut,
+    user,
+  } = useAuthContext();
   const [settingOpen, toggleSetting] = useState<boolean>(false);
   const { sites } = appConfig;
   const onProfileClick = () => {
@@ -80,7 +93,9 @@ const Home = () => {
           }}
         />
       </React.Suspense>
-      <MainContainer>{isSignedIn ? <AuthenticatedContent /> : <AnonymousContent />}</MainContainer>
+      <MainContainer>
+        {isSignedIn ? <AuthenticatedContent /> : <AnonymousContent />}
+      </MainContainer>
     </FullWidthContainer>
   );
 };

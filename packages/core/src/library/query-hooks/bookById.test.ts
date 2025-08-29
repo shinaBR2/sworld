@@ -63,7 +63,11 @@ describe('useBookById', () => {
       error: null,
     } as unknown as ReturnType<typeof useRequest>);
     const { result } = renderHook(() => useBookById('book-2'));
-    expect(result.current).toEqual({ data: null, isLoading: true, error: null });
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
   });
 
   it('should handle error state', () => {
