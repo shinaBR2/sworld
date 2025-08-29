@@ -1,14 +1,24 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { setItem, getItems, removeItems } from './index';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import { getItems, removeItems, setItem } from './index';
 
 function createMockStorage() {
   return {
     set: vi.fn().mockImplementation((items: Record<string, any>) => {
       return Promise.resolve();
     }),
-    get: vi.fn().mockImplementation((keys: string | string[] | Record<string, any>) => {
-      return Promise.resolve({ testKey: 'testValue' });
-    }),
+    get: vi
+      .fn()
+      .mockImplementation((keys: string | string[] | Record<string, any>) => {
+        return Promise.resolve({ testKey: 'testValue' });
+      }),
     remove: vi.fn().mockImplementation((keys: string | string[]) => {
       return Promise.resolve();
     }),
@@ -60,7 +70,9 @@ describe('Chrome Storage Utilities', () => {
       const error = new Error('Storage error');
       mockStorage.set.mockImplementationOnce(() => Promise.reject(error));
 
-      await expect(setItem('testKey', 'testValue')).rejects.toThrow('Storage error');
+      await expect(setItem('testKey', 'testValue')).rejects.toThrow(
+        'Storage error',
+      );
     });
   });
 

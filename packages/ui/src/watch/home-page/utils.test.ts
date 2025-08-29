@@ -1,12 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
 import { AppError } from 'core/universal';
+import {
+  MEDIA_TYPES,
+  type TransformedPlaylist,
+  type TransformedVideo,
+} from 'core/watch/query-hooks';
+import { describe, expect, it, vi } from 'vitest';
 import { genlinkProps } from './utils';
-import { MEDIA_TYPES, TransformedPlaylist, TransformedVideo } from 'core/watch/query-hooks';
 
 // Mock the route generation functions
 vi.mock('core/watch/routes', () => ({
   generateVideoDetailRoute: vi.fn().mockReturnValue({ to: '/video/123' }),
-  generateVideoInPlaylistRoute: vi.fn().mockReturnValue({ to: '/playlist/456' }),
+  generateVideoInPlaylistRoute: vi
+    .fn()
+    .mockReturnValue({ to: '/playlist/456' }),
 }));
 
 describe('genlinkProps', () => {

@@ -20,8 +20,12 @@ console.error = vi.fn();
 describe('Journal Mutation Hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useAuthContext).mockReturnValue({ getAccessToken: mockAccessToken });
-    vi.mocked(useQueryContext).mockReturnValue({ invalidateQuery: mockInvalidateQuery });
+    vi.mocked(useAuthContext).mockReturnValue({
+      getAccessToken: mockAccessToken,
+    });
+    vi.mocked(useQueryContext).mockReturnValue({
+      invalidateQuery: mockInvalidateQuery,
+    });
     vi.mocked(useMutationRequest).mockReturnValue({ mutateAsync: vi.fn() });
   });
 
@@ -36,7 +40,8 @@ describe('Journal Mutation Hooks', () => {
       renderHook(() => useCreateJournal({ onSuccess: mockOnSuccess }));
 
       // Get the onSuccess callback from the mutation options
-      const mutationOptions = vi.mocked(useMutationRequest).mock.calls[0][0].options;
+      const mutationOptions =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options;
       const onSuccessCallback = mutationOptions?.onSuccess;
 
       // Mock data with date
@@ -55,7 +60,11 @@ describe('Journal Mutation Hooks', () => {
       const year = date.getFullYear();
 
       // Verify invalidation using date from returned data
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', month, year]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'journals',
+        month,
+        year,
+      ]);
       expect(mockOnSuccess).toHaveBeenCalledWith(mockData);
     });
   });
@@ -66,7 +75,8 @@ describe('Journal Mutation Hooks', () => {
       renderHook(() => useDeleteJournal({ onSuccess: mockOnSuccess }));
 
       // Get the onSuccess callback from the mutation options
-      const mutationOptions = vi.mocked(useMutationRequest).mock.calls[0][0].options;
+      const mutationOptions =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options;
       const onSuccessCallback = mutationOptions?.onSuccess;
 
       // Mock data with date
@@ -85,7 +95,11 @@ describe('Journal Mutation Hooks', () => {
       const year = date.getFullYear();
 
       // Verify invalidation using date from returned data
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['journals', month, year]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'journals',
+        month,
+        year,
+      ]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['journal', '1']);
       expect(mockOnSuccess).toHaveBeenCalledWith(mockData);
     });
@@ -95,7 +109,8 @@ describe('Journal Mutation Hooks', () => {
       renderHook(() => useDeleteJournal({ onError: mockOnError }));
 
       // Get the onError callback from the mutation options
-      const mutationOptions = vi.mocked(useMutationRequest).mock.calls[0][0].options;
+      const mutationOptions =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options;
       const onErrorCallback = mutationOptions?.onError;
 
       // Create a mock error

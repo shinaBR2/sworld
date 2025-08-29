@@ -1,11 +1,18 @@
-import React from 'react';
-import { Grid, Card, CardContent, Box, Typography, Skeleton } from '@mui/material';
 import {
-  Check as CheckIcon,
   MenuBook as BookIcon,
-  Schedule as ScheduleIcon,
+  Check as CheckIcon,
   Favorite as FavoriteIcon,
+  Schedule as ScheduleIcon,
 } from '@mui/icons-material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Skeleton,
+  Typography,
+} from '@mui/material';
+import type React from 'react';
 
 interface StatsData {
   totalBooks?: number;
@@ -59,7 +66,7 @@ const StatsGridSkeleton = () => {
   return (
     <Box sx={{ mb: 6 }} aria-busy="true" aria-label="Stats section loading">
       <Grid container spacing={{ xs: 2, md: 3 }}>
-        {statItems.map(item => {
+        {statItems.map((item) => {
           const IconComponent = item.icon;
 
           return (
@@ -115,7 +122,7 @@ const StatsGridSkeleton = () => {
   );
 };
 
-const StatsGrid: React.FC<StatsGridProps> = props => {
+const StatsGrid: React.FC<StatsGridProps> = (props) => {
   const { isLoading, stats } = props;
 
   if (isLoading) {
@@ -125,7 +132,7 @@ const StatsGrid: React.FC<StatsGridProps> = props => {
   return (
     <Box sx={{ mb: 6 }}>
       <Grid container spacing={{ xs: 2, md: 3 }}>
-        {statItems.map(item => {
+        {statItems.map((item) => {
           const IconComponent = item.icon;
           let value = stats?.[item.key] ?? 0;
           // Convert minutes to hours for readingTimeThisMonth

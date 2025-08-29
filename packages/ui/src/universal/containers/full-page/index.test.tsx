@@ -1,10 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { FullPageContainer } from './index';
 
 describe('FullPageContainer', () => {
   it('renders with default full-viewport styles', () => {
-    const { container } = render(<FullPageContainer>Test Content</FullPageContainer>);
+    const { container } = render(
+      <FullPageContainer>Test Content</FullPageContainer>,
+    );
 
     const stackElement = container.firstChild as HTMLElement;
     expect(stackElement).toHaveStyle({
@@ -15,7 +17,9 @@ describe('FullPageContainer', () => {
   });
 
   it('merges custom sx styles with defaults', () => {
-    const { container } = render(<FullPageContainer sx={{ margin: 2 }}>Content</FullPageContainer>);
+    const { container } = render(
+      <FullPageContainer sx={{ margin: 2 }}>Content</FullPageContainer>,
+    );
 
     const stackElement = container.firstChild as HTMLElement;
     expect(stackElement).toHaveStyle({
@@ -27,7 +31,7 @@ describe('FullPageContainer', () => {
     render(
       <FullPageContainer>
         <div data-testid="test-child">Child Content</div>
-      </FullPageContainer>
+      </FullPageContainer>,
     );
 
     expect(screen.getByTestId('test-child')).toBeInTheDocument();

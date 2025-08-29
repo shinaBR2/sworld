@@ -1,4 +1,4 @@
-import { BackdropProps } from '@mui/material';
+import type { BackdropProps } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';

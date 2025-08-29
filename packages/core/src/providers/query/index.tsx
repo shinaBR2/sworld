@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createContext, FC, useContext } from 'react';
+import { createContext, type FC, useContext } from 'react';
 import { useFeatureFlagSubscription } from '../../universal/hooks/useFeatureFlagSubscription';
 import { useNotificationsSubscription } from '../../universal/hooks/useNotificationsSubscription';
 
@@ -48,7 +48,11 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
     },
   };
 
-  return <QueryContext.Provider value={contextValue}>{children}</QueryContext.Provider>;
+  return (
+    <QueryContext.Provider value={contextValue}>
+      {children}
+    </QueryContext.Provider>
+  );
 };
 
 const QueryProvider: FC<QueryContextProviderProps> = ({ config, children }) => {

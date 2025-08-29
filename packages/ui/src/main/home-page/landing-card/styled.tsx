@@ -1,5 +1,11 @@
-import { StyledComponent } from '@emotion/styled';
-import { Card, Box, Typography, BoxProps, TypographyProps } from '@mui/material';
+import type { StyledComponent } from '@emotion/styled';
+import {
+  Box,
+  type BoxProps,
+  Card,
+  Typography,
+  type TypographyProps,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -17,33 +23,39 @@ const StyledCard = styled(Card)(({ theme }) => ({
   '&:hover': {
     transform: 'translateY(-4px)',
     boxShadow: theme.shadows[8],
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : theme.palette.background.paper,
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? 'rgba(255, 255, 255, 0.05)'
+        : theme.palette.background.paper,
   },
 })) as typeof Card;
 
-const IconContainer: StyledComponent<BoxProps & { customColor?: string }> = styled(Box, {
-  shouldForwardProp: prop => prop !== 'customColor',
-})<{ customColor?: string }>(({ theme, customColor }) => {
-  const iconColor = customColor || theme.palette.primary.main;
-  return {
-    marginBottom: theme.spacing(2),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-    height: 70,
-    borderRadius: '50%',
-    backgroundColor: `${iconColor}15`,
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      transform: 'scale(1.05)',
-      backgroundColor: `${iconColor}25`,
-    },
-  };
-});
+const IconContainer: StyledComponent<BoxProps & { customColor?: string }> =
+  styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'customColor',
+  })<{ customColor?: string }>(({ theme, customColor }) => {
+    const iconColor = customColor || theme.palette.primary.main;
+    return {
+      marginBottom: theme.spacing(2),
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 70,
+      height: 70,
+      borderRadius: '50%',
+      backgroundColor: `${iconColor}15`,
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'scale(1.05)',
+        backgroundColor: `${iconColor}25`,
+      },
+    };
+  });
 
-const IconTypography: StyledComponent<TypographyProps & { customColor?: string }> = styled(Typography, {
-  shouldForwardProp: prop => prop !== 'customColor',
+const IconTypography: StyledComponent<
+  TypographyProps & { customColor?: string }
+> = styled(Typography, {
+  shouldForwardProp: (prop) => prop !== 'customColor',
 })<{ customColor?: string }>(({ theme, customColor }) => ({
   fontSize: '2rem',
   color: customColor || theme.palette.primary.main,
@@ -70,4 +82,11 @@ const CardContentBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
 })) as typeof Box;
 
-export { StyledCard, IconContainer, IconTypography, TitleTypography, DescriptionTypography, CardContentBox };
+export {
+  StyledCard,
+  IconContainer,
+  IconTypography,
+  TitleTypography,
+  DescriptionTypography,
+  CardContentBox,
+};

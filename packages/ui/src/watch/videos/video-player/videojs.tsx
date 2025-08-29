@@ -1,11 +1,13 @@
 // @ts-nocheck
+
+import { useAuthContext } from 'core/providers/auth';
+import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import { useEffect, useMemo, useRef } from 'react';
 // import videojs from 'video.js';
 import type Player from 'video.js/dist/types/player';
-import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
-import { useAuthContext } from 'core/providers/auth';
-import { PlayableVideo } from '../types';
+import type { PlayableVideo } from '../types';
 import { getVideoPlayerOptions } from './utils';
+
 // import 'video.js/dist/video-js.css';
 
 /**
@@ -55,11 +57,18 @@ export const VideoJS = (props: VideoJSProps) => {
       getVideoPlayerOptions(video, {
         ...videoJsOptions,
       }),
-    [video.source, JSON.stringify(videoJsOptions)]
+    [video.source, JSON.stringify(videoJsOptions)],
   );
 
   const { isSignedIn, getAccessToken } = useAuthContext();
-  const { handleProgress, handlePlay, handlePause, handleSeek, handleEnded, cleanup } = useVideoProgress({
+  const {
+    handleProgress,
+    handlePlay,
+    handlePause,
+    handleSeek,
+    handleEnded,
+    cleanup,
+  } = useVideoProgress({
     videoId: video.id,
     isSignedIn,
     getAccessToken,
@@ -123,9 +132,9 @@ export const VideoJS = (props: VideoJSProps) => {
   //       player.on('loadedmetadata', () => {
   //         debugLog('Metadata loaded');
 
-  //         // @ts-ignore
+  //         // @ts-expect-error
   //         const audioTracks = player.audioTracks();
-  //         // @ts-ignore
+  //         // @ts-expect-error
   //         const videoTracks = player.videoTracks();
 
   //         debugLog('Audio tracks info:', {
@@ -191,7 +200,7 @@ export const VideoJS = (props: VideoJSProps) => {
   //           playerError,
   //           code: playerError?.code,
   //           message: playerError?.message,
-  //           // @ts-ignore
+  //           // @ts-expect-error
   //           type: playerError?.type,
   //         });
   //       });

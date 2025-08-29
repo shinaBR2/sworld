@@ -19,7 +19,7 @@ describe('useVideoProgress', () => {
     vi.useFakeTimers();
 
     mockUseMutationOptions = {};
-    vi.mocked(useMutationRequest).mockImplementation(params => {
+    vi.mocked(useMutationRequest).mockImplementation((params) => {
       mockUseMutationOptions = params.options || {};
       return {
         mutate: mockMutate,
@@ -46,7 +46,7 @@ describe('useVideoProgress', () => {
         getAccessToken: mockGetAccessToken,
         onError: mockOnError,
         isSignedIn,
-      })
+      }),
     );
 
   // Add to existing tests - update all test cases to include isSignedIn: true
@@ -101,7 +101,7 @@ describe('useVideoProgress', () => {
           getAccessToken: mockGetAccessToken,
           isSignedIn,
         }),
-      { initialProps: { isSignedIn: true } }
+      { initialProps: { isSignedIn: true } },
     );
 
     // Start playback and verify initial state
@@ -201,7 +201,10 @@ describe('useVideoProgress', () => {
     });
 
     // Verify error was logged and callback was called
-    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', error);
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to update video progress:',
+      error,
+    );
     expect(mockOnError).toHaveBeenCalledWith(error);
   });
 
@@ -213,7 +216,10 @@ describe('useVideoProgress', () => {
       mockUseMutationOptions.onError?.(nonErrorObject);
     });
 
-    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', nonErrorObject);
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to update video progress:',
+      nonErrorObject,
+    );
     expect(mockOnError).toHaveBeenCalledWith(nonErrorObject);
   });
 
@@ -223,7 +229,7 @@ describe('useVideoProgress', () => {
       useVideoProgress({
         videoId: mockVideoId,
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     const error = new Error('Update failed');
@@ -235,7 +241,10 @@ describe('useVideoProgress', () => {
       });
     }).not.toThrow();
 
-    expect(console.error).toHaveBeenCalledWith('Failed to update video progress:', error);
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to update video progress:',
+      error,
+    );
   });
 
   it('should not start multiple intervals on repeated play calls', () => {

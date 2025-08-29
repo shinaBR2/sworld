@@ -1,14 +1,21 @@
 import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { lazy, useState } from 'react';
 import { Auth } from 'core';
+import {
+  buildVariables,
+  formalize,
+  useSharePlaylist,
+} from 'core/watch/mutation-hooks/share-videos';
 import { useLoadPlaylistDetail } from 'core/watch/query-hooks/playlist-detail';
-import { useSharePlaylist, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
+import React, { lazy, useState } from 'react';
+import { AuthRoute } from 'ui/universal/authRoute';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
-import React from 'react';
-import { AuthRoute } from 'ui/universal/authRoute';
 
-const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
+const Notification = lazy(() =>
+  import('ui/universal/notification').then((m) => ({
+    default: m.Notification,
+  })),
+);
 
 function VideoDetails(): JSX.Element {
   const [notification, setNotification] = useState<{
@@ -26,11 +33,17 @@ function VideoDetails(): JSX.Element {
   const { mutate: sharePlaylist } = useSharePlaylist({
     getAccessToken: authContext.getAccessToken,
     onSuccess: () => {
-      setNotification({ message: 'Playlist shared successfully', severity: 'success' });
+      setNotification({
+        message: 'Playlist shared successfully',
+        severity: 'success',
+      });
     },
-    onError: error => {
+    onError: (error) => {
       console.error('Failed to share playlist:', error);
-      setNotification({ message: 'Failed to share playlist', severity: 'error' });
+      setNotification({
+        message: 'Failed to share playlist',
+        severity: 'error',
+      });
     },
   });
 
@@ -62,7 +75,12 @@ function VideoDetails(): JSX.Element {
 
   return (
     <Layout>
-      {notification && <Notification notification={notification} onClose={() => setNotification(null)} />}
+      {notification && (
+        <Notification
+          notification={notification}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <VideoDetailContainer
         queryRs={videoResult}
         activeVideoId={videoId}
@@ -74,7 +92,9 @@ function VideoDetails(): JSX.Element {
   );
 }
 
-export const Route = createLazyFileRoute('/playlist/$slug/$playlistId/$videoId')({
+export const Route = createLazyFileRoute(
+  '/playlist/$slug/$playlistId/$videoId',
+)({
   component: () => {
     return (
       <AuthRoute>

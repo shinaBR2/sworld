@@ -1,12 +1,12 @@
-import React from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   TextField,
 } from '@mui/material';
+import React from 'react';
 import type { SubtitleDialogProps } from './types';
 
 export const SubtitleDialog: React.FC<SubtitleDialogProps> = ({
@@ -39,7 +39,7 @@ export const SubtitleDialog: React.FC<SubtitleDialogProps> = ({
             label="Subtitle URL"
             fullWidth
             value={url}
-            onChange={e => setUrl(e.target.value)}
+            onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com/subtitles/english.vtt"
           />
         </DialogContent>

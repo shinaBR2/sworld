@@ -1,18 +1,19 @@
 // packages/ui/src/journal/journal-detail.tsx
-import React from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import Skeleton from '@mui/material/Skeleton';
+
 // MUI Icons imports
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { MoodIcon } from '../mood-icons';
+import EditIcon from '@mui/icons-material/Edit';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
+import Typography from '@mui/material/Typography';
+import type { Journal, MoodType } from 'core/src/journal';
 import { formatDate, formatDateTime } from 'core/universal/common';
-import { Journal, MoodType } from 'core/src/journal';
+import type React from 'react';
+import { MoodIcon } from '../mood-icons';
 
 interface JournalDetailProps {
   journal: Journal | null;
@@ -40,7 +41,14 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
         </Box>
 
         <Paper sx={{ p: 3, boxShadow: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              mb: 3,
+            }}
+          >
             <Box sx={{ display: 'flex', gap: 0.5 }}>
               <Skeleton width={60} height={24} />
               <Skeleton width={80} height={24} />
@@ -102,7 +110,14 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
       </Box>
 
       <Paper sx={{ p: 3, boxShadow: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            mb: 3,
+          }}
+        >
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {journal.tags.map((tag: string) => (
               <Chip
@@ -121,11 +136,21 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           <Box sx={{ display: 'flex', gap: 1 }}>
             <MoodIcon mood={journal.mood as MoodType} size={20} />
 
-            <IconButton size="small" color="primary" onClick={onEditClick} sx={{ p: 0.5 }}>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={onEditClick}
+              sx={{ p: 0.5 }}
+            >
               <EditIcon fontSize="small" />
             </IconButton>
 
-            <IconButton size="small" color="error" onClick={onDeleteClick} sx={{ p: 0.5 }}>
+            <IconButton
+              size="small"
+              color="error"
+              onClick={onDeleteClick}
+              sx={{ p: 0.5 }}
+            >
               <DeleteOutlineIcon fontSize="small" />
             </IconButton>
           </Box>

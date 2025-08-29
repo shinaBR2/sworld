@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadVideos } from '.';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../../universal/hooks/use-request';
+import { useLoadVideos } from '.';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -20,7 +20,9 @@ describe('useLoadVideos', () => {
       slug: 'video-1',
       createdAt: '2024-01-01',
       user: { username: 'user1' },
-      user_video_histories: [{ last_watched_at: '2024-01-02', progress_seconds: 30 }],
+      user_video_histories: [
+        { last_watched_at: '2024-01-02', progress_seconds: 30 },
+      ],
     },
     {
       id: '2',
@@ -91,7 +93,9 @@ describe('useLoadVideos', () => {
       isLoading: true,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadVideos({ getAccessToken: mockGetAccessToken }),
+    );
 
     expect(result.current).toEqual({
       videos: [],
@@ -124,7 +128,9 @@ describe('useLoadVideos', () => {
       isLoading: false,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadVideos({ getAccessToken: mockGetAccessToken }),
+    );
 
     expect(result.current).toEqual({
       videos: [
@@ -157,7 +163,9 @@ describe('useLoadVideos', () => {
       error: mockError,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() => useLoadVideos({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadVideos({ getAccessToken: mockGetAccessToken }),
+    );
 
     expect(result.current).toEqual({
       videos: [],

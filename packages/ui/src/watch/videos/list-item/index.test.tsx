@@ -1,11 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { VideoListItem } from './index';
 
 // Mock ResponsiveImage and other dependencies
 vi.mock('../../../universal/images/image', () => ({
-  ResponsiveImage: vi.fn(({ src, alt }) => <img src={src} alt={alt} data-testid="responsive-image" />),
+  ResponsiveImage: vi.fn(({ src, alt }) => (
+    <img src={src} alt={alt} data-testid="responsive-image" />
+  )),
 }));
 
 // Mock default thumbnail
@@ -23,13 +25,19 @@ describe('VideoListItem', () => {
   };
 
   const mockLinkComponent = vi.fn(({ children, to, params }) => (
-    <div data-testid="link-component" data-to={to} data-params={JSON.stringify(params)}>
+    <div
+      data-testid="link-component"
+      data-to={to}
+      data-params={JSON.stringify(params)}
+    >
       {children}
     </div>
   ));
 
   it('renders video details correctly', () => {
-    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />,
+    );
 
     // Check video title
     const titleElement = screen.getByText('Test Video');
@@ -47,15 +55,26 @@ describe('VideoListItem', () => {
         videoId: '1',
       },
     };
-    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} linkProps={linkProps} />);
+    render(
+      <VideoListItem
+        video={mockVideo}
+        LinkComponent={mockLinkComponent}
+        linkProps={linkProps}
+      />,
+    );
 
     const linkComponent = screen.getByTestId('link-component');
     expect(linkComponent).toHaveAttribute('data-to', '/$videoId');
-    expect(linkComponent).toHaveAttribute('data-params', JSON.stringify({ videoId: '1' }));
+    expect(linkComponent).toHaveAttribute(
+      'data-params',
+      JSON.stringify({ videoId: '1' }),
+    );
   });
 
   it('renders thumbnail correctly', () => {
-    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />,
+    );
 
     const thumbnailImage = screen.getByTestId('responsive-image');
     expect(thumbnailImage).toHaveAttribute('src', 'test-thumbnail.jpg');
@@ -65,20 +84,33 @@ describe('VideoListItem', () => {
   it('uses default thumbnail when no thumbnail is provided', () => {
     const videoWithoutThumbnail = { ...mockVideo, thumbnailUrl: undefined };
 
-    render(<VideoListItem video={videoWithoutThumbnail} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem
+        video={videoWithoutThumbnail}
+        LinkComponent={mockLinkComponent}
+      />,
+    );
 
     const thumbnailImage = screen.getByRole('img');
     expect(thumbnailImage).toHaveAttribute('src', 'default-thumbnail.jpg');
   });
 
   it('handles active state with aria-current attribute', () => {
-    const { rerender, container } = render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
+    const { rerender, container } = render(
+      <VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />,
+    );
 
     const initialCurrentItems = document.querySelectorAll('[aria-current]');
     expect(initialCurrentItems).toHaveLength(0);
 
     // Rerender with active state
-    rerender(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} isActive />);
+    rerender(
+      <VideoListItem
+        video={mockVideo}
+        LinkComponent={mockLinkComponent}
+        isActive
+      />,
+    );
 
     // Check active state
     const currentItems = container.querySelectorAll('[aria-current="page"]');
@@ -86,7 +118,9 @@ describe('VideoListItem', () => {
   });
 
   it('displays play icon', () => {
-    render(<VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem video={mockVideo} LinkComponent={mockLinkComponent} />,
+    );
 
     const playIcon = screen.getByTestId('PlayCircleIcon');
     expect(playIcon).toBeInTheDocument();
@@ -99,7 +133,12 @@ describe('VideoListItem', () => {
       duration: 200, // 50% progress
     };
 
-    render(<VideoListItem video={videoWithProgress} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem
+        video={videoWithProgress}
+        LinkComponent={mockLinkComponent}
+      />,
+    );
 
     const progressBar = screen.getByRole('progressbar');
     expect(progressBar).toBeInTheDocument();
@@ -116,7 +155,12 @@ describe('VideoListItem', () => {
       duration: 200,
     };
 
-    render(<VideoListItem video={videoWithZeroProgress} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem
+        video={videoWithZeroProgress}
+        LinkComponent={mockLinkComponent}
+      />,
+    );
 
     const progressBar = screen.queryByRole('progressbar');
     expect(progressBar).not.toBeInTheDocument();
@@ -129,7 +173,12 @@ describe('VideoListItem', () => {
       duration: undefined,
     };
 
-    render(<VideoListItem video={videoWithoutDuration} LinkComponent={mockLinkComponent} />);
+    render(
+      <VideoListItem
+        video={videoWithoutDuration}
+        LinkComponent={mockLinkComponent}
+      />,
+    );
 
     const progressBar = screen.queryByRole('progressbar');
     expect(progressBar).not.toBeInTheDocument();
@@ -149,7 +198,12 @@ describe('VideoListItem', () => {
         duration,
       };
 
-      const { rerender } = render(<VideoListItem video={videoWithProgress} LinkComponent={mockLinkComponent} />);
+      const { rerender } = render(
+        <VideoListItem
+          video={videoWithProgress}
+          LinkComponent={mockLinkComponent}
+        />,
+      );
 
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', expected.toString());

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { NotificationsMenu } from './notifications-menu';
 import '@testing-library/jest-dom';
 import { Link } from '@mui/material';
@@ -33,9 +33,15 @@ type NotificationType = {
 // Mock NotificationItem component
 // Update NotificationItem mock to include onClick handler
 vi.mock('./notification-item', () => ({
-  NotificationItem: ({ notification, onClick }: { notification: NotificationType; onClick: () => void }) => (
-    <div 
-      data-testid="mock-notification-item" 
+  NotificationItem: ({
+    notification,
+    onClick,
+  }: {
+    notification: NotificationType;
+    onClick: () => void;
+  }) => (
+    <div
+      data-testid="mock-notification-item"
       data-notification-id={notification.id}
       onClick={onClick} // Add onClick handler
     >
@@ -76,8 +82,20 @@ describe('NotificationsMenu', () => {
 
   it('renders notification items when there are notifications', () => {
     const mockNotifications: NotificationType[] = [
-      { id: 1, type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
-      { id: 2, type: 'default', title: 'Test 2', message: 'Message 2', readAt: null },
+      {
+        id: 1,
+        type: 'default',
+        title: 'Test 1',
+        message: 'Message 1',
+        readAt: null,
+      },
+      {
+        id: 2,
+        type: 'default',
+        title: 'Test 2',
+        message: 'Message 2',
+        readAt: null,
+      },
     ];
 
     vi.mocked(useQueryContext).mockImplementation(() => ({
@@ -140,8 +158,20 @@ describe('NotificationsMenu', () => {
   // Add new test cases
   it('renders Mark All as Read button when notifications exist', () => {
     const mockNotifications: NotificationType[] = [
-      { id: '1', type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
-      { id: '2', type: 'default', title: 'Test 2', message: 'Message 2', readAt: null },
+      {
+        id: '1',
+        type: 'default',
+        title: 'Test 1',
+        message: 'Message 1',
+        readAt: null,
+      },
+      {
+        id: '2',
+        type: 'default',
+        title: 'Test 2',
+        message: 'Message 2',
+        readAt: null,
+      },
     ];
 
     vi.mocked(useQueryContext).mockImplementation(() => ({
@@ -159,8 +189,20 @@ describe('NotificationsMenu', () => {
 
   it('calls markAllAsRead when Mark All button is clicked', () => {
     const mockNotifications: NotificationType[] = [
-      { id: '1', type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
-      { id: '2', type: 'default', title: 'Test 2', message: 'Message 2', readAt: null },
+      {
+        id: '1',
+        type: 'default',
+        title: 'Test 1',
+        message: 'Message 1',
+        readAt: null,
+      },
+      {
+        id: '2',
+        type: 'default',
+        title: 'Test 2',
+        message: 'Message 2',
+        readAt: null,
+      },
     ];
 
     const markAllAsReadMock = vi.fn();
@@ -200,8 +242,20 @@ describe('NotificationsMenu', () => {
   // Add this test case inside the describe block
   it('calls markAsRead with notification ID when notification item is clicked', () => {
     const mockNotifications: NotificationType[] = [
-      { id: '1', type: 'default', title: 'Test 1', message: 'Message 1', readAt: null },
-      { id: '2', type: 'default', title: 'Test 2', message: 'Message 2', readAt: null },
+      {
+        id: '1',
+        type: 'default',
+        title: 'Test 1',
+        message: 'Message 1',
+        readAt: null,
+      },
+      {
+        id: '2',
+        type: 'default',
+        title: 'Test 2',
+        message: 'Message 2',
+        readAt: null,
+      },
     ];
 
     const markAsReadMock = vi.fn();

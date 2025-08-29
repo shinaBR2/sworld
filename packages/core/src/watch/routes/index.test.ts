@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from './index';
+import { describe, expect, it } from 'vitest';
+import {
+  generateVideoDetailRoute,
+  generateVideoInPlaylistRoute,
+} from './index';
 
 describe('generateVideoDetailRoute', () => {
   it('should return video route', () => {

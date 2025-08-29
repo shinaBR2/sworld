@@ -1,11 +1,10 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { Layout } from '../components/layout';
-import { HistoryContainer } from 'ui/watch/history-page/container';
-import { useMemo } from 'react';
-import React from 'react';
 import { useAuthContext } from 'core/providers/auth';
 import { useLoadHistory } from 'core/watch/query-hooks/history';
+import React, { useMemo } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { HistoryContainer } from 'ui/watch/history-page/container';
+import { Layout } from '../components/layout';
 
 const Content = () => {
   const { getAccessToken } = useAuthContext();
@@ -17,13 +16,19 @@ const Content = () => {
     if (!videos) return [];
 
     return videos.sort((a, b) => {
-      return (b.lastWatchedAt as string).localeCompare(a.lastWatchedAt as string);
+      return (b.lastWatchedAt as string).localeCompare(
+        a.lastWatchedAt as string,
+      );
     });
   }, [videos]);
 
   return (
     <Layout>
-      <HistoryContainer isLoading={isLoading} videos={sortedVideos} LinkComponent={Link} />
+      <HistoryContainer
+        isLoading={isLoading}
+        videos={sortedVideos}
+        LinkComponent={Link}
+      />
     </Layout>
   );
 };

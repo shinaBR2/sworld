@@ -1,5 +1,8 @@
-import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
-import { HistoryVideo } from './types';
+import {
+  generateVideoDetailRoute,
+  generateVideoInPlaylistRoute,
+} from 'core/watch/routes';
+import type { HistoryVideo } from './types';
 
 /**
  * Generates link props based on the media type (video or playlist).

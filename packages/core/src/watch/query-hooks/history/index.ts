@@ -1,8 +1,8 @@
 import { graphql } from '../../../graphql';
-import { UserVideoHistoryQuery } from '../../../graphql/graphql';
+import type { UserVideoHistoryQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformUser } from '../transformers';
-import { BaseQueryProps, MEDIA_TYPES } from '../types';
+import { type BaseQueryProps, MEDIA_TYPES } from '../types';
 
 const historyQuery = graphql(/* GraphQL */ `
   query UserVideoHistory {
@@ -44,8 +44,12 @@ const historyQuery = graphql(/* GraphQL */ `
 `);
 
 const transform = (data: UserVideoHistoryQuery) => {
-  const videos = data.user_video_history.map(item => {
-    const { last_watched_at: lastWatchedAt, progress_seconds: progressSeconds, video } = item;
+  const videos = data.user_video_history.map((item) => {
+    const {
+      last_watched_at: lastWatchedAt,
+      progress_seconds: progressSeconds,
+      video,
+    } = item;
     // Video can belong to many playlist
     // For now it's fine because all videos has one playlist only
     const playlist = video.playlist_videos[0]?.playlist;

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthRoute } from './index';
 import { useAuthContext } from 'core/providers/auth';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { LoginDialog } from '../dialogs/login';
+import { AuthRoute } from './index';
 
 // Mock the auth context
 vi.mock('core/providers/auth', () => ({
@@ -31,7 +31,7 @@ describe('AuthRoute', () => {
     render(
       <AuthRoute>
         <div data-testid="test-content">Protected Content</div>
-      </AuthRoute>
+      </AuthRoute>,
     );
 
     expect(screen.getByTestId('test-content')).toBeInTheDocument();
@@ -47,10 +47,12 @@ describe('AuthRoute', () => {
     render(
       <AuthRoute>
         <div>Protected Content</div>
-      </AuthRoute>
+      </AuthRoute>,
     );
 
-    expect(screen.getByText('Valuable things deserve waiting')).toBeInTheDocument();
+    expect(
+      screen.getByText('Valuable things deserve waiting'),
+    ).toBeInTheDocument();
   });
 
   it('shows login dialog when user is not authenticated', () => {
@@ -64,7 +66,7 @@ describe('AuthRoute', () => {
     render(
       <AuthRoute>
         <div>Protected Content</div>
-      </AuthRoute>
+      </AuthRoute>,
     );
 
     expect(screen.getByTestId('mock-login-dialog')).toBeInTheDocument();
@@ -80,7 +82,7 @@ describe('AuthRoute', () => {
     render(
       <AuthRoute>
         <div data-testid="test-content">Protected Content</div>
-      </AuthRoute>
+      </AuthRoute>,
     );
 
     expect(screen.queryByTestId('test-content')).not.toBeInTheDocument();

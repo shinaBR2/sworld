@@ -1,4 +1,4 @@
-import { DialogueChoice, DialogueContent } from '../../../types/dialog';
+import type { DialogueChoice, DialogueContent } from '../../../types/dialog';
 
 export type DialogueAction =
   | { type: 'TYPE_CHAR'; payload: { char: string } }
@@ -47,7 +47,10 @@ const splitTextIntoPages = (text: string, charsPerPage: number): string[] => {
   return pages;
 };
 
-const dialogueReducer = (state: DialogueState, action: DialogueAction): DialogueState => {
+const dialogueReducer = (
+  state: DialogueState,
+  action: DialogueAction,
+): DialogueState => {
   let isLastPage;
 
   switch (action.type) {
@@ -85,8 +88,11 @@ const dialogueReducer = (state: DialogueState, action: DialogueAction): Dialogue
         selectedChoiceIndex: action.payload.index,
       };
 
-    case 'SET_NEXT_DIALOGUE':
-      const newPages = splitTextIntoPages(action.payload.dialogue.text, state.charsPerPage);
+    case 'SET_NEXT_DIALOGUE': {
+      const newPages = splitTextIntoPages(
+        action.payload.dialogue.text,
+        state.charsPerPage,
+      );
 
       return {
         ...state,
@@ -100,8 +106,9 @@ const dialogueReducer = (state: DialogueState, action: DialogueAction): Dialogue
         showContinuePrompt: false,
         isLastPage: newPages.length === 1,
       };
+    }
 
-    case 'NEXT_PAGE':
+    case 'NEXT_PAGE': {
       const newPageIndex = state.currentPageIndex + 1;
       isLastPage = newPageIndex === state.textPages.length - 1;
 
@@ -113,6 +120,7 @@ const dialogueReducer = (state: DialogueState, action: DialogueAction): Dialogue
         showContinuePrompt: false,
         isLastPage,
       };
+    }
 
     case 'RESET':
       return initialState(action.payload.dialogue, DEFAULT_CHARACTERS_PER_PAGE);
@@ -122,7 +130,10 @@ const dialogueReducer = (state: DialogueState, action: DialogueAction): Dialogue
   }
 };
 
-const initialState = (dialogue: DialogueContent, charsPerPage: number): DialogueState => {
+const initialState = (
+  dialogue: DialogueContent,
+  charsPerPage: number,
+): DialogueState => {
   const pages = splitTextIntoPages(dialogue.text, charsPerPage);
 
   return {

@@ -1,4 +1,4 @@
-import { CategoryType } from 'core/finance';
+import type { CategoryType } from 'core/finance';
 
 const getCategoryIcon = (category: CategoryType) => {
   switch (category) {

@@ -1,20 +1,20 @@
-import Box from '@mui/material/Box';
-import { RequiredLinkComponent } from '../types';
 import PlayCircle from '@mui/icons-material/PlayCircle';
-import { ResponsiveImage } from '../../../universal/images/image';
+import Box from '@mui/material/Box';
+import type { TransformedVideo } from 'core/watch/query-hooks';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import { ResponsiveImage } from '../../../universal/images/image';
+import type { RequiredLinkComponent } from '../types';
 import {
   ListItemContainer,
   PlayIconOverlay,
   Progress,
   ProgressBar,
   ThumbnailContainer,
-  thumbnailImgStyle,
   ThumbnailWrapper,
   TitleText,
+  thumbnailImgStyle,
   UsernameText,
 } from './styled';
-import { TransformedVideo } from 'core/watch/query-hooks';
 
 interface ThumbnailProps {
   src?: string;
@@ -30,7 +30,14 @@ const Thumbnail = (props: ThumbnailProps) => {
   const { src, title } = props;
 
   if (!src) {
-    return <Box component="img" src={defaultThumbnailUrl} alt={title} sx={thumbnailImgStyle} />;
+    return (
+      <Box
+        component="img"
+        src={defaultThumbnailUrl}
+        alt={title}
+        sx={thumbnailImgStyle}
+      />
+    );
   }
 
   return (
@@ -48,11 +55,20 @@ const Thumbnail = (props: ThumbnailProps) => {
 
 const VideoListItem = (props: VideoListItemProps) => {
   const { video, isActive = false, LinkComponent, linkProps } = props;
-  const { title, thumbnailUrl, duration = 0, user, progressSeconds = 0 } = video;
+  const {
+    title,
+    thumbnailUrl,
+    duration = 0,
+    user,
+    progressSeconds = 0,
+  } = video;
 
   return (
     <LinkComponent {...linkProps} style={{ textDecoration: 'none' }}>
-      <ListItemContainer isActive={isActive} aria-current={isActive ? 'page' : undefined}>
+      <ListItemContainer
+        isActive={isActive}
+        aria-current={isActive ? 'page' : undefined}
+      >
         {/* Thumbnail with play overlay */}
         <ThumbnailContainer>
           <ThumbnailWrapper>

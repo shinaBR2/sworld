@@ -1,12 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { JournalList } from './index';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { formatDate, getMonthName } from 'core/universal/common';
+import { describe, expect, it, vi } from 'vitest';
+import { JournalList } from './index';
 
 // Mock dependencies
 vi.mock('core/universal/common', () => ({
-  formatDate: vi.fn(date => `formatted-date-${date}`),
-  getMonthName: vi.fn(month => `Month-${month}`),
+  formatDate: vi.fn((date) => `formatted-date-${date}`),
+  getMonthName: vi.fn((month) => `Month-${month}`),
 }));
 
 describe('JournalList', () => {
@@ -58,18 +58,22 @@ describe('JournalList', () => {
 
     // Check header
     expect(screen.getByText('Journals')).toBeInTheDocument();
-    expect(screen.getByText(`Month-${defaultProps.month} ${defaultProps.year}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Month-${defaultProps.month} ${defaultProps.year}`),
+    ).toBeInTheDocument();
 
     // Check stat cards
-    mockStats.categories.forEach(category => {
+    mockStats.categories.forEach((category) => {
       expect(screen.getByText(category.count.toString())).toBeInTheDocument();
     });
 
     // Check journal cards
-    mockJournals.forEach(journal => {
-      expect(screen.getByText(`formatted-date-${journal.date}`)).toBeInTheDocument();
+    mockJournals.forEach((journal) => {
+      expect(
+        screen.getByText(`formatted-date-${journal.date}`),
+      ).toBeInTheDocument();
       expect(screen.getByText(journal.content)).toBeInTheDocument();
-      journal.tags.forEach(tag => {
+      journal.tags.forEach((tag) => {
         expect(screen.getByText(tag)).toBeInTheDocument();
       });
     });
@@ -78,14 +82,20 @@ describe('JournalList', () => {
   it('renders empty state when no journals', () => {
     render(<JournalList {...defaultProps} journals={[]} />);
 
-    expect(screen.getByText('No journal entries for this month.')).toBeInTheDocument();
-    expect(screen.getByText('Click the + button to create your first entry.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No journal entries for this month.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Click the + button to create your first entry.'),
+    ).toBeInTheDocument();
   });
 
   it('handles previous month navigation', () => {
     render(<JournalList {...defaultProps} />);
 
-    const prevButton = screen.getByTestId('ArrowBackIosNewIcon').closest('button');
+    const prevButton = screen
+      .getByTestId('ArrowBackIosNewIcon')
+      .closest('button');
     fireEvent.click(prevButton!);
 
     // April (4) 2023 when going back from May (5) 2023
@@ -95,7 +105,9 @@ describe('JournalList', () => {
   it('handles next month navigation', () => {
     render(<JournalList {...defaultProps} />);
 
-    const nextButton = screen.getByTestId('ArrowForwardIosIcon').closest('button');
+    const nextButton = screen
+      .getByTestId('ArrowForwardIosIcon')
+      .closest('button');
     fireEvent.click(nextButton!);
 
     // June (6) 2023 when going forward from May (5) 2023
@@ -104,15 +116,23 @@ describe('JournalList', () => {
 
   it('handles year change when navigating months', () => {
     // Test December to January
-    const { unmount: unmountFirst } = render(<JournalList {...defaultProps} month={12} year={2023} />);
-    const nextButton = screen.getByTestId('ArrowForwardIosIcon').closest('button');
+    const { unmount: unmountFirst } = render(
+      <JournalList {...defaultProps} month={12} year={2023} />,
+    );
+    const nextButton = screen
+      .getByTestId('ArrowForwardIosIcon')
+      .closest('button');
     fireEvent.click(nextButton!);
     expect(defaultProps.onMonthChange).toHaveBeenCalledWith(1, 2024);
     unmountFirst();
 
     // Test January to December
-    const { unmount: unmountSecond } = render(<JournalList {...defaultProps} month={1} year={2023} />);
-    const prevButton = screen.getByTestId('ArrowBackIosNewIcon').closest('button');
+    const { unmount: unmountSecond } = render(
+      <JournalList {...defaultProps} month={1} year={2023} />,
+    );
+    const prevButton = screen
+      .getByTestId('ArrowBackIosNewIcon')
+      .closest('button');
     fireEvent.click(prevButton!);
     expect(defaultProps.onMonthChange).toHaveBeenCalledWith(12, 2022);
     unmountSecond();
@@ -121,7 +141,9 @@ describe('JournalList', () => {
   it('handles journal card click', () => {
     render(<JournalList {...defaultProps} />);
 
-    const journalCard = screen.getByText(mockJournals[0].content).closest('.MuiCard-root');
+    const journalCard = screen
+      .getByText(mockJournals[0].content)
+      .closest('.MuiCard-root');
     fireEvent.click(journalCard!);
 
     expect(defaultProps.onJournalClick).toHaveBeenCalledWith(mockJournals[0]);
@@ -129,11 +151,15 @@ describe('JournalList', () => {
 
   it('renders stat cards with correct colors and icons', () => {
     render(<JournalList {...defaultProps} />);
-    
+
     // Check for mood icons using getAllByTestId since there might be multiple instances
-    expect(screen.getAllByTestId('SentimentSatisfiedAltIcon')).not.toHaveLength(0);
+    expect(screen.getAllByTestId('SentimentSatisfiedAltIcon')).not.toHaveLength(
+      0,
+    );
     expect(screen.getAllByTestId('SentimentNeutralIcon')).not.toHaveLength(0);
-    expect(screen.getAllByTestId('SentimentVeryDissatisfiedIcon')).not.toHaveLength(0);
+    expect(
+      screen.getAllByTestId('SentimentVeryDissatisfiedIcon'),
+    ).not.toHaveLength(0);
     expect(screen.getAllByTestId('CalendarTodayIcon')).not.toHaveLength(0);
 
     // Check for stat card labels

@@ -1,4 +1,4 @@
-import { AppError } from '../../error-boundary/app-error';
+import type { AppError } from '../../error-boundary/app-error';
 
 export interface SubscriptionState<T> {
   data: T | null;

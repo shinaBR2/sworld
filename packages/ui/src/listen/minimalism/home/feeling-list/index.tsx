@@ -1,6 +1,6 @@
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import { listenQueryHooks } from 'core';
+import type { listenQueryHooks } from 'core';
 import { FeelingListSkeleton } from './skeleton';
 
 interface FeelingListProps {
@@ -17,11 +17,18 @@ const FeelingList = (props: FeelingListProps) => {
     return <FeelingListSkeleton />;
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   const { tags: feelings } = data;
 
   return (
-    <Stack role="radiogroup" aria-label="feeling list" direction="row" spacing={1} my={2} sx={{ overflowX: 'auto' }}>
+    <Stack
+      role="radiogroup"
+      aria-label="feeling list"
+      direction="row"
+      spacing={1}
+      my={2}
+      sx={{ overflowX: 'auto' }}
+    >
       <Chip
         label="Default"
         color={!activeId ? 'primary' : 'default'}

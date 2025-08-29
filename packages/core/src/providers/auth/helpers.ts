@@ -1,5 +1,5 @@
-import { User } from '@auth0/auth0-react';
-import { CustomUser } from './types';
+import type { User } from '@auth0/auth0-react';
+import type { CustomUser } from './types';
 
 interface HasuraClaims {
   'x-hasura-default-role': string;
@@ -27,7 +27,10 @@ const getClaims = (token: string): HasuraClaims | null => {
  * @param auth0User The user object from Auth0
  * @returns CustomUser object
  */
-const transformUser = (id: string, auth0User: User | undefined): CustomUser | null => {
+const transformUser = (
+  id: string,
+  auth0User: User | undefined,
+): CustomUser | null => {
   if (!id || !auth0User?.sub) return null;
 
   return {

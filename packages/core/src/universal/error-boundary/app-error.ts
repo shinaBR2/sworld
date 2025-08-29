@@ -4,7 +4,7 @@ class AppError extends Error {
     message: string,
     // user-friendly error message
     public readonly errorMessage: string,
-    public readonly canRetry: boolean
+    public readonly canRetry: boolean,
   ) {
     super(message);
     this.name = 'AppError';

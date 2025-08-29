@@ -1,5 +1,5 @@
 import { getFragmentData, graphql } from '../../../graphql';
-import { PlaylistDetailQuery } from '../../../graphql/graphql';
+import type { PlaylistDetailQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { PlaylistFragment, PlaylistVideoFragment } from '../fragments';
 import { transformVideoFragment } from '../transformers';
@@ -33,7 +33,10 @@ const transform = (data: PlaylistDetailQuery) => {
 const useLoadPlaylistDetail = (props: LoadPlaylistDetailProps) => {
   const { id, getAccessToken } = props;
 
-  const { data, isLoading, error } = useRequest<PlaylistDetailQuery, { id: string }>({
+  const { data, isLoading, error } = useRequest<
+    PlaylistDetailQuery,
+    { id: string }
+  >({
     queryKey: ['playlist-detail', id],
     getAccessToken,
     document: playlistDetailQuery,

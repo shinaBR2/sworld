@@ -5,7 +5,7 @@ const meta: Meta<typeof VideoSkeleton> = {
   title: 'Watch/VideoSkeleton',
   component: VideoSkeleton,
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: '400px' }}>
         <Story />
       </div>

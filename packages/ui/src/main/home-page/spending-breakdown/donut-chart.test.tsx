@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
-import { DonutChart, CategoryData } from './donut-chart';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { type CategoryData, DonutChart } from './donut-chart';
 
 // Mock echarts core modules
 vi.mock('echarts/core', () => ({
@@ -34,7 +34,7 @@ vi.mock('echarts-for-react/lib/core', () => ({
     return (
       <div
         data-testid="mock-echarts"
-        onClick={e => {
+        onClick={(e) => {
           // Simulate chart click with mock data
           if (onEvents && onEvents.click) {
             onEvents.click({
@@ -62,11 +62,13 @@ describe('DonutChart', () => {
     { category: 'waste', amount: 25, count: 1 },
   ];
 
-  const renderComponent = (props: Partial<Parameters<typeof DonutChart>[0]> = {}) => {
+  const renderComponent = (
+    props: Partial<Parameters<typeof DonutChart>[0]> = {},
+  ) => {
     return render(
       <ThemeProvider theme={theme}>
         <DonutChart isLoading={false} data={mockData} {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   };
 
@@ -146,8 +148,12 @@ describe('DonutChart', () => {
     const optionsJson = JSON.parse(chartOptions.textContent || '{}');
 
     // Find the 'must' category data
-    const mustData = optionsJson.series[0].data.find((d: any) => d.category === 'must');
-    const niceData = optionsJson.series[0].data.find((d: any) => d.category === 'nice');
+    const mustData = optionsJson.series[0].data.find(
+      (d: any) => d.category === 'must',
+    );
+    const niceData = optionsJson.series[0].data.find(
+      (d: any) => d.category === 'nice',
+    );
 
     // Must should have opacity 1, nice should have opacity 0.6
     expect(mustData.itemStyle.opacity).toBe(1);
@@ -162,9 +168,15 @@ describe('DonutChart', () => {
     const optionsJson = JSON.parse(chartOptions.textContent || '{}');
 
     // Find each category data
-    const mustData = optionsJson.series[0].data.find((d: any) => d.category === 'must');
-    const niceData = optionsJson.series[0].data.find((d: any) => d.category === 'nice');
-    const wasteData = optionsJson.series[0].data.find((d: any) => d.category === 'waste');
+    const mustData = optionsJson.series[0].data.find(
+      (d: any) => d.category === 'must',
+    );
+    const niceData = optionsJson.series[0].data.find(
+      (d: any) => d.category === 'nice',
+    );
+    const wasteData = optionsJson.series[0].data.find(
+      (d: any) => d.category === 'waste',
+    );
 
     // Check colors
     expect(mustData.itemStyle.color).toBe('#ef4444');

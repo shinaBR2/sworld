@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SetStateAction } from 'react';
+import type { SetStateAction } from 'react';
 import { Header } from './index';
 
 const meta: Meta<typeof Header> = {
@@ -51,7 +51,8 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
   tags: ['autodocs'],
   argTypes: {
     toggleSetting: {
-      description: 'Function called when the account button is clicked. Receives a boolean parameter.',
+      description:
+        'Function called when the account button is clicked. Receives a boolean parameter.',
       control: 'function',
       table: {
         type: { summary: 'Dispatch<SetStateAction<boolean>>' },
@@ -102,7 +103,7 @@ export const NarrowContainer: Story = {
     ...defaultArgs,
   },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: '600px', margin: '0 auto' }}>
         <Story />
       </div>
@@ -111,7 +112,8 @@ export const NarrowContainer: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Header component in a narrow container (600px) to demonstrate responsive behavior.',
+        story:
+          'Header component in a narrow container (600px) to demonstrate responsive behavior.',
       },
     },
   },

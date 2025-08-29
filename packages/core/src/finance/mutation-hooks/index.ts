@@ -1,5 +1,5 @@
 import { graphql } from '../../graphql';
-import { CreateFinanceRecordMutation } from '../../graphql/graphql';
+import type { CreateFinanceRecordMutation } from '../../graphql/graphql';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
 
 const createRecord = graphql(/* GraphQL */ `
@@ -52,7 +52,7 @@ const useInsertFinanceTransaction = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error) => {
         console.error('Insert finance transaction failed:', error);
         onError?.(error);
       },
@@ -70,7 +70,7 @@ const useUpdateFinanceTransaction = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error) => {
         console.error('Update finance transaction failed:', error);
         onError?.(error);
       },
@@ -87,7 +87,7 @@ const useDeleteFinanceTransaction = (props: MutationProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error) => {
         console.error('Delete finance transaction failed:', error);
         onError?.(error);
       },
@@ -97,4 +97,8 @@ const useDeleteFinanceTransaction = (props: MutationProps) => {
   return deleteFinanceRecord;
 };
 
-export { useDeleteFinanceTransaction, useInsertFinanceTransaction, useUpdateFinanceTransaction };
+export {
+  useDeleteFinanceTransaction,
+  useInsertFinanceTransaction,
+  useUpdateFinanceTransaction,
+};

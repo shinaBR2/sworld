@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
-import { useDeleteFinanceTransaction, useInsertFinanceTransaction, useUpdateFinanceTransaction } from './index';
+import {
+  useDeleteFinanceTransaction,
+  useInsertFinanceTransaction,
+  useUpdateFinanceTransaction,
+} from './index';
 
 // Mock the useMutationRequest hook
 vi.mock('../../universal/hooks/useMutation', () => ({
@@ -35,7 +39,7 @@ describe('Finance Mutation Hooks', () => {
           options: expect.objectContaining({
             onSuccess: mockOnSuccess,
           }),
-        })
+        }),
       );
       expect(insertFinanceRecord).toBe(mockMutateAsync);
     });
@@ -48,7 +52,8 @@ describe('Finance Mutation Hooks', () => {
       });
 
       // Extract the error handler
-      const errorHandler = vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
+      const errorHandler =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
       const mockError = new Error('Test error');
 
       // Call the error handler
@@ -73,7 +78,7 @@ describe('Finance Mutation Hooks', () => {
           options: expect.objectContaining({
             onSuccess: mockOnSuccess,
           }),
-        })
+        }),
       );
       expect(updateFinanceRecord).toBe(mockMutateAsync);
     });
@@ -86,7 +91,8 @@ describe('Finance Mutation Hooks', () => {
       });
 
       // Extract the error handler
-      const errorHandler = vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
+      const errorHandler =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
       const mockError = new Error('Test error');
 
       // Call the error handler
@@ -111,7 +117,7 @@ describe('Finance Mutation Hooks', () => {
           options: expect.objectContaining({
             onSuccess: mockOnSuccess,
           }),
-        })
+        }),
       );
       expect(deleteFinanceRecord).toBe(mockMutateAsync);
     });
@@ -124,7 +130,8 @@ describe('Finance Mutation Hooks', () => {
       });
 
       // Extract the error handler
-      const errorHandler = vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
+      const errorHandler =
+        vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
       const mockError = new Error('Test error');
 
       // Call the error handler
@@ -142,7 +149,8 @@ describe('Finance Mutation Hooks', () => {
     });
 
     // Extract the error handler
-    const errorHandler = vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
+    const errorHandler =
+      vi.mocked(useMutationRequest).mock.calls[0][0].options.onError;
     const mockError = new Error('Test error');
 
     // This should not throw

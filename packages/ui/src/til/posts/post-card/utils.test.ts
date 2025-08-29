@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Post } from '../types';
+import type { Post } from '../types';
 import { genlinkProps } from './utils';
 
 describe('genlinkProps', () => {

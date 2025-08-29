@@ -1,8 +1,8 @@
-import React from 'react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { Layout } from '../components/layout';
+import React from 'react';
 import { LandingGrid } from 'ui/main/home-page/landing-grid';
 import { Container } from 'ui/universal/containers/generic';
+import { Layout } from '../components/layout';
 import { appConfig } from '../config';
 
 const landingItems = [

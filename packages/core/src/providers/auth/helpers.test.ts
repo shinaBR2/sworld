@@ -1,13 +1,21 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getClaims, transformUser, notifyExtensionTokenChange } from './helpers';
-import { User } from '@auth0/auth0-react';
+import type { User } from '@auth0/auth0-react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  getClaims,
+  notifyExtensionTokenChange,
+  transformUser,
+} from './helpers';
 
 // Define Chrome extension types
 declare global {
   interface Window {
     chrome?: {
       runtime?: {
-        sendMessage?: (extensionId: string, message: any, responseCallback?: (response: any) => void) => void;
+        sendMessage?: (
+          extensionId: string,
+          message: any,
+          responseCallback?: (response: any) => void,
+        ) => void;
         lastError?: { message: string } | null;
       };
     };

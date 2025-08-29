@@ -60,7 +60,7 @@ const getMonthYearFromDate = (dateString?: string) => {
 const invalidateJournalQueries = (
   invalidateQuery: (queryKey: unknown[]) => void,
   date?: string,
-  journalId?: string
+  journalId?: string,
 ) => {
   const dateInfo = getMonthYearFromDate(date);
 
@@ -82,14 +82,14 @@ const useCreateJournal = (props: MutationProps) => {
     document: createJournalMutation,
     getAccessToken,
     options: {
-      onSuccess: data => {
+      onSuccess: (data) => {
         const journalDate = data.insert_journals_one?.date;
         const journalId = data.insert_journals_one?.id;
 
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
-      onError: error => {
+      onError: (error) => {
         console.error('Create journal failed:', error);
         onError?.(error);
       },
@@ -108,14 +108,14 @@ const useUpdateJournal = (props: MutationProps) => {
     document: updateJournalMutation,
     getAccessToken,
     options: {
-      onSuccess: data => {
+      onSuccess: (data) => {
         const journalDate = data.update_journals_by_pk?.date;
         const journalId = data.update_journals_by_pk?.id;
 
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
-      onError: error => {
+      onError: (error) => {
         console.error('Update journal failed:', error);
         onError?.(error);
       },
@@ -134,14 +134,14 @@ const useDeleteJournal = (props: MutationProps) => {
     document: deleteJournalMutation,
     getAccessToken,
     options: {
-      onSuccess: data => {
+      onSuccess: (data) => {
         const journalDate = data.delete_journals_by_pk?.date;
         const journalId = data.delete_journals_by_pk?.id;
 
         invalidateJournalQueries(invalidateQuery, journalDate, journalId);
         onSuccess?.(data);
       },
-      onError: error => {
+      onError: (error) => {
         console.error('Delete journal failed:', error);
         onError?.(error);
       },

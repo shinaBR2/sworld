@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { PostMetadata } from './metadata';
-import { describe, it, expect } from 'vitest';
 
 describe('PostMetadata', () => {
   const mockProps = {
@@ -12,7 +12,11 @@ describe('PostMetadata', () => {
   it('renders post metadata correctly', () => {
     render(<PostMetadata {...mockProps} />);
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(mockProps.title);
-    expect(screen.getByText(`${mockProps.readTimeInMinutes} min read`)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      mockProps.title,
+    );
+    expect(
+      screen.getByText(`${mockProps.readTimeInMinutes} min read`),
+    ).toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { NotificationsSubscription } from '../../../graphql/graphql';
+import type { NotificationsSubscription } from '../../../graphql/graphql';
 import { useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 
@@ -30,7 +30,9 @@ export function useNotificationsSubscription(url: string) {
   });
 
   return {
-    data: subscription.isLoading ? null : subscription.data?.notifications || [],
+    data: subscription.isLoading
+      ? null
+      : subscription.data?.notifications || [],
     isLoading: subscription.isLoading,
     error: subscription.error,
   };

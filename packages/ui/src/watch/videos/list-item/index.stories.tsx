@@ -9,7 +9,7 @@ const meta: Meta<typeof VideoListItemSkeleton> = {
   },
   tags: ['autodocs'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: '400px' }}>
         <Story />
       </div>

@@ -1,4 +1,4 @@
-import { useQueryContext } from 'core/providers/query';
+import type { useQueryContext } from 'core/providers/query';
 
 export const NOTIFICATION_TYPES = {
   VIDEO_READY: 'video-ready',
@@ -10,4 +10,6 @@ export const NOTIFICATION_ICONS = {
   [NOTIFICATION_TYPES.DEFAULT]: '📢',
 } as const;
 
-export type NotificationType = NonNullable<ReturnType<typeof useQueryContext>['notifications']['data']>[number];
+export type NotificationType = NonNullable<
+  ReturnType<typeof useQueryContext>['notifications']['data']
+>[number];

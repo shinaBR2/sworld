@@ -1,5 +1,5 @@
-import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 interface NotificationProps {
   notification: {
@@ -20,7 +20,11 @@ const Notification = (props: NotificationProps) => {
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
       {notification && (
-        <Alert severity={notification.severity} onClose={onClose} variant="filled">
+        <Alert
+          severity={notification.severity}
+          onClose={onClose}
+          variant="filled"
+        >
           {notification.message}
         </Alert>
       )}

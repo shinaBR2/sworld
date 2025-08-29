@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BookCard } from './index';
 
 const baseBook = {
@@ -46,7 +47,9 @@ describe('BookCard', () => {
   });
 
   it('should not show the progress bar if completed', () => {
-    render(<BookCard book={{ ...baseBook, progress: 100, isCompleted: true }} />);
+    render(
+      <BookCard book={{ ...baseBook, progress: 100, isCompleted: true }} />,
+    );
     // Should not find a bar with width 100% if completed
     const progressBar = screen
       .getByText(baseBook.title)

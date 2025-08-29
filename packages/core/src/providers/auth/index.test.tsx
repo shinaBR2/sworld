@@ -1,7 +1,7 @@
-import { describe, expect, test, beforeEach, vi } from 'vitest';
-import { renderHook, act, RenderHookResult } from '@testing-library/react';
-import { User } from '@auth0/auth0-react';
-import { AuthContextValue, AuthProvider, useAuthContext } from '.';
+import type { User } from '@auth0/auth0-react';
+import { act, type RenderHookResult, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { type AuthContextValue, AuthProvider, useAuthContext } from '.';
 
 interface Auth0ContextInterface {
   isAuthenticated: boolean;
@@ -24,7 +24,7 @@ const createMockToken = (claims: Record<string, unknown>): string => {
   const payload = btoa(
     JSON.stringify({
       'https://hasura.io/jwt/claims': claims,
-    })
+    }),
   );
   return `${header}.${payload}.mock_signature`;
 };
@@ -55,8 +55,12 @@ describe('AuthProvider', () => {
 
   test('provides default context when not authenticated', async () => {
     // Create mock functions using Vitest
-    const getAccessTokenSilently = vi.fn().mockResolvedValue('') as () => Promise<string>;
-    const loginWithRedirect = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
+    const getAccessTokenSilently = vi
+      .fn()
+      .mockResolvedValue('') as () => Promise<string>;
+    const loginWithRedirect = vi
+      .fn()
+      .mockResolvedValue(undefined) as () => Promise<void>;
     const logout = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
 
     mockUseAuth0.mockImplementation(() => ({
@@ -86,7 +90,7 @@ describe('AuthProvider', () => {
             isLoading: false,
             user: null,
             isAdmin: false,
-          })
+          }),
         );
       });
     });
@@ -100,8 +104,12 @@ describe('AuthProvider', () => {
     };
 
     const mockToken = createMockToken(mockClaims);
-    const getAccessTokenSilently = vi.fn().mockResolvedValue(mockToken) as () => Promise<string>;
-    const loginWithRedirect = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
+    const getAccessTokenSilently = vi
+      .fn()
+      .mockResolvedValue(mockToken) as () => Promise<string>;
+    const loginWithRedirect = vi
+      .fn()
+      .mockResolvedValue(undefined) as () => Promise<void>;
     const logout = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
 
     mockUseAuth0.mockImplementation(() => ({
@@ -135,7 +143,7 @@ describe('AuthProvider', () => {
               picture: mockUser.picture,
             }),
             isAdmin: false,
-          })
+          }),
         );
       });
     });
@@ -149,8 +157,12 @@ describe('AuthProvider', () => {
     };
 
     const mockToken = createMockToken(mockClaims);
-    const getAccessTokenSilently = vi.fn().mockResolvedValue(mockToken) as () => Promise<string>;
-    const loginWithRedirect = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
+    const getAccessTokenSilently = vi
+      .fn()
+      .mockResolvedValue(mockToken) as () => Promise<string>;
+    const loginWithRedirect = vi
+      .fn()
+      .mockResolvedValue(undefined) as () => Promise<void>;
     const logout = vi.fn().mockResolvedValue(undefined) as () => Promise<void>;
 
     mockUseAuth0.mockImplementation(() => ({
@@ -184,7 +196,7 @@ describe('AuthProvider', () => {
               picture: mockUser.picture,
             }),
             isAdmin: true,
-          })
+          }),
         );
       });
     });
@@ -209,7 +221,9 @@ describe('AuthProvider', () => {
     let renderResult: RenderHookResult<AuthContextValue, unknown>;
     await act(async () => {
       renderResult = renderHook(() => useAuthContext(), {
-        wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
       });
     });
 
@@ -224,7 +238,9 @@ describe('AuthProvider', () => {
   });
 
   test('should handle session check failure', async () => {
-    const mockGetAccessTokenSilently = vi.fn().mockRejectedValue(new Error('Session expired'));
+    const mockGetAccessTokenSilently = vi
+      .fn()
+      .mockRejectedValue(new Error('Session expired'));
 
     mockUseAuth0.mockReturnValue({
       isAuthenticated: true,
@@ -238,7 +254,9 @@ describe('AuthProvider', () => {
     let renderResult: RenderHookResult<AuthContextValue, unknown>;
     await act(async () => {
       renderResult = renderHook(() => useAuthContext(), {
-        wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
       });
     });
 
@@ -258,7 +276,7 @@ describe('AuthProvider', () => {
         'x-hasura-default-role': 'user',
         'x-hasura-allowed-roles': ['user'],
         'x-hasura-user-id': 'test-id',
-      })
+      }),
     );
 
     const mockGetAccessTokenSilently = vi.fn().mockResolvedValue(invalidToken);
@@ -275,7 +293,9 @@ describe('AuthProvider', () => {
     let renderResult: RenderHookResult<AuthContextValue, unknown>;
     await act(async () => {
       renderResult = renderHook(() => useAuthContext(), {
-        wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
       });
     });
 
@@ -303,7 +323,9 @@ describe('AuthProvider', () => {
     let renderResult: RenderHookResult<AuthContextValue, unknown>;
     await act(async () => {
       renderResult = renderHook(() => useAuthContext(), {
-        wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
       });
     });
 
@@ -327,7 +349,9 @@ describe('AuthProvider', () => {
     });
 
     const { result, rerender } = renderHook(() => useAuthContext(), {
-      wrapper: ({ children }) => <AuthProvider config={mockConfig}>{children}</AuthProvider>,
+      wrapper: ({ children }) => (
+        <AuthProvider config={mockConfig}>{children}</AuthProvider>
+      ),
     });
 
     // Should be loading while auth0 is loading

@@ -1,4 +1,4 @@
-import { describe, beforeEach, jest, test, expect } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import Bat from './bat';
 
 describe('Bat', () => {

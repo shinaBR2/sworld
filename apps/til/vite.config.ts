@@ -1,7 +1,8 @@
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
+
 // import { visualizer } from 'rollup-plugin-visualizer';
 
 const codecovToken = process.env.CODECOV_TOKEN;
@@ -24,7 +25,7 @@ export default defineConfig({
         warn(warning);
       },
       output: {
-        manualChunks: id => {
+        manualChunks: (id) => {
           if (id.includes('node_modules')) {
             /**
              * App broken if bundle mui separately

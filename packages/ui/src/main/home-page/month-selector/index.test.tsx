@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MonthSelector } from './index';
 
 // First, let's modify the mock to add data-testid to the buttons
@@ -11,7 +11,10 @@ vi.mock('./donut-chart', () => ({
       <div data-testid="donut-data">{JSON.stringify(data)}</div>
       <div data-testid="donut-selected">{selectedCategory || 'none'}</div>
       {onCategoryClick && (
-        <button data-testid="category-click-button" onClick={() => onCategoryClick('must')}>
+        <button
+          data-testid="category-click-button"
+          onClick={() => onCategoryClick('must')}
+        >
           Click Category
         </button>
       )}
@@ -40,7 +43,9 @@ describe('MonthSelector', () => {
     render(<MonthSelector {...defaultProps} />);
 
     // Use data-testid instead of role and name
-    const previousButton = screen.getByTestId('ChevronLeftIcon').closest('button');
+    const previousButton = screen
+      .getByTestId('ChevronLeftIcon')
+      .closest('button');
     await userEvent.click(previousButton!);
 
     expect(defaultProps.onPreviousMonth).toHaveBeenCalledTimes(1);
@@ -60,7 +65,9 @@ describe('MonthSelector', () => {
     render(<MonthSelector {...defaultProps} disablePrevious={true} />);
 
     // Use data-testid instead of role and name
-    const previousButton = screen.getByTestId('ChevronLeftIcon').closest('button');
+    const previousButton = screen
+      .getByTestId('ChevronLeftIcon')
+      .closest('button');
     expect(previousButton).toBeDisabled();
   });
 

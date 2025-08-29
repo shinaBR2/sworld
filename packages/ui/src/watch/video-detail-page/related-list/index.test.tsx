@@ -1,8 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
+import {
+  generateVideoDetailRoute,
+  generateVideoInPlaylistRoute,
+} from 'core/watch/routes';
 import { RelatedList } from './index';
-import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
 
 // Mock the VideoListItem component
 vi.mock('../../videos/list-item', () => ({
@@ -24,7 +27,9 @@ vi.mock('core/watch/routes', () => ({
 }));
 
 // Mock Link component
-const MockLinkComponent = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const MockLinkComponent = ({ children }: { children: React.ReactNode }) => (
+  <div>{children}</div>
+);
 
 describe('RelatedList', () => {
   const mockVideos = [
@@ -81,21 +86,31 @@ describe('RelatedList', () => {
   });
 
   it('renders the default title when no title prop is provided', () => {
-    render(<RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} />,
+    );
 
     const titleElement = screen.getByText('Related videos');
     expect(titleElement).toBeInTheDocument();
   });
 
   it('renders custom title when provided', () => {
-    render(<RelatedList videos={mockVideos} title="Custom Title" LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList
+        videos={mockVideos}
+        title="Custom Title"
+        LinkComponent={MockLinkComponent}
+      />,
+    );
 
     const titleElement = screen.getByText('Custom Title');
     expect(titleElement).toBeInTheDocument();
   });
 
   it('renders correct number of VideoListItems', () => {
-    render(<RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} />,
+    );
 
     const videoItems = screen.getAllByTestId('video-list-item');
     expect(videoItems.length).toBe(mockVideos.length);
@@ -103,14 +118,23 @@ describe('RelatedList', () => {
 
   it('passes correct props to VideoListItem', () => {
     const activeId = '1';
-    render(<RelatedList videos={mockVideos} activeId={activeId} LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList
+        videos={mockVideos}
+        activeId={activeId}
+        LinkComponent={MockLinkComponent}
+      />,
+    );
 
     const videoItems = screen.getAllByTestId('video-list-item');
 
     videoItems.forEach((item, index) => {
       const video = mockVideos[index];
       expect(item).toHaveAttribute('data-video-id', video.id);
-      expect(item).toHaveAttribute('data-is-active', `${video.id === activeId}`);
+      expect(item).toHaveAttribute(
+        'data-is-active',
+        `${video.id === activeId}`,
+      );
     });
   });
 
@@ -148,10 +172,18 @@ describe('RelatedList', () => {
 
     vi.mocked(generateVideoInPlaylistRoute).mockReturnValue(mockLinkProps);
 
-    render(<RelatedList videos={[mockVideos[0]]} playlist={mockPlaylist} LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList
+        videos={[mockVideos[0]]}
+        playlist={mockPlaylist}
+        LinkComponent={MockLinkComponent}
+      />,
+    );
 
     const videoItem = screen.getByTestId('video-list-item');
-    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
+    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(
+      mockLinkProps,
+    );
     expect(generateVideoInPlaylistRoute).toHaveBeenCalledWith({
       playlistId: mockPlaylist.id,
       playlistSlug: mockPlaylist.slug,
@@ -170,11 +202,22 @@ describe('RelatedList', () => {
 
     vi.mocked(generateVideoDetailRoute).mockReturnValue(mockLinkProps);
 
-    render(<RelatedList videos={[mockVideos[0]]} playlist={null} LinkComponent={MockLinkComponent} />);
+    render(
+      <RelatedList
+        videos={[mockVideos[0]]}
+        playlist={null}
+        LinkComponent={MockLinkComponent}
+      />,
+    );
 
     const videoItem = screen.getByTestId('video-list-item');
-    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(mockLinkProps);
-    expect(generateVideoDetailRoute).toHaveBeenCalledWith({ id: mockVideos[0].id, slug: mockVideos[0].slug });
+    expect(JSON.parse(videoItem.dataset.linkProps || '{}')).toEqual(
+      mockLinkProps,
+    );
+    expect(generateVideoDetailRoute).toHaveBeenCalledWith({
+      id: mockVideos[0].id,
+      slug: mockVideos[0].slug,
+    });
   });
 
   it('should render auto-play checkbox when onAutoPlayChange is provided', () => {
@@ -185,10 +228,12 @@ describe('RelatedList', () => {
         LinkComponent={MockLinkComponent}
         autoPlay={true}
         onAutoPlayChange={onAutoPlayChange}
-      />
+      />,
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: /auto-play next video/i });
+    const checkbox = screen.getByRole('checkbox', {
+      name: /auto-play next video/i,
+    });
     expect(checkbox).toBeInTheDocument();
     expect(checkbox).toBeChecked();
   });
@@ -201,19 +246,29 @@ describe('RelatedList', () => {
         LinkComponent={MockLinkComponent}
         autoPlay={true}
         onAutoPlayChange={onAutoPlayChange}
-      />
+      />,
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: /auto-play next video/i });
+    const checkbox = screen.getByRole('checkbox', {
+      name: /auto-play next video/i,
+    });
     checkbox.click();
 
     expect(onAutoPlayChange).toHaveBeenCalledWith(false);
   });
 
   it('should not render auto-play checkbox when onAutoPlayChange is not provided', () => {
-    render(<RelatedList videos={mockVideos} LinkComponent={MockLinkComponent} autoPlay={true} />);
+    render(
+      <RelatedList
+        videos={mockVideos}
+        LinkComponent={MockLinkComponent}
+        autoPlay={true}
+      />,
+    );
 
-    const checkbox = screen.queryByRole('checkbox', { name: /auto-play next video/i });
+    const checkbox = screen.queryByRole('checkbox', {
+      name: /auto-play next video/i,
+    });
     expect(checkbox).not.toBeInTheDocument();
   });
 });

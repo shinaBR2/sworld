@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { useMutationRequest } from './';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
 import request from 'graphql-request';
-import { type FC, type PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useMutationRequest } from './';
 
 // Mock graphql-request
 vi.mock('graphql-request', () => ({
@@ -56,7 +56,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
@@ -88,7 +88,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
@@ -109,7 +109,9 @@ describe('useMutationRequest', () => {
   });
 
   it('should handle authentication failure', async () => {
-    const mockGetAccessToken = vi.fn().mockRejectedValue(new Error('Auth failed'));
+    const mockGetAccessToken = vi
+      .fn()
+      .mockRejectedValue(new Error('Auth failed'));
 
     const { result } = renderHook(
       () =>
@@ -119,7 +121,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
@@ -140,7 +142,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
@@ -161,7 +163,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
@@ -185,21 +187,27 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const mutatePromise = result.current.mutateAsync(mockVariables);
     await waitFor(async () => {
       await expect(mutatePromise).resolves.toEqual(mockResponse);
     });
-    expect(onSuccess).toHaveBeenCalledWith(mockResponse, mockVariables, undefined);
+    expect(onSuccess).toHaveBeenCalledWith(
+      mockResponse,
+      mockVariables,
+      undefined,
+    );
   });
 
   it('should handle concurrent mutations independently', async () => {
     const mockResponse1 = { updateUser: { id: '123', name: 'User 1' } };
     const mockResponse2 = { updateUser: { id: '456', name: 'User 2' } };
 
-    vi.mocked(request).mockResolvedValueOnce(mockResponse1).mockResolvedValueOnce(mockResponse2);
+    vi.mocked(request)
+      .mockResolvedValueOnce(mockResponse1)
+      .mockResolvedValueOnce(mockResponse2);
 
     const { result } = renderHook(
       () =>
@@ -208,7 +216,7 @@ describe('useMutationRequest', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const promise1 = result.current.mutateAsync({ id: '123' });
@@ -225,7 +233,10 @@ describe('useMutationRequest', () => {
     const mockResponse = { updateUser: null };
     vi.mocked(request).mockResolvedValueOnce(mockResponse);
 
-    const { result } = renderHook(() => useMutationRequest({ document: mockDocument }), { wrapper: createWrapper() });
+    const { result } = renderHook(
+      () => useMutationRequest({ document: mockDocument }),
+      { wrapper: createWrapper() },
+    );
 
     const mutatePromise = result.current.mutateAsync({});
     await waitFor(async () => {

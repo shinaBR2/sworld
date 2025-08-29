@@ -20,8 +20,12 @@ console.error = vi.fn();
 describe('useSaveProgress Mutation Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useAuthContext).mockReturnValue({ getAccessToken: mockAccessToken });
-    vi.mocked(useQueryContext).mockReturnValue({ invalidateQuery: mockInvalidateQuery });
+    vi.mocked(useAuthContext).mockReturnValue({
+      getAccessToken: mockAccessToken,
+    });
+    vi.mocked(useQueryContext).mockReturnValue({
+      invalidateQuery: mockInvalidateQuery,
+    });
     vi.mocked(useMutationRequest).mockReturnValue({ mutateAsync: vi.fn() });
   });
 
@@ -35,14 +39,25 @@ describe('useSaveProgress Mutation Hook', () => {
     renderHook(() => useSaveProgress({ onSuccess: mockOnSuccess }));
 
     // Get the onSuccess callback from the mutation options
-    const mutationOptions = vi.mocked(useMutationRequest).mock.calls[0][0].options;
+    const mutationOptions =
+      vi.mocked(useMutationRequest).mock.calls[0][0].options;
     const onSuccessCallback = mutationOptions?.onSuccess;
 
     // Mock data and variables
     const mockData = {
-      insert_reading_progresses_one: { id: '1', currentPage: 10, percentage: 25, lastReadAt: '2025-06-30T12:00:00Z' },
+      insert_reading_progresses_one: {
+        id: '1',
+        currentPage: 10,
+        percentage: 25,
+        lastReadAt: '2025-06-30T12:00:00Z',
+      },
     };
-    const mockVariables = { bookId: 'book-1', currentPage: 10, totalPages: 100, readingTimeMinutes: 30 };
+    const mockVariables = {
+      bookId: 'book-1',
+      currentPage: 10,
+      totalPages: 100,
+      readingTimeMinutes: 30,
+    };
 
     // Call the onSuccess callback directly
     onSuccessCallback?.(mockData, mockVariables);
@@ -51,7 +66,10 @@ describe('useSaveProgress Mutation Hook', () => {
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['books']);
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['current-reading']);
     expect(mockInvalidateQuery).toHaveBeenCalledWith(['reading-stats']);
-    expect(mockInvalidateQuery).toHaveBeenCalledWith(['book', mockVariables.bookId]);
+    expect(mockInvalidateQuery).toHaveBeenCalledWith([
+      'book',
+      mockVariables.bookId,
+    ]);
     expect(mockOnSuccess).toHaveBeenCalledWith(mockData);
   });
 
@@ -60,7 +78,8 @@ describe('useSaveProgress Mutation Hook', () => {
     renderHook(() => useSaveProgress({ onError: mockOnError }));
 
     // Get the onError callback from the mutation options
-    const mutationOptions = vi.mocked(useMutationRequest).mock.calls[0][0].options;
+    const mutationOptions =
+      vi.mocked(useMutationRequest).mock.calls[0][0].options;
     const onErrorCallback = mutationOptions?.onError;
 
     // Create a mock error

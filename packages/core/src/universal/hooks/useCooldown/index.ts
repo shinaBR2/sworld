@@ -8,7 +8,13 @@ interface CountdownConfig {
   interval?: number;
 }
 
-const useCountdown = ({ duration, onComplete, onTick, enabled = true, interval = 1000 }: CountdownConfig) => {
+const useCountdown = ({
+  duration,
+  onComplete,
+  onTick,
+  enabled = true,
+  interval = 1000,
+}: CountdownConfig) => {
   const [remaining, setRemaining] = useState(duration);
 
   const handleTick = useCallback(
@@ -21,7 +27,7 @@ const useCountdown = ({ duration, onComplete, onTick, enabled = true, interval =
       onTick?.(next);
       return next;
     },
-    [onComplete, onTick]
+    [onComplete, onTick],
   );
 
   useEffect(() => {
@@ -29,7 +35,7 @@ const useCountdown = ({ duration, onComplete, onTick, enabled = true, interval =
 
     if (enabled && remaining > 0) {
       timer = setInterval(() => {
-        setRemaining(prev => {
+        setRemaining((prev) => {
           const next = handleTick(prev);
           if (next <= 0) {
             clearInterval(timer);

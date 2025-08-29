@@ -1,23 +1,28 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { Journal } from 'core/journal';
 import { describe, expect, it, vi } from 'vitest';
 import { EditDialog } from './index';
-import { Journal } from 'core/journal';
 
 // Mock the JournalEdit component to simplify testing
 vi.mock('../journal-edit', () => ({
-  JournalEdit: vi.fn(({ journal, isLoading, isSaving, onBackClick, onSave }) => (
-    <div data-testid="journal-edit">
-      <div data-testid="journal-data">{JSON.stringify(journal)}</div>
-      <div data-testid="loading-state">{String(isLoading)}</div>
-      <div data-testid="saving-state">{String(isSaving)}</div>
-      <button data-testid="back-button" onClick={onBackClick}>
-        Back
-      </button>
-      <button data-testid="save-button" onClick={() => onSave({ id: 'test-id' } as Journal)}>
-        Save
-      </button>
-    </div>
-  )),
+  JournalEdit: vi.fn(
+    ({ journal, isLoading, isSaving, onBackClick, onSave }) => (
+      <div data-testid="journal-edit">
+        <div data-testid="journal-data">{JSON.stringify(journal)}</div>
+        <div data-testid="loading-state">{String(isLoading)}</div>
+        <div data-testid="saving-state">{String(isSaving)}</div>
+        <button data-testid="back-button" onClick={onBackClick}>
+          Back
+        </button>
+        <button
+          data-testid="save-button"
+          onClick={() => onSave({ id: 'test-id' } as Journal)}
+        >
+          Save
+        </button>
+      </div>
+    ),
+  ),
 }));
 
 describe('EditDialog', () => {
@@ -71,14 +76,22 @@ describe('EditDialog', () => {
   });
 
   it('sets isSaving when createJournal is pending', () => {
-    render(<EditDialog {...{ ...defaultProps, createJournal: { isPending: true } }} />);
+    render(
+      <EditDialog
+        {...{ ...defaultProps, createJournal: { isPending: true } }}
+      />,
+    );
 
     const savingState = screen.getByTestId('saving-state');
     expect(savingState.textContent).toBe('true');
   });
 
   it('sets isSaving when updateJournal is pending', () => {
-    render(<EditDialog {...{ ...defaultProps, updateJournal: { isPending: true } }} />);
+    render(
+      <EditDialog
+        {...{ ...defaultProps, updateJournal: { isPending: true } }}
+      />,
+    );
 
     const savingState = screen.getByTestId('saving-state');
     expect(savingState.textContent).toBe('true');

@@ -1,7 +1,10 @@
 import { graphql } from '../../../graphql';
-import { AllVideosQuery } from '../../../graphql/graphql';
+import type { AllVideosQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
-import { transformPlaylistFragment, transformVideoFragment } from '../transformers';
+import {
+  transformPlaylistFragment,
+  transformVideoFragment,
+} from '../transformers';
 
 const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {

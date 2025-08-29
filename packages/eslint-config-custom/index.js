@@ -8,7 +8,12 @@ module.exports = {
       jsx: true,
     },
   },
-  extends: ['eslint:recommended', 'turbo', 'prettier', 'plugin:@typescript-eslint/recommended'],
+  extends: [
+    'eslint:recommended',
+    'turbo',
+    'prettier',
+    'plugin:@typescript-eslint/recommended',
+  ],
   settings: {
     react: {
       version: 'detect',

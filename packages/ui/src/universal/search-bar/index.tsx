@@ -1,7 +1,7 @@
 import Search from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
-import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
 
 const texts = {
   placeholder: 'Search...',

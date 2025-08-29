@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContinueReading } from './index';
 
 // Mock Book data
@@ -37,7 +38,9 @@ describe('ContinueReading', () => {
     render(<ContinueReading isLoading={false} book={undefined} />);
     expect(screen.getByText('Continue Reading')).toBeInTheDocument();
     expect(screen.getByText('No books in progress')).toBeInTheDocument();
-    expect(screen.getByText('Start reading a book to see your progress here')).toBeInTheDocument();
+    expect(
+      screen.getByText('Start reading a book to see your progress here'),
+    ).toBeInTheDocument();
   });
 
   it('should render book info and progress', () => {
@@ -46,15 +49,28 @@ describe('ContinueReading', () => {
     expect(screen.getByText(mockBook.title)).toBeInTheDocument();
     expect(screen.getByText(`by ${mockBook.author}`)).toBeInTheDocument();
     expect(
-      screen.getAllByText((content, element) => element?.tagName.toLowerCase() === 'p' && content.includes('Last read'))
-        .length
+      screen.getAllByText(
+        (content, element) =>
+          element?.tagName.toLowerCase() === 'p' &&
+          content.includes('Last read'),
+      ).length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText(`Page ${mockBook.currentPage} of ${mockBook.totalPages}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        `Page ${mockBook.currentPage} of ${mockBook.totalPages}`,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should call onBookClick when card is clicked', () => {
     const handleBookClick = vi.fn();
-    render(<ContinueReading isLoading={false} book={mockBook} onBookClick={handleBookClick} />);
+    render(
+      <ContinueReading
+        isLoading={false}
+        book={mockBook}
+        onBookClick={handleBookClick}
+      />,
+    );
     // Find the Card by locating the book title, then get the closest Card element
     const card = screen.getByText(mockBook.title).closest('.MuiCard-root');
     expect(card).not.toBeNull();

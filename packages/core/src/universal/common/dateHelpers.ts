@@ -32,7 +32,10 @@ const getCurrentMonthYear = (): { month: number; year: number } => {
   };
 };
 
-const getStartEndDates = (month: number, year: number): { startDate: string; endDate: string } => {
+const getStartEndDates = (
+  month: number,
+  year: number,
+): { startDate: string; endDate: string } => {
   // Create date for first day of the month
   const startDate = new Date(Date.UTC(year, month - 1, 1))
     .toISOString()
@@ -46,4 +49,10 @@ const getStartEndDates = (month: number, year: number): { startDate: string; end
   return { startDate, endDate };
 };
 
-export { formatDate, formatDateTime, getCurrentMonthYear, getMonthName, getStartEndDates };
+export {
+  formatDate,
+  formatDateTime,
+  getCurrentMonthYear,
+  getMonthName,
+  getStartEndDates,
+};

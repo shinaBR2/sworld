@@ -1,9 +1,10 @@
 import { texts } from './texts';
-import { DialogState } from './types';
-import { canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
+import type { DialogState } from './types';
+import { CREATE_NEW_PLAYLIST, canPlayUrls, formalizeState } from './utils';
 
 const validateForm = (state: DialogState) => {
-  const { title, url, subtitle, playlistId, newPlaylistName } = formalizeState(state);
+  const { title, url, subtitle, playlistId, newPlaylistName } =
+    formalizeState(state);
 
   if (!title.trim()) {
     return texts.errors.emptyTitle;
@@ -14,7 +15,8 @@ const validateForm = (state: DialogState) => {
   }
 
   const validationResults = canPlayUrls([url.trim()]);
-  const isValid = validationResults.length === 1 && validationResults[0].isValid;
+  const isValid =
+    validationResults.length === 1 && validationResults[0].isValid;
 
   if (!isValid) {
     return texts.errors.invalidUrl;

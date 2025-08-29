@@ -102,7 +102,7 @@ export const NarrowContainer: Story = {
     ...defaultArgs,
   },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: '600px', margin: '0 auto' }}>
         <Story />
       </div>
@@ -111,7 +111,8 @@ export const NarrowContainer: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Header component in a narrow container (600px) to demonstrate responsive behavior.',
+        story:
+          'Header component in a narrow container (600px) to demonstrate responsive behavior.',
       },
     },
   },

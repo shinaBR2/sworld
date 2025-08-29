@@ -28,7 +28,8 @@ export interface SAudioPlayerInputs {
 
 const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const { audioList, index = 0, configs = {} } = inputs;
-  const { shuffle = false, loopMode: loop = SAudioPlayerLoopMode.All } = configs;
+  const { shuffle = false, loopMode: loop = SAudioPlayerLoopMode.All } =
+    configs;
 
   const ref = useRef<HTMLAudioElement>(null);
 
@@ -192,7 +193,7 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
     if (!isShuffled) {
       const sortFunc = () => (Math.random() > 0.5 ? 1 : -1);
       const newIndexes = [...indexes.sort(sortFunc)];
-      const newCurrentIndex = newIndexes.findIndex(i => i === currentIndex);
+      const newCurrentIndex = newIndexes.findIndex((i) => i === currentIndex);
 
       setIndexes(newIndexes);
       setCurrentIndex(newCurrentIndex);

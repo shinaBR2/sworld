@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { formatDate, formatDateTime, getCurrentMonthYear, getMonthName, getStartEndDates } from './dateHelpers';
+import {
+  formatDate,
+  formatDateTime,
+  getCurrentMonthYear,
+  getMonthName,
+  getStartEndDates,
+} from './dateHelpers';
 
 describe('Date Helpers', () => {
   const mockDate = new Date('2023-05-15T10:30:00');
@@ -32,8 +38,12 @@ describe('Date Helpers', () => {
     });
 
     it('handles different times', () => {
-      expect(formatDateTime('2023-05-15T09:00:00')).toBe('May 15, 2023, 9:00 AM');
-      expect(formatDateTime('2023-05-15T23:59:00')).toBe('May 15, 2023, 11:59 PM');
+      expect(formatDateTime('2023-05-15T09:00:00')).toBe(
+        'May 15, 2023, 9:00 AM',
+      );
+      expect(formatDateTime('2023-05-15T23:59:00')).toBe(
+        'May 15, 2023, 11:59 PM',
+      );
     });
   });
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { formalize, buildVariables } from './utils';
+import { describe, expect, it } from 'vitest';
+import { buildVariables, formalize } from './utils';
 
 describe('formalize', () => {
   const validUUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -15,15 +15,21 @@ describe('formalize', () => {
   });
 
   it('should throw error for invalid entity ID', () => {
-    expect(() => formalize('invalid-id', [validEmail])).toThrow('Invalid entity ID');
+    expect(() => formalize('invalid-id', [validEmail])).toThrow(
+      'Invalid entity ID',
+    );
   });
 
   it('should throw error for empty recipients array', () => {
-    expect(() => formalize(validUUID, [])).toThrow('Recipients must be a non-empty array');
+    expect(() => formalize(validUUID, [])).toThrow(
+      'Recipients must be a non-empty array',
+    );
   });
 
   it('should throw error for invalid email', () => {
-    expect(() => formalize(validUUID, ['invalid-email'])).toThrow('Invalid email address found in recipients');
+    expect(() => formalize(validUUID, ['invalid-email'])).toThrow(
+      'Invalid email address found in recipients',
+    );
   });
 });
 

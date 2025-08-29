@@ -5,4 +5,4 @@ interface CustomUser {
   picture?: string | undefined;
 }
 
-export { type CustomUser };
+export type { CustomUser };

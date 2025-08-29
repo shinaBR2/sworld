@@ -7,7 +7,7 @@ export default class Player {
 
   init(x, y) {
     // Create the physics-based sprite that we will move around and animate
-    this.sprite = this.scene.matter.add.sprite(0, 0, "player", 0);
+    this.sprite = this.scene.matter.add.sprite(0, 0, 'player', 0);
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
     const { width: w, height: h } = this.sprite;
@@ -39,7 +39,7 @@ export default class Player {
       .setFixedRotation() // Sets inertia to infinity so the player can't rotate
       .setPosition(x, y);
     this.addControls();
-    this.scene.events.on("update", this.update, this);
+    this.scene.events.on('update', this.update, this);
   }
 
   addControls() {

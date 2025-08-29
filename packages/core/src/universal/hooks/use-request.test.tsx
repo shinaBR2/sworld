@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useRequest } from './use-request';
+import { renderHook, waitFor } from '@testing-library/react';
 import request from 'graphql-request';
-import { useQueryContext } from '../../providers/query';
-import { TypedDocumentString } from '../../graphql/graphql';
-import { isTokenExpired } from '../graphql/errors';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { TypedDocumentString } from '../../graphql/graphql';
 import { useAuthContext } from '../../providers/auth';
+import { useQueryContext } from '../../providers/query';
+import { isTokenExpired } from '../graphql/errors';
+import { useRequest } from './use-request';
 
 vi.mock('graphql-request', () => ({
   default: vi.fn(),
@@ -81,14 +81,14 @@ describe('useRequest', () => {
           queryKey: ['test'],
           document: mockDocument,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isSuccess).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(result.current.data).toEqual(mockResponse);
@@ -110,14 +110,14 @@ describe('useRequest', () => {
           document: mockDocument,
           variables: mockVariables,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isSuccess).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(result.current.data).toEqual(mockResponse);
@@ -144,34 +144,37 @@ describe('useRequest', () => {
           getAccessToken: mockGetAccessToken,
           document: mockDocument,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isError).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(result.current.error).toBe(tokenError);
     expect(request).not.toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalledWith('Authentication failed:', tokenError);
+    expect(console.error).toHaveBeenCalledWith(
+      'Authentication failed:',
+      tokenError,
+    );
   });
 
   it('should handle token expiration', async () => {
     const expiredTokenError = new Error('Token expired');
     vi.mocked(request).mockRejectedValueOnce(expiredTokenError);
     vi.mocked(isTokenExpired).mockReturnValueOnce(true);
-    
+
     const mockSignOut = vi.fn();
-    
+
     // Create a test document with the correct type
     const testDocument = {
       toString: () => 'query { test }',
       __apiType: 'query',
     } as unknown as TypedDocumentString<{ test: string }, {}>;
-    
+
     // Mock the auth context
     vi.mocked(useAuthContext).mockReturnValueOnce({
       isSignedIn: true,
@@ -191,18 +194,20 @@ describe('useRequest', () => {
           getAccessToken: mockGetAccessToken,
           document: testDocument,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isError).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(mockSignOut).toHaveBeenCalled();
-    expect(result.current.error?.message).toBe('Session expired. Please sign in again.');
+    expect(result.current.error?.message).toBe(
+      'Session expired. Please sign in again.',
+    );
   });
 
   it('should handle request error', async () => {
@@ -216,7 +221,7 @@ describe('useRequest', () => {
           getAccessToken: mockGetAccessToken,
           document: mockDocument,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(() => {
@@ -237,16 +242,19 @@ describe('useRequest', () => {
           document: {
             toString: () => 'query GetSettings { settings { theme } }',
             __apiType: 'query',
-          } as unknown as TypedDocumentString<{ settings: { theme: string } }, {}>,
+          } as unknown as TypedDocumentString<
+            { settings: { theme: string } },
+            {}
+          >,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isSuccess).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(result.current.data).toEqual(mockResponse);
@@ -268,14 +276,14 @@ describe('useRequest', () => {
           getAccessToken: mockGetAccessToken,
           document: mockDocument,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     await waitFor(
       () => {
         expect(result.current.isSuccess).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     rerender();
@@ -293,7 +301,7 @@ describe('useRequest', () => {
           document: mockDocument,
           enabled: false,
         }),
-      { wrapper }
+      { wrapper },
     );
 
     expect(result.current.isLoading).toBe(false);
@@ -312,7 +320,7 @@ describe('useRequest', () => {
       {
         wrapper,
         initialProps: { enabled: false },
-      }
+      },
     );
 
     expect(result.current.isLoading).toBe(false);
@@ -324,7 +332,7 @@ describe('useRequest', () => {
       () => {
         expect(result.current.isSuccess).toBe(true);
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     expect(request).toHaveBeenCalledOnce();

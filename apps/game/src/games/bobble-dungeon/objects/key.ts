@@ -1,12 +1,25 @@
-import { GameScene } from '../scenes/game';
+import type { GameScene } from '../scenes/game';
 
 export default class key extends Phaser.Physics.Matter.Sprite {
   scene: GameScene;
   label: string;
   tween: Phaser.Tweens.Tween | undefined;
 
-  constructor(scene: GameScene, x: number, y: number, texture = 'keys', options = { isStatic: true }) {
-    super(scene.matter.world, x, y, texture, Phaser.Math.RND.pick([0, 1]), options);
+  constructor(
+    scene: GameScene,
+    x: number,
+    y: number,
+    texture = 'keys',
+    options = { isStatic: true },
+  ) {
+    super(
+      scene.matter.world,
+      x,
+      y,
+      texture,
+      Phaser.Math.RND.pick([0, 1]),
+      options,
+    );
     this.scene = scene;
     this.label = 'keys';
     scene.add.existing(this);

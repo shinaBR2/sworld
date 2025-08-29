@@ -1,10 +1,11 @@
 // packages/ui/src/journal/mood-icon.tsx
-import React from 'react';
-import { SvgIconProps } from '@mui/material';
+
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import { MoodType } from 'core/src/journal/types';
+import type { SvgIconProps } from '@mui/material';
+import type { MoodType } from 'core/src/journal/types';
+import type React from 'react';
 
 interface MoodIconProps {
   mood: MoodType;
@@ -20,9 +21,13 @@ const MoodIcon: React.FC<MoodIconProps> = ({ mood, size = 24, className }) => {
 
   switch (mood) {
     case 'happy':
-      return <SentimentSatisfiedAltIcon {...iconProps} sx={{ color: 'green' }} />;
+      return (
+        <SentimentSatisfiedAltIcon {...iconProps} sx={{ color: 'green' }} />
+      );
     case 'sad':
-      return <SentimentVeryDissatisfiedIcon {...iconProps} sx={{ color: 'red' }} />;
+      return (
+        <SentimentVeryDissatisfiedIcon {...iconProps} sx={{ color: 'red' }} />
+      );
     case 'neutral':
       return <SentimentNeutralIcon {...iconProps} sx={{ color: 'blue' }} />;
     default:

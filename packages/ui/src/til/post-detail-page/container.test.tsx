@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { PostDetailPageContainer } from './container';
 
 describe('PostDetailPageContainer', () => {
@@ -7,7 +7,7 @@ describe('PostDetailPageContainer', () => {
     const { container } = render(
       <PostDetailPageContainer>
         <div data-testid="test-child">Test Content</div>
-      </PostDetailPageContainer>
+      </PostDetailPageContainer>,
     );
 
     // Verify container maxWidth

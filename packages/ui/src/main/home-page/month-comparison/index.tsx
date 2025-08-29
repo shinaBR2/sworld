@@ -1,6 +1,6 @@
-import { Box, Card, CardContent, Typography } from '@mui/material';
 // import ReactECharts, { EChartsOption } from 'echarts-for-react';
-import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 
 export interface MonthData {
   month: string; // Format: "YYYY-MM"
@@ -140,7 +140,14 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
 
         <Box sx={{ width: '100%', height: 160 }}>
           {data.length === 0 ? (
-            <Box sx={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                height: 160,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Typography variant="body1" color="text.secondary">
                 No data available
               </Typography>

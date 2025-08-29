@@ -1,18 +1,22 @@
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Controls from './Controls';
-import Seeker from './Seeker';
-import hooks, { SAudioPlayerAudioItem, SAudioPlayerLoopMode } from 'core';
 import Box from '@mui/material/Box';
+import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Slide from '@mui/material/Slide';
-import PlaylistButton from './PlaylistButton';
+import Typography from '@mui/material/Typography';
+import hooks, {
+  type SAudioPlayerAudioItem,
+  type SAudioPlayerLoopMode,
+} from 'core';
 import { useRef, useState } from 'react';
-import { StyledCard, StyledContent } from './Styled';
-import PlayingList from './playing-list';
 import { ResponsiveCardMedia } from '../../../universal';
 import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { useIsMobile } from '../../../universal/responsive';
+import Controls from './Controls';
+import PlaylistButton from './PlaylistButton';
+import PlayingList from './playing-list';
+import Seeker from './Seeker';
+import { StyledCard, StyledContent } from './Styled';
+
 const { useSAudioPlayer } = hooks;
 
 export interface MusicWidgetProps {
@@ -26,9 +30,11 @@ export interface MusicWidgetProps {
 
 const MusicWidget = (props: MusicWidgetProps) => {
   const { audioList, hookResult, onItemSelect } = props;
-  const { getAudioProps, getSeekerProps, getControlsProps, playerState } = hookResult;
+  const { getAudioProps, getSeekerProps, getControlsProps, playerState } =
+    hookResult;
   const { isPlay, isShuffled, loopMode, audioItem } = playerState;
-  const { onPlay, onPrev, onNext, onShuffle, onChangeLoopMode } = getControlsProps();
+  const { onPlay, onPrev, onNext, onShuffle, onChangeLoopMode } =
+    getControlsProps();
   const contentRef = useRef(null);
   const [showPlayinglist, setShowPlayinglist] = useState(false);
   const isMobile = useIsMobile();
@@ -57,11 +63,27 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard role="region" aria-label="music widget">
-      <ResponsiveCardMedia aria-label="audio thumbnail" src={image || defaultAudioThumbnailUrl} alt={name} />
+      <ResponsiveCardMedia
+        aria-label="audio thumbnail"
+        src={image || defaultAudioThumbnailUrl}
+        alt={name}
+      />
       <StyledContent ref={contentRef}>
         <CardContent>
-          <Box component={Grid} container justifyContent="space-between" alignItems="center" mb={1}>
-            <Typography role="text" aria-label="now playing" gutterBottom variant="body2" component="p">
+          <Box
+            component={Grid}
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            mb={1}
+          >
+            <Typography
+              role="text"
+              aria-label="now playing"
+              gutterBottom
+              variant="body2"
+              component="p"
+            >
               {showPlayinglist ? 'Playing list' : 'Now playing'}
             </Typography>
             {isMobile && (
@@ -96,8 +118,16 @@ const MusicWidget = (props: MusicWidgetProps) => {
           <Controls {...controlProps} />
         </CardContent>
         {isMobile && (
-          <Slide direction="up" in={showPlayinglist} container={contentRef.current}>
-            <PlayingList audioList={audioList} onSelect={onSelect} currentId={audioItem.id} />
+          <Slide
+            direction="up"
+            in={showPlayinglist}
+            container={contentRef.current}
+          >
+            <PlayingList
+              audioList={audioList}
+              onSelect={onSelect}
+              currentId={audioItem.id}
+            />
           </Slide>
         )}
         <audio {...getAudioProps()} />

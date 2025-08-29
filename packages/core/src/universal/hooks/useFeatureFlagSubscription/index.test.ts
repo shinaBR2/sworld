@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthContextValue, useAuthContext } from '../../../providers/auth';
+import { type AuthContextValue, useAuthContext } from '../../../providers/auth';
 import { useSubscription } from '../useSubscription';
 import { checkFeatureFlag } from './helpers';
 import { useFeatureFlagSubscription } from './index';
@@ -79,8 +79,14 @@ describe('useFeatureFlagSubscription', () => {
     });
 
     expect(checkFeatureFlag).toHaveBeenCalledTimes(2);
-    expect(checkFeatureFlag).toHaveBeenCalledWith(mockFeatureFlags[0].conditions, mockUserId);
-    expect(checkFeatureFlag).toHaveBeenCalledWith(mockFeatureFlags[1].conditions, mockUserId);
+    expect(checkFeatureFlag).toHaveBeenCalledWith(
+      mockFeatureFlags[0].conditions,
+      mockUserId,
+    );
+    expect(checkFeatureFlag).toHaveBeenCalledWith(
+      mockFeatureFlags[1].conditions,
+      mockUserId,
+    );
   });
 
   it('should handle subscription errors', () => {
@@ -143,7 +149,7 @@ describe('useFeatureFlagSubscription', () => {
         } as unknown as AuthContextValue);
         return useFeatureFlagSubscription(mockUrl);
       },
-      { initialProps: { userId: 'user-1' } }
+      { initialProps: { userId: 'user-1' } },
     );
 
     vi.mocked(useSubscription).mockReturnValue({

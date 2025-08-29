@@ -1,7 +1,7 @@
-import { vi, describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { ErrorBoundary } from './index';
+import { describe, expect, it, vi } from 'vitest';
 import { AppError } from './app-error';
+import { ErrorBoundary } from './index';
 
 // Mock the Rollbar Provider and ErrorBoundary
 vi.mock('@rollbar/react', () => ({
@@ -12,7 +12,9 @@ vi.mock('@rollbar/react', () => ({
       return fallbackUI({ error: new Error('Test error') });
     }
     if (children === 'TRIGGER_APP_ERROR') {
-      return fallbackUI({ error: new AppError('technical message', 'Custom error message', true) });
+      return fallbackUI({
+        error: new AppError('technical message', 'Custom error message', true),
+      });
     }
     return children;
   },
@@ -25,7 +27,7 @@ describe('ErrorBoundary', () => {
     const { container } = render(
       <ErrorBoundary FallbackComponent={() => <div>Mocked Error Fallback</div>}>
         <TestComponent />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     expect(container.textContent).toContain('Normal Content');
@@ -40,9 +42,12 @@ describe('ErrorBoundary', () => {
     );
 
     const { container } = render(
-      <ErrorBoundary FallbackComponent={TestFallback} config={{ accessToken: 'test-token', environment: 'test' }}>
+      <ErrorBoundary
+        FallbackComponent={TestFallback}
+        config={{ accessToken: 'test-token', environment: 'test' }}
+      >
         TRIGGER_ERROR
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     expect(container.textContent).toContain('Error: Something went wrong');
@@ -58,9 +63,12 @@ describe('ErrorBoundary', () => {
     );
 
     const { container } = render(
-      <ErrorBoundary FallbackComponent={TestFallback} config={{ accessToken: 'test-token', environment: 'test' }}>
+      <ErrorBoundary
+        FallbackComponent={TestFallback}
+        config={{ accessToken: 'test-token', environment: 'test' }}
+      >
         TRIGGER_APP_ERROR
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     expect(container.textContent).toContain('Error: Custom error message');

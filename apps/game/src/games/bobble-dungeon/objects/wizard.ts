@@ -1,5 +1,5 @@
+import type { GameScene } from '../scenes/game';
 import Bubble from './bubble';
-import { GameScene } from '../scenes/game';
 
 export default class Wizard extends Phaser.Physics.Matter.Sprite {
   scene: GameScene;
@@ -42,7 +42,7 @@ This function inits the wizard. It creates the animations and the update event. 
 As we did with the player and the bat, we create this callback to handle the collision with the bubble.
   */
   addCollisions() {
-    // @ts-ignore
+    // @ts-expect-error
     this.unsubscribeBatCollide = this.scene.matterCollision.addOnCollideStart({
       objectA: this,
       callback: this.onWizardCollide,
@@ -72,7 +72,7 @@ The wizard will try to shoot directly at the player. It will shoot a fireball an
         this.turn();
       },
       undefined,
-      this
+      this,
     );
   }
 

@@ -1,8 +1,8 @@
+import type { UseQueryResult } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
 import { useReadingStats } from './readingStats';
-import { UseQueryResult } from '@tanstack/react-query';
 
 vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -17,7 +17,9 @@ describe('useReadingStats', () => {
     books_aggregate: { aggregate: { count: 10 } },
     completed_books: { aggregate: { count: 4 } },
     currently_reading: { aggregate: { count: 2 } },
-    reading_time_this_month: { aggregate: { sum: { readingTimeMinutes: 123 } } },
+    reading_time_this_month: {
+      aggregate: { sum: { readingTimeMinutes: 123 } },
+    },
   };
 
   it('should fetch and transform reading stats data correctly', () => {
@@ -76,7 +78,11 @@ describe('useReadingStats', () => {
       error: null,
     } as unknown as UseQueryResult<typeof mockData, Error>);
     const { result } = renderHook(() => useReadingStats());
-    expect(result.current).toEqual({ data: null, isLoading: true, error: null });
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
   });
 
   it('should handle error state', () => {

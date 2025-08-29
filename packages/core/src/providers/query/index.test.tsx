@@ -1,18 +1,20 @@
 // packages/core/src/providers/query/index.test.tsx
-import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
-import { render, renderHook } from '@testing-library/react';
-import { useQueryContext, QueryProvider } from './index';
-import type { QueryContextValue } from './index';
+
 import { QueryClient } from '@tanstack/react-query';
-import { SubscriptionParams } from '../../universal/hooks/useSubscription';
+import { render, renderHook } from '@testing-library/react';
+import type React from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import type { SubscriptionParams } from '../../universal/hooks/useSubscription';
+import type { QueryContextValue } from './index';
+import { QueryProvider, useQueryContext } from './index';
 
 vi.mock('@tanstack/react-query', () => ({
   QueryClient: vi.fn().mockImplementation(() => ({
     removeQueries: vi.fn(),
     refetchQueries: vi.fn(),
   })),
-  QueryClientProvider: ({ children }: { children: React.ReactNode }) => children,
+  QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
 }));
 
 vi.mock('@rollbar/react', () => ({
@@ -50,7 +52,7 @@ vi.mock('../../universal/hooks/useFeatureFlagSubscription', () => ({
 
 // Mock WebSocket
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error
 global.WebSocket = vi.fn().mockImplementation(() => ({
   onopen: vi.fn(),
   onmessage: vi.fn(),
@@ -91,7 +93,7 @@ describe('Query Provider and Context', () => {
     render(
       <QueryProvider config={mockConfig}>
         <TestComponent />
-      </QueryProvider>
+      </QueryProvider>,
     );
 
     expect(contextValue).toEqual(expectedContextValue);
@@ -100,7 +102,9 @@ describe('Query Provider and Context', () => {
   it('should correctly handle invalidateQuery calls', () => {
     const queryKey = ['test-key'];
     const { result } = renderHook(() => useQueryContext(), {
-      wrapper: ({ children }) => <QueryProvider config={mockConfig}>{children}</QueryProvider>,
+      wrapper: ({ children }) => (
+        <QueryProvider config={mockConfig}>{children}</QueryProvider>
+      ),
     });
 
     // Call invalidateQuery
@@ -110,7 +114,10 @@ describe('Query Provider and Context', () => {
     const queryClientInstance = vi.mocked(QueryClient).mock.results[0].value;
 
     // Verify removeQueries was called first
-    expect(queryClientInstance.removeQueries).toHaveBeenCalledWith({ queryKey, exact: true });
+    expect(queryClientInstance.removeQueries).toHaveBeenCalledWith({
+      queryKey,
+      exact: true,
+    });
 
     // Verify refetchQueries was called with correct params
     expect(queryClientInstance.refetchQueries).toHaveBeenCalledWith({
@@ -121,7 +128,8 @@ describe('Query Provider and Context', () => {
 
     // Verify order of operations
     const calls = queryClientInstance.removeQueries.mock.invocationCallOrder[0];
-    const refetchCalls = queryClientInstance.refetchQueries.mock.invocationCallOrder[0];
+    const refetchCalls =
+      queryClientInstance.refetchQueries.mock.invocationCallOrder[0];
     expect(calls).toBeLessThan(refetchCalls);
   });
 
@@ -142,7 +150,7 @@ describe('Query Provider and Context', () => {
     const { container } = render(
       <QueryProvider config={mockConfig}>
         <TestChild />
-      </QueryProvider>
+      </QueryProvider>,
     );
 
     expect(container.innerHTML).toContain('Test Child');
@@ -163,7 +171,7 @@ describe('Query Provider and Context', () => {
         <div>
           <MiddleComponent />
         </div>
-      </QueryProvider>
+      </QueryProvider>,
     );
 
     expect(contextValue).toEqual(expectedContextValue);
@@ -208,7 +216,7 @@ describe('Query Provider and Context', () => {
         <QueryProvider config={nestedConfig}>
           <InnerComponent />
         </QueryProvider>
-      </QueryProvider>
+      </QueryProvider>,
     );
 
     expect(outerContextValue).toEqual(expectedContextValue);
@@ -227,7 +235,7 @@ describe('Query Provider and Context', () => {
     render(
       <QueryProvider config={incompleteConfig}>
         <TestComponent />
-      </QueryProvider>
+      </QueryProvider>,
     );
 
     expect(contextValue).toEqual({

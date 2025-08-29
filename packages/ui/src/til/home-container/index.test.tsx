@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { HomeContainer } from './index';
 import { texts } from './texts';
 
@@ -8,7 +8,9 @@ vi.mock('../posts/post-card/skeleton', () => ({
 }));
 
 vi.mock('../posts/post-card', () => ({
-  PostCard: ({ post }: { post: { id: string } }) => <div data-testid={`post-card-${post.id}`} />,
+  PostCard: ({ post }: { post: { id: string } }) => (
+    <div data-testid={`post-card-${post.id}`} />
+  ),
 }));
 
 describe('HomeContainer', () => {
@@ -39,7 +41,9 @@ describe('HomeContainer', () => {
   });
 
   it('shows no posts message when empty', () => {
-    const { container } = render(<HomeContainer queryRs={mockQueryRs(false, [])} />);
+    const { container } = render(
+      <HomeContainer queryRs={mockQueryRs(false, [])} />,
+    );
 
     expect(container).toHaveTextContent(texts.noPosts);
     expect(screen.queryByTestId('post-card-1')).not.toBeInTheDocument();

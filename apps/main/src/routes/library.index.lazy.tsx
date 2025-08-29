@@ -1,15 +1,20 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import React, { useState } from 'react';
-import { AuthRoute } from 'ui/universal/authRoute';
-import { useBooks, useReadingStats, useCurrentReading } from 'core/library/query-hooks';
-import { useIsMobile } from 'ui/universal/responsive';
-import { Container } from 'ui/universal/containers/generic';
-import { Welcome } from 'ui/main/library-page/home-welcome';
+import {
+  useBooks,
+  useCurrentReading,
+  useReadingStats,
+} from 'core/library/query-hooks';
+import type React from 'react';
+import { useState } from 'react';
+import { BooksGrid } from 'ui/main/library-page/home-books-grid';
 import { ContinueReading } from 'ui/main/library-page/home-continue-reading';
 import { StatsGrid } from 'ui/main/library-page/home-stats';
-import { BooksGrid } from 'ui/main/library-page/home-books-grid';
+import { Welcome } from 'ui/main/library-page/home-welcome';
 import { MobileNavigation } from 'ui/main/library-page/mobile-nav';
 import { FullWidthContainer } from 'ui/universal';
+import { AuthRoute } from 'ui/universal/authRoute';
+import { Container } from 'ui/universal/containers/generic';
+import { useIsMobile } from 'ui/universal/responsive';
 import { Layout } from '../components/layout';
 
 // Helper function to generate consistent gradients based on book ID
@@ -40,7 +45,9 @@ const getCoverGradient = (bookId: string): string => {
 
 const LibraryPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState(0);
-  const [filter, setFilter] = useState<'all' | 'completed' | 'reading' | 'recent'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'completed' | 'reading' | 'recent'
+  >('all');
   // const [searchQuery, setSearchQuery] = useState('');
   // const [page, setPage] = useState(0);
 
@@ -51,7 +58,8 @@ const LibraryPage: React.FC = () => {
   const { data: books = [], isLoading: booksLoading } = useBooks();
 
   const { data: stats, isLoading: statsLoading } = useReadingStats();
-  const { data: currentBook, isLoading: currentBookLoading } = useCurrentReading();
+  const { data: currentBook, isLoading: currentBookLoading } =
+    useCurrentReading();
   // const updateProgress = useUpdateReadingProgress();
 
   const handleTabChange = (value: number) => {
@@ -126,7 +134,7 @@ const LibraryPage: React.FC = () => {
     : undefined;
 
   // Transform books data for the component
-  const transformedBooks = books?.map(book => ({
+  const transformedBooks = books?.map((book) => ({
     id: book.id,
     title: book.title,
     author: book.author || 'Unknown Author',

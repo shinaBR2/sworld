@@ -1,14 +1,21 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { lazy, useState } from 'react';
+import { useAuthContext } from 'core/providers/auth';
+import {
+  buildVariables,
+  formalize,
+  useShareVideo,
+} from 'core/watch/mutation-hooks/share-videos';
 import { useLoadVideoDetail } from 'core/watch/query-hooks/video-detail';
-import { useShareVideo, formalize, buildVariables } from 'core/watch/mutation-hooks/share-videos';
+import React, { lazy, useState } from 'react';
+import { AuthRoute } from 'ui/universal/authRoute';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';
-import React from 'react';
-import { AuthRoute } from 'ui/universal/authRoute';
-import { useAuthContext } from 'core/providers/auth';
 
-const Notification = lazy(() => import('ui/universal/notification').then(m => ({ default: m.Notification })));
+const Notification = lazy(() =>
+  import('ui/universal/notification').then((m) => ({
+    default: m.Notification,
+  })),
+);
 
 function VideoDetails() {
   const [notification, setNotification] = useState<{
@@ -26,7 +33,10 @@ function VideoDetails() {
   const { mutate: shareVideo } = useShareVideo({
     getAccessToken: authContext.getAccessToken,
     onSuccess: () => {
-      setNotification({ message: 'Video shared successfully', severity: 'success' });
+      setNotification({
+        message: 'Video shared successfully',
+        severity: 'success',
+      });
     },
     onError: () => {
       setNotification({ message: 'Failed to share video', severity: 'error' });
@@ -57,7 +67,12 @@ function VideoDetails() {
 
   return (
     <Layout>
-      {notification && <Notification notification={notification} onClose={() => setNotification(null)} />}
+      {notification && (
+        <Notification
+          notification={notification}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <VideoDetailContainer
         queryRs={videoResult}
         activeVideoId={videoId}

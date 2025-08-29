@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MobileNavigation } from './index';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import * as responsive from '../../../universal/responsive';
+import { MobileNavigation } from './index';
 
 describe('MobileNavigation', () => {
   const useIsMobileMock = vi.spyOn(responsive, 'useIsMobile');

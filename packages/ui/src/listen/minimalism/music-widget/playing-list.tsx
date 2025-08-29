@@ -1,11 +1,11 @@
 import GraphicEq from '@mui/icons-material/GraphicEq';
-import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
-import { SAudioPlayerAudioItem } from 'core';
-import { forwardRef, Ref } from 'react';
+import ListItemText from '@mui/material/ListItemText';
+import type { SAudioPlayerAudioItem } from 'core';
+import { forwardRef, type Ref } from 'react';
 import { pulseAnimation, StyledPlayingList } from './Styled';
 
 /**
@@ -20,7 +20,10 @@ interface PlayingListProps {
   onSelect: (id: string) => void;
 }
 
-const PlayingList = (props: PlayingListProps, ref: Ref<HTMLElement> | undefined) => {
+const PlayingList = (
+  props: PlayingListProps,
+  ref: Ref<HTMLElement> | undefined,
+) => {
   const { audioList, onSelect, currentId } = props;
 
   return (
@@ -28,7 +31,7 @@ const PlayingList = (props: PlayingListProps, ref: Ref<HTMLElement> | undefined)
       <Divider />
       <Box height="100%" pb={2} mb={2}>
         <List aria-label="audio tracks" role="listbox">
-          {audioList.map(a => {
+          {audioList.map((a) => {
             const selected = a.id === currentId;
 
             return (

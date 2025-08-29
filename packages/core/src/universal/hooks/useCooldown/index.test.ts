@@ -1,5 +1,5 @@
-import { renderHook, act } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCountdown } from '.';
 
 describe('useCountdown', () => {
@@ -15,7 +15,7 @@ describe('useCountdown', () => {
     const { result } = renderHook(() =>
       useCountdown({
         duration: 3,
-      })
+      }),
     );
 
     expect(result.current).toBe(3);
@@ -37,7 +37,7 @@ describe('useCountdown', () => {
       useCountdown({
         duration: 3,
         onTick,
-      })
+      }),
     );
 
     act(() => {
@@ -57,7 +57,7 @@ describe('useCountdown', () => {
       useCountdown({
         duration: 2,
         onComplete,
-      })
+      }),
     );
 
     act(() => {
@@ -75,7 +75,7 @@ describe('useCountdown', () => {
         onTick,
         onComplete,
         enabled: false,
-      })
+      }),
     );
 
     act(() => {
@@ -91,7 +91,7 @@ describe('useCountdown', () => {
       useCountdown({
         duration: 2,
         interval: 500,
-      })
+      }),
     );
 
     act(() => {
@@ -109,7 +109,7 @@ describe('useCountdown', () => {
         }),
       {
         initialProps: { enabled: false },
-      }
+      },
     );
 
     expect(result.current).toBe(3);
@@ -129,7 +129,7 @@ describe('useCountdown', () => {
       useCountdown({
         duration: 3,
         onTick,
-      })
+      }),
     );
 
     unmount();

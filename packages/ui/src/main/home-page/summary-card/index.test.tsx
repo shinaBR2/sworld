@@ -1,22 +1,34 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { SummaryCard } from './index';
 
 // Mock the styled components and utils
 vi.mock('./styled', () => ({
   StyledCard: ({ children, category, selected, onClick }: any) => (
-    <div data-testid="styled-card" data-category={category} data-selected={selected.toString()} onClick={onClick}>
+    <div
+      data-testid="styled-card"
+      data-category={category}
+      data-selected={selected.toString()}
+      onClick={onClick}
+    >
       {children}
     </div>
   ),
-  StyledAmount: ({ children }: any) => <div data-testid="styled-amount">{children}</div>,
-  StyledCategoryName: ({ children }: any) => <div data-testid="styled-category-name">{children}</div>,
-  StyledCategoryWrapper: ({ children }: any) => <div data-testid="styled-category-wrapper">{children}</div>,
+  StyledAmount: ({ children }: any) => (
+    <div data-testid="styled-amount">{children}</div>
+  ),
+  StyledCategoryName: ({ children }: any) => (
+    <div data-testid="styled-category-name">{children}</div>
+  ),
+  StyledCategoryWrapper: ({ children }: any) => (
+    <div data-testid="styled-category-wrapper">{children}</div>
+  ),
 }));
 
 vi.mock('./utils', () => ({
   getCategoryIcon: (category: string) => `${category}-icon`,
-  getCategoryTitle: (category: string) => `${category.charAt(0).toUpperCase() + category.slice(1)} Title`,
+  getCategoryTitle: (category: string) =>
+    `${category.charAt(0).toUpperCase() + category.slice(1)} Title`,
 }));
 
 vi.mock('./skeleton', () => ({

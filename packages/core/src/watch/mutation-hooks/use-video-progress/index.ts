@@ -93,7 +93,7 @@ const useVideoProgress = (props: UseVideoProgressProps) => {
 
       mutate(progress);
     },
-    [videoId, mutate]
+    [videoId, mutate],
   );
 
   const handleProgress = useCallback(
@@ -102,7 +102,7 @@ const useVideoProgress = (props: UseVideoProgressProps) => {
 
       currentProgressRef.current = playedSeconds;
     },
-    [isSignedIn]
+    [isSignedIn],
   );
 
   const handlePlay = useCallback(() => {
@@ -135,7 +135,7 @@ const useVideoProgress = (props: UseVideoProgressProps) => {
       }
       saveProgress(currentProgressRef.current);
     },
-    [saveProgress, isSignedIn]
+    [saveProgress, isSignedIn],
   );
 
   const handleEnded = useCallback(() => {

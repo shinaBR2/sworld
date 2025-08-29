@@ -7,7 +7,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['src/graphql/**', 'dist/**', 'codegen.ts', 'tsup.config.ts', 'vite.config.ts', '.eslintrc.js'],
+      exclude: [
+        'src/graphql/**',
+        'dist/**',
+        'codegen.ts',
+        'tsup.config.ts',
+        'vite.config.ts',
+        '.eslintrc.js',
+      ],
     },
   },
 });

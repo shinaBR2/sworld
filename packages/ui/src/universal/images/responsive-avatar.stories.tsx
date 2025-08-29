@@ -28,7 +28,8 @@ const meta: Meta<typeof ResponsiveAvatar> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A responsive avatar component with built-in Cloudinary support.',
+        component:
+          'A responsive avatar component with built-in Cloudinary support.',
       },
     },
   },
@@ -43,7 +44,8 @@ const meta: Meta<typeof ResponsiveAvatar> = {
     },
     sizes: {
       control: 'text',
-      description: 'Sizes attribute for responsive images (especially useful for Cloudinary)',
+      description:
+        'Sizes attribute for responsive images (especially useful for Cloudinary)',
       defaultValue: undefined,
     },
     widths: {
@@ -71,7 +73,7 @@ export const CloudinaryImage: Story = {
     alt: 'Cloudinary Avatar',
     variant: 'circular',
   },
-  render: args => (
+  render: (args) => (
     <div
       style={{
         width: 400,
@@ -94,7 +96,7 @@ export const StandardImage: Story = {
     alt: 'Standard Avatar',
     variant: 'rounded',
   },
-  render: args => (
+  render: (args) => (
     <div
       style={{
         width: 400,
@@ -112,7 +114,7 @@ export const StandardImage: Story = {
 // Variants story
 export const AvatarVariants: Story = {
   name: 'Avatar Variants',
-  render: args => (
+  render: (args) => (
     <div
       style={{
         width: 400,
@@ -155,7 +157,7 @@ export const CustomSizesAvatar: Story = {
     widths: [40, 80],
     variant: 'rounded',
   },
-  render: args => (
+  render: (args) => (
     <div
       style={{
         width: 400,
@@ -176,7 +178,7 @@ export const NoSourceAvatar: Story = {
   args: {
     alt: 'No Source Avatar',
   },
-  render: args => (
+  render: (args) => (
     <div
       style={{
         width: 400,

@@ -1,6 +1,9 @@
-import { UseMutationOptions } from '@tanstack/react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
-import { SaveSubtitleMutation, SaveSubtitleMutationVariables } from '../../../graphql/graphql';
+import type {
+  SaveSubtitleMutation,
+  SaveSubtitleMutationVariables,
+} from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
 
 const saveSubtitleMutation = graphql(/* GraphQL */ `
@@ -18,7 +21,8 @@ type SaveSubtitleMutationOptions = UseMutationOptions<
   unknown
 >;
 
-interface UseSaveSubtitleProps extends Pick<SaveSubtitleMutationOptions, 'onSuccess' | 'onError'> {
+interface UseSaveSubtitleProps
+  extends Pick<SaveSubtitleMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
 }
 
@@ -42,7 +46,11 @@ const useSaveSubtitle = (props: UseSaveSubtitleProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: (error: unknown, variables: SaveSubtitleMutationVariables, context: unknown) => {
+      onError: (
+        error: unknown,
+        variables: SaveSubtitleMutationVariables,
+        context: unknown,
+      ) => {
         console.error('Save subtitle failed:', error);
         onError?.(error, variables, context);
       },

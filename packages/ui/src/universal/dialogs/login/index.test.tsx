@@ -1,12 +1,17 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { LoginDialog } from '../index';
 
 // Mock Material-UI Dialog
 vi.mock('@mui/material/Dialog', () => ({
-  default: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
-    open ? <div data-testid="dialog">{children}</div> : null,
+  default: ({
+    children,
+    open,
+  }: {
+    children: React.ReactNode;
+    open: boolean;
+  }) => (open ? <div data-testid="dialog">{children}</div> : null),
 }));
 
 describe('LoginDialog', () => {
@@ -56,7 +61,9 @@ describe('LoginDialog', () => {
   it('renders dialog content with correct MUI classes', () => {
     render(<LoginDialog />);
 
-    const dialogContent = screen.getByTestId('dialog').querySelector('.MuiDialogContent-root');
+    const dialogContent = screen
+      .getByTestId('dialog')
+      .querySelector('.MuiDialogContent-root');
     expect(dialogContent).toBeInTheDocument();
   });
 

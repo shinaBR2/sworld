@@ -1,11 +1,11 @@
+import { ErrorOutline } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { texts } from './texts';
-import { ErrorOutline } from '@mui/icons-material';
 
 interface ErrorFallbackProps {
   errorMessage?: string;
@@ -16,7 +16,13 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
   const { errorMessage = texts.message, canRetry = true } = props;
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" bgcolor="background.default">
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="100vh"
+      bgcolor="background.default"
+    >
       <Container maxWidth="sm">
         <Card elevation={12}>
           <CardContent sx={{ textAlign: 'center' }}>
@@ -36,7 +42,11 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
               </Typography>
               {canRetry && (
                 <Box mt={3}>
-                  <Button variant="contained" fullWidth onClick={() => window.location.reload()}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => window.location.reload()}
+                  >
                     {texts.tryAgain}
                   </Button>
                 </Box>

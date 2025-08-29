@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MoodIcon } from './index';
 
 describe('MoodIcon', () => {
@@ -28,7 +28,10 @@ describe('MoodIcon', () => {
     const customSize = 32;
     render(<MoodIcon mood="happy" size={customSize} />);
     const icon = screen.getByTestId('SentimentSatisfiedAltIcon');
-    expect(icon).toHaveStyle({ width: `${customSize}px`, height: `${customSize}px` });
+    expect(icon).toHaveStyle({
+      width: `${customSize}px`,
+      height: `${customSize}px`,
+    });
   });
 
   it('applies custom className correctly', () => {

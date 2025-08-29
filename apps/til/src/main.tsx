@@ -1,12 +1,11 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import React from 'react';
-import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { ErrorBoundary, Query } from 'core';
-import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
+import React, { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { ErrorFallback } from 'ui/universal/error-boundary';
+import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
 import { queryConfig, rollbarConfig, validateEnvVars } from './config';
+import { routeTree } from './routeTree.gen';
 
 validateEnvVars();
 

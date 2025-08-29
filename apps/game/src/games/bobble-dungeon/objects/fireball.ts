@@ -1,4 +1,4 @@
-import { GameScene } from '../scenes/game';
+import type { GameScene } from '../scenes/game';
 
 export default class Fireball extends Phaser.Physics.Matter.Sprite {
   scene: GameScene;
@@ -36,7 +36,7 @@ export default class Fireball extends Phaser.Physics.Matter.Sprite {
         this.destroy();
       },
       undefined,
-      this
+      this,
     );
   }
 

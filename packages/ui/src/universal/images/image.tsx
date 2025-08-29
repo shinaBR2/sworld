@@ -1,7 +1,7 @@
-import { AvatarProps } from '@mui/material';
+import type { AvatarProps } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import CardMedia from '@mui/material/CardMedia';
-import React from 'react';
+import type React from 'react';
 
 interface ResponsiveImageProps {
   src: string;
@@ -15,7 +15,10 @@ interface ResponsiveImageProps {
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 
-const generateCloudinarySrcSet = (url: string, widths: number[] = [400, 800, 1200]): string => {
+const generateCloudinarySrcSet = (
+  url: string,
+  widths: number[] = [400, 800, 1200],
+): string => {
   try {
     // Find the position of /upload/ in the URL
     const uploadIndex = url.indexOf('/upload/');
@@ -28,11 +31,13 @@ const generateCloudinarySrcSet = (url: string, widths: number[] = [400, 800, 120
     const afterUpload = url.substring(uploadIndex + '/upload/'.length);
     const versionMatch = afterUpload.match(/^v\d+\//);
     const version = versionMatch ? versionMatch[0] : ''; // includes the trailing slash
-    const imagePath = versionMatch ? afterUpload.substring(versionMatch[0].length) : afterUpload;
+    const imagePath = versionMatch
+      ? afterUpload.substring(versionMatch[0].length)
+      : afterUpload;
 
     // Generate srcSet for each width
     return widths
-      .map(width => {
+      .map((width) => {
         const transformedUrl = `${baseUrl}/upload/f_auto,q_auto,w_${width}/${version}${imagePath}`;
         return `${transformedUrl} ${width}w`;
       })
@@ -98,7 +103,9 @@ const ResponsiveCardMedia = ({
       alt={alt}
       className={className}
       sizes={isCloudinaryUrl(src) ? sizes : undefined}
-      srcSet={isCloudinaryUrl(src) ? generateCloudinarySrcSet(src, widths) : undefined}
+      srcSet={
+        isCloudinaryUrl(src) ? generateCloudinarySrcSet(src, widths) : undefined
+      }
       sx={{
         width: '100%',
         height: 'auto',
@@ -116,9 +123,18 @@ interface ResponsiveAvatarProps extends AvatarProps {
   widths?: number[];
 }
 
-const ResponsiveAvatar = ({ src, alt, className, sizes, widths = [40, 80, 120], ...props }: ResponsiveAvatarProps) => {
+const ResponsiveAvatar = ({
+  src,
+  alt,
+  className,
+  sizes,
+  widths = [40, 80, 120],
+  ...props
+}: ResponsiveAvatarProps) => {
   const safeSrc = src ?? '';
-  const srcSet = isCloudinaryUrl(safeSrc) ? generateCloudinarySrcSet(safeSrc, widths) : undefined;
+  const srcSet = isCloudinaryUrl(safeSrc)
+    ? generateCloudinarySrcSet(safeSrc, widths)
+    : undefined;
 
   return (
     <Avatar
@@ -132,4 +148,10 @@ const ResponsiveAvatar = ({ src, alt, className, sizes, widths = [40, 80, 120], 
   );
 };
 
-export { generateCloudinarySrcSet, isCloudinaryUrl, ResponsiveImage, ResponsiveCardMedia, ResponsiveAvatar };
+export {
+  generateCloudinarySrcSet,
+  isCloudinaryUrl,
+  ResponsiveImage,
+  ResponsiveCardMedia,
+  ResponsiveAvatar,
+};

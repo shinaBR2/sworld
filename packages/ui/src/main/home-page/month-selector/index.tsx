@@ -1,5 +1,5 @@
-import { Box, IconButton, Typography, Card } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Box, Card, IconButton, Typography } from '@mui/material';
 
 export interface MonthSelectorProps {
   displayMonth: string; // Format: "January 2024"
@@ -19,8 +19,19 @@ const MonthSelector = ({
   variant = 'card',
 }: MonthSelectorProps) => {
   const content = (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <IconButton onClick={onPreviousMonth} disabled={disablePrevious} size="small" color="primary">
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <IconButton
+        onClick={onPreviousMonth}
+        disabled={disablePrevious}
+        size="small"
+        color="primary"
+      >
         <ChevronLeft />
       </IconButton>
 
@@ -28,7 +39,12 @@ const MonthSelector = ({
         {displayMonth}
       </Typography>
 
-      <IconButton onClick={onNextMonth} disabled={disableNext} size="small" color="primary">
+      <IconButton
+        onClick={onNextMonth}
+        disabled={disableNext}
+        size="small"
+        color="primary"
+      >
         <ChevronRight />
       </IconButton>
     </Box>

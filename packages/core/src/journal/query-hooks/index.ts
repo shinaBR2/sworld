@@ -1,12 +1,12 @@
 import { graphql } from '../../graphql';
-import {
+import type {
   GetJournalByIdQuery,
   GetJournalByIdQueryVariables,
   GetJournalsByMonthQuery,
   GetJournalsByMonthQueryVariables,
 } from '../../graphql/graphql';
 import { useRequest } from '../../universal/hooks/use-request';
-import { JournalStatsCategory } from '../types';
+import type { JournalStatsCategory } from '../types';
 
 const journalsByMonthQuery = graphql(/* GraphQL */ `
   query GetJournalsByMonth($startDate: date!, $endDate: date!) {
@@ -81,7 +81,13 @@ const getStartEndDates = (month: number, year: number) => {
 };
 
 const transformJournalsByMonth = (data: GetJournalsByMonthQuery) => {
-  const { journals = [], happy_aggregate, neutral_aggregate, sad_aggregate, oldest_aggregate } = data;
+  const {
+    journals = [],
+    happy_aggregate,
+    neutral_aggregate,
+    sad_aggregate,
+    oldest_aggregate,
+  } = data;
 
   const happyCount = happy_aggregate.aggregate?.count ?? 0;
   const neutralCount = neutral_aggregate.aggregate?.count ?? 0;
@@ -95,8 +101,11 @@ const transformJournalsByMonth = (data: GetJournalsByMonthQuery) => {
     { mood: 'total', count: totalCount },
   ];
 
-  let oldestDate = oldest_aggregate[0]?.date || new Date().toISOString().split('T')[0];
-  const [year, month] = oldestDate.split('-').map((n: string) => parseInt(n, 10));
+  const oldestDate =
+    oldest_aggregate[0]?.date || new Date().toISOString().split('T')[0];
+  const [year, month] = oldestDate
+    .split('-')
+    .map((n: string) => parseInt(n, 10));
 
   return {
     journals: journals,
@@ -114,7 +123,10 @@ const useLoadJournalsByMonth = (props: LoadJournalsByMonthProps) => {
   const { getAccessToken, month, year } = props;
   const { startDate, endDate } = getStartEndDates(month, year);
 
-  const { data, isLoading, error } = useRequest<GetJournalsByMonthQuery, GetJournalsByMonthQueryVariables>({
+  const { data, isLoading, error } = useRequest<
+    GetJournalsByMonthQuery,
+    GetJournalsByMonthQueryVariables
+  >({
     queryKey: ['journals', month, year],
     getAccessToken,
     document: journalsByMonthQuery,
@@ -134,7 +146,10 @@ const useLoadJournalsByMonth = (props: LoadJournalsByMonthProps) => {
 const useLoadJournalById = (props: LoadJournalByIdProps) => {
   const { getAccessToken, id } = props;
 
-  const { data, isLoading, error } = useRequest<GetJournalByIdQuery, GetJournalByIdQueryVariables>({
+  const { data, isLoading, error } = useRequest<
+    GetJournalByIdQuery,
+    GetJournalByIdQueryVariables
+  >({
     queryKey: ['journal', id],
     getAccessToken,
     document: journalByIdQuery,
@@ -145,10 +160,14 @@ const useLoadJournalById = (props: LoadJournalByIdProps) => {
   });
 
   return {
-    data: !isLoading && data ? data.journals_by_pk ?? null : null,
+    data: !isLoading && data ? (data.journals_by_pk ?? null) : null,
     isLoading,
     error,
   };
 };
 
-export { useLoadJournalById, useLoadJournalsByMonth, type LoadJournalByIdProps };
+export {
+  useLoadJournalById,
+  useLoadJournalsByMonth,
+  type LoadJournalByIdProps,
+};

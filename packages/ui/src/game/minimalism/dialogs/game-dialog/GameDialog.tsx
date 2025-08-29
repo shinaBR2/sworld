@@ -1,18 +1,30 @@
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import { useEffect, useReducer } from 'react';
-import { DialogueChoice, GameDialogProps } from '../../../types/dialog';
-import { DEFAULT_CHARACTERS_PER_PAGE, dialogueReducer, initialState } from './reducer';
+import type { DialogueChoice, GameDialogProps } from '../../../types/dialog';
+import {
+  DEFAULT_CHARACTERS_PER_PAGE,
+  dialogueReducer,
+  initialState,
+} from './reducer';
 
 const GameDialog = (props: GameDialogProps) => {
-  const { isOpen, onClose, dialogue, typewriterSpeed = 50, charsPerPage = DEFAULT_CHARACTERS_PER_PAGE } = props;
-  const [state, dispatch] = useReducer(dialogueReducer, { charsPerPage, dialogue }, () =>
-    initialState(dialogue, charsPerPage)
+  const {
+    isOpen,
+    onClose,
+    dialogue,
+    typewriterSpeed = 50,
+    charsPerPage = DEFAULT_CHARACTERS_PER_PAGE,
+  } = props;
+  const [state, dispatch] = useReducer(
+    dialogueReducer,
+    { charsPerPage, dialogue },
+    () => initialState(dialogue, charsPerPage),
   );
 
   const hasChoices = state.currentChoices.length > 0;
@@ -109,7 +121,8 @@ const GameDialog = (props: GameDialogProps) => {
           dispatch({
             type: 'SELECT_CHOICE',
             payload: {
-              index: (selectedChoiceIndex - 1 + numberOfChoices) % numberOfChoices,
+              index:
+                (selectedChoiceIndex - 1 + numberOfChoices) % numberOfChoices,
             },
           });
           break;
@@ -156,7 +169,7 @@ const GameDialog = (props: GameDialogProps) => {
           payload: { char: currentPageText[index] },
         });
         index++;
-        // @ts-ignore
+        // @ts-expect-error
         timeoutId = setTimeout(typeNextChar, typewriterSpeed);
       } else {
         dispatch({ type: 'COMPLETE_TYPING' });
@@ -176,19 +189,37 @@ const GameDialog = (props: GameDialogProps) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, state.isTyping, state.showContinuePrompt, state.currentChoices, state.selectedChoiceIndex]);
+  }, [
+    isOpen,
+    state.isTyping,
+    state.showContinuePrompt,
+    state.currentChoices,
+    state.selectedChoiceIndex,
+  ]);
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="bg-opacity-90">
-      <DialogTitle className="bg-gray-800 text-yellow-400">{state.currentDialogue.speaker}</DialogTitle>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      className="bg-opacity-90"
+    >
+      <DialogTitle className="bg-gray-800 text-yellow-400">
+        {state.currentDialogue.speaker}
+      </DialogTitle>
       <DialogContent className="bg-gray-800">
-        <Typography className="text-white py-4">{state.displayedText}</Typography>
+        <Typography className="text-white py-4">
+          {state.displayedText}
+        </Typography>
         {shouldShowChoice && (
           <Stack spacing={1} className="mt-4">
             {state.currentChoices.map((choice, index) => (
               <Button
                 key={index}
-                variant={state.selectedChoiceIndex === index ? 'contained' : 'outlined'}
+                variant={
+                  state.selectedChoiceIndex === index ? 'contained' : 'outlined'
+                }
                 className={`
                   text-left px-4 py-2
                   ${state.selectedChoiceIndex === index ? 'bg-blue-600' : 'border-blue-400 text-blue-400'}

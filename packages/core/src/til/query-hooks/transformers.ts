@@ -1,4 +1,4 @@
-import { PostQuery } from '../../graphql/graphql';
+import type { PostQuery } from '../../graphql/graphql';
 
 const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
   const { brief, id, slug, markdownContent, readTimeInMinutes, title } = data;
