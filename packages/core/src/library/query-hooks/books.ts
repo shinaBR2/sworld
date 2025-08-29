@@ -1,5 +1,5 @@
 import { graphql } from '../../graphql';
-import { GetBooksQuery } from '../../graphql/graphql';
+import type { GetBooksQuery } from '../../graphql/graphql';
 import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 
@@ -34,11 +34,13 @@ type BookWithProgress = GetBooksQuery['books'][0] & {
 };
 
 const transform = (books: GetBooksQuery['books']): BookWithProgress[] => {
-  return books.map(book => {
+  return books.map((book) => {
     const progress = book.reading_progresses?.[0];
     const progressPercentage = progress?.percentage || 0;
     const isCompleted = progressPercentage >= 100;
-    const isNew = !progress && new Date(book.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days
+    const isNew =
+      !progress &&
+      new Date(book.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days
 
     return {
       ...book,

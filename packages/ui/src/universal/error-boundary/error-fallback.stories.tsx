@@ -96,7 +96,8 @@ export const NoRetry: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'ErrorFallback without the retry button, useful for critical errors.',
+        story:
+          'ErrorFallback without the retry button, useful for critical errors.',
       },
     },
   },

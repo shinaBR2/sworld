@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type FC, type PropsWithChildren } from 'react';
-import { useSharePlaylist, useShareVideo } from '.';
+import { renderHook } from '@testing-library/react';
+import type { FC, PropsWithChildren } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { useSharePlaylist, useShareVideo } from '.';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -11,7 +11,9 @@ vi.mock('../../../universal/hooks/useMutation', () => ({
 }));
 
 // Mock console.error
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+const mockConsoleError = vi
+  .spyOn(console, 'error')
+  .mockImplementation(() => undefined);
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -60,7 +62,7 @@ describe('share hooks', () => {
     vi.clearAllMocks();
   });
 
-  testCases.forEach(testCase => {
+  testCases.forEach((testCase) => {
     describe(testCase.name, () => {
       const mockVariables = {
         id: testCase.mockId,
@@ -73,7 +75,7 @@ describe('share hooks', () => {
 
         vi.mocked(useMutationRequest).mockReturnValueOnce({
           mutate: vi.fn(),
-          mutateAsync: vi.fn().mockImplementation(async variables => {
+          mutateAsync: vi.fn().mockImplementation(async (variables) => {
             const result = testCase.successResponse;
             await Promise.resolve();
             onSuccess(result, variables, undefined);
@@ -105,12 +107,16 @@ describe('share hooks', () => {
             }),
           {
             wrapper: createWrapper(),
-          }
+          },
         );
 
         await result.current.mutateAsync(mockVariables);
 
-        expect(onSuccess).toHaveBeenCalledWith(testCase.successResponse, mockVariables, undefined);
+        expect(onSuccess).toHaveBeenCalledWith(
+          testCase.successResponse,
+          mockVariables,
+          undefined,
+        );
         expect(onError).not.toHaveBeenCalled();
         expect(mockConsoleError).not.toHaveBeenCalled();
       });
@@ -122,7 +128,7 @@ describe('share hooks', () => {
 
         vi.mocked(useMutationRequest).mockReturnValueOnce({
           mutate: vi.fn(),
-          mutateAsync: vi.fn().mockImplementation(async variables => {
+          mutateAsync: vi.fn().mockImplementation(async (variables) => {
             await Promise.resolve();
             onError(mockError, variables, undefined);
             console.error(testCase.errorPrefix, mockError);
@@ -154,14 +160,23 @@ describe('share hooks', () => {
             }),
           {
             wrapper: createWrapper(),
-          }
+          },
         );
 
-        await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow('Share failed');
+        await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow(
+          'Share failed',
+        );
 
         expect(onSuccess).not.toHaveBeenCalled();
-        expect(onError).toHaveBeenCalledWith(mockError, mockVariables, undefined);
-        expect(mockConsoleError).toHaveBeenCalledWith(testCase.errorPrefix, mockError);
+        expect(onError).toHaveBeenCalledWith(
+          mockError,
+          mockVariables,
+          undefined,
+        );
+        expect(mockConsoleError).toHaveBeenCalledWith(
+          testCase.errorPrefix,
+          mockError,
+        );
       });
 
       it('should work without optional callbacks', async () => {
@@ -192,7 +207,7 @@ describe('share hooks', () => {
             }),
           {
             wrapper: createWrapper(),
-          }
+          },
         );
 
         const response = await result.current.mutateAsync(mockVariables);
@@ -228,13 +243,15 @@ describe('share hooks', () => {
             }),
           {
             wrapper: createWrapper(),
-          }
+          },
         );
 
         expect(useMutationRequest).toHaveBeenCalledWith(
           expect.objectContaining({
-            document: expect.stringContaining(`mutation ${testCase.mutationName}($id: uuid!, $emails: jsonb)`),
-          })
+            document: expect.stringContaining(
+              `mutation ${testCase.mutationName}($id: uuid!, $emails: jsonb)`,
+            ),
+          }),
         );
       });
     });

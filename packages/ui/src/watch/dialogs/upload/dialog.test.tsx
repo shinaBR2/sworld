@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DialogComponent } from './dialog';
 import { texts } from './texts';
-import { DialogState } from './types';
+import type { DialogState } from './types';
 import { CREATE_NEW_PLAYLIST } from './utils';
 
 vi.mock('core/watch/query-hooks/playlists', () => ({
@@ -49,7 +49,7 @@ describe('DialogComponent', () => {
         playlists={mockPlaylists}
         onFormFieldChange={mockOnFormFieldChange}
         handleSubmit={mockHandleSubmit}
-      />
+      />,
     );
   };
 
@@ -65,12 +65,26 @@ describe('DialogComponent', () => {
 
   it('renders all form fields', () => {
     renderComponent();
-    expect(screen.getByPlaceholderText(texts.form.titleInput.placeholder)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(texts.form.urlInput.placeholder)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(texts.form.subtitleInput.placeholder)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(texts.form.descriptionInput.placeholder)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(texts.form.playlistInput.placeholder)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(texts.form.videoPositionInPlaylistInput.placeholder)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(texts.form.titleInput.placeholder),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(texts.form.urlInput.placeholder),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(texts.form.subtitleInput.placeholder),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(texts.form.descriptionInput.placeholder),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(texts.form.playlistInput.placeholder),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(
+        texts.form.videoPositionInPlaylistInput.placeholder,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders playlists in dropdown', () => {
@@ -82,7 +96,9 @@ describe('DialogComponent', () => {
     const options = screen.getByRole('listbox');
 
     const noneOption = within(options).getByText(texts.form.playlistInput.none);
-    const createNewOption = within(options).getByText(texts.form.playlistInput.createNew);
+    const createNewOption = within(options).getByText(
+      texts.form.playlistInput.createNew,
+    );
     const playlist1Option = within(options).getByText('Playlist 1');
     const playlist2Option = within(options).getByText('Playlist 2');
 
@@ -104,21 +120,28 @@ describe('DialogComponent', () => {
   it('renders checkbox controls', () => {
     renderComponent();
     expect(screen.getByLabelText(/keep original source/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/keep dialog open after success/i)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(/keep dialog open after success/i),
+    ).toBeInTheDocument();
   });
 
   // === INTERACTION TESTS ===
   it('calls onFormFieldChange when fields change', () => {
     renderComponent();
-    fireEvent.change(screen.getByPlaceholderText(texts.form.titleInput.placeholder), {
-      target: { value: 'New Title' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText(texts.form.titleInput.placeholder),
+      {
+        target: { value: 'New Title' },
+      },
+    );
     expect(mockOnFormFieldChange).toHaveBeenCalledWith('title');
   });
 
   it('calls handleSubmit when submit button is clicked', () => {
     renderComponent();
-    fireEvent.click(screen.getByRole('button', { name: texts.form.submitButton.submit }));
+    fireEvent.click(
+      screen.getByRole('button', { name: texts.form.submitButton.submit }),
+    );
     expect(mockHandleSubmit).toHaveBeenCalled();
   });
 
@@ -149,38 +172,56 @@ describe('DialogComponent', () => {
   // === STATE-BASED BEHAVIOR TESTS ===
   it('disables all fields and buttons when isSubmitting is true', () => {
     renderComponent({ isSubmitting: true });
-    expect(screen.getByPlaceholderText(texts.form.titleInput.placeholder)).toBeDisabled();
-    expect(screen.getByPlaceholderText(texts.form.urlInput.placeholder)).toBeDisabled();
-    expect(screen.getByPlaceholderText(texts.form.descriptionInput.placeholder)).toBeDisabled();
-    expect(screen.getByPlaceholderText(texts.form.playlistInput.placeholder)).toBeDisabled();
-    expect(screen.getByPlaceholderText(texts.form.videoPositionInPlaylistInput.placeholder)).toBeDisabled();
-    expect(screen.getByRole('button', { name: texts.form.submitButton.submitting })).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(texts.form.titleInput.placeholder),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(texts.form.urlInput.placeholder),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(texts.form.descriptionInput.placeholder),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(texts.form.playlistInput.placeholder),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(
+        texts.form.videoPositionInPlaylistInput.placeholder,
+      ),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: texts.form.submitButton.submitting }),
+    ).toBeDisabled();
     expect(screen.getByLabelText(texts.dialog.closeButton)).toBeDisabled();
   });
 
   it('disables checkbox controls when isSubmitting is true', () => {
     renderComponent({ isSubmitting: true });
     expect(screen.getByLabelText(/keep original source/i)).toBeDisabled();
-    expect(screen.getByLabelText(/keep dialog open after success/i)).toBeDisabled();
+    expect(
+      screen.getByLabelText(/keep dialog open after success/i),
+    ).toBeDisabled();
   });
 
   it('displays success message without countdown when keepDialogOpen is true', () => {
-    renderComponent({ 
-      error: '', 
+    renderComponent({
+      error: '',
       closeDialogCountdown: 5,
-      keepDialogOpen: true 
+      keepDialogOpen: true,
     });
     expect(screen.getByText('Successfully uploaded.')).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
   it('displays success message with countdown when keepDialogOpen is false', () => {
-    renderComponent({ 
-      error: '', 
+    renderComponent({
+      error: '',
       closeDialogCountdown: 5,
-      keepDialogOpen: false 
+      keepDialogOpen: false,
     });
-    expect(screen.getByText(/dialog will close in 5 seconds/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/dialog will close in 5 seconds/i),
+    ).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
@@ -194,7 +235,9 @@ describe('DialogComponent', () => {
   it('displays success message with countdown when closeDialogCountdown is set', () => {
     renderComponent({ error: '', closeDialogCountdown: 5 });
     expect(screen.getByText(/successfully uploaded/i)).toBeInTheDocument();
-    expect(screen.getByText(/dialog will close in 5 seconds/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/dialog will close in 5 seconds/i),
+    ).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 

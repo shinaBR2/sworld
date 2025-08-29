@@ -1,3 +1,8 @@
-import { Journal, JournalStats, JournalStatsCategory, MoodType } from './types';
+import type {
+  Journal,
+  JournalStats,
+  JournalStatsCategory,
+  MoodType,
+} from './types';
 
-export { type Journal, type JournalStats, type JournalStatsCategory, type MoodType };
+export type { Journal, JournalStats, JournalStatsCategory, MoodType };

@@ -49,7 +49,7 @@ const useSaveProgress = (props: MutationProps) => {
         invalidateQuery(['book', bookId]);
         onSuccess?.(data);
       },
-      onError: error => {
+      onError: (error) => {
         console.error('Save progress failed:', error);
         onError?.(error);
       },

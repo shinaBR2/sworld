@@ -1,15 +1,20 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import React from 'react';
-import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
-import { ErrorFallback } from 'ui/universal/error-boundary';
-import { auth0Config, extensionId, queryConfig, rollbarConfig, validateEnvVars } from './config';
-import { ErrorBoundary } from 'core/universal/error-boundary';
 import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
+import { ErrorBoundary } from 'core/universal/error-boundary';
 import { PostHogProvider } from 'posthog-js/react';
+import React, { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ErrorFallback } from 'ui/universal/error-boundary';
+import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
+import {
+  auth0Config,
+  extensionId,
+  queryConfig,
+  rollbarConfig,
+  validateEnvVars,
+} from './config';
+import { routeTree } from './routeTree.gen';
 
 const postHogApiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const postHogOptions = {

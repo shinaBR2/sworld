@@ -1,8 +1,8 @@
-import { JournalEdit } from '../journal-edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import { Journal } from 'core/journal';
+import type { Journal } from 'core/journal';
 import { useIsMobile } from '../../universal/responsive';
+import { JournalEdit } from '../journal-edit';
 
 interface EditDialogProps {
   open: boolean;
@@ -15,7 +15,15 @@ interface EditDialogProps {
 }
 
 const EditDialog = (props: EditDialogProps) => {
-  const { open, onClose, journalDetail, isLoadingDetail, createJournal, updateJournal, onSave } = props;
+  const {
+    open,
+    onClose,
+    journalDetail,
+    isLoadingDetail,
+    createJournal,
+    updateJournal,
+    onSave,
+  } = props;
   const isMobile = useIsMobile();
 
   return (
@@ -56,4 +64,3 @@ const EditDialog = (props: EditDialogProps) => {
 };
 
 export { EditDialog };
-

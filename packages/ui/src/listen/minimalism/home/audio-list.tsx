@@ -1,12 +1,12 @@
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import hooks, { listenQueryHooks } from 'core';
+import hooks, { type listenQueryHooks } from 'core';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
 import { PlayingListSkeleton } from './playing-list-skeleton';
-import { useIsMobile } from '../../../universal/responsive';
 
 const { useSAudioPlayer } = hooks;
 
@@ -39,8 +39,10 @@ const Content = (props: AudioListProps) => {
   // memorize on parent
   const list = useMemo(() => {
     return originalList
-      .map(i => toAudioItem(i))
-      .filter(i => !activeFeelingId || i.tagIds.indexOf(activeFeelingId) > -1);
+      .map((i) => toAudioItem(i))
+      .filter(
+        (i) => !activeFeelingId || i.tagIds.indexOf(activeFeelingId) > -1,
+      );
   }, [originalList, activeFeelingId]);
 
   const [index, setIndex] = useState(0);
@@ -55,7 +57,7 @@ const Content = (props: AudioListProps) => {
   const { onPlay } = getControlsProps();
 
   const onItemSelect = (id: string) => {
-    const index = list.findIndex(a => a.id === id);
+    const index = list.findIndex((a) => a.id === id);
 
     if (index < 0) {
       setIndex(0);
@@ -75,7 +77,8 @@ const Content = (props: AudioListProps) => {
   }, [activeFeelingId]);
 
   const hasNoItem = !list.length;
-  const currentAudio = list[typeof currentIndex === 'number' ? currentIndex : 0];
+  const currentAudio =
+    list[typeof currentIndex === 'number' ? currentIndex : 0];
   const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
 
   if (hasNoItem) {
@@ -88,13 +91,21 @@ const Content = (props: AudioListProps) => {
         <Grid item md={8} sm={6} xs={0}>
           <Card sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }}>
             <Suspense fallback={<PlayingListSkeleton />}>
-              <PlayingList audioList={list} onItemSelect={onItemSelect} currentId={currentAudio.id} />
+              <PlayingList
+                audioList={list}
+                onItemSelect={onItemSelect}
+                currentId={currentAudio.id}
+              />
             </Suspense>
           </Card>
         </Grid>
       )}
       <Grid item md={4} sm={6} xs={12} container justifyContent="center">
-        <MusicWidget audioList={list} hookResult={hookResult} onItemSelect={onItemSelect} />
+        <MusicWidget
+          audioList={list}
+          hookResult={hookResult}
+          onItemSelect={onItemSelect}
+        />
       </Grid>
     </Grid>
   );

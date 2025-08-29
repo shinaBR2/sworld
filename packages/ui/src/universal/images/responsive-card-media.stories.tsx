@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ResponsiveCardMedia } from './image';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import type { Meta, StoryObj } from '@storybook/react';
+import { ResponsiveCardMedia } from './image';
 
 /**
  * ResponsiveCardMedia is a wrapper around Material-UI's CardMedia component
@@ -42,7 +42,7 @@ export const CloudinaryImage: Story = {
     alt: 'Cloudinary Image',
     sx: { maxWidth: 400 },
   },
-  render: args => (
+  render: (args) => (
     <Card sx={{ maxWidth: 400 }}>
       <ResponsiveCardMedia {...args} />
       <CardContent>
@@ -59,7 +59,7 @@ export const StandardImage: Story = {
     alt: 'Standard Image',
     sx: { maxWidth: 400 },
   },
-  render: args => (
+  render: (args) => (
     <Card sx={{ maxWidth: 400 }}>
       <ResponsiveCardMedia {...args} />
       <CardContent>
@@ -78,7 +78,7 @@ export const CustomSizesImage: Story = {
     widths: [300, 600],
     sx: { maxWidth: 400 },
   },
-  render: args => (
+  render: (args) => (
     <Card sx={{ maxWidth: 400 }}>
       <ResponsiveCardMedia {...args} />
       <CardContent>
@@ -94,7 +94,7 @@ export const NoSourceImage: Story = {
     alt: 'No Source Image',
     sx: { maxWidth: 400 },
   },
-  render: args => (
+  render: (args) => (
     <Card sx={{ maxWidth: 400 }}>
       <ResponsiveCardMedia {...args} />
       <CardContent>

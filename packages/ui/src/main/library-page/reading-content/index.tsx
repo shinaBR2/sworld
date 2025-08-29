@@ -1,4 +1,10 @@
-import { Box, CircularProgress, Typography, Alert, Button } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 
 interface ReadingContentProps {
   isLoading: boolean;
@@ -9,7 +15,8 @@ interface ReadingContentProps {
 
 const ReadingContent = (props: ReadingContentProps) => {
   const { isLoading, error, pdfUrl, onErrorClick } = props;
-  const notAvailable = !error && !isLoading && (!pdfUrl || pdfUrl.trim() === '');
+  const notAvailable =
+    !error && !isLoading && (!pdfUrl || pdfUrl.trim() === '');
 
   return (
     <Box

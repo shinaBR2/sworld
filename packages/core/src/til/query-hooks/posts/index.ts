@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { AllPostsQuery } from '../../../graphql/graphql';
+import type { AllPostsQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 
@@ -23,7 +23,7 @@ const useLoadPosts = () => {
   });
 
   return {
-    posts: data?.posts ? data.posts.map(p => transformPost(p)) : [],
+    posts: data?.posts ? data.posts.map((p) => transformPost(p)) : [],
     isLoading,
     error,
   };

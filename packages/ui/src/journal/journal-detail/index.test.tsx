@@ -1,14 +1,15 @@
 // packages/ui/src/journal/journal-detail.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { JournalDetail } from './index';
+
+import { fireEvent, render, screen } from '@testing-library/react';
 import { formatDate, formatDateTime } from 'core/universal/common';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MoodIcon } from '../mood-icons';
+import { JournalDetail } from './index';
 
 // Mock dependencies
 vi.mock('core/universal/common', () => ({
-  formatDate: vi.fn(date => `formatted-date-${date}`),
-  formatDateTime: vi.fn(date => `formatted-datetime-${date}`),
+  formatDate: vi.fn((date) => `formatted-date-${date}`),
+  formatDateTime: vi.fn((date) => `formatted-datetime-${date}`),
 }));
 
 vi.mock('../mood-icons', () => ({
@@ -44,7 +45,7 @@ describe('JournalDetail', () => {
         onEditClick={mockOnEditClick}
         onDeleteClick={mockOnDeleteClick}
         {...props}
-      />
+      />,
     );
   };
 
@@ -82,13 +83,15 @@ describe('JournalDetail', () => {
 
     // Check date formatting
     expect(formatDate).toHaveBeenCalledWith(mockJournal.date);
-    expect(screen.getByText(`formatted-date-${mockJournal.date}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`formatted-date-${mockJournal.date}`),
+    ).toBeInTheDocument();
 
     // Check content
     expect(screen.getByText(mockJournal.content)).toBeInTheDocument();
 
     // Check tags
-    mockJournal.tags.forEach(tag => {
+    mockJournal.tags.forEach((tag) => {
       expect(screen.getByText(tag)).toBeInTheDocument();
     });
 
@@ -99,14 +102,18 @@ describe('JournalDetail', () => {
     // Check for the combined text of label and formatted datetime
     expect(
       screen.getByText(
-        content => content.includes('Created:') && content.includes(`formatted-datetime-${mockJournal.createdAt}`)
-      )
+        (content) =>
+          content.includes('Created:') &&
+          content.includes(`formatted-datetime-${mockJournal.createdAt}`),
+      ),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        content => content.includes('Updated:') && content.includes(`formatted-datetime-${mockJournal.updatedAt}`)
-      )
+        (content) =>
+          content.includes('Updated:') &&
+          content.includes(`formatted-datetime-${mockJournal.updatedAt}`),
+      ),
     ).toBeInTheDocument();
   });
 
@@ -133,7 +140,9 @@ describe('JournalDetail', () => {
     renderComponent();
 
     // Using the DeleteOutlineIcon test ID since that's what's rendered
-    const deleteButton = screen.getByTestId('DeleteOutlineIcon').closest('button');
+    const deleteButton = screen
+      .getByTestId('DeleteOutlineIcon')
+      .closest('button');
     fireEvent.click(deleteButton!);
 
     expect(mockOnDeleteClick).toHaveBeenCalledTimes(1);
@@ -151,6 +160,9 @@ describe('JournalDetail', () => {
     expect(actionButtons.length).toBeGreaterThanOrEqual(3);
 
     const mockMoodIcon = vi.mocked(MoodIcon);
-    expect(mockMoodIcon).toHaveBeenCalledWith(expect.objectContaining({ mood: mockJournal.mood }), expect.anything());
+    expect(mockMoodIcon).toHaveBeenCalledWith(
+      expect.objectContaining({ mood: mockJournal.mood }),
+      expect.anything(),
+    );
   });
 });

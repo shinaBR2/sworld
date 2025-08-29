@@ -1,4 +1,4 @@
-import { GameScene } from '../scenes/game';
+import type { GameScene } from '../scenes/game';
 import Bubble from './bubble';
 
 export default class Bat extends Phaser.Physics.Matter.Sprite {
@@ -36,7 +36,7 @@ export default class Bat extends Phaser.Physics.Matter.Sprite {
     We add the collision event to the scene so we can handle the collision with the bat and the bubble.
   */
   addCollisions() {
-    // @ts-ignore
+    // @ts-expect-error
     this.unsubscribeBatCollide = this.scene.matterCollision.addOnCollideStart({
       objectA: this,
       callback: this.onBatCollide,

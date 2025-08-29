@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
+import React from 'react';
 import { texts } from './texts';
 
 interface SubmitButtonProps {

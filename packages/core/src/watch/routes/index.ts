@@ -21,7 +21,9 @@ interface GenerateVideoInPlaylistRouteProps {
   playlistSlug: string;
 }
 
-const generateVideoInPlaylistRoute = (props: GenerateVideoInPlaylistRouteProps) => {
+const generateVideoInPlaylistRoute = (
+  props: GenerateVideoInPlaylistRouteProps,
+) => {
   const { videoId, playlistId, playlistSlug } = props;
 
   return {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { PostCard } from './index';
-import { describe, it, expect, vi } from 'vitest';
 
 const mockPost = {
   id: '123',
@@ -13,16 +13,25 @@ const mockPost = {
 
 describe('PostCard', () => {
   it('renders post content correctly', () => {
-    render(<PostCard post={mockPost} LinkComponent={({ children }) => <div>{children}</div>} />);
+    render(
+      <PostCard
+        post={mockPost}
+        LinkComponent={({ children }) => <div>{children}</div>}
+      />,
+    );
 
     // Check title
-    expect(screen.getByRole('heading', { level: 6 })).toHaveTextContent(mockPost.title);
+    expect(screen.getByRole('heading', { level: 6 })).toHaveTextContent(
+      mockPost.title,
+    );
 
     // Check brief
     expect(screen.getByText(mockPost.brief)).toBeInTheDocument();
 
     // Check read time
-    expect(screen.getByText(`${mockPost.readTimeInMinutes} min read`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`${mockPost.readTimeInMinutes} min read`),
+    ).toBeInTheDocument();
   });
 
   it('applies correct link props', () => {
@@ -35,7 +44,7 @@ describe('PostCard', () => {
         children: expect.anything(),
         style: { textDecoration: 'none' },
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 });

@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type FC, type PropsWithChildren } from 'react';
-import { useBulkConvertVideos } from './';
+import { renderHook } from '@testing-library/react';
+import type { FC, PropsWithChildren } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { InsertVideosMutation } from '../../../graphql/graphql';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-import { InsertVideosMutation } from '../../../graphql/graphql';
+import { useBulkConvertVideos } from './';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -12,7 +12,9 @@ vi.mock('../../../universal/hooks/useMutation', () => ({
 }));
 
 // Mock console.error
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+const mockConsoleError = vi
+  .spyOn(console, 'error')
+  .mockImplementation(() => undefined);
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -64,7 +66,7 @@ describe('useBulkConvertVideos', () => {
     const onError = vi.fn();
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async variables => {
+      mutateAsync: vi.fn().mockImplementation(async (variables) => {
         const result = mockSuccessResponse;
         await Promise.resolve();
         onSuccess(result, variables, undefined);
@@ -85,12 +87,16 @@ describe('useBulkConvertVideos', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     await result.current.mutateAsync(mockVariables);
 
-    expect(onSuccess).toHaveBeenCalledWith(mockSuccessResponse, mockVariables, undefined);
+    expect(onSuccess).toHaveBeenCalledWith(
+      mockSuccessResponse,
+      mockVariables,
+      undefined,
+    );
     expect(onError).not.toHaveBeenCalled();
     expect(mockConsoleError).not.toHaveBeenCalled();
   });
@@ -101,7 +107,7 @@ describe('useBulkConvertVideos', () => {
     const mockError = new Error('Conversion failed');
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async variables => {
+      mutateAsync: vi.fn().mockImplementation(async (variables) => {
         await Promise.resolve();
         onError(mockError, variables, undefined);
         console.error('Bulk convert videos failed:', mockError);
@@ -122,14 +128,19 @@ describe('useBulkConvertVideos', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
-    await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow('Conversion failed');
+    await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow(
+      'Conversion failed',
+    );
 
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith(mockError, mockVariables, undefined);
-    expect(mockConsoleError).toHaveBeenCalledWith('Bulk convert videos failed:', mockError);
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'Bulk convert videos failed:',
+      mockError,
+    );
   });
 
   it('should work without optional callbacks', async () => {
@@ -148,7 +159,7 @@ describe('useBulkConvertVideos', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     const response = await result.current.mutateAsync(mockVariables);
@@ -161,7 +172,7 @@ describe('useBulkConvertVideos', () => {
     let capturedData: InsertVideosMutation | null = null;
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
-      mutateAsync: vi.fn().mockImplementation(async variables => {
+      mutateAsync: vi.fn().mockImplementation(async (variables) => {
         const result = mockSuccessResponse;
         await Promise.resolve();
         const firstVideo = result.insert_videos.returning[0];
@@ -188,7 +199,7 @@ describe('useBulkConvertVideos', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     await result.current.mutateAsync(mockVariables);
@@ -212,13 +223,15 @@ describe('useBulkConvertVideos', () => {
         }),
       {
         wrapper: createWrapper(),
-      }
+      },
     );
 
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        document: expect.stringContaining('mutation InsertVideos($objects: [videos_insert_input!]!)'),
-      })
+        document: expect.stringContaining(
+          'mutation InsertVideos($objects: [videos_insert_input!]!)',
+        ),
+      }),
     );
   });
 });

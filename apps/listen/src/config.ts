@@ -34,9 +34,11 @@ const validateEnvVars = () => {
     'VITE_ROLLBAR_TOKEN',
     'VITE_ROLLBAR_ENV',
   ];
-  const missing = required.filter(key => !import.meta.env[key]);
+  const missing = required.filter((key) => !import.meta.env[key]);
   if (missing.length) {
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    throw new Error(
+      `Missing required environment variables: ${missing.join(', ')}`,
+    );
   }
 };
 

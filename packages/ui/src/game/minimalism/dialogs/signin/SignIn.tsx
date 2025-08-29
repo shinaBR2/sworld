@@ -1,7 +1,7 @@
-import Button from '@mui/material/Button';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
 import { Box, CardMedia, DialogContent } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
 import { GoogleIcon } from './CustomIcons';
 
 export interface SignInProps {
@@ -22,7 +22,12 @@ const SignIn = (props: SignInProps) => {
           title="beach"
         />
         <Box mt={2}>
-          <Button fullWidth variant="outlined" onClick={onSubmit} startIcon={<GoogleIcon />}>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={onSubmit}
+            startIcon={<GoogleIcon />}
+          >
             Sign in with Google
           </Button>
         </Box>

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
-import { CategoryType } from '../types';
+import type { CategoryType } from '../types';
 import { useLoadTransactionsByPeriod } from './index';
 
 // Mock the useRequest hook
@@ -41,7 +41,7 @@ describe('Finance Query Hooks', () => {
           month: mockMonth,
           year: mockYear,
         },
-      })
+      }),
     );
 
     // Verify the returned result

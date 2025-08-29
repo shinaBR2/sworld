@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { getDisplayLanguage } from './utils';
 
 describe('getDisplayLanguage', () => {
@@ -19,7 +19,7 @@ describe('getDisplayLanguage', () => {
   it('should return "Others" for unknown language codes', () => {
     const unknownCodes = ['fr', 'es', 'de', ''];
 
-    unknownCodes.forEach(code => {
+    unknownCodes.forEach((code) => {
       expect(getDisplayLanguage(code)).toBe('Others');
     });
   });

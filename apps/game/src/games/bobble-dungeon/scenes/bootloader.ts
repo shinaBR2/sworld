@@ -29,10 +29,10 @@ export default class Bootloader extends Phaser.Scene {
           this.cameras.main.width / 4,
           this.cameras.main.height / 2 - 16,
           (this.cameras.main.width / 2) * value,
-          16
+          16,
         );
       },
-      this
+      this,
     );
 
     this.load.on(
@@ -43,7 +43,7 @@ export default class Bootloader extends Phaser.Scene {
         EventBus.emit(SCENE_READY, this);
         this.scene.start('splash');
       },
-      this
+      this,
     );
 
     this.load.on('loaderror', (file: { src: any }) => {
@@ -54,7 +54,11 @@ export default class Bootloader extends Phaser.Scene {
   private loadFonts(): void {
     const fontPath = `${this.assetPath}/fonts`;
 
-    this.load.bitmapFont('default', `${fontPath}/pico.png`, `${fontPath}/pico.xml`);
+    this.load.bitmapFont(
+      'default',
+      `${fontPath}/pico.png`,
+      `${fontPath}/pico.xml`,
+    );
   }
 
   private loadImages(): void {
@@ -129,7 +133,7 @@ export default class Bootloader extends Phaser.Scene {
       this.cameras.main.width / 4 - 2,
       this.cameras.main.height / 2 - 18,
       this.cameras.main.width / 2 + 4,
-      20
+      20,
     );
     this.progressBar = this.add.graphics();
   }

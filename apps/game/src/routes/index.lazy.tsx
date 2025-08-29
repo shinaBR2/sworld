@@ -1,7 +1,7 @@
-import * as React from 'react';
-// @ts-ignore
+// @ts-expect-error
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { Auth } from 'core';
+import * as React from 'react';
 import { HomeContainer } from 'ui/game/minimalism/containers';
 
 const Home = () => {

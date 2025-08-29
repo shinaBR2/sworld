@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { notifyExtension } from './index';
 
 describe('notifyExtension', () => {
@@ -6,9 +6,11 @@ describe('notifyExtension', () => {
   const originalChrome = global.chrome;
 
   // Mock chrome.runtime
-  const mockSendMessage = vi.fn((_id: string, _message: any, callback: () => void) => {
-    callback();
-  });
+  const mockSendMessage = vi.fn(
+    (_id: string, _message: any, callback: () => void) => {
+      callback();
+    },
+  );
 
   const mockRuntime = {
     sendMessage: mockSendMessage,
@@ -17,7 +19,7 @@ describe('notifyExtension', () => {
 
   // Set up and clean up chrome mock before/after tests
   beforeEach(() => {
-    // @ts-ignore - Mocking chrome object
+    // @ts-expect-error - Mocking chrome object
     global.chrome = {
       runtime: {
         ...mockRuntime,
@@ -53,12 +55,12 @@ describe('notifyExtension', () => {
         type: testType,
         data: testData,
       },
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
   it('should not throw when chrome is not defined', () => {
-    // @ts-ignore - Remove chrome for this test
+    // @ts-expect-error - Remove chrome for this test
     delete global.chrome;
 
     expect(() => {
@@ -71,7 +73,7 @@ describe('notifyExtension', () => {
   });
 
   it('should not throw when chrome.runtime is not available', () => {
-    // @ts-ignore - Remove runtime for this test
+    // @ts-expect-error - Remove runtime for this test
     global.chrome = {};
 
     expect(() => {
@@ -88,7 +90,7 @@ describe('notifyExtension', () => {
     const error = new Error('Failed to send message');
 
     // Mock sendMessage to set lastError and call callback
-    // @ts-ignore - Override mock for this test
+    // @ts-expect-error - Override mock for this test
     chrome.runtime = {
       sendMessage: (_id: string, _message: any, callback: () => void) => {
         chrome.runtime.lastError = error;
@@ -122,7 +124,7 @@ describe('notifyExtension', () => {
         type: testType,
         data: undefined,
       },
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 });

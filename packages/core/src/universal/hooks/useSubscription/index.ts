@@ -17,7 +17,9 @@ export interface SubscriptionParams {
   enabled: boolean;
 }
 
-export function useSubscription<T>(params: SubscriptionParams): SubscriptionState<T> {
+export function useSubscription<T>(
+  params: SubscriptionParams,
+): SubscriptionState<T> {
   const { hasuraUrl, query, variables, enabled } = params;
   const [state, setState] = useState<SubscriptionState<T>>({
     data: null,
@@ -32,7 +34,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
   const memoizedVariables = useMemo(
     () => variables,
     // Only recreate when the stringified version changes
-    [JSON.stringify(variables)]
+    [JSON.stringify(variables)],
   );
 
   const errorContext = useMemo(
@@ -40,7 +42,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
       query,
       variables: memoizedVariables,
     }),
-    [query, memoizedVariables]
+    [query, memoizedVariables],
   );
   const fingerprint = ['{{ default }}', 'useSubscription'];
 
@@ -55,17 +57,22 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
             payload: {
               headers,
             },
-          })
+          }),
         );
 
         backoff.reset(); // Reset on successful connection
       } catch (err) {
-        const error = createConnectionError(err instanceof Error ? err : new Error('Failed to init connection'));
+        const error = createConnectionError(
+          err instanceof Error ? err : new Error('Failed to init connection'),
+        );
 
         captureError(error, {
           tags: [
             { key: 'category', value: 'websocket' },
-            { key: 'error_type', value: SubscriptionErrorType.CONNECTION_INIT_FAILED },
+            {
+              key: 'error_type',
+              value: SubscriptionErrorType.CONNECTION_INIT_FAILED,
+            },
           ],
           extras: {
             ...errorContext,
@@ -76,7 +83,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
         handleConnectionError(createWebSocketConnection);
       }
     },
-    [query, memoizedVariables, backoff, isSignedIn, getAccessToken]
+    [query, memoizedVariables, backoff, isSignedIn, getAccessToken],
   );
 
   const startSubscription = useCallback(
@@ -92,7 +99,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
       };
       ws.send(JSON.stringify(startMessage));
     },
-    [query, memoizedVariables]
+    [query, memoizedVariables],
   );
 
   const handleConnectionError = useCallback(
@@ -104,11 +111,13 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
         setState({
           data: null,
           isLoading: false,
-          error: createConnectionError(new Error('Max reconnection attempts exceeded')),
+          error: createConnectionError(
+            new Error('Max reconnection attempts exceeded'),
+          ),
         });
       }
     },
-    [backoff]
+    [backoff],
   );
 
   const handleSubscriptionMessage = useCallback(
@@ -133,13 +142,17 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
           }
 
           case 'error': {
-            const errorMessage = message.payload?.message || 'Subscription error';
+            const errorMessage =
+              message.payload?.message || 'Subscription error';
             const error = createConnectionError(new Error(errorMessage));
 
             captureError(error, {
               tags: [
                 { key: 'category', value: 'websocket' },
-                { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+                {
+                  key: 'error_type',
+                  value: SubscriptionErrorType.DATA_PARSING_ERROR,
+                },
               ],
               extras: {
                 ...errorContext,
@@ -160,11 +173,18 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
             try {
               ws.close();
             } catch (err) {
-              const error = createConnectionError(err instanceof Error ? err : new Error('Failed to close connection'));
+              const error = createConnectionError(
+                err instanceof Error
+                  ? err
+                  : new Error('Failed to close connection'),
+              );
               captureError(error, {
                 tags: [
                   { key: 'category', value: 'websocket' },
-                  { key: 'error_type', value: SubscriptionErrorType.CONNECTION_CLOSED },
+                  {
+                    key: 'error_type',
+                    value: SubscriptionErrorType.CONNECTION_CLOSED,
+                  },
                 ],
                 extras: {
                   ...errorContext,
@@ -180,11 +200,18 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
           }
         }
       } catch (err) {
-        const error = createConnectionError(err instanceof Error ? err : new Error('Parse websocket message error'));
+        const error = createConnectionError(
+          err instanceof Error
+            ? err
+            : new Error('Parse websocket message error'),
+        );
         captureError(error, {
           tags: [
             { key: 'category', value: 'websocket' },
-            { key: 'error_type', value: SubscriptionErrorType.DATA_PARSING_ERROR },
+            {
+              key: 'error_type',
+              value: SubscriptionErrorType.DATA_PARSING_ERROR,
+            },
           ],
           extras: {
             ...errorContext,
@@ -199,7 +226,7 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
         });
       }
     },
-    [startSubscription]
+    [startSubscription],
   );
 
   const createWebSocketConnection = useCallback(() => {
@@ -213,7 +240,12 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
     ws.onmessage = handleSubscriptionMessage(connection);
 
     return connection;
-  }, [hasuraUrl, initializeConnection, handleConnectionError, handleSubscriptionMessage]);
+  }, [
+    hasuraUrl,
+    initializeConnection,
+    handleConnectionError,
+    handleSubscriptionMessage,
+  ]);
 
   useEffect(() => {
     if (!enabled) {
@@ -232,7 +264,9 @@ export function useSubscription<T>(params: SubscriptionParams): SubscriptionStat
           ws.send(JSON.stringify(stopMessage));
           ws.close();
         } catch (err) {
-          const error = createConnectionError(err instanceof Error ? err : new Error('Cleanup failed'));
+          const error = createConnectionError(
+            err instanceof Error ? err : new Error('Cleanup failed'),
+          );
           captureError(error, {
             tags: [
               { key: 'category', value: 'websocket' },

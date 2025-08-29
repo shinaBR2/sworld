@@ -80,7 +80,9 @@ describe('useMarkNotificationAsRead', () => {
       onError: mockOnError,
     });
 
-    await expect(() => markAsRead({ notificationId: 'test-id' })).rejects.toThrow('Mutation failed');
+    await expect(() =>
+      markAsRead({ notificationId: 'test-id' }),
+    ).rejects.toThrow('Mutation failed');
 
     expect(mockOnError).toHaveBeenCalledWith(mockError);
     expect(consoleSpy).toHaveBeenCalledWith('Mark as read failed:', mockError);
@@ -97,7 +99,9 @@ describe('useMarkNotificationAsRead', () => {
 
     // Mock useMutationRequest twice - first for markAsRead (not used), second for markAllAsRead
     (useMutationRequest as any)
-      .mockReturnValueOnce({ mutateAsync: vi.fn().mockResolvedValue({ data: {} }) }) // First call (markAsRead)
+      .mockReturnValueOnce({
+        mutateAsync: vi.fn().mockResolvedValue({ data: {} }),
+      }) // First call (markAsRead)
       .mockImplementationOnce(({ options }) => ({
         // Second call (markAllAsRead)
         mutateAsync: async () => {
@@ -120,7 +124,10 @@ describe('useMarkNotificationAsRead', () => {
     } catch (error) {
       expect(error).toBe(mockError);
       expect(mockOnError).toHaveBeenCalledWith(mockError);
-      expect(consoleSpy).toHaveBeenCalledWith('Mark all as read failed:', mockError);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Mark all as read failed:',
+        mockError,
+      );
     }
 
     consoleSpy.mockRestore();

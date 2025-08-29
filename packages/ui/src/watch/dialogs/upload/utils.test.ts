@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { DialogState } from './types';
-import { buildVariables, canPlayUrls, CREATE_NEW_PLAYLIST, formalizeState } from './utils';
+import type { DialogState } from './types';
+import {
+  buildVariables,
+  CREATE_NEW_PLAYLIST,
+  canPlayUrls,
+  formalizeState,
+} from './utils';
 
 describe('formalizeState', () => {
   it('should trim string values in the dialog state', () => {

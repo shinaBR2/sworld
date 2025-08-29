@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { GetMonthlyComparisonQuery } from '../../../graphql/graphql';
+import type { GetMonthlyComparisonQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 
 const monthlyComparisonQuery = graphql(/* GraphQL */ `

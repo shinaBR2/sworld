@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { act, render, screen, fireEvent } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { PlayableVideo } from '../types';
 import { VideoPlayer } from './index';
-import { PlayableVideo } from '../types';
 
 // Mock ReactPlayer
 const mockReactPlayerRef = vi.fn();
@@ -25,7 +25,7 @@ vi.mock('react-player', () => ({
         'data-url': url,
         'data-props': JSON.stringify(props),
       },
-      'Mock ReactPlayer'
+      'Mock ReactPlayer',
     );
   }),
 }));
@@ -52,7 +52,9 @@ vi.mock('core/watch/mutation-hooks/use-video-progress', () => ({
 
 // Mock VideoThumbnail
 vi.mock('../video-thumbnail', () => ({
-  VideoThumbnail: ({ title }) => <div data-testid="video-thumbnail">{title}</div>,
+  VideoThumbnail: ({ title }) => (
+    <div data-testid="video-thumbnail">{title}</div>
+  ),
 }));
 
 // Mock default thumbnail URL
@@ -122,7 +124,10 @@ describe('VideoPlayer', () => {
   });
 
   it('should render with default thumbnail when thumbnailUrl is undefined', async () => {
-    const videoWithoutThumbnail = { ...mockVideo, thumbnailUrl: undefined as any };
+    const videoWithoutThumbnail = {
+      ...mockVideo,
+      thumbnailUrl: undefined as any,
+    };
     render(<VideoPlayer video={videoWithoutThumbnail} />);
     const player = await screen.findByTestId('mock-react-player');
 
@@ -258,7 +263,7 @@ describe('VideoPlayer keyboard hotkeys', () => {
       <div>
         <input data-testid="test-input" />
         <VideoPlayer video={mockVideo} />
-      </div>
+      </div>,
     );
     await screen.findByTestId('mock-react-player');
 

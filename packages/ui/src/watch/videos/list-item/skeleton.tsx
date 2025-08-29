@@ -1,11 +1,25 @@
 import Skeleton from '@mui/material/Skeleton';
-import { SkeletonContainer, SkeletonContent, SkeletonThumbnail, THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH } from './styled';
+import {
+  SkeletonContainer,
+  SkeletonContent,
+  SkeletonThumbnail,
+  THUMBNAIL_HEIGHT,
+  THUMBNAIL_WIDTH,
+} from './styled';
 
 const VideoListItemSkeleton = () => {
   return (
-    <SkeletonContainer component="article" role="article" aria-busy="true" aria-label="Loading video item">
+    <SkeletonContainer
+      component="article"
+      role="article"
+      aria-busy="true"
+      aria-label="Loading video item"
+    >
       {/* Thumbnail skeleton */}
-      <SkeletonThumbnail aria-label="Loading thumbnail" sx={{ position: 'relative', flexShrink: 0 }}>
+      <SkeletonThumbnail
+        aria-label="Loading thumbnail"
+        sx={{ position: 'relative', flexShrink: 0 }}
+      >
         <Skeleton
           variant="rectangular"
           width={THUMBNAIL_WIDTH}
@@ -25,7 +39,13 @@ const VideoListItemSkeleton = () => {
           animation="wave"
           aria-label="Loading title"
         />
-        <Skeleton variant="text" width="40%" height={16} animation="wave" aria-label="Loading metadata" />
+        <Skeleton
+          variant="text"
+          width="40%"
+          height={16}
+          animation="wave"
+          aria-label="Loading metadata"
+        />
       </SkeletonContent>
     </SkeletonContainer>
   );

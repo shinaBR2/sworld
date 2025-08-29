@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadHistory } from './index';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { UserVideoHistoryQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { MEDIA_TYPES } from '../types';
-import { UserVideoHistoryQuery } from '../../../graphql/graphql';
+import { useLoadHistory } from './index';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -128,7 +128,7 @@ describe('useLoadHistory', () => {
     renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(useRequest).toHaveBeenCalledWith({
@@ -147,7 +147,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -166,7 +166,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -185,7 +185,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -205,7 +205,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -236,7 +236,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current.videos[0].thumbnailUrl).toBe('');
@@ -263,7 +263,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current.videos[0].duration).toBe(0);
@@ -290,7 +290,7 @@ describe('useLoadHistory', () => {
     const { result } = renderHook(() =>
       useLoadHistory({
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
 
     expect(result.current.videos[0].playlist).toBeUndefined();

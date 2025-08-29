@@ -1,7 +1,7 @@
-import { StyledComponent } from '@emotion/styled';
-import { Box, Card, CardProps, Typography } from '@mui/material';
+import type { StyledComponent } from '@emotion/styled';
+import { Box, Card, type CardProps, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CategoryType } from 'core/finance';
+import type { CategoryType } from 'core/finance';
 
 const getCategoryColor = (category: CategoryType) => {
   switch (category) {
@@ -18,31 +18,37 @@ const getCategoryColor = (category: CategoryType) => {
   }
 };
 
-const StyledCard: StyledComponent<CardProps & { category: CategoryType; selected: boolean }> = styled(Card, {
-  shouldForwardProp: prop => prop !== 'category' && prop !== 'selected',
-})<{ category: CategoryType; selected: boolean }>(({ theme, category, selected }) => ({
-  borderLeft: `4px solid ${getCategoryColor(category)}`,
-  cursor: 'pointer',
-  transition: 'all 0.2s',
-  position: 'relative',
-  backgroundColor: selected ? `${getCategoryColor(category)}20` : theme.palette.background.paper,
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[4],
-    backgroundColor: `${getCategoryColor(category)}10`,
-  },
-  '&::after': selected
-    ? {
-        content: '""',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '2px',
-        backgroundColor: getCategoryColor(category),
-      }
-    : {},
-}));
+const StyledCard: StyledComponent<
+  CardProps & { category: CategoryType; selected: boolean }
+> = styled(Card, {
+  shouldForwardProp: (prop) => prop !== 'category' && prop !== 'selected',
+})<{ category: CategoryType; selected: boolean }>(
+  ({ theme, category, selected }) => ({
+    borderLeft: `4px solid ${getCategoryColor(category)}`,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    position: 'relative',
+    backgroundColor: selected
+      ? `${getCategoryColor(category)}20`
+      : theme.palette.background.paper,
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: theme.shadows[4],
+      backgroundColor: `${getCategoryColor(category)}10`,
+    },
+    '&::after': selected
+      ? {
+          content: '""',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          backgroundColor: getCategoryColor(category),
+        }
+      : {},
+  }),
+);
 
 const StyledCategoryWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',

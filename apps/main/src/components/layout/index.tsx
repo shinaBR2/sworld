@@ -1,7 +1,7 @@
-import { FullWidthContainer } from 'ui/universal/containers/full-width';
-import React from 'react';
-import { Header } from 'ui/main/header';
 import { useAuthContext } from 'core/providers/auth';
+import type React from 'react';
+import { Header } from 'ui/main/header';
+import { FullWidthContainer } from 'ui/universal/containers/full-width';
 
 interface LayoutProps {
   children: React.ReactNode;

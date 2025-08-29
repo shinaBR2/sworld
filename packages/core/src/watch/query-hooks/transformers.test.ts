@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { FragmentType } from '../../graphql';
+import type { FragmentType } from '../../graphql';
 import { AppError } from '../../universal/error-boundary/app-error';
-import { PlaylistFragment, UserFragment, VideoFragment } from './fragments';
-import { transformPlaylistFragment, transformUser, transformVideoFragment } from './transformers';
+import type {
+  PlaylistFragment,
+  UserFragment,
+  VideoFragment,
+} from './fragments';
+import {
+  transformPlaylistFragment,
+  transformUser,
+  transformVideoFragment,
+} from './transformers';
 import { MEDIA_TYPES } from './types';
 
 describe('Fragment Transformations', () => {
@@ -11,7 +19,9 @@ describe('Fragment Transformations', () => {
       const mockUserData = {
         username: 'testuser',
       };
-      const result = transformUser(mockUserData as FragmentType<typeof UserFragment>);
+      const result = transformUser(
+        mockUserData as FragmentType<typeof UserFragment>,
+      );
       expect(result).toEqual({
         username: 'testuser',
       });
@@ -53,7 +63,9 @@ describe('Fragment Transformations', () => {
     };
 
     it('should transform video fragment correctly', () => {
-      const result = transformVideoFragment(mockVideoData as FragmentType<typeof VideoFragment>);
+      const result = transformVideoFragment(
+        mockVideoData as FragmentType<typeof VideoFragment>,
+      );
 
       // Update subtitle expectations
       expect(result.subtitles).toEqual([
@@ -76,12 +88,20 @@ describe('Fragment Transformations', () => {
 
     // Rename and update this test
     it('should translate language codes to names', () => {
-      const result = transformVideoFragment(mockVideoData as FragmentType<typeof VideoFragment>);
-      expect(result.subtitles.map(s => s.label)).toEqual(['English', 'Vietnamese']);
+      const result = transformVideoFragment(
+        mockVideoData as FragmentType<typeof VideoFragment>,
+      );
+      expect(result.subtitles.map((s) => s.label)).toEqual([
+        'English',
+        'Vietnamese',
+      ]);
     });
 
     it('should throw AppError when source is missing', () => {
-      const invalidVideoData = { ...mockVideoData, source: undefined } as FragmentType<typeof VideoFragment>;
+      const invalidVideoData = {
+        ...mockVideoData,
+        source: undefined,
+      } as FragmentType<typeof VideoFragment>;
 
       expect(() => transformVideoFragment(invalidVideoData)).toThrow(AppError);
     });
@@ -107,7 +127,9 @@ describe('Fragment Transformations', () => {
     };
 
     it('should transform playlist fragment correctly', () => {
-      const result = transformPlaylistFragment(mockPlaylistData as FragmentType<typeof PlaylistFragment>);
+      const result = transformPlaylistFragment(
+        mockPlaylistData as FragmentType<typeof PlaylistFragment>,
+      );
 
       expect(result).toEqual({
         id: '456',
@@ -127,7 +149,9 @@ describe('Fragment Transformations', () => {
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      expect(() => transformPlaylistFragment(invalidPlaylistData)).toThrow(AppError);
+      expect(() => transformPlaylistFragment(invalidPlaylistData)).toThrow(
+        AppError,
+      );
     });
   });
 });

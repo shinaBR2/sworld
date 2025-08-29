@@ -1,10 +1,10 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
-import React from 'react';
-import { FullPageContainer } from 'ui/universal/containers/full-page';
-import { ReadingContent } from 'ui/main/library-page/reading-content';
 import { useBookById } from 'core/library/query-hooks';
-import { Layout } from '../components/layout';
+import type React from 'react';
+import { ReadingContent } from 'ui/main/library-page/reading-content';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { FullPageContainer } from 'ui/universal/containers/full-page';
+import { Layout } from '../components/layout';
 
 interface BookReaderPageProps {
   bookTitle?: string;

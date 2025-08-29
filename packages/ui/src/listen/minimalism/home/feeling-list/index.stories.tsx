@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { FeelingList } from '.';
 import Box from '@mui/material/Box';
+import type { Meta, StoryObj } from '@storybook/react';
+import { FeelingList } from '.';
 
 const meta: Meta<typeof FeelingList> = {
   title: 'Listen/Home/FeelingList',
@@ -9,7 +9,7 @@ const meta: Meta<typeof FeelingList> = {
     layout: 'centered',
   },
   decorators: [
-    Story => (
+    (Story) => (
       <Box width={'600px'}>
         <Story />
       </Box>
@@ -27,7 +27,7 @@ export const Loaded: Story = {
     onSelect: () => {},
     queryRs: {
       isLoading: false,
-      // @ts-ignore
+      // @ts-expect-error
       data: {
         tags: [
           { id: '1', name: 'Happy' },

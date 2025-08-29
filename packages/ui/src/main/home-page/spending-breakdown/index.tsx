@@ -1,18 +1,25 @@
 import { CardContent, Skeleton, Typography } from '@mui/material';
+import type { CategoryType } from 'core/finance';
+import type { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
 import { DonutChart } from './donut-chart';
 import { BreakdownCard } from './styled';
-import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
-import { CategoryType } from 'core/finance';
 
 interface SpendingBreakdownProps {
   isLoading: boolean;
-  categoryData?: NonNullable<ReturnType<typeof useLoadTransactionsByPeriod>['data']>['categories'];
+  categoryData?: NonNullable<
+    ReturnType<typeof useLoadTransactionsByPeriod>['data']
+  >['categories'];
   handleCategoryClick: (category: CategoryType) => void;
   selectedCategory?: CategoryType;
 }
 
 const SpendingBreakdown = (props: SpendingBreakdownProps) => {
-  const { isLoading, categoryData = [], handleCategoryClick, selectedCategory } = props;
+  const {
+    isLoading,
+    categoryData = [],
+    handleCategoryClick,
+    selectedCategory,
+  } = props;
 
   if (isLoading) {
     return (
@@ -33,7 +40,7 @@ const SpendingBreakdown = (props: SpendingBreakdownProps) => {
         </Typography>
         <DonutChart
           isLoading={false}
-          data={categoryData.filter(d => d.category !== 'total')}
+          data={categoryData.filter((d) => d.category !== 'total')}
           onCategoryClick={handleCategoryClick}
           selectedCategory={selectedCategory}
         />

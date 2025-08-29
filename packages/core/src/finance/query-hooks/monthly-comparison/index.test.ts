@@ -37,7 +37,9 @@ describe('useLoadMonthlyComparison', () => {
     });
 
     // Render the hook
-    const { result } = renderHook(() => useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }),
+    );
 
     // Verify the result
     expect(result.current.data).toEqual(mockData.monthly_totals);
@@ -49,7 +51,7 @@ describe('useLoadMonthlyComparison', () => {
       expect.objectContaining({
         queryKey: ['monthly_totals'],
         getAccessToken: mockGetAccessToken,
-      })
+      }),
     );
   });
 
@@ -62,7 +64,9 @@ describe('useLoadMonthlyComparison', () => {
     });
 
     // Render the hook
-    const { result } = renderHook(() => useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }),
+    );
 
     // Verify the result
     expect(result.current.data).toEqual([]);
@@ -79,7 +83,9 @@ describe('useLoadMonthlyComparison', () => {
     });
 
     // Render the hook
-    const { result } = renderHook(() => useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }),
+    );
 
     // Verify the result
     expect(result.current.isLoading).toBe(true);
@@ -96,7 +102,9 @@ describe('useLoadMonthlyComparison', () => {
     });
 
     // Render the hook
-    const { result } = renderHook(() => useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }));
+    const { result } = renderHook(() =>
+      useLoadMonthlyComparison({ getAccessToken: mockGetAccessToken }),
+    );
 
     // Verify the result
     expect(result.current.error).toEqual(mockError);

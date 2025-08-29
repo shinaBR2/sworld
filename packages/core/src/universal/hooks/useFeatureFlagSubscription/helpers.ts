@@ -1,6 +1,9 @@
-import { FeatureFlagItemConditions } from './types';
+import type { FeatureFlagItemConditions } from './types';
 
-const checkFeatureFlag = (flag: FeatureFlagItemConditions | null, userId: string) => {
+const checkFeatureFlag = (
+  flag: FeatureFlagItemConditions | null,
+  userId: string,
+) => {
   if (!flag) {
     return false;
   }

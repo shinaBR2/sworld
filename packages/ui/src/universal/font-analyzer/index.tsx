@@ -1,5 +1,5 @@
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
 
 interface FontUsage {
   weight: number;
@@ -25,16 +25,20 @@ const FontWeightAnalyzer = () => {
       };
 
       // Analyze all elements
-      document.querySelectorAll('*').forEach(element => {
+      document.querySelectorAll('*').forEach((element) => {
         const computedStyle = window.getComputedStyle(element);
         const fontWeight = parseInt(computedStyle.fontWeight);
 
         if (!isNaN(fontWeight)) {
           // Get MUI component name from className
-          const muiClass = Array.from(element.classList).find(className => className.startsWith('Mui'));
+          const muiClass = Array.from(element.classList).find((className) =>
+            className.startsWith('Mui'),
+          );
 
           if (muiClass) {
-            const componentName = muiClass.replace('Mui-', '').replace('Mui', '');
+            const componentName = muiClass
+              .replace('Mui-', '')
+              .replace('Mui', '');
             addUsage(fontWeight, componentName);
           }
         }
@@ -72,7 +76,9 @@ const FontWeightAnalyzer = () => {
         ))}
 
         {fontUsage.size === 0 && (
-          <Typography color="text.secondary">Analyzing font usage... Interact with your app to see results.</Typography>
+          <Typography color="text.secondary">
+            Analyzing font usage... Interact with your app to see results.
+          </Typography>
         )}
       </CardContent>
     </Card>

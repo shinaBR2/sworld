@@ -1,13 +1,13 @@
+import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { RequiredLinkComponent } from '../videos/types';
-import { useQueryContext } from 'core/providers/query';
-import { NotificationItem } from './notification-item';
-import { useMarkNotificationAsRead } from 'core/universal/hooks/useMarkNotificationAsRead';
 import { useAuthContext } from 'core/providers/auth';
+import { useQueryContext } from 'core/providers/query';
+import { useMarkNotificationAsRead } from 'core/universal/hooks/useMarkNotificationAsRead';
 import { useCallback } from 'react';
-import Divider from '@mui/material/Divider';
+import type { RequiredLinkComponent } from '../videos/types';
+import { NotificationItem } from './notification-item';
 
 interface NotificationsMenuProps {
   anchorEl: HTMLElement | null;
@@ -15,7 +15,11 @@ interface NotificationsMenuProps {
   LinkComponent: RequiredLinkComponent['LinkComponent'];
 }
 
-const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMenuProps) => {
+const NotificationsMenu = ({
+  anchorEl,
+  onClose,
+  LinkComponent,
+}: NotificationsMenuProps) => {
   const { notifications } = useQueryContext();
   const { getAccessToken } = useAuthContext();
   const { markAsRead, markAllAsRead } = useMarkNotificationAsRead({
@@ -28,11 +32,12 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
     (notificationId: string) => () => {
       markAsRead({ notificationId });
     },
-    [markAsRead]
+    [markAsRead],
   );
 
   const handleMarkAll = useCallback(() => {
-    const ids = notifications.data?.map(notification => notification.id) || [];
+    const ids =
+      notifications.data?.map((notification) => notification.id) || [];
     markAllAsRead({ ids });
   }, [notifications.data, markAllAsRead]);
 
@@ -48,7 +53,7 @@ const NotificationsMenu = ({ anchorEl, onClose, LinkComponent }: NotificationsMe
       }}
     >
       {notifications.data?.length ? (
-        notifications.data.map(notification => (
+        notifications.data.map((notification) => (
           <NotificationItem
             key={notification.id}
             notification={notification}

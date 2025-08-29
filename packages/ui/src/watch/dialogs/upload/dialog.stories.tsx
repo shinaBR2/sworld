@@ -1,6 +1,6 @@
+import { action } from '@storybook/addon-actions';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DialogComponent } from './dialog';
-import { action } from '@storybook/addon-actions';
 import { CREATE_NEW_PLAYLIST } from './utils';
 
 const description = `
@@ -32,7 +32,7 @@ const meta: Meta<typeof DialogComponent> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: '600px', margin: '0 auto' }}>
         <Story />
       </div>
@@ -72,8 +72,9 @@ type Story = StoryObj<typeof DialogComponent>;
 // Mock handlers
 const mockHandlers = {
   handleClose: () => console.log('Dialog closed'),
-  onFormFieldChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    action(`${field} changed`)(e.target.value),
+  onFormFieldChange:
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+      action(`${field} changed`)(e.target.value),
   handleSubmit: async (e: React.FormEvent) => {
     e.preventDefault();
     action('Form submitted')(e);

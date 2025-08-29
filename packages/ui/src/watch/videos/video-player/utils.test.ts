@@ -28,7 +28,12 @@ describe('video player utils', () => {
 
       expect(result).toMatchObject({
         techOrder: ['html5'],
-        sources: [{ type: 'application/x-mpegURL', src: 'https://example.com/video.m3u8' }],
+        sources: [
+          {
+            type: 'application/x-mpegURL',
+            src: 'https://example.com/video.m3u8',
+          },
+        ],
       });
     });
 

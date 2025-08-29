@@ -1,13 +1,13 @@
-import { UseMutationOptions } from '@tanstack/react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
-import { useMutationRequest } from '../../../universal/hooks/useMutation';
-import { buildVariables, formalize } from './utils';
-import {
+import type {
   SharePlaylistMutation,
   SharePlaylistMutationVariables,
   ShareVideoMutation,
   ShareVideoMutationVariables,
 } from '../../../graphql/graphql';
+import { useMutationRequest } from '../../../universal/hooks/useMutation';
+import { buildVariables, formalize } from './utils';
 
 const sharePlaylistMutation = graphql(/* GraphQL */ `
   mutation sharePlaylist($id: uuid!, $emails: jsonb) {
@@ -32,13 +32,20 @@ type SharePlaylistMutationOptions = UseMutationOptions<
   unknown
 >;
 
-type ShareVideoMutationOptions = UseMutationOptions<ShareVideoMutation, unknown, ShareVideoMutationVariables, unknown>;
+type ShareVideoMutationOptions = UseMutationOptions<
+  ShareVideoMutation,
+  unknown,
+  ShareVideoMutationVariables,
+  unknown
+>;
 
-interface UseSharePlaylistProps extends Pick<SharePlaylistMutationOptions, 'onSuccess' | 'onError'> {
+interface UseSharePlaylistProps
+  extends Pick<SharePlaylistMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
 }
 
-interface UseShareVideoProps extends Pick<ShareVideoMutationOptions, 'onSuccess' | 'onError'> {
+interface UseShareVideoProps
+  extends Pick<ShareVideoMutationOptions, 'onSuccess' | 'onError'> {
   getAccessToken: () => Promise<string>;
 }
 
@@ -59,7 +66,11 @@ const useSharePlaylist = (props: UseSharePlaylistProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: (error: unknown, variables: SharePlaylistMutationVariables, context: unknown) => {
+      onError: (
+        error: unknown,
+        variables: SharePlaylistMutationVariables,
+        context: unknown,
+      ) => {
         console.error('Share playlist failed:', error);
         onError?.(error, variables, context);
       },
@@ -75,7 +86,11 @@ const useShareVideo = (props: UseShareVideoProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: (error: unknown, variables: ShareVideoMutationVariables, context: unknown) => {
+      onError: (
+        error: unknown,
+        variables: ShareVideoMutationVariables,
+        context: unknown,
+      ) => {
         console.error('Share video failed:', error);
         onError?.(error, variables, context);
       },

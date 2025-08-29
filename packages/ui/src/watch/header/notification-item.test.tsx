@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
+import { Link } from '@mui/material';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { NotificationItem } from './notification-item';
-import { NOTIFICATION_TYPES } from './types';
 import { NOTIFICATION_TEXTS } from './texts';
-import { Link } from '@mui/material';
+import { NOTIFICATION_TYPES } from './types';
 
 describe('NotificationItem', () => {
   const mockNotification = {
@@ -37,8 +37,10 @@ describe('NotificationItem', () => {
   describe('read/unread states', () => {
     it('shows unread state for notification without readAt', () => {
       render(<NotificationItem {...defaultProps} />);
-      const title = screen.getByText(content =>
-        content.includes(NOTIFICATION_TEXTS[NOTIFICATION_TYPES.VIDEO_READY].title)
+      const title = screen.getByText((content) =>
+        content.includes(
+          NOTIFICATION_TEXTS[NOTIFICATION_TYPES.VIDEO_READY].title,
+        ),
       );
       expect(title).toHaveStyle({ fontWeight: 'bold' });
     });
@@ -54,8 +56,10 @@ describe('NotificationItem', () => {
 
       render(<NotificationItem {...readProps} />);
 
-      const title = screen.getByText(content =>
-        content.includes(NOTIFICATION_TEXTS[NOTIFICATION_TYPES.VIDEO_READY].title)
+      const title = screen.getByText((content) =>
+        content.includes(
+          NOTIFICATION_TEXTS[NOTIFICATION_TYPES.VIDEO_READY].title,
+        ),
       );
       expect(title).toHaveStyle({ fontWeight: 'normal' });
     });

@@ -1,10 +1,17 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
-import { PlayableVideo } from '../types';
 import { useAuthContext } from 'core/providers/auth';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
-import { VideoThumbnail } from '../video-thumbnail';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { defaultThumbnailUrl } from '../../../universal/images/default-thumbnail';
+import type { PlayableVideo } from '../types';
+import { VideoThumbnail } from '../video-thumbnail';
 
 const PROGRESS_INTERVAL = 1000;
 
@@ -22,7 +29,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const { video, onEnded, onError } = props;
   const { title, source, thumbnailUrl, subtitles } = video;
   const { isSignedIn, getAccessToken } = useAuthContext();
-  const { handleProgress, handlePlay, handlePause, handleSeek, handleEnded, cleanup } = useVideoProgress({
+  const {
+    handleProgress,
+    handlePlay,
+    handlePause,
+    handleSeek,
+    handleEnded,
+    cleanup,
+  } = useVideoProgress({
     videoId: video.id,
     isSignedIn,
     getAccessToken,
@@ -49,7 +63,10 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if typing in inputs (just like YouTube)
-      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
         return;
       }
 
@@ -60,17 +77,17 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case 'k': // Play/pause
           e.preventDefault();
           if (player.paused) {
-            setPlayerState(prev => ({ ...prev, playing: !prev.playing }));
+            setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
             handlePlay();
           } else {
-            setPlayerState(prev => ({ ...prev, playing: !prev.playing }));
+            setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
             handlePause();
           }
           break;
 
         case 'm': // Toggle mute
           e.preventDefault();
-          setPlayerState(prev => ({ ...prev, muted: !prev.muted }));
+          setPlayerState((prev) => ({ ...prev, muted: !prev.muted }));
           break;
 
         // case 'ArrowLeft': // Seek back 5s
@@ -92,12 +109,18 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'ArrowUp': // Volume up
           e.preventDefault();
-          setPlayerState(prev => ({ ...prev, volume: Math.min(1, prev.volume + 0.05) }));
+          setPlayerState((prev) => ({
+            ...prev,
+            volume: Math.min(1, prev.volume + 0.05),
+          }));
           break;
 
         case 'ArrowDown': // Volume down
           e.preventDefault();
-          setPlayerState(prev => ({ ...prev, volume: Math.max(0, prev.volume - 0.05) }));
+          setPlayerState((prev) => ({
+            ...prev,
+            volume: Math.max(0, prev.volume - 0.05),
+          }));
           break;
 
         case 'f': // Fullscreen
@@ -124,7 +147,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     (error: unknown) => {
       onError?.(error);
     },
-    [onError]
+    [onError],
   );
 
   useEffect(() => {
@@ -135,7 +158,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
   return (
     <Box
-      sx={theme => ({
+      sx={(theme) => ({
         aspectRatio: '16/9',
         borderRadius: theme.shape.borderRadius / 12,
         overflow: 'hidden',
@@ -174,7 +197,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
                 playsInline: true, // Important for iOS
                 crossOrigin: 'true',
               },
-              tracks: subtitles?.map(subtitle => ({
+              tracks: subtitles?.map((subtitle) => ({
                 kind: 'subtitles',
                 src: subtitle.src,
                 srcLang: subtitle.lang,

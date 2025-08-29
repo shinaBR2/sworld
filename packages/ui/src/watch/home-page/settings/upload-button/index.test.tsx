@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
-import { UploadButton } from './index';
 import { Auth, Query } from 'core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { UploadButton } from './index';
 
 // Mock the core module
 vi.mock('core', () => ({
@@ -44,8 +45,12 @@ describe('UploadButton', () => {
     expect(loadingButton).toHaveAttribute('aria-disabled', 'true');
 
     // Verify skeleton elements are present
-    expect(screen.getByTestId('upload-button-skeleton-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('upload-button-skeleton-text')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('upload-button-skeleton-icon'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('upload-button-skeleton-text'),
+    ).toBeInTheDocument();
   });
 
   it('should render enabled state correctly', () => {

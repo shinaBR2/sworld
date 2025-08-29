@@ -1,8 +1,8 @@
-import React from 'react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { Layout } from '../components/layout';
-import { HomeContainer } from 'ui/til/home-container';
 import { useLoadPosts } from 'core/til/query-hooks/posts';
+import React from 'react';
+import { HomeContainer } from 'ui/til/home-container';
+import { Layout } from '../components/layout';
 
 const Index = () => {
   const queryRs = useLoadPosts();

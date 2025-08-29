@@ -1,5 +1,5 @@
 import { graphql } from '../../../graphql';
-import { PostQuery } from '../../../graphql/graphql';
+import type { PostQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 

@@ -1,5 +1,3 @@
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import RepeatIcon from '@mui/icons-material/Repeat';
@@ -9,7 +7,10 @@ import ShuffleIcon from '@mui/icons-material/Shuffle';
 import ShuffleOnIcon from '@mui/icons-material/ShuffleOn';
 import SkipNextRounded from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRounded from '@mui/icons-material/SkipPreviousRounded';
-//@ts-ignore
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+
+//@ts-expect-error
 // import { SAudioPlayerLoopMode } from "core";
 
 // ts sucks
@@ -64,7 +65,16 @@ interface Props {
 
 // https://mui.com/material-ui/react-slider/#music-player
 const Controls = (props: Props) => {
-  const { isPlay, shuffle, onShuffle, loopMode, onChangeLoopMode, handlePlay, handlePrev, handleNext } = props;
+  const {
+    isPlay,
+    shuffle,
+    onShuffle,
+    loopMode,
+    onChangeLoopMode,
+    handlePlay,
+    handlePrev,
+    handleNext,
+  } = props;
 
   const renderIcon = () => {
     if (isPlay) {
@@ -94,11 +104,21 @@ const Controls = (props: Props) => {
 
   return (
     <Box sx={getWrapperStyles()} role="group" aria-label="playback controls">
-      <IconButton size="small" aria-label="toggle loop mode" onClick={onChangeLoopMode} sx={getSideButtonStyles()}>
+      <IconButton
+        size="small"
+        aria-label="toggle loop mode"
+        onClick={onChangeLoopMode}
+        sx={getSideButtonStyles()}
+      >
         {renderLoopMode()}
       </IconButton>
       <Box sx={getCenterControlsStyles()}>
-        <IconButton size="small" aria-label="previous audio" onClick={handlePrev} sx={getMainButtonStyles()}>
+        <IconButton
+          size="small"
+          aria-label="previous audio"
+          onClick={handlePrev}
+          sx={getMainButtonStyles()}
+        >
           <SkipPreviousRounded fontSize="large" />
         </IconButton>
         <IconButton
@@ -109,11 +129,21 @@ const Controls = (props: Props) => {
         >
           {renderIcon()}
         </IconButton>
-        <IconButton size="small" aria-label="next audio" onClick={handleNext} sx={getMainButtonStyles()}>
+        <IconButton
+          size="small"
+          aria-label="next audio"
+          onClick={handleNext}
+          sx={getMainButtonStyles()}
+        >
           <SkipNextRounded fontSize="large" />
         </IconButton>
       </Box>
-      <IconButton size="small" aria-label="shuffle" onClick={onShuffle} sx={getSideButtonStyles()}>
+      <IconButton
+        size="small"
+        aria-label="shuffle"
+        onClick={onShuffle}
+        sx={getSideButtonStyles()}
+      >
         {renderShuffle()}
       </IconButton>
     </Box>

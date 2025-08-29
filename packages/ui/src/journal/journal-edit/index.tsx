@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
-import InputBase from '@mui/material/InputBase';
-import CircularProgress from '@mui/material/CircularProgress';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import AddIcon from '@mui/icons-material/Add';
-import { Journal, MoodType } from 'core/src/journal/types';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import type { Journal, MoodType } from 'core/src/journal/types';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 interface JournalEditProps {
   journal?: Journal | null;
@@ -26,7 +27,13 @@ interface JournalEditProps {
   onSave: (input: any) => void;
 }
 
-export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, isSaving, onBackClick, onSave }) => {
+export const JournalEdit: React.FC<JournalEditProps> = ({
+  journal,
+  isLoading,
+  isSaving,
+  onBackClick,
+  onSave,
+}) => {
   const [content, setContent] = useState('');
   const [date, setDate] = useState('');
   const [mood, setMood] = useState<MoodType>('neutral');
@@ -49,7 +56,10 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
     }
   }, [journal]);
 
-  const handleMoodChange = (_: React.MouseEvent<HTMLElement>, newMood: MoodType | null) => {
+  const handleMoodChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newMood: MoodType | null,
+  ) => {
     if (newMood !== null) {
       setMood(newMood);
     }
@@ -64,7 +74,7 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleTagKeyDown = (event: React.KeyboardEvent) => {
@@ -91,7 +101,9 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
             <ArrowBackIcon fontSize="medium" />
           </IconButton>
-          <Typography variant="h6">{journal ? 'Edit Entry' : 'New Entry'}</Typography>
+          <Typography variant="h6">
+            {journal ? 'Edit Entry' : 'New Entry'}
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
           <CircularProgress />
@@ -101,7 +113,9 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
   }
 
   return (
-    <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box
+      sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}
+    >
       <Box
         sx={{
           position: 'sticky',
@@ -112,7 +126,7 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           justifyContent: 'space-between',
           alignItems: 'center',
           mb: 2,
-          borderBottom: theme => `1px solid ${theme.palette.divider}`,
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 0.5,
           pb: 0.5,
         }}
@@ -121,16 +135,25 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
             <ArrowBackIcon fontSize="medium" />
           </IconButton>
-          <Typography variant="h6">{journal ? 'Edit Entry' : 'New Entry'}</Typography>
+          <Typography variant="h6">
+            {journal ? 'Edit Entry' : 'New Entry'}
+          </Typography>
         </Box>
       </Box>
 
       {/* Non-scrollable date + mood controls */}
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <TextField
           type="date"
           value={date}
-          onChange={e => setDate(e.target.value)}
+          onChange={(e) => setDate(e.target.value)}
           size="small"
           sx={{ width: '50%' }}
           InputProps={{
@@ -138,7 +161,13 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           }}
         />
 
-        <ToggleButtonGroup value={mood} exclusive onChange={handleMoodChange} aria-label="mood" size="small">
+        <ToggleButtonGroup
+          value={mood}
+          exclusive
+          onChange={handleMoodChange}
+          aria-label="mood"
+          size="small"
+        >
           <ToggleButton
             value="sad"
             aria-label="sad"
@@ -197,11 +226,11 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
             backgroundColor: 'transparent',
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: theme => theme.palette.action.hover,
+            backgroundColor: (theme) => theme.palette.action.hover,
             borderRadius: '3px',
           },
           '&::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: theme => theme.palette.action.disabled,
+            backgroundColor: (theme) => theme.palette.action.disabled,
           },
         }}
       >
@@ -210,7 +239,7 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           fullWidth
           placeholder="What's on your mind today?"
           value={content}
-          onChange={e => setContent(e.target.value)}
+          onChange={(e) => setContent(e.target.value)}
           sx={{
             mb: 2,
             flex: 1, // Allow TextField to grow and fill space
@@ -240,7 +269,7 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
             }}
             variant="outlined"
           >
-            {tags.map(tag => (
+            {tags.map((tag) => (
               <Chip
                 key={tag}
                 label={tag}
@@ -259,15 +288,27 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
               />
             ))}
 
-            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, minWidth: 100 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                flexGrow: 1,
+                minWidth: 100,
+              }}
+            >
               <InputBase
                 placeholder="New tag..."
                 value={newTag}
-                onChange={e => setNewTag(e.target.value)}
+                onChange={(e) => setNewTag(e.target.value)}
                 onKeyDown={handleTagKeyDown}
                 sx={{ ml: 1, flex: 1, fontSize: '0.875rem' }}
               />
-              <IconButton size="small" onClick={handleAddTag} disabled={!newTag.trim()} sx={{ p: 0.5 }}>
+              <IconButton
+                size="small"
+                onClick={handleAddTag}
+                disabled={!newTag.trim()}
+                sx={{ p: 0.5 }}
+              >
                 <AddIcon fontSize="small" />
               </IconButton>
             </Box>
@@ -286,14 +327,19 @@ export const JournalEdit: React.FC<JournalEditProps> = ({ journal, isLoading, is
           bottom: 0,
           zIndex: 2,
           bgcolor: 'background.paper',
-          borderTop: theme => `1px solid ${theme.palette.divider}`,
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 1,
           pb: 'max(8px, env(safe-area-inset-bottom))',
           display: 'flex',
           gap: 1,
         }}
       >
-        <Button onClick={onBackClick} variant="outlined" color="inherit" fullWidth>
+        <Button
+          onClick={onBackClick}
+          variant="outlined"
+          color="inherit"
+          fullWidth
+        >
           Cancel
         </Button>
         <Button

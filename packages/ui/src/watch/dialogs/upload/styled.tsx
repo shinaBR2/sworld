@@ -1,8 +1,7 @@
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import Stack from '@mui/material/Stack';
+import Dialog, { type DialogProps } from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
-import { DialogProps } from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 
 export const StyledDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
   '& .MuiDialog-paper': {

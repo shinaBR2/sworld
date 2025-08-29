@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
+import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
+import { MatterGravityFixPlugin } from './plugins/matter_gravity_fix';
 import Bootloader from './scenes/bootloader';
+import Game from './scenes/game';
 import Outro from './scenes/outro';
 import Splash from './scenes/splash';
 import Transition from './scenes/transition';
-import Game from './scenes/game';
-import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
-import { MatterGravityFixPlugin } from './plugins/matter_gravity_fix';
 
 const config = {
   width: 600,

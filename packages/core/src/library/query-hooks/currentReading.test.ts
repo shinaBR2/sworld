@@ -72,7 +72,11 @@ describe('useCurrentReading', () => {
       error: null,
     });
     const { result } = renderHook(() => useCurrentReading());
-    expect(result.current).toEqual({ data: null, isLoading: true, error: null });
+    expect(result.current).toEqual({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
   });
 
   it('should handle error state', () => {
@@ -87,9 +91,13 @@ describe('useCurrentReading', () => {
   });
 
   it('should show lastReadText as days ago if > 24 hours', () => {
-    const threeDaysAgo = new Date(baseDate.getTime() - 72 * 60 * 60 * 1000).toISOString();
+    const threeDaysAgo = new Date(
+      baseDate.getTime() - 72 * 60 * 60 * 1000,
+    ).toISOString();
     vi.mocked(useRequest).mockReturnValue({
-      data: { reading_progresses: [{ ...mockProgress, lastReadAt: threeDaysAgo }] },
+      data: {
+        reading_progresses: [{ ...mockProgress, lastReadAt: threeDaysAgo }],
+      },
       isLoading: false,
       error: null,
     });
@@ -98,9 +106,13 @@ describe('useCurrentReading', () => {
   });
 
   it('should show lastReadText as "Just now" if < 1 hour', () => {
-    const tenMinutesAgo = new Date(baseDate.getTime() - 10 * 60 * 1000).toISOString();
+    const tenMinutesAgo = new Date(
+      baseDate.getTime() - 10 * 60 * 1000,
+    ).toISOString();
     vi.mocked(useRequest).mockReturnValue({
-      data: { reading_progresses: [{ ...mockProgress, lastReadAt: tenMinutesAgo }] },
+      data: {
+        reading_progresses: [{ ...mockProgress, lastReadAt: tenMinutesAgo }],
+      },
       isLoading: false,
       error: null,
     });

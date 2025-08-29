@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import { HistoryContainer } from './index';
-import { VideoSkeleton } from '../../videos/video-card/skeleton';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '../../videos/video-card';
-import { HistoryVideo } from '../types';
+import { VideoSkeleton } from '../../videos/video-card/skeleton';
+import type { HistoryVideo } from '../types';
+import { HistoryContainer } from './index';
 
 // Mock components
 vi.mock('../../videos/video-card/skeleton', () => ({
@@ -49,13 +49,25 @@ describe('HistoryContainer', () => {
   });
 
   it('should render skeletons when loading', () => {
-    render(<HistoryContainer isLoading={true} videos={[]} LinkComponent={MockLink} />);
+    render(
+      <HistoryContainer
+        isLoading={true}
+        videos={[]}
+        LinkComponent={MockLink}
+      />,
+    );
 
     expect(VideoSkeleton).toHaveBeenCalledTimes(12);
   });
 
   it('should render video cards when not loading', () => {
-    render(<HistoryContainer isLoading={false} videos={mockVideos} LinkComponent={MockLink} />);
+    render(
+      <HistoryContainer
+        isLoading={false}
+        videos={mockVideos}
+        LinkComponent={MockLink}
+      />,
+    );
 
     expect(VideoCard).toHaveBeenCalledTimes(2);
     expect(VideoCard).toHaveBeenCalledWith(
@@ -71,12 +83,18 @@ describe('HistoryContainer', () => {
           },
         },
       },
-      expect.anything()
+      expect.anything(),
     );
   });
 
   it('should handle empty videos array', () => {
-    render(<HistoryContainer isLoading={false} videos={[]} LinkComponent={MockLink} />);
+    render(
+      <HistoryContainer
+        isLoading={false}
+        videos={[]}
+        LinkComponent={MockLink}
+      />,
+    );
 
     expect(VideoCard).not.toHaveBeenCalled();
   });

@@ -1,8 +1,16 @@
-import React, { createContext, FC, useContext, useEffect, useState, useCallback } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { getClaims, transformUser } from './helpers';
-import { CustomUser } from './types';
+import type React from 'react';
+import {
+  createContext,
+  type FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { notifyExtension } from '../../universal/extension/communication';
+import { getClaims, transformUser } from './helpers';
+import type { CustomUser } from './types';
 
 interface AuthContextValue {
   isSignedIn: boolean;
@@ -132,7 +140,9 @@ const AuthContextProvider: FC<{
     getAccessToken: getAccessTokenSilently,
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 };
 
 const AuthProvider: FC<Props> = ({ config, extensionId, children }) => {
@@ -147,7 +157,9 @@ const AuthProvider: FC<Props> = ({ config, extensionId, children }) => {
       cookieDomain={config.cookieDomain}
       cacheLocation="localstorage"
     >
-      <AuthContextProvider extensionId={extensionId}>{children}</AuthContextProvider>
+      <AuthContextProvider extensionId={extensionId}>
+        {children}
+      </AuthContextProvider>
     </Auth0Provider>
   );
 };
@@ -168,5 +180,5 @@ const useAuthContext = (): AuthContextValue => {
 };
 
 // For some packages/ui usage
-export { type CustomUser, type AuthContextValue };
+export type { CustomUser, AuthContextValue };
 export { AuthProvider, useAuthContext };

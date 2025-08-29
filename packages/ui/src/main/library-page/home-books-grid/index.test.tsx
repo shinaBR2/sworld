@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BooksGrid } from './index';
 
 const mockBooks = [
@@ -34,15 +35,23 @@ describe('BooksGrid', () => {
     expect(screen.getByTestId('filter-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('grid-view-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('list-view-skeleton')).toBeInTheDocument();
-    expect(screen.getAllByTestId('book-title-skeleton').length).toBeGreaterThan(0);
-    expect(screen.getAllByTestId('book-author-skeleton').length).toBeGreaterThan(0);
+    expect(screen.getAllByTestId('book-title-skeleton').length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getAllByTestId('book-author-skeleton').length,
+    ).toBeGreaterThan(0);
   });
 
   it('should render empty state when no books', () => {
     render(<BooksGrid isLoading={false} books={[]} />);
     expect(screen.getByText('Your Library')).toBeInTheDocument();
     expect(screen.getByText('No books in your library')).toBeInTheDocument();
-    expect(screen.getByText('Add your first book to start building your personal library')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Add your first book to start building your personal library',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should render books grid', () => {
@@ -58,7 +67,13 @@ describe('BooksGrid', () => {
 
   it('should call onBookClick when a BookCard is clicked', () => {
     const handleBookClick = vi.fn();
-    render(<BooksGrid isLoading={false} books={mockBooks} onBookClick={handleBookClick} />);
+    render(
+      <BooksGrid
+        isLoading={false}
+        books={mockBooks}
+        onBookClick={handleBookClick}
+      />,
+    );
     // Simulate click on the book title text (BookCard attaches onClick to inner content)
     const firstBookTitle = screen.getByText('Atomic Habits');
     fireEvent.click(firstBookTitle);
@@ -67,7 +82,14 @@ describe('BooksGrid', () => {
 
   it('should call onFilterChange when filter is changed', () => {
     const handleFilterChange = vi.fn();
-    render(<BooksGrid isLoading={false} books={mockBooks} filter="all" onFilterChange={handleFilterChange} />);
+    render(
+      <BooksGrid
+        isLoading={false}
+        books={mockBooks}
+        filter="all"
+        onFilterChange={handleFilterChange}
+      />,
+    );
     // MUI Select uses role="combobox" for the select trigger
     const select = screen.getByRole('combobox');
     fireEvent.mouseDown(select);
@@ -79,8 +101,17 @@ describe('BooksGrid', () => {
 
   it('should call onLoadMore when Load More Books is clicked', () => {
     const handleLoadMore = vi.fn();
-    render(<BooksGrid isLoading={false} books={mockBooks} hasMore={true} onLoadMore={handleLoadMore} />);
-    const loadMoreBtn = screen.getByRole('button', { name: /load more books/i });
+    render(
+      <BooksGrid
+        isLoading={false}
+        books={mockBooks}
+        hasMore={true}
+        onLoadMore={handleLoadMore}
+      />,
+    );
+    const loadMoreBtn = screen.getByRole('button', {
+      name: /load more books/i,
+    });
     fireEvent.click(loadMoreBtn);
     expect(handleLoadMore).toHaveBeenCalled();
   });

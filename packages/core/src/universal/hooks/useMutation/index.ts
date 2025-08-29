@@ -1,7 +1,7 @@
-import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
+import { type UseMutationOptions, useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
+import type { TypedDocumentString } from '../../../graphql/graphql';
 import { useQueryContext } from '../../../providers/query';
-import { TypedDocumentString } from '../../../graphql/graphql';
 
 interface UseMutationProps<TData, TError, TVariables> {
   document: TypedDocumentString<TData, TVariables>;
@@ -12,16 +12,16 @@ interface UseMutationProps<TData, TError, TVariables> {
 const useMutationRequest = <
   TData = unknown,
   TError = unknown,
-  TVariables extends object = {}
+  TVariables extends object = {},
 >(
-  props: UseMutationProps<TData, TError, TVariables>
+  props: UseMutationProps<TData, TError, TVariables>,
 ) => {
   const { document, getAccessToken, options } = props;
   const { hasuraUrl } = useQueryContext();
 
   return useMutation<TData, TError, TVariables>({
     ...options,
-    mutationFn: async variables => {
+    mutationFn: async (variables) => {
       let headers: Record<string, string> = {
         'content-type': 'application/json',
       };

@@ -1,5 +1,5 @@
 import { graphql } from '../../graphql';
-import { GetCurrentReadingQuery } from '../../graphql/graphql';
+import type { GetCurrentReadingQuery } from '../../graphql/graphql';
 import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 
@@ -30,7 +30,9 @@ const transform = (data: GetCurrentReadingQuery) => {
 
   const lastReadDate = new Date(progress.lastReadAt);
   const now = new Date();
-  const diffHours = Math.floor((now.getTime() - lastReadDate.getTime()) / (1000 * 60 * 60));
+  const diffHours = Math.floor(
+    (now.getTime() - lastReadDate.getTime()) / (1000 * 60 * 60),
+  );
 
   let lastReadText: string;
   if (diffHours < 1) {

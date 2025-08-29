@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { MuiStyledProps } from '../../universal';
+import type { MuiStyledProps } from '../../universal';
 
 interface Props extends MuiStyledProps {
   title: string;

@@ -7,7 +7,7 @@ const graphqlErrors = (error: any) => {
 
 const isTokenExpired = (error: any) => {
   const errorCodes = graphqlErrors(error);
-  return errorCodes.includes("invalid-jwt");
+  return errorCodes.includes('invalid-jwt');
 };
 
 export { isTokenExpired };

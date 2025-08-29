@@ -1,5 +1,5 @@
-import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import { EventBus } from '../EventBus';
 
 export class GameOver extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;

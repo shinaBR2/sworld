@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '../src/baseTheme'
+import theme from '../src/baseTheme';
 
 const preview = {
   parameters: {
@@ -12,7 +12,7 @@ const preview = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider theme={theme}>
         <Story />
       </ThemeProvider>

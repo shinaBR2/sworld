@@ -99,14 +99,18 @@ const slugify = (str: string): string => {
     str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
   }
 
-  str = str.replace(INVALID_CHARS_REGEX, '').replace(WHITESPACE_REGEX, '-').replace(DASHES_REGEX, '-');
+  str = str
+    .replace(INVALID_CHARS_REGEX, '')
+    .replace(WHITESPACE_REGEX, '-')
+    .replace(DASHES_REGEX, '-');
 
   str = str.replace(TRIM_DASHES_REGEX, '');
   return str;
 };
 
 // https://stackoverflow.com/questions/7905929/how-to-test-valid-uuid-guid
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const isValidId = (id: string): boolean => {
   if (typeof id !== 'string') {
@@ -125,7 +129,7 @@ const isValidId = (id: string): boolean => {
 // https://github.com/manishsaraan/email-validator/blob/master/index.js
 const isValidEmail = (email: string): boolean => {
   const emailRegex =
-    /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+    /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
   if (!email) return false;
 
   var emailParts = email.split('@');
@@ -140,12 +144,7 @@ const isValidEmail = (email: string): boolean => {
 
   var domainParts = address.split('.');
 
-  if (
-    domainParts.some(function (part) {
-      return part.length > 63;
-    })
-  )
-    return false;
+  if (domainParts.some((part) => part.length > 63)) return false;
 
   return emailRegex.test(email);
 };

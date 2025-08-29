@@ -1,11 +1,11 @@
-import React from 'react';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import {
   LibraryBooks as LibraryIcon,
   MenuBook as ReadingIcon,
-  Favorite as WishlistIcon,
   BarChart as StatsIcon,
+  Favorite as WishlistIcon,
 } from '@mui/icons-material';
+import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import type React from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 
 interface MobileNavigationProps {
@@ -13,7 +13,7 @@ interface MobileNavigationProps {
   onChange?: (value: number) => void;
 }
 
-const MobileNavigation: React.FC<MobileNavigationProps> = props => {
+const MobileNavigation: React.FC<MobileNavigationProps> = (props) => {
   const { value = 0, onChange } = props;
 
   const isMobile = useIsMobile();

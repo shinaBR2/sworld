@@ -1,8 +1,14 @@
-import { GameScene } from '../scenes/game';
+import type { GameScene } from '../scenes/game';
 
 export default class SeeSaw {
   constructor(scene: GameScene, x: any, y: any, numTiles = 5) {
-    const platform = scene.add.tileSprite(x, y, (32 * numTiles) / 2, 18, 'seesaw');
+    const platform = scene.add.tileSprite(
+      x,
+      y,
+      (32 * numTiles) / 2,
+      18,
+      'seesaw',
+    );
     scene.matter.add.gameObject(platform, {
       restitution: 0, // No bounciness
       frictionAir: 0.2, // Spin forever without slowing down from air resistance

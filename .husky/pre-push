@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+
+echo "Running formatter before push..."
+
+# Snapshot working tree changes before formatting
+before_changes=$(git diff --name-only)
+
+# Run Biome formatter
+pnpm format
+
+# Snapshot working tree changes after formatting
+after_changes=$(git diff --name-only)
+
+# Determine if new changes were introduced by the formatter
+format_introduced_changes=false
+for file in $after_changes; do
+  echo "$before_changes" | grep -Fx -- "$file" >/dev/null 2>&1 || {
+    format_introduced_changes=true
+    break
+  }
+done
+
+if [ "$format_introduced_changes" = true ]; then
+  echo "\nFormatting made changes. Please commit them before pushing."
+  git status --short
+  exit 1
+fi
+
+exit 0

@@ -1,11 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { HistoryVideo } from './types';
 import { genlinkProps } from './utils';
-import { HistoryVideo } from './types';
 
 // Mock the route generation functions
 vi.mock('core/watch/routes', () => ({
   generateVideoDetailRoute: vi.fn().mockReturnValue({ to: '/video/123' }),
-  generateVideoInPlaylistRoute: vi.fn().mockReturnValue({ to: '/playlist/456' }),
+  generateVideoInPlaylistRoute: vi
+    .fn()
+    .mockReturnValue({ to: '/playlist/456' }),
 }));
 
 describe('genlinkProps', () => {

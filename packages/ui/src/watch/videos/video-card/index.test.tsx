@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '.';
 import '@testing-library/jest-dom';
-import { MEDIA_TYPES, TransformedMediaItem } from 'core/watch/query-hooks';
+import { MEDIA_TYPES, type TransformedMediaItem } from 'core/watch/query-hooks';
 
 vi.mock('../video-container', () => ({
   VideoContainer: vi.fn(({ video }) => (
@@ -53,7 +53,11 @@ describe('VideoCard Component', () => {
     to: string;
     params: Record<string, string>;
   }) => (
-    <div data-testid="mock-link" data-to={to} data-params={JSON.stringify(params)}>
+    <div
+      data-testid="mock-link"
+      data-to={to}
+      data-params={JSON.stringify(params)}
+    >
       {children}
     </div>
   );
@@ -68,7 +72,14 @@ describe('VideoCard Component', () => {
       params: { slug: 'test-video', id: '1' },
     };
 
-    await renderWithAct(<VideoCard video={mockVideo} asLink={true} LinkComponent={MockLink} linkProps={linkProps} />);
+    await renderWithAct(
+      <VideoCard
+        video={mockVideo}
+        asLink={true}
+        LinkComponent={MockLink}
+        linkProps={linkProps}
+      />,
+    );
 
     const link = screen.getByTestId('mock-link');
     expect(link).toBeInTheDocument();
@@ -90,11 +101,16 @@ describe('VideoCard Component', () => {
     // Should render VideoThumbnail inside a Box
     const thumbnail = screen.getByTestId('mock-video-thumbnail');
     expect(thumbnail).toBeInTheDocument();
-    expect(thumbnail).toHaveAttribute('data-src', 'https://example.com/thumbnail.jpg');
+    expect(thumbnail).toHaveAttribute(
+      'data-src',
+      'https://example.com/thumbnail.jpg',
+    );
     expect(thumbnail).toHaveAttribute('data-title', 'Test Video');
 
     // Should not render VideoContainer
-    expect(screen.queryByTestId('mock-video-container')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('mock-video-container'),
+    ).not.toBeInTheDocument();
   });
 
   // Update existing tests to include asLink and LinkComponent where needed
@@ -210,6 +226,8 @@ describe('VideoCard Component', () => {
 
     await renderWithAct(<VideoCard video={invalidVideo} asLink={false} />);
 
-    expect(screen.queryByTestId('mock-video-thumbnail')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('mock-video-thumbnail'),
+    ).not.toBeInTheDocument();
   });
 });

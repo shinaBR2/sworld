@@ -1,4 +1,4 @@
-import { PlayableVideo } from '../types';
+import type { PlayableVideo } from '../types';
 
 const getVideoSources = (videoUrl: string) => {
   if (videoUrl.includes('youtu.be') || videoUrl.includes('youtube.com')) {

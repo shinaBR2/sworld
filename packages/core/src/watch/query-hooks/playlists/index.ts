@@ -1,7 +1,7 @@
 import { graphql } from '../../../graphql';
-import { PlaylistsQuery } from '../../../graphql/graphql';
+import type { PlaylistsQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
-import { BaseQueryProps } from '../types';
+import type { BaseQueryProps } from '../types';
 
 const playlistsQuery = graphql(/* GraphQL */ `
   query Playlists {

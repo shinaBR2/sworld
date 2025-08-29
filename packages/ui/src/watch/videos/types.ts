@@ -34,7 +34,10 @@ type RequiredLinkComponent<T = any> = {
   };
 };
 
-type RequiredLinkComponentWithoutLinkProps = Omit<RequiredLinkComponent, 'linkProps'>;
+type RequiredLinkComponentWithoutLinkProps = Omit<
+  RequiredLinkComponent,
+  'linkProps'
+>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface WithLinkComponent<T = any> {
@@ -46,10 +49,10 @@ interface WithLinkComponent<T = any> {
   };
 }
 
-export {
-  type LinkComponentType,
-  type PlayableVideo,
-  type RequiredLinkComponent,
-  type RequiredLinkComponentWithoutLinkProps,
-  type WithLinkComponent,
+export type {
+  LinkComponentType,
+  PlayableVideo,
+  RequiredLinkComponent,
+  RequiredLinkComponentWithoutLinkProps,
+  WithLinkComponent,
 };

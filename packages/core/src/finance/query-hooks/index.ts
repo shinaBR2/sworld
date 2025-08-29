@@ -1,7 +1,10 @@
 import { graphql } from '../../graphql';
-import { GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables } from '../../graphql/graphql';
+import type {
+  GetFinanceRecordsQuery,
+  GetFinanceRecordsQueryVariables,
+} from '../../graphql/graphql';
 import { useRequest } from '../../universal/hooks/use-request';
-import { CategoryType } from '../types';
+import type { CategoryType } from '../types';
 
 const transactionsByPeriodQuery = graphql(/* GraphQL */ `
   query GetFinanceRecords($month: Int!, $year: Int!) {
@@ -60,7 +63,13 @@ interface LoadTransactionsByPeriodProps {
 }
 
 const transform = (data: GetFinanceRecordsQuery) => {
-  const { finance_transactions = [], must_aggregate, nice_aggregate, waste_aggregate, oldest_aggregate } = data;
+  const {
+    finance_transactions = [],
+    must_aggregate,
+    nice_aggregate,
+    waste_aggregate,
+    oldest_aggregate,
+  } = data;
   const mustAmount = (must_aggregate.aggregate?.sum?.amount ?? 0) as number;
   const niceAmount = (nice_aggregate.aggregate?.sum?.amount ?? 0) as number;
   const wasteAmount = (waste_aggregate.aggregate?.sum?.amount ?? 0) as number;
@@ -74,10 +83,26 @@ const transform = (data: GetFinanceRecordsQuery) => {
   return {
     transactions: finance_transactions,
     categories: [
-      { category: 'must' as CategoryType, amount: mustAmount, count: mustCount },
-      { category: 'nice' as CategoryType, amount: niceAmount, count: niceCount },
-      { category: 'waste' as CategoryType, amount: wasteAmount, count: wasteCount },
-      { category: 'total' as CategoryType, amount: totalAmount, count: totalCount },
+      {
+        category: 'must' as CategoryType,
+        amount: mustAmount,
+        count: mustCount,
+      },
+      {
+        category: 'nice' as CategoryType,
+        amount: niceAmount,
+        count: niceCount,
+      },
+      {
+        category: 'waste' as CategoryType,
+        amount: wasteAmount,
+        count: wasteCount,
+      },
+      {
+        category: 'total' as CategoryType,
+        amount: totalAmount,
+        count: totalCount,
+      },
     ],
     oldest: {
       month: oldest_aggregate[0]?.month || 0,
@@ -89,7 +114,10 @@ const transform = (data: GetFinanceRecordsQuery) => {
 const useLoadTransactionsByPeriod = (props: LoadTransactionsByPeriodProps) => {
   const { getAccessToken, month, year } = props;
 
-  const { data, isLoading, error } = useRequest<GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables>({
+  const { data, isLoading, error } = useRequest<
+    GetFinanceRecordsQuery,
+    GetFinanceRecordsQueryVariables
+  >({
     queryKey: ['finance-transactions', month, year],
     getAccessToken,
     document: transactionsByPeriodQuery,

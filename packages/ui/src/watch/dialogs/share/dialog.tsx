@@ -1,12 +1,12 @@
-import React from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   TextField,
 } from '@mui/material';
+import React from 'react';
 import type { ShareDialogProps } from './types';
 
 export const ShareDialog: React.FC<ShareDialogProps> = ({
@@ -19,8 +19,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleShare = () => {
     const emailList = emails
       .split(',')
-      .map(email => email.trim())
-      .filter(email => email !== '');
+      .map((email) => email.trim())
+      .filter((email) => email !== '');
     onShare(emailList);
     onClose();
   };

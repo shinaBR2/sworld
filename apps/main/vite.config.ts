@@ -1,7 +1,7 @@
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 const codecovToken = process.env.CODECOV_TOKEN;
 
@@ -38,12 +38,13 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
         output: {
-          manualChunks: id => {
+          manualChunks: (id) => {
             if (id.includes('node_modules')) {
               /** For error tracking, analytics */
               if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
 
-              if (id.includes('/echarts@') || id.includes('/zrender@')) return 'chart-vendor';
+              if (id.includes('/echarts@') || id.includes('/zrender@'))
+                return 'chart-vendor';
 
               /**
                * App broken if bundle mui separately

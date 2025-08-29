@@ -1,4 +1,4 @@
-import React from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Alert,
   Box,
@@ -13,14 +13,14 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { texts } from './texts';
-import { StyledDialog, StyledCloseButton } from './styled';
-import { SubmitButton } from './submit-button';
-import { DialogState } from './types';
-import { getFormFieldStaticConfigs } from './fields-config';
-import { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import type { useLoadPlaylists } from 'core/watch/query-hooks/playlists';
+import type React from 'react';
 import { useIsMobile } from '../../../universal/responsive';
+import { getFormFieldStaticConfigs } from './fields-config';
+import { StyledCloseButton, StyledDialog } from './styled';
+import { SubmitButton } from './submit-button';
+import { texts } from './texts';
+import type { DialogState } from './types';
 import { CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST } from './utils';
 
 interface UploadErrorResultProps {
@@ -38,7 +38,12 @@ const UploadErrorResult = (props: UploadErrorResultProps) => {
         severity="error"
         sx={{ mb: 2 }}
         action={
-          <Button color="inherit" size="small" onClick={handleSubmit} disabled={isSubmitting}>
+          <Button
+            color="inherit"
+            size="small"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
             Retry
           </Button>
         }
@@ -64,7 +69,13 @@ const UploadSuccessResult = (props: UploadSuccessResultProps) => {
         severity="success"
         sx={{ mb: 2 }}
         action={
-          countdown > 0 && <CircularProgress variant="determinate" value={(countdown / totalTime) * 100} size={20} />
+          countdown > 0 && (
+            <CircularProgress
+              variant="determinate"
+              value={(countdown / totalTime) * 100}
+              size={20}
+            />
+          )
         }
       >
         {message}
@@ -78,7 +89,9 @@ interface DialogComponentProps {
   open: boolean;
   handleClose: () => void;
   playlists: ReturnType<typeof useLoadPlaylists>['playlists'];
-  onFormFieldChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFormFieldChange: (
+    field: string,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
 }
 
@@ -88,7 +101,14 @@ interface DialogComponentProps {
  * @returns
  */
 const DialogComponent = (props: DialogComponentProps) => {
-  const { state, open, handleClose, onFormFieldChange, playlists, handleSubmit } = props;
+  const {
+    state,
+    open,
+    handleClose,
+    onFormFieldChange,
+    playlists,
+    handleSubmit,
+  } = props;
   const {
     isSubmitting,
     title,
@@ -165,25 +185,55 @@ const DialogComponent = (props: DialogComponentProps) => {
     <StyledDialog {...dialogProps} fullScreen={isMobile}>
       <DialogTitle id="video-upload-dialog-title">
         {texts.dialog.title}
-        <StyledCloseButton onClick={onClose} aria-label={texts.dialog.closeButton} disabled={isSubmitting}>
+        <StyledCloseButton
+          onClick={onClose}
+          aria-label={texts.dialog.closeButton}
+          disabled={isSubmitting}
+        >
           <CloseIcon />
         </StyledCloseButton>
       </DialogTitle>
 
       <DialogContent>
-        <Box component="form" noValidate aria-label="Video URL validation form" sx={{ mt: 2 }}>
-          <TextField value={title} onChange={onFormFieldChange('title')} {...titleTextFieldProps} />
-          <TextField value={url} onChange={onFormFieldChange('url')} {...urlTextFieldProps} />
-          <TextField value={subtitle} onChange={onFormFieldChange('subtitle')} {...subtitleTextFieldProps} />
-          <TextField value={description} onChange={onFormFieldChange('description')} {...descriptionTextFieldProps} />
-          <TextField select value={playlistId} onChange={onFormFieldChange('playlistId')} {...playlistTextFieldProps}>
+        <Box
+          component="form"
+          noValidate
+          aria-label="Video URL validation form"
+          sx={{ mt: 2 }}
+        >
+          <TextField
+            value={title}
+            onChange={onFormFieldChange('title')}
+            {...titleTextFieldProps}
+          />
+          <TextField
+            value={url}
+            onChange={onFormFieldChange('url')}
+            {...urlTextFieldProps}
+          />
+          <TextField
+            value={subtitle}
+            onChange={onFormFieldChange('subtitle')}
+            {...subtitleTextFieldProps}
+          />
+          <TextField
+            value={description}
+            onChange={onFormFieldChange('description')}
+            {...descriptionTextFieldProps}
+          />
+          <TextField
+            select
+            value={playlistId}
+            onChange={onFormFieldChange('playlistId')}
+            {...playlistTextFieldProps}
+          >
             <MenuItem value="">
               <em>{texts.form.playlistInput.none}</em>
             </MenuItem>
             <MenuItem value={CREATE_NEW_PLAYLIST}>
               <em>{texts.form.playlistInput.createNew}</em>
             </MenuItem>
-            {playlists.map(p => (
+            {playlists.map((p) => (
               <MenuItem key={p.id} value={p.id}>
                 {p.title}
               </MenuItem>
@@ -200,7 +250,11 @@ const DialogComponent = (props: DialogComponentProps) => {
               required
               disabled={isSubmitting}
               error={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName}
-              helperText={playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName ? 'Playlist name is required' : ''}
+              helperText={
+                playlistId === CREATE_NEW_PLAYLIST && !newPlaylistName
+                  ? 'Playlist name is required'
+                  : ''
+              }
             />
           )}
           <TextField
@@ -243,7 +297,9 @@ const DialogComponent = (props: DialogComponentProps) => {
           </Grid>
 
           {error && <UploadErrorResult {...uploadErrorResultProps} />}
-          {error === '' && <UploadSuccessResult {...uploadSuccessResultProps} />}
+          {error === '' && (
+            <UploadSuccessResult {...uploadSuccessResultProps} />
+          )}
 
           <SubmitButton {...submitButtonProps} />
         </Box>

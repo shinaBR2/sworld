@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 export const StyledCard = styled(Card)({

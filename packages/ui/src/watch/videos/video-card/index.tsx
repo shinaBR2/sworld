@@ -1,12 +1,12 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { PlayableVideo, WithLinkComponent } from '../types';
+import { MEDIA_TYPES, type MediaType } from 'core/watch/query-hooks';
+import { formatCreatedDate } from '../../utils';
+import type { PlayableVideo, WithLinkComponent } from '../types';
+import { VideoContainer } from '../video-container';
 import { VideoThumbnail } from '../video-thumbnail';
 import { StyledCard, StyledTitle } from './styled';
-import { formatCreatedDate } from '../../utils';
-import { VideoContainer } from '../video-container';
-import { MEDIA_TYPES, MediaType } from 'core/watch/query-hooks';
 
 // source and duration are NOT in playlist
 interface Video extends Omit<PlayableVideo, 'source'> {

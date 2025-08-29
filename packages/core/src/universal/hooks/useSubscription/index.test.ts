@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthContextValue, useAuthContext } from '../../../providers/auth';
+import { type AuthContextValue, useAuthContext } from '../../../providers/auth';
 import { useTracker } from '../../tracker';
 import { SubscriptionErrorType } from './helpers';
 import { useSubscription } from './index';
@@ -11,7 +11,7 @@ vi.mock('../../../providers/auth', () => ({
 }));
 
 vi.mock('../../error-boundary/errors', () => ({
-  createConnectionError: vi.fn().mockImplementation(err => err),
+  createConnectionError: vi.fn().mockImplementation((err) => err),
 }));
 
 vi.mock('../../tracker', () => ({
@@ -45,15 +45,20 @@ class MockWebSocket {
   send = vi.fn();
   close = vi.fn();
 
-  constructor(public url: string, public protocol: string) {}
+  constructor(
+    public url: string,
+    public protocol: string,
+  ) {}
 }
 
 let mockWsInstance: MockWebSocket;
 
-const MockWebSocketSpy = vi.fn().mockImplementation((url: string, protocol: string) => {
-  mockWsInstance = new MockWebSocket(url, protocol);
-  return mockWsInstance;
-});
+const MockWebSocketSpy = vi
+  .fn()
+  .mockImplementation((url: string, protocol: string) => {
+    mockWsInstance = new MockWebSocket(url, protocol);
+    return mockWsInstance;
+  });
 
 Object.assign(MockWebSocketSpy, {
   CONNECTING: MockWebSocket.CONNECTING,
@@ -99,7 +104,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     // Initial connection
@@ -115,7 +120,7 @@ describe('useSubscription', () => {
         payload: {
           headers: {},
         },
-      })
+      }),
     );
   });
 
@@ -125,7 +130,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
     expect(result.current).toEqual({
       data: null,
@@ -141,7 +146,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     // Initial connection
@@ -157,7 +162,7 @@ describe('useSubscription', () => {
         payload: {
           headers: { Authorization: `Bearer ${mockToken}` },
         },
-      })
+      }),
     );
 
     // Connection acknowledged, should start subscription
@@ -171,8 +176,8 @@ describe('useSubscription', () => {
     expect(mockWsInstance.send).toHaveBeenNthCalledWith(
       2,
       expect.stringMatching(
-        /{"id":"[^"]+","type":"start","payload":{"query":"subscription { test }","variables":{"id":"123"}}}/
-      )
+        /{"id":"[^"]+","type":"start","payload":{"query":"subscription { test }","variables":{"id":"123"}}}/,
+      ),
     );
 
     // Receive data
@@ -207,7 +212,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     await act(async () => {
@@ -217,7 +222,10 @@ describe('useSubscription', () => {
     expect(mockCaptureError).toHaveBeenCalledWith(mockError, {
       tags: [
         { key: 'category', value: 'websocket' },
-        { key: 'error_type', value: SubscriptionErrorType.CONNECTION_INIT_FAILED },
+        {
+          key: 'error_type',
+          value: SubscriptionErrorType.CONNECTION_INIT_FAILED,
+        },
       ],
       extras,
       fingerprint,
@@ -231,7 +239,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     await act(async () => {
@@ -267,7 +275,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     await act(async () => {
@@ -300,7 +308,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
 
     await act(async () => {
@@ -324,7 +332,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
 
     await act(async () => {
@@ -342,12 +350,14 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
 
     unmount();
 
-    expect(mockWsInstance.send).toHaveBeenCalledWith(expect.stringContaining('"type":"stop"'));
+    expect(mockWsInstance.send).toHaveBeenCalledWith(
+      expect.stringContaining('"type":"stop"'),
+    );
     expect(mockWsInstance.close).toHaveBeenCalled();
   });
 
@@ -357,7 +367,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
 
     mockWsInstance.readyState = WebSocket.CLOSED;
@@ -373,7 +383,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     // Set up close to throw an error
@@ -406,7 +416,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: true,
-      })
+      }),
     );
 
     // Ensure the WebSocket is in OPEN state and properly initialized
@@ -440,10 +450,13 @@ describe('useSubscription', () => {
         hasuraUrl: httpsUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
 
-    expect(MockWebSocketSpy).toHaveBeenLastCalledWith('wss://hasura.example.com/graphql', 'graphql-ws');
+    expect(MockWebSocketSpy).toHaveBeenLastCalledWith(
+      'wss://hasura.example.com/graphql',
+      'graphql-ws',
+    );
   });
 
   // Replace the disabled test cases with enabled ones
@@ -454,7 +467,7 @@ describe('useSubscription', () => {
         query: mockQuery,
         variables: mockVariables,
         enabled: false,
-      })
+      }),
     );
 
     expect(result.current).toEqual({
@@ -474,7 +487,7 @@ describe('useSubscription', () => {
           variables: mockVariables,
           enabled,
         }),
-      { initialProps: { enabled: true } }
+      { initialProps: { enabled: true } },
     );
 
     await act(async () => {
@@ -483,7 +496,9 @@ describe('useSubscription', () => {
 
     rerender({ enabled: false });
 
-    expect(mockWsInstance.send).toHaveBeenLastCalledWith(expect.stringContaining('"type":"stop"'));
+    expect(mockWsInstance.send).toHaveBeenLastCalledWith(
+      expect.stringContaining('"type":"stop"'),
+    );
     expect(mockWsInstance.close).toHaveBeenCalled();
   });
 
@@ -493,7 +508,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: true,
-      })
+      }),
     );
     expect(result.current).toEqual({
       data: null,
@@ -508,7 +523,7 @@ describe('useSubscription', () => {
         hasuraUrl: mockUrl,
         query: mockQuery,
         enabled: false,
-      })
+      }),
     );
     expect(result.current).toEqual({
       data: null,

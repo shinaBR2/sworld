@@ -1,23 +1,24 @@
 // packages/ui/src/journal/journal-list.tsx
-import React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import Skeleton from '@mui/material/Skeleton';
+
 // MUI Icons imports
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { MoodIcon } from '../mood-icons';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
+import Typography from '@mui/material/Typography';
+import type { Journal, JournalStats, MoodType } from 'core/src/journal/types';
 import { formatDate, getMonthName } from 'core/universal/common';
-import { Journal, JournalStats, MoodType } from 'core/src/journal/types';
+import type React from 'react';
+import { MoodIcon } from '../mood-icons';
 
 interface JournalListProps {
   journals: Journal[];
@@ -148,7 +149,13 @@ export const JournalList: React.FC<JournalListProps> = ({
       onClick={() => onJournalClick(journal)}
     >
       <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+          }}
+        >
           <Box>
             <Typography variant="body1" fontWeight="medium">
               {formatDate(journal.date)}
@@ -190,7 +197,11 @@ export const JournalList: React.FC<JournalListProps> = ({
   );
 
   const renderSkeletonCard = (index: number) => (
-    <Card key={`skeleton-${index}`} data-testid={`skeleton-${index}`} sx={{ mb: 2, boxShadow: 1 }}>
+    <Card
+      key={`skeleton-${index}`}
+      data-testid={`skeleton-${index}`}
+      sx={{ mb: 2, boxShadow: 1 }}
+    >
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box>
@@ -211,7 +222,14 @@ export const JournalList: React.FC<JournalListProps> = ({
 
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h5" fontWeight="bold">
           Journals
         </Typography>
@@ -232,12 +250,23 @@ export const JournalList: React.FC<JournalListProps> = ({
       </Box>
 
       {/* Stats Cards */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 2,
+          mb: 3,
+        }}
+      >
         {isLoading
           ? Array(4)
               .fill(0)
               .map((_, index) => (
-                <Card key={`stat-skeleton-${index}`} data-testid={`stat-skeleton-${index}`} sx={{ boxShadow: 1 }}>
+                <Card
+                  key={`stat-skeleton-${index}`}
+                  data-testid={`stat-skeleton-${index}`}
+                  sx={{ boxShadow: 1 }}
+                >
                   <CardContent>
                     <Skeleton height={24} width={80} />
                     <Skeleton height={40} width={40} />
@@ -245,7 +274,9 @@ export const JournalList: React.FC<JournalListProps> = ({
                   </CardContent>
                 </Card>
               ))
-          : stats.categories.map(category => renderStatCard(category.mood, category.count))}
+          : stats.categories.map((category) =>
+              renderStatCard(category.mood, category.count),
+            )}
       </Box>
 
       <Typography variant="h6" fontWeight="medium" sx={{ mb: 2 }}>
@@ -257,7 +288,7 @@ export const JournalList: React.FC<JournalListProps> = ({
           .fill(0)
           .map((_, index) => renderSkeletonCard(index))
       ) : journals.length > 0 ? (
-        journals.map(journal => renderJournalCard(journal))
+        journals.map((journal) => renderJournalCard(journal))
       ) : (
         <Paper
           sx={{

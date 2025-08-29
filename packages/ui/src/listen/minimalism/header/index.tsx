@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
-import { Auth } from 'core';
+import type { Auth } from 'core';
 import { ResponsiveAvatar } from '../../../universal';
 import Logo from '../../../universal/logo';
 import SiteChoices from '../../../universal/site-choices';
@@ -25,7 +25,9 @@ const Header = (props: HeaderProps) => {
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
-      <Toolbar sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+      <Toolbar
+        sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -40,7 +42,11 @@ const Header = (props: HeaderProps) => {
         <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
           <IconButton onClick={onProfileClick} aria-label="account options">
             {avatarUrl ? (
-              <ResponsiveAvatar src={avatarUrl} alt={user.name} data-testid="user-avatar" />
+              <ResponsiveAvatar
+                src={avatarUrl}
+                alt={user.name}
+                data-testid="user-avatar"
+              />
             ) : (
               <AccountCircle />
             )}

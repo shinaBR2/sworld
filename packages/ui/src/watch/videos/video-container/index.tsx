@@ -1,4 +1,4 @@
-import { PlayableVideo } from '../types';
+import type { PlayableVideo } from '../types';
 import { VideoPlayer } from '../video-player';
 
 interface VideoContainerInterface {

@@ -19,11 +19,16 @@ class BootScene extends Phaser.Scene {
     progressBox.fillRect(width / 4, height / 2 - 30, width / 2, 50);
 
     // Loading text
-    const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
-      fontFamily: 'Arial',
-      fontSize: '24px',
-      color: '#ffffff',
-    });
+    const loadingText = this.add.text(
+      width / 2,
+      height / 2 - 50,
+      'Loading...',
+      {
+        fontFamily: 'Arial',
+        fontSize: '24px',
+        color: '#ffffff',
+      },
+    );
     loadingText.setOrigin(0.5);
 
     // Percentage text
@@ -46,7 +51,12 @@ class BootScene extends Phaser.Scene {
     this.load.on('progress', (value: number) => {
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
-      progressBar.fillRect(width / 4 + 10, height / 2 - 20, (width / 2 - 20) * value, 30);
+      progressBar.fillRect(
+        width / 4 + 10,
+        height / 2 - 20,
+        (width / 2 - 20) * value,
+        30,
+      );
       percentText.setText(`${Math.floor(value * 100)}%`);
     });
 

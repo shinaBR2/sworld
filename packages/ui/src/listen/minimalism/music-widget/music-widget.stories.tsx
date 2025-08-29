@@ -31,7 +31,7 @@ const meta: Meta<typeof MusicWidget> = {
   title: 'Music widget',
   component: MusicWidget,
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider theme={theme}>
         <Story />
       </ThemeProvider>
@@ -43,7 +43,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Render function to handle the hook
-const render: Story['render'] = args => {
+const render: Story['render'] = (args) => {
   const hookResult = useSAudioPlayer({
     audioList: args.audioList,
     index: 0,

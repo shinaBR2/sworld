@@ -1,4 +1,4 @@
-import { GameScene } from '../scenes/game';
+import type { GameScene } from '../scenes/game';
 import Bubble from './bubble';
 import Dust from './particle';
 
@@ -61,7 +61,12 @@ export default class Player {
       right: Bodies.rectangle(w * 0.35, 0, 2, h * 0.5, { isSensor: true }),
     };
     const compoundBody = Body.create({
-      parts: [mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
+      parts: [
+        mainBody,
+        this.sensors.bottom,
+        this.sensors.left,
+        this.sensors.right,
+      ],
       frictionStatic: 0,
       frictionAir: 0.02,
       friction: 0.1,
@@ -92,13 +97,13 @@ export default class Player {
     These are the collider events that will be used to control the player. We use the MatterCollision plugin to detect collisions between the player and the walls. We also use the onSensorCollide method to detect collisions with the sensors that we added to the player. This is used to detect collisions with the walls and the ground.
   */
   addColliders() {
-    // @ts-ignore
+    // @ts-expect-error
     this.scene.matterCollision.addOnCollideStart({
       objectA: [this.sensors.bottom, this.sensors.left, this.sensors.right],
       callback: this.onSensorCollide,
       context: this,
     });
-    // @ts-ignore
+    // @ts-expect-error
     this.scene.matterCollision.addOnCollideActive({
       objectA: [this.sensors.bottom, this.sensors.left, this.sensors.right],
       callback: this.onSensorCollide,
@@ -165,10 +170,18 @@ export default class Player {
   */
   addControls() {
     this.cursor = this.scene.input.keyboard?.createCursorKeys();
-    this.W = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    this.A = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.S = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.D = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.W = this.scene.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.W,
+    );
+    this.A = this.scene.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.A,
+    );
+    this.S = this.scene.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.S,
+    );
+    this.D = this.scene.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.D,
+    );
   }
 
   /*
@@ -194,7 +207,8 @@ export default class Player {
         this.sprite.setVelocityX(-5);
       }
     } else {
-      if (this.sprite.anims.currentAnim.key !== 'playershot') this.sprite.anims.play('playeridle', true);
+      if (this.sprite.anims.currentAnim.key !== 'playershot')
+        this.sprite.anims.play('playeridle', true);
     }
 
     if (this.sprite.body.velocity.x > 7) this.sprite.setVelocityX(7);
@@ -208,7 +222,10 @@ export default class Player {
     If the player is jumping, we add a cooldown timer so it can't jump again until it touches the ground.
   */
   checkJump() {
-    if (((this.canJump && this.isOnGround) || this.onWall) && (this.W.isDown || this.cursor.up.isDown)) {
+    if (
+      ((this.canJump && this.isOnGround) || this.onWall) &&
+      (this.W.isDown || this.cursor.up.isDown)
+    ) {
       this.sprite.setVelocityY(-8);
       this.scene.playAudio('jump');
       this.canJump = false;
@@ -224,7 +241,11 @@ export default class Player {
     Same as we did with the jump, here we add a cooldown timer to the shooting so the player can't shoot again until the cooldown is over.
   */
   checkShoot() {
-    if (this.canShoot && (Phaser.Input.Keyboard.JustDown(this.cursor.down) || Phaser.Input.Keyboard.JustDown(this.W))) {
+    if (
+      this.canShoot &&
+      (Phaser.Input.Keyboard.JustDown(this.cursor.down) ||
+        Phaser.Input.Keyboard.JustDown(this.W))
+    ) {
       const offset = this.sprite.flipX ? 128 : -128;
       this.sprite.anims.play('playershot', true);
       this.scene.playAudio('bubble');
@@ -251,7 +272,11 @@ export default class Player {
       this.scene.matter.world.off('beforeupdate', this.resetTouching, this);
     }
 
-    const sensors = [this.sensors.bottom, this.sensors.left, this.sensors.right];
+    const sensors = [
+      this.sensors.bottom,
+      this.sensors.left,
+      this.sensors.right,
+    ];
     this.scene.matterCollision.removeOnCollideStart({ objectA: sensors });
     this.scene.matterCollision.removeOnCollideActive({ objectA: sensors });
 
@@ -265,15 +290,25 @@ Every time the player moves, we add a few dust particles to the scene. This is d
   */
   step() {
     if (Phaser.Math.Between(0, 5) > 4) {
-      this.scene.trailLayer.add(new Dust(this.scene, this.sprite.x, this.sprite.y + Phaser.Math.Between(10, 16)));
+      this.scene.trailLayer.add(
+        new Dust(
+          this.scene,
+          this.sprite.x,
+          this.sprite.y + Phaser.Math.Between(10, 16),
+        ),
+      );
     }
   }
 
   friction() {
     Array(Phaser.Math.Between(2, 4))
       .fill(0)
-      .forEach(i => {
-        new Dust(this.scene, this.sprite.x + Phaser.Math.Between(-8, 8), this.sprite.y + Phaser.Math.Between(-32, 32));
+      .forEach((i) => {
+        new Dust(
+          this.scene,
+          this.sprite.x + Phaser.Math.Between(-8, 8),
+          this.sprite.y + Phaser.Math.Between(-32, 32),
+        );
       });
   }
 
@@ -281,8 +316,12 @@ Every time the player moves, we add a few dust particles to the scene. This is d
     if (this.sprite.body.velocity.y < 1) return;
     Array(Phaser.Math.Between(3, 6))
       .fill(0)
-      .forEach(i => {
-        new Dust(this.scene, this.sprite.x + Phaser.Math.Between(-32, 32), this.sprite.y + Phaser.Math.Between(10, 16));
+      .forEach((i) => {
+        new Dust(
+          this.scene,
+          this.sprite.x + Phaser.Math.Between(-32, 32),
+          this.sprite.y + Phaser.Math.Between(10, 16),
+        );
       });
   }
 
@@ -292,8 +331,12 @@ Every time the player moves, we add a few dust particles to the scene. This is d
   explosion() {
     Array(Phaser.Math.Between(10, 15))
       .fill(0)
-      .forEach(i => {
-        new Dust(this.scene, this.sprite.x + Phaser.Math.Between(-32, 32), this.sprite.y + Phaser.Math.Between(20, 36));
+      .forEach((i) => {
+        new Dust(
+          this.scene,
+          this.sprite.x + Phaser.Math.Between(-32, 32),
+          this.sprite.y + Phaser.Math.Between(20, 36),
+        );
       });
   }
 

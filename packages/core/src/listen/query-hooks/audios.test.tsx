@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useLoadAudios, useLoadPublicAudios } from './audios';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryProvider } from '../../providers/query';
+import { useLoadAudios, useLoadPublicAudios } from './audios';
 
 const mockConfig = {
   hasuraUrl: 'https://test-hasura.url',
@@ -81,7 +81,10 @@ describe('useLoadAudios', () => {
       isLoading: false,
     });
 
-    const { result } = renderHook(() => useLoadAudios({ getAccessToken: mockGetAccessToken }), { wrapper });
+    const { result } = renderHook(
+      () => useLoadAudios({ getAccessToken: mockGetAccessToken }),
+      { wrapper },
+    );
 
     expect(result.current.data).toEqual(mockData);
     expect(result.current.isLoading).toBe(false);
@@ -93,7 +96,10 @@ describe('useLoadAudios', () => {
       isLoading: true,
     });
 
-    const { result } = renderHook(() => useLoadAudios({ getAccessToken: mockGetAccessToken }), { wrapper });
+    const { result } = renderHook(
+      () => useLoadAudios({ getAccessToken: mockGetAccessToken }),
+      { wrapper },
+    );
 
     expect(result.current.data).toBeUndefined();
     expect(result.current.isLoading).toBe(true);
@@ -109,7 +115,10 @@ describe('useLoadAudios', () => {
       error: networkError,
     });
 
-    const { result, rerender } = renderHook(() => useLoadAudios({ getAccessToken: mockGetAccessToken }), { wrapper });
+    const { result, rerender } = renderHook(
+      () => useLoadAudios({ getAccessToken: mockGetAccessToken }),
+      { wrapper },
+    );
 
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBe(networkError);
@@ -137,7 +146,10 @@ describe('useLoadAudios', () => {
       isLoading: false,
     });
 
-    const { result } = renderHook(() => useLoadAudios({ getAccessToken: mockGetAccessToken }), { wrapper });
+    const { result } = renderHook(
+      () => useLoadAudios({ getAccessToken: mockGetAccessToken }),
+      { wrapper },
+    );
 
     expect(result.current.data).toEqual(emptyData);
     expect(result.current.isLoading).toBe(false);

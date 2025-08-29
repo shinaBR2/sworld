@@ -1,5 +1,5 @@
-import { WithLinkComponent } from '../../watch/videos/types';
 import Link from '@mui/material/Link';
+import type { WithLinkComponent } from '../../watch/videos/types';
 import { ResponsiveImage } from '../images/image';
 
 interface LogoProps extends WithLinkComponent {}

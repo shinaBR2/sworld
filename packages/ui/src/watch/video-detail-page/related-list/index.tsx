@@ -1,13 +1,19 @@
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { RequiredLinkComponent } from '../../videos/types';
-import { VideoListItem } from '../../videos/list-item';
-import { generateVideoDetailRoute, generateVideoInPlaylistRoute } from 'core/watch/routes';
-import { TransformedVideo, useLoadPlaylistDetail } from 'core/watch/query-hooks';
+import type {
+  TransformedVideo,
+  useLoadPlaylistDetail,
+} from 'core/watch/query-hooks';
+import {
+  generateVideoDetailRoute,
+  generateVideoInPlaylistRoute,
+} from 'core/watch/routes';
 import React from 'react';
+import { VideoListItem } from '../../videos/list-item';
+import type { RequiredLinkComponent } from '../../videos/types';
 
 interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
   autoPlay?: boolean;
@@ -20,7 +26,7 @@ interface RelatedListProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 
 const genLinkProps = (
   playlist: ReturnType<typeof useLoadPlaylistDetail>['playlist'] | null,
-  video: TransformedVideo
+  video: TransformedVideo,
 ) => {
   if (playlist) {
     return generateVideoInPlaylistRoute({
@@ -37,7 +43,15 @@ const genLinkProps = (
 };
 
 const RelatedList = React.memo((props: RelatedListProps) => {
-  const { videos, title = 'Related videos', activeId, playlist, LinkComponent, autoPlay, onAutoPlayChange } = props;
+  const {
+    videos,
+    title = 'Related videos',
+    activeId,
+    playlist,
+    LinkComponent,
+    autoPlay,
+    onAutoPlayChange,
+  } = props;
 
   return (
     <Box>
@@ -47,7 +61,7 @@ const RelatedList = React.memo((props: RelatedListProps) => {
             control={
               <Checkbox
                 checked={autoPlay}
-                onChange={e => {
+                onChange={(e) => {
                   onAutoPlayChange(e.target.checked);
                 }}
               />
@@ -68,7 +82,7 @@ const RelatedList = React.memo((props: RelatedListProps) => {
       </Typography>
 
       <Stack spacing={2}>
-        {videos.map(video => (
+        {videos.map((video) => (
           <Box key={video.id} sx={{ px: 2 }}>
             <VideoListItem
               key={video.id}

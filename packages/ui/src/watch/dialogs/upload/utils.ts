@@ -1,7 +1,7 @@
 import { slugify } from 'core/universal/common';
-import { BulkConvertVariables } from 'core/watch/mutation-hooks/bulk-convert';
-import { DialogState } from './types';
-import { ValidationResult } from './validation-results';
+import type { BulkConvertVariables } from 'core/watch/mutation-hooks/bulk-convert';
+import type { DialogState } from './types';
+import type { ValidationResult } from './validation-results';
 
 const CLOSE_DELAY_MS = 3000;
 const CREATE_NEW_PLAYLIST = '__create-new';
@@ -22,10 +22,10 @@ const canPlay = (url: string) => {
 // Replace the async canPlayUrls with this version
 const canPlayUrls = (urls: string[]): ValidationResult[] => {
   return urls
-    .filter(url => url != null)
-    .map(url => url!.trim())
+    .filter((url) => url != null)
+    .map((url) => url!.trim())
     .filter(Boolean)
-    .map(url => ({
+    .map((url) => ({
       url,
       isValid: canPlay(url),
     }));
@@ -79,7 +79,8 @@ const buildVariables = (dialogState: DialogState) => {
     ],
   };
 
-  const isCreateNewPlaylist = playlistId === CREATE_NEW_PLAYLIST && newPlaylistName;
+  const isCreateNewPlaylist =
+    playlistId === CREATE_NEW_PLAYLIST && newPlaylistName;
   const isUseExistedPlaylist = playlistId && playlistId !== CREATE_NEW_PLAYLIST;
 
   if (isCreateNewPlaylist || isUseExistedPlaylist) {
@@ -115,4 +116,10 @@ const buildVariables = (dialogState: DialogState) => {
   return variables;
 };
 
-export { buildVariables, canPlayUrls, CLOSE_DELAY_MS, CREATE_NEW_PLAYLIST, formalizeState };
+export {
+  buildVariables,
+  canPlayUrls,
+  CLOSE_DELAY_MS,
+  CREATE_NEW_PLAYLIST,
+  formalizeState,
+};

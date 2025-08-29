@@ -36,7 +36,7 @@ const useMarkNotificationAsRead = (props: UseMarkNotificationAsReadProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error) => {
         console.error('Mark as read failed:', error);
         onError?.(error);
       },
@@ -48,7 +48,7 @@ const useMarkNotificationAsRead = (props: UseMarkNotificationAsReadProps) => {
     getAccessToken,
     options: {
       onSuccess,
-      onError: error => {
+      onError: (error) => {
         console.error('Mark all as read failed:', error);
         onError?.(error);
       },
