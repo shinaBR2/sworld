@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running formatter before push..."
+
+# Run Biome formatter
+pnpm format
+
+# If formatting created changes, block the push so you can commit them
+if ! git diff --quiet; then
+  echo "\nFormatting made changes. Please commit them before pushing."
+  git status --short
+  exit 1
+fi
+
+exit 0

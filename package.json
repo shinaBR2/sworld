@@ -18,12 +18,14 @@
     "dev:main": "pnpm run predev:main && turbo run dev --filter=main --filter=core --filter=ui --no-cache --parallel --continue",
     "dev:docs": "turbo run dev --filter=docs",
     "format": "biome format --write",
+    "prepare": "husky",
     "lint": "turbo run lint",
     "test": "turbo run test"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
     "eslint": "^8.56.0",
+    "husky": "^9.1.7",
     "prettier": "^2.7.1",
     "turbo": "2.4.4"
   },
