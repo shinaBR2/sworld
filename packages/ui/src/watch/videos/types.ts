@@ -14,19 +14,16 @@ interface PlayableVideo {
   subtitles?: Subtitle[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface GenericLinkProps<T = any> {
+interface GenericLinkProps<T = Record<string, unknown>> {
   to: string;
   params?: T;
   children: React.ReactNode;
   style?: React.CSSProperties;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type LinkComponentType<T = any> = React.ComponentType<GenericLinkProps<T>>;
+type LinkComponentType<T = Record<string, unknown>> = React.ComponentType<GenericLinkProps<T>>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RequiredLinkComponent<T = any> = {
+type RequiredLinkComponent<T = Record<string, unknown>> = {
   LinkComponent: LinkComponentType<T>;
   linkProps: {
     to: string;
@@ -34,13 +31,9 @@ type RequiredLinkComponent<T = any> = {
   };
 };
 
-type RequiredLinkComponentWithoutLinkProps = Omit<
-  RequiredLinkComponent,
-  'linkProps'
->;
+type RequiredLinkComponentWithoutLinkProps = Omit<RequiredLinkComponent, 'linkProps'>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface WithLinkComponent<T = any> {
+interface WithLinkComponent<T = Record<string, unknown>> {
   asLink?: boolean;
   LinkComponent?: LinkComponentType<T>;
   linkProps?: {

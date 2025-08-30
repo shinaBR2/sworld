@@ -51,7 +51,6 @@ vi.mock('../../universal/hooks/useFeatureFlagSubscription', () => ({
 }));
 
 // Mock WebSocket
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 global.WebSocket = vi.fn().mockImplementation(() => ({
   onopen: vi.fn(),

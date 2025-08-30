@@ -130,7 +130,6 @@ describe('VideoCard Component', () => {
       duration: undefined,
     };
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     await renderWithAct(<VideoCard video={videoWithoutDuration} />);
 
@@ -195,7 +194,6 @@ describe('VideoCard Component', () => {
       duration: undefined,
       progressSeconds: 150,
     };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     await renderWithAct(<VideoCard video={videoWithoutDuration} />);
 
@@ -208,7 +206,6 @@ describe('VideoCard Component', () => {
       ...mockVideo,
       type: MEDIA_TYPES.PLAYLIST,
     };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     await renderWithAct(<VideoCard video={videoWithoutDuration} />);
 
@@ -216,7 +213,6 @@ describe('VideoCard Component', () => {
     expect(progressBar).toBeNull();
   });
   it('renders nothing when video is invalid type', async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const invalidVideo = {
       ...mockVideo,
