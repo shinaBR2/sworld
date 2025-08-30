@@ -82,4 +82,4 @@ export const useBooks = () => {
   };
 };
 
-export type { BookWithProgress }
+export type { BookWithProgress };
