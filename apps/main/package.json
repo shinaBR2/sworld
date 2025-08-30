@@ -8,8 +8,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "deploy": "vercel deploy dist --team=turborepo --confirm",
     "pre-dev": "cp ../../.env.development.local .env",
-    "dev": "pnpm run pre-dev && vite",
-    "lint": "pnpm run -w typecheck:main && TIMING=1 eslint \"src/**/*.ts*\""
+    "dev": "pnpm run pre-dev && vite"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",
