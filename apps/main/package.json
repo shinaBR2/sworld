@@ -8,7 +8,9 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "deploy": "vercel deploy dist --team=turborepo --confirm",
     "pre-dev": "cp ../../.env.development.local .env",
-    "dev": "pnpm run pre-dev && vite"
+    "dev": "pnpm run pre-dev && vite",
+    "lint": "biome lint --quit-on-problem .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",
@@ -25,7 +27,6 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.2.0",
-    "eslint-config-custom": "workspace:*",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
     "vite": "^6.0.0"

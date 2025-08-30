@@ -11,7 +11,8 @@
     "dev": "pnpm run pre-dev && vite",
     "e2e": "pnpm exec playwright test",
     "e2e-codegen": "pnpm exec playwright codegen",
-    "lint": "TIMING=1 eslint \"src/**/*.ts*\""
+    "lint": "biome lint --quit-on-problem .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "core": "workspace:*",
@@ -28,7 +29,6 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^4.2.0",
-    "eslint-config-custom": "workspace:*",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
     "vite": "^6.0.0",

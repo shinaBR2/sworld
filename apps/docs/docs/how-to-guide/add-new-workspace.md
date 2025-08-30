@@ -29,18 +29,20 @@ Steps:
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.1.0",
-    "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.6.2",
     "vite": "^3.1.0",
   }
   ```
-- Copy the below content into a new file `.eslintrc.js`
-  ```
-  module.exports = {
-    root: true,
-    extends: ["custom"],
-  };
+- Linting/formatting is handled by Biome at the root via `biome.json`. No `.eslintrc*` or `.prettierrc*` files are needed.
+- For consistency, add the following scripts to the new workspace `package.json` if missing:
+  ```json
+  {
+    "scripts": {
+      "lint": "biome lint --quit-on-problem .",
+      "format": "biome format --write ."
+    }
+  }
   ```
 - And here for the `vite.config.ts`
 

@@ -20,15 +20,13 @@
     "typecheck:main": "tsc -p apps/main/tsconfig.json --noEmit",
     "format": "biome format --write",
     "prepare": "husky",
-    "lint": "turbo run lint",
+    "lint": "biome check .",
     "test": "turbo run test"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
     "@types/chrome": "^0.0.268",
-    "eslint": "^8.56.0",
     "husky": "^9.1.7",
-    "prettier": "^2.7.1",
     "turbo": "2.4.4",
     "typescript": "^5.6.2"
   },

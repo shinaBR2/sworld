@@ -8,7 +8,9 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "biome lint --quit-on-problem .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@mikewesthad/dungeon": "^2.0.1",
@@ -30,16 +32,13 @@
     "@jest/globals": "^29.7.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@sworld/jest-dom-preset": "workspace:*",
-    "@tanstack/eslint-plugin-query": "^5.60.1",
     "@tanstack/router-devtools": "^1.78.2",
     "@tanstack/router-plugin": "^1.78.2",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.1.0",
-    "eslint-config-custom": "workspace:*",
     "phaser3-docs": "github:photonstorm/phaser3-docs",
-    "prettier": "^2.7.1",
     "tsconfig": "workspace:*",
     "vite": "^3.1.0",
     "vite-plugin-pwa": "^0.13.3"

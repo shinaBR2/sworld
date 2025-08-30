@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build"
+    "build": "vite build",
+    "lint": "biome lint --quit-on-problem .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "core": "workspace:*",
