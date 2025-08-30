@@ -4,7 +4,7 @@ import { useInsertFinanceTransaction } from 'core/finance/mutation-hooks';
 import { useLoadTransactionsByPeriod } from 'core/finance/query-hooks';
 import { useAuthContext } from 'core/providers/auth';
 import { useQueryContext } from 'core/providers/query';
-import React, { lazy, useState } from 'react';
+import { lazy, useState } from 'react';
 import type {
   AddExpenseButtonProps,
   ExpenseFormData,

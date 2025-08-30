@@ -41,7 +41,6 @@
     "phaser3-docs": "github:photonstorm/phaser3-docs",
     "prettier": "^2.7.1",
     "tsconfig": "workspace:*",
-    "typescript": "^5.6.2",
     "vite": "^3.1.0",
     "vite-plugin-pwa": "^0.13.3"
   }

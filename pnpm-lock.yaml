@@ -99,9 +99,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^3.1.0
         version: 3.2.11(@types/node@18.19.80)(terser@5.39.0)
@@ -130,9 +127,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.0
         version: 4.3.4(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^5.0.0
         version: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
@@ -224,9 +218,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^3.1.0
         version: 3.2.11(@types/node@18.19.80)(terser@5.39.0)
@@ -282,9 +273,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^6.0.0
         version: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -340,9 +328,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^6.0.0
         version: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -398,9 +383,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^6.0.0
         version: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -450,9 +432,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^6.0.0
         version: 6.2.2(@types/node@18.19.80)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -538,9 +517,6 @@ importers:
       tsup:
         specifier: ^6.2.3
         version: 6.7.0(postcss@8.5.6)(typescript@5.8.2)
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@18.19.80)(jsdom@25.0.1)(terser@5.39.0)
@@ -709,9 +685,6 @@ importers:
       tsup:
         specifier: ^6.2.3
         version: 6.7.0(postcss@8.5.6)(typescript@5.8.2)
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@18.19.80)(jsdom@25.0.1)(terser@5.39.0)
