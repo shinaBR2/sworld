@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it } from 'vitest';
 import { checkFeatureFlag } from './helpers';
 import type { FeatureFlagItemConditions } from './types';
@@ -15,7 +14,8 @@ describe('checkFeatureFlag', () => {
   it('should handle malformed allowedUserIds gracefully', () => {
     const flag: FeatureFlagItemConditions = {
       isGlobal: false,
-      allowedUserIds: ['', null, undefined] as any,
+      // Intentionally include invalid entries; cast via unknown to avoid any
+      allowedUserIds: ['', null, undefined] as unknown as string[],
     };
     expect(checkFeatureFlag(flag, 'user1')).toBe(false);
   });

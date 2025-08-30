@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols
@@ -29,19 +27,19 @@ const HistoryLazyRoute = HistoryLazyImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/history.lazy').then((d) => d.Route));
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 const VideoSlugIdLazyRoute = VideoSlugIdLazyImport.update({
   id: '/video/$slug/$id',
   path: '/video/$slug/$id',
   getParentRoute: () => rootRoute,
-} as any).lazy(() =>
+} as const).lazy(() =>
   import('./routes/video.$slug.$id.lazy').then((d) => d.Route),
 );
 
@@ -50,7 +48,7 @@ const PlaylistSlugPlaylistIdVideoIdLazyRoute =
     id: '/playlist/$slug/$playlistId/$videoId',
     path: '/playlist/$slug/$playlistId/$videoId',
     getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
+  } as const).lazy(() =>
     import('./routes/playlist.$slug.$playlistId.$videoId.lazy').then(
       (d) => d.Route,
     ),

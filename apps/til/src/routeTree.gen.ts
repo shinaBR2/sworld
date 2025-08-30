@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols
@@ -25,13 +23,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 const PostsSlugIdRoute = PostsSlugIdImport.update({
   id: '/posts/$slug/$id',
   path: '/posts/$slug/$id',
   getParentRoute: () => rootRoute,
-} as any);
+} as const);
 
 // Populate the FileRoutesByPath interface
 

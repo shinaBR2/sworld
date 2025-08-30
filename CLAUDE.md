@@ -19,7 +19,6 @@ A personal monorepo containing multiple applications and shared packages built w
 
 - **core** - Core business logic with GraphQL, Auth0, React Query, and error handling
 - **ui** - UI component library using Material-UI and Emotion
-- **eslint-config-custom** - Shared ESLint configurations
 - **tsconfig** - Shared TypeScript configurations
 - **jest-dom-preset** - Jest testing presets
 

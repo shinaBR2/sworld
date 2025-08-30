@@ -9,7 +9,8 @@
     "deploy": "vercel deploy dist --team=turborepo --confirm",
     "pre-dev": "cp ../../.env.development.local .env",
     "dev": "pnpm run pre-dev && vite",
-    "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
+    "lint": "biome lint --quit-on-problem .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",
@@ -26,10 +27,8 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.2.0",
-    "eslint-config-custom": "workspace:*",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
-    "typescript": "^5.6.2",
     "vite": "^6.0.0"
   }
 }

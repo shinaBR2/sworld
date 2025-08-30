@@ -45,10 +45,8 @@ describe('genlinkProps', () => {
       title: 'Invalid Media',
     };
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     expect(() => genlinkProps(invalidMedia)).toThrow(AppError);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     expect(() => genlinkProps(invalidMedia)).toThrow('Invalid media type');
   });

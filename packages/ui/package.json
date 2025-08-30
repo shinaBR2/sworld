@@ -35,7 +35,8 @@
     "build-watch": "tsup --watch --no-dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
-    "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
+    "lint": "biome check .",
+    "format": "biome format --write .",
     "test": "vitest --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -62,13 +63,11 @@
     "@types/react-helmet": "^6.1.6",
     "@vitest/coverage-v8": "^2.1.8",
     "babel-loader": "^8.3.0",
-    "eslint-config-custom": "workspace:*",
     "jsdom": "^25.0.1",
     "react": "^18.2.0",
     "storybook": "^7.0.0",
     "tsconfig": "workspace:*",
     "tsup": "^6.2.3",
-    "typescript": "^5.6.2",
     "vitest": "^2.1.8"
   },
   "dependencies": {

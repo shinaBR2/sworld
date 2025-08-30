@@ -6,7 +6,6 @@ import { FullWidthContainer, LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../../config';
 
 interface ContentProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryRs: any;
 }
 
