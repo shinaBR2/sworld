@@ -8,7 +8,10 @@
   "files": {
     "includes": [
       "**",
+      "!**/build",
       "!**/dist",
+      "!**/.docusaurus",
+      "!**/.turbo",
       "!**/public/assets",
       "!**/storybook-static",
       "!**/coverage"
