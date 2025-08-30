@@ -4,6 +4,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["vite/client", "chrome"],
     "paths": {
       "ui": ["../../packages/ui/src"],
       "ui/*": ["../../packages/ui/src/*"],

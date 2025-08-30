@@ -147,7 +147,6 @@ describe('Fragment Transformations', () => {
     it('should throw AppError when playlist has no videos', () => {
       const invalidPlaylistData = { ...mockPlaylistData, playlist_videos: [] };
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       expect(() => transformPlaylistFragment(invalidPlaylistData)).toThrow(
         AppError,

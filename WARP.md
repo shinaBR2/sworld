@@ -93,7 +93,6 @@ cd packages/ui && pnpm test
   - React Error Boundary components
   - Charts (ECharts integration)
   - Video player components
-- **eslint-config-custom** - Shared ESLint configurations
 - **tsconfig** - Shared TypeScript configurations
 - **jest-dom-preset** - Jest testing presets
 

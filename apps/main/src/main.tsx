@@ -3,7 +3,7 @@ import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
 import { ErrorBoundary } from 'core/universal/error-boundary';
 import { PostHogProvider } from 'posthog-js/react';
-import React, { StrictMode } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorFallback } from 'ui/universal/error-boundary';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';

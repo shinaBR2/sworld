@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols
@@ -30,25 +28,25 @@ const JournalLazyRoute = JournalLazyImport.update({
   id: '/journal',
   path: '/journal',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/journal.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/journal.lazy').then((d) => d.Route));
 
 const FinanceLazyRoute = FinanceLazyImport.update({
   id: '/finance',
   path: '/finance',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/finance.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/finance.lazy').then((d) => d.Route));
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 const LibraryIndexLazyRoute = LibraryIndexLazyImport.update({
   id: '/library/',
   path: '/library/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() =>
+} as const).lazy(() =>
   import('./routes/library.index.lazy').then((d) => d.Route),
 );
 
@@ -56,7 +54,7 @@ const LibraryBooksBookIdLazyRoute = LibraryBooksBookIdLazyImport.update({
   id: '/library/books/$bookId',
   path: '/library/books/$bookId',
   getParentRoute: () => rootRoute,
-} as any).lazy(() =>
+} as const).lazy(() =>
   import('./routes/library.books.$bookId.lazy').then((d) => d.Route),
 );
 
