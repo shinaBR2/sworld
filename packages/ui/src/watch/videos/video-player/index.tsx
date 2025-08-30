@@ -53,7 +53,9 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
   // Ref to the player element
   // to control the player and handle hotkeys
+  // biome-ignore lint/suspicious/noExplicitAny: ref type depends on ReactPlayer internals
   const playerRef = useRef<any | null>(null);
+  // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
     if (!player) return;
 

@@ -2,11 +2,9 @@
 
 import { useAuthContext } from 'core/providers/auth';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 // import videojs from 'video.js';
-import type Player from 'video.js/dist/types/player';
 import type { PlayableVideo } from '../types';
-import { getVideoPlayerOptions } from './utils';
 
 // import 'video.js/dist/video-js.css';
 
@@ -29,7 +27,7 @@ interface VideoJsOptions {
     label?: string;
     default?: boolean;
   }[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface VideoJSProps {
@@ -39,36 +37,14 @@ interface VideoJSProps {
   onError?: (error: unknown) => void; // TODO handle error
 }
 
-const debugLog = (message: string, data?: any) => {
-  console.log(`[VideoJS Debug] ${message}`, data || '');
-};
-
 // Thanks to
 // https://github.com/cadenzah/videojs-react-enhanced/blob/master/lib/utils/initializeEventListeners.ts
 export const VideoJS = (props: VideoJSProps) => {
   const videoRef = useRef(null);
-  const playerRef = useRef<Player | null>(null);
-  const { video, videoJsOptions, onEnded } = props;
-
-  // This is IMPORTANT to memoize the options object
-  // Otherwise, the player will be reinitialized on every render
-  const options = useMemo(
-    () =>
-      getVideoPlayerOptions(video, {
-        ...videoJsOptions,
-      }),
-    [video.source, JSON.stringify(videoJsOptions)],
-  );
+  const { video } = props;
 
   const { isSignedIn, getAccessToken } = useAuthContext();
-  const {
-    handleProgress,
-    handlePlay,
-    handlePause,
-    handleSeek,
-    handleEnded,
-    cleanup,
-  } = useVideoProgress({
+  const { cleanup } = useVideoProgress({
     videoId: video.id,
     isSignedIn,
     getAccessToken,
