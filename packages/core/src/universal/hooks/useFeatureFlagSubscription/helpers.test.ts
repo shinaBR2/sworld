@@ -15,7 +15,7 @@ describe('checkFeatureFlag', () => {
     const flag: FeatureFlagItemConditions = {
       isGlobal: false,
       // Intentionally include invalid entries; cast via unknown to avoid any
-      allowedUserIds: (['', null, undefined] as unknown) as string[],
+      allowedUserIds: ['', null, undefined] as unknown as string[],
     };
     expect(checkFeatureFlag(flag, 'user1')).toBe(false);
   });

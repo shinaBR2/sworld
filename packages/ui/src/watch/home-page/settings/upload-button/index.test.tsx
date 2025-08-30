@@ -1,4 +1,3 @@
-
 import { render, screen } from '@testing-library/react';
 import { Auth, Query } from 'core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

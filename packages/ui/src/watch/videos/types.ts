@@ -21,7 +21,9 @@ interface GenericLinkProps<T = Record<string, unknown>> {
   style?: React.CSSProperties;
 }
 
-type LinkComponentType<T = Record<string, unknown>> = React.ComponentType<GenericLinkProps<T>>;
+type LinkComponentType<T = Record<string, unknown>> = React.ComponentType<
+  GenericLinkProps<T>
+>;
 
 type RequiredLinkComponent<T = Record<string, unknown>> = {
   LinkComponent: LinkComponentType<T>;
@@ -31,7 +33,10 @@ type RequiredLinkComponent<T = Record<string, unknown>> = {
   };
 };
 
-type RequiredLinkComponentWithoutLinkProps = Omit<RequiredLinkComponent, 'linkProps'>;
+type RequiredLinkComponentWithoutLinkProps = Omit<
+  RequiredLinkComponent,
+  'linkProps'
+>;
 
 interface WithLinkComponent<T = Record<string, unknown>> {
   asLink?: boolean;
