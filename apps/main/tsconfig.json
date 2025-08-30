@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "paths": {
       "ui": ["../../packages/ui/src"],
       "ui/*": ["../../packages/ui/src/*"],
