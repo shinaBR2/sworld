@@ -9,7 +9,7 @@
     "deploy": "vercel deploy dist --team=turborepo --confirm",
     "pre-dev": "cp ../../.env.development.local .env",
     "dev": "pnpm run pre-dev && vite",
-    "lint": "tsc --noEmit && TIMING=1 eslint \"src/**/*.ts*\""
+    "lint": "pnpm run -w typecheck:main && TIMING=1 eslint \"src/**/*.ts*\""
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",

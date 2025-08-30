@@ -11,7 +11,7 @@ import {
 } from 'core/journal/query-hooks';
 import { useAuthContext } from 'core/providers/auth';
 import { getCurrentMonthYear } from 'core/universal/common';
-import React, { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { FabButton } from 'ui/journal/fab-button';
 import { JournalList } from 'ui/journal/journal-list';
 import { AuthRoute } from 'ui/universal/authRoute';

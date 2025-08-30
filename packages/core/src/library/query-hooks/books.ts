@@ -81,3 +81,5 @@ export const useBooks = () => {
     error,
   };
 };
+
+export type { BookWithProgress }
