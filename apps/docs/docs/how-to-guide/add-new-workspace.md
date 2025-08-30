@@ -39,7 +39,7 @@ Steps:
   ```json
   {
     "scripts": {
-      "lint": "biome lint --quit-on-problem .",
+      "lint": "biome check .",
       "format": "biome format --write ."
     }
   }
