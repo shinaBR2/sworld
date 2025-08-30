@@ -13,7 +13,6 @@ export default defineConfig({
         'codegen.ts',
         'tsup.config.ts',
         'vite.config.ts',
-        '.eslintrc.js',
       ],
     },
   },

@@ -14,7 +14,6 @@ export default defineConfig({
         'dist/**',
         'tsup.config.ts',
         'vite.config.ts',
-        '.eslintrc.js',
       ],
     },
   },
