@@ -1,11 +1,11 @@
 import express, { type Router } from 'express';
-import { validateRequest } from 'src/utils/validators/request';
 import {
   type DeviceRequestCreateRequest,
   deviceRequestCreateSchema,
 } from 'src/schema/auth/device';
-import { createDeviceRequest } from './routes/device';
 import { requestHandler } from 'src/utils/requestHandler';
+import { validateRequest } from 'src/utils/validators/request';
+import { createDeviceRequest } from './routes/device';
 
 const authRouter: Router = express.Router();
 

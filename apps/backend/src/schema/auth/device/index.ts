@@ -18,6 +18,9 @@ const deviceRequestCreateSchema = z
         'x-hasura-action': z.string(),
       })
       .passthrough(),
+    // Add ip and userAgent to the schema
+    ip: z.string(),
+    userAgent: z.string().optional(),
   })
   .transform((req) => ({
     action: req.body.action,
@@ -25,6 +28,8 @@ const deviceRequestCreateSchema = z
     extensionId: req.body.input.input.extensionId,
     hasuraActionHeader: req.headers['x-hasura-action'],
     contentTypeHeader: req.headers['content-type'],
+    ip: req.ip,
+    userAgent: req.userAgent,
   }));
 
 export type DeviceRequestCreateRequest = z.infer<

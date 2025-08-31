@@ -17,12 +17,30 @@ const validPayload = {
     'content-type': 'application/json',
     'x-hasura-action': 'createDeviceRequest',
   },
+  ip: '192.168.1.1',
+  userAgent: 'Test User Agent',
 };
 
 describe('deviceRequestCreateSchema', () => {
   it('should validate a correct payload', () => {
     const result = deviceRequestCreateSchema.safeParse(validPayload);
     expect(result.success).toBe(true);
+  });
+
+  it('should transform the payload correctly', () => {
+    const result = deviceRequestCreateSchema.safeParse(validPayload);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toMatchObject({
+        action: validPayload.body.action,
+        input: validPayload.body.input,
+        extensionId: validPayload.body.input.input.extensionId,
+        hasuraActionHeader: validPayload.headers['x-hasura-action'],
+        contentTypeHeader: validPayload.headers['content-type'],
+        ip: validPayload.ip,
+        userAgent: validPayload.userAgent,
+      });
+    }
   });
 
   describe('body validation', () => {
@@ -62,6 +80,26 @@ describe('deviceRequestCreateSchema', () => {
       };
       const result = deviceRequestCreateSchema.safeParse(invalidPayload);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('ip and userAgent validation', () => {
+    it('should require ip field', () => {
+      const invalidPayload = {
+        ...validPayload,
+        ip: undefined,
+      };
+      const result = deviceRequestCreateSchema.safeParse(invalidPayload);
+      expect(result.success).toBe(false);
+    });
+
+    it('should make userAgent optional', () => {
+      const payload = {
+        ...validPayload,
+        userAgent: undefined,
+      };
+      const result = deviceRequestCreateSchema.safeParse(payload);
+      expect(result.success).toBe(true);
     });
   });
 
