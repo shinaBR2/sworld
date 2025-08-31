@@ -1,8 +1,9 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import type { Context, Next } from 'hono';
 import type { ZodError, ZodSchema, z } from 'zod';
-import type { ServiceResponse } from '../schema';
 import { getClientIP } from '../ip';
+import { logger } from '../logger';
+import type { ServiceResponse } from '../schema';
 
 // Framework-agnostic validation context
 interface ValidationContext {
@@ -64,6 +65,7 @@ const formatZodError = (error: ZodError): string => {
 // Express wrapper
 const expressValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`ip: ${getClientIP(req.headers as Record<string, string>)}`);
     const context: ValidationContext = {
       params: req.params,
       query: req.query,
