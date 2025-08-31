@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { validateMediaURL, verifySignature } from './validator';
-import { FileType, Platform } from 'src/utils/patterns';
+import type { FileType, Platform } from 'src/utils/patterns';
 
 const mockWebhookSecret = 'test-secret';
 
@@ -32,7 +32,7 @@ describe('verifySignature', () => {
 describe('validateMediaURL', () => {
   it('should identify YouTube URLs', () => {
     const result = validateMediaURL(
-      'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     );
     expect(result).toEqual({
       url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
@@ -52,7 +52,7 @@ describe('validateMediaURL', () => {
 
   it('should identify Mux URLs', () => {
     const result = validateMediaURL(
-      'https://stream.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU'
+      'https://stream.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU',
     );
     expect(result).toEqual({
       url: 'https://stream.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU',
@@ -109,7 +109,7 @@ describe('validateMediaURL', () => {
   it('should prioritize platform over file extension if both match', () => {
     // A YouTube URL that happens to end in .mp4
     const result = validateMediaURL(
-      'https://youtube.com/watch?v=dQw4w9WgXcQ&dummy.mp4'
+      'https://youtube.com/watch?v=dQw4w9WgXcQ&dummy.mp4',
     );
     expect(result).toEqual({
       url: 'https://youtube.com/watch?v=dQw4w9WgXcQ&dummy.mp4',
@@ -120,7 +120,7 @@ describe('validateMediaURL', () => {
 
   it('should handle Facebook URLs', () => {
     const result = validateMediaURL(
-      'https://www.facebook.com/watch/123456789/'
+      'https://www.facebook.com/watch/123456789/',
     );
     expect(result).toEqual({
       url: 'https://www.facebook.com/watch/123456789/',
@@ -140,7 +140,7 @@ describe('validateMediaURL', () => {
 
   it('should handle different video formats', () => {
     const formats = ['mp4', 'mov', 'm4v'];
-    formats.forEach(format => {
+    formats.forEach((format) => {
       const result = validateMediaURL(`https://example.com/video.${format}`);
       expect(result).toEqual({
         url: `https://example.com/video.${format}`,

@@ -1,5 +1,5 @@
 import { graphql } from '../../generated-graphql';
-import { DeletePostMutation } from '../../generated-graphql/graphql';
+import type { DeletePostMutation } from '../../generated-graphql/graphql';
 import { hasuraClient } from '../../client';
 
 const DELETE_POST = graphql(/* GraphQL */ `

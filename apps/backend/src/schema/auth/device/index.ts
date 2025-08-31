@@ -19,7 +19,7 @@ const deviceRequestCreateSchema = z
       })
       .passthrough(),
   })
-  .transform(req => ({
+  .transform((req) => ({
     action: req.body.action,
     input: req.body.input,
     extensionId: req.body.input.input.extensionId,
@@ -27,5 +27,7 @@ const deviceRequestCreateSchema = z
     contentTypeHeader: req.headers['content-type'],
   }));
 
-export type DeviceRequestCreateRequest = z.infer<typeof deviceRequestCreateSchema>;
+export type DeviceRequestCreateRequest = z.infer<
+  typeof deviceRequestCreateSchema
+>;
 export { deviceRequestCreateSchema };

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
-import { ErrorRequestHandler } from 'express';
-import { Logger } from 'pino';
+import type { ErrorRequestHandler } from 'express';
+import type { Logger } from 'pino';
 import { CustomError } from './custom-error';
 
 const cleanStack = (stack?: string) => {
@@ -8,13 +8,13 @@ const cleanStack = (stack?: string) => {
 
   return stack
     .split('\n')
-    .filter(line => !line.includes('node_modules'))
+    .filter((line) => !line.includes('node_modules'))
     .join('\n');
 };
 
 const reportError = (err: unknown) => {
   if (err instanceof CustomError) {
-    Sentry.withScope(scope => {
+    Sentry.withScope((scope) => {
       scope.setTags({
         errorCode: err.errorCode,
         severity: err.severity,
@@ -22,7 +22,7 @@ const reportError = (err: unknown) => {
 
       // Add error context as extra data
       if (err.contexts?.length > 0) {
-        err.contexts.forEach(context => {
+        err.contexts.forEach((context) => {
           scope.setExtra(context.source, context.data);
         });
       }
@@ -40,7 +40,7 @@ const reportError = (err: unknown) => {
     });
   } else {
     // For native errors, just capture with basic info
-    Sentry.withScope(scope => {
+    Sentry.withScope((scope) => {
       scope.setLevel('error');
       scope.setTag('type', 'native_error');
       Sentry.captureException(err);
@@ -60,7 +60,8 @@ export const errorHandler = (logger: Logger): ErrorRequestHandler => {
       },
       stack: cleanStack(err.stack),
     });
-    const statusCode = err instanceof CustomError && err.shouldRetry ? 500 : 200;
+    const statusCode =
+      err instanceof CustomError && err.shouldRetry ? 500 : 200;
 
     return res.status(statusCode).json({
       error: 'Internal Server Error',

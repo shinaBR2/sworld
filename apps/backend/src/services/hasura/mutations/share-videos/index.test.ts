@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { hasuraClient } from '../../client';
 import { sharePlaylist, shareVideo } from './index';
-import { SharePlaylistMutation, ShareVideoMutation } from '../../generated-graphql/graphql';
+import type {
+  SharePlaylistMutation,
+  ShareVideoMutation,
+} from '../../generated-graphql/graphql';
 
 // Mock the hasura client
 vi.mock('../../client', () => {
@@ -63,9 +66,11 @@ describe('sharePlaylist', () => {
 
     expect(result).toEqual({
       insert_shared_playlist_recipients: {
-        returning: mockResponse.insert_shared_playlist_recipients.returning.map(record => ({
-          id: String(record.id),
-        })),
+        returning: mockResponse.insert_shared_playlist_recipients.returning.map(
+          (record) => ({
+            id: String(record.id),
+          }),
+        ),
       },
       update_playlist_by_pk: {
         id: mockResponse.update_playlist_by_pk.id,
@@ -78,7 +83,9 @@ describe('sharePlaylist', () => {
     const mockError = new Error('GraphQL request failed');
     vi.mocked(hasuraClient.request).mockRejectedValueOnce(mockError);
 
-    await expect(sharePlaylist(mockObjects, mockPlaylistId, mockEmails)).rejects.toThrow(mockError);
+    await expect(
+      sharePlaylist(mockObjects, mockPlaylistId, mockEmails),
+    ).rejects.toThrow(mockError);
   });
 
   it('should throw an error when insert_shared_playlist_recipients is missing', async () => {
@@ -86,18 +93,23 @@ describe('sharePlaylist', () => {
       update_playlist_by_pk: mockResponse.update_playlist_by_pk,
     } as SharePlaylistMutation);
 
-    await expect(sharePlaylist(mockObjects, mockPlaylistId, mockEmails)).rejects.toThrow(
-      'Failed to insert shared playlist recipients or update playlist'
+    await expect(
+      sharePlaylist(mockObjects, mockPlaylistId, mockEmails),
+    ).rejects.toThrow(
+      'Failed to insert shared playlist recipients or update playlist',
     );
   });
 
   it('should throw an error when update_playlist_by_pk is missing', async () => {
     vi.mocked(hasuraClient.request).mockResolvedValueOnce({
-      insert_shared_playlist_recipients: mockResponse.insert_shared_playlist_recipients,
+      insert_shared_playlist_recipients:
+        mockResponse.insert_shared_playlist_recipients,
     } as SharePlaylistMutation);
 
-    await expect(sharePlaylist(mockObjects, mockPlaylistId, mockEmails)).rejects.toThrow(
-      'Failed to insert shared playlist recipients or update playlist'
+    await expect(
+      sharePlaylist(mockObjects, mockPlaylistId, mockEmails),
+    ).rejects.toThrow(
+      'Failed to insert shared playlist recipients or update playlist',
     );
   });
 });
@@ -152,9 +164,11 @@ describe('shareVideo', () => {
 
     expect(result).toEqual({
       insert_shared_video_recipients: {
-        returning: mockResponse.insert_shared_video_recipients.returning.map(record => ({
-          id: String(record.id),
-        })),
+        returning: mockResponse.insert_shared_video_recipients.returning.map(
+          (record) => ({
+            id: String(record.id),
+          }),
+        ),
       },
       update_videos_by_pk: {
         id: mockResponse.update_videos_by_pk.id,
@@ -167,7 +181,9 @@ describe('shareVideo', () => {
     const mockError = new Error('GraphQL request failed');
     vi.mocked(hasuraClient.request).mockRejectedValueOnce(mockError);
 
-    await expect(shareVideo(mockObjects, mockVideoId, mockEmails)).rejects.toThrow(mockError);
+    await expect(
+      shareVideo(mockObjects, mockVideoId, mockEmails),
+    ).rejects.toThrow(mockError);
   });
 
   it('should throw an error when insert_shared_video_recipients is missing', async () => {
@@ -175,18 +191,23 @@ describe('shareVideo', () => {
       update_videos_by_pk: mockResponse.update_videos_by_pk,
     } as ShareVideoMutation);
 
-    await expect(shareVideo(mockObjects, mockVideoId, mockEmails)).rejects.toThrow(
-      'Failed to insert shared video recipients or update video'
+    await expect(
+      shareVideo(mockObjects, mockVideoId, mockEmails),
+    ).rejects.toThrow(
+      'Failed to insert shared video recipients or update video',
     );
   });
 
   it('should throw an error when update_videos_by_pk is missing', async () => {
     vi.mocked(hasuraClient.request).mockResolvedValueOnce({
-      insert_shared_video_recipients: mockResponse.insert_shared_video_recipients,
+      insert_shared_video_recipients:
+        mockResponse.insert_shared_video_recipients,
     } as ShareVideoMutation);
 
-    await expect(shareVideo(mockObjects, mockVideoId, mockEmails)).rejects.toThrow(
-      'Failed to insert shared video recipients or update video'
+    await expect(
+      shareVideo(mockObjects, mockVideoId, mockEmails),
+    ).rejects.toThrow(
+      'Failed to insert shared video recipients or update video',
     );
   });
 });

@@ -90,7 +90,9 @@ describe('finishVideoProcess', () => {
     const error = new Error('Database error');
     vi.mocked(hasuraClient.request).mockRejectedValueOnce(error);
 
-    await expect(finishVideoProcess(mockVariables)).rejects.toThrow('Database error');
+    await expect(finishVideoProcess(mockVariables)).rejects.toThrow(
+      'Database error',
+    );
   });
 
   // Add new test case for short ID generation
@@ -124,7 +126,7 @@ describe('finishVideoProcess', () => {
             sId: 'test-id-123',
           }),
         }),
-      })
+      }),
     );
   });
 });

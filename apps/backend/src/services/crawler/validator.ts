@@ -27,9 +27,10 @@ const validateUrlInput = (url: string) => {
 
   return {
     handlerType,
-    selectors: selectors.map(selector => ({
+    selectors: selectors.map((selector) => ({
       ...selector,
-      waitForSelectorTimeout: selector.waitForSelectorTimeout || defaultWaitForSelectorTimeout,
+      waitForSelectorTimeout:
+        selector.waitForSelectorTimeout || defaultWaitForSelectorTimeout,
     })),
   };
 };

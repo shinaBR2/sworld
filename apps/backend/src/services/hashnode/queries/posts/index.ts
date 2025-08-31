@@ -1,6 +1,6 @@
 import { getHashnodeClient } from '../../client';
 import { graphql } from '../../generated-graphql';
-import { GetPostQuery } from '../../generated-graphql/graphql';
+import type { GetPostQuery } from '../../generated-graphql/graphql';
 
 const GET_POST = graphql(/* GraphQL */ `
   query GetPost($id: ID!) {
@@ -24,7 +24,10 @@ const getPost = async (id: string) => {
     id,
   };
 
-  const response = await getHashnodeClient().request<GetPostQuery>(GET_POST.toString(), variables);
+  const response = await getHashnodeClient().request<GetPostQuery>(
+    GET_POST.toString(),
+    variables,
+  );
 
   return response.post;
 };

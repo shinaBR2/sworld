@@ -92,7 +92,7 @@ describe('logger', () => {
           serializers: expect.objectContaining({
             req: expect.any(Function),
           }),
-        })
+        }),
       );
     });
 

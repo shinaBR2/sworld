@@ -1,4 +1,8 @@
-import { Storage, TransferManager, CreateWriteStreamOptions } from '@google-cloud/storage';
+import {
+  Storage,
+  TransferManager,
+  type CreateWriteStreamOptions,
+} from '@google-cloud/storage';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
@@ -45,7 +49,11 @@ const getDownloadUrl = (outputPath: string) => {
  * @param storagePath - Destination path in storage bucket, must be relative path (e.g., 'videos/123/file.mp4')
  * @param options - Upload options for caching and resumable uploads
  */
-const uploadFile = async (localPath: string, storagePath: string, options: UploadOptions = DEFAULT_UPLOAD_OPTIONS) => {
+const uploadFile = async (
+  localPath: string,
+  storagePath: string,
+  options: UploadOptions = DEFAULT_UPLOAD_OPTIONS,
+) => {
   const bucket = getDefaultBucket();
 
   await bucket.upload(localPath, {
@@ -80,7 +88,7 @@ const uploadFolderParallel = async (localDir: string, storagePath: string) => {
   const transferManager = new TransferManager(bucket);
 
   await transferManager.uploadManyFiles(localDir, {
-    customDestinationBuilder: filePath => {
+    customDestinationBuilder: (filePath) => {
       const fileName = path.relative(localDir, filePath);
       return path.join(storagePath, fileName);
     },
@@ -146,7 +154,7 @@ const streamFile = async (params: StreamFileParams) => {
             deleteError,
             originalError: originalError?.message,
           },
-          'Failed to delete partial file after upload error'
+          'Failed to delete partial file after upload error',
         );
       }
 
@@ -162,13 +170,16 @@ const streamFile = async (params: StreamFileParams) => {
     }
 
     // Handle stream read errors
-    stream.on('error', readError => {
+    stream.on('error', (readError) => {
       handleError(`Stream read error: ${readError.message}`, readError);
     });
 
     // Handle write stream errors
-    writeStream.on('error', writeError => {
-      handleError(`Cloud storage write error: ${writeError.message}`, writeError);
+    writeStream.on('error', (writeError) => {
+      handleError(
+        `Cloud storage write error: ${writeError.message}`,
+        writeError,
+      );
     });
 
     // Successful completion
@@ -184,10 +195,16 @@ const streamFile = async (params: StreamFileParams) => {
     } catch (pipeError) {
       handleError(
         `Stream piping error: ${pipeError instanceof Error ? pipeError.message : String(pipeError)}`,
-        pipeError instanceof Error ? pipeError : undefined
+        pipeError instanceof Error ? pipeError : undefined,
       );
     }
   });
 };
 
-export { DEFAULT_UPLOAD_OPTIONS, getDownloadUrl, uploadFile, uploadFolderParallel, streamFile };
+export {
+  DEFAULT_UPLOAD_OPTIONS,
+  getDownloadUrl,
+  uploadFile,
+  uploadFolderParallel,
+  streamFile,
+};

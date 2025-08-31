@@ -38,7 +38,7 @@ const subtitleCreatedSchema = z
       })
       .passthrough(),
   })
-  .transform(req => ({
+  .transform((req) => ({
     event: req.body.event,
     contentTypeHeader: req.headers['content-type'] as string,
     signatureHeader: req.headers['x-webhook-signature'] as string,

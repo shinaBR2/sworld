@@ -2,7 +2,11 @@ import type { PlaywrightRequestHandler } from 'crawlee';
 import { CustomError } from 'src/utils/custom-error';
 import { CRAWL_ERRORS, HTTP_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
-import type { HandlerOptions, HandlerState, RequestHandlerWithState } from '../types';
+import type {
+  HandlerOptions,
+  HandlerState,
+  RequestHandlerWithState,
+} from '../types';
 import { SelectorName } from '../types';
 import { scrapeUrl } from './scrapers';
 import { videoUrlXHRMatcher } from './utils';
@@ -12,7 +16,9 @@ import { videoUrlXHRMatcher } from './utils';
  * @param options Configuration options for the handler
  * @returns Object containing the handler function and its initial state
  */
-const hh3dHandler = <T>(options: HandlerOptions): RequestHandlerWithState<T> => {
+const hh3dHandler = <T>(
+  options: HandlerOptions,
+): RequestHandlerWithState<T> => {
   const { selectors, getSingleVideo } = options;
 
   // Initialize state that will be shared across all handler calls
@@ -26,7 +32,9 @@ const hh3dHandler = <T>(options: HandlerOptions): RequestHandlerWithState<T> => 
    * The URL selector is required for the crawler to function properly
    * It defines both the CSS selector to find links and the timeout for waiting
    */
-  const urlSelector = selectors.find(selector => selector.name === SelectorName.URL);
+  const urlSelector = selectors.find(
+    (selector) => selector.name === SelectorName.URL,
+  );
 
   if (!urlSelector) {
     throw CustomError.high('Missing url selector', {
@@ -42,12 +50,16 @@ const hh3dHandler = <T>(options: HandlerOptions): RequestHandlerWithState<T> => 
   const { selector, waitForSelectorTimeout: timeout } = urlSelector;
 
   // Create the request handler
-  const handler: PlaywrightRequestHandler = async ({ page, request, enqueueLinks }) => {
+  const handler: PlaywrightRequestHandler = async ({
+    page,
+    request,
+    enqueueLinks,
+  }) => {
     const currentPageUrl = request.url;
     let videoUrl: string | null = null;
 
-    const videoUrlPromise = new Promise<string | null>(resolve => {
-      page.route('**/*', async route => {
+    const videoUrlPromise = new Promise<string | null>((resolve) => {
+      page.route('**/*', async (route) => {
         const req = route.request();
 
         if (videoUrlXHRMatcher(req.url())) {
@@ -83,17 +95,19 @@ const hh3dHandler = <T>(options: HandlerOptions): RequestHandlerWithState<T> => 
     logger.info(`Processing ${request.url}...`);
     await page.goto(currentPageUrl);
 
-    const timeoutPromise = new Promise<null>(resolve =>
+    const timeoutPromise = new Promise<null>((resolve) =>
       setTimeout(async () => {
         await page.unroute('**/*');
         resolve(null);
-      }, timeout)
+      }, timeout),
     );
 
     await Promise.race([videoUrlPromise, timeoutPromise]);
 
     if (videoUrl === null) {
-      logger.warn(`No video URL found for ${currentPageUrl} (timeout: ${timeout}ms)`);
+      logger.warn(
+        `No video URL found for ${currentPageUrl} (timeout: ${timeout}ms)`,
+      );
     }
 
     // Add data to the shared state

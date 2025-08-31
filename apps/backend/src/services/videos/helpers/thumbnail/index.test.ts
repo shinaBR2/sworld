@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import path from 'path';
+import type path from 'path';
 import { processThumbnail } from './';
 import { createDirectory, downloadFile, generateTempDir } from '../file';
 import { takeScreenshot } from '../ffmpeg';
@@ -55,7 +55,10 @@ describe('processThumbnail', () => {
     expect(createDirectory).toHaveBeenCalledWith(mockWorkingDir);
 
     // Verify video download
-    expect(downloadFile).toHaveBeenCalledWith(mockProps.url, 'temp/123456/input_video_file');
+    expect(downloadFile).toHaveBeenCalledWith(
+      mockProps.url,
+      'temp/123456/input_video_file',
+    );
 
     // Verify screenshot generation
     expect(takeScreenshot).toHaveBeenCalledWith(
@@ -63,13 +66,13 @@ describe('processThumbnail', () => {
       mockWorkingDir,
       expect.stringMatching(/^thumbnail--\d+\.jpg$/),
       mockProps.duration,
-      false
+      false,
     );
 
     // Verify thumbnail upload
     expect(uploadFile).toHaveBeenCalledWith(
       expect.stringMatching(/^temp\/123456\/thumbnail--\d+\.jpg$/),
-      expect.stringMatching(/^videos\/test-123\/thumbnail--\d+\.jpg$/)
+      expect.stringMatching(/^videos\/test-123\/thumbnail--\d+\.jpg$/),
     );
 
     // Verify returned storage path
@@ -80,7 +83,9 @@ describe('processThumbnail', () => {
     const error = new Error('Download failed');
     vi.mocked(downloadFile).mockRejectedValue(error);
 
-    await expect(processThumbnail(mockProps)).rejects.toThrow('Download failed');
+    await expect(processThumbnail(mockProps)).rejects.toThrow(
+      'Download failed',
+    );
     expect(takeScreenshot).not.toHaveBeenCalled();
     expect(uploadFile).not.toHaveBeenCalled();
   });
@@ -89,7 +94,9 @@ describe('processThumbnail', () => {
     const error = new Error('Screenshot failed');
     vi.mocked(takeScreenshot).mockRejectedValue(error);
 
-    await expect(processThumbnail(mockProps)).rejects.toThrow('Screenshot failed');
+    await expect(processThumbnail(mockProps)).rejects.toThrow(
+      'Screenshot failed',
+    );
     expect(uploadFile).not.toHaveBeenCalled();
   });
 
@@ -109,7 +116,10 @@ describe('processThumbnail', () => {
     await processThumbnail(mockProps);
 
     const expectedFilename = `thumbnail--${mockTimestamp}.jpg`;
-    expect(uploadFile).toHaveBeenCalledWith(`temp/123456/${expectedFilename}`, `videos/test-123/${expectedFilename}`);
+    expect(uploadFile).toHaveBeenCalledWith(
+      `temp/123456/${expectedFilename}`,
+      `videos/test-123/${expectedFilename}`,
+    );
 
     // Restore Date.now
     Date.now = realDateNow;
@@ -128,7 +138,7 @@ describe('processThumbnail', () => {
       mockWorkingDir,
       expect.stringMatching(/^thumbnail--\d+\.jpg$/),
       mockProps.duration,
-      true
+      true,
     );
   });
 });

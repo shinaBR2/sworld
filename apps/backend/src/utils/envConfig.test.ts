@@ -29,7 +29,7 @@ describe('envConfig', () => {
       'mainSiteUrl',
     ];
 
-    expectedKeys.forEach(key => {
+    expectedKeys.forEach((key) => {
       expect(envConfig).toHaveProperty(key);
     });
   });

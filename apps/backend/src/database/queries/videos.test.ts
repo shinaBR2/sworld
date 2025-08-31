@@ -1,5 +1,5 @@
-import { Op, Transaction } from 'sequelize';
-import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Op, type Transaction } from 'sequelize';
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Video } from '../models/video';
 import {
   getVideoById,
@@ -94,7 +94,9 @@ describe('getVideoMissingDuration', () => {
     vi.spyOn(Video, 'findAll').mockRejectedValue(mockError);
 
     // Expect the error to be thrown
-    await expect(getVideoMissingDuration()).rejects.toThrow('Database connection failed');
+    await expect(getVideoMissingDuration()).rejects.toThrow(
+      'Database connection failed',
+    );
   });
 });
 
@@ -118,7 +120,10 @@ describe('getVideoMissingThumbnail', () => {
     // Verify findAll was called with correct query
     expect(Video.findAll).toHaveBeenCalledWith({
       where: {
-        [Op.and]: [{ status: 'ready' }, { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] }],
+        [Op.and]: [
+          { status: 'ready' },
+          { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] },
+        ],
       },
     });
 
@@ -141,7 +146,10 @@ describe('getVideoMissingThumbnail', () => {
     // Verify findAll was called with correct query
     expect(Video.findAll).toHaveBeenCalledWith({
       where: {
-        [Op.and]: [{ status: 'ready' }, { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] }],
+        [Op.and]: [
+          { status: 'ready' },
+          { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] },
+        ],
       },
     });
 
@@ -159,7 +167,10 @@ describe('getVideoMissingThumbnail', () => {
     // Verify findAll was called with correct query
     expect(Video.findAll).toHaveBeenCalledWith({
       where: {
-        [Op.and]: [{ status: 'ready' }, { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] }],
+        [Op.and]: [
+          { status: 'ready' },
+          { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] },
+        ],
       },
     });
 
@@ -174,7 +185,9 @@ describe('getVideoMissingThumbnail', () => {
     vi.spyOn(Video, 'findAll').mockRejectedValue(mockError);
 
     // Expect the error to be thrown
-    await expect(getVideoMissingThumbnail()).rejects.toThrow('Database connection failed');
+    await expect(getVideoMissingThumbnail()).rejects.toThrow(
+      'Database connection failed',
+    );
   });
 });
 
@@ -218,7 +231,7 @@ describe('updateVideoDuration', () => {
       {
         where: { id: '123' },
         transaction: undefined,
-      }
+      },
     );
   });
 
@@ -238,7 +251,7 @@ describe('updateVideoDuration', () => {
       {
         where: { id: '123' },
         transaction: mockTransaction,
-      }
+      },
     );
   });
 
@@ -249,7 +262,7 @@ describe('updateVideoDuration', () => {
       updateVideoDuration({
         id: 'nonexistent',
         duration: 120,
-      })
+      }),
     ).rejects.toThrow('Video with ID nonexistent not found');
   });
 });
@@ -270,7 +283,7 @@ describe('updateVideoThumbnail', () => {
       {
         where: { id: '123' },
         transaction: undefined,
-      }
+      },
     );
   });
 
@@ -290,7 +303,7 @@ describe('updateVideoThumbnail', () => {
       {
         where: { id: '123' },
         transaction: mockTransaction,
-      }
+      },
     );
   });
 
@@ -301,7 +314,7 @@ describe('updateVideoThumbnail', () => {
       updateVideoThumbnail({
         id: 'nonexistent',
         thumbnailUrl: 'thumbnail-url',
-      })
+      }),
     ).rejects.toThrow('Video with ID nonexistent not found');
   });
 });

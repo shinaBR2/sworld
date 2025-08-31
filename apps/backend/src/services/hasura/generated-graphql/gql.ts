@@ -54,67 +54,67 @@ const documents: Documents = {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n'
+  source: '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n',
 ): typeof import('./graphql').CreateDeviceRequestDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation DeletePost($hId: String!) {\n    delete_posts(where: { hId: { _eq: $hId } }) {\n      returning {\n        id\n      }\n    }\n  }\n'
+  source: '\n  mutation DeletePost($hId: String!) {\n    delete_posts(where: { hId: { _eq: $hId } }) {\n      returning {\n        id\n      }\n    }\n  }\n',
 ): typeof import('./graphql').DeletePostDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n    }\n  }\n'
+  source: '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').InsertPostDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation UpdatePost($hId: String!, $set: posts_set_input!) {\n    update_posts(where: { hId: { _eq: $hId } }, _set: $set) {\n      returning {\n        id\n      }\n    }\n  }\n'
+  source: '\n  mutation UpdatePost($hId: String!, $set: posts_set_input!) {\n    update_posts(where: { hId: { _eq: $hId } }, _set: $set) {\n      returning {\n        id\n      }\n    }\n  }\n',
 ): typeof import('./graphql').UpdatePostDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation sharePlaylist(\n    $objects: [shared_playlist_recipients_insert_input!]!\n    $playlistId: uuid!\n    $sharedRecipients: jsonb!\n  ) {\n    insert_shared_playlist_recipients(\n      objects: $objects\n      on_conflict: { constraint: shared_playlist_recipients_playlist_id_recipient_id_key, update_columns: [] }\n    ) {\n      returning {\n        id\n      }\n    }\n    update_playlist_by_pk(pk_columns: { id: $playlistId }, _set: { sharedRecipients: $sharedRecipients }) {\n      id\n      sharedRecipients\n    }\n  }\n'
+  source: '\n  mutation sharePlaylist(\n    $objects: [shared_playlist_recipients_insert_input!]!\n    $playlistId: uuid!\n    $sharedRecipients: jsonb!\n  ) {\n    insert_shared_playlist_recipients(\n      objects: $objects\n      on_conflict: { constraint: shared_playlist_recipients_playlist_id_recipient_id_key, update_columns: [] }\n    ) {\n      returning {\n        id\n      }\n    }\n    update_playlist_by_pk(pk_columns: { id: $playlistId }, _set: { sharedRecipients: $sharedRecipients }) {\n      id\n      sharedRecipients\n    }\n  }\n',
 ): typeof import('./graphql').SharePlaylistDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation shareVideo($objects: [shared_video_recipients_insert_input!]!, $videoId: uuid!, $sharedRecipients: jsonb!) {\n    insert_shared_video_recipients(\n      objects: $objects\n      on_conflict: { constraint: shared_video_recipients_video_id_recipient_id_key, update_columns: [] }\n    ) {\n      returning {\n        id\n      }\n    }\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: { sharedRecipients: $sharedRecipients }) {\n      id\n      sharedRecipients\n    }\n  }\n'
+  source: '\n  mutation shareVideo($objects: [shared_video_recipients_insert_input!]!, $videoId: uuid!, $sharedRecipients: jsonb!) {\n    insert_shared_video_recipients(\n      objects: $objects\n      on_conflict: { constraint: shared_video_recipients_video_id_recipient_id_key, update_columns: [] }\n    ) {\n      returning {\n        id\n      }\n    }\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: { sharedRecipients: $sharedRecipients }) {\n      id\n      sharedRecipients\n    }\n  }\n',
 ): typeof import('./graphql').ShareVideoDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n'
+  source: '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n',
 ): typeof import('./graphql').InsertVideosDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n'
+  source: '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').FinalizeVideoDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n'
+  source: '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').SaveSubtitleDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query PlaylistDetail($id: uuid!, $emails: [String!]!) {\n    playlist_by_pk(id: $id) {\n      playlist_videos(where: { video: { status: { _eq: "ready" } } }) {\n        video {\n          id\n          status\n        }\n      }\n    }\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n'
+  source: '\n  query PlaylistDetail($id: uuid!, $emails: [String!]!) {\n    playlist_by_pk(id: $id) {\n      playlist_videos(where: { video: { status: { _eq: "ready" } } }) {\n        video {\n          id\n          status\n        }\n      }\n    }\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n',
 ): typeof import('./graphql').PlaylistDetailDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n'
+  source: '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n',
 ): typeof import('./graphql').UsersDocument;
 
 export function graphql(source: string) {

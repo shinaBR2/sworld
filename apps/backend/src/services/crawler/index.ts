@@ -1,9 +1,14 @@
-import { Configuration, PlaywrightCrawler, PlaywrightCrawlerOptions } from 'crawlee';
-import { CrawlInputs, SelectorConfig } from './types';
+import {
+  Configuration,
+  PlaywrightCrawler,
+  type PlaywrightCrawlerOptions,
+} from 'crawlee';
+import type { CrawlInputs, SelectorConfig } from './types';
 import { createRequestHandler } from './utils';
 import { validateUrlInput } from './validator';
 
-interface BaseCrawlOptions extends Omit<PlaywrightCrawlerOptions, 'requestHandler'> {
+interface BaseCrawlOptions
+  extends Omit<PlaywrightCrawlerOptions, 'requestHandler'> {
   selectors?: SelectorConfig[];
   handlerType?: string;
 }
@@ -20,7 +25,10 @@ interface CrawlResult<T> {
  * @param options Configuration options for the crawler
  * @returns Promise resolving to a CrawlResult object with the collected data
  */
-const crawl = async <T>(props: CrawlInputs, crawlerOptions: BaseCrawlOptions): Promise<CrawlResult<T>> => {
+const crawl = async <T>(
+  props: CrawlInputs,
+  crawlerOptions: BaseCrawlOptions,
+): Promise<CrawlResult<T>> => {
   const { getSingleVideo, url, title, slugPrefix } = props;
   const { handlerType, selectors } = validateUrlInput(url);
 
@@ -39,7 +47,7 @@ const crawl = async <T>(props: CrawlInputs, crawlerOptions: BaseCrawlOptions): P
     },
     new Configuration({
       persistStorage: false,
-    })
+    }),
   );
 
   await crawler.run([url]);

@@ -40,6 +40,8 @@ describe('FixDurationHandlerSchema', () => {
       body: validRequest.body,
     };
 
-    expect(() => fixDurationHandlerSchema.parse(requestWithoutHeaders)).toThrow();
+    expect(() =>
+      fixDurationHandlerSchema.parse(requestWithoutHeaders),
+    ).toThrow();
   });
 });

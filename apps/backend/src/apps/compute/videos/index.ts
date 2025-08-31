@@ -1,10 +1,17 @@
-import express, { Router } from 'express';
+import express, { type Router } from 'express';
 import { validateRequest } from 'src/utils/validator';
 import { convertHandler } from './routes/convert';
-import { ConvertHandlerRequest, convertHandlerSchema } from 'src/schema/videos/convert';
+import {
+  type ConvertHandlerRequest,
+  convertHandlerSchema,
+} from 'src/schema/videos/convert';
 
 const videosRouter: Router = express.Router();
 
-videosRouter.post('/convert-handler', validateRequest<ConvertHandlerRequest>(convertHandlerSchema), convertHandler);
+videosRouter.post(
+  '/convert-handler',
+  validateRequest<ConvertHandlerRequest>(convertHandlerSchema),
+  convertHandler,
+);
 
 export { videosRouter };

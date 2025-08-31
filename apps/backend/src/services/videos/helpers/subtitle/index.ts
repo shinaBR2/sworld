@@ -30,12 +30,19 @@ const streamSubtitleFile = async (options: StreamSubtitleOptions) => {
     throw new CustomError('Failed to fetch subtitle', {
       errorCode: HTTP_ERRORS.EMPTY_RESPONSE,
       shouldRetry: false,
-      context: { url, storagePath, responseStatus: response.statusText, statusCode: response.status },
+      context: {
+        url,
+        storagePath,
+        responseStatus: response.statusText,
+        statusCode: response.status,
+      },
     });
   }
 
   // Convert the web stream to a Node.js stream
-  const nodeStream = Readable.fromWeb(subtitleStream as unknown as ReadableStream<Uint8Array>);
+  const nodeStream = Readable.fromWeb(
+    subtitleStream as unknown as ReadableStream<Uint8Array>,
+  );
 
   // Stream the response directly to GCP
   return streamFile({

@@ -11,11 +11,17 @@ import {
 
 describe('error-codes', () => {
   it('should contain all expected http error codes', () => {
-    const expectedCodes = ['NETWORK_ERROR', 'NETWORK_TIMEOUT', 'SERVER_ERROR', 'CLIENT_ERROR', 'EMPTY_RESPONSE'];
+    const expectedCodes = [
+      'NETWORK_ERROR',
+      'NETWORK_TIMEOUT',
+      'SERVER_ERROR',
+      'CLIENT_ERROR',
+      'EMPTY_RESPONSE',
+    ];
 
     const actualCodes = Object.values(HTTP_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
-    expectedCodes.forEach(code => {
+    expectedCodes.forEach((code) => {
       expect(actualCodes).toContain(code);
     });
   });
@@ -25,7 +31,7 @@ describe('error-codes', () => {
 
     const actualCodes = Object.values(VALIDATION_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
-    expectedCodes.forEach(code => {
+    expectedCodes.forEach((code) => {
       expect(actualCodes).toContain(code);
     });
   });
@@ -35,7 +41,7 @@ describe('error-codes', () => {
 
     const actualCodes = Object.values(DATABASE_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
-    expectedCodes.forEach(code => {
+    expectedCodes.forEach((code) => {
       expect(actualCodes).toContain(code);
     });
   });
@@ -60,17 +66,21 @@ describe('error-codes', () => {
 
     const actualCodes = Object.values(VIDEO_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
-    expectedCodes.forEach(code => {
+    expectedCodes.forEach((code) => {
       expect(actualCodes).toContain(code);
     });
   });
 
   it('should contain all expected crawl error codes', () => {
-    const expectedCodes = ['UNSUPPORTED_SITE', 'MISSING_URL_SELECTOR', 'INVALID_JSON'];
+    const expectedCodes = [
+      'UNSUPPORTED_SITE',
+      'MISSING_URL_SELECTOR',
+      'INVALID_JSON',
+    ];
 
     const actualCodes = Object.values(CRAWL_ERRORS);
     expect(actualCodes).toHaveLength(expectedCodes.length);
-    expectedCodes.forEach(code => {
+    expectedCodes.forEach((code) => {
       expect(actualCodes).toContain(code);
     });
   });
@@ -83,7 +93,7 @@ describe('error-codes', () => {
     };
 
     Object.entries(VIDEO_ERRORS).forEach(([key, value]) => {
-      const prefix = Object.keys(prefixMap).find(p => key.startsWith(p));
+      const prefix = Object.keys(prefixMap).find((p) => key.startsWith(p));
       if (prefix) {
         expect(value.startsWith(prefixMap[prefix])).toBeTruthy();
       }

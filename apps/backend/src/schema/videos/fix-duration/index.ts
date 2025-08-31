@@ -9,5 +9,7 @@ const fixDurationHandlerSchema = z.object({
   headers: taskHandlerHeaderSchema.passthrough(),
 });
 
-export type FixDurationHandlerRequest = z.infer<typeof fixDurationHandlerSchema>;
+export type FixDurationHandlerRequest = z.infer<
+  typeof fixDurationHandlerSchema
+>;
 export { fixDurationHandlerSchema };

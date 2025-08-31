@@ -9,7 +9,7 @@ const getClientIP = (headers: Record<string, string>) => {
     headers['forwarded']?.match(/for=([^;,]+)/)?.[1],
   ];
 
-  return candidates.find(ip => ip && isValidIP(ip)) || 'unknown';
+  return candidates.find((ip) => ip && isValidIP(ip)) || 'unknown';
 };
 
 const isValidIP = (ip: string): boolean => {
@@ -18,7 +18,7 @@ const isValidIP = (ip: string): boolean => {
 
   if (ipv4Regex.test(ip)) {
     const parts = ip.split('.').map(Number);
-    return parts.every(part => part >= 0 && part <= 255);
+    return parts.every((part) => part >= 0 && part <= 255);
   } else if (ipv6Regex.test(ip)) {
     return true;
   }

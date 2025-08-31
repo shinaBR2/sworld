@@ -162,7 +162,10 @@ class CustomError extends Error {
    * @param {Omit<ErrorOptions, 'severity'>} [options={}] - Additional options for the error.
    * @returns {CustomError} The created CustomError instance.
    */
-  static low(message: string, options: Omit<ErrorOptions, 'severity'> = {}): CustomError {
+  static low(
+    message: string,
+    options: Omit<ErrorOptions, 'severity'> = {},
+  ): CustomError {
     return new CustomError(message, {
       ...options,
       severity: ERROR_SEVERITY.LOW,
@@ -175,7 +178,10 @@ class CustomError extends Error {
    * @param {Omit<ErrorOptions, 'severity'>} [options={}] - Additional options for the error.
    * @returns {CustomError} The created CustomError instance.
    */
-  static medium(message: string, options: Omit<ErrorOptions, 'severity'> = {}): CustomError {
+  static medium(
+    message: string,
+    options: Omit<ErrorOptions, 'severity'> = {},
+  ): CustomError {
     return new CustomError(message, {
       ...options,
       severity: ERROR_SEVERITY.MEDIUM,
@@ -188,7 +194,10 @@ class CustomError extends Error {
    * @param {Omit<ErrorOptions, 'severity'>} [options={}] - Additional options for the error.
    * @returns {CustomError} The created CustomError instance.
    */
-  static high(message: string, options: Omit<ErrorOptions, 'severity'> = {}): CustomError {
+  static high(
+    message: string,
+    options: Omit<ErrorOptions, 'severity'> = {},
+  ): CustomError {
     return new CustomError(message, {
       ...options,
       severity: ERROR_SEVERITY.HIGH,
@@ -201,7 +210,10 @@ class CustomError extends Error {
    * @param {Omit<ErrorOptions, 'severity'>} [options={}] - Additional options for the error.
    * @returns {CustomError} The created CustomError instance.
    */
-  static critical(message: string, options: Omit<ErrorOptions, 'severity'> = {}): CustomError {
+  static critical(
+    message: string,
+    options: Omit<ErrorOptions, 'severity'> = {},
+  ): CustomError {
     return new CustomError(message, {
       ...options,
       severity: ERROR_SEVERITY.CRITICAL,
@@ -214,7 +226,8 @@ class CustomError extends Error {
    */
   getFlattenedContext(): Record<string, unknown> {
     return this.contexts.reduce((acc: Record<string, unknown>, context) => {
-      acc[`${context.source}_${context.timestamp ?? 'undefined'}`] = context.data;
+      acc[`${context.source}_${context.timestamp ?? 'undefined'}`] =
+        context.data;
       return acc;
     }, {});
   }

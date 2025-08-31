@@ -18,7 +18,7 @@ const generateOptions = async (userId: string) => {
   const options = await generateAuthenticationOptions({
     rpID: RP_ID,
     // Require users to use a previously-registered authenticator
-    allowCredentials: userPasskeys.map(passkey => ({
+    allowCredentials: userPasskeys.map((passkey) => ({
       id: passkey.id,
       transports: passkey.transports,
     })),
@@ -31,17 +31,17 @@ const generateOptions = async (userId: string) => {
 };
 
 const verify = async (userId: string, credential: any) => {
-  let isVerified = false;
+  const isVerified = false;
   const userSnapshot = await getUser(userId);
 
-  // @ts-ignore
+  // @ts-expect-error
   if (!userSnapshot.exists) {
     return {
       isVerified,
     };
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   const user = userSnapshot.data();
   logger.info('user data', user);
   logger.info('user id', userId);
@@ -51,7 +51,7 @@ const verify = async (userId: string, credential: any) => {
 
   if (!passkey) {
     throw new Error(
-      `Could not find passkey ${credential.id} for user ${user.id}`
+      `Could not find passkey ${credential.id} for user ${user.id}`,
     );
   }
 

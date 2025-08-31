@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { getPost } from 'src/services/hashnode/queries/posts';
 import { deletePost } from 'src/services/hasura/mutations/posts/delete';
 import { insertPost } from 'src/services/hasura/mutations/posts/insert';
@@ -104,7 +104,9 @@ describe('postEventsHandler', () => {
     vi.mocked(getPost).mockResolvedValue(null);
     mockRequest.validatedData.body.data.eventType = 'post_published';
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(CustomError);
+    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+      CustomError,
+    );
   });
 
   it('should throw error for invalid signature', async () => {
@@ -113,19 +115,25 @@ describe('postEventsHandler', () => {
       reason: 'Invalid signature',
     });
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(CustomError);
+    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+      CustomError,
+    );
   });
 
   it('should throw error for invalid event type', async () => {
     mockRequest.validatedData.body.data.eventType = 'invalid_event';
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(CustomError);
+    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+      CustomError,
+    );
   });
 
   it('should throw error when database operation fails', async () => {
     mockRequest.validatedData.body.data.eventType = 'post_published';
     vi.mocked(insertPost).mockRejectedValue(new Error('DB Error'));
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(CustomError);
+    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+      CustomError,
+    );
   });
 });

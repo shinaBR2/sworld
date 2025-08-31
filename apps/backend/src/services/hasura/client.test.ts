@@ -26,11 +26,14 @@ describe('hasuraClient', () => {
     const { hasuraClient } = await import('./client');
 
     // Verify GraphQLClient constructor was called correctly
-    expect(GraphQLClient).toHaveBeenCalledWith('https://test-hasura-endpoint.com', {
-      headers: {
-        'x-hasura-admin-secret': 'test-admin-secret',
+    expect(GraphQLClient).toHaveBeenCalledWith(
+      'https://test-hasura-endpoint.com',
+      {
+        headers: {
+          'x-hasura-admin-secret': 'test-admin-secret',
+        },
       },
-    });
+    );
   });
 
   it('should handle missing environment variables', async () => {

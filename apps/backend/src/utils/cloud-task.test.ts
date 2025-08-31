@@ -80,7 +80,9 @@ describe('createCloudTasks', () => {
 
     // Setup mock implementations
     mockCreateTask.mockResolvedValue([{ name: 'test-task' }, null, null]);
-    mockQueuePath.mockReturnValue('projects/test-project/locations/us-central1/queues/test-queue');
+    mockQueuePath.mockReturnValue(
+      'projects/test-project/locations/us-central1/queues/test-queue',
+    );
 
     const tasksModule = await import('src/database/queries/tasks');
     const dbModule = await import('src/database');
@@ -126,7 +128,11 @@ describe('createCloudTasks', () => {
       transaction,
     });
 
-    expect(mockQueuePath).toHaveBeenCalledWith('test-project', 'us-central1', 'test-queue');
+    expect(mockQueuePath).toHaveBeenCalledWith(
+      'test-project',
+      'us-central1',
+      'test-queue',
+    );
     expect(mockCreateTask).toHaveBeenCalledWith({
       parent: 'projects/test-project/locations/us-central1/queues/test-queue',
       task: {
@@ -240,7 +246,7 @@ describe('createCloudTasks', () => {
             body: Buffer.from(JSON.stringify(testPayload)).toString('base64'),
           }),
         }),
-      })
+      }),
     );
   });
 
@@ -268,7 +274,7 @@ describe('createCloudTasks', () => {
             seconds: Math.floor(60 + now / 1000),
           },
         }),
-      })
+      }),
     );
   });
 
@@ -299,7 +305,7 @@ describe('createCloudTasks', () => {
             },
           }),
         }),
-      })
+      }),
     );
   });
 
@@ -317,7 +323,9 @@ describe('createCloudTasks', () => {
     };
 
     const { createCloudTasks } = await import('./cloud-task');
-    await expect(createCloudTasks(params)).rejects.toThrow('Missing cloud tasks configuration');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing cloud tasks configuration',
+    );
   });
 
   it('should throw error when missing location', async () => {
@@ -334,7 +342,9 @@ describe('createCloudTasks', () => {
     };
 
     const { createCloudTasks } = await import('./cloud-task');
-    await expect(createCloudTasks(params)).rejects.toThrow('Missing cloud tasks configuration');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing cloud tasks configuration',
+    );
   });
 
   it('should throw error when missing cloud tasks service account', async () => {
@@ -351,7 +361,9 @@ describe('createCloudTasks', () => {
     };
 
     const { createCloudTasks } = await import('./cloud-task');
-    await expect(createCloudTasks(params)).rejects.toThrow('Missing cloud tasks configuration');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing cloud tasks configuration',
+    );
   });
 
   it('should throw error when missing required parameters', async () => {
@@ -368,7 +380,9 @@ describe('createCloudTasks', () => {
 
     const { createCloudTasks } = await import('./cloud-task');
     // @ts-expect-error
-    await expect(createCloudTasks(params)).rejects.toThrow('Missing url or queue or target handler');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Missing url or queue or target handler',
+    );
   });
 
   it('should throw error when failed to stringify payload', async () => {
@@ -385,7 +399,9 @@ describe('createCloudTasks', () => {
     };
 
     const { createCloudTasks } = await import('./cloud-task');
-    await expect(createCloudTasks(params)).rejects.toThrow('Invalid payload: Failed to serialize to JSON');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Invalid payload: Failed to serialize to JSON',
+    );
   });
 
   it('should throw error when failed to init task', async () => {
@@ -401,14 +417,16 @@ describe('createCloudTasks', () => {
     const { createCloudTasks } = await import('./cloud-task');
     const originalError = new Error('Task creation failed');
     mockCreateTask.mockRejectedValue(new Error('Task creation failed'));
-    await expect(createCloudTasks(params)).rejects.toThrow('Task creation failed');
+    await expect(createCloudTasks(params)).rejects.toThrow(
+      'Task creation failed',
+    );
     expect(logger.error).toHaveBeenCalledWith(
       expect.objectContaining({
         err: originalError,
         queue: 'test-queue',
         url: 'https://test.com',
       }),
-      'Task creation failed'
+      'Task creation failed',
     );
   });
 
@@ -432,7 +450,7 @@ describe('createCloudTasks', () => {
             seconds: 1800,
           },
         }),
-      })
+      }),
     );
   });
 });

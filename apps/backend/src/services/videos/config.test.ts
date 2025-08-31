@@ -15,7 +15,7 @@ describe('videoConfig', () => {
       'ffmpegCommands',
     ];
 
-    expectedKeys.forEach(key => {
+    expectedKeys.forEach((key) => {
       expect(videoConfig).toHaveProperty(key);
     });
   });
@@ -29,7 +29,7 @@ describe('videoConfig', () => {
       '#EXT-X-ENDLIST',
     ];
 
-    expectedTags.forEach(tag => {
+    expectedTags.forEach((tag) => {
       expect(videoConfig.essentialHLSTags.has(tag)).toBe(true);
     });
     expect(videoConfig.essentialHLSTags.size).toBe(expectedTags.length);
@@ -39,7 +39,12 @@ describe('videoConfig', () => {
     const patterns = videoConfig.excludePatterns;
     expect(patterns).toHaveLength(3);
 
-    const testUrls = ['/adjump/test.ts', '/ads/commercial.ts', '/commercial/video.ts', '/content/legitimate.ts'];
+    const testUrls = [
+      '/adjump/test.ts',
+      '/ads/commercial.ts',
+      '/commercial/video.ts',
+      '/content/legitimate.ts',
+    ];
 
     expect(testUrls[0]).toMatch(patterns[0]); // adjump
     expect(testUrls[1]).toMatch(patterns[1]); // ads

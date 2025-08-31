@@ -46,21 +46,27 @@ const CRAWL_ERRORS = {
 };
 
 type HttpErrorCode = (typeof HTTP_ERRORS)[keyof typeof HTTP_ERRORS];
-type ValidationCode = (typeof VALIDATION_ERRORS)[keyof typeof VALIDATION_ERRORS];
+type ValidationCode =
+  (typeof VALIDATION_ERRORS)[keyof typeof VALIDATION_ERRORS];
 type DbErrorCode = (typeof DATABASE_ERRORS)[keyof typeof DATABASE_ERRORS];
 type VideoErrorCode = (typeof VIDEO_ERRORS)[keyof typeof VIDEO_ERRORS];
 type CrawlErrorCode = (typeof CRAWL_ERRORS)[keyof typeof CRAWL_ERRORS];
 
-type ErrorCode = HttpErrorCode | ValidationCode | DbErrorCode | VideoErrorCode | CrawlErrorCode;
+type ErrorCode =
+  | HttpErrorCode
+  | ValidationCode
+  | DbErrorCode
+  | VideoErrorCode
+  | CrawlErrorCode;
 
 export {
   CRAWL_ERRORS,
   DATABASE_ERRORS,
-  DbErrorCode,
-  ErrorCode,
+  type DbErrorCode,
+  type ErrorCode,
   HTTP_ERRORS,
-  HttpErrorCode,
+  type HttpErrorCode,
   VALIDATION_ERRORS,
   VIDEO_ERRORS,
-  VideoErrorCode,
+  type VideoErrorCode,
 };

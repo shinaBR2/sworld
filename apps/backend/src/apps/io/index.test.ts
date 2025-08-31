@@ -45,21 +45,27 @@ describe('app', () => {
   it('should set up videos route', async () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
-    const videoRouteCall = useCalls.find(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
+    const videoRouteCall = useCalls.find(
+      (call) => call[0] === '/videos' && call[1] === 'mockVideosRouter',
+    );
     expect(videoRouteCall).toBeTruthy();
   });
 
   it('should set up crawler route', async () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
-    const crawlerRouteCall = useCalls.find(call => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter');
+    const crawlerRouteCall = useCalls.find(
+      (call) => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter',
+    );
     expect(crawlerRouteCall).toBeTruthy();
   });
 
   it('should set up error handler with logger', async () => {
     await import('./index');
     expect(errorHandler).toHaveBeenCalledWith('mockLogger');
-    const errorHandlerCall = mockUse.mock.calls.find(call => call[0] === 'mockErrorHandler');
+    const errorHandlerCall = mockUse.mock.calls.find(
+      (call) => call[0] === 'mockErrorHandler',
+    );
     expect(errorHandlerCall).toBeTruthy();
   });
 
@@ -67,9 +73,15 @@ describe('app', () => {
     await import('./index');
     const calls = mockUse.mock.calls;
 
-    const videosRouterCallIndex = calls.findIndex(call => call[0] === '/videos' && call[1] === 'mockVideosRouter');
-    const crawlerRouterCallIndex = calls.findIndex(call => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter');
-    const errorHandlerCallIndex = calls.findIndex(call => call[0] === 'mockErrorHandler');
+    const videosRouterCallIndex = calls.findIndex(
+      (call) => call[0] === '/videos' && call[1] === 'mockVideosRouter',
+    );
+    const crawlerRouterCallIndex = calls.findIndex(
+      (call) => call[0] === '/crawlers' && call[1] === 'mockCrawlerRouter',
+    );
+    const errorHandlerCallIndex = calls.findIndex(
+      (call) => call[0] === 'mockErrorHandler',
+    );
 
     expect(videosRouterCallIndex).not.toBe(-1);
     expect(crawlerRouterCallIndex).not.toBe(-1);
@@ -90,6 +102,8 @@ describe('app', () => {
       throw error;
     });
 
-    await expect(() => import('./index')).rejects.toThrow('Base app creation failed');
+    await expect(() => import('./index')).rejects.toThrow(
+      'Base app creation failed',
+    );
   });
 });

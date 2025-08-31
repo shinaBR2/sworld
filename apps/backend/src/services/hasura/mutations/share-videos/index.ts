@@ -1,5 +1,5 @@
 import { graphql } from '../../generated-graphql';
-import {
+import type {
   SharePlaylistMutation,
   SharePlaylistMutationVariables,
   ShareVideoMutation,
@@ -50,7 +50,7 @@ const SHARE_VIDEO_MUTATION = graphql(/* GraphQL */ `
 const sharePlaylist = async (
   objects: Array<Shared_Playlist_Recipients_Insert_Input>,
   playlistId: string,
-  emails: string[]
+  emails: string[],
 ): Promise<{
   insert_shared_playlist_recipients: { returning: Array<{ id: string }> };
   update_playlist_by_pk: { id: string; sharedRecipients: string[] };
@@ -61,19 +61,29 @@ const sharePlaylist = async (
     sharedRecipients: emails,
   };
 
-  const response = await hasuraClient.request<SharePlaylistMutation, SharePlaylistMutationVariables>({
+  const response = await hasuraClient.request<
+    SharePlaylistMutation,
+    SharePlaylistMutationVariables
+  >({
     document: SHARE_PLAYLIST_MUTATION.toString(),
     variables: variables,
   });
-  if (!response.insert_shared_playlist_recipients || !response.update_playlist_by_pk) {
-    throw new Error('Failed to insert shared playlist recipients or update playlist');
+  if (
+    !response.insert_shared_playlist_recipients ||
+    !response.update_playlist_by_pk
+  ) {
+    throw new Error(
+      'Failed to insert shared playlist recipients or update playlist',
+    );
   }
 
   return {
     insert_shared_playlist_recipients: {
-      returning: response.insert_shared_playlist_recipients.returning.map(record => ({
-        id: String(record.id),
-      })),
+      returning: response.insert_shared_playlist_recipients.returning.map(
+        (record) => ({
+          id: String(record.id),
+        }),
+      ),
     },
     update_playlist_by_pk: {
       id: response.update_playlist_by_pk.id,
@@ -85,7 +95,7 @@ const sharePlaylist = async (
 const shareVideo = async (
   objects: Array<Shared_Video_Recipients_Insert_Input>,
   videoId: string,
-  emails: string[]
+  emails: string[],
 ): Promise<{
   insert_shared_video_recipients: { returning: Array<{ id: string }> };
   update_videos_by_pk: { id: string; sharedRecipients: string[] };
@@ -96,19 +106,27 @@ const shareVideo = async (
     sharedRecipients: emails,
   };
 
-  const response = await hasuraClient.request<ShareVideoMutation, ShareVideoMutationVariables>({
+  const response = await hasuraClient.request<
+    ShareVideoMutation,
+    ShareVideoMutationVariables
+  >({
     document: SHARE_VIDEO_MUTATION.toString(),
     variables: variables,
   });
-  if (!response.insert_shared_video_recipients || !response.update_videos_by_pk) {
+  if (
+    !response.insert_shared_video_recipients ||
+    !response.update_videos_by_pk
+  ) {
     throw new Error('Failed to insert shared video recipients or update video');
   }
 
   return {
     insert_shared_video_recipients: {
-      returning: response.insert_shared_video_recipients.returning.map(record => ({
-        id: String(record.id),
-      })),
+      returning: response.insert_shared_video_recipients.returning.map(
+        (record) => ({
+          id: String(record.id),
+        }),
+      ),
     },
     update_videos_by_pk: {
       id: response.update_videos_by_pk.id,

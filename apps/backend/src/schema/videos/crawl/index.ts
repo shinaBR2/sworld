@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders } from 'src/schema/hasura';
+import {
+  hasuraEventMetadataSchema,
+  headersSchema,
+  transformEventMetadata,
+  transformHeaders,
+} from 'src/schema/hasura';
 import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 
 const CrawlRequestSchema = z.object({
@@ -39,7 +44,7 @@ const crawlSchema = z
     }),
     headers: headersSchema,
   })
-  .transform(req => ({
+  .transform((req) => ({
     ...transformHeaders(req),
     event: transformEvent(req.body.event),
   }));
@@ -62,6 +67,11 @@ const crawlHandlerSchema = z.object({
   }),
 });
 
-export { CrawlEventSchema, CrawlRequestSchema, crawlSchema, crawlHandlerSchema };
+export {
+  CrawlEventSchema,
+  CrawlRequestSchema,
+  crawlSchema,
+  crawlHandlerSchema,
+};
 export type CrawlRequest = z.infer<typeof crawlSchema>;
 export type CrawlHandlerRequest = z.infer<typeof crawlHandlerSchema>;

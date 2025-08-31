@@ -4,10 +4,16 @@ import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { fetchWithError } from 'src/utils/fetch';
 import { logger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
-import { Mock, beforeEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
 import { downloadFile, verifyFileSize } from '../file';
 import { streamFile } from '../gcp-cloud-storage';
-import { downloadSegments, parseM3U8Content, streamPlaylistFile, streamSegmentFile, streamSegments } from './helpers';
+import {
+  downloadSegments,
+  parseM3U8Content,
+  streamPlaylistFile,
+  streamSegmentFile,
+  streamSegments,
+} from './helpers';
 
 vi.mock('src/utils/fetch', () => ({
   fetchWithError: vi.fn(),
@@ -43,7 +49,7 @@ describe('M3U8 parser', () => {
     content
       .trim()
       .split('\n')
-      .map(line => line.trim())
+      .map((line) => line.trim())
       .join('\n');
 
   describe('parseM3U8Content', () => {
@@ -57,7 +63,9 @@ describe('M3U8 parser', () => {
         },
       } as any);
 
-      await expect(parseM3U8Content(baseUrl, excludePatterns)).rejects.toThrow('Failed to fetch m3u8: Not Found');
+      await expect(parseM3U8Content(baseUrl, excludePatterns)).rejects.toThrow(
+        'Failed to fetch m3u8: Not Found',
+      );
     });
 
     test('should handle m3u8 with multiple ad patterns', async () => {
@@ -96,7 +104,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(segments.included).toEqual([
@@ -163,7 +174,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       // Check included segments in order
@@ -244,7 +258,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       // Check included segments in order
@@ -313,7 +330,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(segments.included).toEqual([
@@ -363,7 +383,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(segments.included).toEqual([
@@ -412,10 +435,15 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
       expect(normalizeContent(modifiedContent)).toBe(expected);
       expect(modifiedContent).toContain('#EXT-X-PLAYLIST-TYPE:VOD');
-      expect(segments.included).toEqual([{ url: 'https://example.com/segment1.ts', name: '0.ts', duration: 3 }]);
+      expect(segments.included).toEqual([
+        { url: 'https://example.com/segment1.ts', name: '0.ts', duration: 3 },
+      ]);
       expect(segments.excluded).toHaveLength(0);
     });
 
@@ -435,7 +463,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       expect(segments.included).toEqual([
         {
@@ -523,7 +554,10 @@ describe('M3U8 parser', () => {
       };
       vi.mocked(fetchWithError).mockResolvedValue(mockResponse as any);
 
-      const { modifiedContent, segments, duration } = await parseM3U8Content(baseUrl, excludePatterns);
+      const { modifiedContent, segments, duration } = await parseM3U8Content(
+        baseUrl,
+        excludePatterns,
+      );
 
       // Verify modified content
       expect(normalizeContent(modifiedContent)).toBe(expected);
@@ -574,13 +608,16 @@ describe('downloadSegments', () => {
 
     // Check if downloadFile was called for each segment
     expect(downloadFile).toHaveBeenCalledTimes(3);
-    expect(downloadFile).toHaveBeenCalledWith('https://example.com/segment1.ts', '/tmp/test/segment1.ts');
+    expect(downloadFile).toHaveBeenCalledWith(
+      'https://example.com/segment1.ts',
+      '/tmp/test/segment1.ts',
+    );
     expect(logger.info).toHaveBeenCalledWith(
       {
         segmentName: 'segment1.ts',
         segmentUrl: 'https://example.com/segment1.ts',
       },
-      'Downloading segment'
+      'Downloading segment',
     );
   });
 
@@ -589,7 +626,10 @@ describe('downloadSegments', () => {
     await downloadSegments(mockSegments, mockTempDir, maxSize);
 
     expect(verifyFileSize).toHaveBeenCalledTimes(3);
-    expect(verifyFileSize).toHaveBeenCalledWith('/tmp/test/segment1.ts', maxSize);
+    expect(verifyFileSize).toHaveBeenCalledWith(
+      '/tmp/test/segment1.ts',
+      maxSize,
+    );
   });
 
   test('should process segments in batches of 5', async () => {
@@ -602,7 +642,7 @@ describe('downloadSegments', () => {
     const downloadCalls = vi.mocked(downloadFile).mock.calls;
     // Verify first batch (5 segments)
     const firstBatch = downloadCalls.slice(0, 5);
-    expect(firstBatch.map(call => call[0])).toEqual([
+    expect(firstBatch.map((call) => call[0])).toEqual([
       'https://example.com/segment1.ts',
       'https://example.com/segment2.ts',
       'https://example.com/segment3.ts',
@@ -611,13 +651,17 @@ describe('downloadSegments', () => {
     ]);
     // Verify second batch (1 segment)
     const secondBatch = downloadCalls.slice(5);
-    expect(secondBatch.map(call => call[0])).toEqual(['https://example.com/segment6.ts']);
+    expect(secondBatch.map((call) => call[0])).toEqual([
+      'https://example.com/segment6.ts',
+    ]);
   });
 
   test('when error with promise.all', async () => {
     vi.mocked(downloadFile).mockRejectedValueOnce(new Error('Download failed'));
 
-    await expect(downloadSegments(mockSegments, mockTempDir)).rejects.toThrow('Download failed');
+    await expect(downloadSegments(mockSegments, mockTempDir)).rejects.toThrow(
+      'Download failed',
+    );
 
     expect(downloadFile).toHaveBeenCalledTimes(3);
   });
@@ -639,12 +683,18 @@ describe('streamSegmentFile', () => {
       statusText: 'OK',
     } as Response);
 
-    await streamSegmentFile('http://example.com/segment.ts', 'test-path/segment.ts');
+    await streamSegmentFile(
+      'http://example.com/segment.ts',
+      'test-path/segment.ts',
+    );
 
     // Verify fetch was called with correct URL
-    expect(fetchWithError).toHaveBeenCalledWith('http://example.com/segment.ts', {
-      timeout: systemConfig.defaultExternalRequestTimeout,
-    });
+    expect(fetchWithError).toHaveBeenCalledWith(
+      'http://example.com/segment.ts',
+      {
+        timeout: systemConfig.defaultExternalRequestTimeout,
+      },
+    );
 
     // Verify streamFile was called with correct arguments
     const streamFileCall = (streamFile as Mock).mock.calls[0][0];
@@ -745,7 +795,8 @@ describe('streamPlaylistFile', () => {
   });
 
   test('should stream playlist with special characters', async () => {
-    const content = '#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=1280x720\npath/with/special-chars.ts';
+    const content =
+      '#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=1280x720\npath/with/special-chars.ts';
     const storagePath = 'test/complex-playlist.m3u8';
 
     await streamPlaylistFile(content, storagePath);
@@ -766,7 +817,9 @@ describe('streamPlaylistFile', () => {
     mockStreamFile.mockRejectedValueOnce(mockError);
 
     // Expect the error to be propagated
-    await expect(streamPlaylistFile(content, storagePath)).rejects.toThrow('Stream error');
+    await expect(streamPlaylistFile(content, storagePath)).rejects.toThrow(
+      'Stream error',
+    );
 
     expect(mockStreamFile).toHaveBeenCalledOnce();
   });
@@ -791,7 +844,7 @@ describe('streamSegments', () => {
       Promise.resolve({
         body: new ReadableStream(),
         statusText: 'OK',
-      } as Response)
+      } as Response),
     );
 
     // Mock successful streamFile responses
@@ -826,7 +879,7 @@ describe('streamSegments', () => {
       Promise.resolve({
         body: new ReadableStream(),
         statusText: 'OK',
-      } as Response)
+      } as Response),
     );
     (streamFile as Mock).mockResolvedValue(undefined);
 
@@ -866,7 +919,7 @@ describe('streamSegments', () => {
         segments,
         baseStoragePath,
         options: { concurrencyLimit: 1 },
-      })
+      }),
     ).rejects.toThrow('Failed to fetch segment');
 
     // Should have only processed up to the failing segment

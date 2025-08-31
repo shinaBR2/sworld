@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { CrawlEventSchema, CrawlRequestSchema, crawlHandlerSchema, crawlSchema } from './index';
+import {
+  CrawlEventSchema,
+  CrawlRequestSchema,
+  crawlHandlerSchema,
+  crawlSchema,
+} from './index';
 import { transformEventMetadata, transformHeaders } from 'src/schema/hasura';
 
 vi.mock('src/utils/cloud-task/schema', () => ({
@@ -21,12 +26,12 @@ vi.mock('src/schema/hasura', () => ({
     'x-request-id': z.string(),
     'x-hasura-user-id': z.string().optional(),
   }),
-  transformEventMetadata: vi.fn(metadata => ({
+  transformEventMetadata: vi.fn((metadata) => ({
     id: metadata.id,
     spanId: metadata.span_id,
     traceId: metadata.trace_id,
   })),
-  transformHeaders: vi.fn(req => ({
+  transformHeaders: vi.fn((req) => ({
     requestId: req.headers['x-request-id'],
     userId: req.headers['x-hasura-user-id'],
   })),
@@ -87,7 +92,9 @@ describe('CrawlRequestSchema', () => {
     };
 
     // Act & Assert
-    expect(() => CrawlRequestSchema.parse(validRequestWithoutSlugPrefix)).not.toThrow();
+    expect(() =>
+      CrawlRequestSchema.parse(validRequestWithoutSlugPrefix),
+    ).not.toThrow();
   });
 });
 
@@ -250,7 +257,9 @@ describe('CrawlSchema', () => {
     crawlSchema.parse(validRequest);
 
     // Assert
-    expect(transformEventMetadata).toHaveBeenCalledWith(validRequest.body.event.metadata);
+    expect(transformEventMetadata).toHaveBeenCalledWith(
+      validRequest.body.event.metadata,
+    );
     expect(transformHeaders).toHaveBeenCalledWith(validRequest);
   });
 

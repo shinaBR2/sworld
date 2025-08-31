@@ -21,4 +21,11 @@ const crawlConfig = {
   defaultWaitForSelectorTimeout: 10000,
 };
 
-export { QueueName, Queues, systemConfig, uuidNamespaces, queues, crawlConfig };
+export {
+  QueueName,
+  type Queues,
+  systemConfig,
+  uuidNamespaces,
+  queues,
+  crawlConfig,
+};

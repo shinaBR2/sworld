@@ -6,11 +6,15 @@ const createHasuraClient = (): GraphQLClient => {
   const adminSecret = envConfig.hasuraAdminSecret;
 
   if (!endpoint) {
-    throw new Error('Hasura endpoint is not defined. Please check environment variables.');
+    throw new Error(
+      'Hasura endpoint is not defined. Please check environment variables.',
+    );
   }
 
   if (!adminSecret) {
-    throw new Error('Hasura admin secret is not defined. Please check environment variables.');
+    throw new Error(
+      'Hasura admin secret is not defined. Please check environment variables.',
+    );
   }
 
   return new GraphQLClient(endpoint, {

@@ -1,4 +1,4 @@
-import { SelectorConfig, SelectorName } from '../types';
+import { type SelectorConfig, SelectorName } from '../types';
 
 /**
  * Data
@@ -16,7 +16,8 @@ const selectors: SelectorConfig[] = [
   },
   {
     name: SelectorName.URL,
-    selector: '#main-contents #content #ajax-episode #halim-list-server .halim-list-eps a',
+    selector:
+      '#main-contents #content #ajax-episode #halim-list-server .halim-list-eps a',
     waitForSelectorTimeout: 10000,
     required: true,
   },

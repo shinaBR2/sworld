@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
@@ -12,7 +12,7 @@ const importPlatformHandler = async (req: Request, res: Response) => {
   try {
     logger.info(
       metadata,
-      `[/videos/import-platform-handler] start processing event "${metadata.id}", video "${data.id}"`
+      `[/videos/import-platform-handler] start processing event "${metadata.id}", video "${data.id}"`,
     );
 
     await finishVideoProcess({

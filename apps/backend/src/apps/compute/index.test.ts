@@ -43,7 +43,7 @@ describe('app', () => {
     await import('./index');
     const useCalls = mockUse.mock.calls;
     const videoRouteCall = useCalls.find(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
+      (call) => call[0] === '/videos' && call[1] === 'mockVideosRouter',
     );
     expect(videoRouteCall).toBeTruthy();
   });
@@ -53,7 +53,7 @@ describe('app', () => {
     expect(errorHandler).toHaveBeenCalledWith('mockLogger');
     // Find the error handler middleware registration
     const errorHandlerCall = mockUse.mock.calls.find(
-      call => call[0] === 'mockErrorHandler'
+      (call) => call[0] === 'mockErrorHandler',
     );
     expect(errorHandlerCall).toBeTruthy();
   });
@@ -64,10 +64,10 @@ describe('app', () => {
 
     // Find the indexes of our middleware
     const videosRouterCallIndex = calls.findIndex(
-      call => call[0] === '/videos' && call[1] === 'mockVideosRouter'
+      (call) => call[0] === '/videos' && call[1] === 'mockVideosRouter',
     );
     const errorHandlerCallIndex = calls.findIndex(
-      call => call[0] === 'mockErrorHandler'
+      (call) => call[0] === 'mockErrorHandler',
     );
 
     // Both middleware should be found
@@ -92,7 +92,7 @@ describe('app', () => {
 
     // The import should now fail
     await expect(() => import('./index')).rejects.toThrow(
-      'Base app creation failed'
+      'Base app creation failed',
     );
   });
 });

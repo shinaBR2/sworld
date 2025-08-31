@@ -27,4 +27,10 @@ const transformEventMetadata = (metadata: any) => ({
 const hasuraWebhookSchema = z.object(schema).transform(transformHeaders);
 
 export type HasuraWebhookRequest = z.infer<typeof hasuraWebhookSchema>;
-export { hasuraEventMetadataSchema, headersSchema, transformEventMetadata, transformHeaders, hasuraWebhookSchema };
+export {
+  hasuraEventMetadataSchema,
+  headersSchema,
+  transformEventMetadata,
+  transformHeaders,
+  hasuraWebhookSchema,
+};

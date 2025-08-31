@@ -9,9 +9,7 @@ vi.mock('crawlee', () => ({
   PlaywrightCrawler: vi.fn((options, config) => ({
     run: vi.fn().mockResolvedValue(undefined),
   })),
-  Configuration: vi.fn(function (options) {
-    return options;
-  }),
+  Configuration: vi.fn((options) => options),
 }));
 
 vi.mock('./utils', () => ({
@@ -47,7 +45,7 @@ describe('crawl', () => {
         title: 'Test',
         slugPrefix: 'test',
       },
-      {}
+      {},
     );
 
     // Update the expectation
@@ -57,7 +55,7 @@ describe('crawl', () => {
       },
       {
         persistStorage: false,
-      }
+      },
     );
 
     expect(createRequestHandler).toHaveBeenCalledWith('test', {
@@ -86,8 +84,8 @@ describe('crawl', () => {
           title: 'Test',
           slugPrefix: 'test',
         },
-        {}
-      )
+        {},
+      ),
     ).rejects.toThrow('Invalid URL');
   });
 });

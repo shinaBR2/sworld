@@ -8,7 +8,7 @@ type ServiceResponse<T> = {
 const createResponse = <T>(
   success: boolean,
   message: string,
-  dataObject?: T
+  dataObject?: T,
 ): ServiceResponse<T> => {
   return {
     success,
@@ -24,7 +24,7 @@ const AppError = <T>(message: string, error?: T): ServiceResponse<T> => {
 const AppResponse = <T>(
   success: boolean,
   message: string,
-  dataObject?: T
+  dataObject?: T,
 ): ServiceResponse<T> => {
   return createResponse(success, message, dataObject);
 };

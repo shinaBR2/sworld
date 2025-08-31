@@ -21,7 +21,7 @@ vi.mock('express', () => {
 });
 
 vi.mock('src/utils/validators/request', () => ({
-  validateRequest: vi.fn().mockImplementation(schema => {
+  validateRequest: vi.fn().mockImplementation((schema) => {
     return (req: any, res: any, next: any) => {
       req.validatedData = {
         ...req.body,
@@ -45,7 +45,7 @@ vi.mock('./routes/device', () => ({
 }));
 
 vi.mock('src/utils/requestHandler', () => ({
-  requestHandler: vi.fn(fn => fn),
+  requestHandler: vi.fn((fn) => fn),
 }));
 
 describe('authRouter', () => {
@@ -59,7 +59,7 @@ describe('authRouter', () => {
     const { authRouter } = await import('./index');
     expect(authRouter).toBeDefined();
 
-    const deviceRoute = routeHandlers.find(h => h.path === '/device');
+    const deviceRoute = routeHandlers.find((h) => h.path === '/device');
     expect(deviceRoute).toBeDefined();
     // Should have 2 middlewares: validation and handler
     expect(deviceRoute?.middlewares).toHaveLength(2);
@@ -70,7 +70,7 @@ describe('authRouter', () => {
 
   it('should call createDeviceRequest with correct extensionId', async () => {
     const { authRouter } = await import('./index');
-    const deviceRoute = routeHandlers.find(h => h.path === '/device');
+    const deviceRoute = routeHandlers.find((h) => h.path === '/device');
     expect(deviceRoute).toBeDefined();
     const [validate, handler] = deviceRoute!.middlewares;
 

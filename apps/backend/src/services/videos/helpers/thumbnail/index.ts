@@ -43,7 +43,13 @@ const processThumbnail = async (props: ProcessThumbnailProps) => {
   await downloadFile(url, inputPath);
 
   // Take screenshot and save to working directory
-  await takeScreenshot(inputPath, workingDir, thumbnailFilename, duration, isSegment);
+  await takeScreenshot(
+    inputPath,
+    workingDir,
+    thumbnailFilename,
+    duration,
+    isSegment,
+  );
 
   // Upload to storage and construct final path
   const finalStoragePath = `${storagePath}/${thumbnailFilename}`;

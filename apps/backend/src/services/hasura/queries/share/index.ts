@@ -1,6 +1,6 @@
 import { hasuraClient } from '../../client';
 import { graphql } from '../../generated-graphql';
-import {
+import type {
   PlaylistDetailQuery,
   PlaylistDetailQueryVariables,
   UsersQuery,
@@ -35,13 +35,19 @@ const GET_USERS = graphql(/* GraphQL */ `
   }
 `);
 
-const getPlaylistVideos = async (id: string, emails: string[]): Promise<PlaylistDetailQuery> => {
+const getPlaylistVideos = async (
+  id: string,
+  emails: string[],
+): Promise<PlaylistDetailQuery> => {
   const variables = {
     id,
     emails,
   };
 
-  const response = await hasuraClient.request<PlaylistDetailQuery, PlaylistDetailQueryVariables>({
+  const response = await hasuraClient.request<
+    PlaylistDetailQuery,
+    PlaylistDetailQueryVariables
+  >({
     document: GET_PLAYLIST_VIDEOS.toString(),
     variables: variables,
   });

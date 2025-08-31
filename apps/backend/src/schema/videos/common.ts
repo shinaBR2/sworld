@@ -6,13 +6,13 @@ const videoUrlSchema = z
   .url()
   .regex(/^https:\/\//i, 'URL must use HTTPS')
   .refine(
-    url => {
+    (url) => {
       const result = validateMediaURL(url);
       return result.platform !== null || result.fileType !== null;
     },
     {
       message: 'URL must be a valid media file or from a supported platform',
-    }
+    },
   );
 
 export { videoUrlSchema };

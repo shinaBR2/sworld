@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
@@ -44,7 +44,10 @@ const streamHLSHandler = async (req: Request, res: Response) => {
     }
   }
 
-  logger.info(metadata, `[/videos/stream-hls-handler] start processing event "${metadata.id}", video "${id}"`);
+  logger.info(
+    metadata,
+    `[/videos/stream-hls-handler] start processing event "${metadata.id}", video "${id}"`,
+  );
   const {
     playlistUrl: playableVideoUrl,
     duration,

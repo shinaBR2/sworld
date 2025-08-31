@@ -1,12 +1,25 @@
 /* eslint-disable */
-import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T,
+> = { [_ in K]?: never };
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+    };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -1486,7 +1499,9 @@ export type DocumentationGuideRedirectedPublishedPageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentationGuideItem = DocumentationApiReference | DocumentationGuide;
+export type DocumentationGuideItem =
+  | DocumentationApiReference
+  | DocumentationGuide;
 
 export enum DocumentationGuideItemStatus {
   Published = 'PUBLISHED',
@@ -2051,7 +2066,10 @@ export type DocumentationSection = IDocumentationNestableSidebarItem &
     visibility: DocumentationSidebarItemVisibility;
   };
 
-export type DocumentationSidebarItem = DocumentationLink | DocumentationSection | DocumentationSidebarItemPage;
+export type DocumentationSidebarItem =
+  | DocumentationLink
+  | DocumentationSection
+  | DocumentationSidebarItemPage;
 
 export type DocumentationSidebarItemPage = IDocumentationNestableSidebarItem &
   IDocumentationSidebarItem & {
@@ -3540,9 +3558,10 @@ export type MutationFollowTagsArgs = {
   input: FollowTagsInput;
 };
 
-export type MutationGenerateDocumentationProjectPreviewAuthorizationTokenArgs = {
-  input: GenerateDocumentationProjectPreviewAuthorizationTokenInput;
-};
+export type MutationGenerateDocumentationProjectPreviewAuthorizationTokenArgs =
+  {
+    input: GenerateDocumentationProjectPreviewAuthorizationTokenInput;
+  };
 
 export type MutationGenerateDocumentationProjectPreviewTokenArgs = {
   input: GenerateDocumentationProjectPreviewTokenInput;
@@ -5283,17 +5302,18 @@ export type PublicationSponsorship = {
   stripe?: Maybe<StripeConfiguration>;
 };
 
-export type PublicationUserRecommendingPublicationConnection = PageConnection & {
-  __typename?: 'PublicationUserRecommendingPublicationConnection';
-  /** A list of edges containing Post information */
-  edges: Array<UserRecommendingPublicationEdge>;
-  /** Publications recommending this publication. */
-  nodes: Array<Publication>;
-  /** Information for page based pagination in Post connection. */
-  pageInfo: OffsetPageInfo;
-  /** The total number of documents in the connection. */
-  totalDocuments: Scalars['Int']['output'];
-};
+export type PublicationUserRecommendingPublicationConnection =
+  PageConnection & {
+    __typename?: 'PublicationUserRecommendingPublicationConnection';
+    /** A list of edges containing Post information */
+    edges: Array<UserRecommendingPublicationEdge>;
+    /** Publications recommending this publication. */
+    nodes: Array<Publication>;
+    /** Information for page based pagination in Post connection. */
+    pageInfo: OffsetPageInfo;
+    /** The total number of documents in the connection. */
+    totalDocuments: Scalars['Int']['output'];
+  };
 
 export type PublicationViewEdge = Edge & {
   __typename?: 'PublicationViewEdge';

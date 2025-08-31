@@ -1,7 +1,7 @@
 // https://github.com/manishsaraan/email-validator/blob/master/index.js
 const isValidEmail = (email: string): boolean => {
   const emailRegex =
-    /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+    /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
   if (!email) return false;
 
   var emailParts = email.split('@');
@@ -16,12 +16,7 @@ const isValidEmail = (email: string): boolean => {
 
   var domainParts = address.split('.');
 
-  if (
-    domainParts.some(function (part) {
-      return part.length > 63;
-    })
-  )
-    return false;
+  if (domainParts.some((part) => part.length > 63)) return false;
 
   return emailRegex.test(email);
 };

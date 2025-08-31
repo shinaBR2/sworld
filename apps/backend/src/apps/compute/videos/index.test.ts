@@ -33,20 +33,24 @@ vi.mock('src/utils/validator', () => ({
 describe('videosRouter', () => {
   it('should register POST /convert-handler route', () => {
     const routes = videosRouter.stack
-      .filter(layer => layer.route)
-      .map(layer => ({
+      .filter((layer) => layer.route)
+      .map((layer) => ({
         path: layer.route.path,
         method: Object.keys(layer.route.methods)[0],
       }));
 
-    const convertHandlerRoute = routes.find(r => r.path === '/convert-handler');
+    const convertHandlerRoute = routes.find(
+      (r) => r.path === '/convert-handler',
+    );
 
     expect(convertHandlerRoute).toBeDefined();
     expect(convertHandlerRoute?.method).toBe('post');
   });
 
   it('should have validation middleware and handler', () => {
-    const convertHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/convert-handler');
+    const convertHandlerRoute = videosRouter.stack.find(
+      (layer) => layer.route?.path === '/convert-handler',
+    );
 
     const middlewares = convertHandlerRoute?.route.stack || [];
 

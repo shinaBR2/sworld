@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { completeTask } from 'src/database/queries/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
@@ -46,12 +46,29 @@ describe('crawlHandler', () => {
 
   it('should successfully process video crawling and insertion', async () => {
     const mockCrawlResult = {
-      data: [{ videoUrl: 'http://example.com/video1' }, { videoUrl: 'http://example.com/video2' }],
-      urls: ['URL_ADDRESS.com/video1', 'URL_ADDRESS.com/video1', 'URL_ADDRESSe.com/video2'],
+      data: [
+        { videoUrl: 'http://example.com/video1' },
+        { videoUrl: 'http://example.com/video2' },
+      ],
+      urls: [
+        'URL_ADDRESS.com/video1',
+        'URL_ADDRESS.com/video1',
+        'URL_ADDRESSe.com/video2',
+      ],
     };
     const mockVideos = [
-      { title: 'Test Video 1', slug: 'test-1', video_url: 'http://example.com/video1', user_id: 'user123' },
-      { title: 'Test Video 2', slug: 'test-2', video_url: 'http://example.com/video2', user_id: 'user123' },
+      {
+        title: 'Test Video 1',
+        slug: 'test-1',
+        video_url: 'http://example.com/video1',
+        user_id: 'user123',
+      },
+      {
+        title: 'Test Video 2',
+        slug: 'test-2',
+        video_url: 'http://example.com/video2',
+        user_id: 'user123',
+      },
     ];
 
     vi.mocked(crawl).mockResolvedValue(mockCrawlResult);
@@ -92,7 +109,7 @@ describe('crawlHandler', () => {
         maxRequestsPerCrawl: 100,
         maxConcurrency: 5,
         maxRequestsPerMinute: 20,
-      }
+      },
     );
 
     expect(buildVariables).toHaveBeenCalledWith(mockCrawlResult, {
@@ -111,7 +128,7 @@ describe('crawlHandler', () => {
         url: 'http://example.com',
         userId: 'user123',
       },
-      'crawl success, start inserting'
+      'crawl success, start inserting',
     );
     expect(jsonMock).toHaveBeenCalledWith({ result: mockCrawlResult });
     expect(completeTask).toHaveBeenCalledWith({
@@ -122,9 +139,20 @@ describe('crawlHandler', () => {
   it('should use empty string as default slugPrefix', async () => {
     const mockCrawlResult = {
       data: [{ videoUrl: 'http://example.com/video1' }],
-      urls: ['URL_ADDRESS.com/video1', 'URL_ADDRESS.com/video1', 'URL_ADDRESSe.com/video2'],
+      urls: [
+        'URL_ADDRESS.com/video1',
+        'URL_ADDRESS.com/video1',
+        'URL_ADDRESSe.com/video2',
+      ],
     };
-    const mockVideos = [{ title: 'Test Video', slug: '1', video_url: 'http://example.com/video1', user_id: 'user123' }];
+    const mockVideos = [
+      {
+        title: 'Test Video',
+        slug: '1',
+        video_url: 'http://example.com/video1',
+        user_id: 'user123',
+      },
+    ];
 
     vi.mocked(crawl).mockResolvedValue(mockCrawlResult);
     vi.mocked(buildVariables).mockReturnValue(mockVideos);
@@ -181,6 +209,8 @@ describe('crawlHandler', () => {
       },
     };
 
-    await expect(crawlHandler(mockRequest as Request, mockResponse as Response)).rejects.toThrow('Crawl failed');
+    await expect(
+      crawlHandler(mockRequest as Request, mockResponse as Response),
+    ).rejects.toThrow('Crawl failed');
   });
 });

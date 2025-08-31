@@ -111,7 +111,9 @@ describe('Subtitle Helper', () => {
     const mockError = new Error('Network error');
     vi.mocked(fetchWithError).mockRejectedValue(mockError);
 
-    await expect(streamSubtitleFile(mockOptions)).rejects.toThrow('Network error');
+    await expect(streamSubtitleFile(mockOptions)).rejects.toThrow(
+      'Network error',
+    );
 
     // Verify streamFile was not called
     expect(streamFile).not.toHaveBeenCalled();

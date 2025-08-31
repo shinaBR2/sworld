@@ -10,7 +10,7 @@ vi.mock('../src/apps/compute', () => ({
     listen: vi.fn((port, cb) => {
       cb();
       return {
-        close: vi.fn(cb => cb()),
+        close: vi.fn((cb) => cb()),
       };
     }),
   },
@@ -35,7 +35,7 @@ describe('Compute Server', () => {
 
     expect(Sentry.setupExpressErrorHandler).toHaveBeenCalledWith(app);
     expect(logger.info).toHaveBeenCalledWith(
-      'Compute service is running on port 4000'
+      'Compute service is running on port 4000',
     );
   });
 

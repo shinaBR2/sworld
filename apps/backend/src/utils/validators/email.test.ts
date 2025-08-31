@@ -8,7 +8,9 @@ describe('isValidEmail', () => {
     expect(isValidEmail('user+tag@example.com')).toBe(true);
     expect(isValidEmail('123@domain.com')).toBe(true);
     expect(isValidEmail('very.common@example.com')).toBe(true);
-    expect(isValidEmail('disposable.style.email.with+tag@example.com')).toBe(true);
+    expect(isValidEmail('disposable.style.email.with+tag@example.com')).toBe(
+      true,
+    );
     expect(isValidEmail('other.email-with-hyphen@example.com')).toBe(true);
   });
 

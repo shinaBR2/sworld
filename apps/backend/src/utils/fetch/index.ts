@@ -13,7 +13,10 @@ import { HTTP_ERRORS } from '../error-codes';
  *  - HTTP_ERRORS.CLIENT_ERROR for 4xx responses (non-retryable)
  *  - HTTP_ERRORS.NETWORK_ERROR for network failures (retryable)
  */
-const fetchWithError = async (url: string, options?: RequestInit & { timeout?: number }): Promise<Response> => {
+const fetchWithError = async (
+  url: string,
+  options?: RequestInit & { timeout?: number },
+): Promise<Response> => {
   const { timeout = 5000, ...fetchOptions } = options || {};
 
   try {

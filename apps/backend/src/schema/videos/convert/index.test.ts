@@ -155,7 +155,12 @@ describe('convertSchema', () => {
     const result = convertSchema.safeParse(invalidPayload);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some(issue => issue.path.includes('id') || issue.path.includes('user_id'))).toBe(true);
+      expect(
+        result.error.issues.some(
+          (issue) =>
+            issue.path.includes('id') || issue.path.includes('user_id'),
+        ),
+      ).toBe(true);
     }
   });
 
@@ -226,7 +231,11 @@ describe('convertHandlerSchema', () => {
     videoUrl: 'https://storage.example.com/video.mp4',
   };
 
-  const createRequest = ({ data = validData, metadata = validMetadata, headers = validHeaders } = {}) => ({
+  const createRequest = ({
+    data = validData,
+    metadata = validMetadata,
+    headers = validHeaders,
+  } = {}) => ({
     body: { data, metadata },
     headers,
   });
@@ -235,14 +244,18 @@ describe('convertHandlerSchema', () => {
     it('should reject request with missing x-task-id headers', () => {
       const { 'x-task-id': _, ...headersWithoutTaskId } = validHeaders;
       // @ts-expect-error
-      const result = convertHandlerSchema.safeParse(createRequest({ headers: headersWithoutTaskId }));
+      const result = convertHandlerSchema.safeParse(
+        createRequest({ headers: headersWithoutTaskId }),
+      );
       expect(result.success).toBe(false);
     });
 
     it('should reject request with missing content-type headers', () => {
       const { 'content-type': _, ...headersWithoutContentType } = validHeaders;
       // @ts-expect-error
-      const result = convertHandlerSchema.safeParse(createRequest({ headers: headersWithoutContentType }));
+      const result = convertHandlerSchema.safeParse(
+        createRequest({ headers: headersWithoutContentType }),
+      );
       expect(result.success).toBe(false);
     });
   });
@@ -250,12 +263,16 @@ describe('convertHandlerSchema', () => {
   it('should reject request with missing required fields', () => {
     const { id: _, ...dataWithoutId } = validData;
     // @ts-expect-error
-    const result = convertHandlerSchema.safeParse(createRequest({ data: dataWithoutId }));
+    const result = convertHandlerSchema.safeParse(
+      createRequest({ data: dataWithoutId }),
+    );
     expect(result.success).toBe(false);
   });
 
   it('should reject empty string values', () => {
-    const result = convertHandlerSchema.safeParse(createRequest({ data: { ...validData, id: '' } }));
+    const result = convertHandlerSchema.safeParse(
+      createRequest({ data: { ...validData, id: '' } }),
+    );
     expect(result.success).toBe(false);
   });
 
@@ -266,15 +283,20 @@ describe('convertHandlerSchema', () => {
   });
 
   it('should reject non-UUID id', () => {
-    const result = convertHandlerSchema.safeParse(createRequest({ data: { ...validData, id: 'invalid-id' } }));
+    const result = convertHandlerSchema.safeParse(
+      createRequest({ data: { ...validData, id: 'invalid-id' } }),
+    );
     expect(result.success).toBe(false);
   });
 
   it('should reject non-HTTPS video URL', () => {
     const result = convertHandlerSchema.safeParse(
       createRequest({
-        data: { ...validData, videoUrl: 'http://storage.example.com/video.mp4' },
-      })
+        data: {
+          ...validData,
+          videoUrl: 'http://storage.example.com/video.mp4',
+        },
+      }),
     );
     expect(result.success).toBe(false);
   });
@@ -282,8 +304,11 @@ describe('convertHandlerSchema', () => {
   it('should reject non-video file URL', () => {
     const result = convertHandlerSchema.safeParse(
       createRequest({
-        data: { ...validData, videoUrl: 'https://storage.example.com/image.jpg' },
-      })
+        data: {
+          ...validData,
+          videoUrl: 'https://storage.example.com/image.jpg',
+        },
+      }),
     );
     expect(result.success).toBe(false);
   });

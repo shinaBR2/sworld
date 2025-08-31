@@ -1,5 +1,5 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { verifySignature } from 'src/services/videos/convert/validator';
@@ -62,7 +62,7 @@ describe('sharePlaylistHandler', () => {
     expect(mockJson).toHaveBeenCalledWith(
       AppError('Invalid webhook signature for event', {
         eventId: 'event-1',
-      })
+      }),
     );
   });
 
@@ -75,7 +75,7 @@ describe('sharePlaylistHandler', () => {
     expect(mockJson).toHaveBeenCalledWith(
       AppError('Invalid email', {
         eventId: 'event-1',
-      })
+      }),
     );
   });
 
@@ -91,7 +91,7 @@ describe('sharePlaylistHandler', () => {
     expect(mockJson).toHaveBeenCalledWith(
       AppError('Playlist not found', {
         eventId: 'event-1',
-      })
+      }),
     );
   });
 
@@ -109,7 +109,7 @@ describe('sharePlaylistHandler', () => {
     expect(mockJson).toHaveBeenCalledWith(
       AppError('No ready videos found in playlist', {
         eventId: 'event-1',
-      })
+      }),
     );
   });
 
@@ -127,7 +127,7 @@ describe('sharePlaylistHandler', () => {
     expect(mockJson).toHaveBeenCalledWith(
       AppError('No valid users found', {
         eventId: 'event-1',
-      })
+      }),
     );
   });
 
@@ -143,9 +143,9 @@ describe('sharePlaylistHandler', () => {
     const mockError = new Error('Database error');
     vi.mocked(sharePlaylist).mockRejectedValue(mockError);
 
-    await expect(sharePlaylistHandler(mockReq as Request, mockRes as Response)).rejects.toThrow(
-      'Playlist share failed'
-    );
+    await expect(
+      sharePlaylistHandler(mockReq as Request, mockRes as Response),
+    ).rejects.toThrow('Playlist share failed');
 
     expect(CustomErrorModule.CustomError.critical).toHaveBeenCalledWith(
       'Playlist share failed',
@@ -157,7 +157,7 @@ describe('sharePlaylistHandler', () => {
           metadata: (mockReq as any).validatedData.event.metadata,
         },
         source: 'apps/gateway/videos/routes/share/index.ts',
-      })
+      }),
     );
   });
 
@@ -165,7 +165,10 @@ describe('sharePlaylistHandler', () => {
     vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: {
-        playlist_videos: [{ video: { id: 'video-1', status: 'ready' } }, { video: { id: 'video-2', status: 'ready' } }],
+        playlist_videos: [
+          { video: { id: 'video-1', status: 'ready' } },
+          { video: { id: 'video-2', status: 'ready' } },
+        ],
       },
       users: [
         { id: 'user-1', email: 'user1@example.com' },
@@ -192,7 +195,7 @@ describe('sharePlaylistHandler', () => {
         }),
       ]),
       'playlist-1',
-      ['user1@example.com', 'user2@example.com']
+      ['user1@example.com', 'user2@example.com'],
     );
     expect(mockJson).toHaveBeenCalledWith(AppResponse(true, 'ok'));
   });

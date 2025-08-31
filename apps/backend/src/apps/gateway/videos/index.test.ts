@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { validateRequest } from 'src/utils/validator';
 import { validateRequest as newValidateRequest } from 'src/utils/validators/request';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,17 +32,21 @@ vi.mock('express', () => {
 
 // Mock the validator modules
 vi.mock('src/utils/validator', () => ({
-  validateRequest: vi.fn().mockImplementation(schema => (req: any, res: any, next: any) => {
-    req.validatedData = req.body;
-    next();
-  }),
+  validateRequest: vi
+    .fn()
+    .mockImplementation((schema) => (req: any, res: any, next: any) => {
+      req.validatedData = req.body;
+      next();
+    }),
 }));
 
 vi.mock('src/utils/validators/request', () => ({
-  validateRequest: vi.fn().mockImplementation(schema => (req: any, res: any, next: any) => {
-    req.validatedData = req.body;
-    next();
-  }),
+  validateRequest: vi
+    .fn()
+    .mockImplementation((schema) => (req: any, res: any, next: any) => {
+      req.validatedData = req.body;
+      next();
+    }),
 }));
 
 vi.mock('./routes/stream-to-storage', () => ({
@@ -87,7 +91,9 @@ describe('videosRouter', () => {
     expect(validateRequest).toHaveBeenCalledTimes(6);
 
     // Get the mock implementation from the request validator
-    const { validateRequest: mockNewValidateRequest } = await import('src/utils/validators/request');
+    const { validateRequest: mockNewValidateRequest } = await import(
+      'src/utils/validators/request'
+    );
     expect(mockNewValidateRequest).toHaveBeenCalledTimes(1);
 
     // Check that all validation functions were called with a schema
@@ -95,7 +101,7 @@ describe('videosRouter', () => {
     const newValidateCalls = (mockNewValidateRequest as any).mock.calls;
 
     // Check that all validation calls have a schema defined
-    [...validateCalls, ...newValidateCalls].forEach(call => {
+    [...validateCalls, ...newValidateCalls].forEach((call) => {
       expect(call[0]).toBeDefined();
     });
 
@@ -109,7 +115,7 @@ describe('videosRouter', () => {
     expect(videosRouter).toBeDefined();
 
     // Find the /convert route configuration
-    const convertRoute = routeHandlers.find(h => h.path === '/convert');
+    const convertRoute = routeHandlers.find((h) => h.path === '/convert');
     expect(convertRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -123,7 +129,9 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const durationRoute = routeHandlers.find(h => h.path === '/fix-videos-duration');
+    const durationRoute = routeHandlers.find(
+      (h) => h.path === '/fix-videos-duration',
+    );
     expect(durationRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -137,7 +145,9 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const durationRoute = routeHandlers.find(h => h.path === '/fix-videos-thumbnail');
+    const durationRoute = routeHandlers.find(
+      (h) => h.path === '/fix-videos-thumbnail',
+    );
     expect(durationRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -151,7 +161,7 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const crawlRoute = routeHandlers.find(h => h.path === '/crawl');
+    const crawlRoute = routeHandlers.find((h) => h.path === '/crawl');
     expect(crawlRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -165,7 +175,7 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const shareRoute = routeHandlers.find(h => h.path === '/share-playlist');
+    const shareRoute = routeHandlers.find((h) => h.path === '/share-playlist');
     expect(shareRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -179,7 +189,7 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const shareRoute = routeHandlers.find(h => h.path === '/share-video');
+    const shareRoute = routeHandlers.find((h) => h.path === '/share-video');
     expect(shareRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -193,7 +203,9 @@ describe('videosRouter', () => {
     const { videosRouter } = await import('./index');
     expect(videosRouter).toBeDefined();
 
-    const subtitleRoute = routeHandlers.find(h => h.path === '/subtitle-created');
+    const subtitleRoute = routeHandlers.find(
+      (h) => h.path === '/subtitle-created',
+    );
     expect(subtitleRoute).toBeDefined();
 
     // Should have 2 middlewares: validation and handler
@@ -205,7 +217,11 @@ describe('videosRouter', () => {
     const mockNext = vi.fn();
 
     // Call the handler
-    await subtitleRoute?.middlewares[1](mockReq as any, mockRes as any, mockNext);
+    await subtitleRoute?.middlewares[1](
+      mockReq as any,
+      mockRes as any,
+      mockNext,
+    );
 
     // Verify the handler was called with validated data
     expect(mockRes.json).toHaveBeenCalledWith({

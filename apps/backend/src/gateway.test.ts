@@ -14,7 +14,7 @@ vi.mock('../src/apps/gateway', () => ({
     listen: vi.fn((port, cb) => {
       cb();
       return {
-        close: vi.fn(cb => cb()),
+        close: vi.fn((cb) => cb()),
       };
     }),
     use: vi.fn(),

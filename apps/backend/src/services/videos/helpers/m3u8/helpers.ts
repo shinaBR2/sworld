@@ -25,7 +25,7 @@ interface ParsedResult {
 }
 
 const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
-  return excludePatterns.some(pattern => pattern.test(segmentUrl));
+  return excludePatterns.some((pattern) => pattern.test(segmentUrl));
 };
 
 /**
@@ -60,7 +60,10 @@ const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
  * #EXTINF:3,
  * segment2.ts
  */
-const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = []): Promise<ParsedResult> => {
+const parseM3U8Content = async (
+  m3u8Url: string,
+  excludePatterns: RegExp[] = [],
+): Promise<ParsedResult> => {
   const response = await fetchWithError(m3u8Url);
   const content = await response.text();
   const parser = new Parser();
@@ -94,7 +97,7 @@ const parseM3U8Content = async (m3u8Url: string, excludePatterns: RegExp[] = [])
 
   // Process segments
   let segmentIndex = 0;
-  manifest.segments?.forEach(segment => {
+  manifest.segments?.forEach((segment) => {
     const segmentUrl = new URL(segment.uri, m3u8Url).toString();
 
     if (isAds(segmentUrl, excludePatterns)) {
@@ -163,12 +166,16 @@ const chunks = <T>(array: T[], size: number): T[][] => {
  * ], '/tmp/123', 1024 * 1024);
  * ```
  */
-const downloadSegments = async (segments: string[], tempDir: string, maxSegmentSize?: number) => {
+const downloadSegments = async (
+  segments: string[],
+  tempDir: string,
+  maxSegmentSize?: number,
+) => {
   const batches = chunks(segments, BATCH_SIZE);
 
   for (const batch of batches) {
     await Promise.all(
-      batch.map(async segmentUrl => {
+      batch.map(async (segmentUrl) => {
         const segmentName = path.basename(segmentUrl);
         const localPath = path.join(tempDir, segmentName);
 
@@ -180,7 +187,7 @@ const downloadSegments = async (segments: string[], tempDir: string, maxSegmentS
         }
 
         logger.info({ segmentName }, 'Successfully downloaded segment');
-      })
+      }),
     );
   }
 };
@@ -231,7 +238,12 @@ const streamSegmentFile = async (segmentUrl: string, storagePath: string) => {
     throw new CustomError('Failed to fetch segment', {
       errorCode: HTTP_ERRORS.EMPTY_RESPONSE,
       shouldRetry: false,
-      context: { segmentUrl, storagePath, responseStatus: response.statusText, statusCode: response.status },
+      context: {
+        segmentUrl,
+        storagePath,
+        responseStatus: response.statusText,
+        statusCode: response.status,
+      },
     });
   }
 
@@ -263,14 +275,23 @@ const streamSegments = async (params: StreamSegmentsParams) => {
     const batch = segments.slice(i, i + concurrencyLimit);
 
     await Promise.all(
-      batch.map(async segment => {
+      batch.map(async (segment) => {
         const segmentFileName = segment.name;
-        const segmentStoragePath = path.join(baseStoragePath, segmentFileName as string);
+        const segmentStoragePath = path.join(
+          baseStoragePath,
+          segmentFileName as string,
+        );
 
         await streamSegmentFile(segment.url, segmentStoragePath);
-      })
+      }),
     );
   }
 };
 
-export { downloadSegments, parseM3U8Content, streamPlaylistFile, streamSegmentFile, streamSegments };
+export {
+  downloadSegments,
+  parseM3U8Content,
+  streamPlaylistFile,
+  streamSegmentFile,
+  streamSegments,
+};

@@ -1,4 +1,4 @@
-import {
+import type {
   PublicKeyCredentialCreationOptionsJSON,
   Base64URLString,
   CredentialDeviceType,

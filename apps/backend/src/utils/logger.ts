@@ -32,7 +32,7 @@ const httpLogger = pinoHttp({
     'req.body.*.key',
   ],
   serializers: {
-    req: req => ({
+    req: (req) => ({
       method: req.method,
       url: req.url,
       eventType: req.headers['ce-type'],

@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS, VIDEO_ERRORS } from 'src/utils/error-codes';
-import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { streamHLSHandler } from './index';
 
 vi.mock('src/services/videos/helpers/m3u8', () => ({
@@ -73,7 +73,11 @@ const createMockResponse = (): MockResponse =>
     json: vi.fn(),
   }) as unknown as MockResponse;
 
-const createMockRequest = (data: any = {}, metadata: any = {}, taskId: string = 'task-123'): Request =>
+const createMockRequest = (
+  data: any = {},
+  metadata: any = {},
+  taskId: string = 'task-123',
+): Request =>
   ({
     body: { data, metadata },
     headers: { 'x-task-id': taskId },
@@ -99,7 +103,11 @@ describe('streamHLSHandler', () => {
     } as TestContext;
 
     context.mockResponse = createMockResponse();
-    context.mockRequest = createMockRequest(context.defaultData, context.defaultMetadata, context.defaultTaskId);
+    context.mockRequest = createMockRequest(
+      context.defaultData,
+      context.defaultMetadata,
+      context.defaultTaskId,
+    );
 
     // Reset mocks
     vi.clearAllMocks();
@@ -109,7 +117,7 @@ describe('streamHLSHandler', () => {
     setupMocks: () => void,
     expectedErrorCode: string,
     expectedErrorMessage: string,
-    checksAfterError?: () => void
+    checksAfterError?: () => void,
   ) => {
     setupMocks();
 
@@ -129,7 +137,9 @@ describe('streamHLSHandler', () => {
 
     // Find the call that matches our error
     const matchingCall = criticalCalls.find(
-      call => call[0] === expectedErrorMessage && call[1]?.errorCode === expectedErrorCode
+      (call) =>
+        call[0] === expectedErrorMessage &&
+        call[1]?.errorCode === expectedErrorCode,
     );
     expect(matchingCall).toBeTruthy();
 
@@ -151,7 +161,7 @@ describe('streamHLSHandler', () => {
     expect(streamM3U8).toHaveBeenCalledWith(
       context.defaultData.videoUrl,
       `videos/${context.defaultData.userId}/${context.defaultData.id}`,
-      context.streamOptions
+      context.streamOptions,
     );
     expect(finishVideoProcess).toHaveBeenCalledWith({
       taskId: context.defaultTaskId,
@@ -181,14 +191,14 @@ describe('streamHLSHandler', () => {
           CustomError.critical('Stream HLS failed', {
             errorCode: VIDEO_ERRORS.CONVERSION_FAILED,
             shouldRetry: true,
-          })
+          }),
         );
       },
       VIDEO_ERRORS.CONVERSION_FAILED,
       'Stream HLS failed',
       () => {
         expect(finishVideoProcess).not.toHaveBeenCalled();
-      }
+      },
     );
   });
 
@@ -198,7 +208,10 @@ describe('streamHLSHandler', () => {
       videoUrl: 'https://example.com/custom.mp4',
       userId: 'custom-user',
     };
-    const customRequest = createMockRequest(customData, context.defaultMetadata);
+    const customRequest = createMockRequest(
+      customData,
+      context.defaultMetadata,
+    );
 
     vi.mocked(streamM3U8).mockResolvedValueOnce({
       playlistUrl: 'some-url',
@@ -211,7 +224,7 @@ describe('streamHLSHandler', () => {
     expect(streamM3U8).toHaveBeenCalledWith(
       customData.videoUrl,
       `videos/${customData.userId}/${customData.id}`,
-      context.streamOptions
+      context.streamOptions,
     );
   });
 
@@ -254,7 +267,7 @@ describe('streamHLSHandler', () => {
             duration: 100,
           },
         });
-      }
+      },
     );
   });
 
@@ -263,7 +276,11 @@ describe('streamHLSHandler', () => {
       ...context.defaultData,
       keepOriginalSource: true,
     };
-    const customRequest = createMockRequest(customData, context.defaultMetadata, context.defaultTaskId);
+    const customRequest = createMockRequest(
+      customData,
+      context.defaultMetadata,
+      context.defaultTaskId,
+    );
 
     await streamHLSHandler(customRequest, context.mockResponse);
 
@@ -297,7 +314,11 @@ describe('streamHLSHandler', () => {
       ...context.defaultData,
       keepOriginalSource: true,
     };
-    const customRequest = createMockRequest(customData, context.defaultMetadata, context.defaultTaskId);
+    const customRequest = createMockRequest(
+      customData,
+      context.defaultMetadata,
+      context.defaultTaskId,
+    );
     context.mockRequest = customRequest; // Important: Update the context request
 
     // Setup Hasura failure BEFORE testErrorScenario
@@ -332,7 +353,7 @@ describe('streamHLSHandler', () => {
             status: 'ready',
           },
         });
-      }
+      },
     );
   });
 });

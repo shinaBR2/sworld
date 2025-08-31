@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { crawlConfig, queues, systemConfig, uuidNamespaces } from './systemConfig';
+import {
+  crawlConfig,
+  queues,
+  systemConfig,
+  uuidNamespaces,
+} from './systemConfig';
 
 describe('systemConfig', () => {
   it('has correct default external request timeout', () => {
@@ -9,7 +14,9 @@ describe('systemConfig', () => {
 
 describe('uuidNamespaces', () => {
   it('has correct uuid namespace defined', () => {
-    expect(uuidNamespaces.cloudTask).toBe('abd32375-5036-44a1-bc75-c7bb33051b99');
+    expect(uuidNamespaces.cloudTask).toBe(
+      'abd32375-5036-44a1-bc75-c7bb33051b99',
+    );
   });
 });
 

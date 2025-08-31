@@ -167,7 +167,8 @@ describe('CustomError', () => {
         expect(error.contexts).toHaveLength(3); // High-level, Mid-level, Original error
 
         // Check context details
-        const [controllerContext, databaseContext, originalErrorContext] = error.contexts;
+        const [controllerContext, databaseContext, originalErrorContext] =
+          error.contexts;
 
         // High-level context
         expect(controllerContext.source).toBe('UserController');
@@ -185,7 +186,9 @@ describe('CustomError', () => {
 
         // Original error context
         expect(originalErrorContext.source).toBe('OriginalError');
-        expect(originalErrorContext.data.message).toBe('Database connection failed');
+        expect(originalErrorContext.data.message).toBe(
+          'Database connection failed',
+        );
 
         // Verify no circular reference
         expect(error.originalError).not.toBeInstanceOf(CustomError);
@@ -194,9 +197,15 @@ describe('CustomError', () => {
     });
 
     it('should preserve shouldRetry through error propagation', () => {
-      const lowLevelError = new CustomError('Low level error', { shouldRetry: true });
-      const midLevelError = new CustomError('Mid level error', { originalError: lowLevelError });
-      const highLevelError = new CustomError('High level error', { originalError: midLevelError });
+      const lowLevelError = new CustomError('Low level error', {
+        shouldRetry: true,
+      });
+      const midLevelError = new CustomError('Mid level error', {
+        originalError: lowLevelError,
+      });
+      const highLevelError = new CustomError('High level error', {
+        originalError: midLevelError,
+      });
 
       expect(highLevelError.shouldRetry).toBe(true);
     });

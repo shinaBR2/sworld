@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
@@ -96,21 +96,23 @@ describe('crawl', () => {
         metadata: mockReq.validatedData.event.metadata,
         task: { taskId: 'test-task' },
       },
-      'Crawl task created successfully'
+      'Crawl task created successfully',
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,
         message: 'ok',
-      })
+      }),
     );
   });
 
   it('should throw error when signature verification fails', async () => {
     vi.mocked(verifySignature).mockReturnValue(false);
 
-    await expect(crawlHandler(mockReq as Request, mockRes as Response)).rejects.toThrow('Invalid signature');
+    await expect(
+      crawlHandler(mockReq as Request, mockRes as Response),
+    ).rejects.toThrow('Invalid signature');
 
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(CustomError.high).toHaveBeenCalledWith('Invalid signature', {
@@ -131,7 +133,9 @@ describe('crawl', () => {
     const taskError = new Error('Failed to create task');
     vi.mocked(createCloudTasks).mockRejectedValue(taskError);
 
-    await expect(crawlHandler(mockReq as Request, mockRes as Response)).rejects.toThrow('Failed to create task');
+    await expect(
+      crawlHandler(mockReq as Request, mockRes as Response),
+    ).rejects.toThrow('Failed to create task');
 
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(createCloudTasks).toHaveBeenCalled();

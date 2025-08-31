@@ -1,4 +1,4 @@
-import { SubtitleCreatedRequest } from 'src/schema/videos/subtitle-created';
+import type { SubtitleCreatedRequest } from 'src/schema/videos/subtitle-created';
 import { saveSubtitle } from 'src/services/hasura/mutations/videos/save-subtitle';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { streamSubtitleFile } from 'src/services/videos/helpers/subtitle';

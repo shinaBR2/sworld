@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, type Model } from 'sequelize';
 import { sequelize } from '../index';
 
 interface VideoTS extends Model {
@@ -43,7 +43,7 @@ const Video = sequelize.define<VideoTS>(
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-  }
+  },
 );
 
 export { Video, type VideoTS };

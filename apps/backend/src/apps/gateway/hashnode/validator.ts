@@ -12,14 +12,19 @@ const SIGNATURE_VERSION = '1';
  */
 const parseSignatureHeader = (header: string) => {
   const parts = header.split(',');
-  const timestamp = parts.find(part => part.startsWith('t='))?.split('=')[1];
-  const signature = parts.find(part => part.startsWith(`v${SIGNATURE_VERSION}=`))?.split('=')[1];
+  const timestamp = parts.find((part) => part.startsWith('t='))?.split('=')[1];
+  const signature = parts
+    .find((part) => part.startsWith(`v${SIGNATURE_VERSION}=`))
+    ?.split('=')[1];
 
   if (!timestamp || !signature) {
     return { success: false as const, data: null };
   }
 
-  return { success: true as const, data: { timestamp: parseInt(timestamp, 10), signature } };
+  return {
+    success: true as const,
+    data: { timestamp: parseInt(timestamp, 10), signature },
+  };
 };
 
 type CreateSignatureOptions = {
@@ -40,7 +45,10 @@ type CreateSignatureOptions = {
 const createSignature = (options: CreateSignatureOptions) => {
   const { timestamp, payload, secret } = options;
   const signedPayloadString = `${timestamp}.${payload ? JSON.stringify(payload) : ''}`;
-  return crypto.createHmac('sha256', secret).update(signedPayloadString).digest('hex');
+  return crypto
+    .createHmac('sha256', secret)
+    .update(signedPayloadString)
+    .digest('hex');
 };
 
 type ValidateSignatureOptions = {
@@ -62,11 +70,16 @@ type ValidateSignatureOptions = {
   validForSeconds?: number;
 };
 
-type ValidateSignatureResult = { isValid: true } | { isValid: false; reason: string };
+type ValidateSignatureResult =
+  | { isValid: true }
+  | { isValid: false; reason: string };
 
 const compareSignatures = (signatureA: string, signatureB: string) => {
   try {
-    return crypto.timingSafeEqual(Buffer.from(signatureA), Buffer.from(signatureB));
+    return crypto.timingSafeEqual(
+      Buffer.from(signatureA),
+      Buffer.from(signatureB),
+    );
   } catch (error) {
     return false;
   }
@@ -75,8 +88,15 @@ const compareSignatures = (signatureA: string, signatureB: string) => {
 /**
  * Checks the signature validity and whether the timestamp is within the validForSeconds window.
  */
-const validateSignature = (options: ValidateSignatureOptions): ValidateSignatureResult => {
-  const { incomingSignatureHeader, payload, secret, validForSeconds = 30 } = options;
+const validateSignature = (
+  options: ValidateSignatureOptions,
+): ValidateSignatureResult => {
+  const {
+    incomingSignatureHeader,
+    payload,
+    secret,
+    validForSeconds = 30,
+  } = options;
 
   if (!incomingSignatureHeader) {
     return { isValid: false, reason: 'Missing signature' };
@@ -88,17 +108,26 @@ const validateSignature = (options: ValidateSignatureOptions): ValidateSignature
     return { isValid: false, reason: 'Invalid signature header' };
   }
 
-  const { timestamp: incomingSignatureTimestamp, signature: incomingSignature } = parseSignatureHeaderData;
+  const {
+    timestamp: incomingSignatureTimestamp,
+    signature: incomingSignature,
+  } = parseSignatureHeaderData;
 
-  const signature = createSignature({ timestamp: incomingSignatureTimestamp, payload, secret });
-  let isSignatureValid = compareSignatures(signature, incomingSignature);
+  const signature = createSignature({
+    timestamp: incomingSignatureTimestamp,
+    payload,
+    secret,
+  });
+  const isSignatureValid = compareSignatures(signature, incomingSignature);
 
   if (!isSignatureValid) {
     return { isValid: false, reason: 'Invalid signature' };
   }
 
   if (validForSeconds !== 0) {
-    const differenceInSeconds = Math.abs((Date.now() - incomingSignatureTimestamp) / MILLISECONDS_PER_SECOND);
+    const differenceInSeconds = Math.abs(
+      (Date.now() - incomingSignatureTimestamp) / MILLISECONDS_PER_SECOND,
+    );
 
     const isTimestampValid = differenceInSeconds <= validForSeconds;
     if (!isTimestampValid) {

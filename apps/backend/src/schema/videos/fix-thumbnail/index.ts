@@ -9,5 +9,7 @@ const fixThumbnailHandlerSchema = z.object({
   headers: taskHandlerHeaderSchema.passthrough(),
 });
 
-export type FixThumbnailHandlerRequest = z.infer<typeof fixThumbnailHandlerSchema>;
+export type FixThumbnailHandlerRequest = z.infer<
+  typeof fixThumbnailHandlerSchema
+>;
 export { fixThumbnailHandlerSchema };

@@ -1,6 +1,10 @@
-import { CloudTasksClient, protos } from '@google-cloud/tasks';
+import { CloudTasksClient, type protos } from '@google-cloud/tasks';
 import { sequelize } from 'src/database';
-import { TaskEntityType, TaskStatus, TaskType } from 'src/database/models/task';
+import {
+  type TaskEntityType,
+  TaskStatus,
+  type TaskType,
+} from 'src/database/models/task';
 import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
 import { v5 as uuidv5 } from 'uuid';
 import { envConfig } from './envConfig';
@@ -53,14 +57,26 @@ type CloudTask = protos.google.cloud.tasks.v2.ITask;
  * @returns {Promise<protos.google.cloud.tasks.v2.ITask>} The created task
  * @throws {Error} If required parameters are missing
  */
-const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTask | null> => {
+const createCloudTasks = async (
+  params: CreateCloudTasksParams,
+): Promise<CloudTask | null> => {
   const { projectId, location, cloudTaskServiceAccount } = envConfig;
 
   if (!projectId || !location || !cloudTaskServiceAccount) {
     throw new Error('Missing cloud tasks configuration');
   }
 
-  const { queue, audience, headers, url, payload, inSeconds, entityType, entityId, type } = params;
+  const {
+    queue,
+    audience,
+    headers,
+    url,
+    payload,
+    inSeconds,
+    entityType,
+    entityId,
+    type,
+  } = params;
 
   if (!url || !queue || !audience) {
     throw new Error('Missing url or queue or target handler');
@@ -68,7 +84,10 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
 
   const client = getCloudTasksClient();
   const parent = client.queuePath(projectId, location, queue);
-  const taskId = uuidv5(JSON.stringify({ entityType, entityId, type }), uuidNamespaces.cloudTask);
+  const taskId = uuidv5(
+    JSON.stringify({ entityType, entityId, type }),
+    uuidNamespaces.cloudTask,
+  );
 
   const transaction = await sequelize.transaction();
 
@@ -82,6 +101,9 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
       transaction,
     });
 
+    // This is should be ts-ignore but not sure
+    // why it auto format to ts-expect-error
+    // @ts-expect-error
     if (dbTask.completed) {
       await transaction.commit();
       return null;
@@ -109,7 +131,10 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
 
     if (payload) {
       try {
-        cloudTask.httpRequest!.body = Buffer.from(JSON.stringify(payload)).toString('base64');
+        // biome-ignore lint/style/noNonNullAssertion: fix later
+        cloudTask.httpRequest!.body = Buffer.from(
+          JSON.stringify(payload),
+        ).toString('base64');
       } catch (error) {
         logger.error({ error, payload }, 'Failed to serialize payload');
         throw new Error('Invalid payload: Failed to serialize to JSON');
@@ -146,10 +171,10 @@ const createCloudTasks = async (params: CreateCloudTasksParams): Promise<CloudTa
         entityType,
         entityId,
       },
-      'Task creation failed'
+      'Task creation failed',
     );
     throw error;
   }
 };
 
-export { CreateCloudTasksParams, createCloudTasks };
+export { type CreateCloudTasksParams, createCloudTasks };

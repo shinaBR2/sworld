@@ -81,7 +81,7 @@ describe('validateRequest', () => {
           z.object({
             id: z.string(),
             value: z.number(),
-          })
+          }),
         ),
       }),
       params: z.object({}),

@@ -65,8 +65,8 @@ vi.mock('src/utils/validator', () => ({
 describe('videosRouter', () => {
   it('should register all POST routes', () => {
     const routes = videosRouter.stack
-      .filter(layer => layer.route)
-      .map(layer => ({
+      .filter((layer) => layer.route)
+      .map((layer) => ({
         path: layer.route.path,
         method: Object.keys(layer.route.methods)[0],
       }));
@@ -90,15 +90,17 @@ describe('videosRouter', () => {
       },
     ];
 
-    expectedRoutes.forEach(expectedRoute => {
-      const route = routes.find(r => r.path === expectedRoute.path);
+    expectedRoutes.forEach((expectedRoute) => {
+      const route = routes.find((r) => r.path === expectedRoute.path);
       expect(route).toBeDefined();
       expect(route?.method).toBe(expectedRoute.method);
     });
   });
 
   it('should have validation middleware and handler for stream-hls-handler', () => {
-    const streamHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/stream-hls-handler');
+    const streamHandlerRoute = videosRouter.stack.find(
+      (layer) => layer.route?.path === '/stream-hls-handler',
+    );
 
     const middlewares = streamHandlerRoute?.route.stack || [];
 
@@ -108,7 +110,9 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler for import-platform-handler', () => {
-    const importHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/import-platform-handler');
+    const importHandlerRoute = videosRouter.stack.find(
+      (layer) => layer.route?.path === '/import-platform-handler',
+    );
 
     const middlewares = importHandlerRoute?.route.stack || [];
 
@@ -118,7 +122,9 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler for fix-duration', () => {
-    const fixDurationHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/fix-duration');
+    const fixDurationHandlerRoute = videosRouter.stack.find(
+      (layer) => layer.route?.path === '/fix-duration',
+    );
 
     const middlewares = fixDurationHandlerRoute?.route.stack || [];
 
@@ -128,7 +134,9 @@ describe('videosRouter', () => {
   });
 
   it('should have validation middleware and handler for fix-thumbnail', () => {
-    const fixThumbnailHandlerRoute = videosRouter.stack.find(layer => layer.route?.path === '/fix-thumbnail');
+    const fixThumbnailHandlerRoute = videosRouter.stack.find(
+      (layer) => layer.route?.path === '/fix-thumbnail',
+    );
 
     const middlewares = fixThumbnailHandlerRoute?.route.stack || [];
 

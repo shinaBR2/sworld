@@ -1,5 +1,5 @@
+import type { Transaction } from 'sequelize';
 import { Task, TaskStatus } from '../models/task';
-import { Transaction } from 'sequelize';
 
 interface CreateTaskParams {
   taskId: string;
@@ -10,7 +10,14 @@ interface CreateTaskParams {
   transaction?: Transaction;
 }
 
-const createTask = async ({ taskId, type, metadata, entityType, entityId, transaction }: CreateTaskParams) => {
+const createTask = async ({
+  taskId,
+  type,
+  metadata,
+  entityType,
+  entityId,
+  transaction,
+}: CreateTaskParams) => {
   if (!taskId || !type || !metadata || !entityType || !entityId) {
     throw new Error('Missing required fields for task creation');
   }
@@ -38,13 +45,17 @@ interface UpdateTaskParams {
   transaction?: Transaction;
 }
 
-const updateTaskStatus = async ({ taskId, status, transaction }: UpdateTaskParams) => {
+const updateTaskStatus = async ({
+  taskId,
+  status,
+  transaction,
+}: UpdateTaskParams) => {
   const [updatedCount] = await Task.update(
     { status },
     {
       where: { taskId },
       transaction,
-    }
+    },
   );
 
   if (updatedCount === 0) {
@@ -67,7 +78,7 @@ const completeTask = async ({ taskId, transaction }: CompleteTaskParams) => {
     {
       where: { taskId },
       transaction,
-    }
+    },
   );
 
   if (updatedCount === 0) {

@@ -42,7 +42,7 @@ describe('createHashnodeClient', () => {
     vi.mocked(envConfig).hashnodePersonalToken = 'test-token';
 
     expect(() => createHashnodeClient()).toThrow(
-      'Hashnode endpoint is not defined. Please check environment variables.'
+      'Hashnode endpoint is not defined. Please check environment variables.',
     );
   });
 
@@ -50,7 +50,9 @@ describe('createHashnodeClient', () => {
     vi.mocked(envConfig).hashnodeEndpoint = 'https://api.hashnode.com';
     vi.mocked(envConfig).hashnodePersonalToken = undefined;
 
-    expect(() => createHashnodeClient()).toThrow('Hashnode token is not defined. Please check environment variables.');
+    expect(() => createHashnodeClient()).toThrow(
+      'Hashnode token is not defined. Please check environment variables.',
+    );
   });
 
   it('should throw error when both endpoint and token are not defined', () => {
@@ -58,7 +60,7 @@ describe('createHashnodeClient', () => {
     vi.mocked(envConfig).hashnodePersonalToken = undefined;
 
     expect(() => createHashnodeClient()).toThrow(
-      'Hashnode endpoint is not defined. Please check environment variables.'
+      'Hashnode endpoint is not defined. Please check environment variables.',
     );
   });
 });

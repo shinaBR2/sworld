@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { type ZodError, type ZodSchema } from 'zod';
-import { ServiceResponse } from './schema';
+import type { ZodError, ZodSchema } from 'zod';
+import type { ServiceResponse } from './schema';
 
 type Header<T extends string> = {
   value: string;
@@ -11,13 +11,15 @@ interface ValidatedRequest<T> extends Request {
   validatedData: T;
 }
 
-type ValidateRequest = <T>(schema: ZodSchema<T, any, any>) => (req: Request, res: Response, next: NextFunction) => void;
+type ValidateRequest = <T>(
+  schema: ZodSchema<T, any, any>,
+) => (req: Request, res: Response, next: NextFunction) => void;
 
 const formatZodError = (error: ZodError): string => {
   return error.errors
-    .map(err => {
+    .map((err) => {
       const path = err.path
-        .map(p => {
+        .map((p) => {
           // Special handling for common paths
           if (p === 'headers') return 'Header';
           if (typeof p === 'string') return p;

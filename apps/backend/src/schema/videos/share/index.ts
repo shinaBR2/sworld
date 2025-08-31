@@ -17,7 +17,9 @@ import { videoDataSchema } from '../convert';
  */
 const playlistSchema = z.object({
   id: z.string().uuid(),
-  shared_recipients_input: z.array(z.string().email()).min(1, 'At least one recipient is required'),
+  shared_recipients_input: z
+    .array(z.string().email())
+    .min(1, 'At least one recipient is required'),
 });
 
 const eventSchema = z.object({
@@ -51,7 +53,7 @@ const transformEvent = (event: z.infer<typeof eventSchema>) => {
   };
 };
 
-const shareSchema = originalShareSchema.transform(req => ({
+const shareSchema = originalShareSchema.transform((req) => ({
   event: transformEvent(req.body.event),
   contentTypeHeader: req.headers['content-type'] as string,
   signatureHeader: req.headers['x-webhook-signature'] as string,

@@ -66,7 +66,7 @@ describe('fixVideosThumbnail', () => {
           payload: {
             id: video.id,
           },
-        })
+        }),
       );
     });
 
@@ -86,7 +86,9 @@ describe('fixVideosThumbnail', () => {
     expect(createCloudTasks).not.toHaveBeenCalled();
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(AppError('Invalid webhook signature for event'));
+    expect(mockResponse.json).toHaveBeenCalledWith(
+      AppError('Invalid webhook signature for event'),
+    );
   });
 
   it('should handle missing environment variable', async () => {
@@ -98,15 +100,21 @@ describe('fixVideosThumbnail', () => {
     expect(createCloudTasks).not.toHaveBeenCalled();
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(AppError('Missing environment variable'));
+    expect(mockResponse.json).toHaveBeenCalledWith(
+      AppError('Missing environment variable'),
+    );
   });
 
   it('should handle task creation failure', async () => {
-    vi.mocked(createCloudTasks).mockRejectedValue(new Error('Task creation failed'));
+    vi.mocked(createCloudTasks).mockRejectedValue(
+      new Error('Task creation failed'),
+    );
 
     await fixVideosThumbnail(mockRequest, mockResponse);
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(AppError('Failed to create task'));
+    expect(mockResponse.json).toHaveBeenCalledWith(
+      AppError('Failed to create task'),
+    );
   });
 });

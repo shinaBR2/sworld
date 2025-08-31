@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
@@ -11,7 +11,10 @@ const convertHandler = async (req: Request, res: Response) => {
 
   let playableVideoUrl;
   try {
-    logger.info(metadata, `[/videos/convert-handler] start processing event "${metadata.id}", video "${id}"`);
+    logger.info(
+      metadata,
+      `[/videos/convert-handler] start processing event "${metadata.id}", video "${id}"`,
+    );
     playableVideoUrl = await convertVideo({
       taskId,
       videoData: data,

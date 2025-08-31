@@ -1,5 +1,5 @@
-import { Op, Transaction } from 'sequelize';
-import { Video, VideoTS } from '../models/video';
+import { Op, type Transaction } from 'sequelize';
+import { Video, type VideoTS } from '../models/video';
 
 const getVideoMissingDuration = async () => {
   const query = {
@@ -16,7 +16,10 @@ const getVideoMissingDuration = async () => {
 const getVideoMissingThumbnail = async () => {
   const query = {
     where: {
-      [Op.and]: [{ status: 'ready' }, { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] }],
+      [Op.and]: [
+        { status: 'ready' },
+        { [Op.or]: [{ thumbnail_url: null }, { thumbnail_url: '' }] },
+      ],
     },
   };
 
@@ -45,7 +48,7 @@ const updateVideoDuration = async (props: UpdateVideoDurationProps) => {
         id,
       },
       transaction,
-    }
+    },
   );
 
   if (updatedCount === 0) {
@@ -70,7 +73,7 @@ const updateVideoThumbnail = async (props: UpdateVideoThumbnailProps) => {
         id,
       },
       transaction,
-    }
+    },
   );
 
   if (updatedCount === 0) {
@@ -80,4 +83,10 @@ const updateVideoThumbnail = async (props: UpdateVideoThumbnailProps) => {
   return updatedCount;
 };
 
-export { getVideoById, getVideoMissingDuration, getVideoMissingThumbnail, updateVideoDuration, updateVideoThumbnail };
+export {
+  getVideoById,
+  getVideoMissingDuration,
+  getVideoMissingThumbnail,
+  updateVideoDuration,
+  updateVideoThumbnail,
+};

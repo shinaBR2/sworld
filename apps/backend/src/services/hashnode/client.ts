@@ -8,11 +8,15 @@ const createHashnodeClient = (): GraphQLClient => {
   const token = envConfig.hashnodePersonalToken;
 
   if (!endpoint) {
-    throw new Error('Hashnode endpoint is not defined. Please check environment variables.');
+    throw new Error(
+      'Hashnode endpoint is not defined. Please check environment variables.',
+    );
   }
 
   if (!token) {
-    throw new Error('Hashnode token is not defined. Please check environment variables.');
+    throw new Error(
+      'Hashnode token is not defined. Please check environment variables.',
+    );
   }
 
   return new GraphQLClient(endpoint, {

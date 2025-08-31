@@ -1,4 +1,4 @@
-import { APIResponse } from 'playwright';
+import type { APIResponse } from 'playwright';
 import { CustomError } from 'src/utils/custom-error';
 import { CRAWL_ERRORS } from 'src/utils/error-codes';
 

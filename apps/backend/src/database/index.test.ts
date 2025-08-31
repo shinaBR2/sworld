@@ -55,7 +55,9 @@ describe('Database Initialization', () => {
 
     it('should throw error if authentication fails', async () => {
       // Mock authentication failure
-      const authenticateMock = vi.fn().mockRejectedValue(new Error('Authentication failed'));
+      const authenticateMock = vi
+        .fn()
+        .mockRejectedValue(new Error('Authentication failed'));
       const syncMock = vi.fn();
 
       sequelize.authenticate = authenticateMock;

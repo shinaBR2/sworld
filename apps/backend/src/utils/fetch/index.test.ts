@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { fetchWithError } from './index';
 import { CustomError } from '../custom-error';
 import { HTTP_ERRORS } from '../error-codes';
@@ -31,7 +31,7 @@ describe('fetchWithError', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: expect.any(Object),
-      })
+      }),
     );
   });
 
@@ -41,7 +41,10 @@ describe('fetchWithError', () => {
 
     const response = await fetchWithError(mockUrl);
     expect(response).toBe(mockResponse);
-    expect(fetch).toHaveBeenCalledWith(mockUrl, expect.objectContaining({ signal: expect.any(Object) }));
+    expect(fetch).toHaveBeenCalledWith(
+      mockUrl,
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
   });
 
   it('should throw retryable error for network failures', async () => {
@@ -132,7 +135,9 @@ describe('fetchWithError', () => {
     abortError.name = 'AbortError';
     (fetch as Mock).mockRejectedValue(abortError);
 
-    await expect(fetchWithError(mockUrl, { timeout: 1000 })).rejects.toThrow(CustomError);
+    await expect(fetchWithError(mockUrl, { timeout: 1000 })).rejects.toThrow(
+      CustomError,
+    );
     try {
       await fetchWithError(mockUrl, { timeout: 1000 });
       expect.fail('Expected timeout to trigger a CustomError');

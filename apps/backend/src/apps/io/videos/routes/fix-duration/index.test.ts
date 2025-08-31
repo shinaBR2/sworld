@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { Request, Response } from 'express';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import type { Request, Response } from 'express';
 import { fixDurationHandler } from './index';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
@@ -77,7 +77,10 @@ describe('fixDurationHandler', () => {
     await fixDurationHandler(mockReq, mockRes);
 
     expect(getVideoById).toHaveBeenCalledWith('video-123');
-    expect(parseM3U8Content).toHaveBeenCalledWith('video-source', expect.any(Array));
+    expect(parseM3U8Content).toHaveBeenCalledWith(
+      'video-source',
+      expect.any(Array),
+    );
     expect(sequelize.transaction).toHaveBeenCalled();
     expect(updateVideoDuration).toHaveBeenCalledWith({
       id: 'video-123',

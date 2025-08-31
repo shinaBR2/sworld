@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { hasuraClient } from '../../client';
 import { getPlaylistVideos, getUsers } from './index';
-import { PlaylistDetailQuery, UsersQuery } from '../../generated-graphql/graphql';
+import {
+  PlaylistDetailQuery,
+  type UsersQuery,
+} from '../../generated-graphql/graphql';
 
 // Mock the hasura client
 vi.mock('../../client', () => {
@@ -72,7 +75,9 @@ describe('getPlaylistVideos', () => {
     const mockError = new Error('GraphQL request failed');
     vi.mocked(hasuraClient.request).mockRejectedValueOnce(mockError);
 
-    await expect(getPlaylistVideos(mockPlaylistId, mockEmails)).rejects.toThrow(mockError);
+    await expect(getPlaylistVideos(mockPlaylistId, mockEmails)).rejects.toThrow(
+      mockError,
+    );
   });
 });
 

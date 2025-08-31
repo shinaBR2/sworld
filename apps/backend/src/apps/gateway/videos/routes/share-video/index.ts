@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { AppError, AppResponse } from 'src/utils/schema';
-import { ValidatedRequest } from 'src/utils/validator';
+import type { ValidatedRequest } from 'src/utils/validator';
 import { verifySignature } from 'src/services/videos/convert/validator';
-import { ShareRequest } from 'src/schema/videos/share';
+import type { ShareRequest } from 'src/schema/videos/share';
 import { getUsers } from 'src/services/hasura/queries/share';
 import { shareVideo } from 'src/services/hasura/mutations/share-videos';
 import { CustomError } from 'src/utils/custom-error';
@@ -18,7 +18,7 @@ const shareVideoHandler = async (req: Request, res: Response) => {
     return res.json(
       AppError('Invalid webhook signature for event', {
         eventId: metadata.id,
-      })
+      }),
     );
   }
 
@@ -30,13 +30,15 @@ const shareVideoHandler = async (req: Request, res: Response) => {
   // }
 
   // 1. Validate emails
-  const validEmails = sharedRecipientsInput.filter(email => isValidEmail(email));
+  const validEmails = sharedRecipientsInput.filter((email) =>
+    isValidEmail(email),
+  );
   if (!validEmails.length) {
     // TODO send email
     return res.json(
       AppError('Invalid email', {
         eventId: metadata.id,
-      })
+      }),
     );
   }
   // 2. get list videos and users
@@ -46,12 +48,12 @@ const shareVideoHandler = async (req: Request, res: Response) => {
     return res.json(
       AppError('No valid users found', {
         eventId: metadata.id,
-      })
+      }),
     );
   }
 
   // 3. create shared_playlist_recipients records
-  const recipients = users.map(user => ({
+  const recipients = users.map((user) => ({
     videoId: entityId,
     recipientId: user.id,
   }));

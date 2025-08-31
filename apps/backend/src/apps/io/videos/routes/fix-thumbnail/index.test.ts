@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { Request, Response } from 'express';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import type { Request, Response } from 'express';
 import { fixThumbnailHandler } from './index';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
-import { getVideoById, updateVideoThumbnail } from 'src/database/queries/videos';
+import {
+  getVideoById,
+  updateVideoThumbnail,
+} from 'src/database/queries/videos';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { processThumbnail } from 'src/services/videos/helpers/thumbnail';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
@@ -94,7 +97,10 @@ describe('fixThumbnailHandler', () => {
     await fixThumbnailHandler(mockReq, mockRes);
 
     expect(getVideoById).toHaveBeenCalledWith('video-123');
-    expect(parseM3U8Content).toHaveBeenCalledWith('video-source', expect.any(Array));
+    expect(parseM3U8Content).toHaveBeenCalledWith(
+      'video-source',
+      expect.any(Array),
+    );
     expect(processThumbnail).toHaveBeenCalledWith({
       url: 'segment1.ts',
       duration: 10,
@@ -133,7 +139,9 @@ describe('fixThumbnailHandler', () => {
     };
 
     (getVideoById as Mock).mockResolvedValue(mockVideo);
-    (parseM3U8Content as Mock).mockResolvedValue({ segments: { included: [] } });
+    (parseM3U8Content as Mock).mockResolvedValue({
+      segments: { included: [] },
+    });
 
     await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
 
@@ -169,18 +177,21 @@ describe('fixThumbnailHandler', () => {
         id: 'video-123',
         source: 'video-source',
       },
-      'Thumbnail is empty'
+      'Thumbnail is empty',
     );
-    expect(CustomError.medium).toHaveBeenCalledWith('Invalid generated thumbnail', {
-      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
-      context: {
-        id: 'video-123',
-        taskId: 'task-456',
-        source: 'video-source',
+    expect(CustomError.medium).toHaveBeenCalledWith(
+      'Invalid generated thumbnail',
+      {
+        errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+        context: {
+          id: 'video-123',
+          taskId: 'task-456',
+          source: 'video-source',
+        },
+        shouldRetry: true,
+        source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
       },
-      shouldRetry: true,
-      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
-    });
+    );
   });
 
   it('should handle task completion error', async () => {
@@ -209,16 +220,19 @@ describe('fixThumbnailHandler', () => {
 
     await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
 
-    expect(CustomError.medium).toHaveBeenCalledWith('Generate thumbnail failed', {
-      originalError: taskError,
-      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
-      context: {
-        id: 'video-123',
-        taskId: 'task-456',
+    expect(CustomError.medium).toHaveBeenCalledWith(
+      'Generate thumbnail failed',
+      {
+        originalError: taskError,
+        errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+        context: {
+          id: 'video-123',
+          taskId: 'task-456',
+        },
+        shouldRetry: true,
+        source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
       },
-      shouldRetry: true,
-      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
-    });
+    );
 
     expect(mockTransaction.rollback).toHaveBeenCalled();
   });

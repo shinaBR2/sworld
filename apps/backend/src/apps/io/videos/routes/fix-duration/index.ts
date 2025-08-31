@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
 import { getVideoById, updateVideoDuration } from 'src/database/queries/videos';
@@ -32,7 +32,10 @@ const fixDurationHandler = async (req: Request, res: Response) => {
     }
 
     const { source } = video;
-    const { duration } = await parseM3U8Content(source, videoConfig.excludePatterns);
+    const { duration } = await parseM3U8Content(
+      source,
+      videoConfig.excludePatterns,
+    );
 
     transaction = await sequelize.transaction();
     await updateVideoDuration({

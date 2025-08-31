@@ -1,6 +1,6 @@
 import { hasuraClient } from 'src/services/hasura/client';
 import { graphql } from '../../../generated-graphql';
-import {
+import type {
   CreateDeviceRequestMutation,
   CreateDeviceRequestMutationVariables,
   Device_Requests_Insert_Input,
@@ -17,7 +17,10 @@ const CREATE_DEVICE_REQUEST_MUTATION = graphql(/* GraphQL */ `
 `);
 
 const createDeviceRequest = async (variables: Device_Requests_Insert_Input) => {
-  const response = await hasuraClient.request<CreateDeviceRequestMutation, CreateDeviceRequestMutationVariables>({
+  const response = await hasuraClient.request<
+    CreateDeviceRequestMutation,
+    CreateDeviceRequestMutationVariables
+  >({
     document: CREATE_DEVICE_REQUEST_MUTATION.toString(),
     variables: {
       object: variables,

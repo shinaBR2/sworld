@@ -1,6 +1,11 @@
 import crypto from 'crypto';
 import { describe, expect, test, vi } from 'vitest';
-import { compareSignatures, createSignature, parseSignatureHeader, validateSignature } from './validator';
+import {
+  compareSignatures,
+  createSignature,
+  parseSignatureHeader,
+  validateSignature,
+} from './validator';
 
 const MOCK_SECRET = 'whsec_1234567890';
 // Use a fixed timestamp for tests

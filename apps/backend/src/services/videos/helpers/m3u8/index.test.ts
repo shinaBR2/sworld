@@ -4,7 +4,11 @@ import { logger } from 'src/utils/logger';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getDownloadUrl } from '../gcp-cloud-storage';
 import { processThumbnail } from '../thumbnail';
-import { parseM3U8Content, streamPlaylistFile, streamSegments } from './helpers';
+import {
+  parseM3U8Content,
+  streamPlaylistFile,
+  streamSegments,
+} from './helpers';
 import { streamM3U8 } from './index';
 
 // Mock dependencies
@@ -34,7 +38,8 @@ vi.mock('src/utils/custom-error', () => ({
 describe('streamM3U8', () => {
   const mockM3u8Url = 'https://example.com/video.m3u8';
   const mockStoragePath = 'videos/test-video';
-  const mockPlaylistUrl = 'https://storage.googleapis.com/bucket/videos/test-video/playlist.m3u8';
+  const mockPlaylistUrl =
+    'https://storage.googleapis.com/bucket/videos/test-video/playlist.m3u8';
   const mockThumbnailPath = 'videos/test-video/thumbnail.jpg';
   const mockThumbnailUrl = `https://storage.googleapis.com/bucket/${mockThumbnailPath}`;
   const expectedResult = {
@@ -77,7 +82,10 @@ describe('streamM3U8', () => {
 
     expect(result).toEqual(expectedResult);
     expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, undefined);
-    expect(streamPlaylistFile).toHaveBeenCalledWith('#EXTM3U\n#EXT-X-VERSION:3', 'videos/test-video/playlist.m3u8');
+    expect(streamPlaylistFile).toHaveBeenCalledWith(
+      '#EXTM3U\n#EXT-X-VERSION:3',
+      'videos/test-video/playlist.m3u8',
+    );
     expect(streamSegments).toHaveBeenCalledWith({
       segments: expectedResult.segments.included,
       baseStoragePath: mockStoragePath,
@@ -111,7 +119,9 @@ describe('streamM3U8', () => {
     const error = new Error('Stream failed');
     vi.mocked(parseM3U8Content).mockRejectedValue(error);
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(error);
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(
+      error,
+    );
     expect(streamPlaylistFile).not.toHaveBeenCalled();
     expect(streamSegments).not.toHaveBeenCalled();
   });
@@ -123,7 +133,9 @@ describe('streamM3U8', () => {
       duration: 0,
     });
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow('Empty HLS content');
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(
+      'Empty HLS content',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Empty HLS content', {
       errorCode: VIDEO_ERRORS.INVALID_LENGTH,
@@ -166,7 +178,7 @@ describe('streamM3U8', () => {
         shouldRetry: true,
         context: expectedContext,
       },
-      'Failed to generate thumbnail'
+      'Failed to generate thumbnail',
     );
 
     expect(streamPlaylistFile).toHaveBeenCalled();
@@ -177,15 +189,20 @@ describe('streamM3U8', () => {
     const playlistStreamError = new Error('Playlist stream failed');
     vi.mocked(streamPlaylistFile).mockRejectedValue(playlistStreamError);
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow('Failed to stream file to storage');
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(
+      'Failed to stream file to storage',
+    );
 
-    expect(CustomError.medium).toHaveBeenCalledWith('Failed to stream file to storage', {
-      originalError: playlistStreamError,
-      errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
-      shouldRetry: true,
-      context: expectedContext,
-      source: 'services/videos/helpers/m3u8/index.ts',
-    });
+    expect(CustomError.medium).toHaveBeenCalledWith(
+      'Failed to stream file to storage',
+      {
+        originalError: playlistStreamError,
+        errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
+        shouldRetry: true,
+        context: expectedContext,
+        source: 'services/videos/helpers/m3u8/index.ts',
+      },
+    );
 
     // Verify thumbnail was generated before the stream failure
     expect(processThumbnail).toHaveBeenCalled();
@@ -197,15 +214,20 @@ describe('streamM3U8', () => {
     const segmentsStreamError = new Error('Segments stream failed');
     vi.mocked(streamSegments).mockRejectedValue(segmentsStreamError);
 
-    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow('Failed to stream file to storage');
+    await expect(streamM3U8(mockM3u8Url, mockStoragePath)).rejects.toThrow(
+      'Failed to stream file to storage',
+    );
 
-    expect(CustomError.medium).toHaveBeenCalledWith('Failed to stream file to storage', {
-      originalError: segmentsStreamError,
-      errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
-      shouldRetry: true,
-      context: expectedContext,
-      source: 'services/videos/helpers/m3u8/index.ts',
-    });
+    expect(CustomError.medium).toHaveBeenCalledWith(
+      'Failed to stream file to storage',
+      {
+        originalError: segmentsStreamError,
+        errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
+        shouldRetry: true,
+        context: expectedContext,
+        source: 'services/videos/helpers/m3u8/index.ts',
+      },
+    );
 
     // Verify thumbnail and playlist were processed before segment streaming
     expect(processThumbnail).toHaveBeenCalled();

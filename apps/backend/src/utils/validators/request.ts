@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { Context, Next } from 'hono';
-import { type ZodError, type ZodSchema, z } from 'zod';
-import { ServiceResponse } from '../schema';
+import type { ZodError, ZodSchema, z } from 'zod';
+import type { ServiceResponse } from '../schema';
 import { getClientIP } from '../ip';
 
 // Framework-agnostic validation context
@@ -22,7 +22,10 @@ interface ValidationResult<T> {
 }
 
 // Pure validation logic (framework-independent)
-const validateData = <T>(schema: ZodSchema<T, any, any>, context: ValidationContext): ValidationResult<T> => {
+const validateData = <T>(
+  schema: ZodSchema<T, any, any>,
+  context: ValidationContext,
+): ValidationResult<T> => {
   try {
     const validated = schema.parse(context);
     return {
@@ -40,9 +43,9 @@ const validateData = <T>(schema: ZodSchema<T, any, any>, context: ValidationCont
 
 const formatZodError = (error: ZodError): string => {
   return error.errors
-    .map(err => {
+    .map((err) => {
       const path = err.path
-        .map(p => {
+        .map((p) => {
           if (p === 'headers') return 'Header';
           if (typeof p === 'string') return p;
           return `[${p}]`;
@@ -135,8 +138,12 @@ const validateRequest = expressValidateRequest; // Start with Express
 // const validateRequest = honoValidateRequest // Switch to Hono later
 
 // Types for compatibility
-type ValidatedRequest<T extends z.ZodType> = Request & { validatedData: z.infer<T> };
-type ValidatedContext<T extends z.ZodType> = Context & { validatedData: z.infer<T> };
+type ValidatedRequest<T extends z.ZodType> = Request & {
+  validatedData: z.infer<T>;
+};
+type ValidatedContext<T extends z.ZodType> = Context & {
+  validatedData: z.infer<T>;
+};
 
 export {
   validateRequest,

@@ -57,7 +57,7 @@ const downloadFile = async (url: string, localPath: string) => {
         const reader = response.body?.getReader();
 
         while (true) {
-          //@ts-ignore
+          //@ts-expect-error
           const { done, value } = await reader?.read();
           if (done) break;
 
@@ -103,7 +103,10 @@ const cleanupDirectory = async (dirPath: string): Promise<void> => {
   }
 };
 
-const verifyFileSize = async (filePath: string, maxSize: number): Promise<void> => {
+const verifyFileSize = async (
+  filePath: string,
+  maxSize: number,
+): Promise<void> => {
   const statAsync = promisify(stat);
   const stats = await statAsync(filePath);
   if (stats.size > maxSize) {
@@ -111,4 +114,10 @@ const verifyFileSize = async (filePath: string, maxSize: number): Promise<void> 
   }
 };
 
-export { generateTempDir, downloadFile, createDirectory, cleanupDirectory, verifyFileSize };
+export {
+  generateTempDir,
+  downloadFile,
+  createDirectory,
+  cleanupDirectory,
+  verifyFileSize,
+};

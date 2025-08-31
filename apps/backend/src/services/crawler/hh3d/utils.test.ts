@@ -15,7 +15,7 @@ describe('videoUrlXHRMatcher', () => {
       'https://domain.com/path/api/videos/content',
     ];
 
-    testUrls.forEach(url => {
+    testUrls.forEach((url) => {
       expect(videoUrlXHRMatcher(url)).toBe(true);
     });
   });
@@ -28,15 +28,18 @@ describe('videoUrlXHRMatcher', () => {
       'https://domain.com/path/video/content',
     ];
 
-    testUrls.forEach(url => {
+    testUrls.forEach((url) => {
       expect(videoUrlXHRMatcher(url)).toBe(false);
     });
   });
 
   it('should be case sensitive', () => {
-    const testUrls = ['https://example.com/API/videos/123', 'http://localhost:3000/api/VIDEOS?id=456'];
+    const testUrls = [
+      'https://example.com/API/videos/123',
+      'http://localhost:3000/api/VIDEOS?id=456',
+    ];
 
-    testUrls.forEach(url => {
+    testUrls.forEach((url) => {
       expect(videoUrlXHRMatcher(url)).toBe(false);
     });
   });

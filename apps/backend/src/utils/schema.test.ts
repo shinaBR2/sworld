@@ -146,7 +146,7 @@ describe('Schema Utils', () => {
       const successResponse = AppResponse<User>(true, 'Success', user);
       const errorResponse = AppError<Error>(
         'Error occurred',
-        new Error('Test error')
+        new Error('Test error'),
       );
 
       expect(successResponse.dataObject?.id).toBe(1);

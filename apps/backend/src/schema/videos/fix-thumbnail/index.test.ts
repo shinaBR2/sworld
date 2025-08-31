@@ -40,6 +40,8 @@ describe('FixThumbnailHandlerSchema', () => {
       body: validRequest.body,
     };
 
-    expect(() => fixThumbnailHandlerSchema.parse(requestWithoutHeaders)).toThrow();
+    expect(() =>
+      fixThumbnailHandlerSchema.parse(requestWithoutHeaders),
+    ).toThrow();
   });
 });

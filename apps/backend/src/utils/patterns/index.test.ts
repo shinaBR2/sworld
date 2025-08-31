@@ -24,13 +24,13 @@ describe('urlPatterns', () => {
       'https://youtube.com/shorts/',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(urlPatterns.youtube.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(urlPatterns.youtube.test(url)).toBe(false);
       });
@@ -48,13 +48,13 @@ describe('urlPatterns', () => {
 
     const invalidUrls = ['https://vimeo.com/progressive_redirect/123456789'];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(urlPatterns.vimeo.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(urlPatterns.vimeo.test(url)).toBe(false);
       });
@@ -73,13 +73,13 @@ describe('urlPatterns', () => {
       'https://notmux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(urlPatterns.mux.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(urlPatterns.mux.test(url)).toBe(false);
       });
@@ -100,13 +100,13 @@ describe('urlPatterns', () => {
       'https://facebook.com/path/other/123456789',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(urlPatterns.facebook.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(urlPatterns.facebook.test(url)).toBe(false);
       });
@@ -139,13 +139,13 @@ describe('fileExtensionPatterns', () => {
       'https://example.com/video.mkv',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(fileExtensionPatterns.video.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(fileExtensionPatterns.video.test(url)).toBe(false);
       });
@@ -167,13 +167,13 @@ describe('fileExtensionPatterns', () => {
       'https://example.com/stream.mp4',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should match ${url}`, () => {
         expect(fileExtensionPatterns.hls.test(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should not match ${url}`, () => {
         expect(fileExtensionPatterns.hls.test(url)).toBe(false);
       });

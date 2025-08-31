@@ -2,7 +2,12 @@ import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { z } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
 import type { Context, Next } from 'hono';
-import { validateData, expressValidateRequest, honoValidateRequest, type ValidationContext } from './request';
+import {
+  validateData,
+  expressValidateRequest,
+  honoValidateRequest,
+  type ValidationContext,
+} from './request';
 
 describe('validateData', () => {
   const testSchema = z.object({
@@ -174,7 +179,7 @@ describe('honoValidateRequest', () => {
         message: expect.stringContaining('Invalid input'),
         dataObject: null,
       },
-      200
+      200,
     );
   });
 
@@ -200,7 +205,7 @@ describe('honoValidateRequest', () => {
         message: expect.stringContaining('Invalid input'),
         dataObject: null,
       },
-      200
+      200,
     );
   });
 
@@ -228,7 +233,7 @@ describe('honoValidateRequest', () => {
         message: 'Failed to parse request',
         dataObject: null,
       },
-      200
+      200,
     );
   });
 });

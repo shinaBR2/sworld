@@ -1,6 +1,6 @@
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
-import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 import { envConfig } from 'src/utils/envConfig';
+import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 
 const createDeviceRequest = async ({
   extensionId,

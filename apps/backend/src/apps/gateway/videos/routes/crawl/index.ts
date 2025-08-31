@@ -1,15 +1,18 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
+import type { CrawlRequest } from 'src/schema/videos/crawl';
 import { verifySignature } from 'src/services/videos/convert/validator';
-import { CreateCloudTasksParams, createCloudTasks } from 'src/utils/cloud-task';
+import {
+  type CreateCloudTasksParams,
+  createCloudTasks,
+} from 'src/utils/cloud-task';
 import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
 import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
-import { ValidatedRequest } from 'src/utils/validator';
-import { CrawlRequest } from './schema';
+import type { ValidatedRequest } from 'src/utils/validator';
 
 const crawlHandler = async (req: Request, res: Response) => {
   const { ioServiceUrl } = envConfig;
