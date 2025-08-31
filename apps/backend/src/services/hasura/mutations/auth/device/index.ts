@@ -17,6 +17,8 @@ const CREATE_DEVICE_REQUEST_MUTATION = graphql(/* GraphQL */ `
 `);
 
 const createDeviceRequest = async (variables: Device_Requests_Insert_Input) => {
+  console.log(`DEBUG variables: ${JSON.stringify(variables)}`);
+
   const response = await hasuraClient.request<
     CreateDeviceRequestMutation,
     CreateDeviceRequestMutationVariables

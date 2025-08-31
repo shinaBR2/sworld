@@ -24,6 +24,11 @@ const createDeviceRequest = async ({
   const userCode = generateHumanCode(); // Short, readable
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
+  console.log(`DEBUG deviceCode: ${deviceCode}`);
+  console.log(`DEBUG userCode: ${userCode}`);
+  console.log(`DEBUG expiresAt: ${expiresAt}`);
+  console.log(`DEBUG ip: ${ip}`);
+
   // Store in database
   await createDeviceRequestMutation({
     deviceCode,
