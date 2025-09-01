@@ -118,12 +118,21 @@ importers:
       '@crxjs/vite-plugin':
         specifier: ^2.0.3
         version: 2.0.3
+      '@dotenvx/dotenvx':
+        specifier: ^1.36.0
+        version: 1.39.0
+      '@graphql-codegen/cli':
+        specifier: ^5.0.3
+        version: 5.0.5(@parcel/watcher@2.5.1)(@types/node@18.19.80)(graphql@16.10.0)(typescript@5.8.2)
       '@types/chrome':
         specifier: ^0.0.268
         version: 0.0.268
       '@vitejs/plugin-react':
         specifier: ^4.2.0
         version: 4.3.4(vite@5.4.14(@types/node@18.19.80)(terser@5.39.0))
+      typescript:
+        specifier: ^5.6.2
+        version: 5.8.2
       vite:
         specifier: ^5.0.0
         version: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
