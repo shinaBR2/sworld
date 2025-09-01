@@ -1,23 +1,28 @@
 services:
   postgres:
-    image: postgres:15
+    image: postgres:17
+    container_name: sworld-postgres
     restart: always
+    ports:
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ${DB_NAME}
   graphql-engine:
-    image: hasura/graphql-engine:v2.43.0
+    image: hasura/graphql-engine:v2.48.0
+    container_name: sworld-graphql-engine
     ports:
-      - "8080:8080"
+      - "8030:8080"
     restart: always
     environment:
       ## postgres database to store Hasura metadata
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
-      PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/${DB_NAME}
       ## enable the console served by server
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
@@ -26,14 +31,20 @@ services:
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
       HASURA_GRAPHQL_METADATA_DEFAULTS: '{"backend_configs":{"dataconnector":{"athena":{"uri":"http://data-connector-agent:8081/api/v1/athena"},"mariadb":{"uri":"http://data-connector-agent:8081/api/v1/mariadb"},"mysql8":{"uri":"http://data-connector-agent:8081/api/v1/mysql"},"oracle":{"uri":"http://data-connector-agent:8081/api/v1/oracle"},"snowflake":{"uri":"http://data-connector-agent:8081/api/v1/snowflake"}}}}'
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: anonymous
+      MAIN_WEBHOOK_DOMAIN: ${MAIN_WEBHOOK_DOMAIN}
+      MAIN_WEBHOOK_SIGNATURE: ${MAIN_WEBHOOK_SIGNATURE}
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
     depends_on:
       data-connector-agent:
         condition: service_healthy
   data-connector-agent:
-    image: hasura/graphql-data-connector:v2.43.0
+    image: hasura/graphql-data-connector:v2.46.0
+    container_name: sworld-data-connector-agent
     restart: always
     ports:
-      - 8081:8081
+      - 8082:8081
     environment:
       QUARKUS_LOG_LEVEL: ERROR # FATAL, ERROR, WARN, INFO, DEBUG, TRACE
       ## https://quarkus.io/guides/opentelemetry#configuration-reference
