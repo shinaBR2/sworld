@@ -139,9 +139,6 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.6.2
-        version: 5.8.2
       vite:
         specifier: ^5.0.0
         version: 5.4.14(@types/node@18.19.80)(terser@5.39.0)
