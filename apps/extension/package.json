@@ -7,7 +7,8 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "lint": "biome lint --quit-on-problem .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "codegen": "dotenvx run -- graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "core": "workspace:*",
@@ -17,11 +18,14 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.3",
+    "@dotenvx/dotenvx": "^1.36.0",
+    "@graphql-codegen/cli": "^5.0.3",
     "@types/chrome": "^0.0.268",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.0",
     "tsconfig": "workspace:*",
+    "typescript": "^5.6.2",
     "vite": "^5.0.0"
   }
 }
