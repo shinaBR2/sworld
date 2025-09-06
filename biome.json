@@ -8,6 +8,8 @@
   "files": {
     "includes": [
       "**",
+      "apps/**",
+      "packages/**",
       "!**/build",
       "!**/dist",
       "!**/.docusaurus",
