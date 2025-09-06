@@ -1,8 +1,6 @@
 /* eslint-disable */
 import * as types from './graphql';
 
-
-
 /**
  * Map of all GraphQL operations in the project.
  *
@@ -15,17 +13,19 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n": typeof types.CreateDeviceRequestDocument,
+  '\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n': typeof types.CreateDeviceRequestDocument;
 };
 const documents: Documents = {
-    "\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n": types.CreateDeviceRequestDocument,
+  '\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n':
+    types.CreateDeviceRequestDocument,
 };
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n"): typeof import('./graphql').CreateDeviceRequestDocument;
-
+export function graphql(
+  source: '\n  mutation createDeviceRequest($input: CreateDeviceRequestInput!) {\n    createDeviceRequest(input: $input) {\n      data {\n        userCode\n        verificationUri\n      }\n      error {\n        code\n        message\n      }\n      success\n    }\n  }\n',
+): typeof import('./graphql').CreateDeviceRequestDocument;
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
