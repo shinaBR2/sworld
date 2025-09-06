@@ -17,6 +17,7 @@
     "predev:main": "cp .env.development.local apps/main/.env.development.local",
     "dev:main": "pnpm run predev:main && turbo run dev --filter=main --filter=core --filter=ui --no-cache --parallel --continue",
     "dev:docs": "turbo run dev --filter=docs",
+    "dev:extension": "turbo run dev --filter=extension",
     "typecheck:main": "tsc -p apps/main/tsconfig.json --noEmit",
     "format": "biome format --write",
     "prepare": "husky",
