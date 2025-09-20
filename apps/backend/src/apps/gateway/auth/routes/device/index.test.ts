@@ -3,6 +3,8 @@ import { createDeviceRequest } from './index';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import { envConfig } from 'src/utils/envConfig';
+import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
+import { AppResponse } from 'src/utils/schema';
 
 // Mock dependencies
 vi.mock('src/utils/string', () => ({
@@ -21,10 +23,15 @@ vi.mock('src/utils/envConfig', () => ({
 }));
 
 describe('createDeviceRequest', () => {
-  const mockInput = {
+  const mockInput: DeviceRequestCreateRequest = {
     extensionId: 'ext-123',
     ip: '192.168.1.1',
     userAgent: 'Test User Agent',
+    input: {
+      input: {
+        extensionId: 'ext-123',
+      },
+    },
   };
 
   const mockDate = new Date('2025-01-01T00:00:00Z');
@@ -82,14 +89,17 @@ describe('createDeviceRequest', () => {
     expect(timeDiff).toBeLessThanOrEqual(10.1 * 60 * 1000); // 10.1 minutes
 
     // Verify return value
-    expect(result).toEqual({
-      deviceCode: 'mock-device-code',
-      userCode: 'MOCK-123',
-      verification_uri: 'https://watch.sworld.dev/pair',
-      verification_uri_complete: 'https://watch.sworld.dev/pair?code=MOCK-123',
-      expires_in: 600, // 10 minutes in seconds
-      interval: 5, // 5 seconds
-    });
+    expect(result).toEqual(
+      AppResponse(true, 'ok', {
+        deviceCode: 'mock-device-code',
+        userCode: 'MOCK-123',
+        verification_uri: 'https://watch.sworld.dev/pair',
+        verification_uri_complete:
+          'https://watch.sworld.dev/pair?code=MOCK-123',
+        expires_in: 600, // 10 minutes in seconds
+        interval: 5, // 5 seconds
+      }),
+    );
   });
 
   it('should use the generated user code in the verification URI', async () => {
@@ -97,7 +107,7 @@ describe('createDeviceRequest', () => {
 
     const result = await createDeviceRequest(mockInput);
 
-    expect(result.verification_uri_complete).toBe(
+    expect(result.dataObject.verification_uri_complete).toBe(
       'https://watch.sworld.dev/pair?code=TEST-456',
     );
   });

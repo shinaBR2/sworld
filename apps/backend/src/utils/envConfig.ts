@@ -1,4 +1,5 @@
 const envConfig = {
+  nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL,
   port: process.env.PORT,
   storageBucket: process.env.GCP_STORAGE_BUCKET,
@@ -18,6 +19,9 @@ const envConfig = {
   hashnodeEndpoint: process.env.HASHNODE_ENDPOINT,
   hashnodePersonalToken: process.env.HASHNODE_PERSONAL_TOKEN,
   mainSiteUrl: process.env.MAIN_SITE_URL,
+  server: {
+    maxBodyLimitInKBNumber: Number(process.env.MAX_BODY_LIMIT ?? 50),
+  },
 };
 
 export { envConfig };

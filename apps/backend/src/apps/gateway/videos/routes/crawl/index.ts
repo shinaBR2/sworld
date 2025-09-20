@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import type { CrawlRequest } from 'src/schema/videos/crawl';
 import { verifySignature } from 'src/services/videos/convert/validator';
@@ -12,11 +11,9 @@ import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
-import type { ValidatedRequest } from 'src/utils/validator';
 
-const crawlHandler = async (req: Request, res: Response) => {
+const crawlHandler = async (validatedData: CrawlRequest) => {
   const { ioServiceUrl } = envConfig;
-  const { validatedData } = req as ValidatedRequest<CrawlRequest>;
   const { signatureHeader, event } = validatedData;
   const { data, metadata } = event;
 
@@ -47,7 +44,7 @@ const crawlHandler = async (req: Request, res: Response) => {
 
   const task = await createCloudTasks(taskConfig);
   logger.info({ metadata, task }, 'Crawl task created successfully');
-  return res.json(AppResponse(true, 'ok'));
+  return AppResponse(true, 'ok');
 };
 
 export { crawlHandler };

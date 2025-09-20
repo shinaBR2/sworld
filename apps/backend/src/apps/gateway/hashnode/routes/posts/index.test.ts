@@ -7,6 +7,7 @@ import { CustomError } from 'src/utils/custom-error';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { validateSignature } from '../../validator';
 import { postEventsHandler } from './index';
+import { AppResponse } from 'src/utils/schema';
 
 vi.mock('../../validator', () => ({
   validateSignature: vi.fn(),
@@ -40,20 +41,14 @@ describe('postEventsHandler', () => {
     slug: 'test-post',
   };
 
-  const mockRequest = {
-    validatedData: {
-      signatureHeader: 'valid-signature',
-      body: {
-        data: {
-          post: { id: mockPost.id },
-        },
+  const mockValidatedData = {
+    signatureHeader: 'valid-signature',
+    body: {
+      data: {
+        post: { id: mockPost.id },
       },
     },
-  } as Request;
-
-  const mockResponse = {
-    json: vi.fn(),
-  } as unknown as Response;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -62,8 +57,8 @@ describe('postEventsHandler', () => {
   });
 
   it('should handle post_published event', async () => {
-    mockRequest.validatedData.body.data.eventType = 'post_published';
-    await postEventsHandler(mockRequest, mockResponse);
+    mockValidatedData.body.data.eventType = 'post_published';
+    const result = await postEventsHandler(mockValidatedData);
 
     expect(getPost).toHaveBeenCalledWith(mockPost.id);
     expect(insertPost).toHaveBeenCalledWith({
@@ -74,12 +69,12 @@ describe('postEventsHandler', () => {
       readTimeInMinutes: mockPost.readTimeInMinutes,
       slug: mockPost.slug,
     });
-    expect(mockResponse.json).toHaveBeenCalled();
+    expect(result).toEqual(AppResponse(true, 'ok'));
   });
 
   it('should handle post_updated event', async () => {
-    mockRequest.validatedData.body.data.eventType = 'post_updated';
-    await postEventsHandler(mockRequest, mockResponse);
+    mockValidatedData.body.data.eventType = 'post_updated';
+    const result = await postEventsHandler(mockValidatedData);
 
     expect(getPost).toHaveBeenCalledWith(mockPost.id);
     expect(updatePost).toHaveBeenCalledWith(mockPost.id, {
@@ -89,22 +84,22 @@ describe('postEventsHandler', () => {
       readTimeInMinutes: mockPost.readTimeInMinutes,
       slug: mockPost.slug,
     });
-    expect(mockResponse.json).toHaveBeenCalled();
+    expect(result).toEqual(AppResponse(true, 'ok'));
   });
 
   it('should handle post_deleted event', async () => {
-    mockRequest.validatedData.body.data.eventType = 'post_deleted';
-    await postEventsHandler(mockRequest, mockResponse);
+    mockValidatedData.body.data.eventType = 'post_deleted';
+    const result = await postEventsHandler(mockValidatedData);
 
     expect(deletePost).toHaveBeenCalledWith(mockPost.id);
-    expect(mockResponse.json).toHaveBeenCalled();
+    expect(result).toEqual(AppResponse(true, 'ok'));
   });
 
   it('should throw error when post is not found', async () => {
     vi.mocked(getPost).mockResolvedValue(null);
-    mockRequest.validatedData.body.data.eventType = 'post_published';
+    mockValidatedData.body.data.eventType = 'post_published';
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+    await expect(postEventsHandler(mockValidatedData)).rejects.toThrow(
       CustomError,
     );
   });
@@ -115,24 +110,24 @@ describe('postEventsHandler', () => {
       reason: 'Invalid signature',
     });
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+    await expect(postEventsHandler(mockValidatedData)).rejects.toThrow(
       CustomError,
     );
   });
 
   it('should throw error for invalid event type', async () => {
-    mockRequest.validatedData.body.data.eventType = 'invalid_event';
+    mockValidatedData.body.data.eventType = 'invalid_event';
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+    await expect(postEventsHandler(mockValidatedData)).rejects.toThrow(
       CustomError,
     );
   });
 
   it('should throw error when database operation fails', async () => {
-    mockRequest.validatedData.body.data.eventType = 'post_published';
+    mockValidatedData.body.data.eventType = 'post_published';
     vi.mocked(insertPost).mockRejectedValue(new Error('DB Error'));
 
-    await expect(postEventsHandler(mockRequest, mockResponse)).rejects.toThrow(
+    await expect(postEventsHandler(mockValidatedData)).rejects.toThrow(
       CustomError,
     );
   });

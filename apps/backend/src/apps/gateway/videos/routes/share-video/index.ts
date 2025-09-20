@@ -1,25 +1,20 @@
-import type { Request, Response } from 'express';
-import { AppError, AppResponse } from 'src/utils/schema';
-import type { ValidatedRequest } from 'src/utils/validator';
-import { verifySignature } from 'src/services/videos/convert/validator';
 import type { ShareRequest } from 'src/schema/videos/share';
-import { getUsers } from 'src/services/hasura/queries/share';
 import { shareVideo } from 'src/services/hasura/mutations/share-videos';
+import { getUsers } from 'src/services/hasura/queries/share';
+import { verifySignature } from 'src/services/videos/convert/validator';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { AppError, AppResponse } from 'src/utils/schema';
 import { isValidEmail } from 'src/utils/validators/email';
 
-const shareVideoHandler = async (req: Request, res: Response) => {
-  const { validatedData } = req as ValidatedRequest<ShareRequest>;
+const shareVideoHandler = async (validatedData: ShareRequest) => {
   const { signatureHeader, event } = validatedData;
   const { data, metadata } = event;
 
   if (!verifySignature(signatureHeader)) {
-    return res.json(
-      AppError('Invalid webhook signature for event', {
-        eventId: metadata.id,
-      }),
-    );
+    return AppError('Invalid webhook signature for event', {
+      eventId: metadata.id,
+    });
   }
 
   const { id: entityId, sharedRecipientsInput } = data;
@@ -35,21 +30,17 @@ const shareVideoHandler = async (req: Request, res: Response) => {
   );
   if (!validEmails.length) {
     // TODO send email
-    return res.json(
-      AppError('Invalid email', {
-        eventId: metadata.id,
-      }),
-    );
+    return AppError('Invalid email', {
+      eventId: metadata.id,
+    });
   }
   // 2. get list videos and users
   const { users } = await getUsers(validEmails);
 
   if (!users?.length) {
-    return res.json(
-      AppError('No valid users found', {
-        eventId: metadata.id,
-      }),
-    );
+    return AppError('No valid users found', {
+      eventId: metadata.id,
+    });
   }
 
   // 3. create shared_playlist_recipients records
@@ -73,7 +64,7 @@ const shareVideoHandler = async (req: Request, res: Response) => {
     });
   }
 
-  return res.json(AppResponse(true, 'ok'));
+  return AppResponse(true, 'ok');
 };
 
 export { shareVideoHandler };

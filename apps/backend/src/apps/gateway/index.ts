@@ -1,9 +1,10 @@
+// TODO: remove this
 import { createBaseApp } from '../../utils/base-app';
 import { errorHandler } from '../../utils/error-handler';
 import { logger } from '../../utils/logger';
+import { authRouter } from './auth';
 import { hashnodeRouter } from './hashnode';
 import { videosRouter } from './videos';
-import { authRouter } from './auth';
 
 const app = createBaseApp();
 

@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { HashnodeWebhookRequest } from 'src/schema/hashnode';
 import { getPost } from 'src/services/hashnode/queries/posts';
 import { deletePost } from 'src/services/hasura/mutations/posts/delete';
 import { insertPost } from 'src/services/hasura/mutations/posts/insert';
@@ -7,8 +7,6 @@ import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
 import { HTTP_ERRORS, VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { AppResponse } from 'src/utils/schema';
-import type { ValidatedRequest } from 'src/utils/validator';
-import type { HashnodeWebhookRequest } from 'src/schema/hashnode';
 import { validateSignature } from '../../validator';
 
 const fetchPost = async (hId: string) => {
@@ -28,8 +26,7 @@ const fetchPost = async (hId: string) => {
   return postDetail;
 };
 
-const postEventsHandler = async (req: Request, res: Response) => {
-  const { validatedData } = req as ValidatedRequest<HashnodeWebhookRequest>;
+const postEventsHandler = async (validatedData: HashnodeWebhookRequest) => {
   const { signatureHeader, body } = validatedData;
 
   const validationResult = validateSignature({
@@ -92,7 +89,7 @@ const postEventsHandler = async (req: Request, res: Response) => {
       });
     }
 
-    return res.json(AppResponse(true, 'ok'));
+    return AppResponse(true, 'ok');
   } catch (error) {
     throw CustomError.high('Failed to process post event', {
       shouldRetry: true,

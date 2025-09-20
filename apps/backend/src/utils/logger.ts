@@ -7,6 +7,16 @@ interface EnvConfig {
 }
 
 const loggerStorage = new AsyncLocalStorage<Logger>();
+// Check where use this
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true,
+    },
+  },
+});
 
 const createBaseConfig = (envConfig: EnvConfig) => ({
   level: envConfig.nodeEnv === 'production' ? 'info' : 'debug',
@@ -115,18 +125,8 @@ const createHonoLoggingMiddleware = (envConfig: EnvConfig) => {
   };
 };
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-    },
-  },
-});
-
 const httpLogger = pinoHttp({
-  logger,
+  logger: getCurrentLogger(),
   customProps: (req, res) => ({
     cloudEvent: {
       id: req.headers['ce-id'],

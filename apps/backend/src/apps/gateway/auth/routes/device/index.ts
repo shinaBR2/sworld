@@ -1,16 +1,14 @@
+import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import { envConfig } from 'src/utils/envConfig';
+import { AppResponse } from 'src/utils/schema';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 
-const createDeviceRequest = async ({
-  extensionId,
-  ip,
-  userAgent,
-}: {
-  extensionId: string;
-  ip: string;
-  userAgent: string;
-}) => {
+const createDeviceRequest = async (
+  validatedData: DeviceRequestCreateRequest,
+) => {
+  const { ip, userAgent } = validatedData;
+  const { extensionId } = validatedData.input.input;
   // Validate extension ID
   // if (!isValidExtensionId(extensionId)) {
   //   return res.status(400).json({ error: 'invalid_client' });
@@ -24,11 +22,6 @@ const createDeviceRequest = async ({
   const userCode = generateHumanCode(); // Short, readable
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-  console.log(`DEBUG deviceCode: ${deviceCode}`);
-  console.log(`DEBUG userCode: ${userCode}`);
-  console.log(`DEBUG expiresAt: ${expiresAt}`);
-  console.log(`DEBUG ip: ${ip}`);
-
   // Store in database
   await createDeviceRequestMutation({
     deviceCode,
@@ -40,14 +33,14 @@ const createDeviceRequest = async ({
     status: 'pending',
   });
 
-  return {
+  return AppResponse(true, 'ok', {
     deviceCode, // Extension keeps this secret
     userCode, // Show this to user
     verification_uri: `${envConfig.mainSiteUrl}/pair`,
     verification_uri_complete: `${envConfig.mainSiteUrl}/pair?code=${userCode}`,
     expires_in: 600, // 10 minutes in seconds
     interval: 5, // Poll every 5 seconds
-  };
+  });
 };
 
 export { createDeviceRequest };

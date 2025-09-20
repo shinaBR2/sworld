@@ -16,14 +16,8 @@ vi.mock('src/utils/logger');
 describe('fixVideosDuration', () => {
   const mockVideos = [{ id: 'video1' }, { id: 'video2' }, { id: 'video3' }];
 
-  const mockRequest = {
-    validatedData: {
-      signatureHeader: 'valid-signature',
-    },
-  } as any;
-
-  const mockResponse = {
-    json: vi.fn(),
+  const mockValidatedData = {
+    signatureHeader: 'valid-signature',
   } as any;
 
   beforeEach(() => {
@@ -40,7 +34,7 @@ describe('fixVideosDuration', () => {
   });
 
   it('should create cloud tasks for videos without duration', async () => {
-    await fixVideosDuration(mockRequest, mockResponse);
+    const result = await fixVideosDuration(mockValidatedData);
 
     // Verify signature was checked
     expect(verifySignature).toHaveBeenCalledWith('valid-signature');
@@ -65,7 +59,7 @@ describe('fixVideosDuration', () => {
     });
 
     // Verify response was sent
-    expect(mockResponse.json).toHaveBeenCalledWith({
+    expect(result).toEqual({
       success: true,
       message: 'ok',
     });
@@ -74,29 +68,25 @@ describe('fixVideosDuration', () => {
   it('should handle invalid signature', async () => {
     vi.mocked(verifySignature).mockReturnValue(false);
 
-    await fixVideosDuration(mockRequest, mockResponse);
+    const result = await fixVideosDuration(mockValidatedData);
 
     // Verify no tasks were created
     expect(createCloudTasks).not.toHaveBeenCalled();
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      AppError('Invalid webhook signature for event'),
-    );
+    expect(result).toEqual(AppError('Invalid webhook signature for event'));
   });
 
   it('should handle missing environment variable', async () => {
     envConfig.ioServiceUrl = '';
 
-    await fixVideosDuration(mockRequest, mockResponse);
+    const result = await fixVideosDuration(mockValidatedData);
 
     // Verify no tasks were created
     expect(createCloudTasks).not.toHaveBeenCalled();
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      AppError('Missing environment variable'),
-    );
+    expect(result).toEqual(AppError('Missing environment variable'));
   });
 
   it('should handle task creation failure', async () => {
@@ -104,11 +94,9 @@ describe('fixVideosDuration', () => {
       new Error('Task creation failed'),
     );
 
-    await fixVideosDuration(mockRequest, mockResponse);
+    const result = await fixVideosDuration(mockValidatedData);
 
     // Verify error response
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      AppError('Failed to create task'),
-    );
+    expect(result).toEqual(AppError('Failed to create task'));
   });
 });

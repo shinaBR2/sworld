@@ -1,5 +1,5 @@
-import type { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
+import { AppError, AppResponse } from 'src/utils/schema';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
@@ -32,8 +32,7 @@ vi.mock('src/utils/systemConfig', () => ({
 }));
 
 describe('streamToStorage', () => {
-  let mockReq: Partial<Request>;
-  let mockRes: Partial<Response>;
+  let mockValidatedData: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,65 +42,52 @@ describe('streamToStorage', () => {
     vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(createCloudTasks).mockResolvedValue({ taskId: 'test-task' });
 
-    mockReq = {
-      validatedData: {
-        signatureHeader: 'test-signature',
-        event: {
-          data: { id: 'test-video' },
-          metadata: { id: 'test-event' },
-        },
+    mockValidatedData = {
+      signatureHeader: 'test-signature',
+      event: {
+        data: { id: 'test-video' },
+        metadata: { id: 'test-event' },
       },
-    };
-
-    mockRes = {
-      json: vi.fn().mockReturnThis(),
     };
   });
 
-  const createMockRequest = (data: Record<string, unknown>) => ({
-    ...mockReq,
-    validatedData: {
-      ...mockReq.validatedData,
-      event: {
-        ...mockReq.validatedData.event,
-        data: { ...mockReq.validatedData.event.data, ...data },
-      },
+  const createMockData = (data: Record<string, unknown>) => ({
+    signatureHeader: 'test-signature',
+    event: {
+      data: { id: 'test-video', ...data },
+      metadata: { id: 'test-event' },
     },
   });
 
   it('should create cloud task for HLS file type', async () => {
-    const hlsReq = createMockRequest({ fileType: 'hls' });
-
-    await streamToStorage(hlsReq, mockRes as Response);
+    const newData = createMockData({ fileType: 'hls' });
+    const result = await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/stream-hls-handler',
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
-      payload: hlsReq.validatedData.event,
+      payload: newData.event,
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.STREAM_HLS,
     });
 
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        success: true,
-        message: 'ok',
-      }),
-    );
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+    });
   });
 
   it('should create cloud task for video file type', async () => {
-    const videoReq = createMockRequest({ fileType: 'video' });
-
-    await streamToStorage(videoReq, mockRes as Response);
+    const newData = createMockData({ fileType: 'video' });
+    await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-compute-service/videos/convert-handler',
       audience: 'http://test-compute-service',
       queue: queues.convertVideoQueue,
-      payload: videoReq.validatedData.event,
+      payload: newData.event,
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.CONVERT,
@@ -109,15 +95,14 @@ describe('streamToStorage', () => {
   });
 
   it('should create cloud task for platform import', async () => {
-    const platformReq = createMockRequest({ platform: 'youtube' });
-
-    await streamToStorage(platformReq, mockRes as Response);
+    const newData = createMockData({ platform: 'youtube' });
+    await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/import-platform-handler',
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
-      payload: platformReq.validatedData.event,
+      payload: newData.event,
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.IMPORT_PLATFORM,
@@ -125,53 +110,41 @@ describe('streamToStorage', () => {
   });
 
   it('should return invalid source error when no valid file type or platform', async () => {
-    const invalidReq = createMockRequest({ someOtherField: 'value' });
+    const newData = createMockData({ someOtherFields: 'value' });
+    const result = await streamToStorage(newData);
 
-    await streamToStorage(invalidReq, mockRes as Response);
-
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Invalid source',
-      }),
-    );
+    expect(result).toEqual(AppError('Invalid source'));
     expect(createCloudTasks).not.toHaveBeenCalled();
   });
 
   it('should return invalid source error for unsupported file type', async () => {
-    const invalidReq = createMockRequest({ fileType: 'unsupported' });
+    const newData = createMockData({ fileType: 'invalid' });
+    const result = await streamToStorage(newData);
 
-    await streamToStorage(invalidReq, mockRes as Response);
-
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Invalid source',
-      }),
-    );
+    expect(result).toEqual(AppError('Invalid source'));
   });
 
   it('should return invalid source error for unsupported platform', async () => {
-    const invalidReq = createMockRequest({ platform: 'unsupported' });
+    const newData = createMockData({ platform: 'invalid' });
+    const result = await streamToStorage(newData);
 
-    await streamToStorage(invalidReq, mockRes as Response);
-
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Invalid source',
-      }),
-    );
+    expect(result).toEqual(AppError('Invalid source'));
   });
 
   it('should throw error when signature is invalid', async () => {
+    const newData = {
+      signatureHeader: 'invalid',
+      event: {
+        data: { id: 'test-video' },
+        metadata: { id: 'test-event' },
+      },
+    };
     vi.mocked(verifySignature).mockReturnValue(false);
+    const result = await streamToStorage(newData);
 
-    await streamToStorage(mockReq, mockRes as Response);
-
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Invalid webhook signature for event',
-        details: {
-          eventId: 'test-event',
-        },
+    expect(result).toEqual(
+      AppError('Invalid webhook signature for event', {
+        eventId: 'test-event',
       }),
     );
     expect(createCloudTasks).not.toHaveBeenCalled();
@@ -181,13 +154,10 @@ describe('streamToStorage', () => {
     const mockEnvConfig = vi.mocked(envConfig);
     mockEnvConfig.computeServiceUrl = undefined;
 
-    await streamToStorage(mockReq, mockRes as Response);
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Missing environment variable',
-        details: {
-          eventId: 'test-event',
-        },
+    const result = await streamToStorage(mockValidatedData);
+    expect(result).toEqual(
+      AppError('Missing environment variable', {
+        eventId: 'test-event',
       }),
     );
     expect(createCloudTasks).not.toHaveBeenCalled();
@@ -197,31 +167,35 @@ describe('streamToStorage', () => {
     const error = new Error('Task creation failed');
     vi.mocked(createCloudTasks).mockRejectedValue(error);
 
-    const videoReq = createMockRequest({ fileType: 'video' });
-
-    await streamToStorage(videoReq, mockRes as Response);
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Failed to create task',
-        details: {
-          error,
-          eventId: 'test-event',
-        },
+    const result = await streamToStorage(
+      createMockData({
+        fileType: 'video',
+      }),
+    );
+    expect(result).toEqual(
+      AppError('Failed to create task', {
+        error,
+        eventId: 'test-event',
       }),
     );
   });
 
   it('should skip processing when skipProcess is true', async () => {
-    const skipReq = createMockRequest({ skipProcess: true });
-
-    await streamToStorage(skipReq, mockRes as Response);
+    const result = await streamToStorage({
+      ...mockValidatedData,
+      event: {
+        ...mockValidatedData.event,
+        data: {
+          ...mockValidatedData.event.data,
+          skipProcess: true,
+        },
+      },
+    });
 
     expect(createCloudTasks).not.toHaveBeenCalled();
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        success: true,
-        message: 'ok',
-      }),
-    );
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+    });
   });
 });

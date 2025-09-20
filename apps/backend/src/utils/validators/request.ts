@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { Context, Next } from 'hono';
 import type { ZodError, ZodSchema, z } from 'zod';
 import { getClientIP } from '../ip';
-import { logger } from '../logger';
+import { getCurrentLogger, logger } from '../logger';
 import type { ServiceResponse } from '../schema';
 
 // Framework-agnostic validation context
@@ -97,6 +97,7 @@ const expressValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
 const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
   return async (c: Context, next: Next) => {
     try {
+      const logger = getCurrentLogger();
       const body = await c.req.json().catch(() => ({}));
       const query = Object.fromEntries(new URL(c.req.url).searchParams);
       const params = c.req.param();
@@ -113,18 +114,23 @@ const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
 
       const result = validateData(schema, context);
 
+      logger.info({
+        message: 'Validation result',
+        result,
+      });
+
       if (result.success) {
         (c as any).validatedData = result.data;
         await next();
       } else {
         const serviceResponse: ServiceResponse<null> = {
           success: false,
-          message: result.error!,
+          message: result.error ?? '',
           dataObject: null,
         };
         return c.json(serviceResponse, 200);
       }
-    } catch (err) {
+    } catch (_err) {
       const serviceResponse: ServiceResponse<null> = {
         success: false,
         message: 'Failed to parse request',

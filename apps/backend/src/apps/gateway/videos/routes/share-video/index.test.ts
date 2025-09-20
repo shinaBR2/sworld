@@ -1,5 +1,4 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import type { Request, Response } from 'express';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { verifySignature } from 'src/services/videos/convert/validator';
@@ -28,27 +27,21 @@ vi.mock('src/services/hasura/mutations/share-videos', () => ({
 }));
 
 describe('shareVideoHandler', () => {
-  let mockReq: Partial<Request>;
-  let mockRes: Partial<Response>;
+  let mockValidatedData: any;
   const mockJson = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(CustomErrorModule.CustomError, 'critical');
-    mockRes = {
-      json: mockJson,
-    };
-    mockReq = {
-      validatedData: {
-        signatureHeader: 'valid-signature',
-        event: {
-          data: {
-            id: 'video-1',
-            sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
-          },
-          metadata: {
-            id: 'event-1',
-          },
+    mockValidatedData = {
+      signatureHeader: 'valid-signature',
+      event: {
+        data: {
+          id: 'video-1',
+          sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
+        },
+        metadata: {
+          id: 'event-1',
         },
       },
     };
@@ -57,9 +50,9 @@ describe('shareVideoHandler', () => {
   it('should return error if signature is invalid', async () => {
     vi.mocked(verifySignature).mockReturnValue(false);
 
-    await shareVideoHandler(mockReq as Request, mockRes as Response);
+    const result = await shareVideoHandler(mockValidatedData);
 
-    expect(mockJson).toHaveBeenCalledWith(
+    expect(result).toEqual(
       AppError('Invalid webhook signature for event', {
         eventId: 'event-1',
       }),
@@ -68,11 +61,11 @@ describe('shareVideoHandler', () => {
 
   it('should return error if no valid emails are provided', async () => {
     vi.mocked(verifySignature).mockReturnValue(true);
-    mockReq.validatedData!.event.data.sharedRecipientsInput = ['invalid-email'];
+    mockValidatedData.event.data.sharedRecipientsInput = ['invalid-email'];
 
-    await shareVideoHandler(mockReq as Request, mockRes as Response);
+    const result = await shareVideoHandler(mockValidatedData);
 
-    expect(mockJson).toHaveBeenCalledWith(
+    expect(result).toEqual(
       AppError('Invalid email', {
         eventId: 'event-1',
       }),
@@ -85,9 +78,9 @@ describe('shareVideoHandler', () => {
       users: null,
     });
 
-    await shareVideoHandler(mockReq as Request, mockRes as Response);
+    const result = await shareVideoHandler(mockValidatedData);
 
-    expect(mockJson).toHaveBeenCalledWith(
+    expect(result).toEqual(
       AppError('No valid users found', {
         eventId: 'event-1',
       }),
@@ -103,9 +96,9 @@ describe('shareVideoHandler', () => {
     const mockError = new Error('Database error');
     vi.mocked(shareVideo).mockRejectedValue(mockError);
 
-    await expect(
-      shareVideoHandler(mockReq as Request, mockRes as Response),
-    ).rejects.toThrow('Video share failed');
+    await expect(shareVideoHandler(mockValidatedData)).rejects.toThrow(
+      'Video share failed',
+    );
 
     expect(CustomErrorModule.CustomError.critical).toHaveBeenCalledWith(
       'Video share failed',
@@ -113,8 +106,8 @@ describe('shareVideoHandler', () => {
         errorCode: VIDEO_ERRORS.SHARE_FAILED,
         originalError: mockError,
         context: {
-          data: (mockReq as any).validatedData.event.data,
-          metadata: (mockReq as any).validatedData.event.metadata,
+          data: mockValidatedData.event.data,
+          metadata: mockValidatedData.event.metadata,
         },
         source: 'apps/gateway/videos/routes/share-video/index.ts',
       }),
@@ -139,7 +132,7 @@ describe('shareVideoHandler', () => {
       },
     });
 
-    await shareVideoHandler(mockReq as Request, mockRes as Response);
+    const result = await shareVideoHandler(mockValidatedData);
 
     expect(shareVideo).toHaveBeenCalledWith(
       expect.arrayContaining([
@@ -151,6 +144,6 @@ describe('shareVideoHandler', () => {
       'video-1',
       ['user1@example.com', 'user2@example.com'],
     );
-    expect(mockJson).toHaveBeenCalledWith(AppResponse(true, 'ok'));
+    expect(result).toEqual(AppResponse(true, 'ok'));
   });
 });

@@ -1,17 +1,15 @@
-import express, { type Router } from 'express';
-import { validateRequest } from 'src/utils/validator';
+import { Hono } from 'hono';
+import { hashnodeWebhookSchema } from 'src/schema/hashnode';
+import { requestHandler } from 'src/utils/handlers';
+import { zodValidator } from 'src/utils/validators/zodValidator';
 import { postEventsHandler } from './routes/posts';
-import {
-  type HashnodeWebhookRequest,
-  hashnodeWebhookSchema,
-} from 'src/schema/hashnode';
 
-const hashnodeRouter: Router = express.Router();
+const hashnodeRouter = new Hono();
 
 hashnodeRouter.post(
   '/posts-webhook',
-  validateRequest<HashnodeWebhookRequest>(hashnodeWebhookSchema),
-  postEventsHandler,
+  zodValidator('json', hashnodeWebhookSchema),
+  requestHandler(postEventsHandler),
 );
 
 export { hashnodeRouter };

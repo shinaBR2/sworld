@@ -52,8 +52,7 @@ vi.mock('src/utils/error-codes', () => ({
 }));
 
 describe('crawl', () => {
-  let mockReq: Partial<Request>;
-  let mockRes: Partial<Response>;
+  let validatedData: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -62,29 +61,23 @@ describe('crawl', () => {
     vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(createCloudTasks).mockResolvedValue({ taskId: 'test-task' });
 
-    mockReq = {
-      validatedData: {
-        signatureHeader: 'test-signature',
-        event: {
-          data: { id: 'test-video' },
-          metadata: { id: 'test-event' },
-        },
+    validatedData = {
+      signatureHeader: 'test-signature',
+      event: {
+        data: { id: 'test-video' },
+        metadata: { id: 'test-event' },
       },
-    };
-
-    mockRes = {
-      json: vi.fn().mockReturnThis(),
     };
   });
 
   it('should create cloud task when signature is valid', async () => {
-    await crawlHandler(mockReq as Request, mockRes as Response);
+    const result = await crawlHandler(validatedData);
 
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(createCloudTasks).toHaveBeenCalledWith({
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
-      payload: mockReq.validatedData.event,
+      payload: validatedData.event,
       url: 'http://test-io-service/crawlers/crawl-handler',
       entityId: 'test-video',
       entityType: TaskEntityType.CRAWL_VIDEO,
@@ -93,52 +86,48 @@ describe('crawl', () => {
 
     expect(logger.info).toHaveBeenCalledWith(
       {
-        metadata: mockReq.validatedData.event.metadata,
+        metadata: validatedData.event.metadata,
         task: { taskId: 'test-task' },
       },
       'Crawl task created successfully',
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        success: true,
-        message: 'ok',
-      }),
-    );
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+    });
   });
 
   it('should throw error when signature verification fails', async () => {
     vi.mocked(verifySignature).mockReturnValue(false);
 
-    await expect(
-      crawlHandler(mockReq as Request, mockRes as Response),
-    ).rejects.toThrow('Invalid signature');
+    await expect(crawlHandler(validatedData)).rejects.toThrow(
+      'Invalid signature',
+    );
 
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(CustomError.high).toHaveBeenCalledWith('Invalid signature', {
       shouldRetry: false,
       errorCode: VALIDATION_ERRORS.INVALID_SIGNATURE,
       context: {
-        metadata: mockReq.validatedData.event.metadata,
-        data: mockReq.validatedData.event.data,
+        metadata: validatedData.event.metadata,
+        data: validatedData.event.data,
       },
       source: 'apps/gateway/videos/routes/crawl/index.ts',
     });
 
     expect(createCloudTasks).not.toHaveBeenCalled();
-    expect(mockRes.json).not.toHaveBeenCalled();
   });
 
   it('should handle cloud task creation errors', async () => {
     const taskError = new Error('Failed to create task');
     vi.mocked(createCloudTasks).mockRejectedValue(taskError);
 
-    await expect(
-      crawlHandler(mockReq as Request, mockRes as Response),
-    ).rejects.toThrow('Failed to create task');
+    await expect(crawlHandler(validatedData)).rejects.toThrow(
+      'Failed to create task',
+    );
 
     expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(createCloudTasks).toHaveBeenCalled();
-    expect(mockRes.json).not.toHaveBeenCalled();
   });
 });
