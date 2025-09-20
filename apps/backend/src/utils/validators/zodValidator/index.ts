@@ -23,6 +23,10 @@ const formatZodError = (error: ZodError): string => {
     .join(', ');
 };
 
+/**
+ * This damn schema ONLY for request body
+ * We CAN'T validate headers or query params
+ */
 const zodValidator = <
   T extends ZodSchema,
   Target extends keyof ValidationTargets,
@@ -31,6 +35,7 @@ const zodValidator = <
   schema: T,
 ) =>
   zv(target, schema, (result, c) => {
+    console.log(`result`, result);
     if (!result.success) {
       const message = formatZodError(result.error);
 

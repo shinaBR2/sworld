@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const headersSchema = z.object({
+const hashnodeHeadersSchema = z.object({
   'content-type': z.literal('application/json'),
   'x-hashnode-signature': z.string(),
 });
@@ -23,23 +23,11 @@ const dataSchema = z.object({
   eventType: z.enum(['post_published', 'post_updated', 'post_deleted']),
 });
 
-const bodySchema = z.object({
+const hashnodeBodySchema = z.object({
   metadata: metadataSchema,
   data: dataSchema,
 });
 
-const schema = {
-  headers: headersSchema.passthrough(),
-  body: bodySchema,
-};
+export type HashnodeBodySchema = z.infer<typeof hashnodeBodySchema>;
 
-const transformHeaders = (req: any) => ({
-  contentTypeHeader: req.headers['content-type'] as string,
-  signatureHeader: req.headers['x-hashnode-signature'] as string,
-  body: req.body,
-});
-
-const hashnodeWebhookSchema = z.object(schema).transform(transformHeaders);
-
-export type HashnodeWebhookRequest = z.infer<typeof hashnodeWebhookSchema>;
-export { hashnodeWebhookSchema };
+export { hashnodeHeadersSchema, hashnodeBodySchema };

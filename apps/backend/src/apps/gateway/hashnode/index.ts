@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
-import { hashnodeWebhookSchema } from 'src/schema/hashnode';
+import { hashnodeBodySchema, hashnodeHeadersSchema } from 'src/schema/hashnode';
 import { requestHandler } from 'src/utils/handlers';
+import { validateHashnodeSignature } from 'src/utils/validators/validateHashnodeSignature';
+import { validateHeaders } from 'src/utils/validators/validateHeaders';
 import { zodValidator } from 'src/utils/validators/zodValidator';
 import { postEventsHandler } from './routes/posts';
 
@@ -8,7 +10,9 @@ const hashnodeRouter = new Hono();
 
 hashnodeRouter.post(
   '/posts-webhook',
-  zodValidator('json', hashnodeWebhookSchema),
+  validateHeaders(hashnodeHeadersSchema),
+  validateHashnodeSignature(),
+  zodValidator('json', hashnodeBodySchema),
   requestHandler(postEventsHandler),
 );
 

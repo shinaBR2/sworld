@@ -1,95 +1,107 @@
 import { describe, expect, it } from 'vitest';
-import { hashnodeWebhookSchema } from './hashnode';
+import { hashnodeHeadersSchema, hashnodeBodySchema } from './hashnode';
 
 describe('hashnodeWebhookSchema', () => {
-  const validRequest = {
-    headers: {
-      'content-type': 'application/json',
-      'x-hashnode-signature': 'test-signature',
-      'some-other-header': 'value',
+  const validHeaders = {
+    'content-type': 'application/json',
+    'x-hashnode-signature': 'test-signature',
+  };
+
+  const validBody = {
+    metadata: {
+      uuid: '8ebc1c40-4689-4896-a3fa-e98974d9c64a',
     },
-    body: {
-      metadata: {
-        uuid: '8ebc1c40-4689-4896-a3fa-e98974d9c64a',
-      },
-      data: {
-        publication: { id: '6045fecf8458d42fc821d079' },
-        post: { id: '67e0ae5addd1bbc4e0f63015' },
-        eventType: 'post_published',
-      },
+    data: {
+      publication: { id: '6045fecf8458d42fc821d079' },
+      post: { id: '67e0ae5addd1bbc4e0f63015' },
+      eventType: 'post_published',
     },
   };
 
-  it('should validate valid request with different event types', () => {
-    const eventTypes = [
-      'post_published',
-      'post_updated',
-      'post_deleted',
-    ] as const;
+  describe('hashnodeHeadersSchema', () => {
+    it('should validate valid headers', () => {
+      const result = hashnodeHeadersSchema.safeParse(validHeaders);
+      expect(result.success).toBe(true);
+    });
 
-    eventTypes.forEach((eventType) => {
-      const request = {
-        ...validRequest,
-        body: {
-          ...validRequest.body,
-          data: {
-            ...validRequest.body.data,
-            eventType,
-          },
-        },
-      };
+    it('should fail without content-type header', () => {
+      const invalidHeaders = { ...validHeaders };
+      delete invalidHeaders['content-type'];
+      const result = hashnodeHeadersSchema.safeParse(invalidHeaders);
+      expect(result.success).toBe(false);
+    });
 
-      const result = hashnodeWebhookSchema.parse(request);
-      expect(result.body.data.eventType).toBe(eventType);
+    it('should fail with invalid content-type', () => {
+      const result = hashnodeHeadersSchema.safeParse({
+        ...validHeaders,
+        'content-type': 'text/plain',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('should fail without x-hashnode-signature', () => {
+      const invalidHeaders = { ...validHeaders };
+      delete invalidHeaders['x-hashnode-signature'];
+      const result = hashnodeHeadersSchema.safeParse(invalidHeaders);
+      expect(result.success).toBe(false);
     });
   });
 
-  it('should fail with invalid event type', () => {
-    const invalidRequest = {
-      ...validRequest,
-      body: {
-        ...validRequest.body,
+  describe('hashnodeBodySchema', () => {
+    it('should validate valid body with different event types', () => {
+      const eventTypes = [
+        'post_published',
+        'post_updated',
+        'post_deleted',
+      ] as const;
+
+      eventTypes.forEach((eventType) => {
+        const body = {
+          ...validBody,
+          data: {
+            ...validBody.data,
+            eventType,
+          },
+        };
+
+        const result = hashnodeBodySchema.safeParse(body);
+        expect(result.success).toBe(true);
+      });
+    });
+
+    it('should fail with invalid event type', () => {
+      const invalidBody = {
+        ...validBody,
         data: {
-          ...validRequest.body.data,
-          eventType: 'unknown_event',
+          ...validBody.data,
+          eventType: 'invalid_event',
         },
-      },
-    };
-    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
-  });
+      };
+      const result = hashnodeBodySchema.safeParse(invalidBody);
+      expect(result.success).toBe(false);
+    });
 
-  it('should fail when content-type is not application/json', () => {
-    const invalidRequest = {
-      ...validRequest,
-      headers: { ...validRequest.headers, 'content-type': 'text/plain' },
-    };
-    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
-  });
-
-  it('should fail when signature is missing', () => {
-    const invalidRequest = {
-      ...validRequest,
-      headers: { 'content-type': 'application/json' },
-    };
-    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
-  });
-
-  it('should fail with invalid UUID', () => {
-    const invalidRequest = {
-      ...validRequest,
-      body: {
-        ...validRequest.body,
+    it('should fail with invalid UUID', () => {
+      const invalidBody = {
+        ...validBody,
         metadata: { uuid: 'not-a-uuid' },
-      },
-    };
-    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
-  });
+      };
+      const result = hashnodeBodySchema.safeParse(invalidBody);
+      expect(result.success).toBe(false);
+    });
 
-  it('should fail when required body fields are missing', () => {
-    const invalidRequest = {
-      ...validRequest,
-      body: {},
-    };
-    expect(() => hashnodeWebhookSchema.parse(invalidRequest)).toThrow();
+    it('should fail when required fields are missing', () => {
+      const invalidBodies = [
+        { ...validBody, metadata: undefined },
+        { ...validBody, data: undefined },
+        { ...validBody, metadata: { uuid: undefined } },
+        { ...validBody, data: { ...validBody.data, eventType: undefined } },
+      ];
+
+      invalidBodies.forEach((body) => {
+        const result = hashnodeBodySchema.safeParse(body);
+        expect(result.success).toBe(false);
+      });
+    });
   });
 });
