@@ -87,20 +87,39 @@ videosRouter.post(
   honoValidateRequest(crawlSchema),
   honoRequestHandler(crawlHandler),
 );
+
+/**
+ * curl -X POST 'http://localhost:4000/videos/share-playlist' \
+  -H 'Content-Type: application/json' \
+  -H 'x-webhook-signature: <SIGNATURE>' \
+  -d '{
+    "event": {
+      "metadata": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "span_id": "0000000000000001",
+        "trace_id": "00000000000000000000000000000001"
+      },
+      "data": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "shared_recipients_input": ["ddadaa@gmail.com"]
+      }
+    }
+  }'
+ */
 videosRouter.post(
   '/share-playlist',
-  zodValidator('json', shareSchema),
-  requestHandler(sharePlaylistHandler),
+  honoValidateRequest(shareSchema),
+  honoRequestHandler(sharePlaylistHandler),
 );
 videosRouter.post(
   '/share-video',
-  zodValidator('json', shareSchema),
+  honoValidateRequest(shareSchema),
   requestHandler(shareVideoHandler),
 );
 videosRouter.post(
   '/subtitle-created',
-  zodValidator('json', subtitleCreatedSchema),
-  requestHandler(subtitleCreatedHandler),
+  honoValidateRequest(subtitleCreatedSchema),
+  honoRequestHandler(subtitleCreatedHandler),
 );
 
 export { videosRouter };

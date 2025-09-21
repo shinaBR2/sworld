@@ -33,34 +33,25 @@ describe('sharePlaylistHandler', () => {
     vi.clearAllMocks();
     vi.spyOn(CustomErrorModule.CustomError, 'critical');
     mockValidatedData = {
-      signatureHeader: 'valid-signature',
-      event: {
-        data: {
-          id: 'playlist-1',
-          sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
-        },
-        metadata: {
-          id: 'event-1',
+      validatedData: {
+        signatureHeader: 'valid-signature',
+        event: {
+          data: {
+            id: 'playlist-1',
+            sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
+          },
+          metadata: {
+            id: 'event-1',
+          },
         },
       },
     };
   });
 
-  it('should return error if signature is invalid', async () => {
-    vi.mocked(verifySignature).mockReturnValue(false);
-
-    const result = await sharePlaylistHandler(mockValidatedData);
-
-    expect(result).toEqual(
-      AppError('Invalid webhook signature for event', {
-        eventId: 'event-1',
-      }),
-    );
-  });
-
   it('should return error if no valid emails are provided', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
-    mockValidatedData.event.data.sharedRecipientsInput = ['invalid-email'];
+    mockValidatedData.validatedData.event.data.sharedRecipientsInput = [
+      'invalid-email',
+    ];
 
     const result = await sharePlaylistHandler(mockValidatedData);
 
@@ -72,7 +63,6 @@ describe('sharePlaylistHandler', () => {
   });
 
   it('should return error if playlist is not found', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: null,
       users: [],
@@ -88,7 +78,6 @@ describe('sharePlaylistHandler', () => {
   });
 
   it('should return error if no ready videos found in playlist', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: {
         playlist_videos: [],
@@ -106,7 +95,6 @@ describe('sharePlaylistHandler', () => {
   });
 
   it('should return error if no valid users found', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: {
         playlist_videos: [{ video: { id: 'video-1', status: 'ready' } }],
@@ -124,7 +112,6 @@ describe('sharePlaylistHandler', () => {
   });
 
   it('should throw CustomError when sharePlaylist fails', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: {
         playlist_videos: [{ video: { id: 'video-1', status: 'ready' } }],
@@ -145,8 +132,8 @@ describe('sharePlaylistHandler', () => {
         errorCode: VIDEO_ERRORS.SHARE_FAILED,
         originalError: mockError,
         context: {
-          data: mockValidatedData.event.data,
-          metadata: mockValidatedData.event.metadata,
+          data: mockValidatedData.validatedData.event.data,
+          metadata: mockValidatedData.validatedData.event.metadata,
         },
         source: 'apps/gateway/videos/routes/share/index.ts',
       }),
@@ -154,7 +141,6 @@ describe('sharePlaylistHandler', () => {
   });
 
   it('should successfully share playlist with valid users', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getPlaylistVideos).mockResolvedValue({
       playlist_by_pk: {
         playlist_videos: [

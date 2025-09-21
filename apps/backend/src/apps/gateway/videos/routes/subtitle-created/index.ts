@@ -2,10 +2,13 @@ import type { SubtitleCreatedRequest } from 'src/schema/videos/subtitle-created'
 import { saveSubtitle } from 'src/services/hasura/mutations/videos/save-subtitle';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { streamSubtitleFile } from 'src/services/videos/helpers/subtitle';
+import type { HandlerContext } from 'src/utils/requestHandler';
 
-const subtitleCreatedHandler = async (data: SubtitleCreatedRequest) => {
+const subtitleCreatedHandler = async (
+  context: HandlerContext<SubtitleCreatedRequest>,
+) => {
   // Destructure the validated data
-  const { event } = data;
+  const { event } = context.validatedData;
   const { id, url, videoId, userId, lang } = event.data;
 
   // TODO: Add your business logic here

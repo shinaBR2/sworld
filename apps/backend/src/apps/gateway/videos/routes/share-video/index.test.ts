@@ -34,34 +34,25 @@ describe('shareVideoHandler', () => {
     vi.clearAllMocks();
     vi.spyOn(CustomErrorModule.CustomError, 'critical');
     mockValidatedData = {
-      signatureHeader: 'valid-signature',
-      event: {
-        data: {
-          id: 'video-1',
-          sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
-        },
-        metadata: {
-          id: 'event-1',
+      validatedData: {
+        signatureHeader: 'valid-signature',
+        event: {
+          data: {
+            id: 'video-1',
+            sharedRecipientsInput: ['user1@example.com', 'user2@example.com'],
+          },
+          metadata: {
+            id: 'event-1',
+          },
         },
       },
     };
   });
 
-  it('should return error if signature is invalid', async () => {
-    vi.mocked(verifySignature).mockReturnValue(false);
-
-    const result = await shareVideoHandler(mockValidatedData);
-
-    expect(result).toEqual(
-      AppError('Invalid webhook signature for event', {
-        eventId: 'event-1',
-      }),
-    );
-  });
-
   it('should return error if no valid emails are provided', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
-    mockValidatedData.event.data.sharedRecipientsInput = ['invalid-email'];
+    mockValidatedData.validatedData.event.data.sharedRecipientsInput = [
+      'invalid-email',
+    ];
 
     const result = await shareVideoHandler(mockValidatedData);
 
@@ -73,7 +64,6 @@ describe('shareVideoHandler', () => {
   });
 
   it('should return error if no valid users found', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getUsers).mockResolvedValue({
       users: null,
     });
@@ -88,7 +78,6 @@ describe('shareVideoHandler', () => {
   });
 
   it('should throw CustomError when shareVideo fails', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getUsers).mockResolvedValue({
       users: [{ id: 'user-1', email: 'user1@example.com' }],
     });
@@ -106,8 +95,8 @@ describe('shareVideoHandler', () => {
         errorCode: VIDEO_ERRORS.SHARE_FAILED,
         originalError: mockError,
         context: {
-          data: mockValidatedData.event.data,
-          metadata: mockValidatedData.event.metadata,
+          data: mockValidatedData.validatedData.event.data,
+          metadata: mockValidatedData.validatedData.event.metadata,
         },
         source: 'apps/gateway/videos/routes/share-video/index.ts',
       }),
@@ -115,7 +104,6 @@ describe('shareVideoHandler', () => {
   });
 
   it('should successfully share video with valid users', async () => {
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getUsers).mockResolvedValue({
       users: [
         { id: 'user-1', email: 'user1@example.com' },

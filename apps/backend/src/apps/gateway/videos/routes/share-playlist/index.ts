@@ -1,21 +1,16 @@
 import type { ShareRequest } from 'src/schema/videos/share';
 import { sharePlaylist } from 'src/services/hasura/mutations/share-videos';
 import { getPlaylistVideos } from 'src/services/hasura/queries/share';
-import { verifySignature } from 'src/services/videos/convert/validator';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { isValidEmail } from 'src/utils/validators/email';
 
-const sharePlaylistHandler = async (validatedData: ShareRequest) => {
-  const { signatureHeader, event } = validatedData;
+const sharePlaylistHandler = async (context: HandlerContext<ShareRequest>) => {
+  const { validatedData } = context;
+  const { event } = validatedData;
   const { data, metadata } = event;
-
-  if (!verifySignature(signatureHeader)) {
-    return AppError('Invalid webhook signature for event', {
-      eventId: metadata.id,
-    });
-  }
 
   const { id: entityId, sharedRecipientsInput } = data;
 

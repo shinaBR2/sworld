@@ -11,6 +11,7 @@ import { streamSubtitleFile } from 'src/services/videos/helpers/subtitle';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { saveSubtitle } from 'src/services/hasura/mutations/videos/save-subtitle';
 import type { SubtitleCreatedRequest } from 'src/schema/videos/subtitle-created';
+import type { HandlerContext } from 'src/utils/requestHandler';
 
 // Mock dependencies with proper typing
 vi.mock('src/services/videos/helpers/subtitle', () => ({
@@ -39,26 +40,28 @@ const mockGetDownloadUrl = getDownloadUrl as MockedFunction<
 const mockSaveSubtitle = saveSubtitle as MockedFunction<typeof saveSubtitle>;
 
 describe('subtitleCreatedHandler', () => {
-  const mockData: SubtitleCreatedRequest = {
-    event: {
-      data: {
-        id: 'subtitle-123',
-        videoId: 'video-123',
-        userId: 'user-123',
-        lang: 'en',
-        url: 'https://example.com/subtitle.vtt',
-        isDefault: false,
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z',
+  const mockData: HandlerContext<SubtitleCreatedRequest> = {
+    validatedData: {
+      event: {
+        data: {
+          id: 'subtitle-123',
+          videoId: 'video-123',
+          userId: 'user-123',
+          lang: 'en',
+          url: 'https://example.com/subtitle.vtt',
+          isDefault: false,
+          createdAt: '2023-01-01T00:00:00Z',
+          updatedAt: '2023-01-01T00:00:00Z',
+        },
+        metadata: {
+          id: 'event-123',
+          span_id: 'span-123',
+          trace_id: 'trace-123',
+        },
       },
-      metadata: {
-        id: 'event-123',
-        span_id: 'span-123',
-        trace_id: 'trace-123',
-      },
+      contentTypeHeader: 'application/json',
+      signatureHeader: 'test-signature',
     },
-    contentTypeHeader: 'application/json',
-    signatureHeader: 'test-signature',
   };
 
   const mockSubtitle = {
@@ -83,7 +86,7 @@ describe('subtitleCreatedHandler', () => {
 
     // Verify streamSubtitleFile was called with correct parameters
     expect(mockStreamSubtitleFile).toHaveBeenCalledWith({
-      url: mockData.event.data.url,
+      url: mockData.validatedData.event.data.url,
       storagePath: expectedStoragePath,
       contentType: 'text/vtt',
     });
@@ -92,9 +95,12 @@ describe('subtitleCreatedHandler', () => {
     expect(mockGetDownloadUrl).toHaveBeenCalledWith(expectedStoragePath);
 
     // Verify saveSubtitle was called with the correct parameters
-    expect(mockSaveSubtitle).toHaveBeenCalledWith(mockData.event.data.id, {
-      url: expectedDownloadUrl,
-    });
+    expect(mockSaveSubtitle).toHaveBeenCalledWith(
+      mockData.validatedData.event.data.id,
+      {
+        url: expectedDownloadUrl,
+      },
+    );
 
     // Verify the response
     expect(result).toEqual({
