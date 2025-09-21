@@ -1,14 +1,17 @@
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import { envConfig } from 'src/utils/envConfig';
+import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 
 const createDeviceRequest = async (
-  validatedData: DeviceRequestCreateRequest,
+  context: HandlerContext<DeviceRequestCreateRequest>,
 ) => {
+  const { validatedData } = context;
   const { ip, userAgent } = validatedData;
   const { extensionId } = validatedData.input.input;
+
   // Validate extension ID
   // if (!isValidExtensionId(extensionId)) {
   //   return res.status(400).json({ error: 'invalid_client' });

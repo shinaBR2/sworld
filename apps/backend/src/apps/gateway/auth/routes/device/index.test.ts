@@ -5,6 +5,7 @@ import { createDeviceRequest as createDeviceRequestMutation } from 'src/services
 import { envConfig } from 'src/utils/envConfig';
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
 import { AppResponse } from 'src/utils/schema';
+import type { HandlerContext } from 'src/utils/requestHandler';
 
 // Mock dependencies
 vi.mock('src/utils/string', () => ({
@@ -23,15 +24,24 @@ vi.mock('src/utils/envConfig', () => ({
 }));
 
 describe('createDeviceRequest', () => {
-  const mockInput: DeviceRequestCreateRequest = {
-    extensionId: 'ext-123',
-    ip: '192.168.1.1',
-    userAgent: 'Test User Agent',
-    input: {
+  const mockInput: HandlerContext<DeviceRequestCreateRequest> = {
+    validatedData: {
+      extensionId: 'ext-123',
+      ip: '192.168.1.1',
+      userAgent: 'Test User Agent',
       input: {
-        extensionId: 'ext-123',
+        input: {
+          extensionId: 'ext-123',
+        },
       },
     },
+    action: {
+      name: 'createDeviceRequest',
+    },
+    hasuraActionHeader: 'createDeviceRequest',
+    contentTypeHeader: 'application/json',
+    ip: '192.168.1.1',
+    userAgent: 'Test User Agent',
   };
 
   const mockDate = new Date('2025-01-01T00:00:00Z');
