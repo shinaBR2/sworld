@@ -1,7 +1,7 @@
 // tests/unit/utils/handlers.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Context } from 'hono';
-import { requestHandler } from './index';
+import { requestHandler, pureRequestHandler } from './index';
 
 // Mock Hono context
 const createMockContext = (data: any) =>
@@ -75,5 +75,68 @@ describe('requestHandler', () => {
 
     const handler = requestHandler(mockHandler);
     await expect(handler(mockContext)).rejects.toThrow('Test error');
+  });
+});
+
+describe('pureRequestHandler', () => {
+  // Mock Hono context for pureRequestHandler
+  const createPureMockContext = (data: any) =>
+    ({
+      req: {
+        json: vi.fn().mockResolvedValue(data),
+      },
+      json: vi.fn().mockReturnThis(),
+    }) as unknown as Context;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should call handler with parsed JSON data', async () => {
+    const mockData = { id: '123', name: 'Test' };
+    const mockHandler = vi.fn().mockResolvedValue({ success: true });
+    const mockContext = createPureMockContext(mockData);
+
+    const handler = pureRequestHandler(mockHandler);
+    await handler(mockContext);
+
+    expect(mockContext.req.json).toHaveBeenCalled();
+    expect(mockHandler).toHaveBeenCalledWith(mockData);
+  });
+
+  it('should return handler result as JSON', async () => {
+    const mockData = { id: '123' };
+    const mockResult = { success: true, data: mockData };
+    const mockHandler = vi.fn().mockResolvedValue(mockResult);
+    const mockContext = createPureMockContext(mockData);
+
+    const handler = pureRequestHandler(mockHandler);
+    await handler(mockContext);
+
+    expect(mockContext.json).toHaveBeenCalledWith(mockResult);
+  });
+
+  it('should handle async handlers', async () => {
+    const mockData = { id: '123' };
+    const mockResult = { success: true };
+    const mockHandler = vi.fn().mockResolvedValue(mockResult);
+    const mockContext = createPureMockContext(mockData);
+
+    const handler = pureRequestHandler(mockHandler);
+    const result = await handler(mockContext);
+
+    expect(mockHandler).toHaveBeenCalledWith(mockData);
+    expect(mockContext.json).toHaveBeenCalledWith(mockResult);
+  });
+
+  it('should handle errors thrown by the handler', async () => {
+    const mockData = { id: '123' };
+    const error = new Error('Test error');
+    const mockHandler = vi.fn().mockRejectedValue(error);
+    const mockContext = createPureMockContext(mockData);
+
+    const handler = pureRequestHandler(mockHandler);
+
+    await expect(handler(mockContext)).rejects.toThrow(error);
   });
 });

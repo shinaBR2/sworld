@@ -1,7 +1,5 @@
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { getVideoMissingDuration } from 'src/database/queries/videos';
-import type { HasuraWebhookRequest } from 'src/schema/hasura';
-import { verifySignature } from 'src/services/videos/convert/validator';
 import {
   type CreateCloudTasksParams,
   createCloudTasks,
@@ -10,13 +8,8 @@ import { envConfig } from 'src/utils/envConfig';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
 
-const fixVideosDuration = async (validatedData: HasuraWebhookRequest) => {
+const fixVideosDuration = async () => {
   const { ioServiceUrl } = envConfig;
-  const { signatureHeader } = validatedData;
-
-  if (!verifySignature(signatureHeader)) {
-    return AppError('Invalid webhook signature for event');
-  }
 
   // TODO remove this for simplicity
   if (!ioServiceUrl) {

@@ -4,7 +4,7 @@ import { convertBodySchema } from 'src/schema/videos/convert';
 import { crawlSchema } from 'src/schema/videos/crawl';
 import { shareSchema } from 'src/schema/videos/share';
 import { subtitleCreatedSchema } from 'src/schema/videos/subtitle-created';
-import { requestHandler } from 'src/utils/handlers';
+import { pureRequestHandler, requestHandler } from 'src/utils/handlers';
 import { validateHasuraSignature } from 'src/utils/validators/validateHasuraSignature';
 import { validateHeaders } from 'src/utils/validators/validateHeaders';
 import { zodValidator } from 'src/utils/validators/zodValidator';
@@ -51,8 +51,7 @@ videosRouter.post(
 
 videosRouter.post(
   '/fix-videos-duration',
-  zodValidator('json', hasuraWebhookSchema),
-  requestHandler(fixVideosDuration),
+  pureRequestHandler(fixVideosDuration),
 );
 videosRouter.post(
   '/fix-videos-thumbnail',
