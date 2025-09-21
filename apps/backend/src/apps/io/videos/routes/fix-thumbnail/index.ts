@@ -5,6 +5,7 @@ import {
   getVideoById,
   updateVideoThumbnail,
 } from 'src/database/queries/videos';
+import type { FixThumbnailHandlerRequest } from 'src/schema/videos/fix-thumbnail';
 import { videoConfig } from 'src/services/videos/config';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
@@ -12,10 +13,16 @@ import { processThumbnail } from 'src/services/videos/helpers/thumbnail';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
-const fixThumbnailHandler = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  const taskId = req.headers['x-task-id'] as string;
+const fixThumbnailHandler = async (
+  context: HandlerContext<FixThumbnailHandlerRequest>,
+) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const { id } = body;
+  const taskId = headers['x-task-id'];
   const metadata = {
     id,
     taskId,
@@ -94,7 +101,7 @@ const fixThumbnailHandler = async (req: Request, res: Response) => {
     });
     await transaction.commit();
 
-    return res.json({ taskId });
+    return AppResponse(true, 'ok', { taskId });
   } catch (error) {
     await transaction?.rollback();
     throw CustomError.medium('Generate thumbnail failed', {

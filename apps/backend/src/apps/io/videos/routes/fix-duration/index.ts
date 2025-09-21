@@ -2,15 +2,22 @@ import type { Request, Response } from 'express';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
 import { getVideoById, updateVideoDuration } from 'src/database/queries/videos';
+import type { FixDurationHandlerRequest } from 'src/schema/videos/fix-duration';
 import { videoConfig } from 'src/services/videos/config';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
-const fixDurationHandler = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  const taskId = req.headers['x-task-id'] as string;
+const fixDurationHandler = async (
+  context: HandlerContext<FixDurationHandlerRequest>,
+) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const { id } = body;
+  const taskId = headers['x-task-id'];
   const metadata = {
     id,
     taskId,
@@ -48,7 +55,7 @@ const fixDurationHandler = async (req: Request, res: Response) => {
     });
     await transaction.commit();
 
-    return res.json({ taskId });
+    return AppResponse(true, 'ok', { taskId });
   } catch (error) {
     await transaction?.rollback();
     throw CustomError.medium('Fix duration failed', {

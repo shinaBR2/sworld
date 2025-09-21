@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express';
 import { completeTask } from 'src/database/queries/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
@@ -6,6 +5,7 @@ import { logger } from 'src/utils/logger';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { crawlHandler } from './index';
 import { buildVariables } from './utils';
+import type { HandlerContext } from 'src/utils/requestHandler';
 
 // Mock dependencies
 vi.mock('src/services/crawler', () => ({
@@ -30,18 +30,49 @@ vi.mock('src/database/queries/tasks', () => ({
   completeTask: vi.fn(),
 }));
 
+vi.mock('src/utils/schema', () => ({
+  AppResponse: vi.fn((success, message, data) => ({ success, message, data })),
+}));
+
 describe('crawlHandler', () => {
-  let mockRequest: Partial<Request>;
-  let mockResponse: Partial<Response>;
-  let jsonMock: ReturnType<typeof vi.fn>;
+  let mockContext: HandlerContext<{
+    body: {
+      data: {
+        getSingleVideo: boolean;
+        url: string;
+        title: string;
+        slugPrefix?: string;
+        userId: string;
+      };
+      metadata: { id: string; spanId: string; traceId: string };
+    };
+    headers: { 'x-task-id': string };
+  }>;
 
   beforeEach(() => {
-    jsonMock = vi.fn();
-    mockResponse = {
-      status: vi.fn().mockReturnThis(),
-      json: jsonMock,
-    };
     vi.clearAllMocks();
+
+    mockContext = {
+      validatedData: {
+        body: {
+          data: {
+            getSingleVideo: true,
+            url: 'http://example.com',
+            title: 'Test Title',
+            slugPrefix: 'test-',
+            userId: 'user123',
+          },
+          metadata: {
+            id: 'test-id',
+            spanId: 'test-span-id',
+            traceId: 'test-trace-id',
+          },
+        },
+        headers: {
+          'x-task-id': 'test-task-id',
+        },
+      },
+    };
   });
 
   it('should successfully process video crawling and insertion', async () => {
@@ -75,27 +106,7 @@ describe('crawlHandler', () => {
     vi.mocked(buildVariables).mockReturnValue(mockVideos);
     vi.mocked(insertVideos).mockResolvedValue(undefined);
 
-    mockRequest = {
-      body: {
-        data: {
-          getSingleVideo: true,
-          url: 'http://example.com',
-          title: 'Test Title',
-          slugPrefix: 'test-',
-          userId: 'user123',
-        },
-        metadata: {
-          id: 'test-id',
-          spanId: 'test-span-id',
-          traceId: 'test-trace-id',
-        },
-      },
-      headers: {
-        'x-task-id': 'test-task-id',
-      },
-    };
-
-    await crawlHandler(mockRequest as Request, mockResponse as Response);
+    const result = await crawlHandler(mockContext);
 
     expect(crawl).toHaveBeenCalledWith(
       {
@@ -130,7 +141,13 @@ describe('crawlHandler', () => {
       },
       'crawl success, start inserting',
     );
-    expect(jsonMock).toHaveBeenCalledWith({ result: mockCrawlResult });
+
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+      data: { result: mockCrawlResult },
+    });
+
     expect(completeTask).toHaveBeenCalledWith({
       taskId: 'test-task-id',
     });
@@ -157,26 +174,22 @@ describe('crawlHandler', () => {
     vi.mocked(crawl).mockResolvedValue(mockCrawlResult);
     vi.mocked(buildVariables).mockReturnValue(mockVideos);
 
-    mockRequest = {
-      body: {
-        data: {
-          getSingleVideo: true,
-          url: 'http://example.com',
-          title: 'Test Title',
-          userId: 'user123',
+    // Remove slugPrefix from the test data
+    const testContext = {
+      ...mockContext,
+      validatedData: {
+        ...mockContext.validatedData,
+        body: {
+          ...mockContext.validatedData.body,
+          data: {
+            ...mockContext.validatedData.body.data,
+            slugPrefix: undefined,
+          },
         },
-        metadata: {
-          id: 'test-id',
-          spanId: 'test-span-id',
-          traceId: 'test-trace-id',
-        },
-      },
-      headers: {
-        'x-task-id': 'test-task-id',
       },
     };
 
-    await crawlHandler(mockRequest as Request, mockResponse as Response);
+    await crawlHandler(testContext);
 
     expect(buildVariables).toHaveBeenCalledWith(mockCrawlResult, {
       getSingleVideo: true,
@@ -190,27 +203,21 @@ describe('crawlHandler', () => {
     const error = new Error('Crawl failed');
     vi.mocked(crawl).mockRejectedValue(error);
 
-    mockRequest = {
-      body: {
-        data: {
-          getSingleVideo: true,
-          url: 'http://example.com',
-          title: 'Test Title',
-          userId: 'user123',
+    // Remove slugPrefix for this test
+    const testContext = {
+      ...mockContext,
+      validatedData: {
+        ...mockContext.validatedData,
+        body: {
+          ...mockContext.validatedData.body,
+          data: {
+            ...mockContext.validatedData.body.data,
+            slugPrefix: undefined,
+          },
         },
-        metadata: {
-          id: 'test-id',
-          spanId: 'test-span-id',
-          traceId: 'test-trace-id',
-        },
-      },
-      headers: {
-        'x-task-id': 'test-task-id',
       },
     };
 
-    await expect(
-      crawlHandler(mockRequest as Request, mockResponse as Response),
-    ).rejects.toThrow('Crawl failed');
+    await expect(crawlHandler(testContext)).rejects.toThrow('Crawl failed');
   });
 });

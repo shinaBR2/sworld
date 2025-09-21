@@ -1,17 +1,15 @@
-import express, { type Router } from 'express';
-import { validateRequest } from 'src/utils/validator';
+import { Hono } from 'hono';
+import { crawlHandlerSchema } from 'src/schema/videos/crawl';
+import { honoRequestHandler } from 'src/utils/requestHandler';
+import { honoValidateRequest } from 'src/utils/validators/request';
 import { crawlHandler } from './routes/crawl';
-import {
-  crawlHandlerSchema,
-  type CrawlHandlerRequest,
-} from 'src/schema/videos/crawl';
 
-const crawlerRouter: Router = express.Router();
+const crawlerRouter = new Hono();
 
 crawlerRouter.post(
   '/crawl-handler',
-  validateRequest<CrawlHandlerRequest>(crawlHandlerSchema),
-  crawlHandler,
+  honoValidateRequest(crawlHandlerSchema),
+  honoRequestHandler(crawlHandler),
 );
 
 export { crawlerRouter };

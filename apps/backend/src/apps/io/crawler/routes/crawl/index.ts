@@ -1,8 +1,10 @@
-import type { Request, Response } from 'express';
 import { completeTask } from 'src/database/queries/tasks';
+import type { CrawlHandlerRequest } from 'src/schema/videos/crawl';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 import type { CrawlData } from './type';
 import { buildVariables } from './utils';
 
@@ -23,9 +25,11 @@ import { buildVariables } from './utils';
  * - When crawl playlist, frontend send { url, playlistName }
  */
 
-const crawlHandler = async (req: Request, res: Response) => {
-  const taskId = req.headers['x-task-id'] as string;
-  const { data } = req.body;
+const crawlHandler = async (context: HandlerContext<CrawlHandlerRequest>) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const taskId = headers['x-task-id'] as string;
+  const { data } = body;
   const { userId, getSingleVideo, url, title, slugPrefix = '' } = data;
 
   const inputs = {
@@ -55,7 +59,7 @@ const crawlHandler = async (req: Request, res: Response) => {
     taskId,
   });
 
-  res.json({ result });
+  return AppResponse(true, 'ok', { result });
 };
 
 export { crawlHandler };

@@ -1,14 +1,20 @@
-import type { Request, Response } from 'express';
+import type { StreamHandlerRequest } from 'src/schema/videos/stream-hls';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
-const streamHLSHandler = async (req: Request, res: Response) => {
-  const { data, metadata } = req.body;
-  const taskId = req.headers['x-task-id'] as string;
+const streamHLSHandler = async (
+  context: HandlerContext<StreamHandlerRequest>,
+) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const { data, metadata } = body;
+  const taskId = headers['x-task-id'] as string;
   const { id, videoUrl, userId, keepOriginalSource } = data;
 
   if (keepOriginalSource) {
@@ -28,7 +34,7 @@ const streamHLSHandler = async (req: Request, res: Response) => {
         },
       });
 
-      return res.json({ playableVideoUrl: videoUrl });
+      return AppResponse(true, 'ok', { playableVideoUrl: videoUrl });
     } catch (error) {
       throw CustomError.critical('Hasura server error', {
         originalError: error,
@@ -74,7 +80,7 @@ const streamHLSHandler = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json({ playableVideoUrl });
+    return AppResponse(true, 'ok', { playableVideoUrl });
   } catch (error) {
     throw CustomError.critical('Hasura server error', {
       originalError: error,

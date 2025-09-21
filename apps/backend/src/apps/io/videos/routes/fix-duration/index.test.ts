@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import type { Request, Response } from 'express';
 import { fixDurationHandler } from './index';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
@@ -8,6 +7,8 @@ import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { logger } from 'src/utils/logger';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import type { FixDurationHandlerRequest } from 'src/schema/videos/fix-duration';
 
 // Mock dependencies
 vi.mock('src/database', () => ({
@@ -43,17 +44,24 @@ vi.mock('src/utils/custom-error', () => ({
   },
 }));
 
-describe('fixDurationHandler', () => {
-  const mockReq = {
-    body: { id: 'video-123' },
-    headers: { 'x-task-id': 'task-456' },
-  } as Request;
+const createMockContext = (
+  data: Record<string, unknown> = {},
+  headers: Record<string, string> = {},
+) =>
+  ({
+    validatedData: {
+      body: data,
+      headers,
+    },
+  }) as unknown as HandlerContext<FixDurationHandlerRequest>;
 
-  const mockRes = {
-    json: vi.fn(),
-  } as unknown as Response;
+describe('fixDurationHandler', () => {
+  let mockContext: HandlerContext<FixDurationHandlerRequest>;
+  const defaultData = { id: 'video-123' };
+  const defaultHeaders = { 'x-task-id': 'task-456' };
 
   beforeEach(() => {
+    mockContext = createMockContext(defaultData, defaultHeaders);
     vi.clearAllMocks();
   });
 
@@ -74,7 +82,7 @@ describe('fixDurationHandler', () => {
     (updateVideoDuration as Mock).mockResolvedValue(1);
     (completeTask as Mock).mockResolvedValue(true);
 
-    await fixDurationHandler(mockReq, mockRes);
+    const result = await fixDurationHandler(mockContext);
 
     expect(getVideoById).toHaveBeenCalledWith('video-123');
     expect(parseM3U8Content).toHaveBeenCalledWith(
@@ -89,7 +97,11 @@ describe('fixDurationHandler', () => {
     });
     expect(completeTask).toHaveBeenCalledWith({ taskId: 'task-456' });
     expect(mockTransaction.commit).toHaveBeenCalled();
-    expect(mockRes.json).toHaveBeenCalledWith({ taskId: 'task-456' });
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+      dataObject: { taskId: 'task-456' },
+    });
   });
 
   it('should throw error when video is not found', async () => {
@@ -101,7 +113,9 @@ describe('fixDurationHandler', () => {
     (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(null);
 
-    await expect(fixDurationHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixDurationHandler(mockContext)).rejects.toThrow(
+      'Fix duration failed',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Video not found', {
       errorCode: VIDEO_ERRORS.FIX_DURATION_ERROR,
@@ -128,7 +142,9 @@ describe('fixDurationHandler', () => {
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockRejectedValue(parseError);
 
-    await expect(fixDurationHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixDurationHandler(mockContext)).rejects.toThrow(
+      'Fix duration failed',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Fix duration failed', {
       originalError: parseError,
@@ -146,7 +162,6 @@ describe('fixDurationHandler', () => {
       id: 'video-123',
       source: 'video-source',
     };
-    const mockDuration = 120;
     const taskError = new Error('Task completion failed');
     const mockTransaction = {
       commit: vi.fn(),
@@ -155,11 +170,13 @@ describe('fixDurationHandler', () => {
 
     (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
-    (parseM3U8Content as Mock).mockResolvedValue({ duration: mockDuration });
+    (parseM3U8Content as Mock).mockResolvedValue({ duration: 120 });
     (updateVideoDuration as Mock).mockResolvedValue(1);
     (completeTask as Mock).mockRejectedValue(taskError);
 
-    await expect(fixDurationHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixDurationHandler(mockContext)).rejects.toThrow(
+      'Fix duration failed',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Fix duration failed', {
       originalError: taskError,

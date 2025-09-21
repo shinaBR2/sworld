@@ -1,12 +1,18 @@
-import type { Request, Response } from 'express';
+import type { ImportHandlerRequest } from 'src/schema/videos/import-platform';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
-const importPlatformHandler = async (req: Request, res: Response) => {
-  const { data, metadata } = req.body;
-  const taskId = req.headers['x-task-id'] as string;
+const importPlatformHandler = async (
+  context: HandlerContext<ImportHandlerRequest>,
+) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const { data, metadata } = body;
+  const taskId = headers['x-task-id'];
   const { id, videoUrl, userId } = data;
 
   try {
@@ -32,7 +38,7 @@ const importPlatformHandler = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json({ playableVideoUrl: videoUrl });
+    return AppResponse(true, 'ok', { playableVideoUrl: videoUrl });
   } catch (error) {
     throw CustomError.critical('Import from platform failed', {
       originalError: error,

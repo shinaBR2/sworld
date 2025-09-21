@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import type { Request, Response } from 'express';
 import { fixThumbnailHandler } from './index';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
@@ -13,6 +12,7 @@ import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { logger } from 'src/utils/logger';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import type { HandlerContext } from 'src/utils/requestHandler';
 
 // Mock dependencies
 vi.mock('src/database', () => ({
@@ -57,17 +57,42 @@ vi.mock('src/utils/custom-error', () => ({
   },
 }));
 
-describe('fixThumbnailHandler', () => {
-  const mockReq = {
-    body: { id: 'video-123' },
-    headers: { 'x-task-id': 'task-456' },
-  } as unknown as Request;
+const createMockContext = (
+  data: { id: string } = { id: 'video-123' },
+  headers: Record<string, string> = { 'x-task-id': 'task-456' },
+) =>
+  ({
+    validatedData: {
+      body: data,
+      headers: {
+        'x-task-id': 'task-456',
+        'content-type': 'application/json',
+        ...headers,
+      },
+    },
+  }) as unknown as HandlerContext<{
+    body: { id: string };
+    headers: {
+      'x-task-id': string;
+      'content-type': string;
+      [k: string]: unknown;
+    };
+  }>;
 
-  const mockRes = {
-    json: vi.fn(),
-  } as unknown as Response;
+describe('fixThumbnailHandler', () => {
+  let mockContext: HandlerContext<{
+    body: { id: string };
+    headers: {
+      'x-task-id': string;
+      'content-type': string;
+      [k: string]: unknown;
+    };
+  }>;
+  const defaultData = { id: 'video-123' };
+  const defaultHeaders = { 'x-task-id': 'task-456' };
 
   beforeEach(() => {
+    mockContext = createMockContext(defaultData, defaultHeaders);
     vi.clearAllMocks();
   });
 
@@ -94,7 +119,7 @@ describe('fixThumbnailHandler', () => {
     (updateVideoThumbnail as Mock).mockResolvedValue(1);
     (completeTask as Mock).mockResolvedValue(true);
 
-    await fixThumbnailHandler(mockReq, mockRes);
+    const result = await fixThumbnailHandler(mockContext);
 
     expect(getVideoById).toHaveBeenCalledWith('video-123');
     expect(parseM3U8Content).toHaveBeenCalledWith(
@@ -114,13 +139,19 @@ describe('fixThumbnailHandler', () => {
     });
     expect(completeTask).toHaveBeenCalledWith({ taskId: 'task-456' });
     expect(mockTransaction.commit).toHaveBeenCalled();
-    expect(mockRes.json).toHaveBeenCalledWith({ taskId: 'task-456' });
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+      dataObject: { taskId: 'task-456' },
+    });
   });
 
   it('should throw error when video is not found', async () => {
     (getVideoById as Mock).mockResolvedValue(null);
 
-    await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
+      'Video not found',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Video not found', {
       errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
@@ -143,7 +174,9 @@ describe('fixThumbnailHandler', () => {
       segments: { included: [] },
     });
 
-    await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
+      'Empty HLS content',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Empty HLS content', {
       errorCode: VIDEO_ERRORS.INVALID_LENGTH,
@@ -170,7 +203,9 @@ describe('fixThumbnailHandler', () => {
     (processThumbnail as Mock).mockResolvedValue('thumbnail-path');
     (getDownloadUrl as Mock).mockReturnValue('');
 
-    await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
+      'Invalid generated thumbnail',
+    );
 
     expect(logger.error).toHaveBeenCalledWith(
       {
@@ -218,7 +253,9 @@ describe('fixThumbnailHandler', () => {
     (updateVideoThumbnail as Mock).mockResolvedValue(1);
     (completeTask as Mock).mockRejectedValue(taskError);
 
-    await expect(fixThumbnailHandler(mockReq, mockRes)).rejects.toThrow();
+    await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
+      'Generate thumbnail failed',
+    );
 
     expect(CustomError.medium).toHaveBeenCalledWith(
       'Generate thumbnail failed',

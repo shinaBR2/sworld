@@ -1,46 +1,57 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-// Create mock functions
+// Mock Hono
 const mockPost = vi.fn();
-const mockRouter = { post: mockPost };
-const mockValidateRequest = vi.fn().mockReturnValue('mockMiddleware');
-
-// Mock dependencies
-vi.mock('express', () => {
-  const mockExpress = () => ({});
-  mockExpress.Router = () => mockRouter;
-
-  return {
-    default: mockExpress,
-    __esModule: true,
-  };
-});
-
-vi.mock('src/utils/validator', () => ({
-  validateRequest: mockValidateRequest,
+const mockHono = vi.fn(() => ({
+  post: mockPost,
 }));
 
+vi.mock('hono', () => ({
+  Hono: mockHono,
+}));
+
+// Mock dependencies
 vi.mock('./routes/crawl', () => ({
   crawlHandler: 'mockCrawlHandler',
 }));
 
 vi.mock('src/schema/videos/crawl', () => ({
   crawlHandlerSchema: 'mockSchema',
-  CrawlHandlerRequest: {},
+}));
+
+vi.mock('src/utils/validators/request', () => ({
+  honoValidateRequest: vi.fn().mockReturnValue('mockMiddleware'),
+}));
+
+vi.mock('src/utils/requestHandler', () => ({
+  honoRequestHandler: vi.fn().mockReturnValue('mockHandler'),
 }));
 
 describe('crawlerRouter', () => {
-  it('should set up router correctly', async () => {
-    // Import the module under test
-    const { crawlerRouter } = await import('./index');
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-    // Basic verification
-    expect(crawlerRouter).toBe(mockRouter);
-    expect(mockValidateRequest).toHaveBeenCalledWith('mockSchema');
+  it('should set up router correctly', async () => {
+    // Import the module under test and its dependencies
+    await import('./index');
+    const { honoValidateRequest } = await import(
+      'src/utils/validators/request'
+    );
+    const { honoRequestHandler } = await import('src/utils/requestHandler');
+
+    // Verify Hono router was created
+    expect(mockHono).toHaveBeenCalled();
+
+    // Verify the route was set up correctly
     expect(mockPost).toHaveBeenCalledWith(
       '/crawl-handler',
       'mockMiddleware',
-      'mockCrawlHandler',
+      'mockHandler',
     );
+
+    // Verify middleware and handler were properly wrapped
+    expect(honoValidateRequest).toHaveBeenCalledWith('mockSchema');
+    expect(honoRequestHandler).toHaveBeenCalledWith('mockCrawlHandler');
   });
 });
