@@ -1,12 +1,18 @@
-import type { Request, Response } from 'express';
+import type { ConvertHandlerRequest } from 'src/schema/videos/convert';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
-const convertHandler = async (req: Request, res: Response) => {
-  const taskId = req.headers['x-task-id'] as string;
-  const { data, metadata } = req.body;
+const convertHandler = async (
+  context: HandlerContext<ConvertHandlerRequest>,
+) => {
+  const { validatedData } = context;
+  const { body, headers } = validatedData;
+  const taskId = headers['x-task-id'] as string;
+  const { data, metadata } = body;
   const { id } = data;
 
   let playableVideoUrl;
@@ -20,7 +26,7 @@ const convertHandler = async (req: Request, res: Response) => {
       videoData: data,
     });
 
-    return res.json({ playableVideoUrl });
+    return AppResponse(true, 'ok', { playableVideoUrl });
   } catch (error) {
     throw CustomError.critical('Video conversion failed', {
       originalError: error,

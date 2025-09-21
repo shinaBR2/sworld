@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express';
 import { completeTask } from 'src/database/queries/tasks';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
@@ -6,14 +5,16 @@ import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { convertHandler } from './index';
+import type { Context } from 'hono';
+import type { ConvertHandlerRequest } from 'src/schema/videos/convert';
 
-interface MockResponse extends Response {
+interface MockContext extends Context {
   json: Mock;
+  set: Mock;
 }
 
 interface TestContext {
-  mockRequest: Request;
-  mockResponse: MockResponse;
+  mockContext: MockContext;
   defaultData: {
     id: string;
     userId: string;
@@ -26,7 +27,16 @@ interface TestContext {
   };
   defaultTaskId: string;
   mockPlayableUrl: string;
+  validatedData: ConvertHandlerRequest;
 }
+
+vi.mock('src/utils/schema', () => ({
+  AppResponse: vi.fn((success, message, data) => ({
+    success,
+    message,
+    dataObject: data,
+  })),
+}));
 
 vi.mock('src/services/videos/convert/handler', () => ({
   convertVideo: vi.fn(),
@@ -48,13 +58,12 @@ vi.mock('src/utils/custom-error', () => ({
   },
 }));
 
-const createMockResponse = (): MockResponse =>
-  ({
-    json: vi.fn(),
-  }) as unknown as MockResponse;
-
-const createMockRequest = (data: any, metadata: any, taskId: string): Request =>
-  ({
+const createMockContext = (
+  data: any,
+  metadata: any,
+  taskId: string,
+): MockContext => {
+  const validatedData = {
     body: {
       data,
       metadata,
@@ -62,7 +71,17 @@ const createMockRequest = (data: any, metadata: any, taskId: string): Request =>
     headers: {
       'x-task-id': taskId,
     },
-  }) as unknown as Request;
+  };
+
+  return {
+    json: vi.fn().mockReturnThis(),
+    set: vi.fn().mockReturnThis(),
+    req: {
+      header: (name: string) => (name === 'x-task-id' ? taskId : ''),
+    },
+    validatedData,
+  } as unknown as MockContext;
+};
 
 const setupSuccessfulMocks = (context: TestContext) => {
   vi.mocked(convertVideo).mockResolvedValueOnce(context.mockPlayableUrl);
@@ -88,12 +107,12 @@ describe('convertHandler', () => {
       mockPlayableUrl: 'https://gsapi.com/index.m3u8',
     } as TestContext;
 
-    context.mockResponse = createMockResponse();
-    context.mockRequest = createMockRequest(
+    context.mockContext = createMockContext(
       context.defaultData,
       context.defaultMetadata,
       context.defaultTaskId,
     );
+    context.validatedData = context.mockContext.validatedData;
 
     vi.clearAllMocks();
   });
@@ -105,9 +124,9 @@ describe('convertHandler', () => {
   ) => {
     setupMocks();
 
-    await expect(
-      convertHandler(context.mockRequest, context.mockResponse),
-    ).rejects.toThrow('Video conversion failed');
+    await expect(convertHandler(context.mockContext as any)).rejects.toThrow(
+      'Video conversion failed',
+    );
     expect(CustomError.critical).toHaveBeenCalledWith(
       'Video conversion failed',
       expect.objectContaining({
@@ -133,24 +152,33 @@ describe('convertHandler', () => {
       videoData: context.defaultData,
     });
     checksAfterError?.();
-    expect(context.mockResponse.json).not.toHaveBeenCalled();
+    expect(context.mockContext.json).not.toHaveBeenCalled();
   };
 
-  const testSuccessfulConversion = async (request = context.mockRequest) => {
+  const testSuccessfulConversion = async (
+    mockContext = context.mockContext,
+    customData = context.defaultData,
+  ) => {
     setupSuccessfulMocks(context);
 
-    await convertHandler(request, context.mockResponse);
+    const result = await convertHandler(mockContext as any);
 
     expect(logger.info).toHaveBeenCalledWith(
-      request.body.metadata,
+      context.defaultMetadata,
       expect.stringContaining('start processing event'),
     );
+
     expect(convertVideo).toHaveBeenCalledWith({
       taskId: context.defaultTaskId,
-      videoData: request.body.data,
+      videoData: customData, // Use the custom data here
     });
-    expect(context.mockResponse.json).toHaveBeenCalledWith({
-      playableVideoUrl: context.mockPlayableUrl,
+
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+      dataObject: {
+        playableVideoUrl: context.mockPlayableUrl,
+      },
     });
   };
 
@@ -177,12 +205,12 @@ describe('convertHandler', () => {
       userId: 'custom-user',
       videoUrl: 'https://example.com/custom.mp4',
     };
-    const customRequest = createMockRequest(
+    const customContext = createMockContext(
       customData,
       context.defaultMetadata,
       context.defaultTaskId,
     );
 
-    await testSuccessfulConversion(customRequest);
+    await testSuccessfulConversion(customContext, customData);
   });
 });

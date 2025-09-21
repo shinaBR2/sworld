@@ -1,17 +1,15 @@
-import express, { type Router } from 'express';
-import { validateRequest } from 'src/utils/validator';
+import { Hono } from 'hono';
+import { convertHandlerSchema } from 'src/schema/videos/convert';
+import { honoRequestHandler } from 'src/utils/requestHandler';
+import { honoValidateRequest } from 'src/utils/validators/request';
 import { convertHandler } from './routes/convert';
-import {
-  type ConvertHandlerRequest,
-  convertHandlerSchema,
-} from 'src/schema/videos/convert';
 
-const videosRouter: Router = express.Router();
+const videosRouter = new Hono();
 
 videosRouter.post(
   '/convert-handler',
-  validateRequest<ConvertHandlerRequest>(convertHandlerSchema),
-  convertHandler,
+  honoValidateRequest(convertHandlerSchema),
+  honoRequestHandler(convertHandler),
 );
 
 export { videosRouter };
