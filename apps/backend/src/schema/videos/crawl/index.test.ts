@@ -22,7 +22,7 @@ vi.mock('src/schema/hasura', () => ({
     span_id: z.string(),
     trace_id: z.string(),
   }),
-  headersSchema: z.object({
+  hasuraHeadersSchema: z.object({
     'x-request-id': z.string(),
     'x-hasura-user-id': z.string().optional(),
   }),

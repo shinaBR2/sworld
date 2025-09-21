@@ -1,8 +1,8 @@
+import { validateMediaURL } from 'src/services/videos/convert/validator';
+import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 import { z } from 'zod';
 import { hasuraEventMetadataSchema } from '../../hasura';
-import { validateMediaURL } from 'src/services/videos/convert/validator';
 import { videoUrlSchema } from '../common';
-import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 
 /**
  * These schemas from hasura, for gateway
@@ -43,23 +43,10 @@ const transformEvent = (event: z.infer<typeof eventSchema>) => {
   };
 };
 
-const convertSchema = z
-  .object({
-    body: z.object({
-      event: eventSchema,
-    }),
-    headers: z
-      .object({
-        'content-type': z.string(),
-        'x-webhook-signature': z.string(),
-      })
-      .passthrough(),
-  })
-  .transform((req) => ({
-    event: transformEvent(req.body.event),
-    contentTypeHeader: req.headers['content-type'] as string,
-    signatureHeader: req.headers['x-webhook-signature'] as string,
-  }));
+const convertBodySchema = z.object({
+  event: eventSchema,
+});
+type ConvertBodySchema = z.infer<typeof convertBodySchema>;
 
 /**
  * These schemas for Cloud Task handler
@@ -80,6 +67,11 @@ const convertHandlerSchema = z.object({
   headers: taskHandlerHeaderSchema.passthrough(),
 });
 
-export { convertSchema, eventSchema, videoDataSchema, convertHandlerSchema };
-export type ConvertRequest = z.infer<typeof convertSchema>;
+export {
+  convertBodySchema,
+  type ConvertBodySchema,
+  transformEvent,
+  videoDataSchema,
+  convertHandlerSchema,
+};
 export type ConvertHandlerRequest = z.infer<typeof convertHandlerSchema>;

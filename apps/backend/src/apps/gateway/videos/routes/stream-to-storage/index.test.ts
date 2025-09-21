@@ -22,6 +22,19 @@ vi.mock('src/utils/cloud-task', () => ({
 
 vi.mock('src/services/videos/convert/validator', () => ({
   verifySignature: vi.fn(),
+  validateMediaURL: vi.fn((url: string) => {
+    // Mock implementation that returns platform and fileType based on URL
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      return { platform: 'youtube', fileType: null };
+    }
+    if (url.endsWith('.m3u8')) {
+      return { platform: null, fileType: 'hls' };
+    }
+    if (url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.avi')) {
+      return { platform: null, fileType: 'video' };
+    }
+    return { platform: null, fileType: null };
+  }),
 }));
 
 vi.mock('src/utils/systemConfig', () => ({
@@ -45,7 +58,7 @@ describe('streamToStorage', () => {
     mockValidatedData = {
       signatureHeader: 'test-signature',
       event: {
-        data: { id: 'test-video' },
+        data: { id: 'test-video', videoUrl: 'https://example.com/video.mp4' },
         metadata: { id: 'test-event' },
       },
     };
@@ -54,13 +67,24 @@ describe('streamToStorage', () => {
   const createMockData = (data: Record<string, unknown>) => ({
     signatureHeader: 'test-signature',
     event: {
-      data: { id: 'test-video', ...data },
-      metadata: { id: 'test-event' },
+      data: {
+        id: 'test-video',
+        videoUrl: 'https://example.com/video.mp4',
+        ...data,
+      },
+      metadata: {
+        id: 'test-event',
+        span_id: 'test-span',
+        trace_id: 'test-trace',
+      },
     },
   });
 
   it('should create cloud task for HLS file type', async () => {
-    const newData = createMockData({ fileType: 'hls' });
+    const newData = createMockData({
+      fileType: 'hls',
+      video_url: 'https://example.com/stream.m3u8',
+    });
     const result = await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
@@ -80,7 +104,10 @@ describe('streamToStorage', () => {
   });
 
   it('should create cloud task for video file type', async () => {
-    const newData = createMockData({ fileType: 'video' });
+    const newData = createMockData({
+      fileType: 'video',
+      video_url: 'https://example.com/video.mp4',
+    });
     await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
@@ -95,7 +122,10 @@ describe('streamToStorage', () => {
   });
 
   it('should create cloud task for platform import', async () => {
-    const newData = createMockData({ platform: 'youtube' });
+    const newData = createMockData({
+      platform: 'youtube',
+      video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    });
     await streamToStorage(newData);
 
     expect(createCloudTasks).toHaveBeenCalledWith({
@@ -110,7 +140,10 @@ describe('streamToStorage', () => {
   });
 
   it('should return invalid source error when no valid file type or platform', async () => {
-    const newData = createMockData({ someOtherFields: 'value' });
+    const newData = createMockData({
+      someOtherFields: 'value',
+      video_url: 'https://example.com/video.unsupported',
+    });
     const result = await streamToStorage(newData);
 
     expect(result).toEqual(AppError('Invalid source'));
@@ -118,43 +151,34 @@ describe('streamToStorage', () => {
   });
 
   it('should return invalid source error for unsupported file type', async () => {
-    const newData = createMockData({ fileType: 'invalid' });
+    const newData = createMockData({
+      fileType: 'invalid',
+      video_url: 'https://example.com/video.unsupported',
+    });
     const result = await streamToStorage(newData);
 
     expect(result).toEqual(AppError('Invalid source'));
   });
 
   it('should return invalid source error for unsupported platform', async () => {
-    const newData = createMockData({ platform: 'invalid' });
+    const newData = createMockData({
+      platform: 'invalid',
+      video_url: 'https://example.com/video.unsupported',
+    });
     const result = await streamToStorage(newData);
 
     expect(result).toEqual(AppError('Invalid source'));
-  });
-
-  it('should throw error when signature is invalid', async () => {
-    const newData = {
-      signatureHeader: 'invalid',
-      event: {
-        data: { id: 'test-video' },
-        metadata: { id: 'test-event' },
-      },
-    };
-    vi.mocked(verifySignature).mockReturnValue(false);
-    const result = await streamToStorage(newData);
-
-    expect(result).toEqual(
-      AppError('Invalid webhook signature for event', {
-        eventId: 'test-event',
-      }),
-    );
-    expect(createCloudTasks).not.toHaveBeenCalled();
   });
 
   it('should throw error when compute service URL is missing', async () => {
     const mockEnvConfig = vi.mocked(envConfig);
     mockEnvConfig.computeServiceUrl = undefined;
 
-    const result = await streamToStorage(mockValidatedData);
+    const testData = createMockData({
+      video_url: 'https://example.com/video.mp4',
+    });
+    const result = await streamToStorage(testData);
+
     expect(result).toEqual(
       AppError('Missing environment variable', {
         eventId: 'test-event',
@@ -170,6 +194,7 @@ describe('streamToStorage', () => {
     const result = await streamToStorage(
       createMockData({
         fileType: 'video',
+        video_url: 'https://example.com/video.mp4',
       }),
     );
     expect(result).toEqual(
@@ -181,16 +206,12 @@ describe('streamToStorage', () => {
   });
 
   it('should skip processing when skipProcess is true', async () => {
-    const result = await streamToStorage({
-      ...mockValidatedData,
-      event: {
-        ...mockValidatedData.event,
-        data: {
-          ...mockValidatedData.event.data,
-          skipProcess: true,
-        },
-      },
-    });
+    const result = await streamToStorage(
+      createMockData({
+        skip_process: true,
+        video_url: 'https://example.com/video.mp4',
+      }),
+    );
 
     expect(createCloudTasks).not.toHaveBeenCalled();
     expect(result).toEqual({

@@ -1,8 +1,8 @@
-import type { Request, Response } from 'express';
-import type { Context } from 'hono';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
-import type { ConvertRequest } from 'src/schema/videos/convert';
-import { verifySignature } from 'src/services/videos/convert/validator';
+import {
+  type ConvertBodySchema,
+  transformEvent,
+} from 'src/schema/videos/convert';
 import {
   type CreateCloudTasksParams,
   createCloudTasks,
@@ -27,16 +27,10 @@ const buildHandlerUrl = (baseUrl: string, handler: string): string => {
   return `${baseUrl}${handler}`;
 };
 
-const streamToStorage = async (validatedData: ConvertRequest) => {
+const streamToStorage = async (validatedData: ConvertBodySchema) => {
   const { computeServiceUrl, ioServiceUrl } = envConfig;
-  const { signatureHeader, event } = validatedData;
-  const { data, metadata } = event;
-
-  if (!verifySignature(signatureHeader)) {
-    return AppError('Invalid webhook signature for event', {
-      eventId: metadata.id,
-    });
-  }
+  const { event } = validatedData;
+  const { data, metadata } = transformEvent(event);
 
   // TODO remove this for simplicity
   if (!computeServiceUrl || !ioServiceUrl) {

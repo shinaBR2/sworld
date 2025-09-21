@@ -1,11 +1,11 @@
-import { z } from 'zod';
 import {
   hasuraEventMetadataSchema,
-  headersSchema,
+  hasuraHeadersSchema,
   transformEventMetadata,
   transformHeaders,
 } from 'src/schema/hasura';
 import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
+import { z } from 'zod';
 
 const CrawlRequestSchema = z.object({
   id: z.string().uuid(),
@@ -42,7 +42,7 @@ const crawlSchema = z
     body: z.object({
       event: CrawlEventSchema,
     }),
-    headers: headersSchema,
+    headers: hasuraHeadersSchema,
   })
   .transform((req) => ({
     ...transformHeaders(req),

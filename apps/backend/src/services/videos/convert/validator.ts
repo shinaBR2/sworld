@@ -1,11 +1,12 @@
 import { envConfig } from 'src/utils/envConfig';
 import {
   type FileType,
-  type Platform,
   fileExtensionPatterns,
+  type Platform,
   urlPatterns,
 } from 'src/utils/patterns';
 
+// TODO: moved to src/utils/validators/validateHasuraSignature/validator.ts
 const verifySignature = (signature: string | null) => {
   if (!signature) {
     return false;
