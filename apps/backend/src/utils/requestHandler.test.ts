@@ -1,12 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
-  expressRequestHandler,
   honoRequestHandler,
   type BusinessHandler,
+  expressRequestHandler,
 } from './requestHandler';
-import type { Request, Response } from 'express';
 import type { Context } from 'hono';
-import { ServiceResponse } from './schema';
 
 describe('requestHandler', () => {
   // Mock business handler that returns successful response
@@ -80,13 +78,14 @@ describe('requestHandler', () => {
   describe('honoRequestHandler', () => {
     it('should handle successful requests', async () => {
       const mockContext = {
-        validatedData: { foo: 'bar' },
+        get: vi.fn().mockReturnValue({ foo: 'bar' }),
         json: vi.fn(),
       } as unknown as Context;
 
       const handler = honoRequestHandler(mockSuccessHandler);
       await handler(mockContext);
 
+      expect(mockContext.get).toHaveBeenCalledWith('validatedData');
       expect(mockContext.json).toHaveBeenCalledWith({
         success: true,
         message: 'Success',
@@ -97,13 +96,14 @@ describe('requestHandler', () => {
     it('should pass validated data to business handler', async () => {
       const validatedData = { test: 'data' };
       const mockContext = {
-        validatedData,
+        get: vi.fn().mockReturnValue(validatedData),
         json: vi.fn(),
       } as unknown as Context;
 
       const handler = honoRequestHandler(mockSuccessHandler);
       await handler(mockContext);
 
+      expect(mockContext.get).toHaveBeenCalledWith('validatedData');
       expect(mockContext.json).toHaveBeenCalledWith({
         success: true,
         message: 'Success',
@@ -113,7 +113,7 @@ describe('requestHandler', () => {
 
     it('should let errors bubble up to middleware', async () => {
       const mockContext = {
-        validatedData: { foo: 'bar' },
+        get: vi.fn().mockReturnValue({ foo: 'bar' }),
         json: vi.fn(),
       } as unknown as Context;
 

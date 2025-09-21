@@ -142,11 +142,18 @@ describe('honoValidateRequest', () => {
     const mockContext = {
       req: {
         json: vi.fn().mockResolvedValue({ name: 'John' }),
-        url: 'http://example.com',
-        raw: { headers: new Headers() },
-        param: () => ({}),
+        url: 'http://example.com?test=1',
+        raw: {
+          headers: new Headers({
+            'x-forwarded-for': '203.0.113.195',
+            'user-agent': 'TestAgent/1.0',
+            'x-real-ip': '203.0.113.195',
+          }),
+        },
+        param: vi.fn().mockReturnValue({}),
       },
       json: vi.fn(),
+      set: vi.fn(),
     } as unknown as Context;
 
     const mockNext = vi.fn() as Next;
@@ -154,7 +161,17 @@ describe('honoValidateRequest', () => {
     await middleware(mockContext, mockNext);
 
     expect(mockNext).toHaveBeenCalled();
-    expect(mockContext).toHaveProperty('validatedData');
+    // The validated data should only include fields defined in the schema
+    expect(mockContext.set).toHaveBeenCalledWith('validatedData', {
+      body: { name: 'John' },
+      params: {},
+      query: { test: '1' },
+      headers: expect.objectContaining({
+        'x-forwarded-for': '203.0.113.195',
+        'user-agent': 'TestAgent/1.0',
+        'x-real-ip': '203.0.113.195',
+      }),
+    });
   });
 
   it('should return error response for invalid data', async () => {

@@ -5,6 +5,8 @@ import { crawlSchema } from 'src/schema/videos/crawl';
 import { shareSchema } from 'src/schema/videos/share';
 import { subtitleCreatedSchema } from 'src/schema/videos/subtitle-created';
 import { pureRequestHandler, requestHandler } from 'src/utils/handlers';
+import { honoRequestHandler } from 'src/utils/requestHandler';
+import { honoValidateRequest } from 'src/utils/validators/request';
 import { validateHasuraSignature } from 'src/utils/validators/validateHasuraSignature';
 import { validateHeaders } from 'src/utils/validators/validateHeaders';
 import { zodValidator } from 'src/utils/validators/zodValidator';
@@ -57,10 +59,33 @@ videosRouter.post(
   '/fix-videos-thumbnail',
   pureRequestHandler(fixVideosThumbnail),
 );
+
+/**
+ * Curl test command
+ * curl -X POST 'http://localhost:4000/videos/crawl' \
+  -H 'Content-Type: application/json' \
+  -H 'x-webhook-signature: <SIGNATURE>' \
+  -d '{
+    "event": {
+      "metadata": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "span_id": "0000000000000001",
+        "trace_id": "00000000000000000000000000000001"
+      },
+      "data": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "user_id": "550e8400-e29b-41d4-a716-446655440001",
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "get_single_video": true,
+        "title": "title"
+      }
+    }
+  }'
+ */
 videosRouter.post(
   '/crawl',
-  zodValidator('json', crawlSchema),
-  requestHandler(crawlHandler),
+  honoValidateRequest(crawlSchema),
+  honoRequestHandler(crawlHandler),
 );
 videosRouter.post(
   '/share-playlist',

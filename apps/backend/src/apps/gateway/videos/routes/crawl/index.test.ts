@@ -1,10 +1,7 @@
-import type { Request, Response } from 'express';
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
-import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
-import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
 import { queues } from 'src/utils/systemConfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,16 +13,6 @@ vi.mock('src/utils/schema', () => ({
 
 vi.mock('src/utils/cloud-task', () => ({
   createCloudTasks: vi.fn(),
-}));
-
-vi.mock('src/utils/custom-error', () => ({
-  CustomError: {
-    high: vi.fn((message, options) => {
-      const error = new Error(message);
-      Object.assign(error, { options });
-      return error;
-    }),
-  },
 }));
 
 vi.mock('src/services/videos/convert/validator', () => ({
@@ -70,10 +57,9 @@ describe('crawl', () => {
     };
   });
 
-  it('should create cloud task when signature is valid', async () => {
-    const result = await crawlHandler(validatedData);
+  it('should create cloud task', async () => {
+    const result = await crawlHandler({ validatedData });
 
-    expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(createCloudTasks).toHaveBeenCalledWith({
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
@@ -98,36 +84,14 @@ describe('crawl', () => {
     });
   });
 
-  it('should throw error when signature verification fails', async () => {
-    vi.mocked(verifySignature).mockReturnValue(false);
-
-    await expect(crawlHandler(validatedData)).rejects.toThrow(
-      'Invalid signature',
-    );
-
-    expect(verifySignature).toHaveBeenCalledWith('test-signature');
-    expect(CustomError.high).toHaveBeenCalledWith('Invalid signature', {
-      shouldRetry: false,
-      errorCode: VALIDATION_ERRORS.INVALID_SIGNATURE,
-      context: {
-        metadata: validatedData.event.metadata,
-        data: validatedData.event.data,
-      },
-      source: 'apps/gateway/videos/routes/crawl/index.ts',
-    });
-
-    expect(createCloudTasks).not.toHaveBeenCalled();
-  });
-
   it('should handle cloud task creation errors', async () => {
     const taskError = new Error('Failed to create task');
     vi.mocked(createCloudTasks).mockRejectedValue(taskError);
 
-    await expect(crawlHandler(validatedData)).rejects.toThrow(
+    await expect(crawlHandler({ validatedData })).rejects.toThrow(
       'Failed to create task',
     );
 
-    expect(verifySignature).toHaveBeenCalledWith('test-signature');
     expect(createCloudTasks).toHaveBeenCalled();
   });
 });

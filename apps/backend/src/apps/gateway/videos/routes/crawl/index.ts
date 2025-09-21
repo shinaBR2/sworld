@@ -1,33 +1,20 @@
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import type { CrawlRequest } from 'src/schema/videos/crawl';
-import { verifySignature } from 'src/services/videos/convert/validator';
 import {
   type CreateCloudTasksParams,
   createCloudTasks,
 } from 'src/utils/cloud-task';
-import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
-import { VALIDATION_ERRORS } from 'src/utils/error-codes';
 import { logger } from 'src/utils/logger';
+import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
 
-const crawlHandler = async (validatedData: CrawlRequest) => {
+const crawlHandler = async (context: HandlerContext<CrawlRequest>) => {
   const { ioServiceUrl } = envConfig;
-  const { signatureHeader, event } = validatedData;
+  const { validatedData } = context;
+  const { event } = validatedData;
   const { data, metadata } = event;
-
-  if (!verifySignature(signatureHeader)) {
-    throw CustomError.high('Invalid signature', {
-      shouldRetry: false,
-      errorCode: VALIDATION_ERRORS.INVALID_SIGNATURE,
-      context: {
-        metadata,
-        data,
-      },
-      source: 'apps/gateway/videos/routes/crawl/index.ts',
-    });
-  }
 
   const { id: entityId } = data;
   const { streamVideoQueue } = queues;

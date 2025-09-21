@@ -42,7 +42,7 @@ const honoRequestHandler = <T = any, R = any>(
 ) => {
   return async (c: Context) => {
     const context: HandlerContext<T> = {
-      validatedData: (c as ValidatedContext<T>).validatedData,
+      validatedData: c.get('validatedData'),
     };
 
     const result = await handler(context);
