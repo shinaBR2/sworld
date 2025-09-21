@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fixVideosThumbnail } from './index';
 import { getVideoMissingThumbnail } from 'src/database/queries/videos';
 import { createCloudTasks } from 'src/utils/cloud-task';
-import { verifySignature } from 'src/services/videos/convert/validator';
 import { envConfig } from 'src/utils/envConfig';
 import { queues } from 'src/utils/systemConfig';
 import { AppError } from 'src/utils/schema';
@@ -11,22 +10,16 @@ import { TaskEntityType, TaskType } from 'src/database/models/task';
 // Mock dependencies
 vi.mock('src/database/queries/videos');
 vi.mock('src/utils/cloud-task');
-vi.mock('src/services/videos/convert/validator');
 vi.mock('src/utils/logger');
 
 describe('fixVideosThumbnail', () => {
   const mockVideos = [{ id: 'video1' }, { id: 'video2' }, { id: 'video3' }];
-
-  const mockValidatedData = {
-    signatureHeader: 'valid-signature',
-  };
 
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
 
     // Setup default mocks
-    vi.mocked(verifySignature).mockReturnValue(true);
     vi.mocked(getVideoMissingThumbnail).mockResolvedValue(mockVideos);
     vi.mocked(createCloudTasks).mockResolvedValue(undefined);
 
@@ -35,10 +28,7 @@ describe('fixVideosThumbnail', () => {
   });
 
   it('should create cloud tasks for videos without thumbnail', async () => {
-    const result = await fixVideosThumbnail(mockValidatedData);
-
-    // Verify signature was checked
-    expect(verifySignature).toHaveBeenCalledWith('valid-signature');
+    const result = await fixVideosThumbnail();
 
     // Verify videos were fetched
     expect(getVideoMissingThumbnail).toHaveBeenCalled();
@@ -47,9 +37,8 @@ describe('fixVideosThumbnail', () => {
     expect(createCloudTasks).toHaveBeenCalledTimes(3);
 
     // Check task configuration for each video
-    mockVideos.forEach((video, index) => {
-      expect(createCloudTasks).toHaveBeenNthCalledWith(
-        index + 1,
+    mockVideos.forEach((video) => {
+      expect(createCloudTasks).toHaveBeenCalledWith(
         expect.objectContaining({
           audience: 'http://test-service.com',
           queue: queues.streamVideoQueue,
@@ -71,22 +60,10 @@ describe('fixVideosThumbnail', () => {
     });
   });
 
-  it('should handle invalid signature', async () => {
-    vi.mocked(verifySignature).mockReturnValue(false);
-
-    const result = await fixVideosThumbnail(mockValidatedData);
-
-    // Verify no tasks were created
-    expect(createCloudTasks).not.toHaveBeenCalled();
-
-    // Verify error response
-    expect(result).toEqual(AppError('Invalid webhook signature for event'));
-  });
-
   it('should handle missing environment variable', async () => {
     envConfig.ioServiceUrl = '';
 
-    const result = await fixVideosThumbnail(mockValidatedData);
+    const result = await fixVideosThumbnail();
 
     // Verify no tasks were created
     expect(createCloudTasks).not.toHaveBeenCalled();
@@ -100,7 +77,7 @@ describe('fixVideosThumbnail', () => {
       new Error('Task creation failed'),
     );
 
-    const result = await fixVideosThumbnail(mockValidatedData);
+    const result = await fixVideosThumbnail();
 
     // Verify error response
     expect(result).toEqual(AppError('Failed to create task'));

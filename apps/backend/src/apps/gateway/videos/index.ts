@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { hasuraHeadersSchema, hasuraWebhookSchema } from 'src/schema/hasura';
+import { hasuraHeadersSchema } from 'src/schema/hasura';
 import { convertBodySchema } from 'src/schema/videos/convert';
 import { crawlSchema } from 'src/schema/videos/crawl';
 import { shareSchema } from 'src/schema/videos/share';
@@ -55,8 +55,7 @@ videosRouter.post(
 );
 videosRouter.post(
   '/fix-videos-thumbnail',
-  zodValidator('json', hasuraWebhookSchema),
-  requestHandler(fixVideosThumbnail),
+  pureRequestHandler(fixVideosThumbnail),
 );
 videosRouter.post(
   '/crawl',
