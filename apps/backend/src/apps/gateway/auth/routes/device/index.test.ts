@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createDeviceRequest } from './index';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
-import { envConfig } from 'src/utils/envConfig';
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
 import { AppResponse } from 'src/utils/schema';
 import type { HandlerContext } from 'src/utils/requestHandler';

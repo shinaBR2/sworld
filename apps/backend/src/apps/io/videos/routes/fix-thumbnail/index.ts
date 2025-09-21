@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express';
 import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
 import {

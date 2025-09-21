@@ -1,10 +1,8 @@
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { z } from 'zod';
-import type { Request, Response, NextFunction } from 'express';
 import type { Context, Next } from 'hono';
 import {
   validateData,
-  expressValidateRequest,
   honoValidateRequest,
   type ValidationContext,
 } from './request';
@@ -58,73 +56,6 @@ describe('validateData', () => {
     expect(result.error).toContain('body age');
     expect(result.error).toContain('query filter');
     expect(result.error).toContain('params id');
-  });
-});
-
-describe('expressValidateRequest', () => {
-  const testSchema = z.object({
-    body: z.object({
-      name: z.string(),
-    }),
-    params: z.record(z.string()),
-    query: z.record(z.any()),
-    headers: z.record(z.string()),
-    ip: z.string(),
-    userAgent: z.string().optional(),
-  });
-
-  let mockReq: Partial<Request>;
-  let mockRes: Partial<Response>;
-  let mockNext: NextFunction;
-
-  beforeEach(() => {
-    mockReq = {
-      body: { name: 'John' },
-      params: {},
-      query: {},
-      headers: {
-        'x-forwarded-for': '203.0.113.195',
-        'user-agent': 'TestAgent/1.0',
-      },
-    };
-    mockRes = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    };
-    mockNext = vi.fn();
-  });
-
-  it('should pass validation and call next for valid data', () => {
-    const middleware = expressValidateRequest(testSchema);
-    middleware(mockReq as Request, mockRes as Response, mockNext);
-
-    expect(mockNext).toHaveBeenCalled();
-    expect(mockReq).toHaveProperty('validatedData');
-    expect((mockReq as any).validatedData).toEqual({
-      body: { name: 'John' },
-      params: {},
-      query: {},
-      headers: {
-        'x-forwarded-for': '203.0.113.195',
-        'user-agent': 'TestAgent/1.0',
-      },
-      ip: '203.0.113.195',
-      userAgent: 'TestAgent/1.0',
-    });
-  });
-
-  it('should return error response for invalid data', () => {
-    mockReq.body = { name: 123 }; // Invalid: name should be string
-    const middleware = expressValidateRequest(testSchema);
-    middleware(mockReq as Request, mockRes as Response, mockNext);
-
-    expect(mockNext).not.toHaveBeenCalled();
-    expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({
-      success: false,
-      message: expect.stringContaining('Invalid input'),
-      dataObject: null,
-    });
   });
 });
 

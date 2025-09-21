@@ -2,6 +2,8 @@
 import type { Context } from 'hono';
 
 /**
+ * TODO: remove this,
+ * use honoRequestHandler
  * IMPORTANT!
  * This requires zodValidator
  */
@@ -18,6 +20,10 @@ const requestHandler = <T = any, R = any>(
   };
 };
 
+/**
+ * TODO: remove this
+ * use honoRequestHandler
+ */
 const pureRequestHandler = <T = any, R = any>(
   handler: (data: T) => Promise<R> | R,
 ) => {

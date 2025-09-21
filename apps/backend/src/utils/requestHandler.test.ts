@@ -1,9 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import {
-  honoRequestHandler,
-  type BusinessHandler,
-  expressRequestHandler,
-} from './requestHandler';
+import { honoRequestHandler, type BusinessHandler } from './requestHandler';
 import type { Context } from 'hono';
 
 describe('requestHandler', () => {
@@ -20,60 +16,6 @@ describe('requestHandler', () => {
   const mockErrorHandler: BusinessHandler = async () => {
     throw new Error('Business logic error');
   };
-
-  describe('expressRequestHandler', () => {
-    it('should handle successful requests', async () => {
-      const mockReq = {
-        validatedData: { foo: 'bar' },
-      } as unknown as Request;
-
-      const mockRes = {
-        json: vi.fn(),
-      } as unknown as Response;
-
-      const handler = expressRequestHandler(mockSuccessHandler);
-      await handler(mockReq, mockRes);
-
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Success',
-        dataObject: { foo: 'bar' },
-      });
-    });
-
-    it('should pass validated data to business handler', async () => {
-      const validatedData = { test: 'data' };
-      const mockReq = {
-        validatedData,
-      } as unknown as Request;
-
-      const mockRes = {
-        json: vi.fn(),
-      } as unknown as Response;
-
-      const handler = expressRequestHandler(mockSuccessHandler);
-      await handler(mockReq, mockRes);
-
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Success',
-        dataObject: validatedData,
-      });
-    });
-  });
-
-  describe('error handling', () => {
-    it('should let errors bubble up to middleware', async () => {
-      const mockReq = { validatedData: { foo: 'bar' } } as unknown as Request;
-      const mockRes = { json: vi.fn() } as unknown as Response;
-
-      const handler = expressRequestHandler(mockErrorHandler);
-      await expect(handler(mockReq, mockRes)).rejects.toThrow(
-        'Business logic error',
-      );
-      expect(mockRes.json).not.toHaveBeenCalled();
-    });
-  });
 
   describe('honoRequestHandler', () => {
     it('should handle successful requests', async () => {

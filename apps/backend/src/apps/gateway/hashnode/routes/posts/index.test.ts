@@ -1,17 +1,11 @@
-import type { Request, Response } from 'express';
 import { getPost } from 'src/services/hashnode/queries/posts';
 import { deletePost } from 'src/services/hasura/mutations/posts/delete';
 import { insertPost } from 'src/services/hasura/mutations/posts/insert';
 import { updatePost } from 'src/services/hasura/mutations/posts/update';
 import { CustomError } from 'src/utils/custom-error';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { validateSignature } from '../../validator';
 import { postEventsHandler } from './index';
 import { AppResponse } from 'src/utils/schema';
-
-vi.mock('../../validator', () => ({
-  validateSignature: vi.fn(),
-}));
 
 vi.mock('src/services/hashnode/queries/posts', () => ({
   getPost: vi.fn(),
@@ -49,7 +43,6 @@ describe('postEventsHandler', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(validateSignature).mockReturnValue({ isValid: true });
     vi.mocked(getPost).mockResolvedValue(mockPost);
   });
 

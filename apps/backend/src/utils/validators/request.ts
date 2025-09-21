@@ -1,8 +1,7 @@
-import type { NextFunction, Request, Response } from 'express';
 import type { Context, Next } from 'hono';
 import type { ZodError, ZodSchema, z } from 'zod';
 import { getClientIP } from '../ip';
-import { getCurrentLogger, logger } from '../logger';
+import { getCurrentLogger } from '../logger';
 import type { ServiceResponse } from '../schema';
 
 // Framework-agnostic validation context
@@ -62,37 +61,6 @@ const formatZodError = (error: ZodError): string => {
     .join(', ');
 };
 
-// Express wrapper
-const expressValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`ip: ${getClientIP(req.headers as Record<string, string>)}`);
-    const context: ValidationContext = {
-      params: req.params,
-      query: req.query,
-      body: req.body,
-      headers: req.headers as Record<string, string>,
-      ip: getClientIP(req.headers as Record<string, string>),
-      userAgent: req.headers['user-agent'],
-    };
-
-    // console.log(context);
-
-    const result = validateData(schema, context);
-
-    if (result.success) {
-      (req as any).validatedData = result.data;
-      next();
-    } else {
-      const serviceResponse: ServiceResponse<null> = {
-        success: false,
-        message: result.error!,
-        dataObject: null,
-      };
-      res.status(200).json(serviceResponse);
-    }
-  };
-};
-
 // Hono wrapper
 const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
   return async (c: Context, next: Next) => {
@@ -141,25 +109,14 @@ const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
   };
 };
 
-// Export the appropriate validator based on framework
-const validateRequest = expressValidateRequest; // Start with Express
-// const validateRequest = honoValidateRequest // Switch to Hono later
-
-// Types for compatibility
-type ValidatedRequest<T extends z.ZodType> = Request & {
-  validatedData: z.infer<T>;
-};
 type ValidatedContext<T extends z.ZodType> = Context & {
   validatedData: z.infer<T>;
 };
 
 export {
-  validateRequest,
-  expressValidateRequest,
   honoValidateRequest,
   validateData, // Pure function for testing
   type ValidationContext,
   type ValidationResult,
-  type ValidatedRequest,
   type ValidatedContext,
 };
