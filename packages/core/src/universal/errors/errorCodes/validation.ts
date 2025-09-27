@@ -2,7 +2,7 @@ import { SEVERITY } from './severity';
 
 const VALIDATION_ERROR_CODES = {
   INVALID_INPUT: 'VAL_8001',
-};
+} as const;
 
 const VALIDATION_ERRORS = {
   [VALIDATION_ERROR_CODES.INVALID_INPUT]: {

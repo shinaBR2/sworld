@@ -50,7 +50,7 @@ const HASURA_NATIVE_ERROR_CODES = {
   VALIDATIONFAILED: 'validation-failed',
   TEMPLATERESOLUTIONFAILED: 'template-resolution-failed',
   TIMEOUTERRORCODE: 'timeout',
-};
+} as const;
 
 const HASURA_NATIVE_ERRORS: ErrorMap<typeof HASURA_NATIVE_ERROR_CODES> = {
   [HASURA_NATIVE_ERROR_CODES.ACCESSDENIED]: {
