@@ -73,6 +73,12 @@ vi.mock('hono/body-limit', () => ({
   bodyLimit: () => vi.fn(),
 }));
 
+// Mock context-storage
+const mockContextStorage = vi.fn();
+vi.mock('hono/context-storage', () => ({
+  contextStorage: () => mockContextStorage,
+}));
+
 // Mock request-id
 vi.mock('hono/request-id', () => ({
   requestId: () => vi.fn(),
@@ -108,12 +114,21 @@ describe('IO Application', () => {
 
   it('should set up middleware', () => {
     // Should call use for each middleware:
-    // 1. requestId
-    // 2. createHonoLoggingMiddleware
-    // 3. bodyLimit
-    // 4. sentry
-    // 5. rateLimiter
-    expect(mockUse).toHaveBeenCalledTimes(5);
+    // 1. contextStorage
+    // 2. requestId
+    // 3. createHonoLoggingMiddleware
+    // 4. bodyLimit
+    // 5. sentry
+    // 6. rateLimiter
+    expect(mockUse).toHaveBeenCalledTimes(6);
+  });
+
+  it('should use contextStorage middleware', () => {
+    // Get the first middleware registration (contextStorage should be first)
+    const firstMiddlewareCall = mockUse.mock.calls[0];
+    expect(firstMiddlewareCall[0]).toBe('*');
+    // The second argument should be our mock contextStorage function
+    expect(firstMiddlewareCall[1]).toBe(mockContextStorage);
   });
 
   it('should register the health check endpoint', () => {

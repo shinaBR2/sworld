@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { sentry } from '@hono/sentry';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
+import { contextStorage } from 'hono/context-storage';
 import { requestId } from 'hono/request-id';
 import { rateLimiter } from 'hono-rate-limiter';
 import { envConfig } from 'src/utils/envConfig';
@@ -16,6 +17,7 @@ const port = Number(envConfig.port) || 4000;
 const app = new Hono();
 
 app.use('*', requestId());
+app.use('*', contextStorage());
 app.use(
   '*',
   createHonoLoggingMiddleware({

@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 vi.mock('@hono/node-server');
 vi.mock('@hono/sentry');
 vi.mock('hono/body-limit');
+vi.mock('hono/context-storage');
 vi.mock('hono/request-id');
 vi.mock('hono-rate-limiter');
 vi.mock('src/utils/envConfig');
@@ -41,6 +42,12 @@ const mockUse = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockRoute = vi.fn().mockReturnThis();
 const mockOnError = vi.fn().mockReturnThis();
+
+// Mock contextStorage
+const mockContextStorage = vi.fn();
+vi.mock('hono/context-storage', () => ({
+  contextStorage: () => mockContextStorage,
+}));
 
 vi.mock('hono', () => ({
   Hono: vi.fn(() => ({
@@ -107,6 +114,11 @@ describe('Compute Application', () => {
       expect.any(Function),
     );
 
+    // Verify the contextStorage middleware was registered first
+    const contextStorageCall = mockUse.mock.calls[1]; // Second call (after requestId)
+    expect(contextStorageCall[0]).toBe('*');
+    expect(contextStorageCall[1]).toBe(mockContextStorage);
+
     // Verify the health check endpoint was registered
     expect(mockGet).toHaveBeenCalledWith('/hz', expect.any(Function));
 
@@ -116,6 +128,13 @@ describe('Compute Application', () => {
 
   it('should register the health check endpoint', () => {
     expect(mockGet).toHaveBeenCalledWith('/hz', expect.any(Function));
+  });
+
+  it('should use contextStorage middleware', () => {
+    // The contextStorage middleware should be the second middleware registered (after requestId)
+    const contextStorageCall = mockUse.mock.calls[1];
+    expect(contextStorageCall[0]).toBe('*');
+    expect(contextStorageCall[1]).toBe(mockContextStorage);
   });
 
   it('should register the videos router', () => {
