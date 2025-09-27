@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:20.10.0-slim
+FROM --platform=linux/amd64 node:22.14.0-slim
 
 # Install procps package to provide the 'ps' command
 # (required for the PlaywrightCrawler)

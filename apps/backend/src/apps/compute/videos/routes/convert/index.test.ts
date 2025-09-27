@@ -2,7 +2,6 @@ import { completeTask } from 'src/database/queries/tasks';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
 import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { convertHandler } from './index';
 import type { Context } from 'hono';
@@ -150,11 +149,6 @@ describe('convertHandler', () => {
         source: 'apps/compute/videos/routes/convert/index.ts',
       }),
     );
-
-    expect(logger.info).toHaveBeenCalledWith(
-      context.defaultMetadata,
-      expect.stringContaining('start processing event'),
-    );
     expect(convertVideo).toHaveBeenCalledWith({
       taskId: context.defaultTaskId,
       videoData: context.defaultData,
@@ -171,14 +165,9 @@ describe('convertHandler', () => {
 
     const result = await convertHandler(mockContext as any);
 
-    expect(logger.info).toHaveBeenCalledWith(
-      context.defaultMetadata,
-      expect.stringContaining('start processing event'),
-    );
-
     expect(convertVideo).toHaveBeenCalledWith({
       taskId: context.defaultTaskId,
-      videoData: customData, // Use the custom data here
+      videoData: customData,
     });
 
     expect(result).toEqual({

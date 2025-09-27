@@ -2,7 +2,7 @@ import { Readable } from 'node:stream';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { fetchWithError } from 'src/utils/fetch';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
 import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
 import { downloadFile, verifyFileSize } from '../file';
@@ -35,19 +35,14 @@ vi.mock('../file', () => ({
   verifyFileSize: vi.fn(),
 }));
 
-vi.mock('src/utils/logger', () => {
-  const mockLogger = {
+vi.mock('src/utils/logger', () => ({
+  getCurrentLogger: vi.fn(() => ({
     info: vi.fn(),
     error: vi.fn(),
     warn: vi.fn(),
     debug: vi.fn(),
-  };
-
-  return {
-    logger: mockLogger,
-    getCurrentLogger: vi.fn(() => mockLogger),
-  };
-});
+  })),
+}));
 
 describe('M3U8 parser', () => {
   // Helper to normalize line endings and whitespace
@@ -610,6 +605,19 @@ describe('downloadSegments', () => {
   });
 
   test('should download segments successfully', async () => {
+    // Setup mock logger with all required Logger interface properties
+    const mockLogger = {
+      info: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+      debug: vi.fn(),
+      level: 'info',
+      fatal: vi.fn(),
+      trace: vi.fn(),
+      silent: vi.fn(),
+    } as const;
+    vi.mocked(getCurrentLogger).mockReturnValue(mockLogger as any);
+
     await downloadSegments(mockSegments, mockTempDir);
 
     // Check if downloadFile was called for each segment
@@ -618,7 +626,9 @@ describe('downloadSegments', () => {
       'https://example.com/segment1.ts',
       '/tmp/test/segment1.ts',
     );
-    expect(logger.info).toHaveBeenCalledWith(
+
+    // Verify logger was called with expected arguments
+    expect(mockLogger.info).toHaveBeenCalledWith(
       {
         segmentName: 'segment1.ts',
         segmentUrl: 'https://example.com/segment1.ts',

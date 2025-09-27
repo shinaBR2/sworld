@@ -1,7 +1,5 @@
 /** biome-ignore-all lint/complexity/useArrowFunction: it breaks the test */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { readdir } from 'fs/promises';
-import path from 'path';
 import {
   getDownloadUrl,
   uploadFile,
@@ -11,37 +9,86 @@ import {
 } from '.';
 import { existsSync } from 'fs';
 import { PassThrough, Readable } from 'node:stream';
-import { logger } from 'src/utils/logger';
 
-const mockReadable = {
-  on: vi.fn().mockImplementation((event, handler) => {
-    if (event === 'finish') {
-      setTimeout(() => handler(), 0);
-    }
-    return mockReadable;
-  }),
-  pipe: vi.fn().mockImplementation((dest) => {
+interface MockReadable extends NodeJS.ReadableStream {
+  on: (event: string, handler: (...args: any[]) => void) => MockReadable;
+  pipe: (dest: NodeJS.WritableStream) => MockReadable;
+  emit: (event: string | symbol, ...args: any[]) => boolean;
+}
+
+const mockReadable: MockReadable = {
+  readable: true,
+  read: vi.fn(),
+  setEncoding: vi.fn().mockReturnThis(),
+  pause: vi.fn().mockReturnThis(),
+  resume: vi.fn().mockReturnThis(),
+  isPaused: vi.fn().mockReturnValue(false),
+  pipe: vi.fn().mockImplementation(function (
+    this: MockReadable,
+    dest: NodeJS.WritableStream,
+  ) {
+    this.dest = dest;
     setTimeout(() => dest.emit('finish'), 0);
-    return mockReadable; // Return the source stream instead of dest
+    return this;
   }),
-  emit: vi.fn(),
+  unpipe: vi.fn().mockReturnThis(),
+  unshift: vi.fn(),
+  wrap: vi.fn(),
+  [Symbol.asyncIterator]: vi.fn(),
+
+  // Event emitter methods
+  on: vi.fn().mockImplementation(function (
+    this: any,
+    event: string,
+    listener: (...args: any[]) => void,
+  ) {
+    this.listeners = this.listeners || {};
+    this.listeners[event] = listener;
+    return this;
+  }),
+  once: vi.fn(),
+  emit: vi.fn().mockImplementation(function (
+    this: any,
+    event: string | symbol,
+    ...args: any[]
+  ) {
+    if (this.listeners && this.listeners[event as string]) {
+      this.listeners[event as string](...args);
+    }
+    return true;
+  }),
+  addListener: vi.fn(),
+  removeListener: vi.fn(),
+  off: vi.fn(),
+  removeAllListeners: vi.fn(),
+  setMaxListeners: vi.fn(),
+  getMaxListeners: vi.fn(),
+  listeners: vi.fn(),
+  rawListeners: vi.fn(),
+  listenerCount: vi.fn(),
+  eventNames: vi.fn(),
+  prependListener: vi.fn(),
+  prependOnceListener: vi.fn(),
 };
 
-vi.spyOn(Readable, 'from').mockImplementation(() => mockReadable as any);
+vi.spyOn(Readable, 'from').mockImplementation(
+  () => mockReadable as unknown as Readable,
+);
 
-vi.mock('src/utils/logger', () => {
-  const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-  };
+const mockLogger = {
+  info: vi.fn(),
+  error: vi.fn(),
+  warn: vi.fn(),
+  debug: vi.fn(),
+  level: 'info',
+  fatal: vi.fn(),
+  trace: vi.fn(),
+  silent: vi.fn(),
+};
 
-  return {
-    logger: mockLogger,
-    getCurrentLogger: vi.fn(() => mockLogger),
-  };
-});
+vi.mock('src/utils/logger', () => ({
+  getCurrentLogger: vi.fn(() => mockLogger),
+}));
 
 // Create mock functions
 const uploadMock = vi.fn().mockResolvedValue([{}]);
@@ -204,87 +251,6 @@ describe('gcp-cloud-storage-helpers', () => {
       },
     };
 
-    describe('Error Logging', () => {
-      let loggerErrorSpy: ReturnType<typeof vi.spyOn>;
-
-      beforeEach(() => {
-        loggerErrorSpy = vi.spyOn(logger, 'error');
-      });
-
-      it('should log error with original and delete error', () => {
-        const mockStoragePath = '/path/to/file';
-        const mockDeleteError = new Error('Delete failed');
-        const mockOriginalError = new Error('Original upload error');
-
-        // Call the error logging directly
-        logger.error(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: mockOriginalError.message,
-          },
-          'Failed to delete partial file after upload error',
-        );
-
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: mockOriginalError.message,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
-
-      it('should log error with undefined original error', () => {
-        const mockStoragePath = '/path/to/file';
-        const mockDeleteError = new Error('Delete failed');
-
-        // Call the error logging directly
-        logger.error(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
-
-      it('should log error with string delete error', () => {
-        const mockStoragePath = '/path/to/file';
-        const mockDeleteError = 'Delete error occurred';
-
-        // Call the error logging directly
-        logger.error(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: mockDeleteError,
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
-    });
-
     it('should handle network interruption', async () => {
       mockReadable.on.mockImplementation((event, handler) => {
         if (event === 'error') {
@@ -443,120 +409,6 @@ describe('gcp-cloud-storage-helpers', () => {
       await expect(streamFile(params)).rejects.toThrow(
         'Stream piping error: string error',
       );
-    });
-
-    it('should log error with Error instance for deleteError', () => {
-      // Prepare
-      const mockStoragePath = '/path/to/file';
-      const mockDeleteError = new Error('Delete failed');
-      const mockOriginalError = new Error('Original upload error');
-
-      // Mock logger.error
-      const loggerErrorSpy = vi.mocked(logger.error);
-
-      // Call the error logging directly (you might need to extract this part)
-      const handleError = async () => {
-        try {
-          throw mockDeleteError;
-        } catch (deleteError) {
-          logger.error(
-            {
-              storagePath: mockStoragePath,
-              deleteError:
-                deleteError instanceof Error
-                  ? deleteError.message
-                  : String(deleteError),
-              originalError: mockOriginalError?.message,
-            },
-            'Failed to delete partial file after upload error',
-          );
-        }
-      };
-
-      // Execute and assert
-      return handleError().then(() => {
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: 'Delete failed',
-            originalError: 'Original upload error',
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
-    });
-
-    it('should log error with string for non-Error deleteError', () => {
-      // Prepare
-      const mockStoragePath = '/path/to/file';
-      const mockDeleteError = 'Delete failed';
-      const mockOriginalError = new Error('Original upload error');
-
-      // Mock logger.error
-      const loggerErrorSpy = vi.mocked(logger.error);
-
-      // Call the error logging directly (you might need to extract this part)
-      const handleError = async () => {
-        logger.error(
-          {
-            storagePath: mockStoragePath,
-            deleteError:
-              mockDeleteError instanceof Error
-                ? mockDeleteError.message
-                : String(mockDeleteError),
-            originalError: mockOriginalError?.message,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      };
-
-      // Execute and assert
-      return handleError().then(() => {
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: 'Delete failed',
-            originalError: 'Original upload error',
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
-    });
-
-    it('should handle undefined originalError gracefully', () => {
-      // Prepare
-      const mockStoragePath = '/path/to/file';
-      const mockDeleteError = new Error('Delete failed');
-
-      // Mock logger.error
-      const loggerErrorSpy = vi.mocked(logger.error);
-
-      // Call the error logging directly (you might need to extract this part)
-      const handleError = async () => {
-        logger.error(
-          {
-            storagePath: mockStoragePath,
-            deleteError:
-              mockDeleteError instanceof Error
-                ? mockDeleteError.message
-                : String(mockDeleteError),
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      };
-
-      // Execute and assert
-      return handleError().then(() => {
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
-          {
-            storagePath: mockStoragePath,
-            deleteError: 'Delete failed',
-            originalError: undefined,
-          },
-          'Failed to delete partial file after upload error',
-        );
-      });
     });
   });
 });

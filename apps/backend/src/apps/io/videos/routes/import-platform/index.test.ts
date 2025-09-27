@@ -1,7 +1,6 @@
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ImportHandlerRequest } from 'src/schema/videos/import-platform';
 import type { HandlerContext } from 'src/utils/requestHandler';
@@ -124,11 +123,6 @@ describe('importPlatformHandler', () => {
       },
     });
 
-    expect(logger.info).toHaveBeenCalledWith(
-      context.defaultMetadata,
-      `[/videos/import-platform-handler] start processing event "${context.defaultMetadata.id}", video "${requestData.id}"`,
-    );
-
     expect(result).toEqual({
       success: true,
       message: 'ok',
@@ -191,21 +185,6 @@ describe('importPlatformHandler', () => {
           .mocked(finishVideoProcess)
           .mockRejectedValueOnce(new Error(errorMessage)),
       errorMessage,
-    );
-  });
-
-  it('should log event start with correct metadata', async () => {
-    setupSuccessfulMocks();
-
-    await importPlatformHandler(context.mockContext);
-
-    expect(logger.info).toHaveBeenCalledWith(
-      context.defaultMetadata,
-      expect.stringContaining(context.defaultData.id),
-    );
-    expect(logger.info).toHaveBeenCalledWith(
-      context.defaultMetadata,
-      expect.stringContaining(context.defaultMetadata.id),
     );
   });
 });

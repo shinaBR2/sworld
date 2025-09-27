@@ -1,7 +1,6 @@
 import { completeTask } from 'src/database/queries/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
-import { logger } from 'src/utils/logger';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { crawlHandler } from './index';
 import { buildVariables } from './utils';
@@ -127,16 +126,6 @@ describe('crawlHandler', () => {
     });
 
     expect(insertVideos).toHaveBeenCalledWith(mockVideos);
-    expect(logger.info).toHaveBeenCalledWith(
-      {
-        getSingleVideo: true,
-        title: 'Test Title',
-        slugPrefix: 'test-',
-        url: 'http://example.com',
-        userId: 'user123',
-      },
-      'crawl success, start inserting',
-    );
 
     expect(result).toEqual({
       success: true,

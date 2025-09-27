@@ -1,7 +1,6 @@
 import ffmpeg, { type FfprobeData } from 'fluent-ffmpeg';
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { logger } from 'src/utils/logger';
 import {
   afterEach,
   beforeEach,
@@ -26,11 +25,35 @@ vi.mock('./file-helpers', () => ({
   getDownloadUrl: vi.fn(),
 }));
 
+vi.mock('src/utils/logger', () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  getCurrentLogger: vi.fn().mockReturnValue({
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  }),
+}));
+
+const { logger: mockLogger, getCurrentLogger: getCurrentLoggerMock } =
+  await vi.importMock('src/utils/logger');
+
 describe('FFmpeg Helpers', () => {
   let mockFFmpeg: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    mockLogger.info.mockReset();
+    mockLogger.error.mockReset();
+    mockLogger.warn.mockReset();
+    mockLogger.debug.mockReset();
+    getCurrentLoggerMock.mockReturnValue(mockLogger);
 
     // Create a mock ffmpeg command chain
     mockFFmpeg = {
@@ -46,12 +69,6 @@ describe('FFmpeg Helpers', () => {
 
     // Mock existsSync default behavior
     vi.mocked(existsSync).mockReturnValue(true);
-
-    // Mock logger methods
-    vi.spyOn(logger, 'info').mockImplementation(() => {});
-    vi.spyOn(logger, 'error').mockImplementation(() => {});
-    vi.spyOn(logger, 'warn').mockImplementation(() => {});
-    vi.spyOn(logger, 'debug').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -69,7 +86,7 @@ describe('FFmpeg Helpers', () => {
         'Input file does not exist',
       );
       expect(ffmpeg).not.toHaveBeenCalled();
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should throw error if inputPath is not absolute', async () => {
@@ -77,7 +94,7 @@ describe('FFmpeg Helpers', () => {
         convertToHLS('relative/path.mp4', outputDir),
       ).rejects.toThrow('inputPath must be absolute');
       expect(ffmpeg).not.toHaveBeenCalled();
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should throw error if outputDir is not absolute', async () => {
@@ -85,7 +102,7 @@ describe('FFmpeg Helpers', () => {
         'outputDir must be absolute',
       );
       expect(ffmpeg).not.toHaveBeenCalled();
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should convert video successfully', async () => {
@@ -107,7 +124,7 @@ describe('FFmpeg Helpers', () => {
         path.join(outputDir, 'playlist.m3u8'),
       );
       expect(mockFFmpeg.run).toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         '[convertToHLS] HLS conversion completed successfully',
       );
     });
@@ -126,7 +143,7 @@ describe('FFmpeg Helpers', () => {
       );
       expect(ffmpeg).toHaveBeenCalled();
       expect(mockFFmpeg.run).toHaveBeenCalled();
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should log progress during conversion', async () => {
@@ -142,7 +159,7 @@ describe('FFmpeg Helpers', () => {
       });
 
       await convertToHLS(inputPath, outputDir);
-      expect(logger.debug).toHaveBeenCalledWith(
+      expect(mockLogger.debug).toHaveBeenCalledWith(
         progress,
         '[convertToHLS] Conversion progress:',
       );
@@ -181,7 +198,7 @@ describe('FFmpeg Helpers', () => {
 
       const duration = await getDuration(videoPath);
       expect(duration).toBe(1);
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should return default duration if duration is undefined', async () => {
@@ -191,7 +208,7 @@ describe('FFmpeg Helpers', () => {
 
       const duration = await getDuration(videoPath);
       expect(duration).toBe(1);
-      expect(logger.warn).toHaveBeenCalled();
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
 
     it('should throw error if file does not exist', async () => {
@@ -199,7 +216,7 @@ describe('FFmpeg Helpers', () => {
 
       const duration = await getDuration(videoPath);
       expect(duration).toBe(1);
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 
@@ -264,7 +281,7 @@ describe('FFmpeg Helpers', () => {
       await expect(
         takeScreenshot(videoPath, outputDir, filename, videoDuration),
       ).rejects.toThrow('FFmpeg error: Screenshot failed');
-      expect(logger.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('should set inputFormat to mpegts when isSegment is true', async () => {

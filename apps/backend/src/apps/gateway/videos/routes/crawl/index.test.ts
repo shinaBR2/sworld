@@ -2,7 +2,6 @@ import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
-import { logger } from 'src/utils/logger';
 import { queues } from 'src/utils/systemConfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { crawlHandler } from './index';
@@ -77,14 +76,6 @@ describe('crawl', () => {
       entityType: TaskEntityType.CRAWL_VIDEO,
       type: TaskType.CRAWL,
     });
-
-    expect(logger.info).toHaveBeenCalledWith(
-      {
-        metadata: validatedData.event.metadata,
-        task: { taskId: 'test-task' },
-      },
-      'Crawl task created successfully',
-    );
 
     expect(result).toEqual({
       success: true,

@@ -1,23 +1,23 @@
 import { TaskEntityType, TaskType } from 'src/database/models/task';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { logger } from './logger';
 
 // Mock modules
 const mockCreateTask = vi.fn();
 const mockQueuePath = vi.fn();
-vi.mock('./logger', () => {
-  const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-  };
+const mockLogger = {
+  info: vi.fn(),
+  error: vi.fn(),
+  warn: vi.fn(),
+  debug: vi.fn(),
+  level: 'info',
+  fatal: vi.fn(),
+  trace: vi.fn(),
+  silent: vi.fn(),
+};
 
-  return {
-    logger: mockLogger,
-    getCurrentLogger: vi.fn(() => mockLogger),
-  };
-});
+vi.mock('./logger', () => ({
+  getCurrentLogger: vi.fn(() => mockLogger),
+}));
 
 vi.mock('@google-cloud/tasks', () => ({
   CloudTasksClient: vi.fn().mockImplementation(() => ({
@@ -428,7 +428,7 @@ describe('createCloudTasks', () => {
     await expect(createCloudTasks(params)).rejects.toThrow(
       'Task creation failed',
     );
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(mockLogger.error).toHaveBeenCalledWith(
       expect.objectContaining({
         err: originalError,
         queue: 'test-queue',

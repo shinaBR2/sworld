@@ -4,7 +4,6 @@ import { sequelize } from 'src/database';
 import { completeTask } from 'src/database/queries/tasks';
 import { getVideoById, updateVideoDuration } from 'src/database/queries/videos';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
-import { logger } from 'src/utils/logger';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import type { HandlerContext } from 'src/utils/requestHandler';

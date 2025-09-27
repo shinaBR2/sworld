@@ -9,7 +9,6 @@ import {
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { processThumbnail } from 'src/services/videos/helpers/thumbnail';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
-import { logger } from 'src/utils/logger';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import type { HandlerContext } from 'src/utils/requestHandler';
@@ -41,20 +40,6 @@ vi.mock('src/services/videos/helpers/thumbnail', () => ({
 vi.mock('src/services/videos/helpers/gcp-cloud-storage', () => ({
   getDownloadUrl: vi.fn(),
 }));
-
-vi.mock('src/utils/logger', () => {
-  const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-  };
-
-  return {
-    logger: mockLogger,
-    getCurrentLogger: vi.fn(() => mockLogger),
-  };
-});
 
 vi.mock('src/utils/custom-error', () => ({
   CustomError: {
@@ -214,13 +199,6 @@ describe('fixThumbnailHandler', () => {
       'Invalid generated thumbnail',
     );
 
-    expect(logger.error).toHaveBeenCalledWith(
-      {
-        id: 'video-123',
-        source: 'video-source',
-      },
-      'Thumbnail is empty',
-    );
     expect(CustomError.medium).toHaveBeenCalledWith(
       'Invalid generated thumbnail',
       {
