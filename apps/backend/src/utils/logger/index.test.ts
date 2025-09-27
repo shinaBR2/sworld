@@ -33,7 +33,7 @@ describe('logger', () => {
 
   describe('logger configuration', () => {
     it('should create logger with default config', async () => {
-      const { logger } = await import('./logger');
+      const { logger } = await import('.');
 
       expect(pino).toHaveBeenCalledWith({
         level: 'info',
@@ -52,7 +52,7 @@ describe('logger', () => {
       // Clear module cache to reload with new env
       vi.resetModules();
 
-      const { logger } = await import('./logger');
+      const { logger } = await import('.');
 
       expect(pino).toHaveBeenCalledWith({
         level: 'debug',
@@ -71,7 +71,7 @@ describe('logger', () => {
 
     beforeEach(async () => {
       vi.resetModules();
-      const { httpLogger } = await import('./logger');
+      const { httpLogger } = await import('.');
       httpLoggerConfig = (pinoHttp as any).lastOptions;
     });
 

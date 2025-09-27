@@ -3,7 +3,7 @@ import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 import ffmpeg, { type FfprobeData } from 'fluent-ffmpeg';
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { videoConfig } from '../../config';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
@@ -21,6 +21,7 @@ const convertToHLS = async (
   inputPath: string,
   outputDir: string,
 ): Promise<void> => {
+  const logger = getCurrentLogger();
   if (!existsSync(inputPath)) {
     const error = new Error(`Input file does not exist at "${inputPath}"`);
     logger.error(error, 'Conversion failed');
@@ -79,6 +80,7 @@ const convertToHLS = async (
  *          Returns 1 if duration cannot be determined
  */
 const getDuration = async (videoPath: string): Promise<number> => {
+  const logger = getCurrentLogger();
   const DEFAULT_DURATION = 1;
 
   if (!path.isAbsolute(videoPath)) {
@@ -136,6 +138,7 @@ const takeScreenshot = async (
   videoDuration: number,
   isSegment: boolean = false,
 ): Promise<void> => {
+  const logger = getCurrentLogger();
   const timestamp = Math.min(Math.floor(videoDuration / 3), 10);
 
   return new Promise((resolve, reject) => {

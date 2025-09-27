@@ -2,7 +2,7 @@ import { completeTask } from 'src/database/queries/tasks';
 import type { CrawlHandlerRequest } from 'src/schema/videos/crawl';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 import type { CrawlData } from './type';
@@ -26,6 +26,7 @@ import { buildVariables } from './utils';
  */
 
 const crawlHandler = async (context: HandlerContext<CrawlHandlerRequest>) => {
+  const logger = getCurrentLogger();
   const { validatedData } = context;
   const { body, headers } = validatedData;
   const taskId = headers['x-task-id'] as string;

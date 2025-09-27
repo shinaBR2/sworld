@@ -11,13 +11,14 @@ import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { processThumbnail } from 'src/services/videos/helpers/thumbnail';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 
 const fixThumbnailHandler = async (
   context: HandlerContext<FixThumbnailHandlerRequest>,
 ) => {
+  const logger = getCurrentLogger();
   const { validatedData } = context;
   const { body, headers } = validatedData;
   const { id } = body;

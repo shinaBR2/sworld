@@ -1,18 +1,19 @@
 import {
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse,
+} from '@simplewebauthn/server';
+import { getCurrentLogger } from 'src/utils/logger';
+import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID } from './config';
+import {
   getUser,
   getUserPasskey,
   getUserPasskeys,
   saveUpdatedCounter,
   setCurrentAuthenticationOptions,
 } from './userHelpers';
-import {
-  generateAuthenticationOptions,
-  verifyAuthenticationResponse,
-} from '@simplewebauthn/server';
-import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID } from './config';
-import { logger } from 'src/utils/logger';
 
 const generateOptions = async (userId: string) => {
+  const logger = getCurrentLogger();
   const userPasskeys = await getUserPasskeys(userId);
 
   const options = await generateAuthenticationOptions({
@@ -31,6 +32,7 @@ const generateOptions = async (userId: string) => {
 };
 
 const verify = async (userId: string, credential: any) => {
+  const logger = getCurrentLogger();
   const isVerified = false;
   const userSnapshot = await getUser(userId);
 

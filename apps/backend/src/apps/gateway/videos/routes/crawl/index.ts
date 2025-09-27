@@ -5,12 +5,13 @@ import {
   createCloudTasks,
 } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
 
 const crawlHandler = async (context: HandlerContext<CrawlRequest>) => {
+  const logger = getCurrentLogger();
   const { ioServiceUrl } = envConfig;
   const { validatedData } = context;
   const { event } = validatedData;

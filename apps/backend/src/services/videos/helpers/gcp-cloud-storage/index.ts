@@ -1,13 +1,11 @@
 import {
+  type CreateWriteStreamOptions,
   Storage,
   TransferManager,
-  type CreateWriteStreamOptions,
 } from '@google-cloud/storage';
-import { existsSync } from 'fs';
-import { readdir } from 'fs/promises';
 import path from 'path';
 import { envConfig } from 'src/utils/envConfig';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
 
 interface UploadOptions {
@@ -110,6 +108,7 @@ interface StreamFileParams {
  * @returns Promise that resolves when streaming is complete
  */
 const streamFile = async (params: StreamFileParams) => {
+  const logger = getCurrentLogger();
   const { stream, storagePath, options } = params;
 
   if (!stream) {

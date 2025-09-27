@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from 'fs';
 import * as path from 'path';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { videoConfig } from '../config';
 import { uploadFromLocalFilePath } from '../helpers/cloudinary';
 import { convertToHLS, getDuration, takeScreenshot } from '../helpers/ffmpeg';
@@ -37,6 +37,7 @@ export interface ConversionVideo {
  * @throws Error if any step in the conversion process fails
  */
 export const convertVideo = async (data: ConversionVideo) => {
+  const logger = getCurrentLogger();
   const { taskId, videoData } = data;
   const { id, videoUrl, userId } = videoData;
   const workingDir = generateTempDir();

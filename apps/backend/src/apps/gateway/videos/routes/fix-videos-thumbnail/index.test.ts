@@ -10,7 +10,19 @@ import { TaskEntityType, TaskType } from 'src/database/models/task';
 // Mock dependencies
 vi.mock('src/database/queries/videos');
 vi.mock('src/utils/cloud-task');
-vi.mock('src/utils/logger');
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 describe('fixVideosThumbnail', () => {
   const mockVideos = [{ id: 'video1' }, { id: 'video2' }, { id: 'video3' }];

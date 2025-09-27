@@ -3,11 +3,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { validateHasuraSignature } from './index';
 
 // Mock dependencies
-vi.mock('src/utils/logger', () => ({
-  getCurrentLogger: vi.fn(() => ({
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
     info: vi.fn(),
-  })),
-}));
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 vi.mock('src/utils/schema', () => ({
   AppError: vi.fn((message, context) => ({

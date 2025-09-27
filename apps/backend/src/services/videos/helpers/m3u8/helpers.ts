@@ -1,10 +1,10 @@
-import { Parser } from 'm3u8-parser';
 import { Readable } from 'node:stream';
+import { Parser } from 'm3u8-parser';
 import path from 'path';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { fetchWithError } from 'src/utils/fetch';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
 import { videoConfig } from '../../config';
 import { downloadFile, verifyFileSize } from '../file';
@@ -171,6 +171,7 @@ const downloadSegments = async (
   tempDir: string,
   maxSegmentSize?: number,
 ) => {
+  const logger = getCurrentLogger();
   const batches = chunks(segments, BATCH_SIZE);
 
   for (const batch of batches) {

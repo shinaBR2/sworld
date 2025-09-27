@@ -4,13 +4,14 @@ import { videoConfig } from 'src/services/videos/config';
 import { streamM3U8 } from 'src/services/videos/helpers/m3u8';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 
 const streamHLSHandler = async (
   context: HandlerContext<StreamHandlerRequest>,
 ) => {
+  const logger = getCurrentLogger();
   const { validatedData } = context;
   const { body, headers } = validatedData;
   const { data, metadata } = body;

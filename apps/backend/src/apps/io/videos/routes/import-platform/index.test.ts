@@ -7,11 +7,19 @@ import type { ImportHandlerRequest } from 'src/schema/videos/import-platform';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { importPlatformHandler } from './index';
 
-vi.mock('src/utils/logger', () => ({
-  logger: {
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
     info: vi.fn(),
-  },
-}));
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 vi.mock('src/services/hasura/mutations/videos/finalize', () => ({
   finishVideoProcess: vi.fn(),

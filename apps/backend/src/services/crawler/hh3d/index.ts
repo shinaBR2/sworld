@@ -1,7 +1,7 @@
 import type { PlaywrightRequestHandler } from 'crawlee';
 import { CustomError } from 'src/utils/custom-error';
 import { CRAWL_ERRORS, HTTP_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import type {
   HandlerOptions,
   HandlerState,
@@ -19,6 +19,7 @@ import { videoUrlXHRMatcher } from './utils';
 const hh3dHandler = <T>(
   options: HandlerOptions,
 ): RequestHandlerWithState<T> => {
+  const logger = getCurrentLogger();
   const { selectors, getSingleVideo } = options;
 
   // Initialize state that will be shared across all handler calls

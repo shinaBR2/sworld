@@ -29,11 +29,19 @@ const mockReadable = {
 
 vi.spyOn(Readable, 'from').mockImplementation(() => mockReadable as any);
 
-vi.mock('src/utils/logger', () => ({
-  logger: {
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
     error: vi.fn(),
-  },
-}));
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 // Create mock functions
 const uploadMock = vi.fn().mockResolvedValue([{}]);

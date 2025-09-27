@@ -1,10 +1,10 @@
-import * as os from 'os';
-import { createWriteStream, unlink, stat } from 'fs';
-import { promisify } from 'util';
 import * as crypto from 'crypto';
+import { createWriteStream, stat, unlink } from 'fs';
 import { mkdir, rm } from 'fs/promises';
-import { logger } from 'src/utils/logger';
+import * as os from 'os';
 import path from 'path';
+import { getCurrentLogger } from 'src/utils/logger';
+import { promisify } from 'util';
 import { videoConfig } from '../../config';
 
 // Helper to generate unique temporary directory names
@@ -26,6 +26,7 @@ const generateTempDir = () => {
  * @throws {Error} If stream encounters an error
  */
 const downloadFile = async (url: string, localPath: string) => {
+  const logger = getCurrentLogger();
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -87,6 +88,7 @@ const createDirectory = async (dirPath: string): Promise<void> => {
 };
 
 const cleanupDirectory = async (dirPath: string): Promise<void> => {
+  const logger = getCurrentLogger();
   try {
     const statAsync = promisify(stat);
     const stats = await statAsync(dirPath);

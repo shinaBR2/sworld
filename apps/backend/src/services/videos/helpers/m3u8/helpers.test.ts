@@ -30,18 +30,24 @@ vi.mock('src/utils/custom-error', () => ({
     throw error; // Need to throw the error
   }),
 }));
-
 vi.mock('../file', () => ({
   downloadFile: vi.fn(),
   verifyFileSize: vi.fn(),
 }));
 
-vi.mock('src/utils/logger', () => ({
-  logger: {
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
     info: vi.fn(),
     error: vi.fn(),
-  },
-}));
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 describe('M3U8 parser', () => {
   // Helper to normalize line endings and whitespace

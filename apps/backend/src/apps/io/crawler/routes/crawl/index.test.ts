@@ -12,16 +12,23 @@ vi.mock('src/services/crawler', () => ({
   crawl: vi.fn(),
 }));
 
-vi.mock('src/utils/logger', () => ({
-  logger: {
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
     info: vi.fn(),
-  },
-}));
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 vi.mock('src/services/hasura/mutations/videos/bulk-insert', () => ({
   insertVideos: vi.fn(),
 }));
-
 vi.mock('./utils', () => ({
   buildVariables: vi.fn(),
 }));
@@ -35,19 +42,7 @@ vi.mock('src/utils/schema', () => ({
 }));
 
 describe('crawlHandler', () => {
-  let mockContext: HandlerContext<{
-    body: {
-      data: {
-        getSingleVideo: boolean;
-        url: string;
-        title: string;
-        slugPrefix?: string;
-        userId: string;
-      };
-      metadata: { id: string; spanId: string; traceId: string };
-    };
-    headers: { 'x-task-id': string };
-  }>;
+  let mockContext: HandlerContext<any>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -70,9 +65,10 @@ describe('crawlHandler', () => {
         },
         headers: {
           'x-task-id': 'test-task-id',
+          'content-type': 'application/json',
         },
       },
-    };
+    } as unknown as HandlerContext<any>;
   });
 
   it('should successfully process video crawling and insertion', async () => {
@@ -187,7 +183,7 @@ describe('crawlHandler', () => {
           },
         },
       },
-    };
+    } as unknown as HandlerContext<any>;
 
     await crawlHandler(testContext);
 

@@ -8,7 +8,20 @@ vi.mock('hono/body-limit');
 vi.mock('hono/request-id');
 vi.mock('hono-rate-limiter');
 vi.mock('src/utils/envConfig');
-vi.mock('src/utils/logger');
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+    createHonoLoggingMiddleware: vi.fn(() => vi.fn()),
+  };
+});
 
 // Mock the videos router
 const mockVideosRouter = {};

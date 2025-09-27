@@ -5,11 +5,19 @@ import { logger } from './logger';
 // Mock modules
 const mockCreateTask = vi.fn();
 const mockQueuePath = vi.fn();
-vi.mock('./logger', () => ({
-  logger: {
+vi.mock('./logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
     error: vi.fn(),
-  },
-}));
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 vi.mock('@google-cloud/tasks', () => ({
   CloudTasksClient: vi.fn().mockImplementation(() => ({

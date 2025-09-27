@@ -1,7 +1,7 @@
 import path from 'path';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { getDownloadUrl } from '../gcp-cloud-storage';
 import { processThumbnail } from '../thumbnail';
 import {
@@ -49,6 +49,7 @@ const streamM3U8 = async (
   storagePath: string,
   options: ProcessOptions = {},
 ) => {
+  const logger = getCurrentLogger();
   const context = {
     m3u8Url,
     storagePath,

@@ -19,11 +19,19 @@ vi.mock('src/services/videos/convert/validator', () => ({
   verifySignature: vi.fn(),
 }));
 
-vi.mock('src/utils/logger', () => ({
-  logger: {
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
     info: vi.fn(),
-  },
-}));
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 
 vi.mock('src/utils/systemConfig', () => ({
   queues: {

@@ -8,7 +8,7 @@ import {
 import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
 import { v5 as uuidv5 } from 'uuid';
 import { envConfig } from './envConfig';
-import { logger } from './logger';
+import { getCurrentLogger } from './logger';
 import { uuidNamespaces } from './systemConfig';
 
 let client: CloudTasksClient | null = null;
@@ -60,6 +60,7 @@ type CloudTask = protos.google.cloud.tasks.v2.ITask;
 const createCloudTasks = async (
   params: CreateCloudTasksParams,
 ): Promise<CloudTask | null> => {
+  const logger = getCurrentLogger();
   const { projectId, location, cloudTaskServiceAccount } = envConfig;
 
   if (!projectId || !location || !cloudTaskServiceAccount) {

@@ -15,7 +15,19 @@ vi.mock('../helpers/file');
 vi.mock('../helpers/gcp-cloud-storage');
 vi.mock('../helpers/ffmpeg');
 vi.mock('../helpers/cloudinary');
-vi.mock('src/utils/logger');
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 vi.mock('fs');
 
 // Add proper Hasura mutation mock

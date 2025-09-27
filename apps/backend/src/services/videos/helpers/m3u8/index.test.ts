@@ -14,7 +14,19 @@ import { streamM3U8 } from './index';
 // Mock dependencies
 vi.mock('./helpers');
 vi.mock('../gcp-cloud-storage');
-vi.mock('src/utils/logger');
+vi.mock('src/utils/logger', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+
+  return {
+    logger: mockLogger,
+    getCurrentLogger: vi.fn(() => mockLogger),
+  };
+});
 vi.mock('path', async () => {
   return {
     default: {

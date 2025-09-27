@@ -1,22 +1,22 @@
-import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
-import { webcrypto } from 'crypto';
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
 } from '@simplewebauthn/server';
+import { webcrypto } from 'crypto';
+import { getCurrentLogger } from 'src/utils/logger';
+import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID, RP_NAME } from './config';
 // import { dbRead } from '../singleton/db';
 import {
   getUser,
   getUserPasskeys,
   setCurrentRegistrationOptions,
 } from './userHelpers';
-import { EXPECTED_ORIGINS, EXPECTED_RP_IDS, RP_ID, RP_NAME } from './config';
-import { logger } from 'src/utils/logger';
 
 // @ts-expect-error
 if (!global.crypto) global.crypto = webcrypto;
 
 const generateOptions = async (userId: string) => {
+  const logger = getCurrentLogger();
   // (Pseudocode) Retrieve the user from the database
   // after they've logged in
   // TODO implement
@@ -68,6 +68,7 @@ const generateOptions = async (userId: string) => {
 };
 
 const verify = async (userId: string, credential: any) => {
+  const logger = getCurrentLogger();
   const isVerified = false;
   const userSnapshot = await getUser(userId);
 

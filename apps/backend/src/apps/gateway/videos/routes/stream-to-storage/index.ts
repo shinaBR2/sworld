@@ -8,7 +8,7 @@ import {
   createCloudTasks,
 } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
-import { logger } from 'src/utils/logger';
+import { getCurrentLogger } from 'src/utils/logger';
 import { type Platform, urlPatterns } from 'src/utils/patterns';
 import { AppError, AppResponse } from 'src/utils/schema';
 import { queues } from 'src/utils/systemConfig';
@@ -28,6 +28,7 @@ const buildHandlerUrl = (baseUrl: string, handler: string): string => {
 };
 
 const streamToStorage = async (validatedData: ConvertBodySchema) => {
+  const logger = getCurrentLogger();
   const { computeServiceUrl, ioServiceUrl } = envConfig;
   const { event } = validatedData;
   const { data, metadata } = transformEvent(event);

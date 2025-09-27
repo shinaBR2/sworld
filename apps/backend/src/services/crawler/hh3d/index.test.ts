@@ -19,12 +19,12 @@ vi.mock('src/utils/custom-error', () => ({
 }));
 
 vi.mock('src/utils/logger', () => ({
-  logger: {
+  getCurrentLogger: vi.fn(() => ({
     info: vi.fn(),
     error: vi.fn(),
     warn: vi.fn(),
     debug: vi.fn(),
-  },
+  })),
 }));
 
 // Import the mocked dependencies
