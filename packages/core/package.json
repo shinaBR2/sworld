@@ -1,7 +1,10 @@
 {
   "name": "@shinabr2/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
