@@ -34,6 +34,7 @@ ignore:
   - '**/interface.ts' # ignore TypeScript interfaces
   - '**/fragments.ts' # ignore GraphQL fragments
   - '**/dist/**/*' # Ignore dist folder
+  - 'packages/core/src/universal/errors/**/*'
 
 parsers:
   javascript:
