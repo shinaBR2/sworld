@@ -14,7 +14,7 @@ const SYSTEM_ERRORS: ErrorMap<typeof SYSTEM_ERROR_CODES> = {
     shouldAlert: true,
     shouldRetry: false,
     severity: SEVERITY.CRITICAL,
-    userMessage: 'An unexpected error occurred. Please try again later.',
+    userMessage: 'An unexpected error occurred. We are working on it!',
   },
   [SYSTEM_ERROR_CODES.TIMEOUT]: {
     shouldAlert: true,

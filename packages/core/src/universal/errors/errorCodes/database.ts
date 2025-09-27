@@ -18,13 +18,13 @@ const DATABASE_ERRORS: ErrorMap<typeof DATABASE_ERROR_CODES> = {
     userMessage: 'Data inconsistency detected. We are working on it.',
   },
   [DATABASE_ERROR_CODES.QUERY_TIMEOUT]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: true,
     severity: SEVERITY.HIGH,
     userMessage: 'Request is taking longer than expected. Please try again.',
   },
   [DATABASE_ERROR_CODES.CONSTRAINT_VIOLATION]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: false,
     severity: SEVERITY.MEDIUM,
     userMessage: 'Data validation error. Please check your input.',
@@ -41,8 +41,14 @@ const DATABASE_ERRORS: ErrorMap<typeof DATABASE_ERROR_CODES> = {
     severity: SEVERITY.LOW,
     userMessage: 'This content already exists.',
   },
+  /**
+   * Regular database error, should retry,
+   * and we usually don't try catch this in code
+   * Just bubble it naturally,
+   * let it be handled by global error handler
+   */
   [DATABASE_ERROR_CODES.TRANSACTION_FAILED]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: true,
     severity: SEVERITY.HIGH,
     userMessage: 'Operation failed. Please try again.',

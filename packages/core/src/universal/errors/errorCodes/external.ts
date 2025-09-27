@@ -10,19 +10,19 @@ const EXTERNAL_ERROR_CODES = {
 
 const EXTERNAL_ERRORS: ErrorMap<typeof EXTERNAL_ERROR_CODES> = {
   [EXTERNAL_ERROR_CODES.GCP_STORAGE_ERROR]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: true,
     severity: SEVERITY.HIGH,
     userMessage: 'File operation failed. Please try again.',
   },
   [EXTERNAL_ERROR_CODES.CLOUDINARY_ERROR]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: true,
     severity: SEVERITY.MEDIUM,
     userMessage: 'Image processing failed. We are working on it!',
   },
   [EXTERNAL_ERROR_CODES.AUTH0_ERROR]: {
-    shouldAlert: true,
+    shouldAlert: false,
     shouldRetry: true,
     severity: SEVERITY.HIGH,
     userMessage: 'Authentication service unavailable. Please try again.',
