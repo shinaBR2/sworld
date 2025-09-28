@@ -16,7 +16,9 @@ export * as Auth from './providers/auth';
 export * as Query from './providers/query';
 export { commonHelpers, requestHelpers };
 
-export { watchQueryHooks, watchMutationHooks, listenQueryHooks };
+export { listenQueryHooks, watchMutationHooks, watchQueryHooks };
+
+// trigger release
 
 export { ErrorBoundary };
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
