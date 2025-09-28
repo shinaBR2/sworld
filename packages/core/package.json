@@ -1,9 +1,8 @@
 {
-  "name": "core",
+  "name": "@shinabr2/core",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
-    "name": "@shinabr2/core",
     "access": "public"
   },
   "license": "MIT",
