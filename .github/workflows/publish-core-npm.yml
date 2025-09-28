@@ -52,6 +52,8 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
           cat .npmrc
           npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Rename package for npm publishing
         run: |
