@@ -39,7 +39,7 @@ jobs:
           if [ -z "$NPM_TOKEN" ]; then
             echo "NPM_TOKEN is empty or not set"
           else
-            echo "NPM_TOKEN is set, length: ${#NPM_TOKEN}"
+            echo "NPM_TOKEN is set, length is: ${#NPM_TOKEN}"
           fi
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
