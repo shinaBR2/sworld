@@ -37,8 +37,6 @@ jobs:
       - name: Rename package for npm publishing
         run: |
           cd packages/core
-          # Backup original package.json
-          cp package.json package.json.backup
           # Replace name with scoped version
           sed -i 's/"name": "core"/"name": "@shinabr2\/core"/' package.json
           # Verify the change
