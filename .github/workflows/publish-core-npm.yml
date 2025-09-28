@@ -35,12 +35,16 @@ jobs:
           # Verify the change
           grep '"name"' package.json
       
-      - name: Create Release Pull Request or Publish
-        uses: changesets/action@v1
-        with:
-          publish: npx changeset publish
+      - name: Rename and publish package
+        run: |
+          cd packages/core
+          cp package.json package.json.backup
+          sed -i 's/"name": "core"/"name": "@shinabr2\/core"/' package.json
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          npm publish
+          rm .npmrc
+          mv package.json.backup package.json
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Restore original package.json (if needed)
