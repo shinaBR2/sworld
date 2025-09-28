@@ -1,5 +1,5 @@
 {
-  "name": "@shinabr2/core",
+  "name": "core",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {

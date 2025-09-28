@@ -26,6 +26,16 @@ jobs:
       - run: pnpm build --filter=core
       
       - run: pnpm test --filter=core
+
+      - name: Rename package for npm publishing
+        run: |
+          cd packages/core
+          # Backup original package.json
+          cp package.json package.json.backup
+          # Replace name with scoped version
+          sed -i 's/"name": "core"/"name": "@shinabr2\/core"/' package.json
+          # Verify the change
+          grep '"name"' package.json
       
       - name: Release
         run: npx semantic-release
@@ -33,3 +43,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore original package.json (if needed)
+        if: always()
+        run: |
+          cd packages/core
+          if [ -f package.json.backup ]; then
+            mv package.json.backup package.json
+          fi
