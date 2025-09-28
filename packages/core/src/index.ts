@@ -16,6 +16,8 @@ export * as Auth from './providers/auth';
 export * as Query from './providers/query';
 export { commonHelpers, requestHelpers };
 
+// damn trigger
+
 export { listenQueryHooks, watchMutationHooks, watchQueryHooks };
 
 export { ErrorBoundary };
