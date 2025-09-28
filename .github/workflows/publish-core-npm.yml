@@ -27,6 +27,13 @@ jobs:
       
       - run: pnpm test --filter=core
 
+      - name: Create .npmrc file
+        run: |
+          cd packages/core
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Rename package for npm publishing
         run: |
           cd packages/core
