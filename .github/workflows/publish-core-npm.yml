@@ -3,7 +3,7 @@ name: Release Core Package
 
 on:
   push:
-    branches: [main, fuck]
+    branches: [main]
     paths: ['packages/core/**', '.github/workflows/publish-core-npm.yml']
 
 jobs:
@@ -31,27 +31,6 @@ jobs:
         run: |
           cd packages/core
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
-      - name: Debug secret availability
-        run: |
-          if [ -z "$NPM_TOKEN" ]; then
-            echo "NPM_TOKEN is empty or not set"
-          else
-            echo "NPM_TOKEN is set, length is: ${#NPM_TOKEN}"
-          fi
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
-      - name: Debug token and create .npmrc
-        run: |
-          cd packages/core
-          echo "Token length: ${#NPM_TOKEN}"
-          echo "Token first 10 chars: ${NPM_TOKEN:0:10}"
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          cat .npmrc
-          npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
