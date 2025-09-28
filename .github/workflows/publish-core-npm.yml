@@ -34,6 +34,16 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       
+      - name: Debug secret availability
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "NPM_TOKEN is empty or not set"
+          else
+            echo "NPM_TOKEN is set, length: ${#NPM_TOKEN}"
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
       - name: Debug token and create .npmrc
         run: |
           cd packages/core
