@@ -7,10 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "apps/**",
-    "packages/ui",
-    "packages/tsconfig",
-    "packages/jest-dom-preset"
-  ]
+  "ignore": []
 }
