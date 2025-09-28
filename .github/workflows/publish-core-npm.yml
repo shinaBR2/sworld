@@ -1,3 +1,4 @@
+# Publish to npm
 name: Release Core Package
 
 on:
