@@ -3,7 +3,7 @@ name: Release Core Package
 
 on:
   push:
-    branches: [main, fuck2]
+    branches: [main]
     paths: ['packages/core/**', '.github/workflows/publish-core-npm.yml', 'packages/core/.changeset/**']
 
 jobs:
