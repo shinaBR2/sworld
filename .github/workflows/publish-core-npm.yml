@@ -44,12 +44,13 @@ jobs:
           # Verify the change
           grep '"name"' package.json
       
-      - name: Release
-        run: npx changeset publish
-        working-directory: packages/core
+      - name: Create Release Pull Request or Publish
+        uses: changesets/action@v1
+        with:
+          publish: cd packages/core && npx changeset publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Restore original package.json (if needed)
         if: always()
