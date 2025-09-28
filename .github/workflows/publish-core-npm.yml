@@ -23,7 +23,7 @@ jobs:
           
       - run: pnpm install
       
-      - run: pnpm build --filter=core
+      - run: pnpm run --filter=core build:publish
       
       - run: pnpm test --filter=core
 
