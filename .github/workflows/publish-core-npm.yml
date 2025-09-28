@@ -1,0 +1,53 @@
+# Publish to npm
+name: Release Core Package
+
+on:
+  push:
+    branches: [main]
+    paths: ['packages/core/**']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for semantic release
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - uses: pnpm/action-setup@v4.0.0
+          
+      - run: pnpm install
+      
+      - run: pnpm build --filter=core
+      
+      - run: pnpm test --filter=core
+
+      - name: Rename package for npm publishing
+        run: |
+          cd packages/core
+          # Backup original package.json
+          cp package.json package.json.backup
+          # Replace name with scoped version
+          sed -i 's/"name": "core"/"name": "@shinabr2\/core"/' package.json
+          # Verify the change
+          grep '"name"' package.json
+      
+      - name: Release
+        run: npx semantic-release
+        working-directory: packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore original package.json (if needed)
+        if: always()
+        run: |
+          cd packages/core
+          if [ -f package.json.backup ]; then
+            mv package.json.backup package.json
+          fi
