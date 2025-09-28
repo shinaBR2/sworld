@@ -4,7 +4,7 @@ name: Release Core Package
 on:
   push:
     branches: [main]
-    paths: ['packages/core/**', '.github/workflows/publish-core-npm.yml']
+    paths: ['packages/core/**', '.github/workflows/publish-core-npm.yml', 'packages/core/.changeset/**']
 
 jobs:
   release:
@@ -45,7 +45,7 @@ jobs:
           grep '"name"' package.json
       
       - name: Release
-        run: npx semantic-release
+        run: npx changeset publish
         working-directory: packages/core
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
