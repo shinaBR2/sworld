@@ -1,5 +1,7 @@
 import { defineConfig } from 'tsup';
 
+// trigger config
+
 export default defineConfig({
   clean: true,
   dts: true, // ONLY CHANGE
