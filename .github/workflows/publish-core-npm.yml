@@ -33,6 +33,15 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Debug token and create .npmrc
+        run: |
+          cd packages/core
+          echo "Token length: ${#NPM_TOKEN}"
+          echo "Token first 10 chars: ${NPM_TOKEN:0:10}"
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          cat .npmrc
+          npm whoami
 
       - name: Rename package for npm publishing
         run: |
