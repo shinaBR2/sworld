@@ -130,6 +130,34 @@ const AuthContextProvider: FC<{
     }
   }, [logout, extensionId]);
 
+  const handleGetAccessToken = useCallback(async (): Promise<string> => {
+    try {
+      const token = await getAccessTokenSilently();
+      return token;
+    } catch (error) {
+      console.error('Failed to get access token:', error);
+
+      // If we can't get a token (expired, revoked, or other auth error),
+      // we should log the user out to force re-authentication
+      if (error instanceof Error) {
+        const errorMessage = error.message.toLowerCase();
+
+        // Common Auth0 error scenarios that require re-authentication
+        if (
+          errorMessage.includes('login_required') ||
+          errorMessage.includes('consent_required') ||
+          errorMessage.includes('interaction_required') ||
+          errorMessage.includes('missing refresh token')
+        ) {
+          console.warn('Token refresh failed, logging out user');
+          await handleSignOut();
+        }
+      }
+
+      throw new Error('Failed to get access token. Please sign in again.');
+    }
+  }, [getAccessTokenSilently, handleSignOut]);
+
   const contextValue: AuthContextValue = {
     isSignedIn,
     isLoading,
@@ -137,7 +165,7 @@ const AuthContextProvider: FC<{
     isAdmin,
     signIn: loginWithRedirect,
     signOut: handleSignOut,
-    getAccessToken: getAccessTokenSilently,
+    getAccessToken: handleGetAccessToken,
   };
 
   return (

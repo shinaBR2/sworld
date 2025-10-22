@@ -373,4 +373,116 @@ describe('AuthProvider', () => {
     // Now check if isLoading was updated
     expect(result.current.isLoading).toBe(false);
   });
+
+  test('should handle expired token and logout user on login_required error', async () => {
+    const mockToken = createMockToken({
+      'x-hasura-default-role': 'user',
+      'x-hasura-user-id': 'db-user',
+    });
+
+    const mockLogout = vi.fn().mockResolvedValue(undefined);
+    const mockGetAccessTokenSilently = vi
+      .fn()
+      .mockResolvedValueOnce(mockToken) // First call succeeds (during checkAuth)
+      .mockRejectedValueOnce(new Error('login_required')); // Second call fails
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: mockUser,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: mockLogout,
+    });
+
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
+    });
+
+    // Wait for initial auth to complete
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current.isSignedIn).toBe(true);
+      });
+    });
+
+    // Now try to get access token (which will fail with login_required)
+    await act(async () => {
+      try {
+        await renderResult.result.current.getAccessToken();
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBe(
+          'Failed to get access token. Please sign in again.',
+        );
+      }
+    });
+
+    // Verify logout was called
+    await vi.waitFor(() => {
+      expect(mockLogout).toHaveBeenCalledWith({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      });
+    });
+  });
+
+  test('should handle token refresh errors without logout for non-auth errors', async () => {
+    const mockToken = createMockToken({
+      'x-hasura-default-role': 'user',
+      'x-hasura-user-id': 'db-user',
+    });
+
+    const mockLogout = vi.fn().mockResolvedValue(undefined);
+    const mockGetAccessTokenSilently = vi
+      .fn()
+      .mockResolvedValueOnce(mockToken) // First call succeeds
+      .mockRejectedValueOnce(new Error('Network error')); // Second call fails with non-auth error
+
+    mockUseAuth0.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: mockUser,
+      getAccessTokenSilently: mockGetAccessTokenSilently,
+      loginWithRedirect: vi.fn(),
+      logout: mockLogout,
+    });
+
+    let renderResult: RenderHookResult<AuthContextValue, unknown>;
+    await act(async () => {
+      renderResult = renderHook(() => useAuthContext(), {
+        wrapper: ({ children }) => (
+          <AuthProvider config={mockConfig}>{children}</AuthProvider>
+        ),
+      });
+    });
+
+    // Wait for initial auth to complete
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(renderResult.result.current.isSignedIn).toBe(true);
+      });
+    });
+
+    // Try to get access token (which will fail with network error)
+    await act(async () => {
+      try {
+        await renderResult.result.current.getAccessToken();
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBe(
+          'Failed to get access token. Please sign in again.',
+        );
+      }
+    });
+
+    // Verify logout was NOT called for network errors
+    expect(mockLogout).not.toHaveBeenCalled();
+  });
 });
