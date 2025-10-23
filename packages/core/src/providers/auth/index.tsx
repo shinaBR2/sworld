@@ -161,15 +161,15 @@ const AuthContextProvider: FC<{
 
         // OAuth2/OIDC error codes that require re-authentication
         const recoverableErrors = [
-          'login_required',      // Session expired or invalid
-          'consent_required',    // User consent needed
+          'login_required', // Session expired or invalid
+          'consent_required', // User consent needed
           'interaction_required', // General interaction needed
-          'mfa_required',        // MFA challenge required
+          'mfa_required', // MFA challenge required
           'missing refresh token', // No refresh token available
         ];
 
-        const isRecoverableError = recoverableErrors.some(errCode =>
-          errorMessage.includes(errCode)
+        const isRecoverableError = recoverableErrors.some((errCode) =>
+          errorMessage.includes(errCode),
         );
 
         if (isRecoverableError) {
