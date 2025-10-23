@@ -52,6 +52,7 @@ describe('useRequest', () => {
     vi.clearAllMocks();
     queryClient.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
 
     vi.mocked(useQueryContext).mockReturnValue({
       hasuraUrl: mockHasuraUrl,
@@ -74,11 +75,11 @@ describe('useRequest', () => {
     vi.mocked(isTokenExpired).mockReturnValue(false);
   });
 
-  it('should fetch data anonymously', async () => {
+  it('should fetch data anonymously without getAccessToken', async () => {
     const { result } = renderHook(
       () =>
         useRequest({
-          queryKey: ['test'],
+          queryKey: ['test-anonymous'],
           document: mockDocument,
         }),
       { wrapper },
@@ -98,7 +99,44 @@ describe('useRequest', () => {
       requestHeaders: {
         'content-type': 'application/json',
       },
+      variables: undefined,
     });
+  });
+
+  it('should handle not signed in scenario when getAccessToken is provided', async () => {
+    const mockSignOut = vi.fn();
+    vi.mocked(useAuthContext).mockReturnValueOnce({
+      isSignedIn: false,
+      signOut: mockSignOut,
+      isLoading: false,
+      user: null,
+      isAdmin: false,
+      signIn: vi.fn(),
+      getAccessToken: mockGetAccessToken,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useRequest({
+          queryKey: ['test-not-signed-in'],
+          getAccessToken: mockGetAccessToken,
+          document: mockDocument,
+        }),
+      { wrapper },
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.isError).toBe(true);
+      },
+      { timeout: 2000 },
+    );
+
+    expect(mockSignOut).toHaveBeenCalled();
+    expect(result.current.error?.message).toBe(
+      'Session expired. Please sign in again.',
+    );
+    expect(request).not.toHaveBeenCalled();
   });
 
   it('should fetch data successfully with variables', async () => {
@@ -133,9 +171,37 @@ describe('useRequest', () => {
     });
   });
 
+  it('should handle empty token', async () => {
+    mockGetAccessToken.mockResolvedValueOnce('');
+
+    const { result } = renderHook(
+      () =>
+        useRequest({
+          queryKey: ['test-empty-token'],
+          getAccessToken: mockGetAccessToken,
+          document: mockDocument,
+        }),
+      { wrapper },
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.isError).toBe(true);
+      },
+      { timeout: 2000 },
+    );
+
+    expect(result.current.error?.message).toBe('Invalid access token');
+    expect(request).not.toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalledWith(
+      'Authentication failed:',
+      expect.any(Error),
+    );
+  });
+
   it('should handle token fetch error', async () => {
     const tokenError = new Error('Failed to get token');
-    mockGetAccessToken.mockRejectedValue(tokenError);
+    mockGetAccessToken.mockRejectedValueOnce(tokenError);
 
     const { result } = renderHook(
       () =>
@@ -265,6 +331,7 @@ describe('useRequest', () => {
         Authorization: `Bearer ${mockToken}`,
         'content-type': 'application/json',
       },
+      variables: undefined,
     });
   });
 

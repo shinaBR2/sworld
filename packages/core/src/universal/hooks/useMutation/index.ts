@@ -1,6 +1,7 @@
 import { type UseMutationOptions, useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
 import type { TypedDocumentString } from '../../../graphql/graphql';
+import { useAuthContext } from '../../../providers/auth';
 import { useQueryContext } from '../../../providers/query';
 
 interface UseMutationProps<TData, TError, TVariables> {
@@ -18,6 +19,7 @@ const useMutationRequest = <
 ) => {
   const { document, getAccessToken, options } = props;
   const { hasuraUrl } = useQueryContext();
+  const { isSignedIn, signOut } = useAuthContext();
 
   return useMutation<TData, TError, TVariables>({
     ...options,
@@ -26,7 +28,18 @@ const useMutationRequest = <
         'content-type': 'application/json',
       };
 
+      /**
+       * getAccessToken is undefined for "anonymous" role
+       */
       if (typeof getAccessToken !== 'undefined') {
+        /**
+         * If user is not signed in, signOut and throw error
+         */
+        if (!isSignedIn) {
+          signOut();
+          throw new Error('Session expired. Please sign in again.');
+        }
+
         let token: string;
         try {
           token = await getAccessToken();

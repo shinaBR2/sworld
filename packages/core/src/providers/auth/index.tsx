@@ -130,6 +130,58 @@ const AuthContextProvider: FC<{
     }
   }, [logout, extensionId]);
 
+  /**
+   * Wraps getAccessTokenSilently with proper error handling
+   *
+   * Handles OAuth2/OIDC error codes from the OpenID Connect Core 1.0 specification:
+   * - login_required: User authentication required (session expired)
+   * - consent_required: User consent required for requested scopes
+   * - interaction_required: General error requiring user interaction
+   * - mfa_required: Multi-factor authentication required
+   * - missing refresh token: Refresh token not available (useRefreshTokens config)
+   *
+   * References:
+   * - OpenID Connect Core 1.0: https://openid.net/specs/openid-connect-core-1_0.html
+   * - Auth0 Silent Authentication: https://auth0.com/docs/authenticate/login/configure-silent-authentication
+   * - Auth0 React SDK Issues: https://github.com/auth0/auth0-react/issues/501
+   *
+   * @throws {Error} When token cannot be retrieved
+   */
+  const handleGetAccessToken = useCallback(async (): Promise<string> => {
+    try {
+      const token = await getAccessTokenSilently();
+      return token;
+    } catch (error) {
+      console.error('Failed to get access token:', error);
+
+      // Check for recoverable authentication errors that require user interaction
+      // These errors indicate the session is invalid and the user must re-authenticate
+      if (error instanceof Error) {
+        const errorMessage = error.message.toLowerCase();
+
+        // OAuth2/OIDC error codes that require re-authentication
+        const recoverableErrors = [
+          'login_required', // Session expired or invalid
+          'consent_required', // User consent needed
+          'interaction_required', // General interaction needed
+          'mfa_required', // MFA challenge required
+          'missing refresh token', // No refresh token available
+        ];
+
+        const isRecoverableError = recoverableErrors.some((errCode) =>
+          errorMessage.includes(errCode),
+        );
+
+        if (isRecoverableError) {
+          console.warn('Token refresh failed, logging out user');
+          await handleSignOut();
+        }
+      }
+
+      throw new Error('Failed to get access token. Please sign in again.');
+    }
+  }, [getAccessTokenSilently, handleSignOut]);
+
   const contextValue: AuthContextValue = {
     isSignedIn,
     isLoading,
@@ -137,7 +189,7 @@ const AuthContextProvider: FC<{
     isAdmin,
     signIn: loginWithRedirect,
     signOut: handleSignOut,
-    getAccessToken: getAccessTokenSilently,
+    getAccessToken: handleGetAccessToken,
   };
 
   return (

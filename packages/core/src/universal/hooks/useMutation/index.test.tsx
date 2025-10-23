@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import request from 'graphql-request';
 import type { FC, PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAuthContext } from '../../../providers/auth';
 import { useMutationRequest } from './';
 
 // Mock graphql-request
@@ -16,6 +17,11 @@ vi.mock('../../../providers/query', () => ({
   useQueryContext: () => ({
     hasuraUrl: mockHasuraUrl,
   }),
+}));
+
+// Mock useAuthContext hook
+vi.mock('../../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
 }));
 
 // Create a wrapper with QueryClientProvider
@@ -43,6 +49,18 @@ describe('useMutationRequest', () => {
     vi.clearAllMocks();
     vi.resetAllMocks();
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    // Set up default auth context mock
+    vi.mocked(useAuthContext).mockReturnValue({
+      isSignedIn: true,
+      signOut: vi.fn(),
+      isLoading: false,
+      user: null,
+      isAdmin: false,
+      signIn: vi.fn(),
+      getAccessToken: vi.fn(),
+    });
   });
 
   it('should execute mutation without authentication', async () => {
@@ -242,5 +260,41 @@ describe('useMutationRequest', () => {
     await waitFor(async () => {
       await expect(mutatePromise).resolves.toEqual(mockResponse);
     });
+  });
+
+  it('should handle not signed in scenario when getAccessToken is provided', async () => {
+    const mockSignOut = vi.fn();
+    const mockGetAccessToken = vi.fn().mockResolvedValue('token');
+
+    vi.mocked(useAuthContext).mockReturnValueOnce({
+      isSignedIn: false,
+      signOut: mockSignOut,
+      isLoading: false,
+      user: null,
+      isAdmin: false,
+      signIn: vi.fn(),
+      getAccessToken: mockGetAccessToken,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useMutationRequest({
+          document: mockDocument,
+          getAccessToken: mockGetAccessToken,
+        }),
+      {
+        wrapper: createWrapper(),
+      },
+    );
+
+    const mutatePromise = result.current.mutateAsync(mockVariables);
+    await waitFor(async () => {
+      await expect(mutatePromise).rejects.toThrow(
+        'Session expired. Please sign in again.',
+      );
+    });
+
+    expect(mockSignOut).toHaveBeenCalled();
+    expect(request).not.toHaveBeenCalled();
   });
 });

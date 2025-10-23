@@ -35,7 +35,18 @@ const useRequest = <TData = unknown, TVariables extends object = {}>(
         'content-type': 'application/json',
       };
 
-      if (isSignedIn && typeof getAccessToken !== 'undefined') {
+      /**
+       * getAccessToken is undefined for "anonymous" role
+       */
+      if (typeof getAccessToken !== 'undefined') {
+        /**
+         * If user is not signed in, signOut and throw error
+         */
+        if (!isSignedIn) {
+          signOut();
+          throw new Error('Session expired. Please sign in again.');
+        }
+
         try {
           const token = await getAccessToken();
 
