@@ -77,6 +77,8 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // to control the player and handle hotkeys
   // biome-ignore lint/suspicious/noExplicitAny: ref type depends on ReactPlayer internals
   const playerRef = useRef<any | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
     if (!player) return;
@@ -84,7 +86,11 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playerRef.current = player;
   }, []);
 
+  // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if typing in inputs (just like YouTube)
       if (
@@ -186,7 +192,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.preventDefault();
           e.stopImmediatePropagation();
           // Get the wrapper element for fullscreen
-          const wrapper = player.wrapper;
           if (wrapper) {
             if (document.fullscreenElement) {
               document.exitFullscreen();
@@ -262,11 +267,19 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }
     };
 
-    // Use capture phase to intercept events BEFORE they reach the native video controls
-    // This prevents the native controls from also handling arrow keys (which causes double-seeking)
+    // Focus the wrapper so it can receive keyboard events
+    wrapper.setAttribute('tabindex', '0');
+    wrapper.focus();
+
+    // Listen on the wrapper element in capture phase
+    // This intercepts events before they reach the video element
+    wrapper.addEventListener('keydown', handleKeyDown, { capture: true });
+
+    // Also listen on document as fallback for global shortcuts
     document.addEventListener('keydown', handleKeyDown, { capture: true });
 
     return () => {
+      wrapper.removeEventListener('keydown', handleKeyDown, { capture: true });
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [handlePlay, handlePause, handleSeek]);
@@ -286,12 +299,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
   return (
     <Box
+      ref={wrapperRef}
       sx={(theme) => ({
         aspectRatio: '16/9',
         borderRadius: theme.shape.borderRadius / 12,
         overflow: 'hidden',
         width: '100%',
         height: '100%',
+        outline: 'none', // Remove focus outline
       })}
     >
       <Suspense fallback={<VideoThumbnail title={title} />}>
