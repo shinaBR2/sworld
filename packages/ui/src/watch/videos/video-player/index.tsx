@@ -413,7 +413,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [video.id, video.source, initializeSubtitleTracks]);
+  }, [initializeSubtitleTracks]);
 
   useEffect(() => {
     return () => {
