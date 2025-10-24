@@ -25,6 +25,28 @@ interface VideoPlayerProps {
   onError?: (error: unknown) => void;
 }
 
+/**
+ * Video Player Component with comprehensive keyboard shortcuts
+ *
+ * Available Hotkeys:
+ * - Space / K: Play/Pause toggle
+ * - M: Toggle mute
+ * - F: Toggle fullscreen
+ * - Arrow Left: Seek backward 5 seconds
+ * - Arrow Right: Seek forward 5 seconds
+ * - J: Seek backward 10 seconds (YouTube style)
+ * - L: Seek forward 10 seconds (YouTube style)
+ * - Arrow Up: Increase volume by 5%
+ * - Arrow Down: Decrease volume by 5%
+ * - 0-9: Jump to 0-90% of video (0=start, 5=50%, 9=90%)
+ * - Home: Jump to beginning
+ * - End: Jump to end
+ * - > (Shift + .): Increase playback speed by 0.25x
+ * - < (Shift + ,): Decrease playback speed by 0.25x
+ *
+ * Note: Hotkeys are disabled when typing in input fields
+ */
+
 const VideoPlayer = (props: VideoPlayerProps) => {
   const { video, onEnded, onError } = props;
   const { title, source, thumbnailUrl, subtitles } = video;
@@ -75,16 +97,22 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       const player = playerRef.current;
       if (!player) return;
 
+      const currentTime = player.getCurrentTime();
+      const duration = player.getDuration();
+
       switch (e.key) {
-        case 'k': // Play/pause
+        case ' ': // Space - Play/pause
+        case 'k': // K - Play/pause (YouTube style)
           e.preventDefault();
-          if (player.paused) {
-            setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
-            handlePlay();
-          } else {
-            setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
-            handlePause();
-          }
+          setPlayerState((prev) => {
+            const newPlaying = !prev.playing;
+            if (newPlaying) {
+              handlePlay();
+            } else {
+              handlePause();
+            }
+            return { ...prev, playing: newPlaying };
+          });
           break;
 
         case 'm': // Toggle mute
@@ -92,22 +120,43 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           setPlayerState((prev) => ({ ...prev, muted: !prev.muted }));
           break;
 
-        // case 'ArrowLeft': // Seek back 5s
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        //   setPlayerState(prev => ({ ...prev, seeking: true }));
-        //   player.currentTime = Math.max(0, player.currentTime - 5);
-        //   break;
+        case 'ArrowLeft': // Seek back 5s
+          e.preventDefault();
+          e.stopPropagation();
+          if (currentTime !== null) {
+            const newTime = Math.max(0, currentTime - 5);
+            player.seekTo(newTime, 'seconds');
+            handleSeek();
+          }
+          break;
 
-        // case 'ArrowRight': // Seek forward 5s
-        //   e.preventDefault();
-        //   e.stopPropagation();
+        case 'ArrowRight': // Seek forward 5s
+          e.preventDefault();
+          e.stopPropagation();
+          if (currentTime !== null && duration) {
+            const newTime = Math.min(duration, currentTime + 5);
+            player.seekTo(newTime, 'seconds');
+            handleSeek();
+          }
+          break;
 
-        //   console.log('ArrowRight', player.getCurrentTime(), player.currentTime);
+        case 'j': // Seek back 10s (YouTube style)
+          e.preventDefault();
+          if (currentTime !== null) {
+            const newTime = Math.max(0, currentTime - 10);
+            player.seekTo(newTime, 'seconds');
+            handleSeek();
+          }
+          break;
 
-        //   setPlayerState(prev => ({ ...prev, seeking: true }));
-        //   player.currentTime = Math.min(player.duration, player.getCurrentTime() + 5);
-        //   break;
+        case 'l': // Seek forward 10s (YouTube style)
+          e.preventDefault();
+          if (currentTime !== null && duration) {
+            const newTime = Math.min(duration, currentTime + 10);
+            player.seekTo(newTime, 'seconds');
+            handleSeek();
+          }
+          break;
 
         case 'ArrowUp': // Volume up
           e.preventDefault();
@@ -127,8 +176,70 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'f': // Fullscreen
           e.preventDefault();
-          if (player.requestFullscreen) {
-            player.requestFullscreen();
+          // Get the wrapper element for fullscreen
+          const wrapper = player.wrapper;
+          if (wrapper) {
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else if (wrapper.requestFullscreen) {
+              wrapper.requestFullscreen();
+            }
+          }
+          break;
+
+        case 'Home': // Jump to start
+          e.preventDefault();
+          player.seekTo(0, 'seconds');
+          handleSeek();
+          break;
+
+        case 'End': // Jump to end
+          e.preventDefault();
+          if (duration) {
+            player.seekTo(duration - 1, 'seconds');
+            handleSeek();
+          }
+          break;
+
+        case '>': // Increase playback speed
+        case '.': // Also works with period key
+          if (e.shiftKey || e.key === '>') {
+            e.preventDefault();
+            setPlayerState((prev) => ({
+              ...prev,
+              playbackRate: Math.min(2, prev.playbackRate + 0.25),
+            }));
+          }
+          break;
+
+        case '<': // Decrease playback speed
+        case ',': // Also works with comma key
+          if (e.shiftKey || e.key === '<') {
+            e.preventDefault();
+            setPlayerState((prev) => ({
+              ...prev,
+              playbackRate: Math.max(0.25, prev.playbackRate - 0.25),
+            }));
+          }
+          break;
+
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+          // Jump to percentage of video (0 = 0%, 1 = 10%, 2 = 20%, etc.)
+          e.preventDefault();
+          if (duration) {
+            const percentage = Number.parseInt(e.key, 10) / 10;
+            const newTime = duration * percentage;
+            player.seekTo(newTime, 'seconds');
+            handleSeek();
           }
           break;
 
@@ -143,7 +254,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [handlePlay, handlePause, handleSeek]);
 
   const handleError = useCallback(
     (error: unknown) => {
