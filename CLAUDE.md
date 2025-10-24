@@ -34,6 +34,17 @@ A personal monorepo containing multiple applications and shared packages built w
 
 ## Development Commands
 
+### How Dev Commands Work
+
+All app-specific dev commands (e.g., `pnpm dev:watch`, `pnpm dev:listen`) use `turbo watch` which provides:
+
+- **Automatic dependency tracking**: Changes in `packages/core` or `packages/ui` automatically trigger rebuilds
+- **Smart caching**: Only rebuilds what changed
+- **Parallel execution**: Runs multiple tasks efficiently
+- **Hot reload**: Apps automatically reload when dependencies update
+
+This means you don't need to manually restart your dev server when modifying shared packages!
+
 ### Root Level Commands
 
 ```bash
@@ -43,11 +54,14 @@ pnpm install
 # Run all apps in development mode
 pnpm dev
 
-# Run specific app with dependencies
-pnpm dev:listen  # Listen app + core + ui packages
-pnpm dev:game    # Game app + core + ui packages
-pnpm dev:main    # Main app + core + ui packages
-pnpm dev:docs    # Documentation site only
+# Run specific app with dependencies (uses turbo watch for auto-reload)
+pnpm dev:listen     # Listen app + auto-reload dependencies
+pnpm dev:game       # Game app + auto-reload dependencies
+pnpm dev:main       # Main app + auto-reload dependencies
+pnpm dev:watch      # Watch app + auto-reload dependencies
+pnpm dev:til        # TIL app + auto-reload dependencies
+pnpm dev:docs       # Documentation site + auto-reload dependencies
+pnpm dev:extension  # Extension app + auto-reload dependencies
 
 # Build all packages and apps
 pnpm build
