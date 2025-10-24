@@ -206,65 +206,71 @@ describe('VideoPlayer keyboard hotkeys', () => {
 
   it('should handle keyboard events for play/pause (k key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
+    const wrapper = await screen.findByTestId('video-player-wrapper');
 
-    // Simulate 'k' key press
-    const kEvent = new KeyboardEvent('keydown', { key: 'k' });
+    // Simulate 'k' key press on wrapper (scoped listener)
+    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
     Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, kEvent);
+    fireEvent(wrapper, kEvent);
 
     expect(kEvent.preventDefault).toHaveBeenCalled();
   });
 
   it('should handle keyboard events for mute (m key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
+    const wrapper = await screen.findByTestId('video-player-wrapper');
 
-    // Simulate 'm' key press
-    const mEvent = new KeyboardEvent('keydown', { key: 'm' });
+    // Simulate 'm' key press on wrapper (scoped listener)
+    const mEvent = new KeyboardEvent('keydown', { key: 'm', bubbles: true });
     Object.defineProperty(mEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, mEvent);
+    fireEvent(wrapper, mEvent);
 
     expect(mEvent.preventDefault).toHaveBeenCalled();
   });
 
   it('should handle keyboard events for volume up (ArrowUp key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
+    const wrapper = await screen.findByTestId('video-player-wrapper');
 
-    // Simulate 'ArrowUp' key press
-    const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+    // Simulate 'ArrowUp' key press on wrapper (scoped listener)
+    const upEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowUp',
+      bubbles: true,
+    });
     Object.defineProperty(upEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, upEvent);
+    fireEvent(wrapper, upEvent);
 
     expect(upEvent.preventDefault).toHaveBeenCalled();
   });
 
   it('should handle keyboard events for volume down (ArrowDown key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
+    const wrapper = await screen.findByTestId('video-player-wrapper');
 
-    // Simulate 'ArrowDown' key press
-    const downEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+    // Simulate 'ArrowDown' key press on wrapper (scoped listener)
+    const downEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true,
+    });
     Object.defineProperty(downEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, downEvent);
+    fireEvent(wrapper, downEvent);
 
     expect(downEvent.preventDefault).toHaveBeenCalled();
   });
 
   it('should handle keyboard events for fullscreen (f key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
+    const wrapper = await screen.findByTestId('video-player-wrapper');
 
-    // Simulate 'f' key press
-    const fEvent = new KeyboardEvent('keydown', { key: 'f' });
+    // Simulate 'f' key press on wrapper (scoped listener)
+    const fEvent = new KeyboardEvent('keydown', { key: 'f', bubbles: true });
     Object.defineProperty(fEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, fEvent);
+    fireEvent(wrapper, fEvent);
 
     expect(fEvent.preventDefault).toHaveBeenCalled();
   });

@@ -110,21 +110,20 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case ' ': // Space - Play/pause
         case 'k': // K - Play/pause (YouTube style)
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           // Just toggle playing state - ReactPlayer's onPlay/onPause will handle side effects
           setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
           break;
 
         case 'm': // Toggle mute
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           setPlayerState((prev) => ({ ...prev, muted: !prev.muted }));
           break;
 
         case 'ArrowLeft': // Seek back 5s
           e.preventDefault();
           e.stopPropagation();
-          e.stopImmediatePropagation();
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 5);
             player.seekTo(newTime, 'seconds');
@@ -135,7 +134,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case 'ArrowRight': // Seek forward 5s
           e.preventDefault();
           e.stopPropagation();
-          e.stopImmediatePropagation();
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 5);
             player.seekTo(newTime, 'seconds');
@@ -145,7 +143,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'j': // Seek back 10s (YouTube style)
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 10);
             player.seekTo(newTime, 'seconds');
@@ -155,7 +153,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'l': // Seek forward 10s (YouTube style)
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 10);
             player.seekTo(newTime, 'seconds');
@@ -165,7 +163,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'ArrowUp': // Volume up
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           setPlayerState((prev) => ({
             ...prev,
             volume: Math.min(1, prev.volume + 0.05),
@@ -174,7 +172,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'ArrowDown': // Volume down
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           setPlayerState((prev) => ({
             ...prev,
             volume: Math.max(0, prev.volume - 0.05),
@@ -183,7 +181,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'f': // Fullscreen
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           // Get the wrapper element for fullscreen
           if (wrapper) {
             if (document.fullscreenElement) {
@@ -196,14 +194,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'Home': // Jump to start
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           player.seekTo(0, 'seconds');
           handleSeek();
           break;
 
         case 'End': // Jump to end
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           if (duration) {
             player.seekTo(duration - 1, 'seconds');
             handleSeek();
@@ -214,7 +212,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case '.': // Also works with period key
           if (e.shiftKey || e.key === '>') {
             e.preventDefault();
-            e.stopImmediatePropagation();
+            e.stopPropagation();
             setPlayerState((prev) => ({
               ...prev,
               playbackRate: Math.min(2, prev.playbackRate + 0.25),
@@ -226,7 +224,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case ',': // Also works with comma key
           if (e.shiftKey || e.key === '<') {
             e.preventDefault();
-            e.stopImmediatePropagation();
+            e.stopPropagation();
             setPlayerState((prev) => ({
               ...prev,
               playbackRate: Math.max(0.25, prev.playbackRate - 0.25),
@@ -246,7 +244,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case '9':
           // Jump to percentage of video (0 = 0%, 1 = 10%, 2 = 20%, etc.)
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopPropagation();
           if (duration) {
             const percentage = Number.parseInt(e.key, 10) / 10;
             const newTime = duration * percentage;
@@ -260,19 +258,30 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }
     };
 
-    // Focus the wrapper so it can receive keyboard events
-    wrapper.setAttribute('tabindex', '0');
-    wrapper.focus();
+    // Fullscreen change handler - add document-level listener in fullscreen
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement === wrapper) {
+        // Entering fullscreen - add document-level listener for global shortcuts
+        document.addEventListener('keydown', handleKeyDown, { capture: true });
+      } else {
+        // Exiting fullscreen - remove document-level listener
+        document.removeEventListener('keydown', handleKeyDown, {
+          capture: true,
+        });
+      }
+    };
 
     // Listen on the wrapper element in capture phase
     // This intercepts events before they reach the video element
     wrapper.addEventListener('keydown', handleKeyDown, { capture: true });
 
-    // Also listen on document as fallback for global shortcuts
-    document.addEventListener('keydown', handleKeyDown, { capture: true });
+    // Listen for fullscreen changes to enable/disable document-level shortcuts
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
       wrapper.removeEventListener('keydown', handleKeyDown, { capture: true });
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      // Cleanup document listener if still attached (in case component unmounts while in fullscreen)
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [handleSeek]);
@@ -293,13 +302,22 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   return (
     <Box
       ref={wrapperRef}
+      tabIndex={0}
+      data-testid="video-player-wrapper"
       sx={(theme) => ({
         aspectRatio: '16/9',
         borderRadius: theme.shape.borderRadius / 12,
         overflow: 'hidden',
         width: '100%',
         height: '100%',
-        outline: 'none', // Remove focus outline
+        // Visible focus indicator for accessibility
+        '&:focus': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: '2px',
+        },
+        '&:focus:not(:focus-visible)': {
+          outline: 'none', // Hide outline for mouse clicks
+        },
       })}
     >
       <Suspense fallback={<VideoThumbnail title={title} />}>
