@@ -160,10 +160,43 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           console.log('Track cues:', track.cues ? `${track.cues.length} cues loaded` : 'NO CUES - VTT file may not be loading!');
 
           // Log the track source for debugging
-          const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`);
+          const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
           if (trackElement) {
             console.log('Track element src:', trackElement.src);
-            console.log('Track readyState:', track.mode, track.track?.readyState);
+            console.log('Track readyState:', track.readyState);
+            console.log('Track element readyState:', trackElement.readyState);
+            // TextTrack.readyState: 0=NONE, 1=LOADING, 2=LOADED, 3=ERROR
+            const readyStateNames = ['NONE', 'LOADING', 'LOADED', 'ERROR'];
+            console.log('Track readyState name:', readyStateNames[trackElement.readyState] || 'UNKNOWN');
+
+            // Listen for track errors
+            trackElement.addEventListener('error', (e) => {
+              console.error('❌ Track element error event:', e);
+              console.error('Track error details:', trackElement.error);
+            }, { once: true });
+
+            // Listen for track load event
+            trackElement.addEventListener('load', () => {
+              console.log('✓ Track element load event fired!');
+              console.log('Track cues after load event:', track.cues?.length || 0);
+            }, { once: true });
+
+            // Try to force reload the track by toggling the src
+            if (track.cues === null || (track.cues && track.cues.length === 0)) {
+              console.log('Attempting to force reload track by resetting src...');
+              const originalSrc = trackElement.src;
+              trackElement.src = '';
+
+              setTimeout(() => {
+                trackElement.src = originalSrc;
+                console.log('Track src reset to:', originalSrc);
+
+                // Check again after reload
+                setTimeout(() => {
+                  console.log('Cues after src reset:', track.cues?.length || 0);
+                }, 1000);
+              }, 100);
+            }
           }
 
           // Find the default subtitle track and force it to 'showing' mode
