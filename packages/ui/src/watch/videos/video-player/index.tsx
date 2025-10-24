@@ -107,9 +107,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       if (!text.startsWith('WEBVTT')) {
         console.error('❌ Invalid VTT file - does not start with WEBVTT:', text.substring(0, 50));
       } else {
-        // Count cues
-        const cueCount = (text.match(/\d{2}:\d{2}:\d{2}\.\d{3}\s+-->\s+\d{2}:\d{2}:\d{2}\.\d{3}/g) || []).length;
+        // Count cues (support both HH:MM:SS.mmm and MM:SS.mmm formats)
+        const cueCount = (text.match(/\d{1,2}:\d{2}[:.]\d{3}\s+-->\s+\d{1,2}:\d{2}[:.]\d{3}/g) || []).length;
         console.log(`✓ VTT file is valid, found ${cueCount} cues`);
+
+        if (cueCount === 0) {
+          console.warn('⚠️ VTT file appears valid but no cue timestamps found. Raw content:', text);
+        }
       }
     } catch (error) {
       console.error('❌ Error testing VTT file:', error);
@@ -169,16 +173,31 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             );
 
             if (matchingSubtitle?.isDefault) {
-              track.mode = 'showing';
+              // Force track mode cycle to trigger VTT parsing
+              track.mode = 'disabled';
+
+              // Wait a bit then set to showing
+              setTimeout(() => {
+                track.mode = 'hidden';
+                setTimeout(() => {
+                  track.mode = 'showing';
+                  console.log('✓ Activated default subtitle track via mode cycling:', track.language);
+
+                  // Check cues again after mode change
+                  setTimeout(() => {
+                    console.log('Cues after mode change:', track.cues?.length || 0);
+                  }, 500);
+                }, 50);
+              }, 50);
+
               activated = true;
-              console.log('✓ Activated default subtitle track:', track.language);
 
               // Add event listener to track when cues are loaded
               if (!track.cues || track.cues.length === 0) {
                 console.warn('⚠️ Track is in showing mode but has no cues yet. Waiting for cues to load...');
 
                 track.addEventListener('cuechange', () => {
-                  console.log('Cue changed event fired');
+                  console.log('Cue changed event fired, cues:', track.cues?.length);
                 }, { once: true });
 
                 // Listen for when cues are loaded
@@ -201,9 +220,23 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         return activated;
       };
 
-      // Try immediately
-      if (activateDefaultTrack()) {
-        return;
+      // Wait for video metadata to load before activating tracks
+      // This ensures the browser has parsed the VTT files
+      const handleLoadedMetadata = () => {
+        console.log('Video metadata loaded, attempting track activation');
+        activateDefaultTrack();
+      };
+
+      if (internalPlayer.readyState >= 1) {
+        // Metadata already loaded
+        console.log('Metadata already loaded, activating immediately');
+        if (activateDefaultTrack()) {
+          return;
+        }
+      } else {
+        // Wait for metadata to load
+        console.log('Waiting for metadata to load...');
+        internalPlayer.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
       }
 
       // If tracks not ready, listen for addtrack event
@@ -260,7 +293,8 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       // Cleanup
       setTimeout(() => {
         textTracks.removeEventListener('addtrack', handleTrackAdded);
-      }, 2000);
+        internalPlayer.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      }, 3000);
     } catch (error) {
       console.error('Failed to initialize subtitle tracks:', error);
     }
