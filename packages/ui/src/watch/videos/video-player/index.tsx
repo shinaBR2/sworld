@@ -79,7 +79,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const playerRef = useRef<any | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const subtitlesInitialized = useRef(false);
-  const trackModeWatcher = useRef<NodeJS.Timeout | null>(null);
 
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
@@ -88,8 +87,10 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playerRef.current = player;
   }, []);
 
-  // Test if VTT file is accessible and has content
+  // Debug function to test VTT file accessibility (disabled by default to avoid extra requests)
   const testVttFile = useCallback(async (url: string, lang: string) => {
+    // Uncomment for debugging VTT loading issues
+    /*
     try {
       console.log(`Testing VTT file for ${lang}:`, url);
       const response = await fetch(url);
@@ -103,29 +104,26 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       console.log(`✓ VTT file loaded successfully (${text.length} bytes):`, url);
       console.log('VTT content preview:', text.substring(0, 200));
 
-      // Check if it's valid VTT format
       if (!text.startsWith('WEBVTT')) {
         console.error('❌ Invalid VTT file - does not start with WEBVTT:', text.substring(0, 50));
       } else {
-        // Count cues (support both HH:MM:SS.mmm and MM:SS.mmm formats)
         const cueCount = (text.match(/\d{1,2}:\d{2}[:.]\d{3}\s+-->\s+\d{1,2}:\d{2}[:.]\d{3}/g) || []).length;
         console.log(`✓ VTT file is valid, found ${cueCount} cues`);
-
-        if (cueCount === 0) {
-          console.warn('⚠️ VTT file appears valid but no cue timestamps found. Raw content:', text);
-        }
       }
     } catch (error) {
       console.error('❌ Error testing VTT file:', error);
-      if (error instanceof TypeError && error.message.includes('CORS')) {
-        console.error('❌ CORS error detected! The VTT file cannot be loaded due to CORS restrictions.');
-      }
     }
+    */
   }, []);
 
   // Force subtitle tracks to load and set the default track to 'showing' mode
   const initializeSubtitleTracks = useCallback(() => {
     if (!playerRef.current) return;
+
+    // Prevent multiple initializations
+    if (subtitlesInitialized.current) {
+      return;
+    }
 
     try {
       // Get the internal video element from ReactPlayer
@@ -134,69 +132,20 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
       const textTracks = internalPlayer.textTracks;
 
-      // Test VTT files for default subtitles
-      if (subtitles && subtitles.length > 0) {
-        const defaultSubtitle = subtitles.find(s => s.isDefault);
-        if (defaultSubtitle) {
-          testVttFile(defaultSubtitle.src, defaultSubtitle.lang);
-        }
-      }
-
       const activateDefaultTrack = () => {
-        console.log('Attempting to activate subtitle tracks, count:', textTracks.length);
-
         if (textTracks.length === 0) return false;
 
         let activated = false;
         for (let i = 0; i < textTracks.length; i++) {
           const track = textTracks[i];
-          console.log('Track', i, ':', {
-            language: track.language,
-            mode: track.mode,
-            kind: track.kind,
-          });
-
-          // Check if track has cues loaded
-          console.log('Track cues:', track.cues ? `${track.cues.length} cues loaded` : 'NO CUES - VTT file may not be loading!');
 
           // Log the track source for debugging
           const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
           if (trackElement) {
-            console.log('Track element src:', trackElement.src);
-            console.log('Track readyState:', track.readyState);
-            console.log('Track element readyState:', trackElement.readyState);
-            // TextTrack.readyState: 0=NONE, 1=LOADING, 2=LOADED, 3=ERROR
-            const readyStateNames = ['NONE', 'LOADING', 'LOADED', 'ERROR'];
-            console.log('Track readyState name:', readyStateNames[trackElement.readyState] || 'UNKNOWN');
-
             // Listen for track errors
             trackElement.addEventListener('error', (e) => {
-              console.error('❌ Track element error event:', e);
-              console.error('Track error details:', trackElement.error);
+              console.error('❌ Subtitle track error:', trackElement.error);
             }, { once: true });
-
-            // Listen for track load event
-            trackElement.addEventListener('load', () => {
-              console.log('✓ Track element load event fired!');
-              console.log('Track cues after load event:', track.cues?.length || 0);
-            }, { once: true });
-
-            // Try to force reload the track by toggling the src
-            if (track.cues === null || (track.cues && track.cues.length === 0)) {
-              console.log('Attempting to force reload track by resetting src...');
-              const originalSrc = trackElement.src;
-              trackElement.src = '';
-
-              setTimeout(() => {
-                trackElement.src = originalSrc;
-                console.log('Track src reset to:', originalSrc);
-
-                // Check again after reload
-                setTimeout(() => {
-                  console.log('Cues after src reset:', track.cues?.length || 0);
-                }, 1000);
-              }, 100);
-            }
           }
 
           // Find the default subtitle track and force it to 'showing' mode
@@ -214,32 +163,10 @@ const VideoPlayer = (props: VideoPlayerProps) => {
                 track.mode = 'hidden';
                 setTimeout(() => {
                   track.mode = 'showing';
-                  console.log('✓ Activated default subtitle track via mode cycling:', track.language);
-
-                  // Check cues again after mode change
-                  setTimeout(() => {
-                    console.log('Cues after mode change:', track.cues?.length || 0);
-                  }, 500);
                 }, 50);
               }, 50);
 
               activated = true;
-
-              // Add event listener to track when cues are loaded
-              if (!track.cues || track.cues.length === 0) {
-                console.warn('⚠️ Track is in showing mode but has no cues yet. Waiting for cues to load...');
-
-                track.addEventListener('cuechange', () => {
-                  console.log('Cue changed event fired, cues:', track.cues?.length);
-                }, { once: true });
-
-                // Listen for when cues are loaded
-                track.addEventListener('load', () => {
-                  console.log('✓ Track loaded event fired, cues:', track.cues?.length);
-                }, { once: true });
-              } else {
-                console.log('✓ Track has cues ready:', track.cues.length);
-              }
             } else if (matchingSubtitle) {
               track.mode = 'disabled';
             }
@@ -254,80 +181,31 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       };
 
       // Wait for video metadata to load before activating tracks
-      // This ensures the browser has parsed the VTT files
       const handleLoadedMetadata = () => {
-        console.log('Video metadata loaded, attempting track activation');
         activateDefaultTrack();
       };
 
       if (internalPlayer.readyState >= 1) {
-        // Metadata already loaded
-        console.log('Metadata already loaded, activating immediately');
+        // Metadata already loaded, activate immediately
         if (activateDefaultTrack()) {
           return;
         }
       } else {
         // Wait for metadata to load
-        console.log('Waiting for metadata to load...');
         internalPlayer.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
       }
 
-      // If tracks not ready, listen for addtrack event
-      const handleTrackAdded = () => {
-        console.log('Track added event fired');
-        activateDefaultTrack();
-      };
-
-      textTracks.addEventListener('addtrack', handleTrackAdded);
-
-      // Also retry with increasing delays as fallback
-      const retryDelays = [100, 300, 500, 1000];
-      retryDelays.forEach((delay) => {
-        setTimeout(() => {
-          if (!subtitlesInitialized.current) {
-            console.log(`Retry activation after ${delay}ms`);
-            activateDefaultTrack();
-          }
-        }, delay);
-      });
-
-      // Cleanup previous watcher if exists
-      if (trackModeWatcher.current) {
-        clearInterval(trackModeWatcher.current);
-      }
-
-      // Keep enforcing the track mode every second for the first 10 seconds
-      // This prevents other code from resetting it
-      let watcherCount = 0;
-      trackModeWatcher.current = setInterval(() => {
-        watcherCount++;
-        if (watcherCount > 10) {
-          if (trackModeWatcher.current) {
-            clearInterval(trackModeWatcher.current);
-            trackModeWatcher.current = null;
-          }
-          return;
-        }
-
-        for (let i = 0; i < textTracks.length; i++) {
-          const track = textTracks[i];
-          if (subtitles) {
-            const matchingSubtitle = subtitles.find(
-              sub => sub.lang === track.language
-            );
-            if (matchingSubtitle?.isDefault && track.mode !== 'showing') {
-              console.log('Re-enforcing track mode to showing');
-              track.mode = 'showing';
-            }
-          }
-        }
-      }, 1000);
-
-      // Cleanup
+      // Fallback: retry once after 500ms if not initialized
       setTimeout(() => {
-        textTracks.removeEventListener('addtrack', handleTrackAdded);
+        if (!subtitlesInitialized.current) {
+          activateDefaultTrack();
+        }
+      }, 500);
+
+      // Cleanup event listener
+      setTimeout(() => {
         internalPlayer.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error('Failed to initialize subtitle tracks:', error);
     }
@@ -550,20 +428,11 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // Reset subtitle initialization when video changes
   useEffect(() => {
     subtitlesInitialized.current = false;
-    if (trackModeWatcher.current) {
-      clearInterval(trackModeWatcher.current);
-      trackModeWatcher.current = null;
-    }
   }, [video.id, video.source]);
 
   useEffect(() => {
     return () => {
       cleanup();
-      // Clean up the track mode watcher
-      if (trackModeWatcher.current) {
-        clearInterval(trackModeWatcher.current);
-        trackModeWatcher.current = null;
-      }
     };
   }, [cleanup]);
 
@@ -610,14 +479,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             onEnded?.();
           }}
           onReady={() => {
-            console.log('player ready');
-
-            // Log subtitle configuration for debugging
-            if (subtitles && subtitles.length > 0) {
-              console.log('Subtitle configuration:', subtitles);
-              console.log('Subtitle URLs:', subtitles.map(s => s.src));
-            }
-
             initializeSubtitleTracks();
           }}
           progressInterval={PROGRESS_INTERVAL}
