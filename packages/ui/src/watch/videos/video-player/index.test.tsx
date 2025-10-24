@@ -6,6 +6,10 @@ import { VideoPlayer } from './index';
 
 // Mock ReactPlayer
 const mockReactPlayerRef = vi.fn();
+const mockGetCurrentTime = vi.fn(() => 10); // Mock current time at 10 seconds
+const mockGetDuration = vi.fn(() => 100); // Mock duration at 100 seconds
+const mockSeekTo = vi.fn();
+
 vi.mock('react-player', () => ({
   __esModule: true,
   default: React.forwardRef(({ url, onReady, ...props }, ref) => {
@@ -16,6 +20,10 @@ vi.mock('react-player', () => ({
       ref({
         paused: false,
         requestFullscreen: vi.fn(),
+        getCurrentTime: mockGetCurrentTime,
+        getDuration: mockGetDuration,
+        seekTo: mockSeekTo,
+        wrapper: document.createElement('div'), // Mock wrapper element for fullscreen
       });
     }
     return React.createElement(
@@ -191,6 +199,9 @@ describe('VideoPlayer', () => {
 describe('VideoPlayer keyboard hotkeys', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock implementations for each test
+    mockGetCurrentTime.mockReturnValue(10);
+    mockGetDuration.mockReturnValue(100);
   });
 
   it('should handle keyboard events for play/pause (k key)', async () => {
