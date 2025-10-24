@@ -143,19 +143,17 @@ describe('VideoPlayer', () => {
     expect(props.light).toBe('https://example.com/default-thumb.jpg');
   });
 
-  it('should configure subtitles correctly', async () => {
+  it('should configure file attributes correctly', async () => {
     render(<VideoPlayer video={mockVideo} />);
     const player = await screen.findByTestId('mock-react-player');
 
     const props = JSON.parse(player.getAttribute('data-props') || '{}');
-    expect(props.config.file.tracks).toEqual([
-      {
-        kind: 'subtitles',
-        src: 'https://example.com/subtitles.vtt',
-        srcLang: 'en',
-        default: true,
-      },
-    ]);
+    expect(props.config.file.attributes).toEqual({
+      playsInline: true,
+      crossOrigin: 'anonymous',
+    });
+    // Tracks are now injected directly into the video element, not via config
+    expect(props.config.file.tracks).toBeUndefined();
   });
 
   it('should call onEnded callback when video ends', async () => {

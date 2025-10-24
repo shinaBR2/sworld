@@ -89,35 +89,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playerRef.current = player;
   }, []);
 
-  // Debug function to test VTT file accessibility (disabled by default to avoid extra requests)
-  const testVttFile = useCallback(async (url: string, lang: string) => {
-    // Uncomment for debugging VTT loading issues
-    /*
-    try {
-      console.log(`Testing VTT file for ${lang}:`, url);
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        console.error(`❌ VTT file fetch failed with status ${response.status}:`, url);
-        return;
-      }
-
-      const text = await response.text();
-      console.log(`✓ VTT file loaded successfully (${text.length} bytes):`, url);
-      console.log('VTT content preview:', text.substring(0, 200));
-
-      if (!text.startsWith('WEBVTT')) {
-        console.error('❌ Invalid VTT file - does not start with WEBVTT:', text.substring(0, 50));
-      } else {
-        const cueCount = (text.match(/\d{1,2}:\d{2}[:.]\d{3}\s+-->\s+\d{1,2}:\d{2}[:.]\d{3}/g) || []).length;
-        console.log(`✓ VTT file is valid, found ${cueCount} cues`);
-      }
-    } catch (error) {
-      console.error('❌ Error testing VTT file:', error);
-    }
-    */
-  }, []);
-
   // Add subtitle tracks directly to the video element
   const addSubtitleTracksToVideo = useCallback(
     (videoElement: HTMLVideoElement) => {
