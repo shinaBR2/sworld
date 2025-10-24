@@ -135,7 +135,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 5);
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 
@@ -146,7 +146,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 5);
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 
@@ -156,7 +156,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 10);
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 
@@ -166,7 +166,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 10);
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 
