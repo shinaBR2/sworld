@@ -79,6 +79,8 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const playerRef = useRef<any | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const subtitlesInitialized = useRef(false);
+  const initializationAttempts = useRef(0);
+  const maxAttempts = 10; // Maximum retry attempts
 
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
@@ -116,83 +118,107 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     */
   }, []);
 
-  // Force subtitle tracks to load and set the default track to 'showing' mode
-  // This is a pure event-driven approach with no arbitrary timeouts
+  // Add subtitle tracks directly to the video element
+  const addSubtitleTracksToVideo = useCallback(
+    (videoElement: HTMLVideoElement) => {
+      if (!subtitles || subtitles.length === 0) return;
+
+      // Remove existing tracks to avoid duplicates
+      const existingTracks = videoElement.querySelectorAll('track');
+      existingTracks.forEach((track) => {
+        track.remove();
+      });
+
+      // Add each subtitle as a track element
+      subtitles.forEach((subtitle) => {
+        const track = document.createElement('track');
+        track.kind = 'subtitles';
+        track.label = subtitle.label;
+        track.srclang = subtitle.lang;
+        track.src = subtitle.src;
+
+        if (subtitle.isDefault) {
+          track.default = true;
+        }
+
+        videoElement.appendChild(track);
+      });
+
+      // Tracks added successfully
+    },
+    [subtitles],
+  );
+
+  // Initialize subtitles by ensuring the default track is set to 'showing'
   const initializeSubtitleTracks = useCallback(() => {
-    if (!playerRef.current || subtitlesInitialized.current) return;
+    if (!subtitles || subtitles.length === 0) return;
+    if (!playerRef.current) return;
+    if (subtitlesInitialized.current) return;
+
+    if (initializationAttempts.current >= maxAttempts) {
+      return; // Silently stop after max attempts
+    }
+
+    initializationAttempts.current += 1;
 
     try {
       const internalPlayer = playerRef.current.getInternalPlayer();
-      if (!internalPlayer || !internalPlayer.textTracks) return;
+
+      if (!internalPlayer || !internalPlayer.textTracks) {
+        if (initializationAttempts.current < maxAttempts) {
+          setTimeout(() => initializeSubtitleTracks(), 200);
+        }
+        return;
+      }
+
+      // Add tracks directly to video element if it's a video tag
+      if (internalPlayer.tagName === 'VIDEO') {
+        addSubtitleTracksToVideo(internalPlayer);
+      }
 
       const textTracks = internalPlayer.textTracks;
 
-      // Process each text track
+      if (textTracks.length === 0) {
+        if (initializationAttempts.current < maxAttempts) {
+          setTimeout(() => initializeSubtitleTracks(), 200);
+        }
+        return;
+      }
+
+      // Find and activate the default track
       for (let i = 0; i < textTracks.length; i++) {
         const track = textTracks[i];
-        const trackElement = internalPlayer.querySelector(
-          `track[srclang="${track.language}"]`
-        ) as HTMLTrackElement;
 
-        if (!trackElement) continue;
-
-        // Find matching subtitle configuration
         const matchingSubtitle = subtitles?.find(
-          (sub) => sub.lang === track.language
+          (sub) => sub.lang === track.language,
         );
 
-        if (!matchingSubtitle) continue;
+        if (matchingSubtitle?.isDefault) {
+          // Set mode to showing to trigger loading and display
+          track.mode = 'showing';
 
-        // Listen for track errors
-        trackElement.addEventListener(
-          'error',
-          () => {
-            console.error('❌ Subtitle track error:', trackElement.error);
-          },
-          { once: true }
-        );
-
-        if (matchingSubtitle.isDefault) {
-          // This is the default subtitle track we want to activate
-          const activateTrack = () => {
-            if (track.cues && track.cues.length > 0) {
-              track.mode = 'showing';
-              subtitlesInitialized.current = true;
-              console.log('✓ Subtitles activated:', track.language, track.cues.length, 'cues');
-            }
-          };
-
-          // Check if already loaded
-          if (trackElement.readyState === 2 && track.cues && track.cues.length > 0) {
-            // Already loaded and has cues - activate immediately
-            activateTrack();
-          } else {
-            // Not loaded yet - set up event listeners
-            track.mode = 'showing'; // Set to showing so browser will load it
-
-            // Listen for track load event
-            trackElement.addEventListener('load', activateTrack, { once: true });
-
-            // Backup: listen for cuechange event
-            track.addEventListener(
-              'cuechange',
-              () => {
-                if (!subtitlesInitialized.current) {
-                  activateTrack();
-                }
-              },
-              { once: true }
-            );
+          // If cues are already loaded, mark as initialized
+          if (track.cues && track.cues.length > 0) {
+            subtitlesInitialized.current = true;
+            return;
           }
-        } else {
-          // Not the default track - disable it
-          track.mode = 'disabled';
         }
       }
+
+      // Retry if not initialized yet
+      if (
+        !subtitlesInitialized.current &&
+        initializationAttempts.current < maxAttempts
+      ) {
+        setTimeout(() => initializeSubtitleTracks(), 300);
+      }
     } catch (error) {
-      console.error('Failed to initialize subtitle tracks:', error);
+      console.error('Error initializing subtitles:', error);
+      if (initializationAttempts.current < maxAttempts) {
+        setTimeout(() => initializeSubtitleTracks(), 300);
+      }
     }
-  }, [subtitles]);
+  }, [subtitles, addSubtitleTracksToVideo]);
 
   // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
@@ -304,15 +330,16 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.preventDefault();
           e.stopPropagation();
           player.seekTo(0, 'seconds');
-          handleSeek();
+          handleSeek(0);
           break;
 
         case 'End': // Jump to end
           e.preventDefault();
           e.stopPropagation();
           if (duration) {
-            player.seekTo(duration - 1, 'seconds');
-            handleSeek();
+            const endTime = duration - 1;
+            player.seekTo(endTime, 'seconds');
+            handleSeek(endTime);
           }
           break;
 
@@ -357,7 +384,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             const percentage = Number.parseInt(e.key, 10) / 10;
             const newTime = duration * percentage;
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 
@@ -406,7 +433,16 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // Reset subtitle initialization when video changes
   useEffect(() => {
     subtitlesInitialized.current = false;
-  }, [video.id, video.source]);
+    initializationAttempts.current = 0;
+    // Re-trigger initialization if player is ready
+    if (playerRef.current) {
+      // Small delay to ensure video has changed
+      const timer = setTimeout(() => {
+        initializeSubtitleTracks();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [video.id, video.source, initializeSubtitleTracks]);
 
   useEffect(() => {
     return () => {
@@ -450,7 +486,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           onError={handleError}
           onProgress={handleProgress}
           onPause={handlePause}
-          onPlay={handlePlay}
+          onPlay={() => {
+            handlePlay();
+            // Ensure subtitles are initialized when video starts playing
+            // This is important when using the light prop (thumbnail)
+            if (!subtitlesInitialized.current) {
+              initializeSubtitleTracks();
+            }
+          }}
           onSeek={handleSeek}
           onEnded={() => {
             handleEnded();
@@ -463,17 +506,9 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           config={{
             file: {
               attributes: {
-                playsInline: true, // Important for iOS
-                crossOrigin: 'anonymous', // Required for CORS subtitle loading
-                preload: 'metadata', // Force browser to load subtitle tracks immediately
+                playsInline: true,
+                crossOrigin: 'anonymous',
               },
-              tracks: subtitles?.map((subtitle) => ({
-                kind: 'subtitles',
-                src: subtitle.src,
-                srcLang: subtitle.lang,
-                label: subtitle.label,
-                default: subtitle.isDefault,
-              })),
             },
           }}
         />
