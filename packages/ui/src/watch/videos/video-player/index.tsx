@@ -88,6 +88,37 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     playerRef.current = player;
   }, []);
 
+  // Test if VTT file is accessible and has content
+  const testVttFile = useCallback(async (url: string, lang: string) => {
+    try {
+      console.log(`Testing VTT file for ${lang}:`, url);
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        console.error(`❌ VTT file fetch failed with status ${response.status}:`, url);
+        return;
+      }
+
+      const text = await response.text();
+      console.log(`✓ VTT file loaded successfully (${text.length} bytes):`, url);
+      console.log('VTT content preview:', text.substring(0, 200));
+
+      // Check if it's valid VTT format
+      if (!text.startsWith('WEBVTT')) {
+        console.error('❌ Invalid VTT file - does not start with WEBVTT:', text.substring(0, 50));
+      } else {
+        // Count cues
+        const cueCount = (text.match(/\d{2}:\d{2}:\d{2}\.\d{3}\s+-->\s+\d{2}:\d{2}:\d{2}\.\d{3}/g) || []).length;
+        console.log(`✓ VTT file is valid, found ${cueCount} cues`);
+      }
+    } catch (error) {
+      console.error('❌ Error testing VTT file:', error);
+      if (error instanceof TypeError && error.message.includes('CORS')) {
+        console.error('❌ CORS error detected! The VTT file cannot be loaded due to CORS restrictions.');
+      }
+    }
+  }, []);
+
   // Force subtitle tracks to load and set the default track to 'showing' mode
   const initializeSubtitleTracks = useCallback(() => {
     if (!playerRef.current) return;
@@ -98,6 +129,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       if (!internalPlayer || !internalPlayer.textTracks) return;
 
       const textTracks = internalPlayer.textTracks;
+
+      // Test VTT files for default subtitles
+      if (subtitles && subtitles.length > 0) {
+        const defaultSubtitle = subtitles.find(s => s.isDefault);
+        if (defaultSubtitle) {
+          testVttFile(defaultSubtitle.src, defaultSubtitle.lang);
+        }
+      }
 
       const activateDefaultTrack = () => {
         console.log('Attempting to activate subtitle tracks, count:', textTracks.length);
@@ -113,6 +152,16 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             kind: track.kind,
           });
 
+          // Check if track has cues loaded
+          console.log('Track cues:', track.cues ? `${track.cues.length} cues loaded` : 'NO CUES - VTT file may not be loading!');
+
+          // Log the track source for debugging
+          const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`);
+          if (trackElement) {
+            console.log('Track element src:', trackElement.src);
+            console.log('Track readyState:', track.mode, track.track?.readyState);
+          }
+
           // Find the default subtitle track and force it to 'showing' mode
           if (subtitles && subtitles.length > 0) {
             const matchingSubtitle = subtitles.find(
@@ -123,6 +172,22 @@ const VideoPlayer = (props: VideoPlayerProps) => {
               track.mode = 'showing';
               activated = true;
               console.log('✓ Activated default subtitle track:', track.language);
+
+              // Add event listener to track when cues are loaded
+              if (!track.cues || track.cues.length === 0) {
+                console.warn('⚠️ Track is in showing mode but has no cues yet. Waiting for cues to load...');
+
+                track.addEventListener('cuechange', () => {
+                  console.log('Cue changed event fired');
+                }, { once: true });
+
+                // Listen for when cues are loaded
+                track.addEventListener('load', () => {
+                  console.log('✓ Track loaded event fired, cues:', track.cues?.length);
+                }, { once: true });
+              } else {
+                console.log('✓ Track has cues ready:', track.cues.length);
+              }
             } else if (matchingSubtitle) {
               track.mode = 'disabled';
             }
@@ -199,7 +264,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     } catch (error) {
       console.error('Failed to initialize subtitle tracks:', error);
     }
-  }, [subtitles]);
+  }, [subtitles, testVttFile]);
 
   // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
@@ -479,6 +544,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           }}
           onReady={() => {
             console.log('player ready');
+
+            // Log subtitle configuration for debugging
+            if (subtitles && subtitles.length > 0) {
+              console.log('Subtitle configuration:', subtitles);
+              console.log('Subtitle URLs:', subtitles.map(s => s.src));
+            }
+
             initializeSubtitleTracks();
           }}
           progressInterval={PROGRESS_INTERVAL}
