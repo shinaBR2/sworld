@@ -152,10 +152,35 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           // Log the track source for debugging
           const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
           if (trackElement) {
+            console.log('Track element readyState:', trackElement.readyState);
+
             // Listen for track errors
             trackElement.addEventListener('error', (e) => {
               console.error('❌ Subtitle track error:', trackElement.error);
             }, { once: true });
+
+            // If track not loaded yet, wait for it
+            if (trackElement.readyState !== 2) { // 2 = LOADED
+              console.log('Track not loaded yet, waiting for load event...');
+              trackElement.addEventListener('load', () => {
+                console.log('Track loaded, forcing mode to showing');
+                track.mode = 'showing';
+                if (track.cues && track.cues.length > 0) {
+                  subtitlesInitialized.current = true;
+                  console.log('✓ Subtitles ready after load event');
+                }
+              }, { once: true });
+
+              // Also listen for cuechange as backup
+              track.addEventListener('cuechange', () => {
+                console.log('Cuechange event, cues:', track.cues?.length);
+                if (track.cues && track.cues.length > 0 && !subtitlesInitialized.current) {
+                  track.mode = 'showing';
+                  subtitlesInitialized.current = true;
+                  console.log('✓ Subtitles ready after cuechange');
+                }
+              }, { once: true });
+            }
           }
 
           // Find the default subtitle track and force it to 'showing' mode
@@ -165,30 +190,38 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             );
 
             if (matchingSubtitle?.isDefault) {
-              console.log('→ Starting mode cycle for:', track.language);
-              // Force track mode cycle to trigger VTT parsing
-              track.mode = 'disabled';
+              // Only do mode cycling if track is already loaded
+              const trackElem = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
+              if (trackElem && trackElem.readyState === 2) { // LOADED
+                console.log('→ Track is loaded, starting mode cycle for:', track.language);
+                // Force track mode cycle to trigger VTT parsing
+                track.mode = 'disabled';
 
-              // Wait a bit then set to showing
-              setTimeout(() => {
-                track.mode = 'hidden';
+                // Wait a bit then set to showing
                 setTimeout(() => {
-                  track.mode = 'showing';
-                  console.log('→ Set to showing');
-
-                  // Verify cues loaded after activation
+                  track.mode = 'hidden';
                   setTimeout(() => {
-                    const cueCount = track.cues?.length || 0;
-                    console.log('→ Verification check, cues:', cueCount);
-                    if (track.cues && track.cues.length > 0) {
-                      subtitlesInitialized.current = true;
-                      console.log('✓ Subtitles initialized successfully');
-                    } else {
-                      console.warn('⚠️ Track showing but no cues loaded');
-                    }
-                  }, 200);
+                    track.mode = 'showing';
+                    console.log('→ Set to showing');
+
+                    // Verify cues loaded after activation
+                    setTimeout(() => {
+                      const cueCount = track.cues?.length || 0;
+                      console.log('→ Verification check, cues:', cueCount);
+                      if (track.cues && track.cues.length > 0) {
+                        subtitlesInitialized.current = true;
+                        console.log('✓ Subtitles initialized successfully');
+                      } else {
+                        console.warn('⚠️ Track showing but no cues loaded');
+                      }
+                    }, 200);
+                  }, 50);
                 }, 50);
-              }, 50);
+              } else {
+                console.log('→ Track not ready yet, mode cycling skipped (will activate via event listener)');
+                // Just ensure it's in showing mode - the event listener will handle it when loaded
+                track.mode = 'showing';
+              }
 
               activated = true;
             } else if (matchingSubtitle) {
