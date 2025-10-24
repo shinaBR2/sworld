@@ -117,156 +117,82 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   }, []);
 
   // Force subtitle tracks to load and set the default track to 'showing' mode
+  // This is a pure event-driven approach with no arbitrary timeouts
   const initializeSubtitleTracks = useCallback(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || subtitlesInitialized.current) return;
 
     try {
-      // Get the internal video element from ReactPlayer
       const internalPlayer = playerRef.current.getInternalPlayer();
       if (!internalPlayer || !internalPlayer.textTracks) return;
 
       const textTracks = internalPlayer.textTracks;
 
-      const activateDefaultTrack = () => {
-        console.log('Activating tracks, count:', textTracks.length, 'initialized:', subtitlesInitialized.current);
+      // Process each text track
+      for (let i = 0; i < textTracks.length; i++) {
+        const track = textTracks[i];
+        const trackElement = internalPlayer.querySelector(
+          `track[srclang="${track.language}"]`
+        ) as HTMLTrackElement;
 
-        if (textTracks.length === 0) return false;
+        if (!trackElement) continue;
 
-        let activated = false;
-        for (let i = 0; i < textTracks.length; i++) {
-          const track = textTracks[i];
+        // Find matching subtitle configuration
+        const matchingSubtitle = subtitles?.find(
+          (sub) => sub.lang === track.language
+        );
 
-          console.log('Track status:', {
-            language: track.language,
-            mode: track.mode,
-            cueCount: track.cues?.length || 0
-          });
+        if (!matchingSubtitle) continue;
 
-          // Check if already showing with cues - skip if working
-          if (track.mode === 'showing' && track.cues && track.cues.length > 0) {
-            console.log('✓ Track already working, skipping');
-            subtitlesInitialized.current = true;
-            return true;
-          }
+        // Listen for track errors
+        trackElement.addEventListener(
+          'error',
+          () => {
+            console.error('❌ Subtitle track error:', trackElement.error);
+          },
+          { once: true }
+        );
 
-          // Log the track source for debugging
-          const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
-          if (trackElement) {
-            console.log('Track element readyState:', trackElement.readyState);
-
-            // Listen for track errors
-            trackElement.addEventListener('error', (e) => {
-              console.error('❌ Subtitle track error:', trackElement.error);
-            }, { once: true });
-
-            // If track not loaded yet, wait for it
-            if (trackElement.readyState !== 2) { // 2 = LOADED
-              console.log('Track not loaded yet, waiting for load event...');
-              trackElement.addEventListener('load', () => {
-                console.log('Track loaded, forcing mode to showing');
-                track.mode = 'showing';
-                if (track.cues && track.cues.length > 0) {
-                  subtitlesInitialized.current = true;
-                  console.log('✓ Subtitles ready after load event');
-                }
-              }, { once: true });
-
-              // Also listen for cuechange as backup
-              track.addEventListener('cuechange', () => {
-                console.log('Cuechange event, cues:', track.cues?.length);
-                if (track.cues && track.cues.length > 0 && !subtitlesInitialized.current) {
-                  track.mode = 'showing';
-                  subtitlesInitialized.current = true;
-                  console.log('✓ Subtitles ready after cuechange');
-                }
-              }, { once: true });
+        if (matchingSubtitle.isDefault) {
+          // This is the default subtitle track we want to activate
+          const activateTrack = () => {
+            if (track.cues && track.cues.length > 0) {
+              track.mode = 'showing';
+              subtitlesInitialized.current = true;
+              console.log('✓ Subtitles activated:', track.language, track.cues.length, 'cues');
             }
-          }
+          };
 
-          // Find the default subtitle track and force it to 'showing' mode
-          if (subtitles && subtitles.length > 0) {
-            const matchingSubtitle = subtitles.find(
-              sub => sub.lang === track.language
+          // Check if already loaded
+          if (trackElement.readyState === 2 && track.cues && track.cues.length > 0) {
+            // Already loaded and has cues - activate immediately
+            activateTrack();
+          } else {
+            // Not loaded yet - set up event listeners
+            track.mode = 'showing'; // Set to showing so browser will load it
+
+            // Listen for track load event
+            trackElement.addEventListener('load', activateTrack, { once: true });
+
+            // Backup: listen for cuechange event
+            track.addEventListener(
+              'cuechange',
+              () => {
+                if (!subtitlesInitialized.current) {
+                  activateTrack();
+                }
+              },
+              { once: true }
             );
-
-            if (matchingSubtitle?.isDefault) {
-              // Only do mode cycling if track is already loaded
-              const trackElem = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
-              if (trackElem && trackElem.readyState === 2) { // LOADED
-                console.log('→ Track is loaded, starting mode cycle for:', track.language);
-                // Force track mode cycle to trigger VTT parsing
-                track.mode = 'disabled';
-
-                // Wait a bit then set to showing
-                setTimeout(() => {
-                  track.mode = 'hidden';
-                  setTimeout(() => {
-                    track.mode = 'showing';
-                    console.log('→ Set to showing');
-
-                    // Verify cues loaded after activation
-                    setTimeout(() => {
-                      const cueCount = track.cues?.length || 0;
-                      console.log('→ Verification check, cues:', cueCount);
-                      if (track.cues && track.cues.length > 0) {
-                        subtitlesInitialized.current = true;
-                        console.log('✓ Subtitles initialized successfully');
-                      } else {
-                        console.warn('⚠️ Track showing but no cues loaded');
-                      }
-                    }, 200);
-                  }, 50);
-                }, 50);
-              } else {
-                console.log('→ Track not ready yet, mode cycling skipped (will activate via event listener)');
-                // Just ensure it's in showing mode - the event listener will handle it when loaded
-                track.mode = 'showing';
-              }
-
-              activated = true;
-            } else if (matchingSubtitle) {
-              track.mode = 'disabled';
-            }
           }
+        } else {
+          // Not the default track - disable it
+          track.mode = 'disabled';
         }
-
-        return activated;
-      };
-
-      // Wait for video metadata to load before activating tracks
-      const handleLoadedMetadata = () => {
-        activateDefaultTrack();
-      };
-
-      if (internalPlayer.readyState >= 1) {
-        // Metadata already loaded, activate immediately
-        console.log('Metadata ready, activating now');
-        activateDefaultTrack();
-      } else {
-        // Wait for metadata to load
-        console.log('Waiting for metadata...');
-        internalPlayer.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
       }
-
-      // Multiple retry attempts to ensure consistency
-      const retryDelays = [300, 600, 1000];
-      retryDelays.forEach((delay) => {
-        setTimeout(() => {
-          if (!subtitlesInitialized.current) {
-            console.log(`Retry attempt after ${delay}ms`);
-            activateDefaultTrack();
-          }
-        }, delay);
-      });
-
-      // Cleanup event listener
-      setTimeout(() => {
-        internalPlayer.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      }, 2000);
     } catch (error) {
       console.error('Failed to initialize subtitle tracks:', error);
     }
-  }, [subtitles, testVttFile]);
+  }, [subtitles]);
 
   // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
@@ -475,12 +401,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     [onError],
   );
 
-  // Wrap handlePlay to also initialize subtitles as a fallback
-  const handlePlayWithSubtitles = useCallback(() => {
-    handlePlay();
-    // Try to initialize subtitles again when play starts (fallback)
-    initializeSubtitleTracks();
-  }, [handlePlay, initializeSubtitleTracks]);
+  // No need for fallback - event listeners handle everything
 
   // Reset subtitle initialization when video changes
   useEffect(() => {
@@ -529,7 +450,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           onError={handleError}
           onProgress={handleProgress}
           onPause={handlePause}
-          onPlay={handlePlayWithSubtitles}
+          onPlay={handlePlay}
           onSeek={handleSeek}
           onEnded={() => {
             handleEnded();
