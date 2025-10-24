@@ -111,15 +111,8 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case 'k': // K - Play/pause (YouTube style)
           e.preventDefault();
           e.stopImmediatePropagation();
-          setPlayerState((prev) => {
-            const newPlaying = !prev.playing;
-            if (newPlaying) {
-              handlePlay();
-            } else {
-              handlePause();
-            }
-            return { ...prev, playing: newPlaying };
-          });
+          // Just toggle playing state - ReactPlayer's onPlay/onPause will handle side effects
+          setPlayerState((prev) => ({ ...prev, playing: !prev.playing }));
           break;
 
         case 'm': // Toggle mute
@@ -282,7 +275,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       wrapper.removeEventListener('keydown', handleKeyDown, { capture: true });
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
-  }, [handlePlay, handlePause, handleSeek]);
+  }, [handleSeek]);
 
   const handleError = useCallback(
     (error: unknown) => {
