@@ -350,11 +350,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
               attributes: {
                 playsInline: true, // Important for iOS
                 crossOrigin: 'true',
+                preload: 'metadata', // Force browser to load subtitle tracks immediately
               },
               tracks: subtitles?.map((subtitle) => ({
                 kind: 'subtitles',
                 src: subtitle.src,
                 srcLang: subtitle.lang,
+                label: subtitle.label,
                 default: subtitle.isDefault,
               })),
             },

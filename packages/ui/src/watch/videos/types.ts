@@ -52,5 +52,6 @@ export type {
   PlayableVideo,
   RequiredLinkComponent,
   RequiredLinkComponentWithoutLinkProps,
+  Subtitle,
   WithLinkComponent,
 };
