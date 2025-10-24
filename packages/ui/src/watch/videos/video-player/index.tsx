@@ -104,6 +104,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case ' ': // Space - Play/pause
         case 'k': // K - Play/pause (YouTube style)
           e.preventDefault();
+          e.stopImmediatePropagation();
           setPlayerState((prev) => {
             const newPlaying = !prev.playing;
             if (newPlaying) {
@@ -117,12 +118,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'm': // Toggle mute
           e.preventDefault();
+          e.stopImmediatePropagation();
           setPlayerState((prev) => ({ ...prev, muted: !prev.muted }));
           break;
 
         case 'ArrowLeft': // Seek back 5s
           e.preventDefault();
           e.stopPropagation();
+          e.stopImmediatePropagation();
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 5);
             player.seekTo(newTime, 'seconds');
@@ -133,6 +136,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case 'ArrowRight': // Seek forward 5s
           e.preventDefault();
           e.stopPropagation();
+          e.stopImmediatePropagation();
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 5);
             player.seekTo(newTime, 'seconds');
@@ -142,6 +146,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'j': // Seek back 10s (YouTube style)
           e.preventDefault();
+          e.stopImmediatePropagation();
           if (currentTime !== null) {
             const newTime = Math.max(0, currentTime - 10);
             player.seekTo(newTime, 'seconds');
@@ -151,6 +156,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'l': // Seek forward 10s (YouTube style)
           e.preventDefault();
+          e.stopImmediatePropagation();
           if (currentTime !== null && duration) {
             const newTime = Math.min(duration, currentTime + 10);
             player.seekTo(newTime, 'seconds');
@@ -160,6 +166,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'ArrowUp': // Volume up
           e.preventDefault();
+          e.stopImmediatePropagation();
           setPlayerState((prev) => ({
             ...prev,
             volume: Math.min(1, prev.volume + 0.05),
@@ -168,6 +175,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'ArrowDown': // Volume down
           e.preventDefault();
+          e.stopImmediatePropagation();
           setPlayerState((prev) => ({
             ...prev,
             volume: Math.max(0, prev.volume - 0.05),
@@ -176,6 +184,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'f': // Fullscreen
           e.preventDefault();
+          e.stopImmediatePropagation();
           // Get the wrapper element for fullscreen
           const wrapper = player.wrapper;
           if (wrapper) {
@@ -189,12 +198,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
         case 'Home': // Jump to start
           e.preventDefault();
+          e.stopImmediatePropagation();
           player.seekTo(0, 'seconds');
           handleSeek();
           break;
 
         case 'End': // Jump to end
           e.preventDefault();
+          e.stopImmediatePropagation();
           if (duration) {
             player.seekTo(duration - 1, 'seconds');
             handleSeek();
@@ -205,6 +216,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case '.': // Also works with period key
           if (e.shiftKey || e.key === '>') {
             e.preventDefault();
+            e.stopImmediatePropagation();
             setPlayerState((prev) => ({
               ...prev,
               playbackRate: Math.min(2, prev.playbackRate + 0.25),
@@ -216,6 +228,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case ',': // Also works with comma key
           if (e.shiftKey || e.key === '<') {
             e.preventDefault();
+            e.stopImmediatePropagation();
             setPlayerState((prev) => ({
               ...prev,
               playbackRate: Math.max(0.25, prev.playbackRate - 0.25),
@@ -235,6 +248,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         case '9':
           // Jump to percentage of video (0 = 0%, 1 = 10%, 2 = 20%, etc.)
           e.preventDefault();
+          e.stopImmediatePropagation();
           if (duration) {
             const percentage = Number.parseInt(e.key, 10) / 10;
             const newTime = duration * percentage;
@@ -248,11 +262,12 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }
     };
 
-    // Listen on document (just like YouTube)
-    document.addEventListener('keydown', handleKeyDown);
+    // Use capture phase to intercept events BEFORE they reach the native video controls
+    // This prevents the native controls from also handling arrow keys (which causes double-seeking)
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [handlePlay, handlePause, handleSeek]);
 
