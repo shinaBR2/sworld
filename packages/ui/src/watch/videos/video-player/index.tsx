@@ -78,6 +78,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // biome-ignore lint/suspicious/noExplicitAny: ref type depends on ReactPlayer internals
   const playerRef = useRef<any | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const subtitlesInitialized = useRef(false);
 
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
@@ -85,6 +86,45 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
     playerRef.current = player;
   }, []);
+
+  // Force subtitle tracks to load and set the default track to 'showing' mode
+  const initializeSubtitleTracks = useCallback(() => {
+    if (!playerRef.current || subtitlesInitialized.current) return;
+
+    try {
+      // Get the internal video element from ReactPlayer
+      const internalPlayer = playerRef.current.getInternalPlayer();
+      if (!internalPlayer || !internalPlayer.textTracks) return;
+
+      const textTracks = internalPlayer.textTracks;
+
+      // Wait a bit for tracks to be fully loaded
+      setTimeout(() => {
+        for (let i = 0; i < textTracks.length; i++) {
+          const track = textTracks[i];
+
+          // Find the default subtitle track and force it to 'showing' mode
+          if (subtitles && subtitles.length > 0) {
+            const defaultSubtitle = subtitles.find(sub => sub.isDefault);
+            const matchingSubtitle = subtitles.find(
+              sub => sub.lang === track.language
+            );
+
+            if (matchingSubtitle?.isDefault || (defaultSubtitle && matchingSubtitle)) {
+              track.mode = 'showing';
+            } else {
+              track.mode = 'disabled';
+            }
+          }
+        }
+
+        subtitlesInitialized.current = true;
+        console.log('Subtitle tracks initialized:', textTracks.length);
+      }, 300); // Small delay to ensure tracks are loaded
+    } catch (error) {
+      console.error('Failed to initialize subtitle tracks:', error);
+    }
+  }, [subtitles]);
 
   // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
@@ -293,6 +333,18 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     [onError],
   );
 
+  // Wrap handlePlay to also initialize subtitles as a fallback
+  const handlePlayWithSubtitles = useCallback(() => {
+    handlePlay();
+    // Try to initialize subtitles again when play starts (fallback)
+    initializeSubtitleTracks();
+  }, [handlePlay, initializeSubtitleTracks]);
+
+  // Reset subtitle initialization when video changes
+  useEffect(() => {
+    subtitlesInitialized.current = false;
+  }, [video.id, video.source]);
+
   useEffect(() => {
     return () => {
       cleanup();
@@ -335,7 +387,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           onError={handleError}
           onProgress={handleProgress}
           onPause={handlePause}
-          onPlay={handlePlay}
+          onPlay={handlePlayWithSubtitles}
           onSeek={handleSeek}
           onEnded={() => {
             handleEnded();
@@ -343,13 +395,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           }}
           onReady={() => {
             console.log('player ready');
+            initializeSubtitleTracks();
           }}
           progressInterval={PROGRESS_INTERVAL}
           config={{
             file: {
               attributes: {
                 playsInline: true, // Important for iOS
-                crossOrigin: 'true',
+                crossOrigin: 'anonymous', // Required for CORS subtitle loading
                 preload: 'metadata', // Force browser to load subtitle tracks immediately
               },
               tracks: subtitles?.map((subtitle) => ({
