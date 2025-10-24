@@ -128,14 +128,23 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       const textTracks = internalPlayer.textTracks;
 
       const activateDefaultTrack = () => {
+        console.log('Activating tracks, count:', textTracks.length, 'initialized:', subtitlesInitialized.current);
+
         if (textTracks.length === 0) return false;
 
         let activated = false;
         for (let i = 0; i < textTracks.length; i++) {
           const track = textTracks[i];
 
+          console.log('Track status:', {
+            language: track.language,
+            mode: track.mode,
+            cueCount: track.cues?.length || 0
+          });
+
           // Check if already showing with cues - skip if working
           if (track.mode === 'showing' && track.cues && track.cues.length > 0) {
+            console.log('✓ Track already working, skipping');
             subtitlesInitialized.current = true;
             return true;
           }
@@ -156,6 +165,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             );
 
             if (matchingSubtitle?.isDefault) {
+              console.log('→ Starting mode cycle for:', track.language);
               // Force track mode cycle to trigger VTT parsing
               track.mode = 'disabled';
 
@@ -164,11 +174,17 @@ const VideoPlayer = (props: VideoPlayerProps) => {
                 track.mode = 'hidden';
                 setTimeout(() => {
                   track.mode = 'showing';
+                  console.log('→ Set to showing');
 
                   // Verify cues loaded after activation
                   setTimeout(() => {
+                    const cueCount = track.cues?.length || 0;
+                    console.log('→ Verification check, cues:', cueCount);
                     if (track.cues && track.cues.length > 0) {
                       subtitlesInitialized.current = true;
+                      console.log('✓ Subtitles initialized successfully');
+                    } else {
+                      console.warn('⚠️ Track showing but no cues loaded');
                     }
                   }, 200);
                 }, 50);
@@ -191,9 +207,11 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
       if (internalPlayer.readyState >= 1) {
         // Metadata already loaded, activate immediately
+        console.log('Metadata ready, activating now');
         activateDefaultTrack();
       } else {
         // Wait for metadata to load
+        console.log('Waiting for metadata...');
         internalPlayer.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
       }
 
@@ -202,6 +220,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       retryDelays.forEach((delay) => {
         setTimeout(() => {
           if (!subtitlesInitialized.current) {
+            console.log(`Retry attempt after ${delay}ms`);
             activateDefaultTrack();
           }
         }, delay);
