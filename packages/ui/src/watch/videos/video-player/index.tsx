@@ -79,6 +79,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const playerRef = useRef<any | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const subtitlesInitialized = useRef(false);
+  const trackModeWatcher = useRef<NodeJS.Timeout | null>(null);
 
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
@@ -89,7 +90,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
   // Force subtitle tracks to load and set the default track to 'showing' mode
   const initializeSubtitleTracks = useCallback(() => {
-    if (!playerRef.current || subtitlesInitialized.current) return;
+    if (!playerRef.current) return;
 
     try {
       // Get the internal video element from ReactPlayer
@@ -98,29 +99,103 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
       const textTracks = internalPlayer.textTracks;
 
-      // Wait a bit for tracks to be fully loaded
-      setTimeout(() => {
+      const activateDefaultTrack = () => {
+        console.log('Attempting to activate subtitle tracks, count:', textTracks.length);
+
+        if (textTracks.length === 0) return false;
+
+        let activated = false;
         for (let i = 0; i < textTracks.length; i++) {
           const track = textTracks[i];
+          console.log('Track', i, ':', {
+            language: track.language,
+            mode: track.mode,
+            kind: track.kind,
+          });
 
           // Find the default subtitle track and force it to 'showing' mode
           if (subtitles && subtitles.length > 0) {
-            const defaultSubtitle = subtitles.find(sub => sub.isDefault);
             const matchingSubtitle = subtitles.find(
               sub => sub.lang === track.language
             );
 
-            if (matchingSubtitle?.isDefault || (defaultSubtitle && matchingSubtitle)) {
+            if (matchingSubtitle?.isDefault) {
               track.mode = 'showing';
-            } else {
+              activated = true;
+              console.log('✓ Activated default subtitle track:', track.language);
+            } else if (matchingSubtitle) {
               track.mode = 'disabled';
             }
           }
         }
 
-        subtitlesInitialized.current = true;
-        console.log('Subtitle tracks initialized:', textTracks.length);
-      }, 300); // Small delay to ensure tracks are loaded
+        if (activated) {
+          subtitlesInitialized.current = true;
+        }
+
+        return activated;
+      };
+
+      // Try immediately
+      if (activateDefaultTrack()) {
+        return;
+      }
+
+      // If tracks not ready, listen for addtrack event
+      const handleTrackAdded = () => {
+        console.log('Track added event fired');
+        activateDefaultTrack();
+      };
+
+      textTracks.addEventListener('addtrack', handleTrackAdded);
+
+      // Also retry with increasing delays as fallback
+      const retryDelays = [100, 300, 500, 1000];
+      retryDelays.forEach((delay) => {
+        setTimeout(() => {
+          if (!subtitlesInitialized.current) {
+            console.log(`Retry activation after ${delay}ms`);
+            activateDefaultTrack();
+          }
+        }, delay);
+      });
+
+      // Cleanup previous watcher if exists
+      if (trackModeWatcher.current) {
+        clearInterval(trackModeWatcher.current);
+      }
+
+      // Keep enforcing the track mode every second for the first 10 seconds
+      // This prevents other code from resetting it
+      let watcherCount = 0;
+      trackModeWatcher.current = setInterval(() => {
+        watcherCount++;
+        if (watcherCount > 10) {
+          if (trackModeWatcher.current) {
+            clearInterval(trackModeWatcher.current);
+            trackModeWatcher.current = null;
+          }
+          return;
+        }
+
+        for (let i = 0; i < textTracks.length; i++) {
+          const track = textTracks[i];
+          if (subtitles) {
+            const matchingSubtitle = subtitles.find(
+              sub => sub.lang === track.language
+            );
+            if (matchingSubtitle?.isDefault && track.mode !== 'showing') {
+              console.log('Re-enforcing track mode to showing');
+              track.mode = 'showing';
+            }
+          }
+        }
+      }, 1000);
+
+      // Cleanup
+      setTimeout(() => {
+        textTracks.removeEventListener('addtrack', handleTrackAdded);
+      }, 2000);
     } catch (error) {
       console.error('Failed to initialize subtitle tracks:', error);
     }
@@ -343,11 +418,20 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // Reset subtitle initialization when video changes
   useEffect(() => {
     subtitlesInitialized.current = false;
+    if (trackModeWatcher.current) {
+      clearInterval(trackModeWatcher.current);
+      trackModeWatcher.current = null;
+    }
   }, [video.id, video.source]);
 
   useEffect(() => {
     return () => {
       cleanup();
+      // Clean up the track mode watcher
+      if (trackModeWatcher.current) {
+        clearInterval(trackModeWatcher.current);
+        trackModeWatcher.current = null;
+      }
     };
   }, [cleanup]);
 
