@@ -120,11 +120,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   const initializeSubtitleTracks = useCallback(() => {
     if (!playerRef.current) return;
 
-    // Prevent multiple initializations
-    if (subtitlesInitialized.current) {
-      return;
-    }
-
     try {
       // Get the internal video element from ReactPlayer
       const internalPlayer = playerRef.current.getInternalPlayer();
@@ -138,6 +133,12 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         let activated = false;
         for (let i = 0; i < textTracks.length; i++) {
           const track = textTracks[i];
+
+          // Check if already showing with cues - skip if working
+          if (track.mode === 'showing' && track.cues && track.cues.length > 0) {
+            subtitlesInitialized.current = true;
+            return true;
+          }
 
           // Log the track source for debugging
           const trackElement = internalPlayer.querySelector(`track[srclang="${track.language}"]`) as HTMLTrackElement;
@@ -163,6 +164,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
                 track.mode = 'hidden';
                 setTimeout(() => {
                   track.mode = 'showing';
+
+                  // Verify cues loaded after activation
+                  setTimeout(() => {
+                    if (track.cues && track.cues.length > 0) {
+                      subtitlesInitialized.current = true;
+                    }
+                  }, 200);
                 }, 50);
               }, 50);
 
@@ -171,10 +179,6 @@ const VideoPlayer = (props: VideoPlayerProps) => {
               track.mode = 'disabled';
             }
           }
-        }
-
-        if (activated) {
-          subtitlesInitialized.current = true;
         }
 
         return activated;
@@ -187,20 +191,21 @@ const VideoPlayer = (props: VideoPlayerProps) => {
 
       if (internalPlayer.readyState >= 1) {
         // Metadata already loaded, activate immediately
-        if (activateDefaultTrack()) {
-          return;
-        }
+        activateDefaultTrack();
       } else {
         // Wait for metadata to load
         internalPlayer.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
       }
 
-      // Fallback: retry once after 500ms if not initialized
-      setTimeout(() => {
-        if (!subtitlesInitialized.current) {
-          activateDefaultTrack();
-        }
-      }, 500);
+      // Multiple retry attempts to ensure consistency
+      const retryDelays = [300, 600, 1000];
+      retryDelays.forEach((delay) => {
+        setTimeout(() => {
+          if (!subtitlesInitialized.current) {
+            activateDefaultTrack();
+          }
+        }, delay);
+      });
 
       // Cleanup event listener
       setTimeout(() => {
