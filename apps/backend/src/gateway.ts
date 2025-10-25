@@ -13,10 +13,11 @@ import { hashnodeRouter } from './apps/gateway/hashnode';
 import { videosRouter } from './apps/gateway/videos';
 import { envConfig } from './utils/envConfig';
 import { createHonoLoggingMiddleware, getCurrentLogger } from './utils/logger';
+import type { Env } from './utils/types/context';
 
 const port = Number(envConfig.port) || 4000;
 
-const app = new Hono();
+const app = new Hono<Env>();
 app.use('*', contextStorage());
 app.use('*', requestId());
 app.use(

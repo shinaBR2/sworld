@@ -11,10 +11,11 @@ import {
   getCurrentLogger,
 } from 'src/utils/logger';
 import { videosRouter } from './apps/compute/videos';
+import type { Env } from './utils/types/context';
 
 const port = Number(envConfig.port) || 4000;
 
-const app = new Hono();
+const app = new Hono<Env>();
 
 app.use('*', requestId());
 app.use('*', contextStorage());
