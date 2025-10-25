@@ -22,6 +22,10 @@ const envConfig = {
   server: {
     maxBodyLimitInKBNumber: Number(process.env.MAX_BODY_LIMIT ?? 50),
   },
+  errorTracker: {
+    posthogPublicKey: process.env.POSTHOG_PUBLIC_KEY,
+    posthogHost: process.env.POSTHOG_HOST,
+  },
 };
 
 export { envConfig };

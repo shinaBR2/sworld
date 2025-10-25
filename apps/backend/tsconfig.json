@@ -4,7 +4,8 @@
     "module": "ES2020",
     "baseUrl": ".",
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "@shinabr2/core/*": ["./node_modules/@shinabr2/core/dist/*"]
     },
     "moduleResolution": "Node",
     "resolveJsonModule": true,

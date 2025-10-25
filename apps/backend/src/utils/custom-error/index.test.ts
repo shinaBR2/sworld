@@ -1,5 +1,37 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { CustomError, ERROR_SEVERITY } from './index';
+
+// Mock the @shinabr2/core package
+vi.mock('@shinabr2/core/universal/errors/errorCodes', () => ({
+  ERROR_CODES: {
+    UNEXPECTED_ERROR: 'unexpected-error',
+    USER_ERROR: 'user-error',
+    DB_OPERATION_FAILED: 'db-operation-failed',
+    USER_CREATION_FAILED: 'user-creation-failed',
+  },
+  ERROR_CONFIG: {
+    'unexpected-error': {
+      userMessage: 'An unexpected error occurred',
+      shouldRetry: false,
+      shouldAlert: true,
+    },
+    'user-error': {
+      userMessage: 'User error occurred',
+      shouldRetry: false,
+      shouldAlert: false,
+    },
+    'db-operation-failed': {
+      userMessage: 'Database operation failed',
+      shouldRetry: true,
+      shouldAlert: true,
+    },
+    'user-creation-failed': {
+      userMessage: 'Failed to create user',
+      shouldRetry: false,
+      shouldAlert: true,
+    },
+  },
+}));
 
 describe('CustomError', () => {
   it('should create an error with default values', () => {
@@ -10,6 +42,8 @@ describe('CustomError', () => {
     expect(error.errorCode).toBe('UNKNOWN_ERROR');
     expect(error.severity).toBe('medium');
     expect(error.shouldRetry).toBe(false);
+    expect(error.shouldNotify).toBe(false);
+    expect(error.userMessage).toBe('An unexpected error occurred');
     expect(error.contexts).toHaveLength(1);
     expect(error.contexts[0].source).toBe('Unknown');
     expect(error.timestamp).toBeDefined();
@@ -22,7 +56,7 @@ describe('CustomError', () => {
     const context = { userId: 123 };
 
     const error = new CustomError('Specific error', {
-      errorCode: 'USER_ERROR',
+      errorCode: 'user-error',
       severity: 'high',
       context,
       source: 'UserService',
@@ -31,9 +65,10 @@ describe('CustomError', () => {
     });
 
     expect(error.message).toBe('Specific error');
-    expect(error.errorCode).toBe('USER_ERROR');
+    expect(error.errorCode).toBe('user-error');
     expect(error.severity).toBe('high');
-    expect(error.shouldRetry).toBe(true);
+    expect(error.userMessage).toBe('User error occurred');
+    expect(error.shouldNotify).toBe(false);
     expect(error.contexts).toHaveLength(2);
     expect(error.contexts[0].source).toBe('UserService');
     expect(error.contexts[0].data).toEqual({ userId: 123 });
@@ -73,6 +108,34 @@ describe('CustomError', () => {
       expect(mediumError.severity).toBe(ERROR_SEVERITY.MEDIUM);
       expect(highError.severity).toBe(ERROR_SEVERITY.HIGH);
       expect(criticalError.severity).toBe(ERROR_SEVERITY.CRITICAL);
+    });
+  });
+
+  describe('toUserResponse', () => {
+    it('should return user-facing error response', () => {
+      const error = new CustomError('Test error', {
+        errorCode: 'user-error',
+      });
+
+      const response = error.toUserResponse();
+
+      expect(response).toEqual({
+        message: 'User error occurred',
+        extensions: {
+          code: 'user-error',
+          shouldRetry: false,
+        },
+      });
+    });
+
+    it('should include shouldRetry flag in response', () => {
+      const error = new CustomError('Test error', {
+        errorCode: 'db-operation-failed',
+      });
+
+      const response = error.toUserResponse();
+
+      expect(response.extensions.shouldRetry).toBe(true);
     });
   });
 
@@ -120,7 +183,7 @@ describe('CustomError', () => {
         lowLevelOperation();
       } catch (error) {
         throw new CustomError('Failed to perform database operation', {
-          errorCode: 'DB_OPERATION_FAILED',
+          errorCode: 'db-operation-failed',
           severity: ERROR_SEVERITY.HIGH,
           context: {
             service: 'UserService',
@@ -138,7 +201,7 @@ describe('CustomError', () => {
         midLevelService();
       } catch (error) {
         throw new CustomError('User creation failed', {
-          errorCode: 'USER_CREATION_FAILED',
+          errorCode: 'user-creation-failed',
           severity: ERROR_SEVERITY.CRITICAL,
           context: {
             userId: '123',
@@ -160,8 +223,10 @@ describe('CustomError', () => {
 
         // Check the top-level error properties
         expect(error.message).toBe('User creation failed');
-        expect(error.errorCode).toBe('USER_CREATION_FAILED');
+        expect(error.errorCode).toBe('user-creation-failed');
         expect(error.severity).toBe(ERROR_SEVERITY.CRITICAL);
+        expect(error.userMessage).toBe('Failed to create user');
+        expect(error.shouldNotify).toBe(true);
 
         // Verify contexts
         expect(error.contexts).toHaveLength(3); // High-level, Mid-level, Original error
@@ -208,6 +273,16 @@ describe('CustomError', () => {
       });
 
       expect(highLevelError.shouldRetry).toBe(true);
+    });
+
+    it('should use error config shouldRetry when available', () => {
+      const error = new CustomError('Database error', {
+        errorCode: 'db-operation-failed',
+      });
+
+      expect(error.shouldRetry).toBe(true);
+      expect(error.userMessage).toBe('Database operation failed');
+      expect(error.shouldNotify).toBe(true);
     });
   });
 });

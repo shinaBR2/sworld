@@ -1,3 +1,8 @@
+import {
+  ERROR_CODES,
+  ERROR_CONFIG,
+} from '@shinabr2/core/universal/errors/errorCodes';
+
 const ERROR_SEVERITY = {
   LOW: 'low',
   MEDIUM: 'medium',
@@ -78,6 +83,10 @@ class CustomError extends Error {
    */
   public readonly originalError?: Error;
 
+  public readonly userMessage: string;
+
+  public readonly shouldNotify: boolean;
+
   /**
    * Constructs a new instance of CustomError.
    * @param {string} message - The error message.
@@ -99,8 +108,15 @@ class CustomError extends Error {
     this.timestamp = Date.now();
     this.errorCode = errorCode;
     this.severity = severity;
-    this.shouldRetry = shouldRetry;
     this.contexts = [];
+
+    const errorConfig = ERROR_CONFIG[errorCode as keyof typeof ERROR_CONFIG];
+
+    this.userMessage =
+      errorConfig?.userMessage ??
+      ERROR_CONFIG[ERROR_CODES.UNEXPECTED_ERROR].userMessage;
+    this.shouldRetry = errorConfig?.shouldRetry ?? shouldRetry;
+    this.shouldNotify = errorConfig?.shouldAlert ?? false;
 
     // If wrapping a CustomError
     if (originalError instanceof CustomError) {
@@ -230,6 +246,16 @@ class CustomError extends Error {
         context.data;
       return acc;
     }, {});
+  }
+
+  toUserResponse() {
+    return {
+      message: this.userMessage,
+      extensions: {
+        code: this.errorCode,
+        shouldRetry: this.shouldRetry,
+      },
+    };
   }
 }
 
