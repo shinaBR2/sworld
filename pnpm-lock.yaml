@@ -343,6 +343,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.78.2
         version: 1.114.25(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tiptap/core':
+        specifier: ^3.0.0
+        version: 3.21.0(@tiptap/pm@3.21.0)
       '@tiptap/extension-placeholder':
         specifier: ^3.0.0
         version: 3.21.0(@tiptap/extensions@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))(@tiptap/pm@3.21.0))

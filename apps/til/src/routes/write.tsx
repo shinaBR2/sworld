@@ -1,4 +1,3 @@
-import '@tiptap/core/styles.css';
 import './tiptap-styles.css';
 
 import Alert from '@mui/material/Alert';
