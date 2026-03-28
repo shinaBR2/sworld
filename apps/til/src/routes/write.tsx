@@ -1,10 +1,12 @@
+import './tiptap-styles.css';
+
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -13,6 +15,7 @@ import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { MenuBar } from '../components/editor/menuBar';
 import { Layout } from '../components/layout';
 
 export const Route = createFileRoute('/write')({
@@ -20,6 +23,14 @@ export const Route = createFileRoute('/write')({
 });
 
 function WritePage() {
+  return (
+    <AuthRoute>
+      <WritePageContent />
+    </AuthRoute>
+  );
+}
+
+function WritePageContent() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +72,7 @@ function WritePage() {
 
     try {
       const content = editor?.getHTML() || '';
+      const text = editor?.getText().trim() || '';
       const slug = slugify(title);
 
       await insertPost({
@@ -68,11 +80,10 @@ function WritePage() {
           title: title.trim(),
           slug,
           markdownContent: content,
-          brief:
-            content.substring(0, 200) + (content.length > 200 ? '...' : ''),
+          brief: text.substring(0, 200) + (text.length > 200 ? '...' : ''),
           readTimeInMinutes: Math.max(
             1,
-            Math.ceil(editor?.getText().split(' ').length / 200),
+            Math.ceil(text.split(/\s+/).filter(Boolean).length / 200),
           ),
         },
       });
@@ -85,67 +96,92 @@ function WritePage() {
   };
 
   return (
-    <AuthRoute>
-      <Layout>
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Create a New TIL
-          </Typography>
-
+    <Layout>
+      <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+        {/* Header */}
+        <Container
+          maxWidth={false}
+          sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <TextField
+            fullWidth
+            placeholder="Post title..."
+            value={title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
+            disabled={isSubmitting}
+            variant="standard"
+            InputProps={{
+              style: {
+                fontSize: '1.5rem',
+                fontWeight: 600,
+              },
+            }}
+          />
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
+        </Container>
 
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              fullWidth
-              label="Post title"
-              placeholder="Enter your post title..."
-              value={title}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setTitle(e.target.value)
-              }
-              disabled={isSubmitting}
-              variant="outlined"
-            />
-          </Box>
+        {/* MenuBar */}
+        <Container
+          maxWidth={false}
+          sx={{
+            py: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <MenuBar editor={editor} />
+        </Container>
 
-          <Paper
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              minHeight: 400,
-              mb: 2,
-              p: 2,
-            }}
-          >
+        {/* Editor */}
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
+          <Container maxWidth={false} sx={{ py: 4 }}>
             <EditorContent editor={editor} />
-          </Paper>
+          </Container>
+        </Box>
 
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        {/* Footer */}
+        <Container
+          maxWidth={false}
+          sx={{
+            py: 2,
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            justifyContent="flex-end"
+          >
+            <Button
+              variant="outlined"
+              onClick={() => navigate({ to: '/' })}
+              disabled={isSubmitting}
+              fullWidth
+            >
+              Cancel
+            </Button>
             <Button
               variant="contained"
               onClick={handleSubmit}
               disabled={
                 isSubmitting || !title.trim() || !editor?.getText().trim()
               }
-              startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+              startIcon={isSubmitting ? <CircularProgress size={16} /> : null}
+              fullWidth
             >
-              {isSubmitting ? 'Saving...' : 'Save Post'}
+              {isSubmitting ? 'Publishing...' : 'Publish'}
             </Button>
-
-            <Button
-              variant="outlined"
-              onClick={() => navigate({ to: '/' })}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          </Box>
-        </Box>
-      </Layout>
-    </AuthRoute>
+          </Stack>
+        </Container>
+      </Stack>
+    </Layout>
   );
 }

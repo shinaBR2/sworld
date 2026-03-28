@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as types from './graphql';
 
 /**
@@ -29,6 +30,7 @@ type Documents = {
   '\n  query GetReadingStats($monthStart: timestamptz!) {\n    books_aggregate {\n      aggregate {\n        count\n      }\n    }\n    completed_books: books_aggregate(where: { reading_progresses: { percentage: { _gte: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    currently_reading: books_aggregate(where: { reading_progresses: { percentage: { _gt: 0, _lt: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: $monthStart } }) {\n      aggregate {\n        sum {\n          readingTimeMinutes\n        }\n      }\n    }\n  }\n': typeof types.GetReadingStatsDocument;
   '\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetAudiosAndFeelingsDocument;
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetPublicAudiosAndFeelingsDocument;
+  '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n': typeof types.InsertPostDocument;
   '\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n': typeof types.PostDocument;
   '\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n': typeof types.AllPostsDocument;
   '\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n': typeof types.FeatureFlagsDocument;
@@ -85,6 +87,8 @@ const documents: Documents = {
     types.GetAudiosAndFeelingsDocument,
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n':
     types.GetPublicAudiosAndFeelingsDocument,
+  '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n':
+    types.InsertPostDocument,
   '\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n    }\n  }\n':
     types.PostDocument,
   '\n  query AllPosts @cached {\n    posts(order_by: { slug: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n    }\n  }\n':
@@ -229,6 +233,12 @@ export function graphql(
 export function graphql(
   source: '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n',
 ): typeof import('./graphql').GetPublicAudiosAndFeelingsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n',
+): typeof import('./graphql').InsertPostDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,4 +1,5 @@
-import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
+/* eslint-disable */
+import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -12107,6 +12108,25 @@ export type GetPublicAudiosAndFeelingsQuery = {
   tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
 };
 
+export type InsertPostMutationVariables = Exact<{
+  object: Posts_Insert_Input;
+}>;
+
+export type InsertPostMutation = {
+  __typename?: 'mutation_root';
+  insert_posts_one?: {
+    __typename?: 'posts';
+    id: any;
+    title: string;
+    slug: string;
+    brief: string;
+    markdownContent: string;
+    readTimeInMinutes: number;
+    created_at: any;
+    updated_at: any;
+  } | null;
+};
+
 export type PostQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -12955,6 +12975,23 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   GetPublicAudiosAndFeelingsQuery,
   GetPublicAudiosAndFeelingsQueryVariables
+>;
+export const InsertPostDocument = new TypedDocumentString(`
+    mutation InsertPost($object: posts_insert_input!) {
+  insert_posts_one(object: $object) {
+    id
+    title
+    slug
+    brief
+    markdownContent
+    readTimeInMinutes
+    created_at
+    updated_at
+  }
+}
+    `) as unknown as TypedDocumentString<
+  InsertPostMutation,
+  InsertPostMutationVariables
 >;
 export const PostDocument = new TypedDocumentString(`
     query Post($id: uuid!) @cached {
