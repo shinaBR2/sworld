@@ -18,7 +18,7 @@ interface AuthContextValue {
   user: CustomUser | null;
   isAdmin: boolean;
   signIn: () => void;
-  signOut: () => void;
+  signOut: () => Promise<void> | void;
   getAccessToken: () => Promise<string>;
 }
 
