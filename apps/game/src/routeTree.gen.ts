@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols
@@ -12,8 +10,8 @@ import { createFileRoute } from '@tanstack/react-router';
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
 import { Route as GameSlugImport } from './routes/$gameSlug';
+import { Route as rootRoute } from './routes/__root';
 
 // Create Virtual Routes
 
@@ -25,13 +23,13 @@ const GameSlugRoute = GameSlugImport.update({
   id: '/$gameSlug',
   path: '/$gameSlug',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$gameSlug.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/$gameSlug.lazy').then((d) => d.Route));
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+} as const).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 // Populate the FileRoutesByPath interface
 
