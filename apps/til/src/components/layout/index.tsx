@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router';
 import { Auth } from 'core';
 import type React from 'react';
 import { useState } from 'react';
+import { SettingsPanel } from 'ui/til/settings';
 import type { MuiStyledProps } from 'ui/universal';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
-import { SettingsPanel } from 'ui/watch/home-page/settings';
 import { appConfig } from '../../config';
 import { Header } from './Header';
 
