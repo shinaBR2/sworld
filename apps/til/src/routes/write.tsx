@@ -1,3 +1,10 @@
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -80,95 +87,64 @@ function WritePage() {
   return (
     <AuthRoute>
       <Layout>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-          <h1>Create a New TIL</h1>
+        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Create a New TIL
+          </Typography>
 
           {error && (
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#fee',
-                border: '1px solid #fcc',
-                borderRadius: '4px',
-                marginBottom: '1rem',
-              }}
-            >
+            <Alert severity="error" sx={{ mb: 2 }}>
               {error}
-            </div>
+            </Alert>
           )}
 
-          <div style={{ marginBottom: '1rem' }}>
-            <input
-              type="text"
-              placeholder="Post title..."
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              fullWidth
+              label="Post title"
+              placeholder="Enter your post title..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
               disabled={isSubmitting}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                fontSize: '1.25rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontFamily: 'inherit',
-              }}
+              variant="outlined"
             />
-          </div>
+          </Box>
 
-          <div
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              minHeight: '400px',
-              marginBottom: '1rem',
+          <Paper
+            sx={{
+              border: 1,
+              borderColor: 'divider',
+              minHeight: 400,
+              mb: 2,
+              p: 2,
             }}
           >
-            <EditorContent
-              editor={editor}
-              style={{
-                padding: '1rem',
-              }}
-            />
-          </div>
+            <EditorContent editor={editor} />
+          </Paper>
 
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <button
-              type="button"
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <Button
+              variant="contained"
               onClick={handleSubmit}
               disabled={
                 isSubmitting || !title.trim() || !editor?.getText().trim()
               }
-              style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: isSubmitting ? '#ccc' : '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-              }}
+              startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
             >
               {isSubmitting ? 'Saving...' : 'Save Post'}
-            </button>
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="outlined"
               onClick={() => navigate({ to: '/' })}
               disabled={isSubmitting}
-              style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-              }}
             >
               Cancel
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       </Layout>
     </AuthRoute>
   );
