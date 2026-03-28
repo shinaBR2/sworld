@@ -28,7 +28,12 @@ const Header = (props: HeaderProps) => {
   const avatarUrl = user?.picture;
 
   return (
-    <AppBar position="sticky" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+    <AppBar
+      position="sticky"
+      color="default"
+      elevation={0}
+      sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+    >
       <Toolbar
         sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}
       >
@@ -53,12 +58,15 @@ const Header = (props: HeaderProps) => {
         >
           {user && LinkComponent && (
             <LinkComponent to="/write">
-              <Button color="inherit" sx={{ mr: 1, textTransform: 'none', fontWeight: 500 }}>
+              <Button
+                color="inherit"
+                sx={{ mr: 1, textTransform: 'none', fontWeight: 500 }}
+              >
                 Write
               </Button>
             </LinkComponent>
           )}
-          
+
           <IconButton onClick={!user ? login : logout}>
             {avatarUrl ? (
               <ResponsiveAvatar
