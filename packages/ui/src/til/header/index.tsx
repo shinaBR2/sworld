@@ -1,8 +1,6 @@
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
-import type { Auth } from 'core';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
 // TODO fix this
@@ -15,14 +13,10 @@ interface HeaderProps extends WithLinkComponent {
     play: string;
     til: string;
   };
-  user?: Auth.CustomUser | null;
-  login?: () => void;
-  logout?: () => void;
 }
 
 const Header = (props: HeaderProps) => {
-  const { sites, LinkComponent, user, login, logout } = props;
-  const showAuth = !!login && !!logout;
+  const { sites, LinkComponent } = props;
 
   return (
     <AppBar position="sticky" color="default" elevation={0}>
@@ -39,27 +33,6 @@ const Header = (props: HeaderProps) => {
           <Logo LinkComponent={LinkComponent} />
           <SiteChoices activeSite="til" sites={sites} />
         </Box>
-
-        {showAuth && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {user && LinkComponent && (
-              <LinkComponent to="/write">
-                <Button color="inherit" sx={{ mr: 1 }}>
-                  Write
-                </Button>
-              </LinkComponent>
-            )}
-            {!user ? (
-              <Button color="inherit" onClick={login}>
-                Login
-              </Button>
-            ) : (
-              <Button color="inherit" onClick={logout}>
-                Logout
-              </Button>
-            )}
-          </Box>
-        )}
       </Toolbar>
     </AppBar>
   );
