@@ -20,11 +20,11 @@ interface HeaderProps extends WithLinkComponent {
   };
   user: Auth.CustomUser | null;
   login: () => void;
-  logout: () => void;
+  toggleSidebar: () => void;
 }
 
 const Header = (props: HeaderProps) => {
-  const { sites, LinkComponent, user, login, logout } = props;
+  const { sites, LinkComponent, user, login, toggleSidebar } = props;
   const avatarUrl = user?.picture;
 
   return (
@@ -67,7 +67,7 @@ const Header = (props: HeaderProps) => {
             </LinkComponent>
           )}
 
-          <IconButton onClick={!user ? login : logout}>
+          <IconButton onClick={!user ? login : toggleSidebar}>
             {avatarUrl ? (
               <ResponsiveAvatar
                 src={avatarUrl}

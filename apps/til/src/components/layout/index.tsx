@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import { Auth } from 'core';
 import type React from 'react';
+import { useState } from 'react';
 import type { MuiStyledProps } from 'ui/universal';
-import { appConfig } from '../../config';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
+import { SettingsPanel } from 'ui/watch/home-page/settings';
+import { appConfig } from '../../config';
 import { Header } from './Header';
 
 interface LayoutProps extends MuiStyledProps {
@@ -14,6 +16,11 @@ const Layout = (props: LayoutProps) => {
   const { children, sx } = props;
   const { sites } = appConfig;
   const { user, signIn, signOut } = Auth.useAuthContext();
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
     <FullPageContainer sx={sx}>
@@ -22,7 +29,14 @@ const Layout = (props: LayoutProps) => {
         sites={sites}
         user={user}
         login={signIn}
-        logout={signOut}
+        toggleSidebar={toggleSidebar}
+      />
+      <SettingsPanel
+        open={sidebarOpen}
+        toggle={setSidebarOpen}
+        actions={{
+          logout: signOut,
+        }}
       />
       {children}
     </FullPageContainer>
