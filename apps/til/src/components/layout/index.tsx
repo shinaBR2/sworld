@@ -2,8 +2,8 @@ import { Link } from '@tanstack/react-router';
 import { Auth } from 'core';
 import type React from 'react';
 import type { MuiStyledProps } from 'ui/universal';
-import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { appConfig } from '../../config';
+import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { Header } from './Header';
 
 interface LayoutProps extends MuiStyledProps {
