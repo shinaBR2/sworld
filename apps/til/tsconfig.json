@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "esModuleInterop": true,
+    "moduleResolution": "bundler",
     "paths": {
       "ui": ["../../packages/ui/src"],
       "ui/*": ["../../packages/ui/src/*"],

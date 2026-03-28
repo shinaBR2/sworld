@@ -23,12 +23,26 @@ interface MutationProps {
   onError?: (error: unknown) => void;
 }
 
+interface InsertPostVariables {
+  object: {
+    title: string;
+    slug: string;
+    markdownContent: string;
+    brief: string;
+    readTimeInMinutes: number;
+  };
+}
+
 const useInsertPost = (props: MutationProps) => {
   const { getAccessToken } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: insertPost } = useMutationRequest({
+  const { mutateAsync: insertPost } = useMutationRequest<
+    any,
+    unknown,
+    InsertPostVariables
+  >({
     document: insertPostMutation,
     getAccessToken,
     options: {

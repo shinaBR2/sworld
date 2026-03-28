@@ -1,24 +1,127 @@
+import './tiptap-styles.css';
+
+import CodeIcon from '@mui/icons-material/Code';
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import '@tiptap/core/styles.css';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { useState } from 'react';
-import { AuthRoute } from 'ui/universal/authRoute';
 import { Layout } from '../components/layout';
 
 export const Route = createFileRoute('/write')({
   component: WritePage,
 });
+
+const MenuBar = ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
+  if (!editor) return null;
+
+  return (
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      <Tooltip title="Bold">
+        <IconButton
+          size="small"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          disabled={!editor.can().chain().focus().toggleBold().run()}
+          color={editor.isActive('bold') ? 'primary' : 'default'}
+        >
+          <FormatBoldIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Italic">
+        <IconButton
+          size="small"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          disabled={!editor.can().chain().focus().toggleItalic().run()}
+          color={editor.isActive('italic') ? 'primary' : 'default'}
+        >
+          <FormatItalicIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Box sx={{ width: '1px', height: 24, backgroundColor: 'divider' }} />
+      <Tooltip title="Heading 1">
+        <IconButton
+          size="small"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          color={
+            editor.isActive('heading', { level: 1 }) ? 'primary' : 'default'
+          }
+        >
+          H1
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Heading 2">
+        <IconButton
+          size="small"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          color={
+            editor.isActive('heading', { level: 2 }) ? 'primary' : 'default'
+          }
+        >
+          H2
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Heading 3">
+        <IconButton
+          size="small"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          color={
+            editor.isActive('heading', { level: 3 }) ? 'primary' : 'default'
+          }
+        >
+          H3
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Bullet List">
+        <IconButton
+          size="small"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          color={editor.isActive('bulletList') ? 'primary' : 'default'}
+        >
+          <FormatListBulletedIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Quote">
+        <IconButton
+          size="small"
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          color={editor.isActive('blockquote') ? 'primary' : 'default'}
+        >
+          <FormatQuoteIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Code Block">
+        <IconButton
+          size="small"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          color={editor.isActive('codeBlock') ? 'primary' : 'default'}
+        >
+          <CodeIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Stack>
+  );
+};
 
 function WritePage() {
   const navigate = useNavigate();
@@ -86,115 +189,92 @@ function WritePage() {
   };
 
   return (
-    <AuthRoute>
-      <Layout>
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Create a New TIL
-          </Typography>
-
+    <Layout>
+      <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+        {/* Header */}
+        <Container
+          maxWidth={false}
+          sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <TextField
+            fullWidth
+            placeholder="Post title..."
+            value={title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
+            disabled={isSubmitting}
+            variant="standard"
+            InputProps={{
+              style: {
+                fontSize: '1.5rem',
+                fontWeight: 600,
+              },
+            }}
+          />
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
+        </Container>
 
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              fullWidth
-              label="Post title"
-              placeholder="Enter your post title..."
-              value={title}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setTitle(e.target.value)
-              }
-              disabled={isSubmitting}
-              variant="outlined"
-            />
-          </Box>
+        {/* MenuBar */}
+        <Container
+          maxWidth={false}
+          sx={{
+            py: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <MenuBar editor={editor} />
+        </Container>
 
-          <Paper
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              minHeight: 400,
-              mb: 2,
-              p: 0,
-              '& .ProseMirror': {
-                padding: '16px',
-                minHeight: '350px',
-                outline: 'none',
-                '&:focus': {
-                  outline: 'none',
-                },
-                '& p': {
-                  margin: '0 0 16px 0',
-                  '&:last-child': {
-                    marginBottom: 0,
-                  },
-                },
-                '& h1, & h2, & h3, & h4, & h5, & h6': {
-                  margin: '24px 0 16px 0',
-                  fontWeight: 'bold',
-                  '&:first-child': {
-                    marginTop: 0,
-                  },
-                },
-                '& ul, & ol': {
-                  margin: '0 0 16px 0',
-                  paddingLeft: '24px',
-                },
-                '& blockquote': {
-                  margin: '0 0 16px 0',
-                  paddingLeft: '16px',
-                  borderLeft: '4px solid #e0e0e0',
-                  fontStyle: 'italic',
-                },
-                '& code': {
-                  backgroundColor: '#f5f5f5',
-                  padding: '2px 4px',
-                  borderRadius: '4px',
-                  fontFamily: 'monospace',
-                },
-                '& pre': {
-                  backgroundColor: '#f5f5f5',
-                  padding: '16px',
-                  borderRadius: '4px',
-                  overflowX: 'auto',
-                  margin: '0 0 16px 0',
-                  '& code': {
-                    backgroundColor: 'transparent',
-                    padding: 0,
-                  },
-                },
-              },
-            }}
-          >
+        {/* Editor */}
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
+          <Container maxWidth={false} sx={{ py: 4 }}>
             <EditorContent editor={editor} />
-          </Paper>
+          </Container>
+        </Box>
 
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        {/* Footer */}
+        <Container
+          maxWidth={false}
+          sx={{
+            py: 2,
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            justifyContent="flex-end"
+          >
+            <Button
+              variant="outlined"
+              onClick={() => navigate({ to: '/' })}
+              disabled={isSubmitting}
+              fullWidth
+            >
+              Cancel
+            </Button>
             <Button
               variant="contained"
               onClick={handleSubmit}
               disabled={
                 isSubmitting || !title.trim() || !editor?.getText().trim()
               }
-              startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+              startIcon={isSubmitting ? <CircularProgress size={16} /> : null}
+              fullWidth
             >
-              {isSubmitting ? 'Saving...' : 'Save Post'}
+              {isSubmitting ? 'Publishing...' : 'Publish'}
             </Button>
-
-            <Button
-              variant="outlined"
-              onClick={() => navigate({ to: '/' })}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          </Box>
-        </Box>
-      </Layout>
-    </AuthRoute>
+          </Stack>
+        </Container>
+      </Stack>
+    </Layout>
   );
 }

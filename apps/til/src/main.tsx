@@ -31,9 +31,32 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  const auth = Auth.useAuthContext();
+  const {
+    isSignedIn,
+    isLoading,
+    user,
+    isAdmin,
+    signIn,
+    signOut,
+    getAccessToken,
+  } = Auth.useAuthContext();
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        auth: {
+          isSignedIn,
+          isLoading,
+          user,
+          isAdmin,
+          signIn,
+          signOut,
+          getAccessToken,
+        },
+      }}
+    />
+  );
 };
 
 const AppWrapper = () => {
