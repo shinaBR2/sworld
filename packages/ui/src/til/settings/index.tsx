@@ -11,7 +11,7 @@ interface SettingsPanelProps {
   open: boolean;
   toggle: React.Dispatch<React.SetStateAction<boolean>>;
   actions: {
-    logout: () => Promise<void> | void;
+    logout: () => void;
   };
 }
 
@@ -22,12 +22,6 @@ const texts = {
 const SettingsPanel = (props: SettingsPanelProps) => {
   const { open, toggle, actions } = props;
   const { logout } = actions;
-
-  const handleLogout = () => {
-    Promise.resolve(logout()).catch((error) => {
-      console.error('Logout failed:', error);
-    });
-  };
 
   return (
     <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
@@ -42,7 +36,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
         <List sx={{ flex: 1 }} />
         <Divider />
         <List>
-          <ListItemButton onClick={handleLogout}>
+          <ListItemButton onClick={logout}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
