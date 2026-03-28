@@ -1,4 +1,8 @@
-import { graphql, type Posts_Insert_Input } from '../../../graphql';
+import { graphql } from '../../../graphql';
+import type {
+  InsertPostMutation,
+  InsertPostMutationVariables,
+} from '../../../graphql/graphql';
 import { useAuthContext } from '../../../providers/auth';
 import { useQueryContext } from '../../../providers/query';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
@@ -23,19 +27,15 @@ interface MutationProps {
   onError?: (error: unknown) => void;
 }
 
-interface InsertPostVariables {
-  object: Posts_Insert_Input;
-}
-
 const useInsertPost = (props: MutationProps) => {
   const { getAccessToken } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
   const { mutateAsync: insertPost } = useMutationRequest<
-    any,
+    InsertPostMutation,
     unknown,
-    InsertPostVariables
+    InsertPostMutationVariables
   >({
     document: insertPostMutation,
     getAccessToken,
