@@ -1,3 +1,4 @@
+import '@tiptap/core/styles.css';
 import './tiptap-styles.css';
 
 import Alert from '@mui/material/Alert';
@@ -14,6 +15,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { useState } from 'react';
+import { AuthRoute } from 'ui/universal/authRoute';
 import { MenuBar } from '../components/editor/menuBar';
 import { Layout } from '../components/layout';
 
@@ -22,6 +24,14 @@ export const Route = createFileRoute('/write')({
 });
 
 function WritePage() {
+  return (
+    <AuthRoute>
+      <WritePageContent />
+    </AuthRoute>
+  );
+}
+
+function WritePageContent() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +73,7 @@ function WritePage() {
 
     try {
       const content = editor?.getHTML() || '';
+      const text = editor?.getText().trim() || '';
       const slug = slugify(title);
 
       await insertPost({
@@ -70,11 +81,10 @@ function WritePage() {
           title: title.trim(),
           slug,
           markdownContent: content,
-          brief:
-            content.substring(0, 200) + (content.length > 200 ? '...' : ''),
+          brief: text.substring(0, 200) + (text.length > 200 ? '...' : ''),
           readTimeInMinutes: Math.max(
             1,
-            Math.ceil(editor?.getText().split(' ').length / 200),
+            Math.ceil(text.split(/\s+/).filter(Boolean).length / 200),
           ),
         },
       });
