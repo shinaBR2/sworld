@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import '@tiptap/core/styles.css';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -118,7 +119,55 @@ function WritePage() {
               borderColor: 'divider',
               minHeight: 400,
               mb: 2,
-              p: 2,
+              p: 0,
+              '& .ProseMirror': {
+                padding: '16px',
+                minHeight: '350px',
+                outline: 'none',
+                '&:focus': {
+                  outline: 'none',
+                },
+                '& p': {
+                  margin: '0 0 16px 0',
+                  '&:last-child': {
+                    marginBottom: 0,
+                  },
+                },
+                '& h1, & h2, & h3, & h4, & h5, & h6': {
+                  margin: '24px 0 16px 0',
+                  fontWeight: 'bold',
+                  '&:first-child': {
+                    marginTop: 0,
+                  },
+                },
+                '& ul, & ol': {
+                  margin: '0 0 16px 0',
+                  paddingLeft: '24px',
+                },
+                '& blockquote': {
+                  margin: '0 0 16px 0',
+                  paddingLeft: '16px',
+                  borderLeft: '4px solid #e0e0e0',
+                  fontStyle: 'italic',
+                },
+                '& code': {
+                  backgroundColor: '#f5f5f5',
+                  padding: '2px 4px',
+                  borderRadius: '4px',
+                  fontFamily: 'monospace',
+                },
+                '& pre': {
+                  backgroundColor: '#f5f5f5',
+                  padding: '16px',
+                  borderRadius: '4px',
+                  overflowX: 'auto',
+                  margin: '0 0 16px 0',
+                  '& code': {
+                    backgroundColor: 'transparent',
+                    padding: 0,
+                  },
+                },
+              },
             }}
           >
             <EditorContent editor={editor} />
