@@ -232,5 +232,5 @@ const useAuthContext = (): AuthContextValue => {
 };
 
 // For some packages/ui usage
-export type { CustomUser, AuthContextValue };
 export { AuthProvider, useAuthContext };
+export type { AuthContextValue, CustomUser };
