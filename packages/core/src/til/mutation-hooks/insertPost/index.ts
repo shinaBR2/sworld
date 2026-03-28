@@ -1,4 +1,4 @@
-import { graphql } from '../../../graphql';
+import { graphql, type Posts_Insert_Input } from '../../../graphql';
 import { useAuthContext } from '../../../providers/auth';
 import { useQueryContext } from '../../../providers/query';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
@@ -24,13 +24,7 @@ interface MutationProps {
 }
 
 interface InsertPostVariables {
-  object: {
-    title: string;
-    slug: string;
-    markdownContent: string;
-    brief: string;
-    readTimeInMinutes: number;
-  };
+  object: Posts_Insert_Input;
 }
 
 const useInsertPost = (props: MutationProps) => {
