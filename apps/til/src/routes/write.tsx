@@ -13,8 +13,7 @@ function WritePage() {
         <div style={{ padding: '2rem' }}>
           <h1>Create a New TIL</h1>
           <p>
-            This page is only accessible for authenticated users.
-            Coming soon...
+            This page is only accessible for authenticated users. Coming soon...
           </p>
         </div>
       </Layout>
