@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useInsertPost } from 'core/til/mutation-hooks';
+import { useInsertPost } from 'core/til/mutation-hooks/insert-post';
 import { slugify } from 'core/universal/common';
 import { useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
