@@ -14,8 +14,8 @@ import StarterKit from '@tiptap/starter-kit';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { useState } from 'react';
+import { MenuBar } from '../components/editor/menuBar';
 import { Layout } from '../components/layout';
-import { MenuBar } from './menuBar';
 
 export const Route = createFileRoute('/write')({
   component: WritePage,
