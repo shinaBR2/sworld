@@ -32,17 +32,17 @@ describe('Date Helpers', () => {
   });
 
   describe('formatDateTime', () => {
-    it('formats date and time correctly', () => {
-      const result = formatDateTime('2023-05-15T14:30:00');
-      expect(result).toBe('May 15, 2023, 2:30 PM');
+    it('formats date and time correctly with 24h format and seconds', () => {
+      const result = formatDateTime('2023-05-15T14:30:45');
+      expect(result).toBe('May 15, 2023, 14:30:45');
     });
 
     it('handles different times', () => {
       expect(formatDateTime('2023-05-15T09:00:00')).toBe(
-        'May 15, 2023, 9:00 AM',
+        'May 15, 2023, 09:00:00',
       );
-      expect(formatDateTime('2023-05-15T23:59:00')).toBe(
-        'May 15, 2023, 11:59 PM',
+      expect(formatDateTime('2023-05-15T23:59:59')).toBe(
+        'May 15, 2023, 23:59:59',
       );
     });
   });

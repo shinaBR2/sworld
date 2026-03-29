@@ -1,6 +1,7 @@
 import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { formatDateTime } from 'core/universal/common';
 import type { RequiredLinkComponent } from '../../../watch/videos/types';
 import type { Post } from '../types';
 import { ReadTimeBadge, StyledCard, StyledDescription } from './styled';
