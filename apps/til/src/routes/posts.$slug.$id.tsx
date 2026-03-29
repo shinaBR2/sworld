@@ -23,7 +23,7 @@ function RouteComponent() {
     return (
       <Layout sx={{ overflow: 'auto', pb: 6 }}>
         <PostDetailPageContainer>
-          <Card sx={{ my: 3 }}>
+          <Card sx={{ my: 3, border: '1px solid', borderColor: 'divider' }}>
             <CardContent>
               <SkeletonPostMetadata />
               <SkeletonPostContent />
@@ -49,7 +49,7 @@ function RouteComponent() {
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <Card sx={{ my: 3 }}>
+        <Card sx={{ my: 3, border: 1, borderColor: 'divider' }}>
           <CardContent>
             <PostMetadata
               title={title}
