@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { RequiredLinkComponent } from '../../../watch/videos/types';
 import type { Post } from '../types';
+import { formatDate } from '../utils/date';
 import { ReadTimeBadge, StyledCard, StyledDescription } from './styled';
 import { genlinkProps } from './utils';
 
@@ -30,7 +31,7 @@ export const PostCard = (props: PostCardProps) => {
             </ReadTimeBadge>
             {createdAt && (
               <Typography variant="caption" color="text.secondary">
-                {createdAt}
+                {formatDate(createdAt)}
               </Typography>
             )}
           </Stack>
