@@ -42,14 +42,14 @@ const PostMetadata = (props: Props) => {
         )}
       </Box>
 
-      <Divider sx={{ my: 2 }} />
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <AccessTimeIcon fontSize="small" color="action" />
         <Typography variant="body2" color="text.secondary">
           {readTimeInMinutes} min read
         </Typography>
       </Box>
+
+      <Divider />
     </>
   );
 };
