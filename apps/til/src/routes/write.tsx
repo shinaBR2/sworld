@@ -5,10 +5,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  useBlocker,
+  useNavigate,
+} from '@tanstack/react-router';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
-import { lazy, Suspense, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
@@ -34,6 +38,29 @@ function WritePageContent() {
   const [error, setError] = useState('');
   const [editorContent, setEditorContent] = useState('');
   const editorRef = useRef<TipTapEditorRef>(null);
+
+  // Track if there are unsaved changes
+  const hasUnsavedChanges =
+    title.trim() !== '' ||
+    editorContent.trim() !== '' ||
+    (editorRef.current?.getMarkdown() || '') !== '';
+
+  // Block browser navigation when there are unsaved changes
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Block in-app navigation when there are unsaved changes
+  useBlocker({
+    shouldBlockFn: () => hasUnsavedChanges,
+  });
 
   const insertPost = useInsertPost({
     onSuccess: (data) => {

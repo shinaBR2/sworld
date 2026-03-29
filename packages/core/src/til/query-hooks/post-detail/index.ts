@@ -5,7 +5,7 @@ import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 
 const postDetailQuery = graphql(/* GraphQL */ `
-  query Post($id: uuid!) @cached {
+  query Post($id: uuid!) {
     posts_by_pk(id: $id) {
       title
       readTimeInMinutes
@@ -21,7 +21,10 @@ const postDetailQuery = graphql(/* GraphQL */ `
 
 const useLoadPostDetail = (id: string) => {
   const { getAccessToken, isSignedIn } = useAuthContext();
-  const { data, isLoading, error } = useRequest<PostQuery, { id: string }>({
+  const { data, isLoading, error, refetch } = useRequest<
+    PostQuery,
+    { id: string }
+  >({
     queryKey: ['post', id],
     document: postDetailQuery,
     variables: {
@@ -34,6 +37,7 @@ const useLoadPostDetail = (id: string) => {
     post: data?.posts_by_pk ? transformPost(data.posts_by_pk) : null,
     isLoading,
     error,
+    refetch,
   };
 };
 

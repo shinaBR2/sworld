@@ -31,7 +31,8 @@ type Documents = {
   '\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetAudiosAndFeelingsDocument;
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetPublicAudiosAndFeelingsDocument;
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n': typeof types.InsertPostDocument;
-  '\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.PostDocument;
+  '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n': typeof types.UpdatePostDocument;
+  '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.PostDocument;
   '\n  query AllPosts @cached {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.AllPostsDocument;
   '\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n': typeof types.FeatureFlagsDocument;
   '\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: "now()" }) {\n      id\n      readAt\n    }\n  }\n': typeof types.MarkNotificationAsReadDocument;
@@ -89,7 +90,9 @@ const documents: Documents = {
     types.GetPublicAudiosAndFeelingsDocument,
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n':
     types.InsertPostDocument,
-  '\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n':
+  '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n':
+    types.UpdatePostDocument,
+  '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n':
     types.PostDocument,
   '\n  query AllPosts @cached {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n':
     types.AllPostsDocument,
@@ -243,7 +246,13 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query Post($id: uuid!) @cached {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n',
+  source: '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n',
+): typeof import('./graphql').UpdatePostDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n',
 ): typeof import('./graphql').PostDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

@@ -12163,6 +12163,27 @@ export type InsertPostMutation = {
   } | null;
 };
 
+export type UpdatePostMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  object: Posts_Set_Input;
+}>;
+
+export type UpdatePostMutation = {
+  __typename?: 'mutation_root';
+  update_posts_by_pk?: {
+    __typename?: 'posts';
+    id: any;
+    title: string;
+    slug: string;
+    brief: string;
+    markdownContent: string;
+    readTimeInMinutes: number;
+    created_at: any;
+    updated_at: any;
+    status: string;
+  } | null;
+};
+
 export type PostQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -13033,8 +13054,26 @@ export const InsertPostDocument = new TypedDocumentString(`
   InsertPostMutation,
   InsertPostMutationVariables
 >;
+export const UpdatePostDocument = new TypedDocumentString(`
+    mutation UpdatePost($id: uuid!, $object: posts_set_input!) {
+  update_posts_by_pk(pk_columns: {id: $id}, _set: $object) {
+    id
+    title
+    slug
+    brief
+    markdownContent
+    readTimeInMinutes
+    created_at
+    updated_at
+    status
+  }
+}
+    `) as unknown as TypedDocumentString<
+  UpdatePostMutation,
+  UpdatePostMutationVariables
+>;
 export const PostDocument = new TypedDocumentString(`
-    query Post($id: uuid!) @cached {
+    query Post($id: uuid!) {
   posts_by_pk(id: $id) {
     title
     readTimeInMinutes
