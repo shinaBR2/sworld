@@ -1,5 +1,5 @@
-import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { RequiredLinkComponent } from '../../../watch/videos/types';
 import type { Post } from '../types';
@@ -17,27 +17,18 @@ const PostCard = (props: PostCardProps) => {
   return (
     <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
       <StyledCard>
-        <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: '1.125rem',
-              lineHeight: 1.4,
-              mb: 1.5,
-              color: 'text.primary',
-            }}
-          >
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
             {title}
           </Typography>
           <StyledDescription variant="body2" color="text.secondary">
             {brief}
           </StyledDescription>
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <Stack direction="row" spacing={1}>
             <ReadTimeBadge variant="caption">
               {readTimeInMinutes} min read
             </ReadTimeBadge>
-          </Box>
+          </Stack>
         </CardContent>
       </StyledCard>
     </LinkComponent>

@@ -1,6 +1,6 @@
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
@@ -19,39 +19,13 @@ const Header = (props: HeaderProps) => {
   const { sites, LinkComponent } = props;
 
   return (
-    <AppBar
-      position="sticky"
-      color="default"
-      elevation={0}
-      sx={{
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        backgroundColor: 'background.paper',
-        boxShadow: 'none',
-        px: { xs: 2, sm: 3, md: 4 },
-      }}
-    >
+    <AppBar position="sticky" color="default" elevation={0}>
       <Container maxWidth="lg">
-        <Toolbar
-          sx={{
-            display: 'flex',
-            gap: 2,
-            justifyContent: 'space-between',
-            minHeight: { xs: 56, sm: 64 },
-            py: { xs: 2, sm: 3 },
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              minWidth: 'fit-content',
-              gap: 2,
-            }}
-          >
+        <Toolbar>
+          <Stack direction="row" alignItems="center" spacing={2}>
             <Logo LinkComponent={LinkComponent} />
             <SiteChoices activeSite="til" sites={sites} />
-          </Box>
+          </Stack>
         </Toolbar>
       </Container>
     </AppBar>

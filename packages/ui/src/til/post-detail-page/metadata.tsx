@@ -1,5 +1,5 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { MuiStyledProps } from '../../universal';
 
@@ -12,34 +12,17 @@ const PostMetadata = (props: Props) => {
   const { title, readTimeInMinutes, sx } = props;
 
   return (
-    <Box sx={sx}>
-      <Typography
-        variant="h3"
-        component="h1"
-        sx={{
-          fontWeight: 700,
-          fontSize: { xs: '1.75rem', sm: '2.25rem' },
-          lineHeight: 1.3,
-          color: 'text.primary',
-          mb: 2,
-        }}
-      >
+    <Stack sx={sx} spacing={2}>
+      <Typography variant="h4" component="h1">
         {title}
       </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          color: 'text.secondary',
-        }}
-      >
-        <AccessTimeIcon sx={{ fontSize: '1rem' }} />
-        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <AccessTimeIcon fontSize="small" color="action" />
+        <Typography variant="body2" color="text.secondary">
           {readTimeInMinutes} min read
         </Typography>
-      </Box>
-    </Box>
+      </Stack>
+    </Stack>
   );
 };
 
