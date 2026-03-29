@@ -1,5 +1,6 @@
 import { graphql } from '../../../graphql';
 import type { AllPostsQuery } from '../../../graphql/graphql';
+import { useAuthContext } from '../../../providers/auth';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 
@@ -17,9 +18,11 @@ const postsQuery = graphql(/* GraphQL */ `
 `);
 
 const useLoadPosts = () => {
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { data, isLoading, error } = useRequest<AllPostsQuery>({
     queryKey: ['posts'],
     document: postsQuery,
+    getAccessToken: isSignedIn ? getAccessToken : undefined,
   });
 
   return {
