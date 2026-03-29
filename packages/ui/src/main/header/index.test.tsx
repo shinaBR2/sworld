@@ -16,6 +16,13 @@ vi.mock('../../universal/images/image', () => ({
   ),
 }));
 
+// Mock the ThemeToggleButton component
+vi.mock('../../universal/minimalism', () => ({
+  ThemeToggleButton: () => (
+    <div data-testid="mock-theme-toggle">Theme Toggle</div>
+  ),
+}));
+
 describe('Header', () => {
   const mockUser = {
     id: '123',
