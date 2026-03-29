@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Markdown } from '@tiptap/markdown';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
@@ -35,6 +36,7 @@ function WritePageContent() {
   const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [editorContent, setEditorContent] = useState('');
 
   const insertPost = useInsertPost({
     onSuccess: (data) => {
@@ -53,16 +55,21 @@ function WritePageContent() {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Markdown,
       Placeholder.configure({
         placeholder: 'Start writing your TIL post...',
       }),
     ],
     content: '',
+    contentType: 'markdown',
     editable: !isSubmitting,
+    onUpdate: ({ editor }) => {
+      setEditorContent(editor.getText());
+    },
   });
 
   const handleSubmit = async () => {
-    if (!title.trim() || !editor?.getText().trim()) {
+    if (!title.trim() || !editorContent.trim()) {
       setError('Title and content are required');
       return;
     }
@@ -71,7 +78,7 @@ function WritePageContent() {
     setError('');
 
     try {
-      const content = editor?.getHTML() || '';
+      const content = editor.getMarkdown() || '';
       const text = editor?.getText().trim() || '';
       const slug = slugify(title);
 
@@ -171,9 +178,7 @@ function WritePageContent() {
             <Button
               variant="contained"
               onClick={handleSubmit}
-              disabled={
-                isSubmitting || !title.trim() || !editor?.getText().trim()
-              }
+              disabled={isSubmitting || !title.trim() || !editorContent.trim()}
               startIcon={isSubmitting ? <CircularProgress size={16} /> : null}
               fullWidth
             >
