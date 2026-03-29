@@ -6,7 +6,7 @@
     "dev": "pnpm run pre-dev && vite",
     "pre-dev": "cp ../../.env.development.local .env",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
-    "test": "jest",
+    "test": "jest --ci",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "biome lint --quit-on-problem .",

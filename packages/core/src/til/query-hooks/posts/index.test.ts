@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { useAuthContext } from '../../../providers/auth';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { useLoadPosts } from './index';
 
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
+}));
+
+vi.mock('../../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
 }));
 
 const mockPosts = [
@@ -19,6 +24,10 @@ const mockPosts = [
 describe('useLoadPosts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useAuthContext as Mock).mockReturnValue({
+      isSignedIn: false,
+      getAccessToken: undefined,
+    });
   });
 
   // Update all test cases to use the mock directly
