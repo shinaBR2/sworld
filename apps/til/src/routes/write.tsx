@@ -59,8 +59,13 @@ function WritePageContent() {
 
   // Block in-app navigation when there are unsaved changes
   useBlocker({
-    shouldBlockFn: () => hasUnsavedChanges,
-    disabled: !hasUnsavedChanges,
+    condition: hasUnsavedChanges,
+    enableBeforeUnload: hasUnsavedChanges,
+    // blockerFn: () => {
+    //   return window.confirm(
+    //     'You have unsaved changes. Are you sure you want to leave?',
+    //   );
+    // },
   });
 
   const insertPost = useInsertPost({
