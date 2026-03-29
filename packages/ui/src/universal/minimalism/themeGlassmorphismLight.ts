@@ -5,7 +5,7 @@ const lightGlassmorphismTheme = createTheme({
     mode: 'light',
     background: {
       default: 'transparent',
-      paper: 'rgba(255, 255, 255, 0.7)',
+      paper: 'rgba(255, 255, 255, 0.15)',
     },
     primary: {
       main: '#667eea',
@@ -27,7 +27,7 @@ const lightGlassmorphismTheme = createTheme({
     divider: 'rgba(0, 0, 0, 0.1)',
   },
   shape: {
-    borderRadius: 4,
+    borderRadius: 8,
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -47,7 +47,7 @@ const lightGlassmorphismTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
           border: '1px solid rgba(0, 0, 0, 0.1)',
@@ -73,12 +73,11 @@ const lightGlassmorphismTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
-          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.5)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.37)',
         },
       },
     },
@@ -96,7 +95,7 @@ const lightGlassmorphismTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.5)',
@@ -108,7 +107,7 @@ const lightGlassmorphismTheme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             borderRadius: 12,
@@ -128,7 +127,7 @@ const lightGlassmorphismTheme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+          backgroundColor: 'rgba(0, 0, 0, 0.03)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
           border: '1px solid rgba(0, 0, 0, 0.1)',
@@ -146,10 +145,8 @@ const lightGlassmorphismTheme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          background:
-            'linear-gradient(135deg, #e0e7ff 0%, #d1d5ff 50%, #c7b8ff 100%)',
+          background: '#f8f9fa',
           minHeight: '100vh',
-          backgroundAttachment: 'fixed',
         },
       },
     },

@@ -27,7 +27,7 @@ const glassmorphismTheme = createTheme({
     divider: 'rgba(255, 255, 255, 0.1)',
   },
   shape: {
-    borderRadius: 4,
+    borderRadius: 8,
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -71,7 +71,6 @@ const glassmorphismTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',

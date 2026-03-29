@@ -10,7 +10,6 @@ import { styled } from '@mui/material/styles';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius * 2,
   padding: theme.spacing(3),
   display: 'flex',
   flexDirection: 'column',
