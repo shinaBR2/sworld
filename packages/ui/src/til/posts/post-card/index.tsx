@@ -1,4 +1,5 @@
 import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { RequiredLinkComponent } from '../../../watch/videos/types';
 import type { Post } from '../types';
@@ -11,7 +12,7 @@ interface PostCardProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 
 export const PostCard = (props: PostCardProps) => {
   const { post, LinkComponent } = props;
-  const { title, brief, readTimeInMinutes } = post;
+  const { title, brief, readTimeInMinutes, createdAt } = post;
 
   return (
     <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
@@ -23,9 +24,16 @@ export const PostCard = (props: PostCardProps) => {
           <StyledDescription variant="body2" color="text.secondary">
             {brief}
           </StyledDescription>
-          <ReadTimeBadge variant="caption">
-            {readTimeInMinutes} min read
-          </ReadTimeBadge>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <ReadTimeBadge variant="caption">
+              {readTimeInMinutes} min read
+            </ReadTimeBadge>
+            {createdAt && (
+              <Typography variant="caption" color="text.secondary">
+                {createdAt}
+              </Typography>
+            )}
+          </Stack>
         </CardContent>
       </StyledCard>
     </LinkComponent>
