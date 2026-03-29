@@ -71,10 +71,10 @@ select_permissions:
         - visibility
       filter:
         _or:
-          - status:
-              _eq: published
           - author_id:
               _eq: X-Hasura-User-Id
+          - visibility:
+              _eq: public
     comment: ""
 update_permissions:
   - role: user
