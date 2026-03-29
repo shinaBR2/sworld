@@ -19,6 +19,7 @@
     "@mui/material": "^5.10.12",
     "@tanstack/react-router": "^1.78.2",
     "@tiptap/core": "^3.0.0",
+    "@tiptap/extension-code-block": "^3.21.0",
     "@tiptap/extension-placeholder": "^3.0.0",
     "@tiptap/markdown": "^3.21.0",
     "@tiptap/pm": "^3.0.0",

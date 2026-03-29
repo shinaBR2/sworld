@@ -1,5 +1,3 @@
-import './tiptap-styles.css';
-
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,16 +6,14 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import Placeholder from '@tiptap/extension-placeholder';
-import { Markdown } from '@tiptap/markdown';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
-import { useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
-import { MenuBar } from '../components/editor/menuBar';
+import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
+
+const TipTapEditor = lazy(() => import('../components/editor/tiptap-editor'));
 
 export const Route = createFileRoute('/write')({
   component: WritePage,
@@ -37,6 +33,7 @@ function WritePageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [editorContent, setEditorContent] = useState('');
+  const editorRef = useRef<TipTapEditorRef>(null);
 
   const insertPost = useInsertPost({
     onSuccess: (data) => {
@@ -52,24 +49,8 @@ function WritePageContent() {
     },
   });
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Markdown,
-      Placeholder.configure({
-        placeholder: 'Start writing your TIL post...',
-      }),
-    ],
-    content: '',
-    contentType: 'markdown',
-    editable: !isSubmitting,
-    onUpdate: ({ editor }) => {
-      setEditorContent(editor.getText());
-    },
-  });
-
   const handleSubmit = async () => {
-    if (!title.trim() || !editorContent.trim()) {
+    if (!title.trim() || !editorContent.trim() || !editorRef.current) {
       setError('Title and content are required');
       return;
     }
@@ -78,8 +59,8 @@ function WritePageContent() {
     setError('');
 
     try {
-      const content = editor.getMarkdown() || '';
-      const text = editor?.getText().trim() || '';
+      const content = editorRef.current.getMarkdown() || '';
+      const text = editorRef.current.getText().trim() || '';
       const slug = slugify(title);
 
       await insertPost({
@@ -133,25 +114,27 @@ function WritePageContent() {
           )}
         </Container>
 
-        {/* MenuBar */}
-        <Container
-          maxWidth={false}
-          sx={{
-            py: 1,
-            borderBottom: 1,
-            borderColor: 'divider',
-            backgroundColor: 'background.paper',
-          }}
+        {/* Editor with lazy loading */}
+        <Suspense
+          fallback={
+            <Box
+              sx={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          }
         >
-          <MenuBar editor={editor} />
-        </Container>
-
-        {/* Editor */}
-        <Box sx={{ flex: 1, overflow: 'auto' }}>
-          <Container maxWidth={false} sx={{ py: 4 }}>
-            <EditorContent editor={editor} />
-          </Container>
-        </Box>
+          <TipTapEditor
+            ref={editorRef}
+            isSubmitting={isSubmitting}
+            onUpdate={setEditorContent}
+          />
+        </Suspense>
 
         {/* Footer */}
         <Container

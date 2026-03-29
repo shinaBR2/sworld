@@ -346,6 +346,9 @@ importers:
       '@tiptap/core':
         specifier: ^3.0.0
         version: 3.21.0(@tiptap/pm@3.21.0)
+      '@tiptap/extension-code-block':
+        specifier: ^3.21.0
+        version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))(@tiptap/pm@3.21.0)
       '@tiptap/extension-placeholder':
         specifier: ^3.0.0
         version: 3.21.0(@tiptap/extensions@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))(@tiptap/pm@3.21.0))
