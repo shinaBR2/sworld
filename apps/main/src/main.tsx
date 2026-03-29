@@ -6,7 +6,7 @@ import { PostHogProvider } from 'posthog-js/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorFallback } from 'ui/universal/error-boundary';
-import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
+import { GlassmorphismProvider } from 'ui/universal/minimalism';
 import {
   auth0Config,
   extensionId,
@@ -39,9 +39,9 @@ declare module '@tanstack/react-router' {
 
 const App = () => {
   return (
-    <UniversalMinimalismThemeProvider>
+    <GlassmorphismProvider>
       <RouterProvider router={router} />
-    </UniversalMinimalismThemeProvider>
+    </GlassmorphismProvider>
   );
 };
 
