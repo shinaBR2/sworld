@@ -95,7 +95,13 @@ const MenuBar = ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
       <Tooltip title="Code Block">
         <IconButton
           size="small"
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .toggleCodeBlock({ language: 'javascript' })
+              .run()
+          }
           color={editor.isActive('codeBlock') ? 'primary' : 'default'}
         >
           <CodeIcon fontSize="small" />
