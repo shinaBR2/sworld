@@ -1,4 +1,7 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import type { MuiStyledProps } from '../../universal';
 
@@ -22,6 +25,23 @@ const PostMetadata = (props: Props) => {
       >
         {title}
       </Typography>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Chip
+          label="Published"
+          color="success"
+          size="small"
+          variant="outlined"
+        />
+        {createdAt && (
+          <Typography variant="body2" color="text.secondary">
+            {createdAt}
+          </Typography>
+        )}
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
       <Typography
         variant="body2"
         color="text.secondary"
@@ -29,7 +49,6 @@ const PostMetadata = (props: Props) => {
       >
         <AccessTimeIcon fontSize="small" />
         {readTimeInMinutes} min read
-        {createdAt && ` · ${createdAt}`}
       </Typography>
     </>
   );
