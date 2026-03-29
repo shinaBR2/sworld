@@ -36,6 +36,7 @@ function WritePageContent() {
   const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [editorContent, setEditorContent] = useState('');
 
   const insertPost = useInsertPost({
     onSuccess: (data) => {
@@ -50,8 +51,6 @@ function WritePageContent() {
       console.error('Save error:', error);
     },
   });
-
-  const [editorContent, setEditorContent] = useState('');
 
   const editor = useEditor({
     extensions: [
