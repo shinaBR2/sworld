@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import { Link } from '@tanstack/react-router';
 import type { useLoadPosts } from 'core/til/query-hooks/posts';
 import type { RequiredLinkComponent } from '../../watch/videos/types';
@@ -9,24 +9,15 @@ import { texts } from './texts';
 
 const Loading = () => {
   return (
-    <Stack direction="row" flexWrap="wrap" spacing={3}>
+    <Grid container spacing={2}>
       {Array(12)
         .fill(0)
         .map((_, i) => (
-          <Stack
-            key={`skeleton-${i}`}
-            sx={{
-              width: {
-                xs: '100%',
-                sm: 'calc(50% - 12px)',
-                md: 'calc(33.333% - 16px)',
-              },
-            }}
-          >
+          <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
             <SkeletonPostCard />
-          </Stack>
+          </Grid>
         ))}
-    </Stack>
+    </Grid>
   );
 };
 
@@ -40,34 +31,19 @@ const HomeContainer = (props: HomeContainerProps) => {
 
   return (
     <Container
-      maxWidth="lg"
-      sx={{
-        flex: 1,
-        height: 0,
-        py: { xs: 3, sm: 4 },
-        px: { xs: 2, sm: 3, md: 4 },
-        overflow: 'auto',
-      }}
+      maxWidth={false}
+      sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}
     >
       {isLoading ? (
         <Loading />
       ) : posts.length > 0 ? (
-        <Stack direction="row" flexWrap="wrap" spacing={3}>
+        <Grid container spacing={2}>
           {posts.map((p) => (
-            <Stack
-              key={p.id}
-              sx={{
-                width: {
-                  xs: '100%',
-                  sm: 'calc(50% - 12px)',
-                  md: 'calc(33.333% - 16px)',
-                },
-              }}
-            >
+            <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
               <PostCard post={p} LinkComponent={Link} />
-            </Stack>
+            </Grid>
           ))}
-        </Stack>
+        </Grid>
       ) : (
         texts.noPosts
       )}
