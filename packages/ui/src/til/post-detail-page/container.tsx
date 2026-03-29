@@ -5,19 +5,7 @@ interface PostDetailPageContainerProps {
 }
 
 const PostDetailPageContainer = (props: PostDetailPageContainerProps) => {
-  const { children } = props;
-
-  return (
-    <Container
-      maxWidth="md"
-      sx={{
-        px: { xs: 2, sm: 3, md: 4 },
-        py: { xs: 2, sm: 3 },
-      }}
-    >
-      {children}
-    </Container>
-  );
+  return <Container maxWidth="md">{props.children}</Container>;
 };
 
 export { PostDetailPageContainer };

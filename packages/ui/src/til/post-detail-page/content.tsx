@@ -1,4 +1,4 @@
-import Stack from '@mui/material/Stack';
+import { CardContent } from '@mui/material';
 import { CodeBlockWrapper } from './styled';
 
 interface Props {
@@ -6,12 +6,10 @@ interface Props {
 }
 
 const PostContent = (props: Props) => {
-  const { children } = props;
-
   return (
-    <Stack spacing={2} mt={4}>
-      <CodeBlockWrapper>{children}</CodeBlockWrapper>
-    </Stack>
+    <CardContent>
+      <CodeBlockWrapper>{props.children}</CodeBlockWrapper>
+    </CardContent>
   );
 };
 
