@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { Link } from '@tanstack/react-router';
 import type { useLoadPosts } from 'core/til/query-hooks/posts';
 import type { RequiredLinkComponent } from '../../watch/videos/types';
@@ -9,15 +9,24 @@ import { texts } from './texts';
 
 const Loading = () => {
   return (
-    <Grid container spacing={3}>
+    <Stack direction="row" flexWrap="wrap" spacing={3}>
       {Array(12)
         .fill(0)
         .map((_, i) => (
-          <Grid item xs={12} sm={6} md={4} key={`skeleton-${i}`}>
+          <Stack
+            key={`skeleton-${i}`}
+            sx={{
+              width: {
+                xs: '100%',
+                sm: 'calc(50% - 12px)',
+                md: 'calc(33.333% - 16px)',
+              },
+            }}
+          >
             <SkeletonPostCard />
-          </Grid>
+          </Stack>
         ))}
-    </Grid>
+    </Stack>
   );
 };
 
@@ -43,13 +52,22 @@ const HomeContainer = (props: HomeContainerProps) => {
       {isLoading ? (
         <Loading />
       ) : posts.length > 0 ? (
-        <Grid container spacing={3}>
+        <Stack direction="row" flexWrap="wrap" spacing={3}>
           {posts.map((p) => (
-            <Grid item xs={12} sm={6} md={4} key={p.id}>
+            <Stack
+              key={p.id}
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: 'calc(50% - 12px)',
+                  md: 'calc(33.333% - 16px)',
+                },
+              }}
+            >
               <PostCard post={p} LinkComponent={Link} />
-            </Grid>
+            </Stack>
           ))}
-        </Grid>
+        </Stack>
       ) : (
         texts.noPosts
       )}
