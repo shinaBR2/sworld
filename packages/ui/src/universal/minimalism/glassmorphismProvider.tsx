@@ -6,8 +6,8 @@ import {
   GlassmorphismThemeContextProvider,
   useGlassmorphismTheme,
 } from './themeContext';
-import darkTheme from './themeGlassmorphism';
-import lightTheme from './themeGlassmorphismLight';
+import { theme as darkTheme } from './themeGlassmorphism';
+import { theme as lightTheme } from './themeGlassmorphismLight';
 
 interface InnerProviderProps extends Omit<ThemeProviderProps, 'theme'> {
   children: React.ReactNode;
@@ -44,5 +44,4 @@ const GlassmorphismProvider = (props: GlassmorphismProviderProps) => {
   );
 };
 
-export default GlassmorphismProvider;
-export { useGlassmorphismTheme };
+export { GlassmorphismProvider, useGlassmorphismTheme };

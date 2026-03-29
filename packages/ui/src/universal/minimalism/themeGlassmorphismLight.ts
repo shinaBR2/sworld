@@ -168,4 +168,4 @@ const lightGlassmorphismTheme = createTheme({
 
 const theme = responsiveFontSizes(lightGlassmorphismTheme);
 
-export default theme;
+export { theme };

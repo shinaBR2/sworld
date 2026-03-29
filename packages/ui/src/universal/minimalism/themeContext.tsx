@@ -22,7 +22,7 @@ interface ThemeProviderProps {
 }
 
 const GlassmorphismThemeContextProvider = (props: ThemeProviderProps) => {
-  const { children, defaultMode = 'dark' } = props;
+  const { children, defaultMode = 'light' } = props;
   const [mode, setMode] = useState<ThemeMode>(defaultMode);
 
   const toggleTheme = useCallback(() => {

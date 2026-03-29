@@ -1,8 +1,9 @@
-import GlassmorphismProvider, {
+import {
+  GlassmorphismProvider,
   useGlassmorphismTheme,
 } from './glassmorphismProvider';
 import UniversalMinimalismThemeProvider from './ThemeProvider';
-import ThemeToggleButton from './themeToggleButton';
+import { ThemeToggleButton } from './themeToggleButton';
 
 export {
   GlassmorphismProvider,

@@ -23,4 +23,4 @@ const ThemeToggleButton = (props: ThemeToggleButtonProps) => {
   );
 };
 
-export default ThemeToggleButton;
+export { ThemeToggleButton };

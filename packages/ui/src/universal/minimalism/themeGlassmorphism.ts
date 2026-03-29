@@ -17,7 +17,7 @@ const glassmorphismTheme = createTheme({
       main: '#764ba2',
       light: '#9a7ab8',
       dark: '#5a3a7c',
-      contrastText: '#7c5b5b',
+      contrastText: '#ffffff',
     },
     text: {
       primary: 'rgba(255, 255, 255, 0.9)',
@@ -140,6 +140,16 @@ const glassmorphismTheme = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: 'rgba(255, 255, 255, 0.7)',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          },
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
@@ -155,4 +165,4 @@ const glassmorphismTheme = createTheme({
 
 const theme = responsiveFontSizes(glassmorphismTheme);
 
-export default theme;
+export { theme };
