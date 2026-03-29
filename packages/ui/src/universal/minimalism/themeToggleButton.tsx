@@ -13,7 +13,9 @@ const ThemeToggleButton = (props: ThemeToggleButtonProps) => {
   const { mode, toggleTheme } = useGlassmorphismTheme();
 
   return (
-    <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+    <Tooltip
+      title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+    >
       <IconButton onClick={toggleTheme} size={size} aria-label="toggle theme">
         {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
       </IconButton>
