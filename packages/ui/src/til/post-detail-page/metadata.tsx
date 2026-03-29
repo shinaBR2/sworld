@@ -28,14 +28,7 @@ const PostMetadata = (props: Props) => {
         {title}
       </Typography>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <AccessTimeIcon fontSize="small" color="action" />
-        <Typography variant="body2" color="text.secondary">
-          {readTimeInMinutes} min read
-        </Typography>
-      </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
         <Chip
           label={status || 'Published'}
           color={status === 'published' ? 'success' : 'default'}
@@ -48,7 +41,15 @@ const PostMetadata = (props: Props) => {
           </Typography>
         )}
       </Box>
+
       <Divider sx={{ my: 2 }} />
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <AccessTimeIcon fontSize="small" color="action" />
+        <Typography variant="body2" color="text.secondary">
+          {readTimeInMinutes} min read
+        </Typography>
+      </Box>
     </>
   );
 };
