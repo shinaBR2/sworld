@@ -36,12 +36,12 @@ const IconContainer: StyledComponent<BoxProps & { customColor?: string }> =
   })<{ customColor?: string }>(({ theme, customColor }) => {
     const iconColor = customColor || theme.palette.primary.main;
     return {
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(1.5),
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      width: 70,
-      height: 70,
+      width: 60,
+      height: 60,
       borderRadius: '50%',
       backgroundColor: `${iconColor}15`,
       transition: 'all 0.3s ease',
@@ -61,9 +61,8 @@ const IconTypography: StyledComponent<
   color: customColor || theme.palette.primary.main,
 }));
 
-const TitleTypography = styled(Typography)(({ theme }) => ({
+const TitleTypography = styled(Typography)(() => ({
   fontWeight: 'bold',
-  marginBottom: theme.spacing(1),
   transition: 'color 0.3s ease',
 })) as typeof Typography;
 
@@ -79,14 +78,14 @@ const CardContentBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   width: '100%',
   height: '100%',
-  padding: theme.spacing(3),
+  padding: theme.spacing(1.5),
 })) as typeof Box;
 
 export {
-  StyledCard,
+  CardContentBox,
+  DescriptionTypography,
   IconContainer,
   IconTypography,
+  StyledCard,
   TitleTypography,
-  DescriptionTypography,
-  CardContentBox,
 };
