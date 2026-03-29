@@ -7783,18 +7783,21 @@ input playlist_videos_variance_order_by {
 Blog posts initial idea is fetch from hashnode for til
 """
 type posts {
+  author_id: String!
   brief: String!
   created_at: timestamptz!
   """
   Hashnode public id
   """
-  hId: String!
+  hId: String
   id: uuid!
   markdownContent: String!
   readTimeInMinutes: Int!
   slug: String!
+  status: String!
   title: String!
   updated_at: timestamptz!
+  visibility: String!
 }
 
 """
@@ -7836,6 +7839,7 @@ input posts_bool_exp {
   _and: [posts_bool_exp!]
   _not: posts_bool_exp
   _or: [posts_bool_exp!]
+  author_id: String_comparison_exp
   brief: String_comparison_exp
   created_at: timestamptz_comparison_exp
   hId: String_comparison_exp
@@ -7843,8 +7847,10 @@ input posts_bool_exp {
   markdownContent: String_comparison_exp
   readTimeInMinutes: Int_comparison_exp
   slug: String_comparison_exp
+  status: String_comparison_exp
   title: String_comparison_exp
   updated_at: timestamptz_comparison_exp
+  visibility: String_comparison_exp
 }
 
 """
@@ -7872,6 +7878,7 @@ input posts_inc_input {
 input type for inserting data into table "posts"
 """
 input posts_insert_input {
+  author_id: String
   brief: String
   created_at: timestamptz
   """
@@ -7882,14 +7889,17 @@ input posts_insert_input {
   markdownContent: String
   readTimeInMinutes: Int
   slug: String
+  status: String
   title: String
   updated_at: timestamptz
+  visibility: String
 }
 
 """
 aggregate max on columns
 """
 type posts_max_fields {
+  author_id: String
   brief: String
   created_at: timestamptz
   """
@@ -7900,14 +7910,17 @@ type posts_max_fields {
   markdownContent: String
   readTimeInMinutes: Int
   slug: String
+  status: String
   title: String
   updated_at: timestamptz
+  visibility: String
 }
 
 """
 aggregate min on columns
 """
 type posts_min_fields {
+  author_id: String
   brief: String
   created_at: timestamptz
   """
@@ -7918,8 +7931,10 @@ type posts_min_fields {
   markdownContent: String
   readTimeInMinutes: Int
   slug: String
+  status: String
   title: String
   updated_at: timestamptz
+  visibility: String
 }
 
 """
@@ -7949,6 +7964,7 @@ input posts_on_conflict {
 Ordering options when selecting data from "posts".
 """
 input posts_order_by {
+  author_id: order_by
   brief: order_by
   created_at: order_by
   hId: order_by
@@ -7956,8 +7972,10 @@ input posts_order_by {
   markdownContent: order_by
   readTimeInMinutes: order_by
   slug: order_by
+  status: order_by
   title: order_by
   updated_at: order_by
+  visibility: order_by
 }
 
 """
@@ -7971,6 +7989,10 @@ input posts_pk_columns_input {
 select columns of table "posts"
 """
 enum posts_select_column {
+  """
+  column name
+  """
+  author_id
   """
   column name
   """
@@ -8002,17 +8024,26 @@ enum posts_select_column {
   """
   column name
   """
+  status
+  """
+  column name
+  """
   title
   """
   column name
   """
   updated_at
+  """
+  column name
+  """
+  visibility
 }
 
 """
 input type for updating data in table "posts"
 """
 input posts_set_input {
+  author_id: String
   brief: String
   created_at: timestamptz
   """
@@ -8023,8 +8054,10 @@ input posts_set_input {
   markdownContent: String
   readTimeInMinutes: Int
   slug: String
+  status: String
   title: String
   updated_at: timestamptz
+  visibility: String
 }
 
 """
@@ -8066,6 +8099,7 @@ input posts_stream_cursor_input {
 Initial value of the column from where the streaming should start
 """
 input posts_stream_cursor_value_input {
+  author_id: String
   brief: String
   created_at: timestamptz
   """
@@ -8076,8 +8110,10 @@ input posts_stream_cursor_value_input {
   markdownContent: String
   readTimeInMinutes: Int
   slug: String
+  status: String
   title: String
   updated_at: timestamptz
+  visibility: String
 }
 
 """
@@ -8091,6 +8127,10 @@ type posts_sum_fields {
 update columns of table "posts"
 """
 enum posts_update_column {
+  """
+  column name
+  """
+  author_id
   """
   column name
   """
@@ -8122,11 +8162,19 @@ enum posts_update_column {
   """
   column name
   """
+  status
+  """
+  column name
+  """
   title
   """
   column name
   """
   updated_at
+  """
+  column name
+  """
+  visibility
 }
 
 input posts_updates {
@@ -10422,8 +10470,8 @@ type shared_video_recipients {
   """
   An object relationship
   """
-  video: videos!
-  videoId: uuid!
+  video: videos
+  videoId: uuid
   viewed: Boolean!
 }
 

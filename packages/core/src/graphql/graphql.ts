@@ -5626,16 +5626,19 @@ export type Playlist_Videos_Variance_Order_By = {
 /** Blog posts initial idea is fetch from hashnode for til */
 export type Posts = {
   __typename?: 'posts';
+  author_id: Scalars['String']['output'];
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
-  hId: Scalars['String']['output'];
+  hId?: Maybe<Scalars['String']['output']>;
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   readTimeInMinutes: Scalars['Int']['output'];
   slug: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
+  visibility: Scalars['String']['output'];
 };
 
 /** aggregated selection of "posts" */
@@ -5678,6 +5681,7 @@ export type Posts_Bool_Exp = {
   _and?: InputMaybe<Array<Posts_Bool_Exp>>;
   _not?: InputMaybe<Posts_Bool_Exp>;
   _or?: InputMaybe<Array<Posts_Bool_Exp>>;
+  author_id?: InputMaybe<String_Comparison_Exp>;
   brief?: InputMaybe<String_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   hId?: InputMaybe<String_Comparison_Exp>;
@@ -5685,8 +5689,10 @@ export type Posts_Bool_Exp = {
   markdownContent?: InputMaybe<String_Comparison_Exp>;
   readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
+  status?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  visibility?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "posts" */
@@ -5704,6 +5710,7 @@ export type Posts_Inc_Input = {
 
 /** input type for inserting data into table "posts" */
 export type Posts_Insert_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5712,13 +5719,16 @@ export type Posts_Insert_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate max on columns */
 export type Posts_Max_Fields = {
   __typename?: 'posts_max_fields';
+  author_id?: Maybe<Scalars['String']['output']>;
   brief?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** Hashnode public id */
@@ -5727,13 +5737,16 @@ export type Posts_Max_Fields = {
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  visibility?: Maybe<Scalars['String']['output']>;
 };
 
 /** aggregate min on columns */
 export type Posts_Min_Fields = {
   __typename?: 'posts_min_fields';
+  author_id?: Maybe<Scalars['String']['output']>;
   brief?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** Hashnode public id */
@@ -5742,8 +5755,10 @@ export type Posts_Min_Fields = {
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  visibility?: Maybe<Scalars['String']['output']>;
 };
 
 /** response of any mutation on the table "posts" */
@@ -5764,6 +5779,7 @@ export type Posts_On_Conflict = {
 
 /** Ordering options when selecting data from "posts". */
 export type Posts_Order_By = {
+  author_id?: InputMaybe<Order_By>;
   brief?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   hId?: InputMaybe<Order_By>;
@@ -5771,8 +5787,10 @@ export type Posts_Order_By = {
   markdownContent?: InputMaybe<Order_By>;
   readTimeInMinutes?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  visibility?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: posts */
@@ -5782,6 +5800,8 @@ export type Posts_Pk_Columns_Input = {
 
 /** select columns of table "posts" */
 export enum Posts_Select_Column {
+  /** column name */
+  AuthorId = 'author_id',
   /** column name */
   Brief = 'brief',
   /** column name */
@@ -5797,13 +5817,18 @@ export enum Posts_Select_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
+  Status = 'status',
+  /** column name */
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  Visibility = 'visibility',
 }
 
 /** input type for updating data in table "posts" */
 export type Posts_Set_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5812,8 +5837,10 @@ export type Posts_Set_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate stddev on columns */
@@ -5844,6 +5871,7 @@ export type Posts_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Posts_Stream_Cursor_Value_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5852,8 +5880,10 @@ export type Posts_Stream_Cursor_Value_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate sum on columns */
@@ -5864,6 +5894,8 @@ export type Posts_Sum_Fields = {
 
 /** update columns of table "posts" */
 export enum Posts_Update_Column {
+  /** column name */
+  AuthorId = 'author_id',
   /** column name */
   Brief = 'brief',
   /** column name */
@@ -5879,9 +5911,13 @@ export enum Posts_Update_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
+  Status = 'status',
+  /** column name */
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  Visibility = 'visibility',
 }
 
 export type Posts_Updates = {
@@ -7252,8 +7288,8 @@ export type Shared_Video_Recipients = {
   recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
-  video: Videos;
-  videoId: Scalars['uuid']['output'];
+  video?: Maybe<Videos>;
+  videoId?: Maybe<Scalars['uuid']['output']>;
   viewed: Scalars['Boolean']['output'];
 };
 
@@ -12141,6 +12177,8 @@ export type PostQuery = {
     id: any;
     brief: string;
     slug: string;
+    created_at: any;
+    status: string;
   } | null;
 };
 
@@ -12156,6 +12194,8 @@ export type AllPostsQuery = {
     readTimeInMinutes: number;
     title: string;
     slug: string;
+    created_at: any;
+    status: string;
   }>;
 };
 
@@ -13002,6 +13042,8 @@ export const PostDocument = new TypedDocumentString(`
     id
     brief
     slug
+    created_at
+    status
   }
 }
     `) as unknown as TypedDocumentString<PostQuery, PostQueryVariables>;
@@ -13014,6 +13056,8 @@ export const AllPostsDocument = new TypedDocumentString(`
     readTimeInMinutes
     title
     slug
+    created_at
+    status
   }
 }
     `) as unknown as TypedDocumentString<AllPostsQuery, AllPostsQueryVariables>;

@@ -13,6 +13,8 @@ const postsQuery = graphql(/* GraphQL */ `
       readTimeInMinutes
       title
       slug
+      created_at
+      status
     }
   }
 `);

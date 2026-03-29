@@ -12,9 +12,9 @@ export {
   compareString,
   formatDate,
   formatDateTime,
+  formatNumber,
   getCurrentMonthYear,
   getMonthName,
   getStartEndDates,
   slugify,
-  formatNumber,
 };

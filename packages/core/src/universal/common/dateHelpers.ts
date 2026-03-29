@@ -8,14 +8,19 @@ const formatDate = (dateString: string): string => {
 };
 
 const formatDateTime = (dateTimeString: string): string => {
-  const options: Intl.DateTimeFormatOptions = {
+  const date = new Date(dateTimeString);
+  const datePart = date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  };
-  return new Date(dateTimeString).toLocaleDateString('en-US', options);
+  });
+  const timePart = date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+  return `${datePart}, ${timePart}`;
 };
 
 const getMonthName = (month: number): string => {

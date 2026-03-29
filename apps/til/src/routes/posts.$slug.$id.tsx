@@ -1,6 +1,6 @@
+import { Card, CardContent } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
-import React from 'react';
 import {
   PostContent,
   PostDetailPageContainer,
@@ -23,8 +23,12 @@ function RouteComponent() {
     return (
       <Layout sx={{ overflow: 'auto', pb: 6 }}>
         <PostDetailPageContainer>
-          <SkeletonPostMetadata sx={{ my: 3 }} />
-          <SkeletonPostContent />
+          <Card sx={{ my: 3, border: '1px solid', borderColor: 'divider' }}>
+            <CardContent>
+              <SkeletonPostMetadata />
+              <SkeletonPostContent />
+            </CardContent>
+          </Card>
         </PostDetailPageContainer>
       </Layout>
     );
@@ -40,19 +44,24 @@ function RouteComponent() {
     );
   }
 
-  const { title, readTimeInMinutes, mContent } = post;
+  const { title, readTimeInMinutes, mContent, createdAt, status } = post;
 
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <PostMetadata
-          title={title}
-          readTimeInMinutes={readTimeInMinutes}
-          sx={{ my: 3 }}
-        />
-        <PostContent>
-          <MarkdownContent content={mContent} />
-        </PostContent>
+        <Card sx={{ my: 3, border: 1, borderColor: 'divider' }}>
+          <CardContent>
+            <PostMetadata
+              title={title}
+              readTimeInMinutes={readTimeInMinutes}
+              createdAt={createdAt}
+              status={status}
+            />
+            <PostContent>
+              <MarkdownContent content={mContent} />
+            </PostContent>
+          </CardContent>
+        </Card>
       </PostDetailPageContainer>
     </Layout>
   );
