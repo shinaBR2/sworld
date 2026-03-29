@@ -17,12 +17,13 @@ export interface TipTapEditorRef {
 }
 
 interface TipTapEditorProps {
+  content?: string;
   isSubmitting: boolean;
   onUpdate: (content: string) => void;
 }
 
 const TipTapEditor = forwardRef<TipTapEditorRef, TipTapEditorProps>(
-  ({ isSubmitting, onUpdate }, ref) => {
+  ({ content = '', isSubmitting, onUpdate }, ref) => {
     const editor = useEditor({
       extensions: [
         StarterKit.configure({
@@ -36,7 +37,7 @@ const TipTapEditor = forwardRef<TipTapEditorRef, TipTapEditorProps>(
           placeholder: 'Start writing your TIL post...',
         }),
       ],
-      content: '',
+      content,
       contentType: 'markdown',
       editable: !isSubmitting,
       onUpdate: ({ editor }) => {
