@@ -49,9 +49,23 @@ const getStartEndDates = (
   return { startDate, endDate };
 };
 
+const formatDateTimeWithSeconds = (dateTimeString: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  };
+  return new Date(dateTimeString).toLocaleDateString('en-US', options);
+};
+
 export {
   formatDate,
   formatDateTime,
+  formatDateTimeWithSeconds,
   getCurrentMonthYear,
   getMonthName,
   getStartEndDates,

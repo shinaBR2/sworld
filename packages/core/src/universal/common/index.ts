@@ -1,6 +1,7 @@
 import {
   formatDate,
   formatDateTime,
+  formatDateTimeWithSeconds,
   getCurrentMonthYear,
   getMonthName,
   getStartEndDates,
@@ -12,9 +13,10 @@ export {
   compareString,
   formatDate,
   formatDateTime,
+  formatDateTimeWithSeconds,
+  formatNumber,
   getCurrentMonthYear,
   getMonthName,
   getStartEndDates,
   slugify,
-  formatNumber,
 };
