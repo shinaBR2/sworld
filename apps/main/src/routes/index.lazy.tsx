@@ -6,36 +6,37 @@ import { appConfig } from '../config';
 
 const landingItems = [
   {
-    icon: '🎵',
+    icon: '🎧',
     title: 'Listen',
     to: appConfig.sites.listen,
     isExternal: true,
   },
   {
-    icon: '📺',
+    icon: '🎬',
     title: 'Watch',
     to: appConfig.sites.watch,
     isExternal: true,
   },
   {
-    icon: '📖',
+    icon: '📚',
     title: 'Library',
     to: '/library',
     isExternal: false,
   },
-  // {
-  //   icon: '🎮',
-  //   title: 'Play',
-  //   to: '/play',
-  // },
   {
-    icon: '💰',
+    icon: '💡',
+    title: 'TIL',
+    to: appConfig.sites.til,
+    isExternal: true,
+  },
+  {
+    icon: '📊',
     title: 'Finance',
     to: '/finance',
     isExternal: false,
   },
   {
-    icon: '📝',
+    icon: '📓',
     title: 'Journal',
     to: '/journal',
     isExternal: false,
