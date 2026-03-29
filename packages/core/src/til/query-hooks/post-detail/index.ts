@@ -13,6 +13,7 @@ const postDetailQuery = graphql(/* GraphQL */ `
       id
       brief
       slug
+      created_at
     }
   }
 `);

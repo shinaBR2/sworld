@@ -1,4 +1,4 @@
-import { CardContent } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import { CodeBlockWrapper } from './styled';
 
 interface Props {
@@ -7,9 +7,11 @@ interface Props {
 
 const PostContent = (props: Props) => {
   return (
-    <CardContent>
-      <CodeBlockWrapper>{props.children}</CodeBlockWrapper>
-    </CardContent>
+    <Card>
+      <CardContent>
+        <CodeBlockWrapper>{props.children}</CodeBlockWrapper>
+      </CardContent>
+    </Card>
   );
 };
 

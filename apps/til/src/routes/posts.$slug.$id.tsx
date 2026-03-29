@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
-import React from 'react';
 import {
   PostContent,
   PostDetailPageContainer,
@@ -40,7 +39,7 @@ function RouteComponent() {
     );
   }
 
-  const { title, readTimeInMinutes, mContent } = post;
+  const { title, readTimeInMinutes, mContent, createdAt } = post;
 
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
@@ -48,6 +47,7 @@ function RouteComponent() {
         <PostMetadata
           title={title}
           readTimeInMinutes={readTimeInMinutes}
+          createdAt={createdAt}
           sx={{ my: 3 }}
         />
         <PostContent>
