@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import type { CustomUser } from 'core/providers/auth';
 import { ResponsiveAvatar } from '../../universal/images/image';
 import Logo from '../../universal/logo';
+import { ThemeToggleButton } from '../../universal/minimalism';
 
 interface HeaderProps {
   onProfileClick: () => void;
@@ -31,7 +32,15 @@ const Header = (props: HeaderProps) => {
           <Logo />
         </Box>
 
-        <Box sx={{ display: 'flex', minWidth: 'fit-content' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            minWidth: 'fit-content',
+            gap: 1,
+            alignItems: 'center',
+          }}
+        >
+          <ThemeToggleButton />
           <IconButton onClick={onProfileClick} aria-label="account options">
             {avatarUrl ? (
               <ResponsiveAvatar

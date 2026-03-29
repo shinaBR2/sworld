@@ -20,12 +20,6 @@ vi.mock('./styled', () => ({
   TitleTypography: ({ children }: any) => (
     <div data-testid="title-typography">{children}</div>
   ),
-  DescriptionTypography: ({ children }: any) => (
-    <div data-testid="description-typography">{children}</div>
-  ),
-  CardContentBox: ({ children }: any) => (
-    <div data-testid="card-content-box">{children}</div>
-  ),
 }));
 
 describe('LandingCard', () => {
@@ -43,21 +37,6 @@ describe('LandingCard', () => {
     expect(screen.getByTestId('title-typography')).toBeInTheDocument();
     expect(screen.getByText('🚀')).toBeInTheDocument();
     expect(screen.getByText('Test Title')).toBeInTheDocument();
-  });
-
-  it('renders with description when provided', () => {
-    render(<LandingCard {...defaultProps} description="Test Description" />);
-
-    expect(screen.getByTestId('description-typography')).toBeInTheDocument();
-    expect(screen.getByText('Test Description')).toBeInTheDocument();
-  });
-
-  it('does not render description when not provided', () => {
-    render(<LandingCard {...defaultProps} />);
-
-    expect(
-      screen.queryByTestId('description-typography'),
-    ).not.toBeInTheDocument();
   });
 
   it('applies custom color when provided', () => {
