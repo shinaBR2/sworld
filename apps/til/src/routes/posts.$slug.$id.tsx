@@ -10,11 +10,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useBlocker } from '@tanstack/react-router';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
 import { slugify } from 'core/universal/common';
-import { lazy, Suspense, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   PostContent,
   PostDetailPageContainer,
@@ -61,6 +61,13 @@ const RouteComponent = () => {
   };
 
   const handleCancel = () => {
+    // Check for unsaved changes before canceling
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        'You have unsaved changes. Are you sure you want to leave?',
+      );
+      if (!confirmed) return;
+    }
     setIsEditing(false);
     setEditableTitle('');
     setEditorContent('');
@@ -91,6 +98,39 @@ const RouteComponent = () => {
     handleMenuClose();
     refetch();
   };
+
+  // Store original values for comparison
+  const originalTitle = post?.title ?? '';
+  const originalContent = post?.mContent ?? '';
+
+  // Track if there are unsaved changes (only when editing)
+  const hasUnsavedChanges =
+    isEditing &&
+    (editableTitle !== originalTitle ||
+      (editorRef.current?.getMarkdown() || '') !== originalContent);
+
+  // Block browser navigation when there are unsaved changes
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Block in-app navigation when there are unsaved changes
+  useBlocker({
+    condition: hasUnsavedChanges,
+    blockerFn: () => {
+      return window.confirm(
+        'You have unsaved changes. Are you sure you want to leave?',
+      );
+    },
+  });
 
   if (isLoading) {
     return (
