@@ -144,7 +144,6 @@ export const JournalList: React.FC<JournalListProps> = ({
       sx={{
         mb: 2,
         cursor: 'pointer',
-        // boxShadow: 1,
       }}
       onClick={() => onJournalClick(journal)}
     >

@@ -1,7 +1,6 @@
+import { CardContent } from '@mui/material';
 import type React from 'react';
 import {
-  CardContentBox,
-  DescriptionTypography,
   IconContainer,
   IconTypography,
   StyledCard,
@@ -14,7 +13,6 @@ interface LandingCardProps {
   LinkComponent?: React.ElementType;
   to?: string;
   isExternal?: boolean;
-  description?: string;
   color?: string;
 }
 
@@ -24,23 +22,17 @@ const LandingCard = ({
   LinkComponent,
   to,
   isExternal,
-  description,
   color,
 }: LandingCardProps) => {
-  const CardContent = () => (
-    <>
+  const cardContent = (
+    <CardContent sx={{ textAlign: 'center' }}>
       <IconContainer customColor={color}>
         <IconTypography variant="h3" customColor={color}>
           {icon}
         </IconTypography>
       </IconContainer>
       <TitleTypography variant="h6">{title}</TitleTypography>
-      {description && (
-        <DescriptionTypography variant="body2">
-          {description}
-        </DescriptionTypography>
-      )}
-    </>
+    </CardContent>
   );
 
   if (isExternal) {
@@ -49,38 +41,25 @@ const LandingCard = ({
         href={to}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ textDecoration: 'none' }}
+        style={{ textDecoration: 'none', display: 'block', height: '100%' }}
       >
-        <StyledCard>
-          <CardContentBox>
-            <CardContent />
-          </CardContentBox>
-        </StyledCard>
+        <StyledCard>{cardContent}</StyledCard>
       </a>
     );
   }
 
-  // If LinkComponent is provided, wrap the content with it
   if (LinkComponent) {
     return (
-      <LinkComponent to={to} style={{ textDecoration: 'none' }}>
-        <StyledCard>
-          <CardContentBox>
-            <CardContent />
-          </CardContentBox>
-        </StyledCard>
+      <LinkComponent
+        to={to}
+        style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+      >
+        <StyledCard>{cardContent}</StyledCard>
       </LinkComponent>
     );
   }
 
-  // Otherwise, just render the card without a link
-  return (
-    <StyledCard>
-      <CardContentBox>
-        <CardContent />
-      </CardContentBox>
-    </StyledCard>
-  );
+  return <StyledCard>{cardContent}</StyledCard>;
 };
 
 export { LandingCard, type LandingCardProps };
