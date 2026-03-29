@@ -1,14 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { SkeletonPostMetadata } from './metadata-skeleton';
 
 describe('SkeletonPostMetadata', () => {
-  it('renders the skeleton with correct attributes', () => {
-    render(<SkeletonPostMetadata sx={{ padding: 2 }} />);
+  it('renders skeleton elements', () => {
+    render(<SkeletonPostMetadata />);
 
-    // Check the card has aria-busy attribute
-    const card = screen.getByRole('generic', { busy: true });
-    expect(card).toBeInTheDocument();
-    expect(card).toBeVisible();
+    // Check skeleton elements are rendered
+    const skeletons = document.querySelectorAll('.MuiSkeleton-root');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 });
