@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { useAuthContext } from '../../../providers/auth';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 import { useLoadPostDetail } from './index';
 
 vi.mock('../transformers');
+vi.mock('../../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
+}));
 vi.mock('../../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
 }));
@@ -20,6 +24,10 @@ const mockPostData = {
 describe('useLoadPostDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useAuthContext as Mock).mockReturnValue({
+      isSignedIn: false,
+      getAccessToken: undefined,
+    });
   });
 
   it('should handle loading state', () => {
