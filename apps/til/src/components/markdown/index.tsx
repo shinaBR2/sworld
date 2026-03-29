@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
  * TODO
  * Dynamic loading or using RSC in the future
  */
+import Box from '@mui/material/Box';
 import Markdown from 'react-markdown';
 import { CodeBlock } from './code-block';
 
@@ -31,6 +32,25 @@ const MarkdownContent = React.memo((props: MarkdownContentProps) => {
   return (
     <Markdown
       components={{
+        blockquote({ children }) {
+          return (
+            <Box
+              component="blockquote"
+              sx={{
+                borderLeft: 4,
+                borderColor: 'primary.main',
+                pl: 2,
+                py: 1,
+                my: 2,
+                mx: 0,
+                bgcolor: 'action.hover',
+                '& p': { m: 0 },
+              }}
+            >
+              {children}
+            </Box>
+          );
+        },
         code({ node, inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
 
