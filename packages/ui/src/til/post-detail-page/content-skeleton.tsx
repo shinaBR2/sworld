@@ -1,14 +1,19 @@
-import { Card, CardContent, Skeleton } from '@mui/material';
+import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 
 const SkeletonPostContent = () => (
-  <Card aria-busy="true">
-    <CardContent>
-      <Skeleton variant="text" width="60%" height={40} sx={{ mb: 2 }} />
-      <Skeleton variant="text" width="100%" height={24} sx={{ mb: 1 }} />
-      <Skeleton variant="text" width="90%" height={24} sx={{ mb: 3 }} />
-      <Skeleton variant="rectangular" width="100%" height={200} />
-    </CardContent>
-  </Card>
+  <Box sx={{ py: 4 }} aria-busy="true">
+    <Skeleton variant="text" width="60%" height={40} sx={{ mb: 3 }} />
+    <Skeleton variant="text" width="100%" height={24} sx={{ mb: 1.5 }} />
+    <Skeleton variant="text" width="95%" height={24} sx={{ mb: 1.5 }} />
+    <Skeleton variant="text" width="90%" height={24} sx={{ mb: 4 }} />
+    <Skeleton
+      variant="rounded"
+      width="100%"
+      height={200}
+      sx={{ borderRadius: 2 }}
+    />
+  </Box>
 );
 
 export { SkeletonPostContent };
