@@ -1,3 +1,4 @@
+import { Card, CardContent } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
 import {
@@ -22,8 +23,12 @@ function RouteComponent() {
     return (
       <Layout sx={{ overflow: 'auto', pb: 6 }}>
         <PostDetailPageContainer>
-          <SkeletonPostMetadata sx={{ my: 3 }} />
-          <SkeletonPostContent />
+          <Card sx={{ my: 3 }}>
+            <CardContent>
+              <SkeletonPostMetadata />
+              <SkeletonPostContent />
+            </CardContent>
+          </Card>
         </PostDetailPageContainer>
       </Layout>
     );
@@ -44,15 +49,18 @@ function RouteComponent() {
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <PostMetadata
-          title={title}
-          readTimeInMinutes={readTimeInMinutes}
-          createdAt={createdAt}
-          sx={{ my: 3 }}
-        />
-        <PostContent>
-          <MarkdownContent content={mContent} />
-        </PostContent>
+        <Card sx={{ my: 3 }}>
+          <CardContent>
+            <PostMetadata
+              title={title}
+              readTimeInMinutes={readTimeInMinutes}
+              createdAt={createdAt}
+            />
+            <PostContent>
+              <MarkdownContent content={mContent} />
+            </PostContent>
+          </CardContent>
+        </Card>
       </PostDetailPageContainer>
     </Layout>
   );
