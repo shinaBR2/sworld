@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import { formatDateTime } from 'core/universal/common';
 import type { MuiStyledProps } from '../../universal';
 
 interface Props extends MuiStyledProps {
@@ -36,7 +37,7 @@ const PostMetadata = (props: Props) => {
         />
         {createdAt && (
           <Typography variant="body2" color="text.secondary">
-            {formatDateTimeWithSeconds(createdAt)}
+            {formatDateTime(createdAt)}
           </Typography>
         )}
       </Box>

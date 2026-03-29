@@ -30,7 +30,7 @@ export const PostCard = (props: PostCardProps) => {
             </ReadTimeBadge>
             {createdAt && (
               <Typography variant="caption" color="text.secondary">
-                {formatDateTimeWithSeconds(createdAt)}
+                {formatDateTime(createdAt)}
               </Typography>
             )}
           </Stack>
