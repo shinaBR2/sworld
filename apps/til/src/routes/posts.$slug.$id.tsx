@@ -123,12 +123,7 @@ const RouteComponent = () => {
 
   // Block in-app navigation when there are unsaved changes
   useBlocker({
-    condition: hasUnsavedChanges,
-    blockerFn: () => {
-      return window.confirm(
-        'You have unsaved changes. Are you sure you want to leave?',
-      );
-    },
+    shouldBlockFn: () => hasUnsavedChanges,
   });
 
   if (isLoading) {
