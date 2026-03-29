@@ -44,7 +44,7 @@ function RouteComponent() {
     );
   }
 
-  const { title, readTimeInMinutes, mContent, createdAt } = post;
+  const { title, readTimeInMinutes, mContent, createdAt, status } = post;
 
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
@@ -55,6 +55,7 @@ function RouteComponent() {
               title={title}
               readTimeInMinutes={readTimeInMinutes}
               createdAt={createdAt}
+              status={status}
             />
             <PostContent>
               <MarkdownContent content={mContent} />

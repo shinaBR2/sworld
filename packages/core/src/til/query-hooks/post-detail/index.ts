@@ -14,6 +14,7 @@ const postDetailQuery = graphql(/* GraphQL */ `
       brief
       slug
       created_at
+      status
     }
   }
 `);

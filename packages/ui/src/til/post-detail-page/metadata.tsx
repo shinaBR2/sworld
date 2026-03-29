@@ -9,10 +9,11 @@ interface Props extends MuiStyledProps {
   title: string;
   readTimeInMinutes: number;
   createdAt?: string;
+  status?: string;
 }
 
 const PostMetadata = (props: Props) => {
-  const { title, readTimeInMinutes, createdAt, sx } = props;
+  const { title, readTimeInMinutes, createdAt, status, sx } = props;
 
   return (
     <>
@@ -28,8 +29,8 @@ const PostMetadata = (props: Props) => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
         <Chip
-          label="Published"
-          color="success"
+          label={status || 'Published'}
+          color={status === 'published' ? 'success' : 'default'}
           size="small"
           variant="outlined"
         />
