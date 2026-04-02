@@ -112,6 +112,18 @@ const RouteComponent = () => {
     refetch();
   };
 
+  const handleToggleVisibility = async () => {
+    const newVisibility = post?.visibility === 'public' ? 'private' : 'public';
+    await updatePost({
+      id: postId,
+      object: {
+        visibility: newVisibility,
+      },
+    });
+    handleMenuClose();
+    refetch();
+  };
+
   // Store original values for comparison
   const originalTitle = post?.title ?? '';
   const originalContent = post?.mContent ?? '';
@@ -319,6 +331,9 @@ const RouteComponent = () => {
                 {status !== 'published' && (
                   <MenuItem onClick={handlePublish}>Publish</MenuItem>
                 )}
+                <MenuItem onClick={handleToggleVisibility}>
+                  Make {post?.visibility === 'public' ? 'Private' : 'Public'}
+                </MenuItem>
               </Menu>
             </Box>
             <PostContent>

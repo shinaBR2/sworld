@@ -15,6 +15,7 @@ const postsQuery = graphql(/* GraphQL */ `
       slug
       created_at
       status
+      visibility
     }
   }
 `);
