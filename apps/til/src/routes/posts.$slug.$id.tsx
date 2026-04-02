@@ -11,11 +11,21 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { createFileRoute, useBlocker } from '@tanstack/react-router';
-import { POST_STATUS, POST_VISIBILITY } from 'core/til/constants';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
 import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+
+const POST_VISIBILITY = {
+  PUBLIC: 'public',
+  PRIVATE: 'private',
+} as const;
+
+const POST_STATUS = {
+  DRAFT: 'draft',
+  PUBLISHED: 'published',
+} as const;
+
 import {
   PostContent,
   PostDetailPageContainer,
@@ -25,6 +35,10 @@ import {
 } from 'ui/til/post-detail-page';
 import { Notification as UINotification } from 'ui/universal/notification';
 import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
+import {
+  POST_STATUS,
+  POST_VISIBILITY,
+} from '../../../../packages/core/src/til/constants';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 import { MarkdownContent } from '../components/markdown';
