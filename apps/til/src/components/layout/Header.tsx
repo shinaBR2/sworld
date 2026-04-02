@@ -1,7 +1,6 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import type { Auth } from 'core';
@@ -56,17 +55,6 @@ const Header = (props: HeaderProps) => {
             alignItems: 'center',
           }}
         >
-          {user && LinkComponent && (
-            <LinkComponent to="/write">
-              <Button
-                color="inherit"
-                sx={{ mr: 1, textTransform: 'none', fontWeight: 500 }}
-              >
-                Write
-              </Button>
-            </LinkComponent>
-          )}
-
           <IconButton onClick={!user ? login : toggleSidebar}>
             {avatarUrl ? (
               <ResponsiveAvatar
