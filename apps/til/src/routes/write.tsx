@@ -3,11 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import {
@@ -20,6 +15,7 @@ import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { Notification } from 'ui/universal/notification';
+import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 
@@ -135,24 +131,11 @@ function WritePageContent() {
     <Layout>
       <Stack sx={{ height: 'calc(100vh - 64px)' }}>
         {/* Blocker Dialog */}
-        <Dialog
+        <UnsavedChangesDialog
           open={blocker.status === 'blocked'}
-          onClose={() => blocker.reset?.()}
-        >
-          <DialogTitle>Unsaved Changes</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              You have unsaved changes. Are you sure you want to leave this
-              page?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => blocker.reset?.()}>Stay</Button>
-            <Button onClick={() => blocker.proceed?.()} color="error">
-              Leave
-            </Button>
-          </DialogActions>
-        </Dialog>
+          onStay={() => blocker.reset?.()}
+          onLeave={() => blocker.proceed?.()}
+        />
 
         {/* Notification */}
         {notification && (

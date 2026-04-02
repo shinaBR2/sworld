@@ -5,11 +5,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -27,7 +22,8 @@ import {
   SkeletonPostContent,
   SkeletonPostMetadata,
 } from 'ui/til/post-detail-page';
-import { Notification } from 'ui/universal/notification';
+import { Notification as UINotification } from 'ui/universal/notification';
+import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 import { MarkdownContent } from '../components/markdown';
@@ -177,28 +173,15 @@ const RouteComponent = () => {
       <Layout>
         <Stack sx={{ height: 'calc(100vh - 64px)' }}>
           {/* Blocker Dialog */}
-          <Dialog
+          <UnsavedChangesDialog
             open={blocker.status === 'blocked'}
-            onClose={() => blocker.reset?.()}
-          >
-            <DialogTitle>Unsaved Changes</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                You have unsaved changes. Are you sure you want to leave this
-                page?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => blocker.reset?.()}>Stay</Button>
-              <Button onClick={() => blocker.proceed?.()} color="error">
-                Leave
-              </Button>
-            </DialogActions>
-          </Dialog>
+            onStay={() => blocker.reset?.()}
+            onLeave={() => blocker.proceed?.()}
+          />
 
           {/* Notification */}
           {notification && (
-            <Notification
+            <UINotification
               notification={notification}
               onClose={() => setNotification(null)}
             />
