@@ -11,10 +11,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { createFileRoute, useBlocker } from '@tanstack/react-router';
+import { POST_STATUS, POST_VISIBILITY } from 'core/til/constants';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
 import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+
 import {
   PostContent,
   PostDetailPageContainer,
@@ -105,7 +107,22 @@ const RouteComponent = () => {
     await updatePost({
       id: postId,
       object: {
-        status: 'published',
+        status: POST_STATUS.PUBLISHED,
+      },
+    });
+    handleMenuClose();
+    refetch();
+  };
+
+  const handleToggleVisibility = async () => {
+    const newVisibility =
+      post?.visibility === POST_VISIBILITY.PUBLIC
+        ? POST_VISIBILITY.PRIVATE
+        : POST_VISIBILITY.PUBLIC;
+    await updatePost({
+      id: postId,
+      object: {
+        visibility: newVisibility,
       },
     });
     handleMenuClose();
@@ -316,9 +333,15 @@ const RouteComponent = () => {
                 }}
               >
                 <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                {status !== 'published' && (
+                {status !== POST_STATUS.PUBLISHED && (
                   <MenuItem onClick={handlePublish}>Publish</MenuItem>
                 )}
+                <MenuItem onClick={handleToggleVisibility}>
+                  Make{' '}
+                  {post?.visibility === POST_VISIBILITY.PUBLIC
+                    ? 'Private'
+                    : 'Public'}
+                </MenuItem>
               </Menu>
             </Box>
             <PostContent>

@@ -12200,6 +12200,7 @@ export type PostQuery = {
     slug: string;
     created_at: any;
     status: string;
+    visibility: string;
   } | null;
 };
 
@@ -12217,6 +12218,7 @@ export type AllPostsQuery = {
     slug: string;
     created_at: any;
     status: string;
+    visibility: string;
   }>;
 };
 
@@ -13083,6 +13085,7 @@ export const PostDocument = new TypedDocumentString(`
     slug
     created_at
     status
+    visibility
   }
 }
     `) as unknown as TypedDocumentString<PostQuery, PostQueryVariables>;
@@ -13097,6 +13100,7 @@ export const AllPostsDocument = new TypedDocumentString(`
     slug
     created_at
     status
+    visibility
   }
 }
     `) as unknown as TypedDocumentString<AllPostsQuery, AllPostsQueryVariables>;

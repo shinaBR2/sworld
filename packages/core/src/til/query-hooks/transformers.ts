@@ -10,6 +10,7 @@ const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
     title,
     created_at,
     status,
+    visibility,
   } = data;
 
   return {
@@ -21,6 +22,7 @@ const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
     readTimeInMinutes,
     createdAt: created_at,
     status,
+    visibility,
   };
 };
 
