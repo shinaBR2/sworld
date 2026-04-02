@@ -33,7 +33,7 @@ type Documents = {
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n': typeof types.InsertPostDocument;
   '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n': typeof types.UpdatePostDocument;
   '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.PostDocument;
-  '\n  query AllPosts @cached {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.AllPostsDocument;
+  '\n  query AllPosts {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n': typeof types.AllPostsDocument;
   '\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n': typeof types.FeatureFlagsDocument;
   '\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: "now()" }) {\n      id\n      readAt\n    }\n  }\n': typeof types.MarkNotificationAsReadDocument;
   '\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: "now()" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n': typeof types.MarkNotificationsAsReadDocument;
@@ -94,7 +94,7 @@ const documents: Documents = {
     types.UpdatePostDocument,
   '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n    }\n  }\n':
     types.PostDocument,
-  '\n  query AllPosts @cached {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n':
+  '\n  query AllPosts {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n':
     types.AllPostsDocument,
   '\n  subscription FeatureFlags {\n    feature_flag {\n      id\n      name\n      conditions\n    }\n  }\n':
     types.FeatureFlagsDocument,
@@ -258,7 +258,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query AllPosts @cached {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n',
+  source: '\n  query AllPosts {\n    posts(order_by: { created_at: desc }) {\n      brief\n      id\n      markdownContent\n      readTimeInMinutes\n      title\n      slug\n      created_at\n      status\n    }\n  }\n',
 ): typeof import('./graphql').AllPostsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

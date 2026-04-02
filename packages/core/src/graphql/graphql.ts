@@ -13087,7 +13087,7 @@ export const PostDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<PostQuery, PostQueryVariables>;
 export const AllPostsDocument = new TypedDocumentString(`
-    query AllPosts @cached {
+    query AllPosts {
   posts(order_by: {created_at: desc}) {
     brief
     id

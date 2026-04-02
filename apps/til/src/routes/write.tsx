@@ -3,6 +3,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import {
@@ -14,6 +19,7 @@ import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { Notification } from 'ui/universal/notification';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 
@@ -39,11 +45,13 @@ function WritePageContent() {
   const [editorContent, setEditorContent] = useState('');
   const editorRef = useRef<TipTapEditorRef>(null);
 
-  // Track if there are unsaved changes
-  const hasUnsavedChanges =
-    title.trim() !== '' ||
-    editorContent.trim() !== '' ||
-    (editorRef.current?.getMarkdown() || '') !== '';
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
+
+  // Track if there are unsaved changes - use only reactive state
+  const hasUnsavedChanges = title.trim() !== '' || editorContent.trim() !== '';
 
   // Block browser navigation when there are unsaved changes
   useEffect(() => {
@@ -58,8 +66,9 @@ function WritePageContent() {
   }, [hasUnsavedChanges]);
 
   // Block in-app navigation when there are unsaved changes
-  useBlocker({
+  const blocker = useBlocker({
     shouldBlockFn: () => hasUnsavedChanges,
+    withResolver: true,
   });
 
   const insertPost = useInsertPost({
@@ -67,11 +76,22 @@ function WritePageContent() {
       const slug = data.insert_posts_one?.slug;
       const id = data.insert_posts_one?.id;
       if (slug && id) {
+        setNotification({
+          message: 'Post published successfully!',
+          severity: 'success',
+        });
+        // Clear form state before navigating to prevent blocker
+        setTitle('');
+        setEditorContent('');
         navigate({ to: '/posts/$slug/$id', params: { slug, id } });
       }
     },
     onError: (error) => {
       setError('Failed to save post. Please try again.');
+      setNotification({
+        message: 'Failed to save post. Please try again.',
+        severity: 'error',
+      });
       console.error('Save error:', error);
     },
   });
@@ -113,6 +133,34 @@ function WritePageContent() {
   return (
     <Layout>
       <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+        {/* Blocker Dialog */}
+        <Dialog
+          open={blocker.status === 'blocked'}
+          onClose={() => blocker.reset?.()}
+        >
+          <DialogTitle>Unsaved Changes</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              You have unsaved changes. Are you sure you want to leave this
+              page?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => blocker.reset?.()}>Stay</Button>
+            <Button onClick={() => blocker.proceed?.()} color="error">
+              Leave
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Notification */}
+        {notification && (
+          <Notification
+            notification={notification}
+            onClose={() => setNotification(null)}
+          />
+        )}
+
         {/* Header */}
         <Container
           maxWidth={false}
