@@ -18,6 +18,10 @@
     "./*": {
       "import": "./dist/*/index.mjs",
       "types": "./dist/*/index.d.ts"
+    },
+    "./til/*": {
+      "import": "./dist/til/*.mjs",
+      "types": "./dist/til/*.d.ts"
     }
   },
   "files": [
