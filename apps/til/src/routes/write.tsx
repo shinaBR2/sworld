@@ -50,7 +50,7 @@ function WritePageContent() {
     severity: 'success' | 'error' | 'warning' | 'info';
   } | null>(null);
 
-  // Track if there are unsaved changes - use only reactive state
+  // Track if there are unsaved changes
   const hasUnsavedChanges = title.trim() !== '' || editorContent.trim() !== '';
 
   // Block browser navigation when there are unsaved changes
@@ -80,10 +80,11 @@ function WritePageContent() {
           message: 'Post published successfully!',
           severity: 'success',
         });
-        // Clear form state before navigating to prevent blocker
         setTitle('');
         setEditorContent('');
-        navigate({ to: '/posts/$slug/$id', params: { slug, id } });
+        setTimeout(() => {
+          navigate({ to: '/posts/$slug/$id', params: { slug, id } });
+        }, 100);
       }
     },
     onError: (error) => {
