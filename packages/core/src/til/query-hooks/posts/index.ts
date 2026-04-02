@@ -5,7 +5,7 @@ import { useRequest } from '../../../universal/hooks/use-request';
 import { transformPost } from '../transformers';
 
 const postsQuery = graphql(/* GraphQL */ `
-  query AllPosts @cached {
+  query AllPosts {
     posts(order_by: { created_at: desc }) {
       brief
       id

@@ -22,6 +22,8 @@ import {
   SkeletonPostContent,
   SkeletonPostMetadata,
 } from 'ui/til/post-detail-page';
+import { Notification as UINotification } from 'ui/universal/notification';
+import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 import { MarkdownContent } from '../components/markdown';
@@ -38,11 +40,29 @@ const RouteComponent = () => {
   const [editableTitle, setEditableTitle] = useState('');
   const editorRef = useRef<TipTapEditorRef>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
 
   const { updatePost, isPending } = useUpdatePost({
     onSuccess: () => {
+      setNotification({
+        message: 'Post updated successfully!',
+        severity: 'success',
+      });
       setIsEditing(false);
-      refetch();
+      setEditableTitle('');
+      setEditorContent('');
+      setTimeout(() => {
+        refetch();
+      }, 100);
+    },
+    onError: () => {
+      setNotification({
+        message: 'Failed to update post. Please try again.',
+        severity: 'error',
+      });
     },
   });
 
@@ -61,13 +81,6 @@ const RouteComponent = () => {
   };
 
   const handleCancel = () => {
-    // Check for unsaved changes before canceling
-    if (hasUnsavedChanges) {
-      const confirmed = window.confirm(
-        'You have unsaved changes. Are you sure you want to leave?',
-      );
-      if (!confirmed) return;
-    }
     setIsEditing(false);
     setEditableTitle('');
     setEditorContent('');
@@ -106,8 +119,7 @@ const RouteComponent = () => {
   // Track if there are unsaved changes (only when editing)
   const hasUnsavedChanges =
     isEditing &&
-    (editableTitle !== originalTitle ||
-      (editorRef.current?.getMarkdown() || '') !== originalContent);
+    (editableTitle !== originalTitle || editorContent !== originalContent);
 
   // Block browser navigation when there are unsaved changes
   useEffect(() => {
@@ -122,8 +134,9 @@ const RouteComponent = () => {
   }, [hasUnsavedChanges]);
 
   // Block in-app navigation when there are unsaved changes
-  useBlocker({
-    shouldBlockFn: () => hasUnsavedChanges,
+  const blocker = useBlocker({
+    shouldBlockFn: () => hasUnsavedChanges && isEditing,
+    withResolver: true,
   });
 
   if (isLoading) {
@@ -159,6 +172,21 @@ const RouteComponent = () => {
     return (
       <Layout>
         <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+          {/* Blocker Dialog */}
+          <UnsavedChangesDialog
+            open={blocker.status === 'blocked'}
+            onStay={() => blocker.reset?.()}
+            onLeave={() => blocker.proceed?.()}
+          />
+
+          {/* Notification */}
+          {notification && (
+            <UINotification
+              notification={notification}
+              onClose={() => setNotification(null)}
+            />
+          )}
+
           {/* Header with title */}
           <Container
             maxWidth={false}

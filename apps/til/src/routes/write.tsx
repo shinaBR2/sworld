@@ -14,6 +14,8 @@ import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
+import { Notification } from 'ui/universal/notification';
+import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
 import type { TipTapEditorRef } from '../components/editor/tiptap-editor';
 import { Layout } from '../components/layout';
 
@@ -39,11 +41,13 @@ function WritePageContent() {
   const [editorContent, setEditorContent] = useState('');
   const editorRef = useRef<TipTapEditorRef>(null);
 
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
+
   // Track if there are unsaved changes
-  const hasUnsavedChanges =
-    title.trim() !== '' ||
-    editorContent.trim() !== '' ||
-    (editorRef.current?.getMarkdown() || '') !== '';
+  const hasUnsavedChanges = title.trim() !== '' || editorContent.trim() !== '';
 
   // Block browser navigation when there are unsaved changes
   useEffect(() => {
@@ -58,8 +62,9 @@ function WritePageContent() {
   }, [hasUnsavedChanges]);
 
   // Block in-app navigation when there are unsaved changes
-  useBlocker({
+  const blocker = useBlocker({
     shouldBlockFn: () => hasUnsavedChanges,
+    withResolver: true,
   });
 
   const insertPost = useInsertPost({
@@ -67,11 +72,23 @@ function WritePageContent() {
       const slug = data.insert_posts_one?.slug;
       const id = data.insert_posts_one?.id;
       if (slug && id) {
-        navigate({ to: '/posts/$slug/$id', params: { slug, id } });
+        setNotification({
+          message: 'Post published successfully!',
+          severity: 'success',
+        });
+        setTitle('');
+        setEditorContent('');
+        setTimeout(() => {
+          navigate({ to: '/posts/$slug/$id', params: { slug, id } });
+        }, 100);
       }
     },
     onError: (error) => {
       setError('Failed to save post. Please try again.');
+      setNotification({
+        message: 'Failed to save post. Please try again.',
+        severity: 'error',
+      });
       console.error('Save error:', error);
     },
   });
@@ -113,6 +130,21 @@ function WritePageContent() {
   return (
     <Layout>
       <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+        {/* Blocker Dialog */}
+        <UnsavedChangesDialog
+          open={blocker.status === 'blocked'}
+          onStay={() => blocker.reset?.()}
+          onLeave={() => blocker.proceed?.()}
+        />
+
+        {/* Notification */}
+        {notification && (
+          <Notification
+            notification={notification}
+            onClose={() => setNotification(null)}
+          />
+        )}
+
         {/* Header */}
         <Container
           maxWidth={false}

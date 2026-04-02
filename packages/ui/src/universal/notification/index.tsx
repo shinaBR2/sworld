@@ -1,5 +1,6 @@
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import type { FC } from 'react';
 
 interface NotificationProps {
   notification: {
@@ -9,7 +10,7 @@ interface NotificationProps {
   onClose: () => void;
 }
 
-const Notification = (props: NotificationProps) => {
+const Notification: FC<NotificationProps> = (props) => {
   const { notification, onClose } = props;
 
   return (
