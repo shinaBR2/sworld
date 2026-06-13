@@ -1,0 +1,46 @@
+# A3 — Thread custom headers through the subtitle path
+
+**Repo:** sworld-backend
+**Type:** feature
+**Status:** todo
+**Estimate:** S
+**Blocked by:** A0, A1
+**Blocks:** Z1
+**Parallel-safe with:** A2, A4 (disjoint files)
+
+## Context
+
+`subtitle-created` downloads `url_input` with no headers. Some subtitle CDNs are
+hotlink-protected too. The subtitle event payload is the subtitle row, which has
+no `metadata` — so source the headers from the **parent video's**
+`metadata.customRequestHeaders`.
+
+## Scope
+
+- In `subtitleCreatedHandler`, look up the parent video's
+  `metadata.customRequestHeaders` (by `video_id`) — or include it via the
+  trigger payload if cheaper — and pass it to `streamSubtitleFile`.
+- `streamSubtitleFile` calls `fetchWithError(url, { headers: buildRequestHeaders(custom) })`.
+
+## Files to touch (ownership)
+
+- `src/apps/gateway/videos/routes/subtitle-created/index.ts`
+- `src/schema/videos/subtitle-created/index.ts`
+- `src/services/videos/helpers/subtitle/index.ts`
+
+## Acceptance criteria
+
+- [ ] Subtitle fetch sends default UA + parent video's `customRequestHeaders`.
+- [ ] A hotlink-protected `.vtt` succeeds when the video has the right `Referer`.
+- [ ] No headers → unchanged behaviour (plus default UA).
+- [ ] `pnpm type-check` clean.
+
+## Test plan
+
+- Local: a subtitle URL behind a Referer check uploads successfully when the
+  parent video's metadata carries it.
+
+## Out of scope
+
+- Per-subtitle (vs per-video) headers — reuse the video's for now; note as future.
+- HLS / convert paths.

@@ -21,6 +21,7 @@ ignore:
   - 'src/services/hasura/codegen.ts'
   - 'src/services/hashnode/generated-graphql/**'
   - 'src/services/hashnode/codegen.ts'
+  - 'src/cli/**' # standalone operator tooling, run via tsx (not part of the services)
 
 comment:
   layout: 'reach, diff, flags, files'

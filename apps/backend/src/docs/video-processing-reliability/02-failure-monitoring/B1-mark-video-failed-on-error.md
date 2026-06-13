@@ -1,0 +1,55 @@
+# B1 — Write `status='failed'` + `metadata.lastError` on terminal error
+
+**Repo:** sworld-backend
+**Type:** feature
+**Status:** todo
+**Estimate:** S
+**Blocked by:** F1
+**Blocks:** B2, Z1
+**Parallel-safe with:** A1, A2, A3, A4, C1
+
+## Context
+
+Today a processing failure leaves the video at `status: 'processing'`,
+`source: null`, silently — `TaskStatus.FAILED` is never written. We need a
+durable, queryable failure state that also records *why* (so a human/agent knows
+to add a `Referer`). Hook this into the **central** error path (not each
+handler's catch) so it doesn't collide with the A-path tickets.
+
+## Scope
+
+- New mutation `markVideoFailed(videoId, error)`:
+  - `update_videos_by_pk` → `status: 'failed'`, and merge into `metadata`:
+    `lastError: { code, httpStatus?, message, at }`.
+  - Also mark the related `tasks` row `status: 'failed'` (use existing
+    `TaskStatus.FAILED`).
+- Call it from the **central error wrapper** (`utils/handlers` / `utils/requestHandler`
+  or `middleware/errorHandler`) when a video-processing task throws — derive
+  `videoId` from the Cloud Task payload `entityId` / handler context.
+- Only flips to `failed` for video-entity tasks; leave non-video flows untouched.
+- **Sanitize before persisting / alerting.** `error.message` can carry source
+  URLs, query strings, or header values. Redact/whitelist into operator-safe
+  fields (`code`, `httpStatus`, a cleaned `message`) before writing `lastError`
+  or sending to Slack, so hotlink targets and secrets don't leak.
+
+## Files to touch (ownership)
+
+- `src/services/hasura/mutations/videos/markFailed.ts` (new)
+- the central error wrapper file (one of `utils/requestHandler` / `utils/handlers` / `middleware/errorHandler`) — **B1 owns this file for this epic**
+
+## Acceptance criteria
+
+- [ ] A thrown error in a video task sets `videos.status='failed'` + `metadata.lastError`.
+- [ ] `metadata.customRequestHeaders` (if present) is preserved (merge, not overwrite).
+- [ ] The `tasks` row is marked `failed`.
+- [ ] Non-video tasks are unaffected.
+
+## Test plan
+
+- Unit: call `markVideoFailed` against a test/local Hasura, assert row state.
+- Integration: run a stream task with a bad URL locally → row goes `failed`.
+
+## Out of scope
+
+- Slack notification (B2 consumes the `failed` state).
+- Per-handler catch blocks (kept clean for A-path).
