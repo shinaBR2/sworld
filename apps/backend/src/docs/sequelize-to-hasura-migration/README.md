@@ -73,7 +73,17 @@ intended behaviour; M1 documents it.
 | **M4** | Migrate `crawler/crawl` to Hasura `completeTask` | backend | H1 | D1 | XS |
 | **M5** | Migrate `fix-videos-duration` gateway route | backend | H1 | D1 | XS |
 | **M6** | Migrate `fix-videos-thumbnail` gateway route | backend | H1 | D1 | XS |
-| **D1** | Delete `src/database/` + drop `sequelize`/`pg`/`pg-hstore` | backend | M1–M6 | — | S |
+| **M7** | Migrate `gateway/videos/routes/crawl` (task enums) | backend | H1 | D1 | XS |
+| **M8** | Migrate `gateway/videos/routes/stream-to-storage` (task enums) | backend | H1 | D1 | XS |
+| **M9** | Migrate `compute/videos/routes/convert` test (`completeTask`) | backend | H1 | D1 | XS |
+| **D1** | Delete `src/database/` + drop `sequelize`/`pg`/`pg-hstore` | backend | M1–M9 | — | S |
+
+> **M7–M9 added after the fact.** The original consumer map (below) only listed
+> the call sites found when the epic was scoped. During the D1 readiness check we
+> found three more files still importing from `src/database` — two that only use
+> the task enums (`gateway/crawl`, `stream-to-storage`) and one test (`convert`)
+> that mocks `completeTask`. Some arrived via the parallel reliability work. They
+> are the same trivial import swaps as M4–M6 and must land before D1.
 
 > **Why one foundation PR (H1) instead of several.** Adding a GraphQL operation
 > regenerates the shared `src/services/hasura/generated-graphql/*` files. If two
@@ -93,6 +103,9 @@ intended behaviour; M1 documents it.
 | `createTask`, `updateTaskStatus` | `utils/cloud-task.ts` | M1 |
 | `completeTask` | `apps/io/crawler/routes/crawl/index.ts` | M4 |
 | `completeTask` (folded into combined mutation) | the two `fix-*` handlers | M2, M3 |
+| `TaskEntityType`, `TaskType` (enums) | `apps/gateway/videos/routes/crawl/index.ts` | M7 |
+| `TaskEntityType`, `TaskType` (enums) | `apps/gateway/videos/routes/stream-to-storage/index.ts` | M8 |
+| `completeTask` (test mock only) | `apps/compute/videos/routes/convert/index.test.ts` | M9 |
 
 ## Status
 
