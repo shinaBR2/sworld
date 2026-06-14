@@ -1,4 +1,4 @@
-import { completeTask } from 'src/database/queries/tasks';
+import { completeTask } from 'src/services/hasura/mutations/tasks';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,7 +32,7 @@ vi.mock('./utils', () => ({
   buildVariables: vi.fn(),
 }));
 
-vi.mock('src/database/queries/tasks', () => ({
+vi.mock('src/services/hasura/mutations/tasks', () => ({
   completeTask: vi.fn(),
 }));
 

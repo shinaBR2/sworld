@@ -1,4 +1,4 @@
-import { completeTask } from 'src/database/queries/tasks';
+import { completeTask } from 'src/services/hasura/mutations/tasks';
 import type { CrawlHandlerRequest } from 'src/schema/videos/crawl';
 import { crawl } from 'src/services/crawler';
 import { insertVideos } from 'src/services/hasura/mutations/videos/bulk-insert';
