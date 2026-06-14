@@ -86,6 +86,7 @@ export {
   type ConvertBodySchema,
   transformEvent,
   videoDataSchema,
+  videoMetadataSchema,
   convertHandlerSchema,
 };
 export type ConvertHandlerRequest = z.infer<typeof convertHandlerSchema>;

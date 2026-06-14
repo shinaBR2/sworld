@@ -67,8 +67,10 @@ describe('Subtitle Helper', () => {
 
     const result = await streamSubtitleFile(mockOptions);
 
-    // Verify fetch was called with the correct URL
-    expect(fetchWithError).toHaveBeenCalledWith(mockOptions.url);
+    // Verify fetch was called with the correct URL and a default browser UA
+    expect(fetchWithError).toHaveBeenCalledWith(mockOptions.url, {
+      headers: expect.objectContaining({ 'User-Agent': expect.any(String) }),
+    });
 
     // Verify streamFile was called with the correct arguments
     expect(streamFile).toHaveBeenCalledWith({
@@ -85,6 +87,31 @@ describe('Subtitle Helper', () => {
       bucket: 'test-bucket',
       size: '1024',
       contentType: 'text/vtt',
+    });
+  });
+
+  test('should merge customRequestHeaders into the fetch headers', async () => {
+    const mockReadable = new ReadableStream();
+    vi.mocked(fetchWithError).mockResolvedValue({
+      body: mockReadable,
+      statusText: 'OK',
+      status: 200,
+    } as Response);
+    vi.mocked(streamFile).mockResolvedValue({
+      name: 'subtitles/test/en.vtt',
+      bucket: 'test-bucket',
+    });
+
+    await streamSubtitleFile({
+      ...mockOptions,
+      customRequestHeaders: { Referer: 'https://example.com/' },
+    });
+
+    expect(fetchWithError).toHaveBeenCalledWith(mockOptions.url, {
+      headers: expect.objectContaining({
+        'User-Agent': expect.any(String),
+        Referer: 'https://example.com/',
+      }),
     });
   });
 

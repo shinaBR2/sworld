@@ -12099,6 +12099,7 @@ export type GetVideoByIdQuery = {
     user_id: any;
     duration?: number | null;
     thumbnailUrl?: string | null;
+    metadata?: any | null;
   } | null;
 };
 
@@ -12404,6 +12405,7 @@ export const GetVideoByIdDocument = new TypedDocumentString(`
     user_id
     duration
     thumbnailUrl
+    metadata
   }
 }
     `) as unknown as TypedDocumentString<

@@ -31,7 +31,7 @@ type Documents = {
   '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n': typeof types.SaveSubtitleDocument;
   '\n  query PlaylistDetail($id: uuid!, $emails: [String!]!) {\n    playlist_by_pk(id: $id) {\n      playlist_videos(where: { video: { status: { _eq: "ready" } } }) {\n        video {\n          id\n          status\n        }\n      }\n    }\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n': typeof types.PlaylistDetailDocument;
   '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n': typeof types.UsersDocument;
-  '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n    }\n  }\n': typeof types.GetVideoByIdDocument;
+  '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n      metadata\n    }\n  }\n': typeof types.GetVideoByIdDocument;
   '\n  query GetVideosMissingDuration {\n    videos(\n      where: { _or: [{ duration: { _is_null: true } }, { duration: { _eq: 0 } }] }\n    ) {\n      id\n    }\n  }\n': typeof types.GetVideosMissingDurationDocument;
   '\n  query GetVideosMissingThumbnail {\n    videos(\n      where: {\n        status: { _eq: "ready" }\n        _or: [\n          { thumbnailUrl: { _is_null: true } }\n          { thumbnailUrl: { _eq: "" } }\n        ]\n      }\n    ) {\n      id\n    }\n  }\n': typeof types.GetVideosMissingThumbnailDocument;
 };
@@ -72,7 +72,7 @@ const documents: Documents = {
     types.PlaylistDetailDocument,
   '\n  query Users($emails: [String!]!) {\n    users(where: { email: { _in: $emails } }) {\n      id\n      email\n      username\n    }\n  }\n':
     types.UsersDocument,
-  '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n    }\n  }\n':
+  '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n      metadata\n    }\n  }\n':
     types.GetVideoByIdDocument,
   '\n  query GetVideosMissingDuration {\n    videos(\n      where: { _or: [{ duration: { _is_null: true } }, { duration: { _eq: 0 } }] }\n    ) {\n      id\n    }\n  }\n':
     types.GetVideosMissingDurationDocument,
@@ -192,7 +192,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n    }\n  }\n',
+  source: '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n      metadata\n    }\n  }\n',
 ): typeof import('./graphql').GetVideoByIdDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

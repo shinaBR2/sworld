@@ -2,6 +2,7 @@ import { Readable } from 'node:stream';
 import type { ReadableStream } from 'node:stream/web';
 import { streamFile } from '../gcp-cloud-storage';
 import { fetchWithError } from 'src/utils/fetch';
+import { buildRequestHeaders } from 'src/utils/http/buildRequestHeaders';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
 
@@ -12,16 +13,26 @@ interface StreamSubtitleOptions {
   storagePath: string;
   /** Optional content type, defaults to 'text/vtt' */
   contentType?: string;
+  /** Optional per-source request headers (e.g. Referer) from the parent video's metadata */
+  customRequestHeaders?: Record<string, string>;
 }
 
 /**
  * Streams a subtitle file directly from a URL to GCP Cloud Storage
  */
 const streamSubtitleFile = async (options: StreamSubtitleOptions) => {
-  const { url, storagePath, contentType = 'text/vtt' } = options;
+  const {
+    url,
+    storagePath,
+    contentType = 'text/vtt',
+    customRequestHeaders,
+  } = options;
 
-  // Fetch the subtitle file with enhanced error handling and timeout
-  const response = await fetchWithError(url);
+  // Fetch the subtitle file with enhanced error handling and timeout.
+  // Always send a default browser UA, merged with any per-source headers.
+  const response = await fetchWithError(url, {
+    headers: buildRequestHeaders(customRequestHeaders),
+  });
 
   // Get the response body as a stream
   const subtitleStream = response.body;

@@ -16,6 +16,7 @@ const GET_VIDEO_BY_ID = graphql(/* GraphQL */ `
       user_id
       duration
       thumbnailUrl
+      metadata
     }
   }
 `);
