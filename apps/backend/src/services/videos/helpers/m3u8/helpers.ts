@@ -6,6 +6,7 @@ import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { fetchWithError } from 'src/utils/fetch';
 import { buildRequestHeaders } from 'src/utils/http/buildRequestHeaders';
 import { getCurrentLogger } from 'src/utils/logger';
+import { isRetryableError, withRetry } from 'src/utils/retry/withRetry';
 import { systemConfig } from 'src/utils/systemConfig';
 import { videoConfig } from '../../config';
 import { downloadFile, verifyFileSize } from '../file';
@@ -294,10 +295,19 @@ const streamSegments = async (params: StreamSegmentsParams) => {
           segmentFileName as string,
         );
 
-        await streamSegmentFile(
-          segment.url,
-          segmentStoragePath,
-          customRequestHeaders,
+        // One dropped connection must not kill the whole video — retry the
+        // individual segment (transient socket/timeout/5xx only, not 4xx).
+        await withRetry(
+          () =>
+            streamSegmentFile(
+              segment.url,
+              segmentStoragePath,
+              customRequestHeaders,
+            ),
+          {
+            label: `segment ${segmentFileName}`,
+            isRetryable: isRetryableError,
+          },
         );
       }),
     );

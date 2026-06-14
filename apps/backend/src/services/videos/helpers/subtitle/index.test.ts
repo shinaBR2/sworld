@@ -140,17 +140,24 @@ describe('Subtitle Helper', () => {
     expect(streamFile).not.toHaveBeenCalled();
   });
 
-  test('should throw error when fetch fails', async () => {
-    // Mock fetch error
-    const mockError = new Error('Network error');
-    vi.mocked(fetchWithError).mockRejectedValue(mockError);
+  test('retries a transient fetch failure and then throws', async () => {
+    vi.useFakeTimers();
+    try {
+      // A generic (non-CustomError) failure is treated as transient → retried.
+      vi.mocked(fetchWithError).mockRejectedValue(new Error('Network error'));
 
-    await expect(streamSubtitleFile(mockOptions)).rejects.toThrow(
-      'Network error',
-    );
+      const promise = streamSubtitleFile(mockOptions);
+      const assertion = expect(promise).rejects.toThrow('Network error');
+      // Fast-forward the linear backoff between attempts.
+      await vi.runAllTimersAsync();
+      await assertion;
 
-    // Verify streamFile was not called
-    expect(streamFile).not.toHaveBeenCalled();
+      // 4 attempts (default), then gives up; never reaches the upload.
+      expect(fetchWithError).toHaveBeenCalledTimes(4);
+      expect(streamFile).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   test('should use default content type when not provided', async () => {
