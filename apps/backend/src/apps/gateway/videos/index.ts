@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { hasuraHeadersSchema } from 'src/schema/hasura';
 import { convertBodySchema } from 'src/schema/videos/convert';
 import { crawlSchema } from 'src/schema/videos/crawl';
+import { notifyFailureSchema } from 'src/schema/videos/notify-failure';
 import { shareSchema } from 'src/schema/videos/share';
 import { subtitleCreatedSchema } from 'src/schema/videos/subtitle-created';
 import { pureRequestHandler, requestHandler } from 'src/utils/handlers';
@@ -15,6 +16,7 @@ import { fixVideosDuration } from './routes/fix-videos-duration';
 import { fixVideosThumbnail } from './routes/fix-videos-thumbnail';
 import { sharePlaylistHandler } from './routes/share-playlist';
 import { shareVideoHandler } from './routes/share-video';
+import { notifyFailureHandler } from './routes/notify-failure';
 import { streamToStorage } from './routes/stream-to-storage';
 import { subtitleCreatedHandler } from './routes/subtitle-created';
 
@@ -120,6 +122,29 @@ videosRouter.post(
   '/subtitle-created',
   honoValidateRequest(subtitleCreatedSchema),
   honoRequestHandler(subtitleCreatedHandler),
+);
+
+/**
+ * Fired by the `status -> failed` event trigger (B2a). Posts a Slack alert.
+ * curl -X POST 'http://localhost:4000/videos/notify-failure' \
+  -H 'Content-Type: application/json' \
+  -H 'x-webhook-signature: <SIGNATURE>' \
+  -d '{
+    "event": {
+      "metadata": { "id": "...", "span_id": "...", "trace_id": "..." },
+      "data": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "title": "My video",
+        "status": "failed",
+        "metadata": { "lastError": { "code": "CLIENT_ERROR", "httpStatus": 403, "message": "...", "at": "2026-..." } }
+      }
+    }
+  }'
+ */
+videosRouter.post(
+  '/notify-failure',
+  honoValidateRequest(notifyFailureSchema),
+  honoRequestHandler(notifyFailureHandler),
 );
 
 export { videosRouter };
