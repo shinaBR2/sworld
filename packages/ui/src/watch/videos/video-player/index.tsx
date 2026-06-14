@@ -347,6 +347,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           progressInterval={PROGRESS_INTERVAL}
           config={{
             file: {
+              // react-player defaults to hls.js 1.1.4, which mis-builds the AAC
+              // decoder config for some MPEG-TS streams (Chrome media-internals
+              // shows `profile: unknown` / `Unknown sample format`), producing
+              // intermittent noise/garbled audio on desktop (hls.js path only;
+              // iOS/native is unaffected). Pin a current hls.js that fixes it.
+              // See video-dev/hls.js#5251.
+              hlsVersion: '1.5.20',
               attributes: {
                 playsInline: true, // Important for iOS
                 crossOrigin: 'true',
