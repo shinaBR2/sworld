@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { withVideoFailureReport } from 'src/middleware/reportVideoFailure';
 import { convertHandlerSchema } from 'src/schema/videos/convert';
 import { honoRequestHandler } from 'src/utils/requestHandler';
 import { honoValidateRequest } from 'src/utils/validators/request';
@@ -9,7 +10,7 @@ const videosRouter = new Hono();
 videosRouter.post(
   '/convert-handler',
   honoValidateRequest(convertHandlerSchema),
-  honoRequestHandler(convertHandler),
+  honoRequestHandler(withVideoFailureReport(convertHandler)),
 );
 
 export { videosRouter };

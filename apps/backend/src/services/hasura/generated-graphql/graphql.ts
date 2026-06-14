@@ -10941,11 +10941,15 @@ export type Videos = {
   id: Scalars['uuid']['output'];
   /** When this field is true, keep the source field as video_url without any video processing */
   keepOriginalSource?: Maybe<Scalars['Boolean']['output']>;
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: Maybe<Scalars['jsonb']['output']>;
   /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
   public: Scalars['Boolean']['output'];
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count: Scalars['Int']['output'];
   /** short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
@@ -10985,6 +10989,11 @@ export type Videos = {
   /** An aggregate relationship */
   video_views_aggregate: Video_Views_Aggregate;
   view_count?: Maybe<Scalars['Int']['output']>;
+};
+
+/** columns and relationships of "videos" */
+export type VideosMetadataArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** columns and relationships of "videos" */
@@ -11178,6 +11187,8 @@ export type Videos_Aggregate_Order_By = {
 
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Videos_Append_Input = {
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
   sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
@@ -11195,12 +11206,16 @@ export type Videos_Arr_Rel_Insert_Input = {
 export type Videos_Avg_Fields = {
   __typename?: 'videos_avg_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by avg() on columns of table "videos" */
 export type Videos_Avg_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11214,9 +11229,11 @@ export type Videos_Bool_Exp = {
   duration?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   keepOriginalSource?: InputMaybe<Boolean_Comparison_Exp>;
+  metadata?: InputMaybe<Jsonb_Comparison_Exp>;
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
+  retry_count?: InputMaybe<Int_Comparison_Exp>;
   sId?: InputMaybe<String_Comparison_Exp>;
   sharedRecipients?: InputMaybe<Jsonb_Comparison_Exp>;
   sharedRecipientsInput?: InputMaybe<Jsonb_Comparison_Exp>;
@@ -11255,6 +11272,8 @@ export enum Videos_Constraint {
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type Videos_Delete_At_Path_Input = {
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
   sharedRecipients?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
@@ -11263,6 +11282,8 @@ export type Videos_Delete_At_Path_Input = {
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Videos_Delete_Elem_Input = {
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['Int']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
   sharedRecipients?: InputMaybe<Scalars['Int']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
@@ -11271,6 +11292,8 @@ export type Videos_Delete_Elem_Input = {
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Videos_Delete_Key_Input = {
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['String']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
   sharedRecipients?: InputMaybe<Scalars['String']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
@@ -11280,6 +11303,8 @@ export type Videos_Delete_Key_Input = {
 /** input type for incrementing numeric columns in table "videos" */
 export type Videos_Inc_Input = {
   duration?: InputMaybe<Scalars['Int']['input']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Scalars['Int']['input']>;
   view_count?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -11291,8 +11316,12 @@ export type Videos_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   /** When this field is true, keep the source field as video_url without any video processing */
   keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Scalars['Int']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
@@ -11325,6 +11354,8 @@ export type Videos_Max_Fields = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Int']['output']>;
   /** short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
@@ -11344,6 +11375,8 @@ export type Videos_Max_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
@@ -11364,6 +11397,8 @@ export type Videos_Min_Fields = {
   description?: Maybe<Scalars['String']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Int']['output']>;
   /** short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
@@ -11383,6 +11418,8 @@ export type Videos_Min_Order_By = {
   description?: InputMaybe<Order_By>;
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
@@ -11426,8 +11463,10 @@ export type Videos_Order_By = {
   duration?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   keepOriginalSource?: InputMaybe<Order_By>;
+  metadata?: InputMaybe<Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
+  retry_count?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
   sharedRecipients?: InputMaybe<Order_By>;
   sharedRecipientsInput?: InputMaybe<Order_By>;
@@ -11456,6 +11495,8 @@ export type Videos_Pk_Columns_Input = {
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 export type Videos_Prepend_Input = {
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
   sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
@@ -11475,7 +11516,11 @@ export enum Videos_Select_Column {
   /** column name */
   KeepOriginalSource = 'keepOriginalSource',
   /** column name */
+  Metadata = 'metadata',
+  /** column name */
   Public = 'public',
+  /** column name */
+  RetryCount = 'retry_count',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -11532,7 +11577,11 @@ export type Videos_Set_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   /** When this field is true, keep the source field as video_url without any video processing */
   keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Scalars['Int']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
@@ -11556,12 +11605,16 @@ export type Videos_Set_Input = {
 export type Videos_Stddev_Fields = {
   __typename?: 'videos_stddev_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev() on columns of table "videos" */
 export type Videos_Stddev_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11569,12 +11622,16 @@ export type Videos_Stddev_Order_By = {
 export type Videos_Stddev_Pop_Fields = {
   __typename?: 'videos_stddev_pop_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_pop() on columns of table "videos" */
 export type Videos_Stddev_Pop_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11582,12 +11639,16 @@ export type Videos_Stddev_Pop_Order_By = {
 export type Videos_Stddev_Samp_Fields = {
   __typename?: 'videos_stddev_samp_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_samp() on columns of table "videos" */
 export type Videos_Stddev_Samp_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11607,7 +11668,11 @@ export type Videos_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   /** When this field is true, keep the source field as video_url without any video processing */
   keepOriginalSource?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow */
+  metadata?: InputMaybe<Scalars['jsonb']['input']>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Scalars['Int']['input']>;
   /** short id like Youtube video id */
   sId?: InputMaybe<Scalars['String']['input']>;
   /** List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids. */
@@ -11631,12 +11696,16 @@ export type Videos_Stream_Cursor_Value_Input = {
 export type Videos_Sum_Fields = {
   __typename?: 'videos_sum_fields';
   duration?: Maybe<Scalars['Int']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Int']['output']>;
   view_count?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by sum() on columns of table "videos" */
 export type Videos_Sum_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11653,7 +11722,11 @@ export enum Videos_Update_Column {
   /** column name */
   KeepOriginalSource = 'keepOriginalSource',
   /** column name */
+  Metadata = 'metadata',
+  /** column name */
   Public = 'public',
+  /** column name */
+  RetryCount = 'retry_count',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -11705,12 +11778,16 @@ export type Videos_Updates = {
 export type Videos_Var_Pop_Fields = {
   __typename?: 'videos_var_pop_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_pop() on columns of table "videos" */
 export type Videos_Var_Pop_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11718,12 +11795,16 @@ export type Videos_Var_Pop_Order_By = {
 export type Videos_Var_Samp_Fields = {
   __typename?: 'videos_var_samp_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_samp() on columns of table "videos" */
 export type Videos_Var_Samp_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11731,12 +11812,16 @@ export type Videos_Var_Samp_Order_By = {
 export type Videos_Variance_Fields = {
   __typename?: 'videos_variance_fields';
   duration?: Maybe<Scalars['Float']['output']>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: Maybe<Scalars['Float']['output']>;
   view_count?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by variance() on columns of table "videos" */
 export type Videos_Variance_Order_By = {
   duration?: InputMaybe<Order_By>;
+  /** Bump to request a reprocess; an update-event on this column re-enqueues processing */
+  retry_count?: InputMaybe<Order_By>;
   view_count?: InputMaybe<Order_By>;
 };
 
@@ -11933,6 +12018,25 @@ export type FixVideoThumbnailMutation = {
     __typename?: 'tasks_mutation_response';
     affected_rows: number;
   } | null;
+};
+
+export type VideoMetadataQueryVariables = Exact<{
+  videoId: Scalars['uuid']['input'];
+}>;
+
+export type VideoMetadataQuery = {
+  __typename?: 'query_root';
+  videos_by_pk?: { __typename?: 'videos'; metadata?: any | null } | null;
+};
+
+export type MarkVideoFailedMutationVariables = Exact<{
+  videoId: Scalars['uuid']['input'];
+  metadata: Scalars['jsonb']['input'];
+}>;
+
+export type MarkVideoFailedMutation = {
+  __typename?: 'mutation_root';
+  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
 };
 
 export type SaveSubtitleMutationVariables = Exact<{
@@ -12228,6 +12332,29 @@ export const FixVideoThumbnailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   FixVideoThumbnailMutation,
   FixVideoThumbnailMutationVariables
+>;
+export const VideoMetadataDocument = new TypedDocumentString(`
+    query VideoMetadata($videoId: uuid!) {
+  videos_by_pk(id: $videoId) {
+    metadata
+  }
+}
+    `) as unknown as TypedDocumentString<
+  VideoMetadataQuery,
+  VideoMetadataQueryVariables
+>;
+export const MarkVideoFailedDocument = new TypedDocumentString(`
+    mutation MarkVideoFailed($videoId: uuid!, $metadata: jsonb!) {
+  update_videos_by_pk(
+    pk_columns: {id: $videoId}
+    _set: {status: "failed", metadata: $metadata}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<
+  MarkVideoFailedMutation,
+  MarkVideoFailedMutationVariables
 >;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {

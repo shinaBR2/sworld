@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { withVideoFailureReport } from 'src/middleware/reportVideoFailure';
 import { fixDurationHandlerSchema } from 'src/schema/videos/fix-duration';
 import { fixThumbnailHandlerSchema } from 'src/schema/videos/fix-thumbnail';
 import { importHandlerSchema } from 'src/schema/videos/import-platform';
@@ -15,12 +16,12 @@ const videosRouter = new Hono();
 videosRouter.post(
   '/stream-hls-handler',
   honoValidateRequest(streamHandlerSchema),
-  honoRequestHandler(streamHLSHandler),
+  honoRequestHandler(withVideoFailureReport(streamHLSHandler)),
 );
 videosRouter.post(
   '/import-platform-handler',
   honoValidateRequest(importHandlerSchema),
-  honoRequestHandler(importPlatformHandler),
+  honoRequestHandler(withVideoFailureReport(importPlatformHandler)),
 );
 videosRouter.post(
   '/fix-duration',
