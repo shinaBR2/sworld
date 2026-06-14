@@ -1,9 +1,5 @@
-import { sequelize } from 'src/database';
-import { completeTask } from 'src/database/queries/tasks';
-import {
-  getVideoById,
-  updateVideoThumbnail,
-} from 'src/database/queries/videos';
+import { fixVideoThumbnail } from 'src/services/hasura/mutations/videos/fixThumbnail';
+import { getVideoById } from 'src/services/hasura/queries/videos';
 import type { FixThumbnailHandlerRequest } from 'src/schema/videos/fix-thumbnail';
 import { videoConfig } from 'src/services/videos/config';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
@@ -27,7 +23,6 @@ const fixThumbnailHandler = async (
     id,
     taskId,
   };
-  let transaction;
 
   logger.info(metadata, `[/videos/fix-thumbnail] start processing`);
   const video = await getVideoById(id);
@@ -90,20 +85,14 @@ const fixThumbnailHandler = async (
   }
 
   try {
-    transaction = await sequelize.transaction();
-    await updateVideoThumbnail({
+    await fixVideoThumbnail({
       id,
       thumbnailUrl,
-      transaction,
-    });
-    await completeTask({
       taskId,
     });
-    await transaction.commit();
 
     return AppResponse(true, 'ok', { taskId });
   } catch (error) {
-    await transaction?.rollback();
     throw CustomError.medium('Generate thumbnail failed', {
       originalError: error,
       errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,

@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { fixThumbnailHandler } from './index';
-import { sequelize } from 'src/database';
-import { completeTask } from 'src/database/queries/tasks';
-import {
-  getVideoById,
-  updateVideoThumbnail,
-} from 'src/database/queries/videos';
+import { fixVideoThumbnail } from 'src/services/hasura/mutations/videos/fixThumbnail';
+import { getVideoById } from 'src/services/hasura/queries/videos';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { processThumbnail } from 'src/services/videos/helpers/thumbnail';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
@@ -14,19 +10,12 @@ import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import type { HandlerContext } from 'src/utils/requestHandler';
 
 // Mock dependencies
-vi.mock('src/database', () => ({
-  sequelize: {
-    transaction: vi.fn(),
-  },
-}));
-
-vi.mock('src/database/queries/tasks', () => ({
-  completeTask: vi.fn(),
-}));
-
-vi.mock('src/database/queries/videos', () => ({
+vi.mock('src/services/hasura/queries/videos', () => ({
   getVideoById: vi.fn(),
-  updateVideoThumbnail: vi.fn(),
+}));
+
+vi.mock('src/services/hasura/mutations/videos/fixThumbnail', () => ({
+  fixVideoThumbnail: vi.fn(),
 }));
 
 vi.mock('src/services/videos/helpers/m3u8/helpers', () => ({
@@ -94,12 +83,7 @@ describe('fixThumbnailHandler', () => {
       source: 'video-source',
       user_id: 'user-789',
     };
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
 
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockResolvedValue({
       segments: {
@@ -108,8 +92,7 @@ describe('fixThumbnailHandler', () => {
     });
     (processThumbnail as Mock).mockResolvedValue('thumbnail-path');
     (getDownloadUrl as Mock).mockReturnValue('thumbnail-url');
-    (updateVideoThumbnail as Mock).mockResolvedValue(1);
-    (completeTask as Mock).mockResolvedValue(true);
+    (fixVideoThumbnail as Mock).mockResolvedValue({});
 
     const result = await fixThumbnailHandler(mockContext);
 
@@ -124,13 +107,11 @@ describe('fixThumbnailHandler', () => {
       storagePath: 'videos/user-789/video-123',
       isSegment: true,
     });
-    expect(updateVideoThumbnail).toHaveBeenCalledWith({
+    expect(fixVideoThumbnail).toHaveBeenCalledWith({
       id: 'video-123',
       thumbnailUrl: 'thumbnail-url',
-      transaction: mockTransaction,
+      taskId: 'task-456',
     });
-    expect(completeTask).toHaveBeenCalledWith({ taskId: 'task-456' });
-    expect(mockTransaction.commit).toHaveBeenCalled();
     expect(result).toEqual({
       success: true,
       message: 'ok',
@@ -214,19 +195,14 @@ describe('fixThumbnailHandler', () => {
     );
   });
 
-  it('should handle task completion error', async () => {
+  it('should handle fix mutation error', async () => {
     const mockVideo = {
       id: 'video-123',
       source: 'video-source',
       user_id: 'user-789',
     };
-    const taskError = new Error('Task completion failed');
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
+    const mutationError = new Error('Mutation failed');
 
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockResolvedValue({
       segments: {
@@ -235,8 +211,7 @@ describe('fixThumbnailHandler', () => {
     });
     (processThumbnail as Mock).mockResolvedValue('thumbnail-path');
     (getDownloadUrl as Mock).mockReturnValue('thumbnail-url');
-    (updateVideoThumbnail as Mock).mockResolvedValue(1);
-    (completeTask as Mock).mockRejectedValue(taskError);
+    (fixVideoThumbnail as Mock).mockRejectedValue(mutationError);
 
     await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
       'Generate thumbnail failed',
@@ -245,7 +220,7 @@ describe('fixThumbnailHandler', () => {
     expect(CustomError.medium).toHaveBeenCalledWith(
       'Generate thumbnail failed',
       {
-        originalError: taskError,
+        originalError: mutationError,
         errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
         context: {
           id: 'video-123',
@@ -255,7 +230,5 @@ describe('fixThumbnailHandler', () => {
         source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
       },
     );
-
-    expect(mockTransaction.rollback).toHaveBeenCalled();
   });
 });
