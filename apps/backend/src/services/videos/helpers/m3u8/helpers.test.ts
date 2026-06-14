@@ -704,12 +704,13 @@ describe('streamSegmentFile', () => {
       'test-path/segment.ts',
     );
 
-    // Verify fetch was called with correct URL
+    // Verify fetch was called with the URL, timeout, and a browser User-Agent (A2)
     expect(fetchWithError).toHaveBeenCalledWith(
       'http://example.com/segment.ts',
-      {
+      expect.objectContaining({
         timeout: systemConfig.defaultExternalRequestTimeout,
-      },
+        headers: expect.objectContaining({ 'User-Agent': expect.any(String) }),
+      }),
     );
 
     // Verify streamFile was called with correct arguments

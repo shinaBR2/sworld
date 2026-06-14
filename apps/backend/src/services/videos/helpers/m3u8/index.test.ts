@@ -97,7 +97,11 @@ describe('streamM3U8', () => {
     const result = await streamM3U8(mockM3u8Url, mockStoragePath);
 
     expect(result).toEqual(expectedResult);
-    expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, undefined);
+    expect(parseM3U8Content).toHaveBeenCalledWith(
+      mockM3u8Url,
+      undefined,
+      undefined,
+    );
     expect(streamPlaylistFile).toHaveBeenCalledWith(
       '#EXTM3U\n#EXT-X-VERSION:3',
       'videos/test-video/playlist.m3u8',
@@ -114,7 +118,25 @@ describe('streamM3U8', () => {
     const excludePatterns = [/test/];
     await streamM3U8(mockM3u8Url, mockStoragePath, { excludePatterns });
 
-    expect(parseM3U8Content).toHaveBeenCalledWith(mockM3u8Url, excludePatterns);
+    expect(parseM3U8Content).toHaveBeenCalledWith(
+      mockM3u8Url,
+      excludePatterns,
+      undefined,
+    );
+  });
+
+  it('threads customRequestHeaders to parseM3U8Content and streamSegments (A2)', async () => {
+    const customRequestHeaders = { Referer: 'https://phimnhua.online/' };
+    await streamM3U8(mockM3u8Url, mockStoragePath, { customRequestHeaders });
+
+    expect(parseM3U8Content).toHaveBeenCalledWith(
+      mockM3u8Url,
+      undefined,
+      customRequestHeaders,
+    );
+    expect(streamSegments).toHaveBeenCalledWith(
+      expect.objectContaining({ customRequestHeaders }),
+    );
   });
 
   it('should pass process options to streamSegments', async () => {

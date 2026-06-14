@@ -10,6 +10,7 @@ const streamHandlerSchema = z.object({
       userId: videoDataSchema.shape.user_id,
       videoUrl: videoDataSchema.shape.video_url,
       keepOriginalSource: videoDataSchema.shape.keep_original_source,
+      customRequestHeaders: z.record(z.string()).optional(),
     }),
     metadata: z.object({
       id: hasuraEventMetadataSchema.shape.id,

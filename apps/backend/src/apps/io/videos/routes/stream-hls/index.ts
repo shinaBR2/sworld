@@ -16,7 +16,8 @@ const streamHLSHandler = async (
   const { body, headers } = validatedData;
   const { data, metadata } = body;
   const taskId = headers['x-task-id'] as string;
-  const { id, videoUrl, userId, keepOriginalSource } = data;
+  const { id, videoUrl, userId, keepOriginalSource, customRequestHeaders } =
+    data;
 
   if (keepOriginalSource) {
     try {
@@ -61,6 +62,7 @@ const streamHLSHandler = async (
     thumbnailUrl = '',
   } = await streamM3U8(videoUrl, `videos/${userId}/${id}`, {
     excludePatterns: videoConfig.excludePatterns,
+    customRequestHeaders,
   });
 
   try {

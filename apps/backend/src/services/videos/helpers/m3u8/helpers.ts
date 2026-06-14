@@ -4,6 +4,7 @@ import path from 'path';
 import { CustomError } from 'src/utils/custom-error';
 import { HTTP_ERRORS } from 'src/utils/error-codes';
 import { fetchWithError } from 'src/utils/fetch';
+import { buildRequestHeaders } from 'src/utils/http/buildRequestHeaders';
 import { getCurrentLogger } from 'src/utils/logger';
 import { systemConfig } from 'src/utils/systemConfig';
 import { videoConfig } from '../../config';
@@ -63,8 +64,11 @@ const isAds = (segmentUrl: string, excludePatterns: RegExp[]) => {
 const parseM3U8Content = async (
   m3u8Url: string,
   excludePatterns: RegExp[] = [],
+  customRequestHeaders?: Record<string, string>,
 ): Promise<ParsedResult> => {
-  const response = await fetchWithError(m3u8Url);
+  const response = await fetchWithError(m3u8Url, {
+    headers: buildRequestHeaders(customRequestHeaders),
+  });
   const content = await response.text();
   const parser = new Parser();
   parser.push(content);
@@ -231,9 +235,14 @@ const streamPlaylistFile = async (content: string, storagePath: string) => {
  * @param storagePath Destination path in Cloud Storage (e.g., 'videos/123/segments/segment.ts')
  * @returns Promise that resolves when upload is complete
  */
-const streamSegmentFile = async (segmentUrl: string, storagePath: string) => {
+const streamSegmentFile = async (
+  segmentUrl: string,
+  storagePath: string,
+  customRequestHeaders?: Record<string, string>,
+) => {
   const response = await fetchWithError(segmentUrl, {
     timeout: systemConfig.defaultExternalRequestTimeout,
+    headers: buildRequestHeaders(customRequestHeaders),
   });
   if (!response.body) {
     throw new CustomError('Failed to fetch segment', {
@@ -265,10 +274,12 @@ interface StreamSegmentsParams {
     /** Optional concurrency limit for streaming segments */
     concurrencyLimit?: number;
   };
+  /** Per-source request headers (e.g. Referer) applied to each segment fetch. */
+  customRequestHeaders?: Record<string, string>;
 }
 
 const streamSegments = async (params: StreamSegmentsParams) => {
-  const { segments, baseStoragePath, options } = params;
+  const { segments, baseStoragePath, options, customRequestHeaders } = params;
   const { defaultConcurrencyLimit } = videoConfig;
   const concurrencyLimit = options?.concurrencyLimit || defaultConcurrencyLimit;
 
@@ -283,7 +294,11 @@ const streamSegments = async (params: StreamSegmentsParams) => {
           segmentFileName as string,
         );
 
-        await streamSegmentFile(segment.url, segmentStoragePath);
+        await streamSegmentFile(
+          segment.url,
+          segmentStoragePath,
+          customRequestHeaders,
+        );
       }),
     );
   }

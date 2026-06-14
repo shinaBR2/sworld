@@ -14,6 +14,8 @@ interface ProcessOptions {
   excludePatterns?: RegExp[];
   maxSegmentSize?: number;
   concurrencyLimit?: number;
+  /** Per-source request headers (e.g. Referer) for the playlist + segment fetches. */
+  customRequestHeaders?: Record<string, string>;
 }
 
 /**
@@ -59,6 +61,7 @@ const streamM3U8 = async (
   const { modifiedContent, segments, duration } = await parseM3U8Content(
     m3u8Url,
     options.excludePatterns,
+    options.customRequestHeaders,
   );
 
   logger.info(
@@ -110,6 +113,7 @@ const streamM3U8 = async (
       segments: segments.included,
       baseStoragePath: storagePath,
       options,
+      customRequestHeaders: options.customRequestHeaders,
     });
 
     const result = {
