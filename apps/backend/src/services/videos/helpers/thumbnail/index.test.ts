@@ -54,10 +54,11 @@ describe('processThumbnail', () => {
     expect(generateTempDir).toHaveBeenCalled();
     expect(createDirectory).toHaveBeenCalledWith(mockWorkingDir);
 
-    // Verify video download
+    // Verify video download (A4: customRequestHeaders forwarded, undefined here)
     expect(downloadFile).toHaveBeenCalledWith(
       mockProps.url,
       'temp/123456/input_video_file',
+      undefined,
     );
 
     // Verify screenshot generation

@@ -89,6 +89,7 @@ const streamM3U8 = async (
       duration: firstSegment.duration as number,
       storagePath,
       isSegment: true,
+      customRequestHeaders: options.customRequestHeaders,
     });
     thumbnailUrl = getDownloadUrl(thumbnailPath);
   } catch (screenshotError) {

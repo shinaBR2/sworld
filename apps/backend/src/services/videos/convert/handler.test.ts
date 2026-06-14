@@ -117,10 +117,11 @@ describe('convertVideo', () => {
       mockPaths.outputDir,
     );
 
-    // Verify file downloads
+    // Verify file downloads (A4: customRequestHeaders forwarded, undefined here)
     expect(fileHelpers.downloadFile).toHaveBeenCalledWith(
       mockData.videoData.videoUrl,
       mockPaths.inputPath,
+      undefined,
     );
     expect(fileHelpers.verifyFileSize).toHaveBeenCalledWith(
       mockPaths.inputPath,

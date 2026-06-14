@@ -21,6 +21,7 @@ interface VideoData {
   id: string;
   videoUrl: string;
   userId: string;
+  customRequestHeaders?: Record<string, string>;
 }
 
 export interface ConversionVideo {
@@ -39,7 +40,7 @@ export interface ConversionVideo {
 export const convertVideo = async (data: ConversionVideo) => {
   const logger = getCurrentLogger();
   const { taskId, videoData } = data;
-  const { id, videoUrl, userId } = videoData;
+  const { id, videoUrl, userId, customRequestHeaders } = videoData;
   const workingDir = generateTempDir();
   const outputDir = path.join(workingDir, 'output');
   const thumbnailFilename = `${id}--${Date.now()}.jpg`;
@@ -53,7 +54,7 @@ export const convertVideo = async (data: ConversionVideo) => {
     logger.debug(`Created working directories: ${workingDir}, ${outputDir}`);
 
     // Step 2: Download and verify source video
-    await downloadFile(videoUrl, inputPath);
+    await downloadFile(videoUrl, inputPath, customRequestHeaders);
     await verifyFileSize(inputPath, videoConfig.maxFileSize);
     logger.debug(`Downloaded and verified source video: ${inputPath}`);
 

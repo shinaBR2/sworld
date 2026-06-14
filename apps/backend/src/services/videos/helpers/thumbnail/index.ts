@@ -12,6 +12,8 @@ interface ProcessThumbnailProps {
   storagePath: string;
   /** Optional flag to indicate if the video is a segment */
   isSegment?: boolean;
+  /** Per-source request headers (e.g. Referer) for the source download. */
+  customRequestHeaders?: Record<string, string>;
 }
 
 /**
@@ -29,7 +31,13 @@ interface ProcessThumbnailProps {
  * @throws {Error} If any step in the pipeline fails (download, FFmpeg, upload)
  */
 const processThumbnail = async (props: ProcessThumbnailProps) => {
-  const { url, duration, storagePath, isSegment = false } = props;
+  const {
+    url,
+    duration,
+    storagePath,
+    isSegment = false,
+    customRequestHeaders,
+  } = props;
   const workingDir = generateTempDir();
   const thumbnailFilename = `thumbnail--${Date.now()}.jpg`;
   const localThumbnailPath = path.join(workingDir, thumbnailFilename);
@@ -40,7 +48,7 @@ const processThumbnail = async (props: ProcessThumbnailProps) => {
   await createDirectory(workingDir);
 
   // Download and verify source video
-  await downloadFile(url, inputPath);
+  await downloadFile(url, inputPath, customRequestHeaders);
 
   // Take screenshot and save to working directory
   await takeScreenshot(

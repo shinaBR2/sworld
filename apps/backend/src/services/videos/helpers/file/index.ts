@@ -3,6 +3,7 @@ import { createWriteStream, stat, unlink } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import * as os from 'os';
 import path from 'path';
+import { buildRequestHeaders } from 'src/utils/http/buildRequestHeaders';
 import { getCurrentLogger } from 'src/utils/logger';
 import { promisify } from 'util';
 import { videoConfig } from '../../config';
@@ -25,9 +26,15 @@ const generateTempDir = () => {
  * @throws {Error} If response body is missing
  * @throws {Error} If stream encounters an error
  */
-const downloadFile = async (url: string, localPath: string) => {
+const downloadFile = async (
+  url: string,
+  localPath: string,
+  customRequestHeaders?: Record<string, string>,
+) => {
   const logger = getCurrentLogger();
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: buildRequestHeaders(customRequestHeaders),
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch: ${response.statusText}`);
