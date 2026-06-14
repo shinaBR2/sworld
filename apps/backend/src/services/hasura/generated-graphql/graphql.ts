@@ -5626,6 +5626,7 @@ export type Playlist_Videos_Variance_Order_By = {
 /** Blog posts initial idea is fetch from hashnode for til */
 export type Posts = {
   __typename?: 'posts';
+  author_id: Scalars['String']['output'];
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
@@ -5634,8 +5635,10 @@ export type Posts = {
   markdownContent: Scalars['String']['output'];
   readTimeInMinutes: Scalars['Int']['output'];
   slug: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updated_at: Scalars['timestamptz']['output'];
+  visibility: Scalars['String']['output'];
 };
 
 /** aggregated selection of "posts" */
@@ -5678,6 +5681,7 @@ export type Posts_Bool_Exp = {
   _and?: InputMaybe<Array<Posts_Bool_Exp>>;
   _not?: InputMaybe<Posts_Bool_Exp>;
   _or?: InputMaybe<Array<Posts_Bool_Exp>>;
+  author_id?: InputMaybe<String_Comparison_Exp>;
   brief?: InputMaybe<String_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   hId?: InputMaybe<String_Comparison_Exp>;
@@ -5685,8 +5689,10 @@ export type Posts_Bool_Exp = {
   markdownContent?: InputMaybe<String_Comparison_Exp>;
   readTimeInMinutes?: InputMaybe<Int_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
+  status?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  visibility?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "posts" */
@@ -5704,6 +5710,7 @@ export type Posts_Inc_Input = {
 
 /** input type for inserting data into table "posts" */
 export type Posts_Insert_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5712,13 +5719,16 @@ export type Posts_Insert_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate max on columns */
 export type Posts_Max_Fields = {
   __typename?: 'posts_max_fields';
+  author_id?: Maybe<Scalars['String']['output']>;
   brief?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** Hashnode public id */
@@ -5727,13 +5737,16 @@ export type Posts_Max_Fields = {
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  visibility?: Maybe<Scalars['String']['output']>;
 };
 
 /** aggregate min on columns */
 export type Posts_Min_Fields = {
   __typename?: 'posts_min_fields';
+  author_id?: Maybe<Scalars['String']['output']>;
   brief?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   /** Hashnode public id */
@@ -5742,8 +5755,10 @@ export type Posts_Min_Fields = {
   markdownContent?: Maybe<Scalars['String']['output']>;
   readTimeInMinutes?: Maybe<Scalars['Int']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  visibility?: Maybe<Scalars['String']['output']>;
 };
 
 /** response of any mutation on the table "posts" */
@@ -5764,6 +5779,7 @@ export type Posts_On_Conflict = {
 
 /** Ordering options when selecting data from "posts". */
 export type Posts_Order_By = {
+  author_id?: InputMaybe<Order_By>;
   brief?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   hId?: InputMaybe<Order_By>;
@@ -5771,8 +5787,10 @@ export type Posts_Order_By = {
   markdownContent?: InputMaybe<Order_By>;
   readTimeInMinutes?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  visibility?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: posts */
@@ -5782,6 +5800,8 @@ export type Posts_Pk_Columns_Input = {
 
 /** select columns of table "posts" */
 export enum Posts_Select_Column {
+  /** column name */
+  AuthorId = 'author_id',
   /** column name */
   Brief = 'brief',
   /** column name */
@@ -5797,13 +5817,18 @@ export enum Posts_Select_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
+  Status = 'status',
+  /** column name */
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  Visibility = 'visibility',
 }
 
 /** input type for updating data in table "posts" */
 export type Posts_Set_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5812,8 +5837,10 @@ export type Posts_Set_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate stddev on columns */
@@ -5844,6 +5871,7 @@ export type Posts_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Posts_Stream_Cursor_Value_Input = {
+  author_id?: InputMaybe<Scalars['String']['input']>;
   brief?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   /** Hashnode public id */
@@ -5852,8 +5880,10 @@ export type Posts_Stream_Cursor_Value_Input = {
   markdownContent?: InputMaybe<Scalars['String']['input']>;
   readTimeInMinutes?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregate sum on columns */
@@ -5864,6 +5894,8 @@ export type Posts_Sum_Fields = {
 
 /** update columns of table "posts" */
 export enum Posts_Update_Column {
+  /** column name */
+  AuthorId = 'author_id',
   /** column name */
   Brief = 'brief',
   /** column name */
@@ -5879,9 +5911,13 @@ export enum Posts_Update_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
+  Status = 'status',
+  /** column name */
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  Visibility = 'visibility',
 }
 
 export type Posts_Updates = {
@@ -11794,6 +11830,46 @@ export type ShareVideoMutation = {
   } | null;
 };
 
+export type CreateTaskMutationVariables = Exact<{
+  object: Tasks_Insert_Input;
+}>;
+
+export type CreateTaskMutation = {
+  __typename?: 'mutation_root';
+  insert_tasks_one?: {
+    __typename?: 'tasks';
+    id: any;
+    task_id: any;
+    status: string;
+    completed: boolean;
+  } | null;
+};
+
+export type UpdateTaskStatusMutationVariables = Exact<{
+  taskId: Scalars['uuid']['input'];
+  status: Scalars['String']['input'];
+}>;
+
+export type UpdateTaskStatusMutation = {
+  __typename?: 'mutation_root';
+  update_tasks?: {
+    __typename?: 'tasks_mutation_response';
+    affected_rows: number;
+  } | null;
+};
+
+export type CompleteTaskMutationVariables = Exact<{
+  taskId: Scalars['uuid']['input'];
+}>;
+
+export type CompleteTaskMutation = {
+  __typename?: 'mutation_root';
+  update_tasks?: {
+    __typename?: 'tasks_mutation_response';
+    affected_rows: number;
+  } | null;
+};
+
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
@@ -11827,6 +11903,36 @@ export type FinalizeVideoMutation = {
   } | null;
   insert_notifications_one?: { __typename?: 'notifications'; id: any } | null;
   update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
+};
+
+export type FixVideoDurationMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  duration: Scalars['Int']['input'];
+  taskId: Scalars['uuid']['input'];
+}>;
+
+export type FixVideoDurationMutation = {
+  __typename?: 'mutation_root';
+  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
+  update_tasks?: {
+    __typename?: 'tasks_mutation_response';
+    affected_rows: number;
+  } | null;
+};
+
+export type FixVideoThumbnailMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  thumbnailUrl: Scalars['String']['input'];
+  taskId: Scalars['uuid']['input'];
+}>;
+
+export type FixVideoThumbnailMutation = {
+  __typename?: 'mutation_root';
+  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
+  update_tasks?: {
+    __typename?: 'tasks_mutation_response';
+    affected_rows: number;
+  } | null;
 };
 
 export type SaveSubtitleMutationVariables = Exact<{
@@ -11873,6 +11979,41 @@ export type UsersQuery = {
     email: string;
     username?: string | null;
   }>;
+};
+
+export type GetVideoByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+export type GetVideoByIdQuery = {
+  __typename?: 'query_root';
+  videos_by_pk?: {
+    __typename?: 'videos';
+    id: any;
+    source?: string | null;
+    status?: string | null;
+    user_id: any;
+    duration?: number | null;
+    thumbnailUrl?: string | null;
+  } | null;
+};
+
+export type GetVideosMissingDurationQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetVideosMissingDurationQuery = {
+  __typename?: 'query_root';
+  videos: Array<{ __typename?: 'videos'; id: any }>;
+};
+
+export type GetVideosMissingThumbnailQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetVideosMissingThumbnailQuery = {
+  __typename?: 'query_root';
+  videos: Array<{ __typename?: 'videos'; id: any }>;
 };
 
 export class TypedDocumentString<TResult, TVariables>
@@ -11984,6 +12125,45 @@ export const ShareVideoDocument = new TypedDocumentString(`
   ShareVideoMutation,
   ShareVideoMutationVariables
 >;
+export const CreateTaskDocument = new TypedDocumentString(`
+    mutation CreateTask($object: tasks_insert_input!) {
+  insert_tasks_one(
+    object: $object
+    on_conflict: {constraint: tasks_task_id_key, update_columns: [task_id]}
+  ) {
+    id
+    task_id
+    status
+    completed
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CreateTaskMutation,
+  CreateTaskMutationVariables
+>;
+export const UpdateTaskStatusDocument = new TypedDocumentString(`
+    mutation UpdateTaskStatus($taskId: uuid!, $status: String!) {
+  update_tasks(where: {task_id: {_eq: $taskId}}, _set: {status: $status}) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  UpdateTaskStatusMutation,
+  UpdateTaskStatusMutationVariables
+>;
+export const CompleteTaskDocument = new TypedDocumentString(`
+    mutation CompleteTask($taskId: uuid!) {
+  update_tasks(
+    where: {task_id: {_eq: $taskId}}
+    _set: {status: "completed", completed: true}
+  ) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CompleteTaskMutation,
+  CompleteTaskMutationVariables
+>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {
@@ -12016,6 +12196,38 @@ export const FinalizeVideoDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   FinalizeVideoMutation,
   FinalizeVideoMutationVariables
+>;
+export const FixVideoDurationDocument = new TypedDocumentString(`
+    mutation FixVideoDuration($id: uuid!, $duration: Int!, $taskId: uuid!) {
+  update_videos_by_pk(pk_columns: {id: $id}, _set: {duration: $duration}) {
+    id
+  }
+  update_tasks(
+    where: {task_id: {_eq: $taskId}}
+    _set: {status: "completed", completed: true}
+  ) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  FixVideoDurationMutation,
+  FixVideoDurationMutationVariables
+>;
+export const FixVideoThumbnailDocument = new TypedDocumentString(`
+    mutation FixVideoThumbnail($id: uuid!, $thumbnailUrl: String!, $taskId: uuid!) {
+  update_videos_by_pk(pk_columns: {id: $id}, _set: {thumbnailUrl: $thumbnailUrl}) {
+    id
+  }
+  update_tasks(
+    where: {task_id: {_eq: $taskId}}
+    _set: {status: "completed", completed: true}
+  ) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  FixVideoThumbnailMutation,
+  FixVideoThumbnailMutationVariables
 >;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
@@ -12056,3 +12268,40 @@ export const UsersDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UsersQuery, UsersQueryVariables>;
+export const GetVideoByIdDocument = new TypedDocumentString(`
+    query GetVideoById($id: uuid!) {
+  videos_by_pk(id: $id) {
+    id
+    source
+    status
+    user_id
+    duration
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetVideoByIdQuery,
+  GetVideoByIdQueryVariables
+>;
+export const GetVideosMissingDurationDocument = new TypedDocumentString(`
+    query GetVideosMissingDuration {
+  videos(where: {_or: [{duration: {_is_null: true}}, {duration: {_eq: 0}}]}) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetVideosMissingDurationQuery,
+  GetVideosMissingDurationQueryVariables
+>;
+export const GetVideosMissingThumbnailDocument = new TypedDocumentString(`
+    query GetVideosMissingThumbnail {
+  videos(
+    where: {status: {_eq: "ready"}, _or: [{thumbnailUrl: {_is_null: true}}, {thumbnailUrl: {_eq: ""}}]}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetVideosMissingThumbnailQuery,
+  GetVideosMissingThumbnailQueryVariables
+>;
