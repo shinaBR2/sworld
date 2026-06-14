@@ -8,7 +8,6 @@ describe('envConfig', () => {
 
   it('contains expected configuration keys', () => {
     const expectedKeys = [
-      'databaseUrl',
       'port',
       'storageBucket',
       'sentrydsn',

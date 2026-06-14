@@ -1,6 +1,5 @@
 const envConfig = {
   nodeEnv: process.env.NODE_ENV || 'development',
-  databaseUrl: process.env.DATABASE_URL,
   port: process.env.PORT,
   storageBucket: process.env.GCP_STORAGE_BUCKET,
   sentrydsn: process.env.SENTRY_DSN,

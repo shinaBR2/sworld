@@ -71,13 +71,10 @@
     "hono-rate-limiter": "^0.4.2",
     "m3u8-parser": "^7.2.0",
     "nanoid": "^5.1.5",
-    "pg": "^8.13.1",
-    "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
     "pino-http": "^10.3.0",
     "playwright": "^1.50.1",
     "posthog-node": "^5.9.1",
-    "sequelize": "^6.37.5",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
   }
