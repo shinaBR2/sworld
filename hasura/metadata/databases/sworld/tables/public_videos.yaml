@@ -246,3 +246,43 @@ event_triggers:
       paused: false
       schedule: 0 0 * * *
       timeout: 600
+  - name: video_on_retry
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - retry_count
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 300
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/convert'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+    cleanup_config:
+      batch_size: 10000
+      clean_invocation_logs: false
+      clear_older_than: 168
+      paused: false
+      schedule: 0 0 * * *
+      timeout: 600
