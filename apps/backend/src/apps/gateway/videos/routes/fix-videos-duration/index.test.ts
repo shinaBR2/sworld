@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fixVideosDuration } from './index';
-import { getVideoMissingDuration } from 'src/database/queries/videos';
+import { getVideoMissingDuration } from 'src/services/hasura/queries/videos';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
 import { queues } from 'src/utils/systemConfig';
 import { AppError } from 'src/utils/schema';
 
 // Mock dependencies
-vi.mock('src/database/queries/videos');
+vi.mock('src/services/hasura/queries/videos', () => ({
+  getVideoMissingDuration: vi.fn(),
+}));
 vi.mock('src/utils/cloud-task');
 vi.mock('src/utils/logger', () => {
   const mockLogger = {
