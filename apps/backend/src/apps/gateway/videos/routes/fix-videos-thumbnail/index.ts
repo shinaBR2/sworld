@@ -1,5 +1,8 @@
-import { TaskEntityType, TaskType } from 'src/database/models/task';
-import { getVideoMissingThumbnail } from 'src/database/queries/videos';
+import { getVideoMissingThumbnail } from 'src/services/hasura/queries/videos';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 import {
   type CreateCloudTasksParams,
   createCloudTasks,

@@ -1,14 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fixVideosThumbnail } from './index';
-import { getVideoMissingThumbnail } from 'src/database/queries/videos';
+import { getVideoMissingThumbnail } from 'src/services/hasura/queries/videos';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
 import { queues } from 'src/utils/systemConfig';
 import { AppError } from 'src/utils/schema';
-import { TaskEntityType, TaskType } from 'src/database/models/task';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 
 // Mock dependencies
-vi.mock('src/database/queries/videos');
+vi.mock('src/services/hasura/queries/videos', () => ({
+  getVideoMissingThumbnail: vi.fn(),
+}));
 vi.mock('src/utils/cloud-task');
 vi.mock('src/utils/logger', () => {
   const mockLogger = {
