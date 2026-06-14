@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { fixDurationHandler } from './index';
-import { sequelize } from 'src/database';
-import { completeTask } from 'src/database/queries/tasks';
-import { getVideoById, updateVideoDuration } from 'src/database/queries/videos';
+import { fixVideoDuration } from 'src/services/hasura/mutations/videos/fixDuration';
+import { getVideoById } from 'src/services/hasura/queries/videos';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
@@ -10,19 +9,12 @@ import type { HandlerContext } from 'src/utils/requestHandler';
 import type { FixDurationHandlerRequest } from 'src/schema/videos/fix-duration';
 
 // Mock dependencies
-vi.mock('src/database', () => ({
-  sequelize: {
-    transaction: vi.fn(),
-  },
-}));
-
-vi.mock('src/database/queries/tasks', () => ({
-  completeTask: vi.fn(),
-}));
-
-vi.mock('src/database/queries/videos', () => ({
+vi.mock('src/services/hasura/queries/videos', () => ({
   getVideoById: vi.fn(),
-  updateVideoDuration: vi.fn(),
+}));
+
+vi.mock('src/services/hasura/mutations/videos/fixDuration', () => ({
+  fixVideoDuration: vi.fn(),
 }));
 
 vi.mock('src/services/videos/helpers/m3u8/helpers', () => ({
@@ -78,16 +70,10 @@ describe('fixDurationHandler', () => {
       source: 'video-source',
     };
     const mockDuration = 120;
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
 
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockResolvedValue({ duration: mockDuration });
-    (updateVideoDuration as Mock).mockResolvedValue(1);
-    (completeTask as Mock).mockResolvedValue(true);
+    (fixVideoDuration as Mock).mockResolvedValue({});
 
     const result = await fixDurationHandler(mockContext);
 
@@ -96,14 +82,11 @@ describe('fixDurationHandler', () => {
       'video-source',
       expect.any(Array),
     );
-    expect(sequelize.transaction).toHaveBeenCalled();
-    expect(updateVideoDuration).toHaveBeenCalledWith({
+    expect(fixVideoDuration).toHaveBeenCalledWith({
       id: 'video-123',
       duration: mockDuration,
-      transaction: mockTransaction,
+      taskId: 'task-456',
     });
-    expect(completeTask).toHaveBeenCalledWith({ taskId: 'task-456' });
-    expect(mockTransaction.commit).toHaveBeenCalled();
     expect(result).toEqual({
       success: true,
       message: 'ok',
@@ -112,12 +95,6 @@ describe('fixDurationHandler', () => {
   });
 
   it('should throw error when video is not found', async () => {
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
-
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(null);
 
     await expect(fixDurationHandler(mockContext)).rejects.toThrow(
@@ -140,12 +117,7 @@ describe('fixDurationHandler', () => {
       source: 'video-source',
     };
     const parseError = new Error('Parsing failed');
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
 
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockRejectedValue(parseError);
 
@@ -164,29 +136,23 @@ describe('fixDurationHandler', () => {
     });
   });
 
-  it('should handle errors during task completion', async () => {
+  it('should handle errors during the fix mutation', async () => {
     const mockVideo = {
       id: 'video-123',
       source: 'video-source',
     };
-    const taskError = new Error('Task completion failed');
-    const mockTransaction = {
-      commit: vi.fn(),
-      rollback: vi.fn(),
-    };
+    const mutationError = new Error('Mutation failed');
 
-    (sequelize.transaction as Mock).mockResolvedValue(mockTransaction);
     (getVideoById as Mock).mockResolvedValue(mockVideo);
     (parseM3U8Content as Mock).mockResolvedValue({ duration: 120 });
-    (updateVideoDuration as Mock).mockResolvedValue(1);
-    (completeTask as Mock).mockRejectedValue(taskError);
+    (fixVideoDuration as Mock).mockRejectedValue(mutationError);
 
     await expect(fixDurationHandler(mockContext)).rejects.toThrow(
       'Fix duration failed',
     );
 
     expect(CustomError.medium).toHaveBeenCalledWith('Fix duration failed', {
-      originalError: taskError,
+      originalError: mutationError,
       errorCode: VIDEO_ERRORS.FIX_DURATION_ERROR,
       context: {
         id: 'video-123',
@@ -194,7 +160,5 @@ describe('fixDurationHandler', () => {
       },
       source: 'apps/io/videos/routes/fix-duration/index.ts',
     });
-
-    expect(mockTransaction.rollback).toHaveBeenCalled();
   });
 });

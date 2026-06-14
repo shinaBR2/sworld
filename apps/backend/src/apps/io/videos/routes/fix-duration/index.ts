@@ -1,6 +1,5 @@
-import { sequelize } from 'src/database';
-import { completeTask } from 'src/database/queries/tasks';
-import { getVideoById, updateVideoDuration } from 'src/database/queries/videos';
+import { fixVideoDuration } from 'src/services/hasura/mutations/videos/fixDuration';
+import { getVideoById } from 'src/services/hasura/queries/videos';
 import type { FixDurationHandlerRequest } from 'src/schema/videos/fix-duration';
 import { videoConfig } from 'src/services/videos/config';
 import { parseM3U8Content } from 'src/services/videos/helpers/m3u8/helpers';
@@ -22,7 +21,6 @@ const fixDurationHandler = async (
     id,
     taskId,
   };
-  let transaction;
 
   try {
     logger.info(metadata, `[/videos/fix-duration] start processing`);
@@ -44,20 +42,14 @@ const fixDurationHandler = async (
       videoConfig.excludePatterns,
     );
 
-    transaction = await sequelize.transaction();
-    await updateVideoDuration({
+    await fixVideoDuration({
       id,
       duration,
-      transaction,
-    });
-    await completeTask({
       taskId,
     });
-    await transaction.commit();
 
     return AppResponse(true, 'ok', { taskId });
   } catch (error) {
-    await transaction?.rollback();
     throw CustomError.medium('Fix duration failed', {
       originalError: error,
       errorCode: VIDEO_ERRORS.FIX_DURATION_ERROR,
