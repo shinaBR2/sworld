@@ -1,11 +1,13 @@
 import { CloudTasksClient, type protos } from '@google-cloud/tasks';
-import { sequelize } from 'src/database';
+import {
+  createTask,
+  updateTaskStatus,
+} from 'src/services/hasura/mutations/tasks';
 import {
   type TaskEntityType,
   TaskStatus,
   type TaskType,
-} from 'src/database/models/task';
-import { createTask, updateTaskStatus } from 'src/database/queries/tasks';
+} from 'src/services/hasura/mutations/tasks/constants';
 import { v5 as uuidv5 } from 'uuid';
 import { envConfig } from './envConfig';
 import { getCurrentLogger } from './logger';
@@ -90,8 +92,6 @@ const createCloudTasks = async (
     uuidNamespaces.cloudTask,
   );
 
-  const transaction = await sequelize.transaction();
-
   try {
     const dbTask = await createTask({
       taskId,
@@ -99,14 +99,11 @@ const createCloudTasks = async (
       metadata: payload || {},
       entityType,
       entityId,
-      transaction,
     });
 
-    // This is should be ts-ignore but not sure
-    // why it auto format to ts-expect-error
-    // @ts-expect-error
-    if (dbTask.completed) {
-      await transaction.commit();
+    // createTask upserts on task_id and returns the existing row on conflict,
+    // so an already-completed task short-circuits without re-enqueuing.
+    if (dbTask?.completed) {
       return null;
     }
 
@@ -154,14 +151,10 @@ const createCloudTasks = async (
     await updateTaskStatus({
       taskId,
       status: TaskStatus.IN_PROGRESS,
-      transaction,
     });
-    await transaction.commit();
 
     return response;
   } catch (error) {
-    await transaction.rollback();
-
     logger.error(
       {
         err: error,

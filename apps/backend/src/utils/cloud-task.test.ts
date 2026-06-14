@@ -1,4 +1,7 @@
-import { TaskEntityType, TaskType } from 'src/database/models/task';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock modules
@@ -26,16 +29,7 @@ vi.mock('@google-cloud/tasks', () => ({
   })),
 }));
 
-vi.mock('src/database', () => ({
-  sequelize: {
-    transaction: vi.fn().mockImplementation(() => ({
-      commit: vi.fn().mockResolvedValue(undefined),
-      rollback: vi.fn().mockResolvedValue(undefined),
-    })),
-  },
-}));
-
-vi.mock('src/database/queries/tasks', () => ({
+vi.mock('src/services/hasura/mutations/tasks', () => ({
   createTask: vi.fn(),
   updateTaskStatus: vi.fn(),
 }));
@@ -67,7 +61,6 @@ vi.mock('./systemConfig', () => ({
 describe('createCloudTasks', () => {
   let dbCreateTask: any;
   let dbUpdateStatus: any;
-  let sequelize: any;
 
   const basePayload = {
     data: 'test',
@@ -92,15 +85,12 @@ describe('createCloudTasks', () => {
       'projects/test-project/locations/us-central1/queues/test-queue',
     );
 
-    const tasksModule = await import('src/database/queries/tasks');
-    const dbModule = await import('src/database');
+    const tasksModule = await import('src/services/hasura/mutations/tasks');
     dbCreateTask = tasksModule.createTask;
     dbUpdateStatus = tasksModule.updateTaskStatus;
-    sequelize = dbModule.sequelize;
 
     dbCreateTask.mockReset();
     dbUpdateStatus.mockReset();
-    sequelize.transaction.mockClear();
   });
 
   afterEach(() => {
@@ -111,8 +101,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should create a basic task successfully', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -133,7 +121,6 @@ describe('createCloudTasks', () => {
       metadata: testPayload,
       entityType: 'video',
       entityId: '123',
-      transaction,
     });
 
     expect(mockQueuePath).toHaveBeenCalledWith(
@@ -167,16 +154,12 @@ describe('createCloudTasks', () => {
     expect(dbUpdateStatus).toHaveBeenCalledWith({
       taskId: 'mock-uuid',
       status: 'in_progress',
-      transaction,
     });
 
-    expect(transaction.commit).toHaveBeenCalled();
     expect(response).toEqual({ name: 'test-task' });
   });
 
   it('should return null if task already exists and is completed', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: true });
 
     const params = {
@@ -187,14 +170,11 @@ describe('createCloudTasks', () => {
     const response = await createCloudTasks(params);
 
     expect(response).toBeNull();
-    expect(transaction.commit).toHaveBeenCalled();
     expect(mockCreateTask).not.toHaveBeenCalled();
     expect(dbUpdateStatus).not.toHaveBeenCalled();
   });
 
-  it('should rollback transaction if cloud task creation fails', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
+  it('should throw and skip the status update if cloud task creation fails', async () => {
     dbCreateTask.mockResolvedValue({ completed: false });
     mockCreateTask.mockRejectedValue(new Error('Cloud task error'));
 
@@ -205,16 +185,12 @@ describe('createCloudTasks', () => {
     const { createCloudTasks } = await import('./cloud-task');
     await expect(createCloudTasks(params)).rejects.toThrow();
 
-    expect(transaction.rollback).toHaveBeenCalled();
-    expect(transaction.commit).not.toHaveBeenCalled();
     expect(dbUpdateStatus).not.toHaveBeenCalled();
   });
 
-  it('should rollback transaction if database update fails', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
+  it('should throw if the status update fails', async () => {
     dbCreateTask.mockResolvedValue({ completed: false });
-    dbUpdateStatus.mockRejectedValue(new Error('DB update error'));
+    dbUpdateStatus.mockRejectedValue(new Error('Status update error'));
 
     const params = {
       ...baseParams,
@@ -222,14 +198,9 @@ describe('createCloudTasks', () => {
 
     const { createCloudTasks } = await import('./cloud-task');
     await expect(createCloudTasks(params)).rejects.toThrow();
-
-    expect(transaction.rollback).toHaveBeenCalled();
-    expect(transaction.commit).not.toHaveBeenCalled();
   });
 
   it('should handle object payload correctly', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -259,8 +230,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should handle schedule time correctly', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -287,8 +256,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should handle custom headers', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -318,8 +285,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when missing projectId', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -337,8 +302,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when missing location', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -356,8 +319,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when missing cloud tasks service account', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -375,8 +336,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when missing required parameters', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -394,8 +353,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when failed to stringify payload', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -413,8 +370,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should throw error when failed to init task', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 
@@ -439,8 +394,6 @@ describe('createCloudTasks', () => {
   });
 
   it('should set the dispatch deadline to 1800 seconds', async () => {
-    const transaction = { commit: vi.fn(), rollback: vi.fn() };
-    sequelize.transaction.mockResolvedValue(transaction);
     dbCreateTask.mockResolvedValue({ completed: false });
     dbUpdateStatus.mockResolvedValue({});
 

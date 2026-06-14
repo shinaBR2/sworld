@@ -19,13 +19,25 @@ vi.mock('src/utils/envConfig', () => ({
 describe('hasuraClient', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
+    // Restore the default mocked env before each test
+    vi.mocked(envConfig).hasuraEndpoint = 'https://test-hasura-endpoint.com';
+    vi.mocked(envConfig).hasuraAdminSecret = 'test-admin-secret';
   });
 
-  it('should create a GraphQLClient with correct parameters', async () => {
-    // Import the client after mocks are set up
+  it('does not construct the client at import time', async () => {
+    await import('./client');
+
+    // Lazy: importing the module must not touch the env or build the client.
+    expect(GraphQLClient).not.toHaveBeenCalled();
+  });
+
+  it('constructs a GraphQLClient with correct parameters on first use', async () => {
     const { hasuraClient } = await import('./client');
 
-    // Verify GraphQLClient constructor was called correctly
+    // Accessing a member triggers lazy construction.
+    void hasuraClient.request;
+
     expect(GraphQLClient).toHaveBeenCalledWith(
       'https://test-hasura-endpoint.com',
       {
@@ -36,29 +48,17 @@ describe('hasuraClient', () => {
     );
   });
 
-  it('should handle missing environment variables', async () => {
-    // Save original values
-    const originalEndpoint = vi.mocked(envConfig).hasuraEndpoint;
-    const originalSecret = vi.mocked(envConfig).hasuraAdminSecret;
-
-    // Test missing endpoint
+  it('throws on use when the endpoint is missing', async () => {
     vi.mocked(envConfig).hasuraEndpoint = undefined;
-    vi.resetModules();
+    const { hasuraClient } = await import('./client');
 
-    await expect(async () => {
-      await import('./client');
-    }).rejects.toThrow(/endpoint/i);
+    expect(() => hasuraClient.request).toThrow(/endpoint/i);
+  });
 
-    // Restore endpoint, test missing secret
-    vi.mocked(envConfig).hasuraEndpoint = originalEndpoint;
+  it('throws on use when the admin secret is missing', async () => {
     vi.mocked(envConfig).hasuraAdminSecret = undefined;
-    vi.resetModules();
+    const { hasuraClient } = await import('./client');
 
-    await expect(async () => {
-      await import('./client');
-    }).rejects.toThrow(/admin secret/i);
-
-    // Restore original values
-    vi.mocked(envConfig).hasuraAdminSecret = originalSecret;
+    expect(() => hasuraClient.request).toThrow(/admin secret/i);
   });
 });
