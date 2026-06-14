@@ -9,6 +9,9 @@ This folder is our "Linear" for this epic. Each sub-feature is a folder; each
 micro-PR is one markdown file (a "ticket"). Pick any ticket whose **Blocked by**
 is satisfied and ship it in one small PR.
 
+**Status lives in the folder and file names** — `ls` the tree to see where
+everything stands without opening a thing (see [Status](#status)).
+
 ---
 
 ## The problem (grounded in the current code)
@@ -70,6 +73,33 @@ hence a dedicated **`retry_count`** (the "when"), separate from `metadata` (the
 > per-segment retry — the same flaws already fixed in `src/cli/stream-m3u8.ts`.
 > R1 shares files with A2/A3, so fold it into those PRs or sequence right after.
 
+## Status
+
+**Status is encoded in the folder and file names — no need to open anything.**
+`ls` the tree and you see where every wave and ticket stands.
+
+- **Folder** = the wave's rollup status: `NN.<status>.<name>/`
+  (e.g. `01.todo.custom-request-headers/`).
+- **File** = the ticket's status: `<ID>.<status>.<name>.md`
+  (e.g. `A0.todo.build-request-headers-util.md`).
+
+Status tokens: `todo` → `wip` → `review` → `done` (plus `blocked`).
+
+```bash
+# every ticket's status, at a glance (no file reads):
+find src/docs/video-processing-reliability -name '*.md' ! -name README.md
+# wave rollups:
+ls src/docs/video-processing-reliability
+# what's left:
+find src/docs/video-processing-reliability -name '*.todo.*.md'
+```
+
+**To change status, `git mv` the file's token** (e.g. `A0.todo.…` → `A0.wip.…` →
+`A0.review.…` → `A0.done.…`). The **filename is the single source of truth** —
+there is deliberately *no* `Status:` field inside the file to drift out of sync.
+When every ticket in a folder reaches a state, bump the **folder** token to match
+(it's the rollup). Drop the PR link into the ticket body when it goes to `review`.
+
 ## Dependency graph
 
 ```
@@ -121,5 +151,6 @@ No two parallel tickets touch the same file.
 - **Schema first.** F1 lands before anything that reads the columns.
 - **Hasura changes are their own PRs** (F1, B2-trigger, C1).
 - **No scope trimming** — ship a ticket's full scope or split it further first.
-- **Mark progress** by checking the box in each ticket file; move `Status:` to
-  `done` and reference the PR.
+- **Mark progress** by renaming the ticket file's status token
+  (`git mv …todo… …done…`) — the filename is the source of truth (see
+  [Status](#status)); bump the folder token when the whole wave moves.
