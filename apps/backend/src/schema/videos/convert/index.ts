@@ -8,12 +8,24 @@ import { videoUrlSchema } from '../common';
  * These schemas from hasura, for gateway
  */
 
+/**
+ * `videos.metadata` jsonb (F1). Input side: `customRequestHeaders` are forwarded
+ * to outbound fetches (A2/A3/A4). `.passthrough()` keeps other keys (e.g. the
+ * `lastError` output written by B1) without this schema needing to model them.
+ */
+const videoMetadataSchema = z
+  .object({
+    customRequestHeaders: z.record(z.string()).optional(),
+  })
+  .passthrough();
+
 const videoDataSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   video_url: videoUrlSchema,
   skip_process: z.boolean(),
   keep_original_source: z.boolean(),
+  metadata: videoMetadataSchema.nullable().optional(),
 });
 
 const eventSchema = z.object({
@@ -32,6 +44,7 @@ const transformEvent = (event: z.infer<typeof eventSchema>) => {
       videoUrl: event.data.video_url,
       skipProcess: event.data.skip_process,
       keepOriginalSource: event.data.keep_original_source,
+      customRequestHeaders: event.data.metadata?.customRequestHeaders,
       platform,
       fileType,
     },
@@ -57,6 +70,7 @@ const convertHandlerSchema = z.object({
       id: videoDataSchema.shape.id,
       userId: videoDataSchema.shape.user_id,
       videoUrl: videoDataSchema.shape.video_url,
+      customRequestHeaders: z.record(z.string()).optional(),
     }),
     metadata: z.object({
       id: hasuraEventMetadataSchema.shape.id, // Can we reuse somehow?

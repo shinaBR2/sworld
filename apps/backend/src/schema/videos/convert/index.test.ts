@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { convertHandlerSchema } from './index';
+import { convertHandlerSchema, transformEvent, videoDataSchema } from './index';
 
 describe('convertHandlerSchema', () => {
   const validHeaders = {
@@ -99,5 +99,82 @@ describe('convertHandlerSchema', () => {
       }),
     );
     expect(result.success).toBe(false);
+  });
+
+  it('accepts optional customRequestHeaders (A1)', () => {
+    const result = convertHandlerSchema.safeParse({
+      body: {
+        data: { ...validData, customRequestHeaders: { Referer: 'https://x/' } },
+        metadata: validMetadata,
+      },
+      headers: validHeaders,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+// ─── A1: metadata.customRequestHeaders ───────────────────────────────────────
+
+const ID = '550e8400-e29b-41d4-a716-446655440000';
+const USER_ID = '550e8400-e29b-41d4-a716-446655440001';
+const VIDEO_URL = 'https://example.com/video.m3u8';
+
+const baseData = {
+  id: ID,
+  user_id: USER_ID,
+  video_url: VIDEO_URL,
+  skip_process: false,
+  keep_original_source: false,
+};
+
+const eventWith = (data: Record<string, unknown>) =>
+  ({
+    metadata: { id: 'evt-1', span_id: 'span-1', trace_id: 'trace-1' },
+    data,
+  }) as unknown as Parameters<typeof transformEvent>[0];
+
+describe('transformEvent', () => {
+  it('leaves customRequestHeaders undefined when metadata is absent', () => {
+    const result = transformEvent(eventWith(baseData));
+
+    expect(result.data.customRequestHeaders).toBeUndefined();
+    expect(result.data.videoUrl).toBe(VIDEO_URL);
+    expect(result.data.fileType).toBe('hls');
+  });
+
+  it('surfaces customRequestHeaders from metadata', () => {
+    const result = transformEvent(
+      eventWith({
+        ...baseData,
+        metadata: {
+          customRequestHeaders: { Referer: 'https://phimnhua.online/' },
+        },
+      }),
+    );
+
+    expect(result.data.customRequestHeaders).toEqual({
+      Referer: 'https://phimnhua.online/',
+    });
+  });
+});
+
+describe('videoDataSchema metadata', () => {
+  it('parses a row with metadata (customRequestHeaders + passthrough lastError)', () => {
+    const parsed = videoDataSchema.parse({
+      ...baseData,
+      metadata: {
+        customRequestHeaders: { Referer: 'https://x/' },
+        lastError: { code: 'CLIENT_ERROR' },
+      },
+    });
+
+    expect(parsed.metadata?.customRequestHeaders).toEqual({
+      Referer: 'https://x/',
+    });
+  });
+
+  it('parses a row with no metadata (backwards compatible)', () => {
+    const parsed = videoDataSchema.parse(baseData);
+    expect(parsed.metadata).toBeUndefined();
   });
 });
