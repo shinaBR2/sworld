@@ -1,4 +1,7 @@
-import { TaskEntityType, TaskType } from 'src/database/models/task';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 import {
   type ConvertBodySchema,
   transformEvent,
