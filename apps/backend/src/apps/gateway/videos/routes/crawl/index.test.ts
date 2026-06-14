@@ -1,4 +1,7 @@
-import { TaskEntityType, TaskType } from 'src/database/models/task';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 import { verifySignature } from 'src/services/videos/convert/validator';
 import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
