@@ -1,4 +1,4 @@
-import { completeTask } from 'src/database/queries/tasks';
+import { completeTask } from 'src/services/hasura/mutations/tasks';
 import { convertVideo } from 'src/services/videos/convert/handler';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
@@ -55,7 +55,7 @@ vi.mock('src/utils/logger', () => {
   };
 });
 
-vi.mock('src/database/queries/tasks', () => ({
+vi.mock('src/services/hasura/mutations/tasks', () => ({
   completeTask: vi.fn(),
 }));
 
