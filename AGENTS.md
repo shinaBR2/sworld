@@ -64,7 +64,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 - _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 
-**Tasks & requirements** — the source of truth for work is **Linear** (team **SWorld**, key `SWO`). Bugs and small features are single issues; large features are projects whose description + a Linear document hold the spec, with one issue per sub-task, milestones for waves, and blocking relations for dependencies. Status lives in the issue state (`Backlog → Todo → In Progress → In Review → Done`). See the `writing-task-specs` skill for how to author them and `parallel-workflow` for how state moves as work ships.
+**Tasks & requirements** — the source of truth for work is **Linear** (team **SWorld**, key `SWO`). A **project is an app** (Til, Watch, Library, …) — every issue belongs to one. Bugs and small features are single issues; a large feature is a **parent issue** (with sub-issues) inside the app's project, its description + a Linear document holding the spec, with blocking relations encoding the dependency waves. Status lives in the issue state (`Backlog → Todo → In Progress → In Review → Done`). See the `writing-task-specs` skill for how to author them and `parallel-workflow` for how state moves as work ships.
 
 ## Development Commands
 

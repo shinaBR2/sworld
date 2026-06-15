@@ -7,11 +7,13 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 Produce clear, consistent task specs in **Linear** that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`, `save_milestone`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, `labels`, and `milestone` **by name** (e.g. `state: "In Progress"`, `project: "Library"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
+Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, and `labels` **by name** (e.g. `state: "In Progress"`, `project: "Library"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
 
-- **Bug / small feature** → a single **issue** (`save_issue`). Bugs carry the `bug` label.
-- **User story** → an **issue in `Backlog`**, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large-feature **project**.
-- **Large feature (scoped)** → a **project** (`save_project`). The project description + a **Linear document** hold the spec; each sub-task is an **issue** in the project; **waves** are **milestones**; **blocked-by** is a **blocking relation**; **estimate** is the issue **estimate** field.
+**A `project` is an app** — the long-lived container for everything in one app. Your workspace already has `Til`, `Watch`, `Library`; create the rest (`Listen`, `Game`, …) with `save_project` as needed. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
+
+- **Bug / small feature** → a single **issue** (`save_issue`) in the app's project. Bugs carry the `bug` label.
+- **User story** → an **issue in `Backlog`** in the app's project, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
+- **Large feature (scoped)** → a **parent issue** in the app's project, with one **sub-issue** per sub-task (`parentId` = the parent issue). The parent issue's description + (for a heavy concept) a **Linear document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (optionally a `wave-N` label); **blocked-by** is a **blocking relation**; **estimate** is the issue **estimate** field.
 
 The fields that an in-repo tracker would keep in frontmatter are native Linear fields:
 
@@ -19,17 +21,18 @@ The fields that an in-repo tracker would keep in frontmatter are native Linear f
 |-----------------|---------------------------------|
 | `status:` | `state` — `Backlog` / `Todo` / `In Progress` / `In Review` / `Done` |
 | `estimate:` | `estimate` |
-| `parent:` (which feature) | `project` (and `parentId` for a true sub-issue) |
+| which app | `project` |
+| `parent:` (which feature) | `parentId` (the feature's parent issue) |
 | `blocked-by:` | `blockedBy` (issue identifiers) |
-| wave grouping | `milestone` |
+| wave grouping | `blockedBy` relations (optionally a `wave-N` label) |
 | bug / user-story tagging | `labels` |
 
 ## Critical rules
 
 - Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
-- For large features, do the scoping work in conversation with the user before creating the project — do not invent sub-tasks without confirming the breakdown
+- For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
-- Always create in the **SWorld** team; attach feature work to the matching **project** (apps map to projects: Til, Watch, Library, …)
+- Always create in the **SWorld** team; attach every issue to the matching app **project** (apps map to projects: Til, Watch, Library, …) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, set its `state` to `In Progress` (see the `parallel-workflow` skill)
 
 ## The four spec shapes
@@ -40,24 +43,24 @@ Before writing anything, identify which shape applies. The shapes are not interc
 |-------|---------|-----------------|
 | **Bug** | Something is broken. Specific, reproducible. | One issue → one PR fix |
 | **Small feature** | A single focused change that maps to one PR | One issue → one PR |
-| **User story** | A user need or product direction, written in plain language. Not technically scoped. | One issue in `Backlog` → later becomes a project when a developer picks it up |
-| **Large feature (scoped)** | A technically broken-down feature with sequenced sub-tasks. The *result* of scoping a user story. | One project + sub-task issues → many PRs |
+| **User story** | A user need or product direction, written in plain language. Not technically scoped. | One issue in `Backlog` → later becomes a parent issue when a developer picks it up |
+| **Large feature (scoped)** | A technically broken-down feature with sequenced sub-tasks. The *result* of scoping a user story. | One parent issue + sub-issues → many PRs |
 
 ### The user story → large feature progression
 
-These two shapes are connected. A **user story** describes *what* and *why* from the user's perspective. When a developer picks it up, they scope it technically — that scoping produces a **large-feature project** with sub-task issues.
+These two shapes are connected. A **user story** describes *what* and *why* from the user's perspective. When a developer picks it up, they scope it technically — that scoping produces a **parent issue** (with sub-issues) inside the app's project.
 
-The user story content often gets carried forward into the project's context. The user story issue stays as a reference — link it from the project (mention it in the project description and relate the first sub-task to it).
+The user story content often gets carried forward into the parent issue's context. The user story issue stays as a reference — link it from the parent issue (mention it in the description and relate the parent to it).
 
 ```
 User story issue (plain language, user perspective, in Backlog)
     ↓ developer picks it up, scopes technically
-Large-feature project (description + document, milestones, sub-task issues)
-    ↓ sub-task issues get worked
+Parent issue (description + document, sub-issues wired by blocking relations)
+    ↓ sub-issues get worked
 PRs merge to main
 ```
 
-Not every user story becomes a project — sometimes scoping reveals it's actually a small feature. That's fine. The point is that the user story doesn't try to answer technical questions.
+Not every user story becomes a large feature — sometimes scoping reveals it's actually a small feature. That's fine. The point is that the user story doesn't try to answer technical questions.
 
 ## Title and slug conventions
 
@@ -192,7 +195,7 @@ Behind feature flag `bulk_import_tracks`.
 
 ## Shape 3 — User story
 
-A user story captures a user need or product direction in plain language. It does **not** try to solve the problem technically — that happens later when a developer scopes it into a large feature. Create it as an issue in **`Backlog`** (`state: "Backlog"`). When it's scoped, link it from the resulting project.
+A user story captures a user need or product direction in plain language. It does **not** try to solve the problem technically — that happens later when a developer scopes it into a large feature. Create it as an issue in **`Backlog`** (`state: "Backlog"`). When it's scoped, link it from the resulting parent issue.
 
 ### What a user story is for
 
@@ -205,7 +208,7 @@ A user story captures a user need or product direction in plain language. It doe
 
 - A technical spec (no file paths, no architecture diagrams, no sub-tasks)
 - A commitment to a specific implementation
-- A spec that gets worked on directly — it spawns work (a project), it doesn't *become* work
+- A spec that gets worked on directly — it spawns work (a parent issue + sub-issues), it doesn't *become* work
 
 ### Description structure
 
@@ -310,7 +313,7 @@ Out of scope: file upload, AI extraction, auto-tagging, duplicate detection. The
 
 ## Shape 4 — Large feature (scoped)
 
-A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **Linear project** (`save_project`, `team: "SWorld"`) whose **description** carries the technical scope, with one **issue per sub-task** in the project, **milestones** for waves, and **blocking relations** for dependencies.
+A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** (`save_issue`, `team: "SWorld"`, attached to the app's `project`) whose **description** carries the technical scope, with one **sub-issue per sub-task** (`parentId` = the parent issue), and **blocking relations** for the dependency graph (which also encode the waves).
 
 ### When this shape is created
 
@@ -322,15 +325,15 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 
 1. **Start from the user story.** Read the user story issue. Understand the problem, the ideas explored, and the open questions.
 2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow?
-3. **Resolve the open questions.** The user story's open questions become decisions in the project description.
+3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
 4. **Identify dependencies.** What blocks what? Where can work happen in parallel?
 5. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
-6. **Group into waves.** A wave is a set of sub-tasks that can be done in parallel — model each wave as a **milestone**. Subsequent waves depend on previous waves landing.
-7. **Confirm with the user** before creating the project and issues. Show the proposed wave (milestone) structure and dependency graph. Adjust until it's right.
+6. **Group into waves.** A wave is a set of sub-tasks that can be done in parallel — encode it with **blocking relations** (each wave's sub-issues are `blockedBy` the previous wave's). Subsequent waves depend on previous waves landing.
+7. **Confirm with the user** before creating the parent issue and sub-issues. Show the proposed wave structure and dependency graph. Adjust until it's right.
 
-### Project description structure
+### Parent issue description structure
 
-The project holds the technical scope. It is not worked on directly — its issues do the work. Set this as the project `description` (and, for a heavy domain concept, also create a Linear **document** attached to the project — see `product-planning`).
+The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a Linear **document** attached to the app's project — see `product-planning`).
 
 ```markdown
 **Context**
@@ -357,13 +360,13 @@ For features involving data models or complex logic, include sections like:
 
 **Waves & sub-tasks (N total)**
 
-**Wave 0 — [Milestone name]**
+**Wave 0 — [Wave name]**
 
 | Sub-task | Work | Est | Blocked by |
 |----------|------|-----|------------|
 | <title> | <description> | Xh | — |
 
-**Wave 1 — [Milestone name]**
+**Wave 1 — [Wave name]**
 
 [... same table format, blocked-by references earlier sub-tasks]
 
@@ -391,7 +394,7 @@ For features involving data models or complex logic, include sections like:
 
 ### Sub-task issue structure
 
-Each sub-task is one issue in the project, and a small focused PR. It inherits context from the project — do not repeat the architecture or rationale. Create with `save_issue`: `team: "SWorld"`, `project: "<project>"`, `milestone: "<wave>"`, `state: "Todo"`, `estimate`, and `blockedBy: ["SWO-NNN", …]` for its dependencies.
+Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create with `save_issue`: `team: "SWorld"`, `project: "<app>"`, `parentId: "SWO-NNN"` (the parent issue), `state: "Todo"`, `estimate`, and `blockedBy: ["SWO-NNN", …]` for its dependencies.
 
 ```markdown
 **What**
@@ -411,28 +414,28 @@ Each sub-task is one issue in the project, and a small focused PR. It inherits c
 
 ### Sub-task titles
 
-The project gives the context, so the sub-task title can be short:
+The parent issue gives the context, so the sub-task title can be short:
 
 - `Reading-stats aggregation in readingStats query-hook`
 - `Compute total listening time in listen query-hook`
 - `Types + helper for monthly finance comparison`
 - `Hook wiring (useCurrentReading)`
 
-Do not prefix with `[domain]` or other tags — the project already scopes the work.
+Do not prefix with `[domain]` or other tags — the parent issue already scopes the work.
 
 ### Wave and dependency example
 
-A worked dependency graph for an `import-notes` project (waves = milestones, blockers = `blockedBy` relations):
+A worked dependency graph for an `Import notes` parent issue (waves are encoded by `blockedBy` relations between sub-issues):
 
 ```
-Wave 0 — Foundations (milestone, no blockers):
+Wave 0 — Foundations (no blockers):
   parser-helper          — pure text→notes parser in packages/core
   import-dialog-shell    — empty dialog + button in apps/til
 
-Wave 1 — Preview (milestone):
+Wave 1 — Preview:
   preview-table          — blockedBy: [parser-helper, import-dialog-shell]
 
-Wave 2 — Save (milestone):
+Wave 2 — Save:
   save-wiring            — blockedBy: [preview-table]
 ```
 
@@ -446,22 +449,22 @@ When Claude has been working with the developer and a spec is needed:
 2. **For user stories** — focus on capturing the user's problem and ideas in plain language, as an issue in `Backlog`. Do not jump to technical scoping.
 3. **For large features** — run the scoping conversation before creating anything. Confirm the breakdown with the user. If there's an existing user story, start from it.
 4. **Draft the spec** matching the shape's structure. Use the developer's existing context, do not re-investigate things already discussed.
-5. **Create in Linear** — `save_issue` for a bug / small feature / user story; for a large feature: `save_project`, then a `save_milestone` per wave, then `save_issue` per sub-task with `project`, `milestone`, `estimate`, and `blockedBy` set. For a heavy domain concept, add a `save_document` attached to the project.
-6. **Confirm to the user** what was created, with the issue/project identifiers and URLs.
+5. **Create in Linear** — `save_issue` for a bug / small feature / user story; for a large feature: `save_issue` for the parent (attached to the app `project`), then `save_issue` per sub-task with `parentId`, `project`, `estimate`, and `blockedBy` set. For a heavy domain concept, add a `save_document` attached to the app's project.
+6. **Confirm to the user** what was created, with the issue identifiers and URLs.
 
 ## Validation checklist
 
 Before creating a spec:
 
 - Title is specific; no square-bracket prefixes
-- Created in the **SWorld** team and attached to the right **project** where applicable
+- Created in the **SWorld** team and attached to the right app **project**
 - Shape matches the work (bug / small feature / user story / large feature)
 - Detail level matches the shape — not over-documented, not under-documented
-- Linear fields set: `state`, plus `estimate` / `labels` / `milestone` / `blockedBy` where relevant
+- Linear fields set: `state`, plus `estimate` / `labels` / `parentId` / `blockedBy` where relevant
 - For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
 - For small features: problem, proposed solution, acceptance criteria
 - For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly
-- For large features: scoping conversation done, project description has architecture + wave breakdown, sub-task issues are small and revertible, `blockedBy` wiring matches the dependency graph, milestones model the waves, links back to the user story issue if one exists
+- For large features: scoping conversation done, parent issue description has architecture + wave breakdown, sub-issues are small and revertible, `blockedBy` wiring matches the dependency graph and encodes the waves, links back to the user story issue if one exists
 - UK English throughout
 - No AI attribution
 
