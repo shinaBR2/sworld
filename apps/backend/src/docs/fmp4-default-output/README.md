@@ -63,7 +63,7 @@ ffmpeg -i <source> -c:v copy -c:a aac -b:a 128k -ac 2 -ar 44100 \
 
 | Wave | Folder | Tickets |
 | - | - | - |
-| Extract core (refactor, still `.ts`) | `00.todo.extract-core` | **F1** extract injectable core + io handler calls it · **F2** CLI calls the core (delete the replica) |
+| Extract core (refactor, still `.ts`) — **done** | `00.done.extract-core` | **F1** extract injectable core + io handler calls it · **F2** CLI calls the core (delete the replica) |
 | Switch to fMP4 (behavior) | `01.todo.switch-to-fmp4` | **P1** core emits fMP4 (io + CLI get it) · **P2** convert path emits fMP4 (shared packaging) |
 | Verify | `02.todo.verify` | **V1** fMP4 + dedup tests |
 | Deferred | `03.deferred.catalog-migration` | **G1** migrate existing `.ts` catalog |
