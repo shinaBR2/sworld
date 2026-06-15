@@ -25,19 +25,23 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import {
   chmodSync,
+  createReadStream,
   existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
 } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
+import { fileURLToPath } from 'node:url';
+import { slugify } from '@shinabr2/core/universal/common';
 import { Storage } from '@google-cloud/storage';
 import { GraphQLClient } from 'graphql-request';
-import { Parser } from 'm3u8-parser';
 import { nanoid } from 'nanoid';
 import path from 'path';
 import os from 'os';
 import { randomUUID } from 'crypto';
+import { processStream } from 'src/services/videos/processing/processStream';
+import type { ProcessStreamDeps } from 'src/services/videos/processing/types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -46,100 +50,6 @@ import { randomUUID } from 'crypto';
  * Per project rule this is ALWAYS the same account.
  */
 const USER_ID = '6ff27fda-03e8-4dcd-949b-f1328f955065';
-
-// ─── Slugify ──────────────────────────────────────────────────────────────────
-// Replica of packages/core/src/universal/common/stringHelpers.ts `slugify`, kept
-// byte-for-byte so find-or-create reuses the same playlist rows the web app makes.
-
-const charMap: Record<string, string> = {
-  à: 'a',
-  á: 'a',
-  ạ: 'a',
-  ả: 'a',
-  ã: 'a',
-  â: 'a',
-  ầ: 'a',
-  ấ: 'a',
-  ậ: 'a',
-  ẩ: 'a',
-  ẫ: 'a',
-  ă: 'a',
-  ằ: 'a',
-  ắ: 'a',
-  ặ: 'a',
-  ẳ: 'a',
-  ẵ: 'a',
-  è: 'e',
-  é: 'e',
-  ẹ: 'e',
-  ẻ: 'e',
-  ẽ: 'e',
-  ê: 'e',
-  ề: 'e',
-  ế: 'e',
-  ệ: 'e',
-  ể: 'e',
-  ễ: 'e',
-  ì: 'i',
-  í: 'i',
-  ị: 'i',
-  ỉ: 'i',
-  ĩ: 'i',
-  ò: 'o',
-  ó: 'o',
-  ọ: 'o',
-  ỏ: 'o',
-  õ: 'o',
-  ô: 'o',
-  ồ: 'o',
-  ố: 'o',
-  ộ: 'o',
-  ổ: 'o',
-  ỗ: 'o',
-  ơ: 'o',
-  ờ: 'o',
-  ớ: 'o',
-  ợ: 'o',
-  ở: 'o',
-  ỡ: 'o',
-  ù: 'u',
-  ú: 'u',
-  ụ: 'u',
-  ủ: 'u',
-  ũ: 'u',
-  ư: 'u',
-  ừ: 'u',
-  ứ: 'u',
-  ự: 'u',
-  ử: 'u',
-  ữ: 'u',
-  ỳ: 'y',
-  ý: 'y',
-  ỵ: 'y',
-  ỷ: 'y',
-  ỹ: 'y',
-  đ: 'd',
-};
-
-function slugify(str: string): string {
-  str = str.replace(/^\s+|\s+$/g, '').toLowerCase();
-
-  for (const [key, value] of Object.entries(charMap)) {
-    str = str.replace(new RegExp(key, 'g'), value);
-  }
-
-  const from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
-  const to = 'aaaaeeeeiiiioooouuuunc------';
-  for (let i = 0, l = from.length; i < l; i++) {
-    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-  }
-
-  return str
-    .replace(/[^a-z0-9 -]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
 
 // ─── Interactive prompt ─────────────────────────────────────────────────────────
 
@@ -408,149 +318,6 @@ function buildFetchHeaders(referer?: string): Record<string, string> {
 
 const EXCLUDE_PATTERNS = [/\/adjump\//, /\/ads\//, /\/commercial\//];
 
-interface HLSSegment {
-  url: string;
-  name: string;
-  duration?: number;
-}
-
-interface ParsedResult {
-  modifiedContent: string;
-  segments: {
-    included: HLSSegment[];
-    excluded: HLSSegment[];
-  };
-  duration: number;
-}
-
-function isAds(segmentUrl: string, excludePatterns: RegExp[]): boolean {
-  return excludePatterns.some((pattern) => pattern.test(segmentUrl));
-}
-
-async function resolveMasterPlaylist(
-  m3u8Url: string,
-  headers: Record<string, string> = {},
-): Promise<string | null> {
-  const response = await fetch(m3u8Url, { headers });
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch m3u8: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const content = await response.text();
-  const parser = new Parser();
-  parser.push(content);
-  parser.end();
-
-  const { playlists, segments } = parser.manifest;
-
-  if (segments && segments.length > 0) {
-    return null;
-  }
-
-  if (playlists && playlists.length > 0) {
-    const best = playlists.reduce((prev, curr) => {
-      const prevBw = prev.attributes?.BANDWIDTH || 0;
-      const currBw = curr.attributes?.BANDWIDTH || 0;
-      return currBw > prevBw ? curr : prev;
-    });
-
-    const resolvedUrl = new URL(best.uri, m3u8Url).toString();
-    console.log(`  Master playlist detected. Variants: ${playlists.length}`);
-    console.log(
-      `  Selected best quality: ${best.attributes?.RESOLUTION?.width || '?'}x${best.attributes?.RESOLUTION?.height || '?'} (${best.attributes?.BANDWIDTH || '?'} bps)`,
-    );
-    console.log(`  Resolved URL: ${resolvedUrl}`);
-    return resolvedUrl;
-  }
-
-  throw new Error('M3U8 playlist has no segments and no variant streams');
-}
-
-async function parseM3U8Content(
-  source: { url: string } | { filePath: string },
-  excludePatterns: RegExp[] = [],
-  headers: Record<string, string> = {},
-): Promise<ParsedResult> {
-  let content: string;
-  let baseUrl: string | undefined;
-
-  if ('filePath' in source) {
-    console.log(`  Reading local file: ${source.filePath}`);
-    content = readFileSync(source.filePath, 'utf-8');
-  } else {
-    const resolvedUrl = await resolveMasterPlaylist(source.url, headers);
-    baseUrl = resolvedUrl || source.url;
-
-    console.log(`  Fetching media playlist from: ${baseUrl}`);
-    const response = await fetch(baseUrl, { headers });
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch m3u8: ${response.status} ${response.statusText}`,
-      );
-    }
-    content = await response.text();
-  }
-  const parser = new Parser();
-  parser.push(content);
-  parser.end();
-
-  const manifest = parser.manifest;
-  const segments = {
-    included: [] as HLSSegment[],
-    excluded: [] as HLSSegment[],
-  };
-
-  let modifiedContent = '';
-  let totalDuration = 0;
-
-  // #EXTM3U is mandatory and must always be the first line; the version tag is optional.
-  modifiedContent += '#EXTM3U\n';
-  if (manifest.version) {
-    modifiedContent += `#EXT-X-VERSION:${manifest.version}\n`;
-  }
-
-  if (manifest.playlistType) {
-    modifiedContent += `#EXT-X-PLAYLIST-TYPE:${manifest.playlistType}\n`;
-  }
-
-  if (manifest.targetDuration) {
-    modifiedContent += `#EXT-X-TARGETDURATION:${manifest.targetDuration}\n`;
-  }
-
-  let segmentIndex = 0;
-  manifest.segments?.forEach((segment) => {
-    // For local files with absolute URLs, segment.uri is already absolute
-    // For remote playlists, resolve relative URIs against the base URL
-    const segmentUrl = baseUrl
-      ? new URL(segment.uri, baseUrl).toString()
-      : segment.uri;
-
-    if (isAds(segmentUrl, excludePatterns)) {
-      segments.excluded.push({ url: segmentUrl, name: '' });
-    } else {
-      if (segment.duration) {
-        modifiedContent += `#EXTINF:${segment.duration},\n`;
-        totalDuration += segment.duration;
-        const segmentName = `${segmentIndex++}.ts`;
-        modifiedContent += `${segmentName}\n`;
-        segments.included.push({
-          url: segmentUrl,
-          name: segmentName,
-          duration: segment.duration,
-        });
-      }
-    }
-  });
-
-  if (manifest.endList) {
-    modifiedContent += '#EXT-X-ENDLIST\n';
-  }
-
-  return { modifiedContent, segments, duration: Math.round(totalDuration) };
-}
-
 // ─── GCS Upload ─────────────────────────────────────────────────────────────
 
 function createStorage(gcpKeyPath?: string) {
@@ -564,105 +331,52 @@ function getDownloadUrl(bucket: string, storagePath: string): string {
   return `https://storage.googleapis.com/${bucket}/${storagePath}`;
 }
 
-async function uploadPlaylist(
-  storage: Storage,
-  bucket: string,
-  content: string,
-  storagePath: string,
-): Promise<void> {
-  const file = storage.bucket(bucket).file(storagePath);
-  const stream = file.createWriteStream({
-    contentType: 'application/vnd.apple.mpegurl',
-    metadata: { cacheControl: 'public, max-age=31536000' },
-  });
+/**
+ * Local deps for the shared `processStream` core: GCS storage from the CLI's
+ * configured key, an http port that fetches URLs and reads `file://` sources, a
+ * no-op thumbnail (the CLI doesn't make thumbnails), and a console logger.
+ */
+function buildCliDeps(args: StreamArgs): ProcessStreamDeps {
+  const storage = createStorage(args.gcpKeyPath);
+  const bucket = storage.bucket(args.gcpBucket);
 
-  // pipeline() awaits completion and tears down both streams on any error.
-  await pipeline(Readable.from(content), stream);
-}
-
-async function uploadSegment(
-  storage: Storage,
-  bucket: string,
-  segmentUrl: string,
-  storagePath: string,
-  headers: Record<string, string> = {},
-): Promise<void> {
-  const response = await fetch(segmentUrl, { headers });
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch segment: ${response.status} ${response.statusText} - ${segmentUrl}`,
-    );
-  }
-  if (!response.body) {
-    throw new Error(`Empty response body for segment: ${segmentUrl}`);
-  }
-
-  const file = storage.bucket(bucket).file(storagePath);
-  const writeStream = file.createWriteStream({
-    contentType: 'video/MP2T',
-    metadata: { cacheControl: 'public, max-age=31536000' },
-  });
-
-  // pipeline() forwards SOURCE errors (socket drop / body timeout) as a rejection
-  // and tears down both streams, so withRetry can catch and retry the segment.
-  // (A bare pipe() leaves source errors unhandled and crashes the process.)
-  await pipeline(Readable.fromWeb(response.body as any), writeStream);
-}
-
-/** Retry a transient async op (socket drops, body timeouts) with linear backoff. */
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  label: string,
-  attempts = 4,
-  delayMs = 1500,
-): Promise<T> {
-  let lastErr: unknown;
-  for (let i = 1; i <= attempts; i++) {
-    try {
-      return await fn();
-    } catch (err) {
-      lastErr = err;
-      const msg = (err as Error)?.message?.split('\n')[0] ?? String(err);
-      if (i < attempts) {
-        console.log(`    retry ${i}/${attempts - 1} for ${label}: ${msg}`);
-        await new Promise((r) => setTimeout(r, delayMs * i));
-      }
-    }
-  }
-  throw lastErr;
-}
-
-async function uploadSegments(
-  storage: Storage,
-  bucket: string,
-  segments: HLSSegment[],
-  baseStoragePath: string,
-  concurrency: number,
-  headers: Record<string, string> = {},
-): Promise<void> {
-  for (let i = 0; i < segments.length; i += concurrency) {
-    const batch = segments.slice(i, i + concurrency);
-    await Promise.all(
-      batch.map(async (segment) => {
-        const segmentStoragePath = path.join(baseStoragePath, segment.name);
-        // One dropped connection must not kill the whole video — retry the segment.
-        await withRetry(
-          () =>
-            uploadSegment(
-              storage,
-              bucket,
-              segment.url,
-              segmentStoragePath,
-              headers,
-            ),
-          segment.name,
-        );
-        console.log(
-          `    Uploaded segment ${segment.name} (${segment.duration?.toFixed(2)}s)`,
-        );
-      }),
-    );
-  }
+  return {
+    storage: {
+      uploadStream: ({ stream, storagePath, contentType }) =>
+        pipeline(
+          stream,
+          bucket.file(storagePath).createWriteStream({
+            contentType,
+            metadata: { cacheControl: 'public, max-age=31536000' },
+          }),
+        ),
+      getDownloadUrl: (storagePath) =>
+        getDownloadUrl(args.gcpBucket, storagePath),
+    },
+    http: {
+      fetch: async (url, init) => {
+        if (url.startsWith('file://')) {
+          const filePath = fileURLToPath(url);
+          return {
+            text: async () => readFileSync(filePath, 'utf-8'),
+            body: Readable.toWeb(
+              createReadStream(filePath),
+            ) as ReadableStream<Uint8Array>,
+            status: 200,
+            statusText: 'OK',
+          };
+        }
+        return fetch(url, { headers: init?.headers });
+      },
+    },
+    // The CLI doesn't generate thumbnails.
+    thumbnail: { generateFromSegment: async () => undefined },
+    logger: {
+      info: (_obj, msg) => msg && console.log(`  ${msg}`),
+      warn: (_obj, msg) => console.warn(`  ${msg ?? ''}`),
+      error: (obj, msg) => console.error(`  ${msg ?? ''}`, obj),
+    },
+  };
 }
 
 // ─── Hasura DB Update ───────────────────────────────────────────────────────
@@ -911,37 +625,44 @@ async function handleStream(rawArgs: string[]) {
     await assertVideoExists(args);
   }
 
-  // Build fetch headers
-  const fetchHeaders = buildFetchHeaders(args.referer);
+  // Source + per-request headers (UA + Referer/Origin). Local files are passed
+  // as file:// URLs so the core resolves segment URIs and our http port reads them.
+  const customRequestHeaders = buildFetchHeaders(args.referer);
+  const sourceUrl = args.file ? `file://${path.resolve(args.file)}` : args.url!;
+  const storagePath = `videos/${args.userId}/${args.videoId}`;
 
-  // Step 1: Parse M3U8
-  console.log('[1/4] Parsing M3U8 playlist...');
-  const source = args.file ? { filePath: args.file } : { url: args.url! };
-  const { modifiedContent, segments, duration } = await parseM3U8Content(
-    source,
-    EXCLUDE_PATTERNS,
-    fetchHeaders,
-  );
-
-  console.log(`  Included segments: ${segments.included.length}`);
-  console.log(`  Excluded segments (ads): ${segments.excluded.length}`);
+  console.log('');
   console.log(
-    `  Total duration: ${duration}s (${(duration / 60).toFixed(1)} min)`,
+    args.dryRun
+      ? 'Resolving + parsing via the shared core (dry run, no upload)...'
+      : 'Processing stream via the shared core...',
   );
 
-  if (segments.included.length === 0) {
-    console.error('Error: No valid segments found in M3U8 playlist');
-    process.exit(1);
-  }
+  const result = await processStream(
+    { sourceUrl, storagePath },
+    {
+      excludePatterns: EXCLUDE_PATTERNS,
+      concurrencyLimit: args.concurrency,
+      customRequestHeaders,
+      dryRun: args.dryRun,
+    },
+    buildCliDeps(args),
+  );
+
+  console.log(`  Included segments: ${result.segments.included.length}`);
+  console.log(`  Excluded segments (ads): ${result.segments.excluded.length}`);
+  console.log(
+    `  Total duration: ${result.duration}s (${(result.duration / 60).toFixed(1)} min)`,
+  );
 
   if (args.dryRun) {
     console.log('');
     console.log('[DRY RUN] Generated playlist content:');
     console.log('---');
-    console.log(modifiedContent);
+    console.log(result.modifiedContent);
     console.log('---');
     console.log(
-      `[DRY RUN] Would upload ${segments.included.length} segments to: videos/${args.userId}/${args.videoId}/`,
+      `[DRY RUN] Would upload ${result.segments.included.length} segments to: ${storagePath}/`,
     );
     if (args.playlistName) {
       const where =
@@ -956,64 +677,36 @@ async function handleStream(rawArgs: string[]) {
     return;
   }
 
-  // Initialize GCS with service account key if configured
-  const storage = createStorage(args.gcpKeyPath);
-  const storagePath = `videos/${args.userId}/${args.videoId}`;
-  const playlistStoragePath = path.join(storagePath, 'playlist.m3u8');
+  console.log(`  Playlist URL: ${result.playlistUrl}`);
 
-  // Step 2: Upload playlist
-  console.log('');
-  console.log('[2/4] Uploading playlist to GCS...');
-  await uploadPlaylist(
-    storage,
-    args.gcpBucket,
-    modifiedContent,
-    playlistStoragePath,
-  );
-  const playlistUrl = getDownloadUrl(args.gcpBucket, playlistStoragePath);
-  console.log(`  Playlist URL: ${playlistUrl}`);
-
-  // Step 3: Upload segments
-  console.log('');
-  console.log(`[3/4] Uploading ${segments.included.length} segments to GCS...`);
-  await uploadSegments(
-    storage,
-    args.gcpBucket,
-    segments.included,
-    storagePath,
-    args.concurrency,
-    fetchHeaders,
-  );
-  console.log('  All segments uploaded.');
-
-  // Step 4: Update database
+  // Update database
   console.log('');
   if (args.skipDb) {
-    console.log('[4/4] Skipping database update (--skip-db)');
+    console.log('Skipping database update (--skip-db)');
   } else {
-    console.log('[4/4] Updating Hasura database...');
+    console.log('Updating Hasura database...');
     await updateDatabase({
       videoId: args.videoId,
-      playlistUrl,
-      duration,
+      playlistUrl: result.playlistUrl,
+      duration: result.duration,
       hasuraEndpoint: args.hasuraEndpoint,
       hasuraSecret: args.hasuraSecret,
     });
     console.log('  Database updated.');
   }
 
-  // Step 5: Link to playlist (optional)
+  // Link to playlist (optional)
   if (args.playlistName && !args.skipDb) {
     console.log('');
-    console.log('[5/5] Linking video to playlist...');
+    console.log('Linking video to playlist...');
     await attachToPlaylist(args);
   }
 
   console.log('');
   console.log('=== Done ===');
-  console.log(`  Playlist: ${playlistUrl}`);
-  console.log(`  Segments: ${segments.included.length}`);
-  console.log(`  Duration: ${duration}s`);
+  console.log(`  Playlist: ${result.playlistUrl}`);
+  console.log(`  Segments: ${result.segments.included.length}`);
+  console.log(`  Duration: ${result.duration}s`);
 }
 
 // ─── Main Router ────────────────────────────────────────────────────────────
