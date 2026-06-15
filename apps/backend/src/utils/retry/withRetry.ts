@@ -1,5 +1,9 @@
 import { getCurrentLogger } from 'src/utils/logger';
 
+interface RetryLogger {
+  warn(obj: unknown, msg?: string): void;
+}
+
 interface WithRetryOptions {
   /** Short label for logging which operation is being retried. */
   label: string;
@@ -9,6 +13,8 @@ interface WithRetryOptions {
   delayMs?: number;
   /** Decide whether an error is worth retrying (default: retry everything). */
   isRetryable?: (error: unknown) => boolean;
+  /** Logger for retry warnings (default: the ambient request logger). */
+  logger?: RetryLogger;
 }
 
 /**
@@ -36,8 +42,8 @@ const withRetry = async <T>(
     attempts = 4,
     delayMs = 1500,
     isRetryable = () => true,
+    logger = getCurrentLogger(),
   } = options;
-  const logger = getCurrentLogger();
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
