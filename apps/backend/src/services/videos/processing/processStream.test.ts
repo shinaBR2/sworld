@@ -134,6 +134,52 @@ high.m3u8`;
     expect(deps.storage.uploadStream).toHaveBeenCalledTimes(3);
   });
 
+  it('passes an fMP4 source through as .m4s + uploads the init segment', async () => {
+    const FMP4 = `#EXTM3U
+#EXT-X-VERSION:7
+#EXT-X-TARGETDURATION:6
+#EXT-X-MAP:URI="main-init.mp4"
+#EXTINF:6.0,
+seg-0.m4s
+#EXTINF:6.0,
+seg-1.m4s
+#EXT-X-ENDLIST`;
+    const deps = makeDeps();
+    (deps.http.fetch as ReturnType<typeof vi.fn>).mockImplementation(
+      async (url: string) => {
+        if (url === SOURCE)
+          return okResponse({ text: async () => FMP4, body: null });
+        return okResponse({ body: new ReadableStream() });
+      },
+    );
+
+    await processStream(
+      { sourceUrl: SOURCE, storagePath: STORAGE_PATH },
+      OPTIONS,
+      deps,
+    );
+
+    // playlist + init.mp4 + 2 .m4s segments
+    expect(deps.storage.uploadStream).toHaveBeenCalledTimes(4);
+    expect(deps.storage.uploadStream).toHaveBeenCalledWith(
+      expect.objectContaining({
+        storagePath: `${STORAGE_PATH}/init.mp4`,
+        contentType: 'video/mp4',
+      }),
+    );
+    expect(deps.storage.uploadStream).toHaveBeenCalledWith(
+      expect.objectContaining({
+        storagePath: `${STORAGE_PATH}/0.m4s`,
+        contentType: 'video/iso.segment',
+      }),
+    );
+    // init is fetched from the resolved #EXT-X-MAP URI
+    expect(deps.http.fetch).toHaveBeenCalledWith(
+      'https://cdn.example.com/video/main-init.mp4',
+      expect.anything(),
+    );
+  });
+
   it('dry-run resolves + parses but uploads nothing and skips the thumbnail', async () => {
     const deps = makeDeps();
 

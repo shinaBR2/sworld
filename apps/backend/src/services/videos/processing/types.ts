@@ -16,6 +16,12 @@ interface ParsedManifest {
   };
   /** Total duration of included segments, rounded to whole seconds. */
   duration: number;
+  /**
+   * The fMP4 init segment (`#EXT-X-MAP`), present only for fMP4/CMAF sources.
+   * The caller fetches + uploads it alongside the `.m4s` segments. Undefined for
+   * MPEG-TS (`.ts`) sources.
+   */
+  init?: HlsSegment;
 }
 
 /** Minimal `fetch`-like response the core consumes (satisfied by `fetchWithError`). */

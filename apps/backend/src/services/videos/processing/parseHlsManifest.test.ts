@@ -61,4 +61,58 @@ describe('parseHlsManifest', () => {
     expect(result.modifiedContent.startsWith('#EXTM3U')).toBe(true);
     expect(result.modifiedContent).not.toContain('#EXT-X-VERSION');
   });
+
+  it('leaves a .ts source as .ts with no init', () => {
+    const result = parseHlsManifest(manifest, SOURCE);
+    expect(result.init).toBeUndefined();
+    expect(result.modifiedContent).not.toContain('#EXT-X-MAP');
+    expect(result.segments.included.every((s) => s.name.endsWith('.ts'))).toBe(
+      true,
+    );
+  });
+
+  it('keeps an fMP4 source as .m4s and carries the init (#EXT-X-MAP)', () => {
+    const fmp4 = `#EXTM3U
+#EXT-X-VERSION:7
+#EXT-X-TARGETDURATION:6
+#EXT-X-MAP:URI="main-init.mp4"
+#EXTINF:6.0,
+seg-0.m4s
+#EXTINF:6.0,
+seg-1.m4s
+#EXT-X-ENDLIST`;
+    const result = parseHlsManifest(fmp4, SOURCE);
+
+    expect(result.init).toEqual({
+      url: 'https://cdn.example.com/video/main-init.mp4',
+      name: 'init.mp4',
+    });
+    expect(result.modifiedContent).toContain('#EXT-X-MAP:URI="init.mp4"');
+    expect(result.segments.included).toEqual([
+      {
+        url: 'https://cdn.example.com/video/seg-0.m4s',
+        name: '0.m4s',
+        duration: 6,
+      },
+      {
+        url: 'https://cdn.example.com/video/seg-1.m4s',
+        name: '1.m4s',
+        duration: 6,
+      },
+    ]);
+  });
+
+  it('fails loud on a byte-range source (unsupported)', () => {
+    const byteRange = `#EXTM3U
+#EXT-X-VERSION:7
+#EXT-X-MAP:URI="main.mp4",BYTERANGE="800@0"
+#EXTINF:6.0,
+#EXT-X-BYTERANGE:50000@800
+main.mp4
+#EXT-X-ENDLIST`;
+
+    expect(() => parseHlsManifest(byteRange, SOURCE)).toThrow(
+      'Byte-range HLS is not supported',
+    );
+  });
 });

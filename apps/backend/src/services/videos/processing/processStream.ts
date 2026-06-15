@@ -16,8 +16,18 @@ import type {
 
 const PLAYLIST_NAME = 'playlist.m3u8';
 const PLAYLIST_CONTENT_TYPE = 'application/vnd.apple.mpegurl';
-const SEGMENT_CONTENT_TYPE = 'video/MP2T';
 const DEFAULT_SEGMENT_CONCURRENCY = 5;
+
+/**
+ * Content-type for a stored segment/init by its file extension — format-aware so
+ * the proxy labels whatever the source is: `.ts` → MPEG-TS, `.m4s` → fMP4 media
+ * segment, `.mp4` → the fMP4 init segment.
+ */
+const contentTypeFor = (name: string): string => {
+  if (name.endsWith('.m4s')) return 'video/iso.segment';
+  if (name.endsWith('.mp4')) return 'video/mp4';
+  return 'video/MP2T';
+};
 
 /** Fetch one segment and upload it to storage. Retried as a unit by withRetry. */
 const streamSegment = async (
@@ -46,16 +56,18 @@ const streamSegment = async (
   await deps.storage.uploadStream({
     stream: Readable.fromWeb(response.body as never),
     storagePath: path.join(storagePath, segment.name),
-    contentType: SEGMENT_CONTENT_TYPE,
+    contentType: contentTypeFor(segment.name),
   });
 };
 
 /**
  * Framework- and env-agnostic stream-processing core: fetch + parse an M3U8
  * playlist, strip ads, generate a thumbnail, and upload the rewritten playlist
- * and its segments — all through injected ports (`deps`). Behaviour-preserving
- * relative to the previous `streamM3U8` (still emits `.ts`); P1 flips packaging
- * to fMP4. Finalize stays with the caller (io vs CLI finalize differently).
+ * and its segments — all through injected ports (`deps`). It's a byte-copy proxy:
+ * it preserves whatever container the source uses (MPEG-TS `.ts` or fMP4 `.m4s` +
+ * its `#EXT-X-MAP` init), never transcoding. Converting `.ts` → fMP4 is the
+ * on-demand `repair-fmp4` tool's job. Finalize stays with the caller (io vs CLI
+ * finalize differently).
  */
 const processStream = async (
   input: ProcessStreamInput,
@@ -90,7 +102,7 @@ const processStream = async (
     content = await (await deps.http.fetch(variantUrl, { headers })).text();
   }
 
-  const { modifiedContent, segments, duration } = parseHlsManifest(
+  const { modifiedContent, segments, duration, init } = parseHlsManifest(
     content,
     baseUrl,
     excludePatterns,
@@ -147,6 +159,19 @@ const processStream = async (
       storagePath: playlistStoragePath,
       contentType: PLAYLIST_CONTENT_TYPE,
     });
+
+    // fMP4 sources carry a shared init segment (`#EXT-X-MAP`) — fetch + upload it
+    // (once) like a segment, so the `.m4s` playlist can resolve it.
+    if (init) {
+      await withRetry(
+        () => streamSegment(deps, init, storagePath, customRequestHeaders),
+        {
+          label: `init ${init.name}`,
+          isRetryable: isRetryableError,
+          logger: deps.logger,
+        },
+      );
+    }
 
     // Upload segments in concurrency-limited batches; one dropped connection
     // retries that segment rather than failing the whole video (R1).
