@@ -7,7 +7,7 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 Produce clear, consistent task specs in **Linear** that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the Linear MCP tools (`save_issue`, `save_project`, `save_document`, `save_milestone`). The short version of the model:
+Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`, `save_milestone`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, `labels`, and `milestone` **by name** (e.g. `state: "In Progress"`, `project: "Library"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
 
 - **Bug / small feature** → a single **issue** (`save_issue`). Bugs carry the `bug` label.
 - **User story** → an **issue in `Backlog`**, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large-feature **project**.
