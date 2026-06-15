@@ -1,11 +1,18 @@
 name: Deploy Compute to PROD
 
 on:
+  # Manual redeploy (e.g. to ship a shared-code change that already merged).
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - 'src/apps/compute/**'
+      - 'src/compute.ts'
+      - 'src/middleware/**' # shared
+      - 'src/schema/**' # shared
+      - 'src/services/**' # shared
+      - 'src/utils/**' # shared
       - 'Dockerfile.compute'
       - 'package.json'
       - 'package-lock.json'
