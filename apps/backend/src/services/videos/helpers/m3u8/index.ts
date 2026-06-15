@@ -1,14 +1,14 @@
-import path from 'path';
-import { CustomError } from 'src/utils/custom-error';
-import { VIDEO_ERRORS } from 'src/utils/error-codes';
+import { processStream } from 'src/services/videos/processing/processStream';
+import type {
+  ProcessStreamDeps,
+  ProcessStreamResult,
+} from 'src/services/videos/processing/types';
+import { fetchWithError } from 'src/utils/fetch';
 import { getCurrentLogger } from 'src/utils/logger';
-import { getDownloadUrl } from '../gcp-cloud-storage';
+import { systemConfig } from 'src/utils/systemConfig';
+import { videoConfig } from '../../config';
+import { getDownloadUrl, streamFile } from '../gcp-cloud-storage';
 import { processThumbnail } from '../thumbnail';
-import {
-  parseM3U8Content,
-  streamPlaylistFile,
-  streamSegments,
-} from './helpers';
 
 interface ProcessOptions {
   excludePatterns?: RegExp[];
@@ -19,125 +19,63 @@ interface ProcessOptions {
 }
 
 /**
- * Stream an M3U8 playlist and its video segments to cloud storage.
- *
- * @param m3u8Url - The URL of the source M3U8 playlist
- * @param storagePath - The base path in cloud storage where files will be uploaded
- * @param options - Optional configuration for streaming process
- * @returns A promise resolving to an object containing:
- *   - playlistUrl: The cloud storage URL of the streamed playlist
- *   - segments: Information about included and excluded segments
- *   - duration: The total duration of the video
- *
- * @remarks
- * - Parses the M3U8 playlist to extract video segments
- * - Streams the modified playlist file to cloud storage
- * - Streams all included video segments in parallel
- * - Supports optional segment exclusion via excludePatterns
- *
- * @example
- * ```typescript
- * const playlistUrl = await streamM3U8(
- *   'https://example.com/video.m3u8',
- *   'videos/my-movie'
- * );
- * ```
- *
- * @throws {Error} Propagates any errors encountered during streaming process
- * - Logs detailed error information before throwing
+ * Backend adapter: wires the env-coupled backend implementations (GCS storage,
+ * `fetchWithError`, ffmpeg thumbnail, the request logger) into the injectable
+ * `processStream` core. The CLI builds its own deps the same way.
+ */
+const buildBackendDeps = (): ProcessStreamDeps => ({
+  storage: {
+    uploadStream: ({ stream, storagePath, contentType }) =>
+      streamFile({ stream, storagePath, options: { contentType } }),
+    getDownloadUrl,
+  },
+  http: {
+    // Default to the external-request timeout so segment fetches keep their
+    // previous 15s budget (fetchWithError's own default is shorter).
+    fetch: (url, init) =>
+      fetchWithError(url, {
+        ...init,
+        timeout: init?.timeout ?? systemConfig.defaultExternalRequestTimeout,
+      }),
+  },
+  thumbnail: {
+    generateFromSegment: async ({
+      url,
+      duration,
+      storagePath,
+      customRequestHeaders,
+    }) => {
+      const thumbnailPath = await processThumbnail({
+        url,
+        duration,
+        storagePath,
+        isSegment: true,
+        customRequestHeaders,
+      });
+      return getDownloadUrl(thumbnailPath);
+    },
+  },
+  logger: getCurrentLogger(),
+});
+
+/**
+ * Stream an M3U8 playlist and its segments to cloud storage via the shared
+ * processing core. Kept as the io adapter so existing callers are unchanged.
  */
 const streamM3U8 = async (
   m3u8Url: string,
   storagePath: string,
   options: ProcessOptions = {},
-) => {
-  const logger = getCurrentLogger();
-  const context = {
-    m3u8Url,
-    storagePath,
-  };
-  logger.info({ m3u8Url, storagePath }, 'Starting M3U8 streaming');
-
-  const { modifiedContent, segments, duration } = await parseM3U8Content(
-    m3u8Url,
-    options.excludePatterns,
-    options.customRequestHeaders,
-  );
-
-  logger.info(
+): Promise<ProcessStreamResult> =>
+  processStream(
+    { sourceUrl: m3u8Url, storagePath },
     {
-      includedCount: segments.included.length,
-      excludedCount: segments.excluded.length,
+      excludePatterns: options.excludePatterns,
+      concurrencyLimit:
+        options.concurrencyLimit ?? videoConfig.defaultConcurrencyLimit,
+      customRequestHeaders: options.customRequestHeaders,
     },
-    'Parsed M3U8 content',
+    buildBackendDeps(),
   );
-
-  if (!segments.included.length) {
-    throw CustomError.medium('Empty HLS content', {
-      errorCode: VIDEO_ERRORS.INVALID_LENGTH,
-      context,
-      source: 'services/videos/helpers/m3u8/index.ts',
-    });
-  }
-
-  let thumbnailUrl;
-  try {
-    const firstSegment = segments.included[0];
-    logger.info(firstSegment, 'first segment');
-    const thumbnailPath = await processThumbnail({
-      url: firstSegment.url,
-      duration: firstSegment.duration as number,
-      storagePath,
-      isSegment: true,
-      customRequestHeaders: options.customRequestHeaders,
-    });
-    thumbnailUrl = getDownloadUrl(thumbnailPath);
-  } catch (screenshotError) {
-    logger.error(
-      {
-        originalError: screenshotError,
-        errorCode: VIDEO_ERRORS.VIDEO_TAKE_SCREENSHOT_FAILED,
-        shouldRetry: true,
-        context,
-      },
-      'Failed to generate thumbnail',
-    );
-  }
-
-  try {
-    // Stream playlist file
-    const playlistStoragePath = path.join(storagePath, 'playlist.m3u8');
-    await streamPlaylistFile(modifiedContent, playlistStoragePath);
-
-    // Stream segments in parallel
-    await streamSegments({
-      segments: segments.included,
-      baseStoragePath: storagePath,
-      options,
-      customRequestHeaders: options.customRequestHeaders,
-    });
-
-    const result = {
-      playlistUrl: getDownloadUrl(playlistStoragePath),
-      segments,
-      duration,
-      thumbnailUrl,
-    };
-
-    logger.info(
-      { playlistUrl: result.playlistUrl },
-      'M3U8 streaming completed',
-    );
-    return result;
-  } catch (error) {
-    throw CustomError.medium('Failed to stream file to storage', {
-      originalError: error,
-      errorCode: VIDEO_ERRORS.STORAGE_UPLOAD_FAILED,
-      shouldRetry: true,
-      context,
-      source: 'services/videos/helpers/m3u8/index.ts',
-    });
-  }
-};
 
 export { type ProcessOptions, streamM3U8 };
