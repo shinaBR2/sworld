@@ -102,6 +102,67 @@ interface ProcessStreamResult {
   modifiedContent: string;
 }
 
+/**
+ * One produced fMP4 file (the init segment or a media segment), as a lazily
+ * opened readable so a whole video never has to sit in memory at once.
+ */
+interface Fmp4Artifact {
+  /** Object name relative to the video's storage path, e.g. `init.mp4`, `0.m4s`. */
+  name: string;
+  stream: Readable;
+}
+
+/** What an fMP4 remux produced from a source HLS playlist. */
+interface Fmp4Artifacts {
+  /** The single shared init segment (`init.mp4`). */
+  init: Fmp4Artifact;
+  /** The media segments (`*.m4s`). */
+  segments: Fmp4Artifact[];
+  /**
+   * The fMP4 playlist text ffmpeg wrote (contains `#EXT-X-MAP`). The repair
+   * engine returns this for the caller (P2) to swap into `playlist.m3u8`; the
+   * engine itself never writes the shared playlist name.
+   */
+  playlistContent: string;
+}
+
+interface RepackageOutput {
+  artifacts: Fmp4Artifacts;
+  /** Release any temp resources the adapter created (e.g. its temp dir). */
+  cleanup: () => Promise<void>;
+}
+
+/**
+ * Port that reads an HLS source URL and remuxes it to fMP4/CMAF — no video
+ * transcode. The real implementation (fluent-ffmpeg + a temp dir) is the
+ * adapter's (P2); the engine only sees this interface, which keeps it
+ * env-agnostic and unit-testable with a fake.
+ */
+interface RepackagePort {
+  repackageToFmp4(sourceUrl: string): Promise<RepackageOutput>;
+}
+
+interface RepackageDeps {
+  /** Reuses the existing storage port (read URL + upload). */
+  storage: StoragePort;
+  repackage: RepackagePort;
+  logger: LoggerPort;
+}
+
+interface RepackageInput {
+  /** Base storage path of the already-streamed video, e.g. `videos/<user>/<id>`. */
+  storagePath: string;
+}
+
+interface RepackageResult {
+  /** Uploaded init object name (relative to `storagePath`). */
+  initName: string;
+  /** Uploaded `.m4s` object names (relative to `storagePath`). */
+  segmentNames: string[];
+  /** fMP4 playlist text for the caller to swap into `playlist.m3u8` (P2). */
+  playlistContent: string;
+}
+
 export type {
   HlsSegment,
   ParsedManifest,
@@ -115,4 +176,11 @@ export type {
   ProcessStreamInput,
   ProcessStreamOptions,
   ProcessStreamResult,
+  Fmp4Artifact,
+  Fmp4Artifacts,
+  RepackageOutput,
+  RepackagePort,
+  RepackageDeps,
+  RepackageInput,
+  RepackageResult,
 };
