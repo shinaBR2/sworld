@@ -7,9 +7,9 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 Produce clear, consistent task specs in **Linear** that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, and `labels` **by name** (e.g. `state: "In Progress"`, `project: "Library"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
+Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, and `labels` **by name** (e.g. `state: "In Progress"`, `project: "Main"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
 
-**A `project` is an app** — the long-lived container for everything in one app. Your workspace already has `Til`, `Watch`, `Library`; create the rest (`Listen`, `Game`, …) with `save_project` as needed. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
+**A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`, `Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library areas). For a brand-new app surface, create the project with `save_project` first. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
 
 - **Bug / small feature** → a single **issue** (`save_issue`) in the app's project. Bugs carry the `bug` label.
 - **User story** → an **issue in `Backlog`** in the app's project, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
@@ -32,7 +32,7 @@ The fields that an in-repo tracker would keep in frontmatter are native Linear f
 - Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
 - For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
-- Always create in the **SWorld** team; attach every issue to the matching app **project** (apps map to projects: Til, Watch, Library, …) — a large feature is a parent issue *inside* its app's project, not a project of its own
+- Always create in the **SWorld** team; attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, set its `state` to `In Progress` (see the `parallel-workflow` skill)
 
 ## The four spec shapes
@@ -114,7 +114,7 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 
 ### Example — the library progress bug
 
-Created with `save_issue`: `team: "SWorld"`, `project: "Library"`, `labels: ["bug"]`, `state: "Todo"`, `estimate: 1`, `title: "Library reading progress bar loses its label on long books"`, and this description:
+Created with `save_issue`: `team: "SWorld"`, `project: "Main"` (library is a feature area of the main app), `labels: ["bug"]`, `state: "Todo"`, `estimate: 1`, `title: "Library reading progress bar loses its label on long books"`, and this description:
 
 ```markdown
 **Problem**
