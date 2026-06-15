@@ -19,7 +19,7 @@ user-invocable: false
 ## Before starting
 
 1. Read the current Linear issue (`get_issue`) and confirm its `state`.
-2. Verify an issue exists for this work — a sub-task issue in a feature project, or a standalone issue. If none exists, create it first (`writing-task-specs`).
+2. Verify an issue exists for this work — a sub-issue under a feature's parent issue, or a standalone issue. If none exists, create it first (`writing-task-specs`).
 3. Check the issue's blocking relations (`blockedBy`); resolve those blockers first.
 4. Set the issue's `state` to `In Progress` (`save_issue`) before starting.
 
@@ -109,9 +109,10 @@ After each iteration, report what you found and fixed. Lead with unresolved comm
 ## Issue state management
 
 - States follow the SWorld team lifecycle: `Backlog → Todo → In Progress → In Review → Done`.
-- Starting work on a large feature (even planning) → move the **project** out of `Backlog` (set it `In Progress` via `save_project`).
-- Each sub-task **issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
-- Last sub-task issue of a project done → mark the **project** `Done`.
+- A **project** is an app (Til, Watch, Library, …) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
+- Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`save_issue`).
+- Each sub-task **sub-issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
+- Last sub-issue of a parent done → set the **parent issue** to `Done`.
 
 ## Good PR criteria
 

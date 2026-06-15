@@ -90,10 +90,10 @@ bring it back to pressure-test their model — exactly as you'd research anythin
 the path.
 
 **Capture the domain/feature concept as a short Linear document if it's non-obvious** — pure concept
-truth ("what is it", "how it works", "the rules"). Use `save_document`: attach it to the **project**
-for a feature concept, or to the **SWorld team** for a cross-cutting domain concept. Write it
+truth ("what is it", "how it works", "the rules"). Use `save_document`: attach it to the app's
+**project** for a feature concept, or to the **SWorld team** for a cross-cutting domain concept. Write it
 **before** the code, not retrofitted after — defining it first is the point. Keep the feature's
-architecture and trade-offs out of it — those live in the parent project (Step 3).
+architecture and trade-offs out of it — those live in the parent issue (Step 3).
 
 ## Step 2 — Shape the solution
 
@@ -112,10 +112,10 @@ Now think hard about *how*, and be self-critical about it:
 
 ## Step 3 — Shape a high-level parent
 
-Once the thinking holds, capture it as a **high-level parent project** with `writing-task-specs` — a
-Linear project whose description carries the concept, the options, and the trade-offs that
-*prove* the problem is understood. Keep it high-level; do **not** scope the children (sub-task issues)
-yet. The concept lives in its Linear document; the parent project supports it.
+Once the thinking holds, capture it as a **high-level parent issue** with `writing-task-specs` — a
+Linear issue (in the app's project) whose description carries the concept, the options, and the trade-offs that
+*prove* the problem is understood. Keep it high-level; do **not** scope the children (sub-issues)
+yet. The concept lives in its Linear document; the parent issue supports it.
 
 ## The team-review decision is the user's
 
@@ -126,7 +126,7 @@ decide a change doesn't need team sign-off, and that's their call. Don't hold th
 ## Step 4 — Detailed scoping (a separate, later pass)
 
 Only once the user (and, where they chose to, the team) is aligned: break the parent into children —
-the sub-task issues, their order (waves → milestones), and the dependency chain (`blockedBy` relations)
+the sub-issues, their order (waves encoded by `blockedBy` relations), and the dependency chain
 that delivers the feature most efficiently. Use `writing-task-specs` (large-feature shape) and `micro-prs`,
 respecting the deployment model (small, independently mergeable, revertible). This is deliberately *separate* from Steps 1–3 —
 don't race ahead into it before the shape is agreed.
@@ -141,7 +141,7 @@ rock-solid?) and **the non-gating posture**.
 |-------|----------|
 | Interrogating the thinking | `grill-me` |
 | Nailing the concept | a short Linear document |
-| Parent project + sub-task issues | `writing-task-specs` |
+| Parent issue + sub-issues | `writing-task-specs` |
 | Decomposition & sequencing | `micro-prs` |
 
 ## Always on, even when you skip the full chain
