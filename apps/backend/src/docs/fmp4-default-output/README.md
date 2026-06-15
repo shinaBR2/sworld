@@ -94,17 +94,23 @@ proven-clean default; revisit only if it proves unnecessary.)
 
 ---
 
-## Waves
+## Status: shipped ✅
+
+The on-demand fMP4 repair is **live and validated on PROD** — a real noisy Gosick
+segment was streamed to `.ts`, repaired to fMP4 via `repair-fmp4.ts`, and
+confirmed to play clean in desktop Chrome. See `src/cli/` for the tool.
 
 | Wave | Folder | Tickets |
 | - | - | - |
 | Extract core (refactor, still `.ts`) — **done** | `00.done.extract-core` | **F1** extract injectable core + io handler calls it · **F2** CLI calls the core (delete the replica) |
-| On-demand fMP4 repair | `01.todo.on-demand-fmp4-repair` | **P1** fMP4 repackage engine (stored `.ts` → fMP4) · **P2** CLI repair command (read GCS, repackage, safe swap-in) |
-| Verify | `02.todo.verify` | **V1** repair tests (fMP4 output + safe swap) |
+| On-demand fMP4 repair — **done** | `01.todo.on-demand-fmp4-repair` | **P1** fMP4 repackage engine (stored `.ts` → fMP4) · **P2** CLI repair command (fresh-URL publish + `source` repoint) |
+| Verify — **skipped** | `02.todo.verify` | **V1** repair tests — covered by P1 unit tests + manual PROD validation |
 | Deferred | `03.deferred.catalog-migration` | **G1** batch-repair fragile videos (reuses P2) |
 
-Order: **P1 → P2 → V1**. `G1` deferred. The default streaming/convert flows are
-**not** part of any wave — they stay as-is.
+Order was **P1 → P2 → V1**; V1 was skipped (see its ticket). `G1` stays deferred —
+pick up only if enough videos surface the noise to make one-by-one repair
+impractical. The default streaming/convert flows were **never** part of any wave —
+they stay as-is.
 
 ## The target shape
 
