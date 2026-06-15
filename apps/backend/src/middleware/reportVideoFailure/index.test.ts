@@ -74,23 +74,43 @@ describe('withVideoFailureReport', () => {
     expect(mockMarkVideoFailed).not.toHaveBeenCalled();
   });
 
-  it('marks the video failed on a terminal error, then re-throws', async () => {
+  it('marks the video failed on a terminal error, then ACKs (no throw)', async () => {
     const error = terminal();
+    const wrapped = withVideoFailureReport(async () => {
+      throw error;
+    });
+
+    // Resolves (2xx ack) so Cloud Tasks stops retrying a permanent failure.
+    await expect(wrapped(videoCtx('v1'))).resolves.toEqual({
+      success: false,
+      message: 'Client error: Forbidden',
+    });
+    expect(mockMarkVideoFailed).toHaveBeenCalledWith('v1', error);
+  });
+
+  it('ACKs a terminal error even when the payload carries no video id', async () => {
+    const error = terminal();
+    const wrapped = withVideoFailureReport(async () => {
+      throw error;
+    });
+
+    await expect(wrapped(videoCtx(undefined))).resolves.toEqual({
+      success: false,
+      message: 'Client error: Forbidden',
+    });
+    expect(mockMarkVideoFailed).not.toHaveBeenCalled();
+  });
+
+  it('re-throws a RETRYABLE error so Cloud Tasks retries (no ack, no mark)', async () => {
+    const error = new CustomError('Server error', {
+      errorCode: 'SERVER_ERROR',
+      shouldRetry: true,
+    });
     const wrapped = withVideoFailureReport(async () => {
       throw error;
     });
 
     await expect(wrapped(videoCtx('v1'))).rejects.toBe(error);
-    expect(mockMarkVideoFailed).toHaveBeenCalledWith('v1', error);
-  });
-
-  it('re-throws without marking when the payload carries no video id', async () => {
-    const error = terminal();
-    const wrapped = withVideoFailureReport(async () => {
-      throw error;
-    });
-
-    await expect(wrapped(videoCtx(undefined))).rejects.toBe(error);
     expect(mockMarkVideoFailed).not.toHaveBeenCalled();
   });
 });

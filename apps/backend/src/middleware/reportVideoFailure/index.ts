@@ -1,6 +1,7 @@
-import type { BusinessHandler } from 'src/utils/requestHandler';
 import { CustomError } from 'src/utils/custom-error';
 import { getCurrentLogger } from 'src/utils/logger';
+import type { BusinessHandler } from 'src/utils/requestHandler';
+import { AppResponse } from 'src/utils/schema';
 
 /**
  * Flag a video `failed` when its processing task throws a TERMINAL error (which
@@ -44,7 +45,9 @@ interface VideoTaskData {
 
 /**
  * Wrap a VIDEO-PROCESSING business handler so a terminal failure flags the
- * video `failed`, then re-throws so the normal error path still responds.
+ * video `failed` (which fires the Slack alert) and then ACKs the task with a 2xx
+ * so Cloud Tasks stops retrying a permanent failure. Retryable errors are
+ * re-thrown (→ 5xx) so Cloud Tasks retries transient blips.
  *
  * Apply this ONLY to ingest/processing entry points — `convert` (compute),
  * `stream-hls` and `import-platform` (io). Do NOT apply it to non-video
@@ -60,6 +63,16 @@ const withVideoFailureReport =
       const videoId = (context.validatedData as VideoTaskData | undefined)?.body
         ?.data?.id;
       await reportVideoTaskFailure(error, videoId);
+
+      // A terminal (non-retryable) failure is permanent — we've already flagged
+      // the video `failed` and alerted (above). ACK it to Cloud Tasks with a 2xx
+      // so the task leaves the queue instead of retrying forever (re-firing the
+      // same alert each time). Retryable errors re-throw → 5xx → Cloud Tasks
+      // retries, which is what we want for transient blips.
+      const isTerminal = error instanceof CustomError && !error.shouldRetry;
+      if (isTerminal) {
+        return AppResponse<R>(false, error.message);
+      }
       throw error;
     }
   };
