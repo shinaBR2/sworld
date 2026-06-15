@@ -89,6 +89,8 @@ interface ProcessStreamOptions {
   concurrencyLimit?: number;
   /** Per-source request headers (e.g. Referer) for playlist + segment fetches. */
   customRequestHeaders?: Record<string, string>;
+  /** Parse + preview only — resolve/parse but skip the thumbnail and uploads. */
+  dryRun?: boolean;
 }
 
 interface ProcessStreamResult {
@@ -96,6 +98,8 @@ interface ProcessStreamResult {
   duration: number;
   thumbnailUrl?: string;
   segments: ParsedManifest['segments'];
+  /** The rewritten playlist content (handy for dry-run previews). */
+  modifiedContent: string;
 }
 
 export type {

@@ -5,6 +5,7 @@ import { HTTP_ERRORS, VIDEO_ERRORS } from 'src/utils/error-codes';
 import { buildRequestHeaders } from 'src/utils/http/buildRequestHeaders';
 import { isRetryableError, withRetry } from 'src/utils/retry/withRetry';
 import { parseHlsManifest } from './parseHlsManifest';
+import { selectVariantUrl } from './selectVariantUrl';
 import type {
   HlsSegment,
   ProcessStreamDeps,
@@ -73,13 +74,25 @@ const processStream = async (
 
   deps.logger.info(errorContext, 'Starting M3U8 streaming');
 
-  const response = await deps.http.fetch(sourceUrl, {
-    headers: buildRequestHeaders(customRequestHeaders),
-  });
-  const content = await response.text();
+  const headers = buildRequestHeaders(customRequestHeaders);
+
+  // Fetch the source; if it's a master playlist, resolve to the best variant
+  // and fetch that. Segment URIs resolve against whichever URL we parse.
+  let baseUrl = sourceUrl;
+  let content = await (await deps.http.fetch(sourceUrl, { headers })).text();
+  const variantUrl = selectVariantUrl(content, sourceUrl);
+  if (variantUrl) {
+    deps.logger.info(
+      { variantUrl },
+      'Master playlist detected; resolved to best variant',
+    );
+    baseUrl = variantUrl;
+    content = await (await deps.http.fetch(variantUrl, { headers })).text();
+  }
+
   const { modifiedContent, segments, duration } = parseHlsManifest(
     content,
-    sourceUrl,
+    baseUrl,
     excludePatterns,
   );
 
@@ -97,6 +110,18 @@ const processStream = async (
       context: errorContext,
       source: 'services/videos/processing/processStream.ts',
     });
+  }
+
+  const playlistStoragePath = path.join(storagePath, PLAYLIST_NAME);
+
+  // Dry run: resolve + parse only, no thumbnail and no uploads.
+  if (options.dryRun) {
+    return {
+      playlistUrl: deps.storage.getDownloadUrl(playlistStoragePath),
+      duration,
+      segments,
+      modifiedContent,
+    };
   }
 
   // Thumbnail is best-effort: a failure here must not fail the whole video.
@@ -117,7 +142,6 @@ const processStream = async (
   }
 
   try {
-    const playlistStoragePath = path.join(storagePath, PLAYLIST_NAME);
     await deps.storage.uploadStream({
       stream: Readable.from(modifiedContent),
       storagePath: playlistStoragePath,
@@ -148,6 +172,7 @@ const processStream = async (
       segments,
       duration,
       thumbnailUrl,
+      modifiedContent,
     };
     deps.logger.info(
       { playlistUrl: result.playlistUrl },

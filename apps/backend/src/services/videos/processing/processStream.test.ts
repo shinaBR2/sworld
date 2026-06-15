@@ -95,12 +95,61 @@ describe('processStream', () => {
       playlistUrl: `https://storage.test/${STORAGE_PATH}/playlist.m3u8`,
       duration: 6,
       thumbnailUrl: 'https://storage.test/thumb.jpg',
+      modifiedContent: expect.stringContaining('#EXTM3U'),
       segments: expect.objectContaining({
         included: expect.arrayContaining([
           expect.objectContaining({ name: '0.ts' }),
         ]),
       }),
     });
+  });
+
+  it('resolves a master playlist to its best variant, then processes it', async () => {
+    const MASTER = `#EXTM3U
+#EXT-X-STREAM-INF:BANDWIDTH=800000
+low.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=2000000
+high.m3u8`;
+    const variantUrl = 'https://cdn.example.com/video/high.m3u8';
+    const deps = makeDeps();
+    (deps.http.fetch as ReturnType<typeof vi.fn>).mockImplementation(
+      async (url: string) => {
+        if (url === SOURCE)
+          return okResponse({ text: async () => MASTER, body: null });
+        if (url === variantUrl)
+          return okResponse({ text: async () => MANIFEST, body: null });
+        return okResponse({ body: new ReadableStream() });
+      },
+    );
+
+    const result = await processStream(
+      { sourceUrl: SOURCE, storagePath: STORAGE_PATH },
+      { ...OPTIONS, concurrencyLimit: 2 },
+      deps,
+    );
+
+    // fetched the master, then the highest-bandwidth variant
+    expect(deps.http.fetch).toHaveBeenCalledWith(variantUrl, expect.anything());
+    expect(result.segments.included).toHaveLength(2);
+    expect(deps.storage.uploadStream).toHaveBeenCalledTimes(3);
+  });
+
+  it('dry-run resolves + parses but uploads nothing and skips the thumbnail', async () => {
+    const deps = makeDeps();
+
+    const result = await processStream(
+      { sourceUrl: SOURCE, storagePath: STORAGE_PATH },
+      { ...OPTIONS, dryRun: true },
+      deps,
+    );
+
+    expect(deps.storage.uploadStream).not.toHaveBeenCalled();
+    expect(deps.thumbnail.generateFromSegment).not.toHaveBeenCalled();
+    expect(result.modifiedContent).toContain('#EXTM3U');
+    expect(result.segments.included).toHaveLength(2);
+    expect(result.playlistUrl).toBe(
+      `https://storage.test/${STORAGE_PATH}/playlist.m3u8`,
+    );
   });
 
   it('throws on an empty playlist (no kept segments)', async () => {

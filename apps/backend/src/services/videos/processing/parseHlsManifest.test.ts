@@ -53,4 +53,12 @@ describe('parseHlsManifest', () => {
     expect(result.segments.included).toHaveLength(3);
     expect(result.segments.excluded).toHaveLength(0);
   });
+
+  it('always emits #EXTM3U even without a version tag', () => {
+    const versionless = '#EXTM3U\n#EXTINF:3,\nseg-0.ts\n#EXT-X-ENDLIST';
+    const result = parseHlsManifest(versionless, SOURCE);
+
+    expect(result.modifiedContent.startsWith('#EXTM3U')).toBe(true);
+    expect(result.modifiedContent).not.toContain('#EXT-X-VERSION');
+  });
 });

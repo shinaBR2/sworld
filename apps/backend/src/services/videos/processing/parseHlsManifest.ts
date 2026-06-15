@@ -32,8 +32,9 @@ const parseHlsManifest = (
   let modifiedContent = '';
   let totalDuration = 0;
 
+  // #EXTM3U is mandatory and must be the first line; the version tag is optional.
+  modifiedContent += '#EXTM3U\n';
   if (manifest.version) {
-    modifiedContent += `#EXTM3U\n`;
     modifiedContent += `#EXT-X-VERSION:${manifest.version}\n`;
   }
 
