@@ -1,11 +1,11 @@
 import {
-  TaskEntityType,
-  TaskType,
-} from 'src/services/hasura/mutations/tasks/constants';
-import {
   type ConvertBodySchema,
   transformEvent,
 } from 'src/schema/videos/convert';
+import {
+  TaskEntityType,
+  TaskType,
+} from 'src/services/hasura/mutations/tasks/constants';
 import {
   type CreateCloudTasksParams,
   createCloudTasks,
@@ -54,7 +54,11 @@ const streamToStorage = async (validatedData: ConvertBodySchema) => {
   const taskConfig: CreateCloudTasksParams = {
     audience: '',
     queue: streamVideoQueue,
-    payload: event,
+    // Send the TRANSFORMED (camelCase) payload the handlers' schemas expect —
+    // not the raw snake_case `event`. Sending `event` made every task fail
+    // validation in io/compute (userId/videoUrl/keepOriginalSource/spanId/
+    // traceId all "required"), silently stalling the pipeline. See D1.
+    payload: { data, metadata },
     url: '',
     entityId,
     entityType: TaskEntityType.VIDEO,

@@ -8,6 +8,7 @@ import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
 import { queues } from 'src/utils/systemConfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { transformEvent } from 'src/schema/videos/convert';
 import { streamToStorage } from './index';
 
 vi.mock('src/utils/schema', () => ({
@@ -90,11 +91,12 @@ describe('streamToStorage', () => {
     });
     const result = await streamToStorage(newData);
 
+    const { data, metadata } = transformEvent(newData.event as never);
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/stream-hls-handler',
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
-      payload: newData.event,
+      payload: { data, metadata },
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.STREAM_HLS,
@@ -113,11 +115,12 @@ describe('streamToStorage', () => {
     });
     await streamToStorage(newData);
 
+    const { data, metadata } = transformEvent(newData.event as never);
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-compute-service/videos/convert-handler',
       audience: 'http://test-compute-service',
       queue: queues.convertVideoQueue,
-      payload: newData.event,
+      payload: { data, metadata },
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.CONVERT,
@@ -131,11 +134,12 @@ describe('streamToStorage', () => {
     });
     await streamToStorage(newData);
 
+    const { data, metadata } = transformEvent(newData.event as never);
     expect(createCloudTasks).toHaveBeenCalledWith({
       url: 'http://test-io-service/videos/import-platform-handler',
       audience: 'http://test-io-service',
       queue: queues.streamVideoQueue,
-      payload: newData.event,
+      payload: { data, metadata },
       entityId: 'test-video',
       entityType: TaskEntityType.VIDEO,
       type: TaskType.IMPORT_PLATFORM,

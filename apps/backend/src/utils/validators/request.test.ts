@@ -127,7 +127,7 @@ describe('honoValidateRequest', () => {
         message: expect.stringContaining('Invalid input'),
         dataObject: null,
       },
-      200,
+      400,
     );
   });
 
@@ -153,7 +153,7 @@ describe('honoValidateRequest', () => {
         message: expect.stringContaining('Invalid input'),
         dataObject: null,
       },
-      200,
+      400,
     );
   });
 
@@ -181,7 +181,7 @@ describe('honoValidateRequest', () => {
         message: 'Failed to parse request',
         dataObject: null,
       },
-      200,
+      400,
     );
   });
 });

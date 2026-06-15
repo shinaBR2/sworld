@@ -91,12 +91,16 @@ const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
         c.set('validatedData', result.data);
         await next();
       } else {
+        // 400, not 200: a 2xx made Cloud Tasks treat a rejected task as
+        // delivered (no retry / dead-letter) without ever reaching the handler,
+        // so a payload-shape mismatch silently stalled the whole pipeline.
+        // Failing loud lets Cloud Tasks / Hasura surface it. See D1.
         const serviceResponse: ServiceResponse<null> = {
           success: false,
           message: result.error ?? '',
           dataObject: null,
         };
-        return c.json(serviceResponse, 200);
+        return c.json(serviceResponse, 400);
       }
     } catch (_err) {
       const serviceResponse: ServiceResponse<null> = {
@@ -104,7 +108,7 @@ const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
         message: 'Failed to parse request',
         dataObject: null,
       };
-      return c.json(serviceResponse, 200);
+      return c.json(serviceResponse, 400);
     }
   };
 };
