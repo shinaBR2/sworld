@@ -8,7 +8,7 @@ You are part of this project and you own the code you ship. Be confident, be acc
 
 **First principles before code.** Don't write a line until the concept is genuinely clear. If the idea, the edge cases, or the downstream impact aren't thought through, that's a stop signal — not something to figure out as you go. Question assumptions, surface what's unclear, and stress-test the design before committing to it.
 
-**Plan deeply, then ship fast.** Speed comes from the quality of the planning, not from cutting corners. Invest the time up front — think, iterate, pressure-test — then break the work into markdown task specs and micro-PRs (see the `writing-task-specs`, `micro-prs`, and `parallel-workflow` skills). Deep planning is what makes fast, direct-to-main work safe.
+**Plan deeply, then ship fast.** Speed comes from the quality of the planning, not from cutting corners. Invest the time up front — think, iterate, pressure-test — then break the work into Linear issues and micro-PRs (see the `writing-task-specs`, `micro-prs`, and `parallel-workflow` skills). Deep planning is what makes fast, direct-to-main work safe.
 
 **Default to less.** Before adding, ask whether you can delete or extend instead, and whether the platform already solves it — can an existing pattern, package, or tool do this for us? No cleverness for its own sake, no abstractions until there are 3+ real uses, no new dependencies without justification. Boring and proven beats clever; the most maintainable solution wins.
 
@@ -64,7 +64,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 - _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 
-**Tasks & requirements** (`docs/tasks/`) — the source of truth for work, as local markdown (sworld does **not** use Linear). One folder per parent task with a `README.md` spec; one markdown file per child subtask, with `status` tracked in frontmatter. See `docs/tasks/README.md` for the convention, and the `writing-task-specs` skill for how to author them.
+**Tasks & requirements** — the source of truth for work is **Linear** (team **SWorld**, key `SWO`). Bugs and small features are single issues; large features are projects whose description + a Linear document hold the spec, with one issue per sub-task, milestones for waves, and blocking relations for dependencies. Status lives in the issue state (`Backlog → Todo → In Progress → In Review → Done`). See the `writing-task-specs` skill for how to author them and `parallel-workflow` for how state moves as work ships.
 
 ## Development Commands
 
@@ -110,5 +110,4 @@ These project rules take precedence over anything inherited in the skills:
 apps/<app>/src/         # per-app source (routes/, components/, config)
 packages/core/src/      # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
 packages/ui/src/        # shared MUI + Emotion components (+ Storybook)
-docs/tasks/             # markdown task specs (source of truth for work)
 ```

@@ -1,6 +1,6 @@
 ---
 name: parallel-workflow
-description: Enforces the parallel subtask workflow using markdown task files, git worktrees, and PRs. Auto-triggers when working with git, branches, worktrees, PRs, task files, codegen, or CI.
+description: Enforces the parallel subtask workflow using Linear issues, git worktrees, and PRs. Auto-triggers when working with git, branches, worktrees, PRs, Linear issues/tasks, codegen, or CI.
 user-invocable: false
 ---
 
@@ -8,7 +8,7 @@ user-invocable: false
 
 ## Non-negotiable prerequisites
 
-- **The task file is the source of truth.** A task file under `docs/tasks/` is REQUIRED before starting any work. NEVER start working without one.
+- **The Linear issue is the source of truth.** A Linear issue (in the **SWorld** team) is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`).
 - **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean.
 
 ## Git fundamentals
@@ -18,15 +18,15 @@ user-invocable: false
 
 ## Before starting
 
-1. Read the current task file under `docs/tasks/` and confirm its `status`.
-2. Verify a task file exists for this work (a child `docs/tasks/<parent-slug>/<child-slug>.md`, or a standalone `docs/tasks/<slug>.md`).
-3. Check the `blocked-by: []` frontmatter for blockers; resolve them first.
-4. Set the task file's `status: in-progress` and commit before starting.
+1. Read the current Linear issue (`get_issue`) and confirm its `state`.
+2. Verify an issue exists for this work — a sub-task issue in a feature project, or a standalone issue. If none exists, create it first (`writing-task-specs`).
+3. Check the issue's blocking relations (`blockedBy`); resolve those blockers first.
+4. Set the issue's `state` to `In Progress` (`save_issue`) before starting.
 
 ## Creating a worktree
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
-6. Name worktrees after the child-slug of the task file (e.g. `.claude/worktrees/<child-slug>`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default.
+6. Name worktrees after the issue's slug — the kebab-case short form of its title, optionally prefixed with the identifier (e.g. `.claude/worktrees/swo-123-sticky-progress-bar`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default. Including the `SWO-NNN` identifier in the branch name lets the GitHub↔Linear integration auto-link the PR to the issue.
 7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories.
 8. Run `pnpm install` in each worktree.
 
@@ -54,9 +54,9 @@ user-invocable: false
 ## PR submission
 
 - Create PR with `[WIP]` prefix (not draft).
-- Reference the task file in the PR description.
+- Reference the Linear issue in the PR description (e.g. `SWO-123`) so the integration links them.
 - ALWAYS assign PR to the user (`--assignee "@me"`).
-- Set the task file's `status: in-review` after the PR is created.
+- Set the issue's `state` to `In Review` (`save_issue`) after the PR is created.
 - Ensure PR is independent and mergeable without other PRs.
 - Run the CI loop after pushing.
 
@@ -69,7 +69,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 ### Step 1: Check merge status
 
 - Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → set the task file's `status: done`, clean up worktree + delete local branch. Loop is done.
+- If `MERGED` → set the issue's `state` to `Done` (`save_issue`), clean up worktree + delete local branch. Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 
@@ -106,11 +106,12 @@ The #1 failure mode: batching multiple checks in parallel, fixing multiple thing
 
 After each iteration, report what you found and fixed. Lead with unresolved comments if they exist — that's the #1 thing the user cares about.
 
-## Task file management
+## Issue state management
 
-- Starting work on a parent task (even planning) → set the parent `docs/tasks/<parent-slug>/README.md` `status: in-progress`.
-- Each child subtask carries its own `status` (todo → in-progress → in-review → done) in its frontmatter.
-- Last child of a parent done → set the parent `status: done`.
+- States follow the SWorld team lifecycle: `Backlog → Todo → In Progress → In Review → Done`.
+- Starting work on a large feature (even planning) → move the **project** out of `Backlog` (set it `In Progress` via `save_project`).
+- Each sub-task **issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
+- Last sub-task issue of a project done → mark the **project** `Done`.
 
 ## Good PR criteria
 
