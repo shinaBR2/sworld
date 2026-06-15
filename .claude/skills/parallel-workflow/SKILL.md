@@ -109,7 +109,7 @@ After each iteration, report what you found and fixed. Lead with unresolved comm
 ## Issue state management
 
 - States follow the SWorld team lifecycle: `Backlog → Todo → In Progress → In Review → Done`.
-- A **project** is an app (Til, Watch, Library, …) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
+- A **project** is an app (Til, Watch, Listen, Game, Docs, Main) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
 - Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`save_issue`).
 - Each sub-task **sub-issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
 - Last sub-issue of a parent done → set the **parent issue** to `Done`.
