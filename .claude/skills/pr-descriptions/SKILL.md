@@ -15,7 +15,7 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 - Do not include "Generated with Claude Code" or any AI attribution
 - Do not mention Claude, AI, or assistants anywhere in the PR
 - Do not pad the description by restating the diff
-- Do not put the task ID in the title — keep the title clean and link the task file in the body instead
+- Do not put the Linear issue ID in the title — keep the title clean and reference the issue (e.g. `SWO-123`) in the body instead
 
 ## Title format
 
@@ -73,7 +73,7 @@ No "Changelog" section in the PR body. The changelog is driven by changesets (se
 
 ### Summary
 
-1–3 sentences, plain English. State the change directly. Link related PRs as `#NNNN`. Reference the task file under `docs/tasks/` it came from.
+1–3 sentences, plain English. State the change directly. Link related PRs as `#NNNN`. Reference the Linear issue it came from (e.g. `SWO-123`) so the integration links the PR back to it.
 
 **User-facing PR — describe what the user sees, before → after.**
 

@@ -41,8 +41,8 @@ and offer**, you don't enforce.
 Don't assume where the user is. They may have planned this deeply with an agent already, or may be
 starting cold and have skipped straight to "let's build it." Find out before you start:
 
-- If they reference a task file under `docs/tasks/`, pull it and work from it.
-- Check whether a doc already exists for the concept in play (e.g. under `docs/`) — if it does, that's
+- If they reference a Linear issue or project, pull it (`get_issue` / `get_project`) and work from it.
+- Check whether a Linear **document** already exists for the concept in play — if it does, that's
   a strong signal they've already worked the concept through. If it doesn't and the work needs one,
   that's a signal it's missing.
 - If it's still unclear, just ask: *"has this been through a planning round before?"*
@@ -89,10 +89,11 @@ You can do the messy research yourself (how the concept actually works, the comp
 bring it back to pressure-test their model — exactly as you'd research anything else. The user picks
 the path.
 
-**Capture the domain/feature concept as a short doc under `docs/` if it's non-obvious** — pure concept
-truth ("what is it", "how it works", "the rules"). Write it **before** the code, not retrofitted
-after — defining it first is the point. Keep the feature's architecture and trade-offs out of it —
-those live in the parent (Step 3).
+**Capture the domain/feature concept as a short Linear document if it's non-obvious** — pure concept
+truth ("what is it", "how it works", "the rules"). Use `save_document`: attach it to the **project**
+for a feature concept, or to the **SWorld team** for a cross-cutting domain concept. Write it
+**before** the code, not retrofitted after — defining it first is the point. Keep the feature's
+architecture and trade-offs out of it — those live in the parent project (Step 3).
 
 ## Step 2 — Shape the solution
 
@@ -111,10 +112,10 @@ Now think hard about *how*, and be self-critical about it:
 
 ## Step 3 — Shape a high-level parent
 
-Once the thinking holds, capture it as a **high-level parent task** with `writing-task-specs` — a
-`docs/tasks/<parent-slug>/README.md` that carries the concept, the options, and the trade-offs that
-*prove* the problem is understood. Keep it high-level; do **not** scope the children yet. The concept
-lives in its `docs/` doc; the parent task supports it.
+Once the thinking holds, capture it as a **high-level parent project** with `writing-task-specs` — a
+Linear project whose description carries the concept, the options, and the trade-offs that
+*prove* the problem is understood. Keep it high-level; do **not** scope the children (sub-task issues)
+yet. The concept lives in its Linear document; the parent project supports it.
 
 ## The team-review decision is the user's
 
@@ -125,9 +126,9 @@ decide a change doesn't need team sign-off, and that's their call. Don't hold th
 ## Step 4 — Detailed scoping (a separate, later pass)
 
 Only once the user (and, where they chose to, the team) is aligned: break the parent into children —
-the child subtask files, their order, and the dependency chain that delivers the feature most
-efficiently. Use `writing-task-specs` (large-feature shape) and `micro-prs`, respecting the deployment
-model (small, independently mergeable, revertible). This is deliberately *separate* from Steps 1–3 —
+the sub-task issues, their order (waves → milestones), and the dependency chain (`blockedBy` relations)
+that delivers the feature most efficiently. Use `writing-task-specs` (large-feature shape) and `micro-prs`,
+respecting the deployment model (small, independently mergeable, revertible). This is deliberately *separate* from Steps 1–3 —
 don't race ahead into it before the shape is agreed.
 
 ## You are the conductor
@@ -139,8 +140,8 @@ rock-solid?) and **the non-gating posture**.
 | Phase | Leans on |
 |-------|----------|
 | Interrogating the thinking | `grill-me` |
-| Nailing the concept | a short doc under `docs/` |
-| Parent + children tasks | `writing-task-specs` |
+| Nailing the concept | a short Linear document |
+| Parent project + sub-task issues | `writing-task-specs` |
 | Decomposition & sequencing | `micro-prs` |
 
 ## Always on, even when you skip the full chain
