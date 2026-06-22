@@ -47,7 +47,15 @@ const convertToHLS = async (
 
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
-      .outputOptions(videoConfig.ffmpegCommands)
+      .outputOptions([
+        ...videoConfig.ffmpegCommands,
+        // ABSOLUTE segment path. ffmpeg resolves `-hls_segment_filename` relative
+        // to the process CWD, so a relative name writes every .m4s outside
+        // outputDir (they then never get uploaded). The init filename stays
+        // relative (config) — ffmpeg places it in this segment dir.
+        '-hls_segment_filename',
+        path.join(outputDir, '%d.m4s'),
+      ])
       .output(outputPath)
       .on('progress', (progress) => {
         logger.debug(progress, '[convertToHLS] Conversion progress:');

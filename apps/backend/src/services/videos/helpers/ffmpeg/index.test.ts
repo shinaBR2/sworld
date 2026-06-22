@@ -117,8 +117,14 @@ describe('FFmpeg Helpers', () => {
       await expect(convertToHLS(inputPath, outputDir)).resolves.not.toThrow();
 
       expect(ffmpeg).toHaveBeenCalledWith(inputPath);
+      // The base config plus an ABSOLUTE segment filename pinned to outputDir
+      // (otherwise ffmpeg writes .m4s relative to CWD and they never get uploaded).
       expect(mockFFmpeg.outputOptions).toHaveBeenCalledWith(
-        videoConfig.ffmpegCommands,
+        expect.arrayContaining([
+          ...videoConfig.ffmpegCommands,
+          '-hls_segment_filename',
+          path.join(outputDir, '%d.m4s'),
+        ]),
       );
       expect(mockFFmpeg.output).toHaveBeenCalledWith(
         path.join(outputDir, 'playlist.m3u8'),

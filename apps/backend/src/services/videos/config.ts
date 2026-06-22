@@ -40,12 +40,17 @@ const videoConfig = {
     // The init segment carries the AAC config upfront, sidestepping hls.js's
     // MPEG-TS AAC-demux race (the "Gosick" garbled-audio bug on desktop Chrome).
     // Free here because convert already transcodes. See src/docs/fmp4-default-output.
+    //
+    // The init filename is RELATIVE on purpose — ffmpeg writes it into the
+    // segment directory (which convertToHLS pins absolute via
+    // `-hls_segment_filename`). An ABSOLUTE init path here gets mis-joined and
+    // fails ("Failed to open segment"). The `.m4s` SEGMENT filename is NOT set
+    // here at all: a relative one would write segments to the process CWD, so
+    // convertToHLS sets it as an absolute path inside the output dir.
     '-hls_segment_type',
     'fmp4',
     '-hls_fmp4_init_filename',
-    'init.mp4', // Init segment name (referenced by #EXT-X-MAP)
-    '-hls_segment_filename',
-    '%d.m4s', // fMP4 fragment names: 0.m4s, 1.m4s, …
+    'init.mp4',
   ],
 };
 
