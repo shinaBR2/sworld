@@ -21,8 +21,6 @@
  *   config path      Show config file path
  */
 
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 import {
   chmodSync,
   createReadStream,
@@ -32,24 +30,18 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
-import { slugify } from '@shinabr2/core/universal/common';
 import { Storage } from '@google-cloud/storage';
+import { slugify } from '@shinabr2/core/universal/common';
+import { randomUUID } from 'crypto';
 import { GraphQLClient } from 'graphql-request';
 import { nanoid } from 'nanoid';
-import path from 'path';
 import os from 'os';
-import { randomUUID } from 'crypto';
+import path from 'path';
 import { processStream } from 'src/services/videos/processing/processStream';
 import type { ProcessStreamDeps } from 'src/services/videos/processing/types';
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-/**
- * Owner of every manually-fixed video / playlist / subtitle.
- * Per project rule this is ALWAYS the same account.
- */
-const USER_ID = '6ff27fda-03e8-4dcd-949b-f1328f955065';
 
 // ─── Interactive prompt ─────────────────────────────────────────────────────────
 
@@ -227,12 +219,23 @@ function parseStreamArgs(rawArgs: string[]): StreamArgs {
   const config = loadConfig();
 
   // url / video-id are optional here: if omitted they are gathered interactively
-  // in handleStream. user-id is fixed by project rule (overridable via flag/config).
+  // in handleStream. user-id comes from flag/env/config (required).
   const url = get('--url');
   const file = get('--file');
   const videoId = get('--video-id') || '';
-  const userId =
-    resolve(get('--user-id'), 'DEFAULT_USER_ID', 'user-id', config) || USER_ID;
+  // Owner comes from --user-id > env > config. Never hardcoded in source.
+  const userId = resolve(
+    get('--user-id'),
+    'DEFAULT_USER_ID',
+    'user-id',
+    config,
+  );
+  if (!userId) {
+    console.error(
+      'Error: user-id not configured. Run `config set user-id <uuid>`, or pass --user-id <uuid>.',
+    );
+    process.exit(1);
+  }
 
   if (url && file) {
     console.error('Error: use --url OR --file, not both.');
@@ -756,7 +759,9 @@ function main() {
     console.log(
       '  --skip-db           Upload to GCS but skip all Hasura writes',
     );
-    console.log(`  --user-id <uuid>    Override owner (default: ${USER_ID})`);
+    console.log(
+      '  --user-id <uuid>    Owner (from --user-id > env > config user-id)',
+    );
     return;
   }
 

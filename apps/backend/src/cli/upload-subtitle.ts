@@ -19,22 +19,20 @@
  *   --lang <code>       Subtitle language (default: vi)
  *   --name <name>       Storage file name without extension (default: the file's base name)
  *   --not-default       Mark the subtitle as NOT the default track (default: it IS default)
- *   --user-id <uuid>    Override owner (default: the fixed project account)
+ *   --user-id <uuid>    Owner (from --user-id > env > config user-id)
  */
 
 import { existsSync, readFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import os from 'node:os';
-import path from 'node:path';
 import { Storage } from '@google-cloud/storage';
 import { GraphQLClient } from 'graphql-request';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-/** Owner of every manually-fixed video / playlist / subtitle (project rule). */
-const USER_ID = '6ff27fda-03e8-4dcd-949b-f1328f955065';
 const DEFAULT_LANG = 'vi';
 
 // ─── Shared config (same file as stream-m3u8.ts) ────────────────────────────────
@@ -254,8 +252,19 @@ async function gatherArgs(rawArgs: string[]): Promise<SubtitleArgs> {
   }
   name = name || defaultName;
 
-  const userId =
-    resolve(get('--user-id'), 'DEFAULT_USER_ID', 'user-id', config) || USER_ID;
+  // Owner comes from --user-id > env > config. Never hardcoded in source.
+  const userId = resolve(
+    get('--user-id'),
+    'DEFAULT_USER_ID',
+    'user-id',
+    config,
+  );
+  if (!userId) {
+    console.error(
+      'Error: user-id not configured. Run `stream-m3u8.ts config set user-id <uuid>`, or pass --user-id <uuid>.',
+    );
+    process.exit(1);
+  }
   const gcpKeyPath = resolve(
     get('--gcp-key'),
     'GOOGLE_APPLICATION_CREDENTIALS',
@@ -428,7 +437,9 @@ function main(): void {
     console.log(
       '  --not-default       Do NOT mark as the default track (default: it is)',
     );
-    console.log(`  --user-id <uuid>    Override owner (default: ${USER_ID})`);
+    console.log(
+      '  --user-id <uuid>    Owner (from --user-id > env > config user-id)',
+    );
     return;
   }
 

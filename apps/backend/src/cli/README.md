@@ -180,15 +180,12 @@ failed to fetch `url_input`. → Fix with `upload-subtitle.ts`.
 Both scripts are standalone, run via `tsx`, and share one config file at
 `~/.sworld-cli/config.json`. They never touch the running services.
 
-### Fixed rule
+### Owner (user-id)
 
-The owner of every manually-fixed video / playlist / subtitle is **always**:
-
-```text
-USER_ID = 6ff27fda-03e8-4dcd-949b-f1328f955065
-```
-
-Hardcoded as a constant in both scripts (overridable via `--user-id`).
+The owner of every manually-created/fixed video / playlist / subtitle comes from
+your **CLI config** (`user-id`), resolved `--user-id` flag > `DEFAULT_USER_ID`
+env > config file. It is **required** — the tools error if it isn't set, and it
+is **never** hardcoded in source. Configure it once (see setup below).
 
 ### One-time setup (GCS + Hasura auth)
 
@@ -196,6 +193,7 @@ GCS auth is solved with a **service-account JSON key** (`new Storage({
 keyFilename })`). No `gcloud login` needed. Configure once:
 
 ```bash
+npx tsx src/cli/stream-m3u8.ts config set user-id <your-user-uuid>
 npx tsx src/cli/stream-m3u8.ts config set gcp-key /absolute/path/to/service-account.json
 npx tsx src/cli/stream-m3u8.ts config set gcp-bucket sworld-prod.appspot.com
 npx tsx src/cli/stream-m3u8.ts config set hasura-endpoint https://<your-hasura>/v1/graphql
@@ -396,6 +394,6 @@ npx tsx src/cli/stream-m3u8.ts stream \
   every segment 403s.
 - `slugify('The X Files - season 6')` = `the-x-files-season-6`, which matched the
   existing playlist → reused, no duplicate.
-- Result: ~1.1 GB copied to `videos/6ff27fda…/ade0…/`, video → `ready`, linked
+- Result: ~1.1 GB copied to `videos/<userId>/ade0…/`, video → `ready`, linked
   into the playlist.
 ```
