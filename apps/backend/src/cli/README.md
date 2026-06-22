@@ -271,6 +271,64 @@ root, e.g. `https://somesite.com/`).
 
 ---
 
+### `convert.ts` — convert a local video file to HLS
+
+The operator-local counterpart to the compute **convert** flow (mp4 → HLS).
+Point it at a **local video file**; it runs ffmpeg locally (bundled
+`@ffmpeg-installer`, no system ffmpeg needed), uploads the HLS output to GCS, and
+writes the `videos` row. It reuses the same ffmpeg command as the compute flow
+(`videoConfig.ffmpegCommands`), so the output is the same **fMP4/CMAF**
+(`playlist.m3u8` + `init.mp4` + `.m4s`) — see `src/docs/fmp4-default-output/`.
+
+Unlike `stream-m3u8.ts` (UPDATE-only), this tool **creates the `videos` row when
+it doesn't exist**, folding the manual "insert row first" step into the command.
+
+```bash
+# Create a new video from a local file (generates the row + a uuid):
+npx tsx src/cli/convert.ts convert --file ./movie.mp4 --title 'Movie'
+
+# Finalize an existing row:
+npx tsx src/cli/convert.ts convert --file ./ep01.mp4 --video-id <uuid>
+
+# Into a playlist, dry-run first:
+npx tsx src/cli/convert.ts convert --file ./ep01.mp4 --title 'Tập 1' \
+  --playlist 'My Series' --dry-run
+```
+
+What it does:
+
+1. **ffprobe** the input for duration.
+2. **Resolve create-vs-update** — `--video-id` that exists → finalize it;
+   `--video-id` missing or omitted → **create** the row (needs `--title`;
+   `slug` defaults to `slugify(title)`, `skip_process: true`, `status: processing`).
+3. **Convert** the file → fMP4 HLS in a temp dir.
+4. **Upload** `playlist.m3u8` + `init.mp4` + `.m4s` → `videos/{userId}/{videoId}/`
+   with correct content-types.
+5. **Finalize** the row → `{ source, status: 'ready', duration, sId }`.
+6. **Playlist** (if `--playlist`) — find-or-create by slug and link (append by
+   default; `--position` to override).
+
+V1 scope: **local file only** (`--url` is rejected), and **no thumbnail** (a
+converted video has none, like the stream CLI).
+
+| Flag | Meaning |
+| ---- | ------- |
+| `--file <path>` | **Required.** Local video file. |
+| `--title <title>` | Required when creating a new row. |
+| `--slug <slug>` | Slug (default: `slugify(title)`). |
+| `--video-id <uuid>` | Existing row to finalize; if missing, it's created with this id. |
+| `--video-url <url>` | Stored as `videos.video_url` on create (default: `local:<filename>`). |
+| `--public` | Mark the new video public (default: private). |
+| `--playlist <name>` | Find-or-create playlist (by slug) and link. |
+| `--position <n>` | Position in the playlist (default: append). |
+| `--standalone` | Skip the playlist prompt. |
+| `--dry-run` | Show the plan; no encode/upload/DB writes. |
+| `--skip-db` | Convert + upload to GCS but skip all Hasura writes. |
+| `--concurrency <n>` | Parallel segment uploads (default 5). |
+
+Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
+it once via `stream-m3u8.ts config set <key> <value>`.
+
 ### `upload-subtitle.ts` — add a missing subtitle
 
 Takes a `.vtt` **from a local file or a remote URL**, uploads it to GCS, and
