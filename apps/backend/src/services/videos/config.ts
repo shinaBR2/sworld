@@ -36,8 +36,16 @@ const videoConfig = {
     '4', // Segment duration in seconds
     '-hls_list_size',
     '0', // Include all segments in the playlist
-    // '-hls_segment_filename',
-    // 'segment_%03d.ts', // Segment filename pattern
+    // fMP4/CMAF output (init.mp4 + .m4s + #EXT-X-MAP) instead of MPEG-TS .ts.
+    // The init segment carries the AAC config upfront, sidestepping hls.js's
+    // MPEG-TS AAC-demux race (the "Gosick" garbled-audio bug on desktop Chrome).
+    // Free here because convert already transcodes. See src/docs/fmp4-default-output.
+    '-hls_segment_type',
+    'fmp4',
+    '-hls_fmp4_init_filename',
+    'init.mp4', // Init segment name (referenced by #EXT-X-MAP)
+    '-hls_segment_filename',
+    '%d.m4s', // fMP4 fragment names: 0.m4s, 1.m4s, …
   ],
 };
 

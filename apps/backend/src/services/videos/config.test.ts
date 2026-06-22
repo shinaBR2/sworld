@@ -86,6 +86,12 @@ describe('videoConfig', () => {
       '4',
       '-hls_list_size',
       '0',
+      '-hls_segment_type',
+      'fmp4',
+      '-hls_fmp4_init_filename',
+      'init.mp4',
+      '-hls_segment_filename',
+      '%d.m4s',
     ]);
   });
 });

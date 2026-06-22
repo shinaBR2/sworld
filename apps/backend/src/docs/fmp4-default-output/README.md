@@ -27,7 +27,12 @@ is no longer the plan.** Decisions that now govern this epic:
   segments byte-for-byte. It's the cheap, default, **main** flow and it works
   fine for almost everything. We do **not** make it run ffmpeg, and we do **not**
   probe/detect audio inside it.
-- **The convert flow (mp4 → HLS) stays untouched** too, for now.
+- **The convert flow (mp4 → HLS) now emits fMP4** (`init.mp4` + `.m4s`), not
+  `.ts` — updated in **SWO-239**. This reverses the original "stays untouched"
+  decision *for the convert path only*: convert already transcodes (libx264 +
+  AAC re-encode), so emitting fMP4 is ≈free and pre-empts the Gosick bug for
+  every converted video. The "don't tax the cheap path" rationale below applies
+  to the byte-copy *stream* flow — which **does** stay `.ts`.
 - **No automatic detection.** A video streams in as `.ts`, goes `ready`, and a
   **human** judges noise by watching it on the frontend. That's the trigger.
 - **fMP4 is a repair, not a default.** We only pay the heavy ffmpeg-repackage
@@ -119,7 +124,7 @@ EXISTING, UNCHANGED:
   core: processStream(input, opts, deps)   ← copies .ts byte-for-byte (default)
     ├── io stream-hls handler  → thin adapter (GCS, fetchWithError)
     └── CLI stream-m3u8        → thin adapter (local GCS key)
-  convert (mp4→HLS)            → own transcode, emits .ts
+  convert (mp4→HLS)            → own transcode, emits fMP4 (init.mp4 + .m4s)  ← SWO-239
 
 NEW, ADDITIVE (this epic):
   repackageToFmp4(input, deps)             ← P1: stored .ts → init.mp4 + .m4s
