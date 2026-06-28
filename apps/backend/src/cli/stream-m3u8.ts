@@ -40,6 +40,7 @@ import { GraphQLClient } from 'graphql-request';
 import { nanoid } from 'nanoid';
 import os from 'os';
 import path from 'path';
+import { uploadThumbnailFromUrl } from 'src/services/videos/helpers/thumbnail-from-url';
 import { processStream } from 'src/services/videos/processing/processStream';
 import type { ProcessStreamDeps } from 'src/services/videos/processing/types';
 
@@ -199,6 +200,8 @@ interface StreamArgs {
   standalone: boolean;
   concurrency: number;
   referer?: string;
+  // Optional thumbnail image URL (re-hosted to GCS); reuses --referer for the fetch.
+  thumbnail?: string;
   // Playlist linking (optional)
   playlistName?: string;
   position?: number;
@@ -212,7 +215,11 @@ interface StreamArgs {
 function parseStreamArgs(rawArgs: string[]): StreamArgs {
   const get = (flag: string): string | undefined => {
     const idx = rawArgs.indexOf(flag);
-    return idx !== -1 ? rawArgs[idx + 1] : undefined;
+    if (idx === -1) return undefined;
+    const value = rawArgs[idx + 1];
+    // A missing value (end of args, or another --flag) is treated as unset, not
+    // silently swallowing the next flag as this one's value.
+    return value && !value.startsWith('--') ? value : undefined;
   };
   const has = (flag: string): boolean => rawArgs.includes(flag);
 
@@ -294,6 +301,7 @@ function parseStreamArgs(rawArgs: string[]): StreamArgs {
     standalone: has('--standalone'),
     concurrency,
     referer: get('--referer'),
+    thumbnail: get('--thumbnail'),
     playlistName: get('--playlist'),
     position,
     gcpKeyPath,
@@ -399,11 +407,18 @@ async function updateDatabase(params: {
   videoId: string;
   playlistUrl: string;
   duration: number;
+  thumbnailUrl?: string;
   hasuraEndpoint: string;
   hasuraSecret: string;
 }): Promise<void> {
-  const { videoId, playlistUrl, duration, hasuraEndpoint, hasuraSecret } =
-    params;
+  const {
+    videoId,
+    playlistUrl,
+    duration,
+    thumbnailUrl,
+    hasuraEndpoint,
+    hasuraSecret,
+  } = params;
 
   const client = new GraphQLClient(hasuraEndpoint, {
     headers: { 'x-hasura-admin-secret': hasuraSecret },
@@ -418,6 +433,7 @@ async function updateDatabase(params: {
       status: 'ready',
       duration,
       sId,
+      ...(thumbnailUrl ? { thumbnailUrl } : {}),
     },
   });
 
@@ -676,6 +692,11 @@ async function handleStream(rawArgs: string[]) {
         `[DRY RUN] Would find-or-create playlist "${args.playlistName}" (slug: ${slugify(args.playlistName)}) and link this video at ${where}.`,
       );
     }
+    if (args.thumbnail) {
+      console.log(
+        `[DRY RUN] Would re-host thumbnail ${args.thumbnail} → ${storagePath}/thumbnail.<ext> and set thumbnailUrl.`,
+      );
+    }
     console.log('[DRY RUN] Done.');
     return;
   }
@@ -687,11 +708,26 @@ async function handleStream(rawArgs: string[]) {
   if (args.skipDb) {
     console.log('Skipping database update (--skip-db)');
   } else {
+    // Optional thumbnail: re-host the given image URL to GCS (reusing --referer
+    // for hotlink-protected hosts) and set thumbnailUrl in the finalize update.
+    let thumbnailUrl: string | undefined;
+    if (args.thumbnail) {
+      console.log('Uploading thumbnail...');
+      const bucket = createStorage(args.gcpKeyPath).bucket(args.gcpBucket);
+      thumbnailUrl = await uploadThumbnailFromUrl(bucket, {
+        imageUrl: args.thumbnail,
+        referer: args.referer,
+        storagePath,
+      });
+      console.log(`  Thumbnail: ${thumbnailUrl}`);
+    }
+
     console.log('Updating Hasura database...');
     await updateDatabase({
       videoId: args.videoId,
       playlistUrl: result.playlistUrl,
       duration: result.duration,
+      thumbnailUrl,
       hasuraEndpoint: args.hasuraEndpoint,
       hasuraSecret: args.hasuraSecret,
     });
@@ -752,6 +788,9 @@ function main() {
     );
     console.log('  --standalone        Skip the playlist prompt (no playlist)');
     console.log('  --referer <url>     Referer/Origin header for CDN auth');
+    console.log(
+      '  --thumbnail <url>   Image URL to re-host to GCS + set as the thumbnail (uses --referer)',
+    );
     console.log('  --concurrency <n>   Parallel segment uploads (default: 5)');
     console.log(
       '  --dry-run           Parse and show what would happen, no uploads/DB writes',

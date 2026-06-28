@@ -252,6 +252,7 @@ Key flags:
 | `--url` / `--file` | Source `.m3u8` URL, or a local `.m3u8` file.                   |
 | `--video-id`     | **Required.** Existing video to finalize.                        |
 | `--referer`      | Sets `Referer` + `Origin` (needed for hotlink-protected CDNs).   |
+| `--thumbnail`    | Image URL to re-host to GCS and set as the video's thumbnail (uses `--referer`). |
 | `--playlist`     | Playlist name to find-or-create and link to.                     |
 | `--position`     | Position in the playlist (default: append to end).               |
 | `--standalone`   | Skip the playlist prompt (no playlist).                          |
@@ -325,6 +326,12 @@ converted video has none, like the stream CLI).
 | `--dry-run` | Show the plan; no encode/upload/DB writes. |
 | `--skip-db` | Convert + upload to GCS but skip all Hasura writes. |
 | `--concurrency <n>` | Parallel segment uploads (default 5). |
+| `--thumbnail <url>` | Image URL to re-host to GCS and set as the thumbnail. |
+| `--thumbnail-referer <url>` | Referer for the thumbnail fetch (hotlink-protected hosts). |
+
+Both CLIs re-host the image in our bucket (`<storagePath>/thumbnail.<ext>`) — they
+never point `thumbnailUrl` at the third-party URL, which may be referer-gated or
+expire.
 
 Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
 it once via `stream-m3u8.ts config set <key> <value>`.

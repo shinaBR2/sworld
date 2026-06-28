@@ -45,6 +45,7 @@ import { nanoid } from 'nanoid';
 // convert handler runs (so the output format can never drift). Only the
 // CLI-specific plumbing (local temp dir, GCS key, create/finalize) lives here.
 import { convertToHLS } from 'src/services/videos/helpers/ffmpeg';
+import { uploadThumbnailFromUrl } from 'src/services/videos/helpers/thumbnail-from-url';
 
 // convertToHLS (imported above) sets the ffmpeg binary path on the shared
 // fluent-ffmpeg singleton at its module load; we set ffprobe here for the
@@ -117,6 +118,8 @@ interface ConvertArgs {
   title?: string;
   slug?: string;
   videoUrl?: string;
+  thumbnail?: string;
+  thumbnailReferer?: string;
   isPublic: boolean;
   userId: string;
   skipDb: boolean;
@@ -216,6 +219,8 @@ const parseConvertArgs = (rawArgs: string[]): ConvertArgs => {
     title: get('--title')?.trim() || undefined,
     slug: get('--slug'),
     videoUrl: get('--video-url'),
+    thumbnail: get('--thumbnail'),
+    thumbnailReferer: get('--thumbnail-referer'),
     isPublic: has('--public'),
     userId,
     skipDb: has('--skip-db'),
@@ -375,11 +380,18 @@ const finalizeVideo = async (
   videoId: string,
   playlistUrl: string,
   duration: number,
+  thumbnailUrl?: string,
 ): Promise<string> => {
   const sId = nanoid(11);
   await makeClient(args).request(FINALIZE_VIDEO_MUTATION, {
     videoId,
-    videoUpdates: { source: playlistUrl, status: 'ready', duration, sId },
+    videoUpdates: {
+      source: playlistUrl,
+      status: 'ready',
+      duration,
+      sId,
+      ...(thumbnailUrl ? { thumbnailUrl } : {}),
+    },
   });
   return sId;
 };
@@ -586,6 +598,11 @@ const handleConvert = async (rawArgs: string[]) => {
         `  4. find-or-create playlist "${args.playlistName}" and link at ${where}`,
       );
     }
+    if (args.thumbnail) {
+      console.log(
+        `  *. re-host thumbnail ${args.thumbnail} → ${storagePath}/thumbnail.<ext> and set thumbnailUrl`,
+      );
+    }
     console.log('[DRY RUN] Done — nothing written.');
     return;
   }
@@ -621,8 +638,25 @@ const handleConvert = async (rawArgs: string[]) => {
         console.log(`Creating video row "${args.title}"…`);
         await createVideo(args, videoId);
       }
+      // Optional thumbnail: re-host the given image URL to GCS.
+      let thumbnailUrl: string | undefined;
+      if (args.thumbnail) {
+        console.log('Uploading thumbnail…');
+        thumbnailUrl = await uploadThumbnailFromUrl(bucket, {
+          imageUrl: args.thumbnail,
+          referer: args.thumbnailReferer,
+          storagePath,
+        });
+        console.log(`  Thumbnail: ${thumbnailUrl}`);
+      }
       console.log('Finalizing video row…');
-      const sId = await finalizeVideo(args, videoId, playlistUrl, duration);
+      const sId = await finalizeVideo(
+        args,
+        videoId,
+        playlistUrl,
+        duration,
+        thumbnailUrl,
+      );
       console.log(`  status=ready  sId=${sId}`);
 
       // 4. Optional playlist link.
@@ -678,6 +712,12 @@ const main = () => {
     );
     console.log(
       '  --video-url <url>   Stored as videos.video_url on create (default: local:<filename>)',
+    );
+    console.log(
+      '  --thumbnail <url>          Image URL to re-host to GCS + set as the thumbnail',
+    );
+    console.log(
+      '  --thumbnail-referer <url> Referer for the thumbnail fetch (hotlink-protected hosts)',
     );
     console.log(
       '  --public            Mark the new video public (default: private)',
