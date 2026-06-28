@@ -46,6 +46,7 @@ import { nanoid } from 'nanoid';
 // CLI-specific plumbing (local temp dir, GCS key, create/finalize) lives here.
 import { convertToHLS } from 'src/services/videos/helpers/ffmpeg';
 import { uploadThumbnailFromUrl } from 'src/services/videos/helpers/thumbnail-from-url';
+import { flushThenExit } from './cli-exit';
 
 // convertToHLS (imported above) sets the ffmpeg binary path on the shared
 // fluent-ffmpeg singleton at its module load; we set ffprobe here for the
@@ -748,15 +749,20 @@ const main = () => {
   }
 
   if (command === 'convert') {
-    handleConvert(args.slice(1)).catch((error) => {
-      console.error('');
-      console.error('=== Error ===');
-      console.error(error.message || error);
-      if (error.response) {
-        console.error('Response:', JSON.stringify(error.response, null, 2));
-      }
-      process.exit(1);
-    });
+    handleConvert(args.slice(1))
+      // Exit explicitly on success — GCS/fetch keep-alive sockets can otherwise
+      // keep the event loop alive, hanging any batch that waits on this process.
+      // flushThenExit drains stdio first so captured output isn't truncated.
+      .then(() => flushThenExit(0))
+      .catch((error) => {
+        console.error('');
+        console.error('=== Error ===');
+        console.error(error.message || error);
+        if (error.response) {
+          console.error('Response:', JSON.stringify(error.response, null, 2));
+        }
+        flushThenExit(1);
+      });
     return;
   }
 

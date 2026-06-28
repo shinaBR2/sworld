@@ -43,6 +43,7 @@ import path from 'path';
 import { uploadThumbnailFromUrl } from 'src/services/videos/helpers/thumbnail-from-url';
 import { processStream } from 'src/services/videos/processing/processStream';
 import type { ProcessStreamDeps } from 'src/services/videos/processing/types';
+import { flushThenExit } from './cli-exit';
 
 // ─── Interactive prompt ─────────────────────────────────────────────────────────
 
@@ -810,15 +811,21 @@ function main() {
   }
 
   if (command === 'stream') {
-    handleStream(args.slice(1)).catch((error) => {
-      console.error('');
-      console.error('=== Error ===');
-      console.error(error.message || error);
-      if (error.response) {
-        console.error('Response:', JSON.stringify(error.response, null, 2));
-      }
-      process.exit(1);
-    });
+    handleStream(args.slice(1))
+      // Exit explicitly on success — GCS/fetch keep-alive sockets (esp. after
+      // transient retries) can otherwise keep the event loop alive for minutes,
+      // hanging any batch that waits on this process. flushThenExit drains stdio
+      // first so captured output isn't truncated.
+      .then(() => flushThenExit(0))
+      .catch((error) => {
+        console.error('');
+        console.error('=== Error ===');
+        console.error(error.message || error);
+        if (error.response) {
+          console.error('Response:', JSON.stringify(error.response, null, 2));
+        }
+        flushThenExit(1);
+      });
     return;
   }
 
