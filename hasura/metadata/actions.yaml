@@ -18,12 +18,34 @@ actions:
     permissions:
       - role: anonymous
     comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
+  - name: createSignedUploadUrl
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: createSignedUploadUrl
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/storage/signed-upload-url'
+        version: 2
+    permissions:
+      - role: user
+    comment: Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic).
 custom_types:
   enums: []
   input_objects:
     - name: CreateDeviceRequestInput
+    - name: SignedUploadUrlInput
   objects:
     - name: CreateDeviceRequestOutput
     - name: DeviceRequestError
     - name: CreateDeviceRequestResponse
+    - name: SignedUploadUrlOutput
+    - name: SignedUploadUrlResponse
   scalars: []
