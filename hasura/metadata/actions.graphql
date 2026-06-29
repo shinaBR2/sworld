@@ -2,6 +2,9 @@ type Mutation {
   createDeviceRequest(
     input: CreateDeviceRequestInput!
   ): CreateDeviceRequestResponse!
+  createSignedUploadUrl(
+    input: SignedUploadUrlInput!
+  ): SignedUploadUrlResponse!
 }
 
 input CreateDeviceRequestInput {
@@ -26,5 +29,31 @@ type CreateDeviceRequestResponse {
   success: Boolean!
   data: CreateDeviceRequestOutput
   error: DeviceRequestError
+}
+
+input SignedUploadUrlInput {
+  # site: watch | listen | main | … (validated server-side)
+  site: String!
+  # action enum, e.g. VIDEO_UPLOAD, VIDEO_THUMBNAIL_UPLOAD, AUDIO_UPLOAD, BOOK_UPLOAD
+  action: String!
+  # optional entity id to nest the object under; a uuid is generated when omitted
+  id: String
+  # MIME type the browser will PUT; pinned into the signed URL
+  contentType: String!
+}
+
+type SignedUploadUrlOutput {
+  uploadUrl: String!
+  publicUrl: String!
+  objectPath: String!
+  expiresAt: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type SignedUploadUrlResponse {
+  success: Boolean!
+  message: String!
+  dataObject: SignedUploadUrlOutput
 }
 
