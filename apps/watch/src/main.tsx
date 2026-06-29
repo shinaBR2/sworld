@@ -12,6 +12,7 @@ import {
 } from './config';
 import { routeTree } from './routeTree.gen';
 
+// Trigger a production build to verify the Cloudflare Pages deploy pipeline.
 validateEnvVars();
 
 // @ts-expect-error
