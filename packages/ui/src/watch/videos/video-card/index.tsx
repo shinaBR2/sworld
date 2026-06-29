@@ -1,3 +1,4 @@
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -43,6 +44,28 @@ const VideoCardContent = (props: VideoCardContentProps) => {
         {creator} • {createdTime}
       </Typography>
     </CardContent>
+  );
+};
+
+const PlaylistBadge = () => {
+  return (
+    <Box
+      aria-label="Playlist"
+      sx={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        display: 'flex',
+        alignItems: 'center',
+        bgcolor: 'rgba(0, 0, 0, 0.75)',
+        color: 'common.white',
+        borderRadius: 1,
+        px: 0.5,
+        py: 0.25,
+      }}
+    >
+      <PlaylistPlayIcon sx={{ fontSize: 18 }} />
+    </Box>
   );
 };
 
@@ -94,6 +117,7 @@ const VideoContent = (props: VideoContentProps) => {
     return (
       <Box sx={{ position: 'relative' }}>
         <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+        {video.type === MEDIA_TYPES.PLAYLIST && <PlaylistBadge />}
         <VideoProgress video={video} />
       </Box>
     );
@@ -103,6 +127,7 @@ const VideoContent = (props: VideoContentProps) => {
     return (
       <Box sx={{ position: 'relative' }}>
         <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
+        <PlaylistBadge />
       </Box>
     );
   }

@@ -1,6 +1,7 @@
 import EditIcon from '@mui/icons-material/Edit';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import ShareIcon from '@mui/icons-material/Share';
-import { IconButton, Stack, Tooltip } from '@mui/material';
+import { Box, IconButton, Stack, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -44,7 +45,8 @@ const SubtitleDialog = React.lazy(() =>
 
 const MainContent = (props: VideoDetailContainerProps) => {
   const { queryRs, activeVideoId, onVideoEnded, autoPlay, onShare } = props;
-  const { isLoading, videos } = queryRs;
+  const { isLoading, videos, playlist } = queryRs;
+  const isPlaylist = Boolean(playlist);
 
   const { getAccessToken } = useAuthContext();
 
@@ -132,14 +134,29 @@ const MainContent = (props: VideoDetailContainerProps) => {
 
   return (
     <Grid item sx={{ width: '100%', px: 2 }}>
-      <VideoContainer
-        video={videoDetail}
-        onError={(err: unknown) => {
-          console.log(err);
+      <Box
+        sx={{
+          width: '100%',
+          // Cap the player so its 16:9 height never exceeds the viewport
+          // minus room for the header and the title/actions row below it.
+          maxWidth: 'calc((100vh - 220px) * 16 / 9)',
+          mx: 'auto',
         }}
-        onEnded={handleVideoEnd}
-      />
+      >
+        <VideoContainer
+          video={videoDetail}
+          onError={(err: unknown) => {
+            console.log(err);
+          }}
+          onEnded={handleVideoEnd}
+        />
+      </Box>
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
+        {isPlaylist && (
+          <Tooltip title="Playlist">
+            <PlaylistPlayIcon color="action" />
+          </Tooltip>
+        )}
         <Typography
           component="h1"
           variant="h4"
@@ -265,7 +282,7 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
 
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
-      <Grid container item alignItems="center" xs={12} sm={6} md={8} lg={9}>
+      <Grid container item alignItems="flex-start" xs={12} sm={6} md={8} lg={9}>
         <MainContent
           {...props}
           onVideoEnded={handleVideoEnded}

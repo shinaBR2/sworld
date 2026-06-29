@@ -32,6 +32,7 @@ const HomeContainer = (props: HomeContainerProps) => {
   return (
     <Container
       maxWidth={false}
+      data-scroll-restoration-id="watch-home"
       sx={{ flex: 1, height: 0, py: 3, px: { xs: 2, sm: 3 }, overflow: 'auto' }}
     >
       <Grid container spacing={3}>
