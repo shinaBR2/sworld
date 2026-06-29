@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getDownloadUrl,
+  getSignedUploadUrl,
   uploadFile,
   DEFAULT_UPLOAD_OPTIONS,
   streamFile,
@@ -99,6 +100,7 @@ const mockTransferManager = {
 };
 const mockFile = {
   delete: vi.fn(),
+  getSignedUrl: vi.fn().mockResolvedValue(['https://signed.example/put']),
   createWriteStream: vi.fn(() => {
     const writeStream = new PassThrough();
     const originalOn = writeStream.on.bind(writeStream);
@@ -152,6 +154,60 @@ describe('gcp-cloud-storage-helpers', () => {
 
       expect(getDownloadUrl(outputPath)).toBe(expected);
       expect(storageMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('getSignedUploadUrl', () => {
+    it('signs a V4 write URL pinned to the content type and returns the public URL', async () => {
+      const objectPath = 'videos/user-1/abc/def.mp4';
+      const contentType = 'video/mp4';
+
+      const result = await getSignedUploadUrl({ objectPath, contentType });
+
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: 'v4',
+          action: 'write',
+          contentType,
+          expires: expect.any(Number),
+        }),
+      );
+      expect(result.uploadUrl).toBe('https://signed.example/put');
+      expect(result.publicUrl).toBe(
+        'https://storage.googleapis.com/test-bucket/videos/user-1/abc/def.mp4',
+      );
+      // expiresAt is a valid ISO-8601 string
+      expect(result.expiresAt).toBe(new Date(result.expiresAt).toISOString());
+    });
+
+    it('honors a custom ttlMs', async () => {
+      const before = Date.now();
+
+      await getSignedUploadUrl({
+        objectPath: 'books/user-1/x/y.pdf',
+        contentType: 'application/pdf',
+        ttlMs: 60_000,
+      });
+
+      const opts = mockFile.getSignedUrl.mock.calls.at(-1)?.[0];
+      expect(opts.expires).toBeGreaterThanOrEqual(before + 60_000);
+      expect(opts.expires).toBeLessThanOrEqual(Date.now() + 60_000);
+    });
+
+    it.each([
+      ['over the 7-day GCS V4 limit', 8 * 24 * 60 * 60 * 1000],
+      ['zero', 0],
+      ['negative', -1],
+      ['not finite', Number.POSITIVE_INFINITY],
+    ])('rejects a ttlMs that is %s without signing', async (_label, ttlMs) => {
+      await expect(
+        getSignedUploadUrl({
+          objectPath: 'videos/user-1/abc/def.mp4',
+          contentType: 'video/mp4',
+          ttlMs,
+        }),
+      ).rejects.toThrow(/ttlMs/);
+      expect(mockFile.getSignedUrl).not.toHaveBeenCalled();
     });
   });
 
