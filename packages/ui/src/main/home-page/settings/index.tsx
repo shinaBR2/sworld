@@ -26,7 +26,12 @@ const SettingsPanel = (props: SettingsPanelProps) => {
     <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
       <Box sx={{ width: 250, height: '100%' }}>
         <List>
-          <ListItemButton onClick={logout}>
+          <ListItemButton
+            onClick={() => {
+              toggle(false);
+              logout();
+            }}
+          >
             <ListItemIcon>
               <Logout />
             </ListItemIcon>

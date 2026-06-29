@@ -25,11 +25,12 @@ describe('SettingsPanel', () => {
     expect(screen.queryByText('Logout')).not.toBeInTheDocument();
   });
 
-  it('calls logout when the logout option is clicked', () => {
+  it('closes the drawer and calls logout when the logout option is clicked', () => {
     render(<SettingsPanel {...defaultProps} />);
 
     fireEvent.click(screen.getByText('Logout'));
 
+    expect(defaultProps.toggle).toHaveBeenCalledWith(false);
     expect(defaultProps.actions.logout).toHaveBeenCalledTimes(1);
   });
 
