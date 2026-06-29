@@ -1,10 +1,17 @@
 const hasuraGraphqlUrl = `${import.meta.env.VITE_HASURA_DOMAIN}/v1/graphql`;
 
+// On localhost there are no sibling subdomains to share a session with, and a
+// `.localhost` cookie domain is rejected by browsers — which breaks the Auth0
+// login handshake. Omit cookieDomain locally so a host-only cookie is used.
+const isLocalhost = window.location.hostname === 'localhost';
+
 const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
   audience: hasuraGraphqlUrl,
-  cookieDomain: `.${import.meta.env.VITE_MAIN_SITE_URL}`,
+  cookieDomain: isLocalhost
+    ? undefined
+    : `.${import.meta.env.VITE_MAIN_SITE_URL}`,
   redirectUri: window.location.origin,
 };
 const queryConfig = {

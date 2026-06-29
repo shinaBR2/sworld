@@ -27,7 +27,7 @@ interface Auth0Config {
   clientId: string;
   audience: string;
   redirectUri: string;
-  cookieDomain: string;
+  cookieDomain?: string;
 }
 
 interface Props {
