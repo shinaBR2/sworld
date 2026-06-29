@@ -61,6 +61,10 @@ vi.mock('./apps/gateway/auth', () => ({
   authRouter: 'mockAuthRouter',
 }));
 
+vi.mock('./apps/gateway/storage', () => ({
+  storageRouter: 'mockStorageRouter',
+}));
+
 // Mock sentry
 vi.mock('@hono/sentry', () => ({
   sentry: () => vi.fn(),
@@ -139,6 +143,7 @@ describe('Gateway Application', () => {
     expect(mockRoute).toHaveBeenCalledWith('/videos', 'mockVideosRouter');
     expect(mockRoute).toHaveBeenCalledWith('/hashnode', 'mockHashnodeRouter');
     expect(mockRoute).toHaveBeenCalledWith('/auth', 'mockAuthRouter');
+    expect(mockRoute).toHaveBeenCalledWith('/storage', 'mockStorageRouter');
   });
 
   it('should set up error handling', () => {
