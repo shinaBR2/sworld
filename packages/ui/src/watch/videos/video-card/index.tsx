@@ -50,6 +50,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
 const PlaylistBadge = () => {
   return (
     <Box
+      role="img"
       aria-label="Playlist"
       sx={{
         position: 'absolute',

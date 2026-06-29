@@ -154,7 +154,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
         {isPlaylist && (
           <Tooltip title="Playlist">
-            <PlaylistPlayIcon color="action" />
+            <PlaylistPlayIcon color="action" titleAccess="Playlist" />
           </Tooltip>
         )}
         <Typography
