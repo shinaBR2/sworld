@@ -314,6 +314,10 @@ describe('VideoDetailContainer', () => {
     expect(screen.getByTestId('related-list-title')).toHaveTextContent(
       'Same playlist',
     );
+    // The heading prefixes the playlist name onto the video title.
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'My Playlist - Video 1',
+    );
   });
 
   it('should return null in MainContent when video is not found', async () => {

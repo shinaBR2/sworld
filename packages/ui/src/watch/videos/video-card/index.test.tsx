@@ -90,6 +90,25 @@ describe('VideoCard Component', () => {
     });
   });
 
+  it('prefixes the playlist name and shows a playlist badge for a video watched inside a playlist', async () => {
+    const playlistVideo = {
+      ...mockVideo,
+      playlist: { title: 'My Playlist' },
+    };
+
+    await renderWithAct(
+      <VideoCard
+        video={playlistVideo}
+        asLink={true}
+        LinkComponent={MockLink}
+        linkProps={{ to: '/x', params: { slug: 'test-video', id: '1' } }}
+      />,
+    );
+
+    expect(screen.getByText('My Playlist - Test Video')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Playlist' })).toBeInTheDocument();
+  });
+
   it('renders thumbnail only for playlist type when not asLink', async () => {
     const playlistVideo = {
       ...mockVideo,
