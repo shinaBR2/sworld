@@ -12,6 +12,8 @@ interface PlayableVideo {
   source: string;
   thumbnailUrl: string;
   subtitles?: Subtitle[];
+  // Saved playback position in seconds; the player resumes from here on load.
+  progressSeconds?: number;
 }
 
 interface GenericLinkProps<T = Record<string, unknown>> {

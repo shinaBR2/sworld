@@ -15,6 +15,14 @@ import { VideoThumbnail } from '../video-thumbnail';
 
 const PROGRESS_INTERVAL = 1000;
 
+// Rewind a few seconds from the saved position so the viewer gets a moment of
+// context when resuming rather than landing mid-sentence.
+const RESUME_REWIND_SECONDS = 5;
+
+// If the saved position is within this many seconds of the end, treat the video
+// as finished and start from the beginning instead of resuming at the very end.
+const RESUME_END_THRESHOLD_SECONDS = 10;
+
 // Lazy load the VideoJS component that contains video.js
 // const VideoJS = lazy(() => import('./videojs'));
 const ReactPlayer = lazy(() => import('react-player'));
@@ -78,6 +86,16 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // biome-ignore lint/suspicious/noExplicitAny: ref type depends on ReactPlayer internals
   const playerRef = useRef<any | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  // Resume only once per video, and never override a position the viewer has
+  // since changed themselves.
+  const hasResumedRef = useRef(false);
+
+  // Reset the resume guard whenever the source video changes (e.g. advancing to
+  // the next video in a playlist reuses this same player instance).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: video.id is the intended reset trigger, not a value read in the body
+  useEffect(() => {
+    hasResumedRef.current = false;
+  }, [video.id]);
 
   // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
   const setPlayerRef = useCallback((player: any) => {
@@ -293,6 +311,31 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     [onError],
   );
 
+  // Resume from the saved position once the media is ready to seek.
+  const handleReady = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || hasResumedRef.current) return;
+    hasResumedRef.current = true;
+
+    const progressSeconds = video.progressSeconds ?? 0;
+    if (progressSeconds <= 0) return;
+
+    // Skip resuming when the saved position is at/near the end — the viewer has
+    // effectively finished, so start over rather than land on the last frame.
+    const duration = player.getDuration?.() ?? 0;
+    if (
+      duration &&
+      progressSeconds >= duration - RESUME_END_THRESHOLD_SECONDS
+    ) {
+      return;
+    }
+
+    player.seekTo(
+      Math.max(0, progressSeconds - RESUME_REWIND_SECONDS),
+      'seconds',
+    );
+  }, [video.progressSeconds]);
+
   useEffect(() => {
     return () => {
       cleanup();
@@ -341,9 +384,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             handleEnded();
             onEnded?.();
           }}
-          onReady={() => {
-            console.log('player ready');
-          }}
+          onReady={handleReady}
           progressInterval={PROGRESS_INTERVAL}
           config={{
             file: {

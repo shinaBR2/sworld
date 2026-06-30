@@ -12,7 +12,7 @@ const mockSeekTo = vi.fn();
 
 vi.mock('react-player', () => ({
   __esModule: true,
-  default: React.forwardRef(({ url, onReady, ...props }, ref) => {
+  default: React.forwardRef(({ url, ...props }, ref) => {
     mockReactPlayerRef.mockImplementation(() => props);
 
     // Simulate ref callback
@@ -193,6 +193,64 @@ describe('VideoPlayer', () => {
     });
 
     expect(onError).toHaveBeenCalledWith(mockError);
+  });
+});
+
+describe('VideoPlayer resume from saved progress', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetDuration.mockReturnValue(100);
+  });
+
+  it('seeks to the saved position (minus a short rewind) on ready', async () => {
+    render(<VideoPlayer video={{ ...mockVideo, progressSeconds: 50 }} />);
+    await screen.findByTestId('mock-react-player');
+    const props = mockReactPlayerRef();
+
+    act(() => {
+      props.onReady();
+    });
+
+    // 50 saved - 5s rewind
+    expect(mockSeekTo).toHaveBeenCalledWith(45, 'seconds');
+  });
+
+  it('does not seek when there is no saved progress', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+    const props = mockReactPlayerRef();
+
+    act(() => {
+      props.onReady();
+    });
+
+    expect(mockSeekTo).not.toHaveBeenCalled();
+  });
+
+  it('does not resume when the saved position is at/near the end', async () => {
+    // duration 100, threshold 10 → anything >= 90 is treated as finished
+    render(<VideoPlayer video={{ ...mockVideo, progressSeconds: 95 }} />);
+    await screen.findByTestId('mock-react-player');
+    const props = mockReactPlayerRef();
+
+    act(() => {
+      props.onReady();
+    });
+
+    expect(mockSeekTo).not.toHaveBeenCalled();
+  });
+
+  it('resumes only once even if ready fires repeatedly', async () => {
+    render(<VideoPlayer video={{ ...mockVideo, progressSeconds: 50 }} />);
+    await screen.findByTestId('mock-react-player');
+    const props = mockReactPlayerRef();
+
+    act(() => {
+      props.onReady();
+      props.onReady();
+    });
+
+    expect(mockSeekTo).toHaveBeenCalledTimes(1);
   });
 });
 
