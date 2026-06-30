@@ -3,8 +3,10 @@ import type { AllVideosQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import {
   transformPlaylistFragment,
+  transformUser,
   transformVideoFragment,
 } from '../transformers';
+import { MEDIA_TYPES } from '../types';
 
 const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {
@@ -20,6 +22,41 @@ const videosQuery = graphql(/* GraphQL */ `
       }
     ) {
       ...PlaylistFields
+    }
+    user_video_history(
+      where: {
+        _and: {
+          last_watched_at: { _is_null: false }
+          progress_seconds: { _gt: 0 }
+          video: { source: { _is_null: false } }
+        }
+      }
+      order_by: { last_watched_at: desc }
+      limit: 5
+    ) {
+      id
+      last_watched_at
+      progress_seconds
+      video {
+        id
+        title
+        source
+        slug
+        thumbnailUrl
+        duration
+        createdAt
+        user {
+          ...UserFields
+        }
+        playlist_videos {
+          playlist {
+            id
+            slug
+            title
+            thumbnailUrl
+          }
+        }
+      }
     }
   }
 `);
@@ -43,6 +80,42 @@ const transform = (data: AllVideosQuery) => {
   return sorted;
 };
 
+// Own transform for this query's user_video_history selection — the most
+// recently watched videos for the "Continue watching" row. Kept local to
+// useLoadVideos rather than shared with useLoadHistory: each query declares
+// what it selects and maps it independently.
+const transformContinueWatching = (data: AllVideosQuery) => {
+  if (!data.user_video_history) {
+    return [];
+  }
+
+  return data.user_video_history.map((item) => {
+    const {
+      last_watched_at: lastWatchedAt,
+      progress_seconds: progressSeconds,
+      video,
+    } = item;
+    // A video can belong to many playlists; today each has at most one.
+    const playlist = video.playlist_videos[0]?.playlist;
+    const user = transformUser(video.user);
+
+    return {
+      id: video.id,
+      type: MEDIA_TYPES.VIDEO,
+      title: video.title,
+      source: video.source || '',
+      slug: video.slug,
+      thumbnailUrl: video.thumbnailUrl || '',
+      duration: video.duration || 0,
+      createdAt: video.createdAt,
+      lastWatchedAt,
+      progressSeconds,
+      playlist,
+      user,
+    };
+  });
+};
+
 const useLoadVideos = (props: LoadVideosProps) => {
   const { getAccessToken } = props;
 
@@ -54,6 +127,7 @@ const useLoadVideos = (props: LoadVideosProps) => {
 
   return {
     videos: data ? transform(data) : [],
+    continueWatching: data ? transformContinueWatching(data) : [],
     isLoading,
     error,
   };

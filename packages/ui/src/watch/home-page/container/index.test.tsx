@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '../../videos/video-card';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
+import { ContinueWatchingSection } from '../continue-watching';
 import { HomeContainer } from './index';
 
 vi.mock('../../videos/video-card/skeleton', () => ({
@@ -10,6 +11,10 @@ vi.mock('../../videos/video-card/skeleton', () => ({
 
 vi.mock('../../videos/video-card', () => ({
   VideoCard: vi.fn(() => <div>VideoCard</div>),
+}));
+
+vi.mock('../continue-watching', () => ({
+  ContinueWatchingSection: vi.fn(() => <div>ContinueWatchingSection</div>),
 }));
 
 vi.mock('../utils', () => ({
@@ -35,6 +40,7 @@ describe('HomeContainer', () => {
         queryRs={{
           isLoading: true,
           videos: [],
+          continueWatching: [],
         }}
         LinkComponent={MockLink}
       />,
@@ -54,6 +60,7 @@ describe('HomeContainer', () => {
         queryRs={{
           isLoading: false,
           videos: mockVideos,
+          continueWatching: [],
         }}
         LinkComponent={MockLink}
       />,
@@ -76,11 +83,35 @@ describe('HomeContainer', () => {
         queryRs={{
           isLoading: false,
           videos: [],
+          continueWatching: [],
         }}
         LinkComponent={MockLink}
       />,
     );
 
     expect(VideoCard).not.toHaveBeenCalled();
+  });
+
+  it('should pass continue-watching videos to ContinueWatchingSection', () => {
+    const continueWatching = [{ id: '1', title: 'Video 1' }];
+
+    render(
+      <HomeContainer
+        queryRs={{
+          isLoading: false,
+          videos: [],
+          continueWatching,
+        }}
+        LinkComponent={MockLink}
+      />,
+    );
+
+    expect(ContinueWatchingSection).toHaveBeenCalledWith(
+      expect.objectContaining({
+        videos: continueWatching,
+        LinkComponent: MockLink,
+      }),
+      expect.anything(),
+    );
   });
 });

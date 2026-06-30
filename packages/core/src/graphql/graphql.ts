@@ -12627,6 +12627,35 @@ export type AllVideosQuery = {
       ' $fragmentRefs'?: { PlaylistFieldsFragment: PlaylistFieldsFragment };
     }
   >;
+  user_video_history: Array<{
+    __typename?: 'user_video_history';
+    id: any;
+    last_watched_at: any;
+    progress_seconds: number;
+    video: {
+      __typename?: 'videos';
+      id: any;
+      title: string;
+      source?: string | null;
+      slug: string;
+      thumbnailUrl?: string | null;
+      duration?: number | null;
+      createdAt?: any | null;
+      user: { __typename?: 'users' } & {
+        ' $fragmentRefs'?: { UserFieldsFragment: UserFieldsFragment };
+      };
+      playlist_videos: Array<{
+        __typename?: 'playlist_videos';
+        playlist: {
+          __typename?: 'playlist';
+          id: any;
+          slug: string;
+          title: string;
+          thumbnailUrl?: string | null;
+        };
+      }>;
+    };
+  }>;
 };
 
 export class TypedDocumentString<TResult, TVariables>
@@ -13524,6 +13553,35 @@ export const AllVideosDocument = new TypedDocumentString(`
     where: {playlist_videos_aggregate: {count: {predicate: {_gt: 0}, filter: {video: {status: {_eq: "ready"}}}}}}
   ) {
     ...PlaylistFields
+  }
+  user_video_history(
+    where: {_and: {last_watched_at: {_is_null: false}, progress_seconds: {_gt: 0}, video: {source: {_is_null: false}}}}
+    order_by: {last_watched_at: desc}
+    limit: 5
+  ) {
+    id
+    last_watched_at
+    progress_seconds
+    video {
+      id
+      title
+      source
+      slug
+      thumbnailUrl
+      duration
+      createdAt
+      user {
+        ...UserFields
+      }
+      playlist_videos {
+        playlist {
+          id
+          slug
+          title
+          thumbnailUrl
+        }
+      }
+    }
   }
 }
     fragment UserFields on users {
