@@ -6,7 +6,7 @@ import { transformPost } from '../transformers';
 
 const postsQuery = graphql(/* GraphQL */ `
   query AllPosts {
-    posts(order_by: { created_at: desc }) {
+    posts(order_by: [{ pinned: desc }, { created_at: desc }]) {
       brief
       id
       markdownContent
@@ -16,6 +16,7 @@ const postsQuery = graphql(/* GraphQL */ `
       created_at
       status
       visibility
+      pinned
     }
   }
 `);

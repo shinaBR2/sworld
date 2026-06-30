@@ -18,6 +18,7 @@ const mockPosts = [
     brief: 'Test brief',
     markdownContent: '# Content',
     readTimeInMinutes: 5,
+    pinned: true,
   },
 ];
 
@@ -60,6 +61,7 @@ describe('useLoadPosts', () => {
         brief: 'Test brief',
         mContent: '# Content',
         readTimeInMinutes: 5,
+        pinned: true,
       },
     ]);
   });

@@ -72,6 +72,26 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
+input SignedUploadUrlInput {
+  action: String!
+  contentType: String!
+  id: String
+  site: String!
+}
+
+type SignedUploadUrlOutput {
+  expiresAt: String!
+  objectPath: String!
+  publicUrl: String!
+  uploadUrl: String!
+}
+
+type SignedUploadUrlResponse {
+  dataObject: SignedUploadUrlOutput
+  message: String!
+  success: Boolean!
+}
+
 """
 Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
 """
@@ -4057,6 +4077,10 @@ type mutation_root {
     input: CreateDeviceRequestInput!
   ): CreateDeviceRequestResponse!
   """
+  Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic).
+  """
+  createSignedUploadUrl(input: SignedUploadUrlInput!): SignedUploadUrlResponse!
+  """
   delete data from the table: "audio_tags"
   """
   delete_audio_tags(
@@ -7792,6 +7816,7 @@ type posts {
   hId: String
   id: uuid!
   markdownContent: String!
+  pinned: Boolean!
   readTimeInMinutes: Int!
   slug: String!
   status: String!
@@ -7845,6 +7870,7 @@ input posts_bool_exp {
   hId: String_comparison_exp
   id: uuid_comparison_exp
   markdownContent: String_comparison_exp
+  pinned: Boolean_comparison_exp
   readTimeInMinutes: Int_comparison_exp
   slug: String_comparison_exp
   status: String_comparison_exp
@@ -7887,6 +7913,7 @@ input posts_insert_input {
   hId: String
   id: uuid
   markdownContent: String
+  pinned: Boolean
   readTimeInMinutes: Int
   slug: String
   status: String
@@ -7970,6 +7997,7 @@ input posts_order_by {
   hId: order_by
   id: order_by
   markdownContent: order_by
+  pinned: order_by
   readTimeInMinutes: order_by
   slug: order_by
   status: order_by
@@ -8016,6 +8044,10 @@ enum posts_select_column {
   """
   column name
   """
+  pinned
+  """
+  column name
+  """
   readTimeInMinutes
   """
   column name
@@ -8052,6 +8084,7 @@ input posts_set_input {
   hId: String
   id: uuid
   markdownContent: String
+  pinned: Boolean
   readTimeInMinutes: Int
   slug: String
   status: String
@@ -8108,6 +8141,7 @@ input posts_stream_cursor_value_input {
   hId: String
   id: uuid
   markdownContent: String
+  pinned: Boolean
   readTimeInMinutes: Int
   slug: String
   status: String
@@ -8151,6 +8185,10 @@ enum posts_update_column {
   column name
   """
   markdownContent
+  """
+  column name
+  """
+  pinned
   """
   column name
   """
@@ -16334,6 +16372,15 @@ type videos {
   """
   keepOriginalSource: Boolean
   """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata(
+    """
+    JSON select path
+    """
+    path: String
+  ): jsonb
+  """
   An array relationship
   """
   playlist_videos(
@@ -16384,6 +16431,10 @@ type videos {
     where: playlist_videos_bool_exp
   ): playlist_videos_aggregate!
   public: Boolean!
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int!
   """
   short id like Youtube video id
   """
@@ -16749,6 +16800,10 @@ append existing jsonb value of filtered columns with new jsonb value
 """
 input videos_append_input {
   """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: jsonb
+  """
   List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
   """
   sharedRecipients: jsonb
@@ -16774,6 +16829,10 @@ aggregate avg on columns
 """
 type videos_avg_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -16782,6 +16841,10 @@ order by avg() on columns of table "videos"
 """
 input videos_avg_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -16797,9 +16860,11 @@ input videos_bool_exp {
   duration: Int_comparison_exp
   id: uuid_comparison_exp
   keepOriginalSource: Boolean_comparison_exp
+  metadata: jsonb_comparison_exp
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
+  retry_count: Int_comparison_exp
   sId: String_comparison_exp
   sharedRecipients: jsonb_comparison_exp
   sharedRecipientsInput: jsonb_comparison_exp
@@ -16849,6 +16914,10 @@ delete the field or element with specified path (for JSON arrays, negative integ
 """
 input videos_delete_at_path_input {
   """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: [String!]
+  """
   List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
   """
   sharedRecipients: [String!]
@@ -16862,6 +16931,10 @@ input videos_delete_at_path_input {
 delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
 """
 input videos_delete_elem_input {
+  """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: Int
   """
   List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
   """
@@ -16877,6 +16950,10 @@ delete key/value pair or string element. key/value pairs are matched based on th
 """
 input videos_delete_key_input {
   """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: String
+  """
   List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
   """
   sharedRecipients: String
@@ -16891,6 +16968,10 @@ input type for incrementing numeric columns in table "videos"
 """
 input videos_inc_input {
   duration: Int
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
   view_count: Int
 }
 
@@ -16906,8 +16987,16 @@ input videos_insert_input {
   When this field is true, keep the source field as video_url without any video processing
   """
   keepOriginalSource: Boolean
+  """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: jsonb
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
   """
   short id like Youtube video id
   """
@@ -16950,6 +17039,10 @@ type videos_max_fields {
   duration: Int
   id: uuid
   """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
+  """
   short id like Youtube video id
   """
   sId: String
@@ -16972,6 +17065,10 @@ input videos_max_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   """
   short id like Youtube video id
   """
@@ -16996,6 +17093,10 @@ type videos_min_fields {
   duration: Int
   id: uuid
   """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
+  """
   short id like Youtube video id
   """
   sId: String
@@ -17018,6 +17119,10 @@ input videos_min_order_by {
   description: order_by
   duration: order_by
   id: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   """
   short id like Youtube video id
   """
@@ -17076,8 +17181,10 @@ input videos_order_by {
   duration: order_by
   id: order_by
   keepOriginalSource: order_by
+  metadata: order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
+  retry_count: order_by
   sId: order_by
   sharedRecipients: order_by
   sharedRecipientsInput: order_by
@@ -17110,6 +17217,10 @@ input videos_pk_columns_input {
 prepend existing jsonb value of filtered columns with new jsonb value
 """
 input videos_prepend_input {
+  """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: jsonb
   """
   List of shared recipient emails after validated by the system, should use this field to show for end users. Only system can update this field. End user should NOT know the real shared user ids.
   """
@@ -17147,7 +17258,15 @@ enum videos_select_column {
   """
   column name
   """
+  metadata
+  """
+  column name
+  """
   public
+  """
+  column name
+  """
+  retry_count
   """
   column name
   """
@@ -17250,7 +17369,15 @@ input videos_set_input {
   When this field is true, keep the source field as video_url without any video processing
   """
   keepOriginalSource: Boolean
+  """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: jsonb
   public: Boolean
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
   """
   short id like Youtube video id
   """
@@ -17283,6 +17410,10 @@ aggregate stddev on columns
 """
 type videos_stddev_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17291,6 +17422,10 @@ order by stddev() on columns of table "videos"
 """
 input videos_stddev_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17299,6 +17434,10 @@ aggregate stddev_pop on columns
 """
 type videos_stddev_pop_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17307,6 +17446,10 @@ order by stddev_pop() on columns of table "videos"
 """
 input videos_stddev_pop_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17315,6 +17458,10 @@ aggregate stddev_samp on columns
 """
 type videos_stddev_samp_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17323,6 +17470,10 @@ order by stddev_samp() on columns of table "videos"
 """
 input videos_stddev_samp_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17352,7 +17503,15 @@ input videos_stream_cursor_value_input {
   When this field is true, keep the source field as video_url without any video processing
   """
   keepOriginalSource: Boolean
+  """
+  Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow
+  """
+  metadata: jsonb
   public: Boolean
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
   """
   short id like Youtube video id
   """
@@ -17385,6 +17544,10 @@ aggregate sum on columns
 """
 type videos_sum_fields {
   duration: Int
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Int
   view_count: Int
 }
 
@@ -17393,6 +17556,10 @@ order by sum() on columns of table "videos"
 """
 input videos_sum_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17423,7 +17590,15 @@ enum videos_update_column {
   """
   column name
   """
+  metadata
+  """
+  column name
+  """
   public
+  """
+  column name
+  """
+  retry_count
   """
   column name
   """
@@ -17518,6 +17693,10 @@ aggregate var_pop on columns
 """
 type videos_var_pop_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17526,6 +17705,10 @@ order by var_pop() on columns of table "videos"
 """
 input videos_var_pop_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17534,6 +17717,10 @@ aggregate var_samp on columns
 """
 type videos_var_samp_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17542,6 +17729,10 @@ order by var_samp() on columns of table "videos"
 """
 input videos_var_samp_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }
 
@@ -17550,6 +17741,10 @@ aggregate variance on columns
 """
 type videos_variance_fields {
   duration: Float
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: Float
   view_count: Float
 }
 
@@ -17558,5 +17753,9 @@ order by variance() on columns of table "videos"
 """
 input videos_variance_order_by {
   duration: order_by
+  """
+  Bump to request a reprocess; an update-event on this column re-enqueues processing
+  """
+  retry_count: order_by
   view_count: order_by
 }

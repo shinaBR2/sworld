@@ -16,6 +16,7 @@ const postDetailQuery = graphql(/* GraphQL */ `
       created_at
       status
       visibility
+      pinned
     }
   }
 `);
