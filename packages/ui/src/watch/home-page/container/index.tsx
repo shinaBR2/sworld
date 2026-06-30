@@ -9,6 +9,7 @@ import { VideoCard } from '../../videos/video-card';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { GRID_COLUMN_PROPS } from '../columns';
 import { ContinueWatchingSection } from '../continue-watching';
+import { WatchEmptyState } from '../empty-state';
 import { HomeSearch } from '../search';
 import { filterByTitle, genlinkProps } from '../utils';
 
@@ -36,6 +37,7 @@ const HomeContainer = (props: HomeContainerProps) => {
   const { videos, continueWatching, isLoading } = queryRs;
   const [query, setQuery] = useState('');
 
+  const isEmpty = !isLoading && videos.length === 0;
   const filteredVideos = filterByTitle(videos, query);
   const hasQuery = query.trim().length > 0;
   const noResults = !isLoading && hasQuery && filteredVideos.length === 0;
@@ -50,40 +52,46 @@ const HomeContainer = (props: HomeContainerProps) => {
         videos={continueWatching}
         LinkComponent={LinkComponent}
       />
-      <Box
-        sx={{
-          mb: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 2,
-          flexWrap: 'wrap',
-        }}
-      >
-        <Typography variant="h6" component="h2">
-          Videos
-        </Typography>
-        <HomeSearch onQueryChange={setQuery} />
-      </Box>
-      {noResults ? (
-        <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
-          No videos match “{query.trim()}”.
-        </Typography>
+      {isEmpty ? (
+        <WatchEmptyState />
       ) : (
-        <Grid container spacing={3}>
-          {isLoading && <Loading />}
-          {!isLoading &&
-            filteredVideos.map((video) => (
-              <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
-                <VideoCard
-                  video={video}
-                  asLink={true}
-                  LinkComponent={LinkComponent}
-                  linkProps={genlinkProps(video)}
-                />
-              </Grid>
-            ))}
-        </Grid>
+        <>
+          <Box
+            sx={{
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+              flexWrap: 'wrap',
+            }}
+          >
+            <Typography variant="h6" component="h2">
+              Videos
+            </Typography>
+            <HomeSearch onQueryChange={setQuery} />
+          </Box>
+          {noResults ? (
+            <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
+              No videos match “{query.trim()}”.
+            </Typography>
+          ) : (
+            <Grid container spacing={3}>
+              {isLoading && <Loading />}
+              {!isLoading &&
+                filteredVideos.map((video) => (
+                  <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
+                    <VideoCard
+                      video={video}
+                      asLink={true}
+                      LinkComponent={LinkComponent}
+                      linkProps={genlinkProps(video)}
+                    />
+                  </Grid>
+                ))}
+            </Grid>
+          )}
+        </>
       )}
     </Container>
   );
