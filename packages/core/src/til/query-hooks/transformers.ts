@@ -11,6 +11,7 @@ const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
     created_at,
     status,
     visibility,
+    pinned,
   } = data;
 
   return {
@@ -23,6 +24,7 @@ const transformPost = (data: NonNullable<PostQuery['posts_by_pk']>) => {
     createdAt: created_at,
     status,
     visibility,
+    pinned,
   };
 };
 

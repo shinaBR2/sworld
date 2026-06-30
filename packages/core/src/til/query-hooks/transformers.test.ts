@@ -10,6 +10,7 @@ describe('transformPost', () => {
       brief: 'Sample brief description',
       markdownContent: '# Hello World\nTest content',
       readTimeInMinutes: 5,
+      pinned: true,
     } as NonNullable<PostQuery['posts_by_pk']>;
 
     const result = transformPost(mockData);
@@ -20,6 +21,7 @@ describe('transformPost', () => {
       brief: 'Sample brief description',
       mContent: '# Hello World\nTest content',
       readTimeInMinutes: 5,
+      pinned: true,
     });
   });
 });
