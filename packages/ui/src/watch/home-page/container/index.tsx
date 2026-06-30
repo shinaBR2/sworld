@@ -3,12 +3,14 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import type { useLoadVideos } from 'core/watch/query-hooks/videos';
+import { useState } from 'react';
 import type { RequiredLinkComponent } from '../../videos/types';
 import { VideoCard } from '../../videos/video-card';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { GRID_COLUMN_PROPS } from '../columns';
 import { ContinueWatchingSection } from '../continue-watching';
-import { genlinkProps } from '../utils';
+import { HomeSearch } from '../search';
+import { filterByTitle, genlinkProps } from '../utils';
 
 const SKELETON_KEYS = Array.from({ length: 12 }, (_, i) => `skeleton-${i}`);
 
@@ -32,6 +34,11 @@ interface HomeContainerProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 const HomeContainer = (props: HomeContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { videos, continueWatching, isLoading } = queryRs;
+  const [query, setQuery] = useState('');
+
+  const filteredVideos = filterByTitle(videos, query);
+  const hasQuery = query.trim().length > 0;
+  const noResults = !isLoading && hasQuery && filteredVideos.length === 0;
 
   return (
     <Container
@@ -43,25 +50,41 @@ const HomeContainer = (props: HomeContainerProps) => {
         videos={continueWatching}
         LinkComponent={LinkComponent}
       />
-      <Box sx={{ mb: 2 }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 2,
+          flexWrap: 'wrap',
+        }}
+      >
         <Typography variant="h6" component="h2">
           Videos
         </Typography>
+        <HomeSearch onQueryChange={setQuery} />
       </Box>
-      <Grid container spacing={3}>
-        {isLoading && <Loading />}
-        {!isLoading &&
-          videos.map((video) => (
-            <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
-              <VideoCard
-                video={video}
-                asLink={true}
-                LinkComponent={LinkComponent}
-                linkProps={genlinkProps(video)}
-              />
-            </Grid>
-          ))}
-      </Grid>
+      {noResults ? (
+        <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
+          No videos match “{query.trim()}”.
+        </Typography>
+      ) : (
+        <Grid container spacing={3}>
+          {isLoading && <Loading />}
+          {!isLoading &&
+            filteredVideos.map((video) => (
+              <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
+                <VideoCard
+                  video={video}
+                  asLink={true}
+                  LinkComponent={LinkComponent}
+                  linkProps={genlinkProps(video)}
+                />
+              </Grid>
+            ))}
+        </Grid>
+      )}
     </Container>
   );
 };

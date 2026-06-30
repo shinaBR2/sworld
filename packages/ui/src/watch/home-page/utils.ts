@@ -31,4 +31,20 @@ const genlinkProps = (video: ReturnType<typeof useLoadVideos>['videos'][0]) => {
   throw new AppError('Invalid media type', 'Invalid media type', false);
 };
 
-export { genlinkProps };
+/**
+ * Filters media items by a case-insensitive title substring match. An empty or
+ * whitespace-only query is treated as no filter and returns the list unchanged.
+ */
+const filterByTitle = <T extends { title: string }>(
+  items: T[],
+  query: string,
+): T[] => {
+  const trimmed = query.trim().toLowerCase();
+  if (!trimmed) {
+    return items;
+  }
+
+  return items.filter((item) => item.title.toLowerCase().includes(trimmed));
+};
+
+export { filterByTitle, genlinkProps };
