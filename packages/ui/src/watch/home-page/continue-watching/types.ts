@@ -21,6 +21,7 @@ interface ContinueWatchingItem {
   playlist?: {
     id: string;
     slug: string;
+    title: string;
   };
 }
 

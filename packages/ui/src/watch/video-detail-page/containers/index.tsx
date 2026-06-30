@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useAuthContext } from 'core/providers/auth';
 import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
 import React, { Suspense } from 'react';
+import { getMediaDisplayName } from '../../utils';
 import { VideoContainer } from '../../videos/video-container';
 import { RelatedList } from '../related-list';
 import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';
@@ -169,7 +170,10 @@ const MainContent = (props: VideoDetailContainerProps) => {
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {videoDetail.title}
+          {getMediaDisplayName({
+            videoTitle: videoDetail.title,
+            playlistName: playlist?.title,
+          })}
         </Typography>
         {onShare && (
           <Tooltip title="Share video">

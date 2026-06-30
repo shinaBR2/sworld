@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { MEDIA_TYPES, type MediaType } from 'core/watch/query-hooks';
-import { formatCreatedDate } from '../../utils';
+import { formatCreatedDate, getMediaDisplayName } from '../../utils';
 import type { PlayableVideo, WithLinkComponent } from '../types';
 import { VideoContainer } from '../video-container';
 import { VideoThumbnail } from '../video-thumbnail';
@@ -19,6 +19,11 @@ interface Video extends Omit<PlayableVideo, 'source'> {
   };
   progressSeconds?: number;
   createdAt: string;
+  // Set when this card is a video watched inside a playlist (e.g. a
+  // continue-watching item) so we can show the playlist name + badge.
+  playlist?: {
+    title: string;
+  };
 }
 
 interface VideoCardProps extends WithLinkComponent {
@@ -118,13 +123,15 @@ const VideoContent = (props: VideoContentProps) => {
     return (
       <Box sx={{ position: 'relative' }}>
         <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
-        {video.type === MEDIA_TYPES.PLAYLIST && <PlaylistBadge />}
+        {(video.type === MEDIA_TYPES.PLAYLIST || Boolean(video.playlist)) && (
+          <PlaylistBadge />
+        )}
         <VideoProgress video={video} />
       </Box>
     );
   }
 
-  if (video.type == MEDIA_TYPES.PLAYLIST) {
+  if (video.type === MEDIA_TYPES.PLAYLIST) {
     return (
       <Box sx={{ position: 'relative' }}>
         <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
@@ -157,7 +164,10 @@ const VideoCard = (props: VideoCardProps) => {
         <VideoContent video={video} asLink={asLink} />
       </Box>
       <VideoCardContent
-        title={video.title}
+        title={getMediaDisplayName({
+          videoTitle: video.title,
+          playlistName: video.playlist?.title,
+        })}
         creator={video.user?.username || ''}
         createdTime={formatCreatedDate(video.createdAt)}
       />
