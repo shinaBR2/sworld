@@ -18,6 +18,7 @@ const allPostsQuery = `
       status
       visibility
       authorId
+      pinned
     }
   }
 `;
@@ -69,6 +70,7 @@ const allowedAnonymousQueries: QueryTestCase[] = [
 				expect(post).toHaveProperty("status");
 				expect(post).toHaveProperty("visibility");
 				expect(post).toHaveProperty("authorId");
+				expect(post).toHaveProperty("pinned");
 
 				// Anonymous users should only see public posts (any status)
 				expect(post.visibility).toBe("public");
@@ -98,6 +100,7 @@ const allowedUserQueries: QueryTestCase[] = [
 				expect(post).toHaveProperty("status");
 				expect(post).toHaveProperty("visibility");
 				expect(post).toHaveProperty("authorId");
+				expect(post).toHaveProperty("pinned");
 			}
 		},
 	},

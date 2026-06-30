@@ -41,6 +41,7 @@ select_permissions:
         - h_id
         - id
         - markdown_content
+        - pinned
         - readTimeInMinutes
         - slug
         - status
@@ -63,6 +64,7 @@ select_permissions:
         - h_id
         - id
         - markdown_content
+        - pinned
         - readTimeInMinutes
         - slug
         - status
@@ -83,6 +85,7 @@ update_permissions:
         - brief
         - h_id
         - markdown_content
+        - pinned
         - readTimeInMinutes
         - slug
         - status
