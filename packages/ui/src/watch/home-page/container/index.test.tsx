@@ -1,9 +1,14 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '../../videos/video-card';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
 import { ContinueWatchingSection } from '../continue-watching';
+import { WatchEmptyState } from '../empty-state';
 import { HomeContainer } from './index';
+
+vi.mock('../empty-state', () => ({
+  WatchEmptyState: vi.fn(() => <div>WatchEmptyState</div>),
+}));
 
 vi.mock('../../videos/video-card/skeleton', () => ({
   VideoSkeleton: vi.fn(() => <div>VideoSkeleton</div>),
@@ -77,7 +82,7 @@ describe('HomeContainer', () => {
     );
   });
 
-  it('should handle empty videos array', () => {
+  it('should render the empty state when there are no videos', () => {
     render(
       <HomeContainer
         queryRs={{
@@ -89,7 +94,24 @@ describe('HomeContainer', () => {
       />,
     );
 
+    expect(WatchEmptyState).toHaveBeenCalled();
+    expect(screen.queryByText('Videos')).not.toBeInTheDocument();
     expect(VideoCard).not.toHaveBeenCalled();
+  });
+
+  it('should not render the empty state while loading', () => {
+    render(
+      <HomeContainer
+        queryRs={{
+          isLoading: true,
+          videos: [],
+          continueWatching: [],
+        }}
+        LinkComponent={MockLink}
+      />,
+    );
+
+    expect(WatchEmptyState).not.toHaveBeenCalled();
   });
 
   it('should pass continue-watching videos to ContinueWatchingSection', () => {
