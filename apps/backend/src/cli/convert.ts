@@ -67,7 +67,14 @@ const CONTENT_TYPES: Record<string, string> = {
   '.m4s': 'video/iso.segment',
   '.mp4': 'video/mp4',
   '.ts': 'video/mp2t',
+  // A frame grabbed from the source (--thumbnail-from-video) is written into the
+  // same output dir and uploaded with the HLS files, so it needs a content-type too.
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
 };
+
+/** Filename for a frame extracted from the source video (--thumbnail-from-video). */
+const VIDEO_THUMBNAIL_NAME = 'thumbnail.jpg';
 
 // ─── Interactive prompt ──────────────────────────────────────────────────────
 
@@ -121,6 +128,8 @@ interface ConvertArgs {
   videoUrl?: string;
   thumbnail?: string;
   thumbnailReferer?: string;
+  thumbnailFromVideo: boolean;
+  thumbnailAt?: number;
   isPublic: boolean;
   userId: string;
   skipDb: boolean;
@@ -179,6 +188,28 @@ const parseConvertArgs = (rawArgs: string[]): ConvertArgs => {
     process.exit(1);
   }
 
+  // --thumbnail (re-host a URL) and --thumbnail-from-video (grab a source frame)
+  // are mutually exclusive — they both target the same thumbnail slot.
+  const thumbnailFromVideo = has('--thumbnail-from-video');
+  if (thumbnailFromVideo && get('--thumbnail')) {
+    console.error(
+      'Error: --thumbnail and --thumbnail-from-video are mutually exclusive.',
+    );
+    process.exit(1);
+  }
+  const thumbnailAtFlag = get('--thumbnail-at');
+  const thumbnailAt =
+    thumbnailAtFlag !== undefined ? Number(thumbnailAtFlag) : undefined;
+  if (
+    thumbnailAt !== undefined &&
+    (!Number.isFinite(thumbnailAt) || thumbnailAt < 0)
+  ) {
+    console.error(
+      'Error: --thumbnail-at must be a non-negative number (seconds).',
+    );
+    process.exit(1);
+  }
+
   const gcpKeyPath = resolveValue(
     get('--gcp-key'),
     'GOOGLE_APPLICATION_CREDENTIALS',
@@ -222,6 +253,8 @@ const parseConvertArgs = (rawArgs: string[]): ConvertArgs => {
     videoUrl: get('--video-url'),
     thumbnail: get('--thumbnail'),
     thumbnailReferer: get('--thumbnail-referer'),
+    thumbnailFromVideo,
+    thumbnailAt,
     isPublic: has('--public'),
     userId,
     skipDb: has('--skip-db'),
@@ -316,6 +349,30 @@ const convertLocalToHls = async (
     },
   };
 };
+
+/**
+ * Grab a single JPEG frame from the source video into `outputDir/thumbnail.jpg`.
+ * Written into the SAME dir as the HLS output so it's uploaded by `uploadDir`
+ * alongside the segments (one upload pass, correct content-type). `atSeconds` is
+ * clamped below the duration so we never seek past the end (which yields no frame).
+ */
+const extractThumbnail = (
+  inputPath: string,
+  outputDir: string,
+  atSeconds: number,
+): Promise<string> =>
+  new Promise((resolve, reject) => {
+    ffmpeg(inputPath)
+      .on('end', () => resolve(path.join(outputDir, VIDEO_THUMBNAIL_NAME)))
+      .on('error', (err) =>
+        reject(new Error(`Thumbnail extraction failed: ${err.message}`)),
+      )
+      .screenshots({
+        timestamps: [atSeconds],
+        filename: VIDEO_THUMBNAIL_NAME,
+        folder: outputDir,
+      });
+  });
 
 // ─── Hasura ──────────────────────────────────────────────────────────────────
 
@@ -603,6 +660,12 @@ const handleConvert = async (rawArgs: string[]) => {
       console.log(
         `  *. re-host thumbnail ${args.thumbnail} → ${storagePath}/thumbnail.<ext> and set thumbnailUrl`,
       );
+    } else if (args.thumbnailFromVideo) {
+      const at =
+        args.thumbnailAt !== undefined ? `${args.thumbnailAt}s` : '~1s';
+      console.log(
+        `  *. grab a frame from the source (at ${at}) → ${storagePath}/${VIDEO_THUMBNAIL_NAME} and set thumbnailUrl`,
+      );
     }
     console.log('[DRY RUN] Done — nothing written.');
     return;
@@ -614,7 +677,23 @@ const handleConvert = async (rawArgs: string[]) => {
   const { outputDir, cleanup } = await convertLocalToHls(args.file);
 
   try {
-    // 2. Upload the HLS output.
+    // 1b. Optionally grab a frame from the source into the output dir, so it
+    //     uploads with the HLS files below. Clamp the seek below the duration.
+    let videoFrameThumbnailUrl: string | undefined;
+    if (args.thumbnailFromVideo) {
+      const at =
+        args.thumbnailAt !== undefined
+          ? Math.min(args.thumbnailAt, Math.max(duration - 1, 0))
+          : Math.min(1, Math.max(duration - 1, 0));
+      console.log(`Extracting thumbnail frame at ${at}s…`);
+      await extractThumbnail(args.file, outputDir, at);
+      videoFrameThumbnailUrl = getDownloadUrl(
+        args.gcpBucket,
+        `${storagePath}/${VIDEO_THUMBNAIL_NAME}`,
+      );
+    }
+
+    // 2. Upload the HLS output (plus the extracted frame, if any).
     console.log('Uploading to GCS…');
     const storage = createStorage(args.gcpKeyPath);
     const bucket = storage.bucket(args.gcpBucket);
@@ -639,7 +718,9 @@ const handleConvert = async (rawArgs: string[]) => {
         console.log(`Creating video row "${args.title}"…`);
         await createVideo(args, videoId);
       }
-      // Optional thumbnail: re-host the given image URL to GCS.
+      // Optional thumbnail: either re-host a given image URL, or use the frame
+      // already extracted from the source video (uploaded above). The two are
+      // mutually exclusive (enforced at parse time).
       let thumbnailUrl: string | undefined;
       if (args.thumbnail) {
         console.log('Uploading thumbnail…');
@@ -649,6 +730,9 @@ const handleConvert = async (rawArgs: string[]) => {
           storagePath,
         });
         console.log(`  Thumbnail: ${thumbnailUrl}`);
+      } else if (videoFrameThumbnailUrl) {
+        thumbnailUrl = videoFrameThumbnailUrl;
+        console.log(`  Thumbnail (from video frame): ${thumbnailUrl}`);
       }
       console.log('Finalizing video row…');
       const sId = await finalizeVideo(
@@ -719,6 +803,12 @@ const main = () => {
     );
     console.log(
       '  --thumbnail-referer <url> Referer for the thumbnail fetch (hotlink-protected hosts)',
+    );
+    console.log(
+      '  --thumbnail-from-video    Grab a frame from the source as the thumbnail (no URL needed)',
+    );
+    console.log(
+      '  --thumbnail-at <seconds>  Frame timestamp for --thumbnail-from-video (default ~1s)',
     );
     console.log(
       '  --public            Mark the new video public (default: private)',
