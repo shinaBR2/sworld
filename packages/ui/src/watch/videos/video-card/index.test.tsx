@@ -109,6 +109,56 @@ describe('VideoCard Component', () => {
     expect(screen.getByRole('img', { name: 'Playlist' })).toBeInTheDocument();
   });
 
+  it('shows a duration badge on a video card', async () => {
+    await renderWithAct(
+      <VideoCard
+        video={mockVideo}
+        asLink={true}
+        LinkComponent={MockLink}
+        linkProps={{ to: '/x', params: { slug: 'test-video', id: '1' } }}
+      />,
+    );
+
+    // mockVideo.duration === 300 → 5:00
+    expect(screen.getByText('5:00')).toBeInTheDocument();
+  });
+
+  it('does not show a duration badge for a playlist card', async () => {
+    const playlistVideo = {
+      ...mockVideo,
+      type: MEDIA_TYPES.PLAYLIST,
+    } as TransformedMediaItem;
+
+    await renderWithAct(
+      <VideoCard
+        video={playlistVideo}
+        asLink={true}
+        LinkComponent={MockLink}
+        linkProps={{ to: '/x', params: { slug: 'test-video', id: '1' } }}
+      />,
+    );
+
+    expect(screen.queryByText('5:00')).not.toBeInTheDocument();
+  });
+
+  it('does not show a duration badge when duration is missing', async () => {
+    const videoWithoutDuration = {
+      ...mockVideo,
+      duration: undefined,
+    } as unknown as TransformedMediaItem;
+
+    await renderWithAct(
+      <VideoCard
+        video={videoWithoutDuration}
+        asLink={true}
+        LinkComponent={MockLink}
+        linkProps={{ to: '/x', params: { slug: 'test-video', id: '1' } }}
+      />,
+    );
+
+    expect(screen.queryByText('5:00')).not.toBeInTheDocument();
+  });
+
   it('renders thumbnail only for playlist type when not asLink', async () => {
     const playlistVideo = {
       ...mockVideo,

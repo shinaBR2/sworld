@@ -33,4 +33,23 @@ const getMediaDisplayName = (props: MediaDisplayNameProps): string => {
   return playlistName ? `${playlistName} - ${videoTitle}` : videoTitle;
 };
 
-export { formatCreatedDate, getMediaDisplayName };
+// Formats a duration in seconds as `m:ss`, widening to `h:mm:ss` past an hour.
+// Returns '' for missing / non-positive / non-finite values so callers can
+// simply skip rendering the badge.
+const formatDuration = (seconds: number | null | undefined): string => {
+  if (!seconds || seconds <= 0 || !Number.isFinite(seconds)) {
+    return '';
+  }
+
+  const total = Math.floor(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  const pad = (value: number) => String(value).padStart(2, '0');
+
+  return hours > 0
+    ? `${hours}:${pad(minutes)}:${pad(secs)}`
+    : `${minutes}:${pad(secs)}`;
+};
+
+export { formatCreatedDate, formatDuration, getMediaDisplayName };
