@@ -5,7 +5,7 @@ import {
   type TransformedVideo,
 } from 'core/watch/query-hooks';
 import { describe, expect, it, vi } from 'vitest';
-import { genlinkProps } from './utils';
+import { filterByTitle, genlinkProps } from './utils';
 
 // Mock the route generation functions
 vi.mock('core/watch/routes', () => ({
@@ -49,5 +49,34 @@ describe('genlinkProps', () => {
     expect(() => genlinkProps(invalidMedia)).toThrow(AppError);
     // @ts-expect-error
     expect(() => genlinkProps(invalidMedia)).toThrow('Invalid media type');
+  });
+});
+
+describe('filterByTitle', () => {
+  const items = [
+    { title: 'React Basics' },
+    { title: 'Advanced React' },
+    { title: 'Vue Intro' },
+  ];
+
+  it('matches titles case-insensitively as a substring', () => {
+    expect(filterByTitle(items, 'react')).toEqual([
+      { title: 'React Basics' },
+      { title: 'Advanced React' },
+    ]);
+    expect(filterByTitle(items, 'VUE')).toEqual([{ title: 'Vue Intro' }]);
+  });
+
+  it('returns the full list for an empty or whitespace-only query', () => {
+    expect(filterByTitle(items, '')).toBe(items);
+    expect(filterByTitle(items, '   ')).toBe(items);
+  });
+
+  it('returns an empty array when nothing matches', () => {
+    expect(filterByTitle(items, 'svelte')).toEqual([]);
+  });
+
+  it('trims surrounding whitespace in the query', () => {
+    expect(filterByTitle(items, '  vue  ')).toEqual([{ title: 'Vue Intro' }]);
   });
 });

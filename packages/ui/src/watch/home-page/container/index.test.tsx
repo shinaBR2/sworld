@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VideoCard } from '../../videos/video-card';
 import { VideoSkeleton } from '../../videos/video-card/skeleton';
@@ -22,15 +22,31 @@ vi.mock('../continue-watching', () => ({
   ContinueWatchingSection: vi.fn(() => <div>ContinueWatchingSection</div>),
 }));
 
-vi.mock('../utils', () => ({
-  genlinkProps: (video: { id: string; slug: string }) => ({
-    to: '/video/$slug-$id',
-    params: {
-      slug: video.slug,
-      id: video.id,
-    },
-  }),
+// Synchronous stand-in for the debounced search field so tests can drive the
+// query directly.
+vi.mock('../search', () => ({
+  HomeSearch: ({ onQueryChange }: { onQueryChange: (q: string) => void }) => (
+    <input
+      aria-label="Search videos"
+      onChange={(event) => onQueryChange(event.target.value)}
+    />
+  ),
 }));
+
+// Keep the real filterByTitle; only stub genlinkProps to avoid route generation.
+vi.mock('../utils', async () => {
+  const actual = await vi.importActual<typeof import('../utils')>('../utils');
+  return {
+    ...actual,
+    genlinkProps: (video: { id: string; slug: string }) => ({
+      to: '/video/$slug-$id',
+      params: {
+        slug: video.slug,
+        id: video.id,
+      },
+    }),
+  };
+});
 
 const MockLink = vi.fn();
 
@@ -135,5 +151,59 @@ describe('HomeContainer', () => {
       }),
       expect.anything(),
     );
+  });
+
+  it('filters the grid by the search query', () => {
+    const mockVideos = [
+      { id: '1', title: 'React Basics' },
+      { id: '2', title: 'Vue Intro' },
+    ];
+
+    render(
+      <HomeContainer
+        queryRs={{
+          isLoading: false,
+          videos: mockVideos,
+          continueWatching: [],
+        }}
+        LinkComponent={MockLink}
+      />,
+    );
+
+    expect(VideoCard).toHaveBeenCalledTimes(2);
+    vi.mocked(VideoCard).mockClear();
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search videos' }), {
+      target: { value: 'vue' },
+    });
+
+    expect(VideoCard).toHaveBeenCalledTimes(1);
+    expect(VideoCard).toHaveBeenCalledWith(
+      expect.objectContaining({ video: mockVideos[1] }),
+      expect.anything(),
+    );
+  });
+
+  it('shows a no-results message when the query matches nothing', () => {
+    render(
+      <HomeContainer
+        queryRs={{
+          isLoading: false,
+          videos: [{ id: '1', title: 'React Basics' }],
+          continueWatching: [],
+        }}
+        LinkComponent={MockLink}
+      />,
+    );
+
+    // Clear the initial (unfiltered) render before applying the query.
+    vi.mocked(VideoCard).mockClear();
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search videos' }), {
+      target: { value: 'svelte' },
+    });
+
+    expect(screen.getByText(/No videos match/)).toBeInTheDocument();
+    expect(VideoCard).not.toHaveBeenCalled();
   });
 });
