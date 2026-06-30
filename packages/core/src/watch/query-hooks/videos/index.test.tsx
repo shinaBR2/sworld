@@ -99,6 +99,7 @@ describe('useLoadVideos', () => {
 
     expect(result.current).toEqual({
       videos: [],
+      continueWatching: [],
       isLoading: true,
     });
   });
@@ -147,6 +148,7 @@ describe('useLoadVideos', () => {
         },
         ...expectedTransformedVideos,
       ],
+      continueWatching: [],
       isLoading: false,
     });
 
@@ -169,8 +171,104 @@ describe('useLoadVideos', () => {
 
     expect(result.current).toEqual({
       videos: [],
+      continueWatching: [],
       isLoading: false,
       error: mockError,
     });
+  });
+
+  it('should transform user_video_history into continueWatching', () => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: {
+        videos: [],
+        playlist: [],
+        user_video_history: [
+          {
+            id: 'h1',
+            last_watched_at: '2024-02-02',
+            progress_seconds: 70,
+            video: {
+              id: '1',
+              title: 'Video 1',
+              source: 'source1',
+              slug: 'video-1',
+              thumbnailUrl: 'thumb1.jpg',
+              duration: 120,
+              createdAt: '2024-01-01',
+              user: { username: 'user1' },
+              playlist_videos: [],
+            },
+          },
+          {
+            id: 'h2',
+            last_watched_at: '2024-02-01',
+            progress_seconds: 30,
+            video: {
+              id: '2',
+              title: 'Video 2',
+              source: 'source2',
+              slug: 'video-2',
+              thumbnailUrl: 'thumb2.jpg',
+              duration: 240,
+              createdAt: '2024-01-02',
+              user: { username: 'user2' },
+              playlist_videos: [
+                {
+                  playlist: {
+                    id: 'p1',
+                    slug: 'playlist-1',
+                    title: 'Playlist 1',
+                    thumbnailUrl: 'thumbP.jpg',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadVideos({ getAccessToken: mockGetAccessToken }),
+    );
+
+    // Preserves the server's last_watched_at desc order; standalone vs
+    // playlist-internal both mapped.
+    expect(result.current.continueWatching).toEqual([
+      {
+        id: '1',
+        type: 'video',
+        title: 'Video 1',
+        source: 'source1',
+        slug: 'video-1',
+        thumbnailUrl: 'thumb1.jpg',
+        duration: 120,
+        createdAt: '2024-01-01',
+        lastWatchedAt: '2024-02-02',
+        progressSeconds: 70,
+        playlist: undefined,
+        user: { username: 'user1' },
+      },
+      {
+        id: '2',
+        type: 'video',
+        title: 'Video 2',
+        source: 'source2',
+        slug: 'video-2',
+        thumbnailUrl: 'thumb2.jpg',
+        duration: 240,
+        createdAt: '2024-01-02',
+        lastWatchedAt: '2024-02-01',
+        progressSeconds: 30,
+        playlist: {
+          id: 'p1',
+          slug: 'playlist-1',
+          title: 'Playlist 1',
+          thumbnailUrl: 'thumbP.jpg',
+        },
+        user: { username: 'user2' },
+      },
+    ]);
   });
 });
