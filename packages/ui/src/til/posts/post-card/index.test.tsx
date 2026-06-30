@@ -47,4 +47,26 @@ describe('PostCard', () => {
       expect.anything(),
     );
   });
+
+  it('does not render the pin marker for an unpinned post', () => {
+    render(
+      <PostCard
+        post={mockPost}
+        LinkComponent={({ children }) => <div>{children}</div>}
+      />,
+    );
+
+    expect(screen.queryByTestId('PushPinIcon')).not.toBeInTheDocument();
+  });
+
+  it('renders the pin marker for a pinned post', () => {
+    render(
+      <PostCard
+        post={{ ...mockPost, pinned: true }}
+        LinkComponent={({ children }) => <div>{children}</div>}
+      />,
+    );
+
+    expect(screen.getByTestId('PushPinIcon')).toBeInTheDocument();
+  });
 });

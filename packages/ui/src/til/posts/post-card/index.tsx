@@ -1,3 +1,4 @@
+import PushPinIcon from '@mui/icons-material/PushPin';
 import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -13,15 +14,29 @@ interface PostCardProps extends Omit<RequiredLinkComponent, 'linkProps'> {
 
 export const PostCard = (props: PostCardProps) => {
   const { post, LinkComponent } = props;
-  const { title, brief, readTimeInMinutes, createdAt } = post;
+  const { title, brief, readTimeInMinutes, createdAt, pinned } = post;
 
   return (
     <LinkComponent {...genlinkProps(post)} style={{ textDecoration: 'none' }}>
       <StyledCard>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            {title}
-          </Typography>
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Typography variant="h6" gutterBottom>
+              {title}
+            </Typography>
+            {pinned && (
+              <PushPinIcon
+                fontSize="small"
+                color="action"
+                aria-label="Pinned"
+              />
+            )}
+          </Stack>
           <StyledDescription variant="body2" color="text.secondary">
             {brief}
           </StyledDescription>
