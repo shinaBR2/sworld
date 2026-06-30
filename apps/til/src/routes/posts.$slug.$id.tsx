@@ -129,6 +129,17 @@ const RouteComponent = () => {
     refetch();
   };
 
+  const handleTogglePin = async () => {
+    await updatePost({
+      id: postId,
+      object: {
+        pinned: !post?.pinned,
+      },
+    });
+    handleMenuClose();
+    refetch();
+  };
+
   // Store original values for comparison
   const originalTitle = post?.title ?? '';
   const originalContent = post?.mContent ?? '';
@@ -341,6 +352,9 @@ const RouteComponent = () => {
                   {post?.visibility === POST_VISIBILITY.PUBLIC
                     ? 'Private'
                     : 'Public'}
+                </MenuItem>
+                <MenuItem onClick={handleTogglePin}>
+                  {post?.pinned ? 'Unpin' : 'Pin'}
                 </MenuItem>
               </Menu>
             </Box>
