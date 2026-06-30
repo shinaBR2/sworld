@@ -27,7 +27,7 @@ user-invocable: false
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
 6. Name worktrees after the issue's slug — the kebab-case short form of its title, optionally prefixed with the identifier (e.g. `.claude/worktrees/swo-123-sticky-progress-bar`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default. Including the `SWO-NNN` identifier in the branch name lets the GitHub↔Linear integration auto-link the PR to the issue.
-7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories.
+7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`.
 8. Run `pnpm install` in each worktree.
 
 ## During work
@@ -42,7 +42,7 @@ user-invocable: false
 ## Codegen
 
 - ALWAYS `git fetch origin main && git merge origin/main` before running codegen.
-- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types.
+- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types. Needs `packages/core/.env` in the worktree (see step 7) — codegen introspects the live Hasura schema using the URL/secret from it.
 - See `architecture` skill for GraphQL conventions (generated files, `graphql()` usage).
 
 ## Resolving conflicts
