@@ -3,7 +3,11 @@ import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { MEDIA_TYPES, type MediaType } from 'core/watch/query-hooks';
-import { formatCreatedDate, getMediaDisplayName } from '../../utils';
+import {
+  formatCreatedDate,
+  formatDuration,
+  getMediaDisplayName,
+} from '../../utils';
 import type { PlayableVideo, WithLinkComponent } from '../types';
 import { VideoContainer } from '../video-container';
 import { VideoThumbnail } from '../video-thumbnail';
@@ -75,6 +79,38 @@ const PlaylistBadge = () => {
   );
 };
 
+interface DurationBadgeProps {
+  duration?: number;
+}
+
+const DurationBadge = (props: DurationBadgeProps) => {
+  const label = formatDuration(props.duration);
+  if (!label) {
+    return null;
+  }
+
+  return (
+    <Box
+      aria-label={`Duration ${label}`}
+      sx={{
+        position: 'absolute',
+        bottom: 8,
+        right: 8,
+        bgcolor: 'rgba(0, 0, 0, 0.75)',
+        color: 'common.white',
+        borderRadius: 1,
+        px: 0.75,
+        py: 0.25,
+        fontSize: 12,
+        fontWeight: 500,
+        lineHeight: 1.4,
+      }}
+    >
+      {label}
+    </Box>
+  );
+};
+
 interface VideoProgressProps {
   video: Video;
 }
@@ -125,6 +161,9 @@ const VideoContent = (props: VideoContentProps) => {
         <VideoThumbnail src={video.thumbnailUrl} title={video.title} />
         {(video.type === MEDIA_TYPES.PLAYLIST || Boolean(video.playlist)) && (
           <PlaylistBadge />
+        )}
+        {video.type !== MEDIA_TYPES.PLAYLIST && (
+          <DurationBadge duration={video.duration} />
         )}
         <VideoProgress video={video} />
       </Box>
