@@ -153,6 +153,7 @@ update_permissions:
       columns:
         - description
         - shared_recipients_input
+        - thumbnail_url
         - title
       filter:
         user_id:

@@ -56,32 +56,12 @@ actions:
     permissions:
       - role: user
     comment: Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
-  - name: setVideoThumbnailUrl
-    definition:
-      kind: synchronous
-      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
-      forward_client_headers: true
-      headers:
-        - name: X-Hasura-Action
-          value: setVideoThumbnailUrl
-        - name: Content-Type
-          value: application/json
-      request_transform:
-        method: POST
-        query_params: {}
-        template_engine: Kriti
-        url: '{{$base_url}}/videos-actions/set-thumbnail-url'
-        version: 2
-    permissions:
-      - role: user
-    comment: Persist a browser-captured thumbnail (uploaded via createSignedUploadUrl) as the video's thumbnail; ownership + path-safety enforced server-side.
 custom_types:
   enums: []
   input_objects:
     - name: CreateDeviceRequestInput
     - name: SignedUploadUrlInput
     - name: SetVideoThumbnailAtTimeInput
-    - name: SetVideoThumbnailUrlInput
   objects:
     - name: CreateDeviceRequestOutput
     - name: DeviceRequestError
@@ -90,6 +70,4 @@ custom_types:
     - name: SignedUploadUrlResponse
     - name: SetVideoThumbnailAtTimeOutput
     - name: SetVideoThumbnailAtTimeResponse
-    - name: SetVideoThumbnailUrlOutput
-    - name: SetVideoThumbnailUrlResponse
   scalars: []
