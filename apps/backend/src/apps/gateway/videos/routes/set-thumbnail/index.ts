@@ -24,8 +24,8 @@ import { AppError, AppResponse } from 'src/utils/schema';
  *  - This server path works without any browser/CORS setup and can target any
  *    timestamp even when the user isn't watching — but it's slow + unreliable
  *    (cold start, segment download, ffmpeg) and can't cheaply downscale.
- *  - The new PRIMARY path (`setVideoThumbnailUrl`) captures the exact frame the
- *    user sees in-browser, downscales it, and uploads it directly to GCS — instant
+ *  - The PRIMARY path (a plain `update_videos_by_pk` mutation) captures the exact
+ *    frame the user sees in-browser, downscales it, and uploads it directly to GCS — instant
  *    and with no ffmpeg/cold start — but needs the video to be CORS-clean for the
  *    canvas capture.
  *

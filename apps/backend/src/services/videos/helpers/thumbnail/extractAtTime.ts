@@ -13,7 +13,7 @@
  *  - Server-side (this code): needs no browser/CORS setup and can target ANY
  *    timestamp even if the user isn't watching — but it's slow and unreliable
  *    (cold start + segment download + ffmpeg) and can't cheaply downscale.
- *  - Client-side (the new PRIMARY path via `setVideoThumbnailUrl`): instant, the
+ *  - Client-side (the PRIMARY path via a plain `update_videos_by_pk` mutation): instant, the
  *    exact frame the user sees, downscaled in-browser to a small thumbnail, no
  *    ffmpeg or cold start — but requires the video to be CORS-clean so the canvas
  *    can capture it.
