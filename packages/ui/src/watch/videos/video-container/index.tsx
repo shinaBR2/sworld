@@ -8,10 +8,18 @@ interface VideoContainerInterface {
   onError?: (error: unknown) => void;
   onPausedChange?: (isPaused: boolean) => void;
   getCurrentTimeRef?: MutableRefObject<(() => number | null) | null>;
+  getVideoElementRef?: MutableRefObject<(() => HTMLVideoElement | null) | null>;
 }
 
 const VideoContainer = (props: VideoContainerInterface) => {
-  const { video, onEnded, onError, onPausedChange, getCurrentTimeRef } = props;
+  const {
+    video,
+    onEnded,
+    onError,
+    onPausedChange,
+    getCurrentTimeRef,
+    getVideoElementRef,
+  } = props;
 
   return (
     <VideoPlayer
@@ -20,6 +28,7 @@ const VideoContainer = (props: VideoContainerInterface) => {
       onError={onError}
       onPausedChange={onPausedChange}
       getCurrentTimeRef={getCurrentTimeRef}
+      getVideoElementRef={getVideoElementRef}
     />
   );
 };

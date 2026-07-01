@@ -7,12 +7,22 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from 'core/providers/auth';
+import { useCreateSignedUploadUrl } from 'core/watch/mutation-hooks/create-signed-upload-url';
 import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+// Server-side ffmpeg thumbnail action. Kept available as a fallback but no
+// longer the primary path — it's unreliable (Hono cold start + Linux ffmpeg
+// seek quirks). The click now captures the frame in the browser instead.
 import { useSetVideoThumbnail } from 'core/watch/mutation-hooks/set-video-thumbnail';
+import { useSetVideoThumbnailUrl } from 'core/watch/mutation-hooks/set-video-thumbnail-url';
 import React, { Suspense } from 'react';
 import { getMediaDisplayName } from '../../utils';
 import { VideoContainer } from '../../videos/video-container';
 import { RelatedList } from '../related-list';
+import {
+  captureFrameBlob,
+  TaintedCanvasError,
+  uploadBlob,
+} from './capture-thumbnail';
 import { MainContentSkeleton, RelatedContentSkeleton } from './skeleton';
 import { StyledRelatedContainer } from './styled';
 import type { VideoDetailContainerProps } from './types';
@@ -68,6 +78,13 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const [isPaused, setIsPaused] = React.useState(false);
   // Filled by the player with a getter for the current playback time (seconds).
   const getCurrentTimeRef = React.useRef<(() => number | null) | null>(null);
+  // Filled by the player with a getter for the underlying <video> element, used
+  // to draw the paused frame to a canvas for client-side thumbnail capture.
+  const getVideoElementRef = React.useRef<
+    (() => HTMLVideoElement | null) | null
+  >(null);
+  // Guards against overlapping captures if the button is clicked repeatedly.
+  const isCapturingRef = React.useRef(false);
 
   const videoDetail = React.useMemo(
     () => videos.find((video) => video.id === activeVideoId),
@@ -76,29 +93,74 @@ const MainContent = (props: VideoDetailContainerProps) => {
 
   const isOwner = Boolean(user?.id) && videoDetail?.userId === user?.id;
 
-  const { mutate: setVideoThumbnail } = useSetVideoThumbnail({
+  // Fallback server action (ffmpeg). Retained for reference/emergency use; the
+  // primary flow below captures the frame in the browser and uploads it.
+  useSetVideoThumbnail({ getAccessToken });
+
+  const { mutateAsync: createSignedUploadUrl } = useCreateSignedUploadUrl({
     getAccessToken,
-    onSuccess: () => {
-      // Ask the route to refetch its own detail query so the new thumbnail is
-      // reflected without a hard reload (the route owns its query key).
-      onThumbnailUpdated?.();
-      onNotify?.({ message: 'Thumbnail updated', severity: 'success' });
-    },
-    onError: () => {
-      onNotify?.({ message: 'Failed to update thumbnail', severity: 'error' });
-    },
+  });
+  const { mutateAsync: setVideoThumbnailUrl } = useSetVideoThumbnailUrl({
+    getAccessToken,
   });
 
-  const handleSetThumbnail = React.useCallback(() => {
-    if (!videoDetail) return;
+  const handleSetThumbnail = React.useCallback(async () => {
+    if (!videoDetail || isCapturingRef.current) return;
 
-    const atSeconds = getCurrentTimeRef.current?.() ?? null;
-    if (atSeconds === null) return;
+    const videoEl = getVideoElementRef.current?.();
+    if (!videoEl) {
+      onNotify?.({ message: 'Failed to update thumbnail', severity: 'error' });
+      return;
+    }
 
-    setVideoThumbnail({
-      input: { videoId: videoDetail.id, atSeconds },
-    });
-  }, [videoDetail, setVideoThumbnail]);
+    isCapturingRef.current = true;
+    try {
+      // 1. Capture + downscale the current frame to a JPEG blob.
+      const blob = await captureFrameBlob(videoEl);
+
+      // 2. Ask the backend for a signed PUT URL scoped to this video.
+      const signed = await createSignedUploadUrl({
+        input: {
+          site: 'watch',
+          action: 'VIDEO_THUMBNAIL_UPLOAD',
+          id: videoDetail.id,
+          contentType: 'image/jpeg',
+        },
+      });
+      const dataObject = signed.createSignedUploadUrl.dataObject;
+      if (!dataObject) {
+        throw new Error('No signed upload URL returned');
+      }
+
+      // 3. Upload the blob straight to the bucket.
+      await uploadBlob({ uploadUrl: dataObject.uploadUrl, blob });
+
+      // 4. Persist the thumbnail against the video record.
+      await setVideoThumbnailUrl({
+        input: { videoId: videoDetail.id, objectPath: dataObject.objectPath },
+      });
+
+      // 5. Refetch (route owns the query key) so the new thumbnail shows.
+      onThumbnailUpdated?.();
+      onNotify?.({ message: 'Thumbnail updated', severity: 'success' });
+    } catch (error) {
+      // A tainted canvas is a distinct, actionable failure (CORS), so surface
+      // its specific message; everything else gets the generic error.
+      const message =
+        error instanceof TaintedCanvasError
+          ? error.message
+          : 'Failed to update thumbnail';
+      onNotify?.({ message, severity: 'error' });
+    } finally {
+      isCapturingRef.current = false;
+    }
+  }, [
+    videoDetail,
+    createSignedUploadUrl,
+    setVideoThumbnailUrl,
+    onThumbnailUpdated,
+    onNotify,
+  ]);
 
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
@@ -191,6 +253,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
           onEnded={handleVideoEnd}
           onPausedChange={setIsPaused}
           getCurrentTimeRef={getCurrentTimeRef}
+          getVideoElementRef={getVideoElementRef}
         />
       </Box>
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
