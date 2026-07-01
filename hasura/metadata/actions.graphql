@@ -62,7 +62,7 @@ type SignedUploadUrlResponse {
 
 input SetVideoThumbnailAtTimeInput {
   # id of the video whose thumbnail to set; ownership enforced server-side
-  videoId: uuid!
+  videoId: String!
   # timestamp (seconds) of the frame to capture as the thumbnail
   atSeconds: Float!
 }
