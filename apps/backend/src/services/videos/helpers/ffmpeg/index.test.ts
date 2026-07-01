@@ -10,7 +10,12 @@ import {
   vi,
   type Mock,
 } from 'vitest';
-import { convertToHLS, getDuration, takeScreenshot } from '.';
+import {
+  convertToHLS,
+  getDuration,
+  takeScreenshot,
+  takeScreenshotAtTime,
+} from '.';
 import { videoConfig } from '../../config';
 
 // Mock all external dependencies
@@ -57,6 +62,7 @@ describe('FFmpeg Helpers', () => {
 
     // Create a mock ffmpeg command chain
     mockFFmpeg = {
+      inputOptions: vi.fn().mockReturnThis(),
       outputOptions: vi.fn().mockReturnThis(),
       output: vi.fn().mockReturnThis(),
       on: vi.fn().mockReturnThis(),
@@ -380,6 +386,63 @@ describe('FFmpeg Helpers', () => {
           filename: filename,
         });
       });
+    });
+  });
+
+  describe('takeScreenshotAtTime', () => {
+    const videoPath = '/tmp/work/playable.mp4';
+    const outputDir = '/tmp/work';
+    const filename = 'thumbnail--123.jpg';
+
+    it('seeks to the exact ABSOLUTE timestamp (before input) and grabs one frame', async () => {
+      mockFFmpeg.on.mockImplementation((event, callback) => {
+        if (event === 'end') callback();
+        return mockFFmpeg;
+      });
+
+      // A large absolute media time (as passed for a later fMP4 segment) must be
+      // forwarded to `-ss` verbatim, not reduced to an in-segment offset.
+      await takeScreenshotAtTime(videoPath, outputDir, filename, 600);
+
+      expect(vi.mocked(ffmpeg)).toHaveBeenCalledWith(videoPath);
+      expect(mockFFmpeg.inputOptions).toHaveBeenCalledWith(['-ss', '600']);
+      // A fractional absolute time is also forwarded unchanged.
+      await takeScreenshotAtTime(videoPath, outputDir, filename, 3.14);
+      expect(mockFFmpeg.inputOptions).toHaveBeenCalledWith(['-ss', '3.14']);
+      expect(mockFFmpeg.outputOptions).toHaveBeenCalledWith([
+        '-frames:v',
+        '1',
+        '-q:v',
+        '2',
+      ]);
+      expect(mockFFmpeg.output).toHaveBeenCalledWith(
+        path.join(outputDir, filename),
+      );
+      expect(mockFFmpeg.run).toHaveBeenCalled();
+    });
+
+    it('clamps a negative timestamp to 0', async () => {
+      mockFFmpeg.on.mockImplementation((event, callback) => {
+        if (event === 'end') callback();
+        return mockFFmpeg;
+      });
+
+      await takeScreenshotAtTime(videoPath, outputDir, filename, -5);
+
+      expect(mockFFmpeg.inputOptions).toHaveBeenCalledWith(['-ss', '0']);
+    });
+
+    it('rejects on ffmpeg error', async () => {
+      const error = new Error('boom');
+      mockFFmpeg.on.mockImplementation((event, callback) => {
+        if (event === 'error') callback(error, '', '');
+        return mockFFmpeg;
+      });
+
+      await expect(
+        takeScreenshotAtTime(videoPath, outputDir, filename, 1),
+      ).rejects.toThrow('FFmpeg error: boom');
+      expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 });

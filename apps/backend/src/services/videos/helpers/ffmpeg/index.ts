@@ -170,4 +170,49 @@ const takeScreenshot = async (
   });
 };
 
-export { convertToHLS, getDuration, takeScreenshot };
+/**
+ * Takes a screenshot from a local video file at an EXACT timestamp.
+ *
+ * Unlike {@link takeScreenshot} (which derives a fixed default timestamp from
+ * the video duration), this seeks to the caller-provided `atSeconds` and grabs
+ * a single frame. `-ss` is placed BEFORE the input for a fast keyframe seek,
+ * then re-decoded to the requested position — accurate on a short, seekable
+ * fMP4 file (init.mp4 + one .m4s concatenated) while staying cheap.
+ *
+ * `atSeconds` is the ABSOLUTE media time on the file's own timeline. For a
+ * concatenated fMP4 segment this is NOT rebased to zero: the fragment keeps its
+ * `tfdt` baseMediaDecodeTime, so callers must pass the absolute timestamp (not
+ * an in-segment offset) for the seek to land on the requested frame.
+ *
+ * @param videoPath - Absolute path to a seekable local video file
+ * @param outputDir - Absolute path to the output directory
+ * @param filename - Output file name without path (e.g. 'thumbnail--123.jpg')
+ * @param atSeconds - Absolute seek position on the file's timeline, in seconds
+ *                    (clamped to >= 0)
+ * @returns Promise<void> - Resolves once the frame is written, rejects on error
+ */
+const takeScreenshotAtTime = async (
+  videoPath: string,
+  outputDir: string,
+  filename: string,
+  atSeconds: number,
+): Promise<void> => {
+  const logger = getCurrentLogger();
+  const seek = Math.max(0, atSeconds);
+  const outputPath = path.join(outputDir, filename);
+
+  return new Promise((resolve, reject) => {
+    ffmpeg(videoPath)
+      .inputOptions(['-ss', `${seek}`])
+      .outputOptions(['-frames:v', '1', '-q:v', '2'])
+      .output(outputPath)
+      .on('end', () => resolve())
+      .on('error', (err, stdout, stderr) => {
+        logger.error({ stdout, stderr }, 'takeScreenshotAtTime failed');
+        reject(new Error(`FFmpeg error: ${err.message}`));
+      })
+      .run();
+  });
+};
+
+export { convertToHLS, getDuration, takeScreenshot, takeScreenshotAtTime };
