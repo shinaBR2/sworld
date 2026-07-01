@@ -13,7 +13,7 @@ import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
 // longer the primary path — it's unreliable (Hono cold start + Linux ffmpeg
 // seek quirks). The click now captures the frame in the browser instead.
 import { useSetVideoThumbnail } from 'core/watch/mutation-hooks/set-video-thumbnail';
-import { useSetVideoThumbnailUrl } from 'core/watch/mutation-hooks/set-video-thumbnail-url';
+import { useUpdateVideoThumbnail } from 'core/watch/mutation-hooks/update-video-thumbnail';
 import React, { Suspense } from 'react';
 import { getMediaDisplayName } from '../../utils';
 import { VideoContainer } from '../../videos/video-container';
@@ -100,7 +100,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const { mutateAsync: createSignedUploadUrl } = useCreateSignedUploadUrl({
     getAccessToken,
   });
-  const { mutateAsync: setVideoThumbnailUrl } = useSetVideoThumbnailUrl({
+  const { mutateAsync: updateVideoThumbnail } = useUpdateVideoThumbnail({
     getAccessToken,
   });
 
@@ -136,8 +136,9 @@ const MainContent = (props: VideoDetailContainerProps) => {
       await uploadBlob({ uploadUrl: dataObject.uploadUrl, blob });
 
       // 4. Persist the thumbnail against the video record.
-      await setVideoThumbnailUrl({
-        input: { videoId: videoDetail.id, objectPath: dataObject.objectPath },
+      await updateVideoThumbnail({
+        id: videoDetail.id,
+        thumbnailUrl: dataObject.publicUrl,
       });
 
       // 5. Refetch (route owns the query key) so the new thumbnail shows.
@@ -157,7 +158,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
   }, [
     videoDetail,
     createSignedUploadUrl,
-    setVideoThumbnailUrl,
+    updateVideoThumbnail,
     onThumbnailUpdated,
     onNotify,
   ]);

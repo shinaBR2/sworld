@@ -174,14 +174,14 @@ vi.mock('core/watch/mutation-hooks/set-video-thumbnail', () => ({
 
 // New client-upload hooks. mutateAsync is what the container awaits.
 const mockCreateSignedUploadUrl = vi.fn();
-const mockSetVideoThumbnailUrl = vi.fn();
+const mockUpdateVideoThumbnail = vi.fn();
 vi.mock('core/watch/mutation-hooks/create-signed-upload-url', () => ({
   useCreateSignedUploadUrl: () => ({
     mutateAsync: mockCreateSignedUploadUrl,
   }),
 }));
-vi.mock('core/watch/mutation-hooks/set-video-thumbnail-url', () => ({
-  useSetVideoThumbnailUrl: () => ({ mutateAsync: mockSetVideoThumbnailUrl }),
+vi.mock('core/watch/mutation-hooks/update-video-thumbnail', () => ({
+  useUpdateVideoThumbnail: () => ({ mutateAsync: mockUpdateVideoThumbnail }),
 }));
 
 // Mock the capture util so the container test drives the orchestration without
@@ -365,9 +365,10 @@ describe('VideoDetailContainer', () => {
       },
     });
     mockUploadBlob.mockResolvedValue(undefined);
-    mockSetVideoThumbnailUrl.mockResolvedValue({
-      setVideoThumbnailUrl: {
-        dataObject: { thumbnailUrl: 'https://cdn.example/thumb.jpg' },
+    mockUpdateVideoThumbnail.mockResolvedValue({
+      update_videos_by_pk: {
+        id: 'video1',
+        thumbnailUrl: 'https://cdn.example/thumb.jpg',
       },
     });
     // Default: current user is the video owner.
@@ -745,9 +746,10 @@ describe('VideoDetailContainer', () => {
         blob: expect.any(Blob),
       });
 
-      // Persisted against the video via objectPath.
-      expect(mockSetVideoThumbnailUrl).toHaveBeenCalledWith({
-        input: { videoId: 'video1', objectPath: 'watch/video1/thumb.jpg' },
+      // Persisted against the video via publicUrl.
+      expect(mockUpdateVideoThumbnail).toHaveBeenCalledWith({
+        id: 'video1',
+        thumbnailUrl: 'https://cdn.example/thumb.jpg',
       });
 
       // Refetch + success toast.
@@ -775,7 +777,7 @@ describe('VideoDetailContainer', () => {
 
       expect(mockCreateSignedUploadUrl).not.toHaveBeenCalled();
       expect(mockUploadBlob).not.toHaveBeenCalled();
-      expect(mockSetVideoThumbnailUrl).not.toHaveBeenCalled();
+      expect(mockUpdateVideoThumbnail).not.toHaveBeenCalled();
       expect(onThumbnailUpdated).not.toHaveBeenCalled();
       expect(onNotify).toHaveBeenCalledWith({
         message: TAINTED_CANVAS_MESSAGE,
@@ -798,7 +800,7 @@ describe('VideoDetailContainer', () => {
 
       await pauseAndCapture();
 
-      expect(mockSetVideoThumbnailUrl).not.toHaveBeenCalled();
+      expect(mockUpdateVideoThumbnail).not.toHaveBeenCalled();
       expect(onThumbnailUpdated).not.toHaveBeenCalled();
       expect(onNotify).toHaveBeenCalledWith({
         message: 'Failed to update thumbnail',
