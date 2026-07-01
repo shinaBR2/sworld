@@ -43,7 +43,7 @@ type Documents = {
   '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.SharePlaylistDocument;
   '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.ShareVideoDocument;
   '\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n': typeof types.UpdateVideoProgressDocument;
-  '\n  fragment UserFields on users {\n    username\n  }\n': typeof types.UserFieldsFragmentDoc;
+  '\n  fragment UserFields on users {\n    id\n    username\n  }\n': typeof types.UserFieldsFragmentDoc;
   '\n  fragment VideoFields on videos {\n    id\n    title\n    description\n    duration\n    thumbnailUrl\n    source\n    slug\n    createdAt\n    user {\n      ...UserFields\n    }\n    user_video_histories {\n      last_watched_at\n      progress_seconds\n    }\n    subtitles {\n      id\n      isDefault\n      lang\n      url\n    }\n  }\n': typeof types.VideoFieldsFragmentDoc;
   '\n  fragment PlaylistVideoFields on playlist_videos {\n    position\n    video {\n      ...VideoFields\n    }\n  }\n': typeof types.PlaylistVideoFieldsFragmentDoc;
   '\n  fragment PlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    user {\n      ...UserFields\n    }\n    playlist_videos(where: { video: { status: { _eq: "ready" } } }, order_by: { position: asc }) {\n      ...PlaylistVideoFields\n    }\n  }\n': typeof types.PlaylistFieldsFragmentDoc;
@@ -114,7 +114,7 @@ const documents: Documents = {
     types.ShareVideoDocument,
   '\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n':
     types.UpdateVideoProgressDocument,
-  '\n  fragment UserFields on users {\n    username\n  }\n':
+  '\n  fragment UserFields on users {\n    id\n    username\n  }\n':
     types.UserFieldsFragmentDoc,
   '\n  fragment VideoFields on videos {\n    id\n    title\n    description\n    duration\n    thumbnailUrl\n    source\n    slug\n    createdAt\n    user {\n      ...UserFields\n    }\n    user_video_histories {\n      last_watched_at\n      progress_seconds\n    }\n    subtitles {\n      id\n      isDefault\n      lang\n      url\n    }\n  }\n':
     types.VideoFieldsFragmentDoc,
@@ -318,7 +318,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment UserFields on users {\n    username\n  }\n',
+  source: '\n  fragment UserFields on users {\n    id\n    username\n  }\n',
 ): typeof import('./graphql').UserFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

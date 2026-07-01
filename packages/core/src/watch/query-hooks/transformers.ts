@@ -12,6 +12,7 @@ import { MEDIA_TYPES } from './types';
 const transformUser = (userData: FragmentType<typeof UserFragment>) => {
   const user = getFragmentData(UserFragment, userData);
   return {
+    id: user.id,
     username: user.username || '',
   };
 };

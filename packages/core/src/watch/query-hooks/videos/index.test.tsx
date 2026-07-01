@@ -19,7 +19,7 @@ describe('useLoadVideos', () => {
       source: 'source1',
       slug: 'video-1',
       createdAt: '2024-01-01',
-      user: { username: 'user1' },
+      user: { id: 'user-1', username: 'user1' },
       user_video_histories: [
         { last_watched_at: '2024-01-02', progress_seconds: 30 },
       ],
@@ -32,7 +32,7 @@ describe('useLoadVideos', () => {
       source: 'source2',
       slug: 'video-2',
       createdAt: '2024-01-02',
-      user: { username: 'user2' },
+      user: { id: 'user-2', username: 'user2' },
       user_video_histories: [],
     },
   ];
@@ -46,7 +46,7 @@ describe('useLoadVideos', () => {
       source: 'source2',
       slug: 'video-2',
       createdAt: '2024-01-02',
-      user: { username: 'user2' },
+      user: { id: 'user-2', username: 'user2' },
       lastWatchedAt: null,
       progressSeconds: 0,
       duration: 0,
@@ -60,7 +60,7 @@ describe('useLoadVideos', () => {
       source: 'source1',
       slug: 'video-1',
       createdAt: '2024-01-01',
-      user: { username: 'user1' },
+      user: { id: 'user-1', username: 'user1' },
       lastWatchedAt: '2024-01-02',
       progressSeconds: 30,
       duration: 0,
@@ -116,7 +116,7 @@ describe('useLoadVideos', () => {
             thumbnailUrl: 'thumb3.jpg',
             slug: 'playlist-1',
             createdAt: '2024-01-03', // Most recent date
-            user: { username: 'user3' },
+            user: { id: 'user-3', username: 'user3' },
             playlist_videos: [
               {
                 video: mockVideos[0],
@@ -143,7 +143,7 @@ describe('useLoadVideos', () => {
           thumbnailUrl: 'thumb3.jpg',
           slug: 'playlist-1',
           createdAt: '2024-01-03', // Most recent date
-          user: { username: 'user3' },
+          user: { id: 'user-3', username: 'user3' },
           firstVideoId: '1',
         },
         ...expectedTransformedVideos,
@@ -195,7 +195,7 @@ describe('useLoadVideos', () => {
               thumbnailUrl: 'thumb1.jpg',
               duration: 120,
               createdAt: '2024-01-01',
-              user: { username: 'user1' },
+              user: { id: 'user-1', username: 'user1' },
               playlist_videos: [],
             },
           },
@@ -211,7 +211,7 @@ describe('useLoadVideos', () => {
               thumbnailUrl: 'thumb2.jpg',
               duration: 240,
               createdAt: '2024-01-02',
-              user: { username: 'user2' },
+              user: { id: 'user-2', username: 'user2' },
               playlist_videos: [
                 {
                   playlist: {
@@ -248,7 +248,7 @@ describe('useLoadVideos', () => {
         lastWatchedAt: '2024-02-02',
         progressSeconds: 70,
         playlist: undefined,
-        user: { username: 'user1' },
+        user: { id: 'user-1', username: 'user1' },
       },
       {
         id: '2',
@@ -267,7 +267,7 @@ describe('useLoadVideos', () => {
           title: 'Playlist 1',
           thumbnailUrl: 'thumbP.jpg',
         },
-        user: { username: 'user2' },
+        user: { id: 'user-2', username: 'user2' },
       },
     ]);
   });
