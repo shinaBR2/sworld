@@ -39,6 +39,10 @@ interface VideoPlayerProps {
   // seconds, letting the parent read the paused frame without owning the
   // player instance.
   getCurrentTimeRef?: MutableRefObject<(() => number | null) | null>;
+  // A ref the player fills with a getter for the underlying <video> element, so
+  // the parent can capture the current frame client-side (thumbnail capture)
+  // without owning the player instance.
+  getVideoElementRef?: MutableRefObject<(() => HTMLVideoElement | null) | null>;
 }
 
 /**
@@ -64,7 +68,14 @@ interface VideoPlayerProps {
  */
 
 const VideoPlayer = (props: VideoPlayerProps) => {
-  const { video, onEnded, onError, onPausedChange, getCurrentTimeRef } = props;
+  const {
+    video,
+    onEnded,
+    onError,
+    onPausedChange,
+    getCurrentTimeRef,
+    getVideoElementRef,
+  } = props;
   const { title, source, thumbnailUrl, subtitles } = video;
   const { isSignedIn, getAccessToken } = useAuthContext();
   const {
@@ -118,8 +129,18 @@ const VideoPlayer = (props: VideoPlayerProps) => {
         getCurrentTimeRef.current = () =>
           playerRef.current?.getCurrentTime?.() ?? null;
       }
+
+      // Expose the underlying <video> element (the file player's internal
+      // player) so the parent can draw the current frame to a canvas for
+      // client-side thumbnail capture.
+      if (getVideoElementRef) {
+        getVideoElementRef.current = () => {
+          const internal = playerRef.current?.getInternalPlayer?.();
+          return internal instanceof HTMLVideoElement ? internal : null;
+        };
+      }
     },
-    [getCurrentTimeRef],
+    [getCurrentTimeRef, getVideoElementRef],
   );
 
   // Wrap the progress-tracking pause/play handlers so the parent also learns
@@ -428,7 +449,11 @@ const VideoPlayer = (props: VideoPlayerProps) => {
               hlsVersion: '1.5.20',
               attributes: {
                 playsInline: true, // Important for iOS
-                crossOrigin: 'true',
+                // `anonymous` loads the media without credentials but *with*
+                // CORS, so drawing a frame to a canvas doesn't taint it. This
+                // plus permissive GET CORS headers on the video bucket is
+                // required for client-side thumbnail capture.
+                crossOrigin: 'anonymous',
               },
               tracks: subtitles?.map((subtitle) => ({
                 kind: 'subtitles',

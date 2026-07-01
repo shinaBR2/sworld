@@ -10,6 +10,10 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  TAINTED_CANVAS_MESSAGE,
+  TaintedCanvasError,
+} from './capture-thumbnail';
 import { VideoDetailContainer } from './index';
 import type { VideoDetailContainerProps } from './types';
 
@@ -77,15 +81,41 @@ vi.mock('@mui/material/Checkbox', () => ({
 // The mocked player exposes controls to drive paused state and the current
 // playback time (in seconds) from within tests.
 const mockCurrentTime = { value: 42 };
+// A stand-in <video> element handed to the container via getVideoElementRef.
+// `null` simulates the player not being ready.
+const mockVideoElement: { value: HTMLVideoElement | null } = {
+  value: {} as HTMLVideoElement,
+};
+
+const wireRefs = ({
+  getCurrentTimeRef,
+  getVideoElementRef,
+}: {
+  getCurrentTimeRef?: { current: (() => number | null) | null };
+  getVideoElementRef?: {
+    current: (() => HTMLVideoElement | null) | null;
+  };
+}) => {
+  if (getCurrentTimeRef) {
+    getCurrentTimeRef.current = () => mockCurrentTime.value;
+  }
+  if (getVideoElementRef) {
+    getVideoElementRef.current = () => mockVideoElement.value;
+  }
+};
 
 // Create VideoContainer mock with a mock implementation
 const mockVideoContainer = vi
   .fn()
   .mockImplementation(
-    ({ video, onEnded, onPausedChange, getCurrentTimeRef }) => {
-      if (getCurrentTimeRef) {
-        getCurrentTimeRef.current = () => mockCurrentTime.value;
-      }
+    ({
+      video,
+      onEnded,
+      onPausedChange,
+      getCurrentTimeRef,
+      getVideoElementRef,
+    }) => {
+      wireRefs({ getCurrentTimeRef, getVideoElementRef });
       return (
         <div data-testid="video-container">
           <button
@@ -124,6 +154,9 @@ vi.mock('../../videos/video-container', () => ({
     getCurrentTimeRef?: {
       current: (() => number | null) | null;
     };
+    getVideoElementRef?: {
+      current: (() => HTMLVideoElement | null) | null;
+    };
   }) => mockVideoContainer(props),
 }));
 
@@ -133,21 +166,38 @@ vi.mock('core/providers/auth', () => ({
   useAuthContext: () => mockUseAuthContext(),
 }));
 
-// Mock the set-thumbnail mutation hook.
-const mockSetVideoThumbnail = vi.fn();
-let capturedThumbnailHandlers: {
-  onSuccess?: () => void;
-  onError?: () => void;
-} = {};
+// The server-side ffmpeg action is retained as a fallback but no longer called
+// on click — just mock it so the module resolves.
 vi.mock('core/watch/mutation-hooks/set-video-thumbnail', () => ({
-  useSetVideoThumbnail: (props: {
-    onSuccess?: () => void;
-    onError?: () => void;
-  }) => {
-    capturedThumbnailHandlers = props;
-    return { mutate: mockSetVideoThumbnail };
-  },
+  useSetVideoThumbnail: () => ({ mutate: vi.fn() }),
 }));
+
+// New client-upload hooks. mutateAsync is what the container awaits.
+const mockCreateSignedUploadUrl = vi.fn();
+const mockSetVideoThumbnailUrl = vi.fn();
+vi.mock('core/watch/mutation-hooks/create-signed-upload-url', () => ({
+  useCreateSignedUploadUrl: () => ({
+    mutateAsync: mockCreateSignedUploadUrl,
+  }),
+}));
+vi.mock('core/watch/mutation-hooks/set-video-thumbnail-url', () => ({
+  useSetVideoThumbnailUrl: () => ({ mutateAsync: mockSetVideoThumbnailUrl }),
+}));
+
+// Mock the capture util so the container test drives the orchestration without
+// touching a real canvas/fetch (those are unit-tested in capture-thumbnail.test).
+const mockCaptureFrameBlob = vi.fn();
+const mockUploadBlob = vi.fn();
+vi.mock('./capture-thumbnail', async () => {
+  const actual = await vi.importActual<typeof import('./capture-thumbnail')>(
+    './capture-thumbnail',
+  );
+  return {
+    ...actual,
+    captureFrameBlob: (...args: unknown[]) => mockCaptureFrameBlob(...args),
+    uploadBlob: (...args: unknown[]) => mockUploadBlob(...args),
+  };
+});
 
 vi.mock('../../dialogs/share', () => ({
   ShareDialog: ({
@@ -300,17 +350,40 @@ describe('VideoDetailContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCurrentTime.value = 42;
-    capturedThumbnailHandlers = {};
+    mockVideoElement.value = {} as HTMLVideoElement;
+    // Sensible defaults for the happy path; individual tests override.
+    mockCaptureFrameBlob.mockResolvedValue(
+      new Blob(['x'], { type: 'image/jpeg' }),
+    );
+    mockCreateSignedUploadUrl.mockResolvedValue({
+      createSignedUploadUrl: {
+        dataObject: {
+          uploadUrl: 'https://signed.example/put',
+          publicUrl: 'https://cdn.example/thumb.jpg',
+          objectPath: 'watch/video1/thumb.jpg',
+        },
+      },
+    });
+    mockUploadBlob.mockResolvedValue(undefined);
+    mockSetVideoThumbnailUrl.mockResolvedValue({
+      setVideoThumbnailUrl: {
+        dataObject: { thumbnailUrl: 'https://cdn.example/thumb.jpg' },
+      },
+    });
     // Default: current user is the video owner.
     mockUseAuthContext.mockReturnValue({
       getAccessToken: vi.fn(),
       user: { id: 'owner-1' },
     });
     mockVideoContainer.mockImplementation(
-      ({ video, onEnded, onPausedChange, getCurrentTimeRef }) => {
-        if (getCurrentTimeRef) {
-          getCurrentTimeRef.current = () => mockCurrentTime.value;
-        }
+      ({
+        video,
+        onEnded,
+        onPausedChange,
+        getCurrentTimeRef,
+        getVideoElementRef,
+      }) => {
+        wireRefs({ getCurrentTimeRef, getVideoElementRef });
         return (
           <div data-testid="video-container">
             <button
@@ -630,26 +703,16 @@ describe('VideoDetailContainer', () => {
       expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
     });
 
-    it('calls the mutation with the video id and current time on click', async () => {
-      mockCurrentTime.value = 87;
-
-      await act(async () => {
-        renderWithTheme(<VideoDetailContainer {...createProps()} />);
-      });
-
+    const pauseAndCapture = async () => {
       await act(async () => {
         fireEvent.click(screen.getByTestId('video-container-pause'));
       });
       await act(async () => {
         fireEvent.click(screen.getByLabelText(thumbnailLabel));
       });
+    };
 
-      expect(mockSetVideoThumbnail).toHaveBeenCalledWith({
-        input: { videoId: 'video1', atSeconds: 87 },
-      });
-    });
-
-    it('notifies and refetches on success, notifies on error', async () => {
+    it('captures, signs, uploads, persists and refetches on click', async () => {
       const onNotify = vi.fn();
       const onThumbnailUpdated = vi.fn();
 
@@ -661,18 +724,82 @@ describe('VideoDetailContainer', () => {
         );
       });
 
-      await act(async () => {
-        capturedThumbnailHandlers.onSuccess?.();
+      await pauseAndCapture();
+
+      // Frame captured from the player's <video> element.
+      expect(mockCaptureFrameBlob).toHaveBeenCalledWith(mockVideoElement.value);
+
+      // Signed URL requested for this video.
+      expect(mockCreateSignedUploadUrl).toHaveBeenCalledWith({
+        input: {
+          site: 'watch',
+          action: 'VIDEO_THUMBNAIL_UPLOAD',
+          id: 'video1',
+          contentType: 'image/jpeg',
+        },
       });
+
+      // Blob PUT to the signed URL.
+      expect(mockUploadBlob).toHaveBeenCalledWith({
+        uploadUrl: 'https://signed.example/put',
+        blob: expect.any(Blob),
+      });
+
+      // Persisted against the video via objectPath.
+      expect(mockSetVideoThumbnailUrl).toHaveBeenCalledWith({
+        input: { videoId: 'video1', objectPath: 'watch/video1/thumb.jpg' },
+      });
+
+      // Refetch + success toast.
       expect(onThumbnailUpdated).toHaveBeenCalledTimes(1);
       expect(onNotify).toHaveBeenCalledWith({
         message: 'Thumbnail updated',
         severity: 'success',
       });
+    });
+
+    it('shows a CORS-specific error and skips upload on a tainted canvas', async () => {
+      const onNotify = vi.fn();
+      const onThumbnailUpdated = vi.fn();
+      mockCaptureFrameBlob.mockRejectedValue(new TaintedCanvasError());
 
       await act(async () => {
-        capturedThumbnailHandlers.onError?.();
+        renderWithTheme(
+          <VideoDetailContainer
+            {...createProps({ onNotify, onThumbnailUpdated })}
+          />,
+        );
       });
+
+      await pauseAndCapture();
+
+      expect(mockCreateSignedUploadUrl).not.toHaveBeenCalled();
+      expect(mockUploadBlob).not.toHaveBeenCalled();
+      expect(mockSetVideoThumbnailUrl).not.toHaveBeenCalled();
+      expect(onThumbnailUpdated).not.toHaveBeenCalled();
+      expect(onNotify).toHaveBeenCalledWith({
+        message: TAINTED_CANVAS_MESSAGE,
+        severity: 'error',
+      });
+    });
+
+    it('shows a generic error when the upload fails', async () => {
+      const onNotify = vi.fn();
+      const onThumbnailUpdated = vi.fn();
+      mockUploadBlob.mockRejectedValue(new Error('403'));
+
+      await act(async () => {
+        renderWithTheme(
+          <VideoDetailContainer
+            {...createProps({ onNotify, onThumbnailUpdated })}
+          />,
+        );
+      });
+
+      await pauseAndCapture();
+
+      expect(mockSetVideoThumbnailUrl).not.toHaveBeenCalled();
+      expect(onThumbnailUpdated).not.toHaveBeenCalled();
       expect(onNotify).toHaveBeenCalledWith({
         message: 'Failed to update thumbnail',
         severity: 'error',
