@@ -37,15 +37,38 @@ actions:
     permissions:
       - role: user
     comment: Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic).
+  - name: setVideoThumbnailAtTime
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: setVideoThumbnailAtTime
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/videos-actions/set-thumbnail'
+        version: 2
+    permissions:
+      - role: user
+    comment: Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
 custom_types:
   enums: []
   input_objects:
     - name: CreateDeviceRequestInput
     - name: SignedUploadUrlInput
+    - name: SetVideoThumbnailAtTimeInput
   objects:
     - name: CreateDeviceRequestOutput
     - name: DeviceRequestError
     - name: CreateDeviceRequestResponse
     - name: SignedUploadUrlOutput
     - name: SignedUploadUrlResponse
-  scalars: []
+    - name: SetVideoThumbnailAtTimeOutput
+    - name: SetVideoThumbnailAtTimeResponse
+  scalars:
+    - name: uuid

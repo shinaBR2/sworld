@@ -5,6 +5,9 @@ type Mutation {
   createSignedUploadUrl(
     input: SignedUploadUrlInput!
   ): SignedUploadUrlResponse!
+  setVideoThumbnailAtTime(
+    input: SetVideoThumbnailAtTimeInput!
+  ): SetVideoThumbnailAtTimeResponse!
 }
 
 input CreateDeviceRequestInput {
@@ -55,5 +58,24 @@ type SignedUploadUrlResponse {
   success: Boolean!
   message: String!
   dataObject: SignedUploadUrlOutput
+}
+
+input SetVideoThumbnailAtTimeInput {
+  # id of the video whose thumbnail to set; ownership enforced server-side
+  videoId: uuid!
+  # timestamp (seconds) of the frame to capture as the thumbnail
+  atSeconds: Float!
+}
+
+type SetVideoThumbnailAtTimeOutput {
+  thumbnailUrl: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type SetVideoThumbnailAtTimeResponse {
+  success: Boolean!
+  message: String!
+  dataObject: SetVideoThumbnailAtTimeOutput
 }
 
