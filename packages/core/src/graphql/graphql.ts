@@ -88,23 +88,6 @@ export type Int_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
-export type SetVideoThumbnailUrlInput = {
-  objectPath: Scalars['String']['input'];
-  videoId: Scalars['String']['input'];
-};
-
-export type SetVideoThumbnailUrlOutput = {
-  __typename?: 'SetVideoThumbnailUrlOutput';
-  thumbnailUrl: Scalars['String']['output'];
-};
-
-export type SetVideoThumbnailUrlResponse = {
-  __typename?: 'SetVideoThumbnailUrlResponse';
-  dataObject?: Maybe<SetVideoThumbnailUrlOutput>;
-  message: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-};
-
 export type SignedUploadUrlInput = {
   action: Scalars['String']['input'];
   contentType: Scalars['String']['input'];
@@ -12517,21 +12500,18 @@ export type CreateSignedUploadUrlMutation = {
   };
 };
 
-export type SetVideoThumbnailUrlMutationVariables = Exact<{
-  input: SetVideoThumbnailUrlInput;
+export type UpdateVideoThumbnailMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  thumbnailUrl: Scalars['String']['input'];
 }>;
 
-export type SetVideoThumbnailUrlMutation = {
+export type UpdateVideoThumbnailMutation = {
   __typename?: 'mutation_root';
-  setVideoThumbnailUrl: {
-    __typename?: 'SetVideoThumbnailUrlResponse';
-    success: boolean;
-    message: string;
-    dataObject?: {
-      __typename?: 'SetVideoThumbnailUrlOutput';
-      thumbnailUrl: string;
-    } | null;
-  };
+  update_videos_by_pk?: {
+    __typename?: 'videos';
+    id: any;
+    thumbnailUrl?: string | null;
+  } | null;
 };
 
 export type ShareVideoMutationVariables = Exact<{
@@ -13471,19 +13451,16 @@ export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
   CreateSignedUploadUrlMutation,
   CreateSignedUploadUrlMutationVariables
 >;
-export const SetVideoThumbnailUrlDocument = new TypedDocumentString(`
-    mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!) {
-  setVideoThumbnailUrl(input: $input) {
-    success
-    message
-    dataObject {
-      thumbnailUrl
-    }
+export const UpdateVideoThumbnailDocument = new TypedDocumentString(`
+    mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {
+  update_videos_by_pk(pk_columns: {id: $id}, _set: {thumbnailUrl: $thumbnailUrl}) {
+    id
+    thumbnailUrl
   }
 }
     `) as unknown as TypedDocumentString<
-  SetVideoThumbnailUrlMutation,
-  SetVideoThumbnailUrlMutationVariables
+  UpdateVideoThumbnailMutation,
+  UpdateVideoThumbnailMutationVariables
 >;
 export const SharePlaylistDocument = new TypedDocumentString(`
     mutation sharePlaylist($id: uuid!, $emails: jsonb) {

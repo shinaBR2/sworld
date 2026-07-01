@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import type { FC, PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMutationRequest } from '../../../universal/hooks/useMutation';
-import { useSetVideoThumbnailUrl } from './';
+import { useUpdateVideoThumbnail } from './';
 
 // Mock useMutationRequest
 vi.mock('../../../universal/hooks/useMutation', () => ({
@@ -31,22 +31,17 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useSetVideoThumbnailUrl', () => {
+describe('useUpdateVideoThumbnail', () => {
   const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
   const mockVariables = {
-    input: {
-      videoId: 'test-video-id',
-      objectPath: 'watch/thumbnail/test.png',
-    },
+    id: 'test-video-id',
+    thumbnailUrl: 'https://example.com/thumbnail.png',
   };
 
   const mockSuccessResponse = {
-    setVideoThumbnailUrl: {
-      success: true,
-      message: 'ok',
-      dataObject: {
-        thumbnailUrl: 'https://example.com/thumbnail.png',
-      },
+    update_videos_by_pk: {
+      id: 'test-video-id',
+      thumbnailUrl: 'https://example.com/thumbnail.png',
     },
   };
 
@@ -54,7 +49,7 @@ describe('useSetVideoThumbnailUrl', () => {
     vi.clearAllMocks();
   });
 
-  it('should successfully set video thumbnail URL and call onSuccess', async () => {
+  it('should successfully update video thumbnail and call onSuccess', async () => {
     const onSuccess = vi.fn();
     const onError = vi.fn();
 
@@ -73,7 +68,7 @@ describe('useSetVideoThumbnailUrl', () => {
 
     const { result } = renderHook(
       () =>
-        useSetVideoThumbnailUrl({
+        useUpdateVideoThumbnail({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -97,13 +92,13 @@ describe('useSetVideoThumbnailUrl', () => {
   it('should handle errors and call onError', async () => {
     const onSuccess = vi.fn();
     const onError = vi.fn();
-    const mockError = new Error('Set thumbnail URL failed');
+    const mockError = new Error('Update thumbnail failed');
 
     vi.mocked(useMutationRequest).mockReturnValueOnce({
       mutateAsync: vi.fn().mockImplementation(async (variables) => {
         await Promise.resolve();
         onError(mockError, variables, undefined);
-        console.error('Set video thumbnail URL failed:', mockError);
+        console.error('Update video thumbnail failed:', mockError);
         throw mockError;
       }),
       mutate: vi.fn(),
@@ -114,7 +109,7 @@ describe('useSetVideoThumbnailUrl', () => {
 
     const { result } = renderHook(
       () =>
-        useSetVideoThumbnailUrl({
+        useUpdateVideoThumbnail({
           getAccessToken: mockGetAccessToken,
           onSuccess,
           onError,
@@ -125,13 +120,13 @@ describe('useSetVideoThumbnailUrl', () => {
     );
 
     await expect(result.current.mutateAsync(mockVariables)).rejects.toThrow(
-      'Set thumbnail URL failed',
+      'Update thumbnail failed',
     );
 
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith(mockError, mockVariables, undefined);
     expect(mockConsoleError).toHaveBeenCalledWith(
-      'Set video thumbnail URL failed:',
+      'Update video thumbnail failed:',
       mockError,
     );
   });
@@ -147,7 +142,7 @@ describe('useSetVideoThumbnailUrl', () => {
 
     const { result } = renderHook(
       () =>
-        useSetVideoThumbnailUrl({
+        useUpdateVideoThumbnail({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -171,7 +166,7 @@ describe('useSetVideoThumbnailUrl', () => {
 
     renderHook(
       () =>
-        useSetVideoThumbnailUrl({
+        useUpdateVideoThumbnail({
           getAccessToken: mockGetAccessToken,
         }),
       {
@@ -182,7 +177,7 @@ describe('useSetVideoThumbnailUrl', () => {
     expect(useMutationRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         document: expect.stringContaining(
-          'mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!)',
+          'mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!)',
         ),
       }),
     );
