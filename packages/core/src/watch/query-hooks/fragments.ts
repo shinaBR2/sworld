@@ -2,7 +2,6 @@ import { graphql } from '../../graphql';
 
 const UserFragment = graphql(/* GraphQL */ `
   fragment UserFields on users {
-    id
     username
   }
 `);
@@ -17,6 +16,7 @@ const VideoFragment = graphql(/* GraphQL */ `
     source
     slug
     createdAt
+    user_id
     user {
       ...UserFields
     }

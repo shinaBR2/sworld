@@ -17,14 +17,12 @@ describe('Fragment Transformations', () => {
   describe('transformUser', () => {
     it('should transform user correctly', () => {
       const mockUserData = {
-        id: 'user-123',
         username: 'testuser',
       };
       const result = transformUser(
         mockUserData as FragmentType<typeof UserFragment>,
       );
       expect(result).toEqual({
-        id: 'user-123',
         username: 'testuser',
       });
     });
@@ -40,7 +38,8 @@ describe('Fragment Transformations', () => {
       slug: 'test-video',
       duration: 100,
       createdAt: '2023-01-01T00:00:00Z',
-      user: { id: 'user-123', username: 'testuser' },
+      user_id: 'user-123',
+      user: { username: 'testuser' },
       subtitles: [
         {
           id: '1',
@@ -117,7 +116,7 @@ describe('Fragment Transformations', () => {
       slug: 'test-playlist',
       createdAt: '2023-01-01T00:00:00Z',
       description: 'Test Playlist Description',
-      user: { id: 'user-123', username: 'testuser' },
+      user: { username: 'testuser' },
       playlist_videos: [
         {
           video: {
@@ -141,7 +140,7 @@ describe('Fragment Transformations', () => {
         slug: 'test-playlist',
         createdAt: '2023-01-01T00:00:00Z',
         description: 'Test Playlist Description',
-        user: { id: 'user-123', username: 'testuser' },
+        user: { username: 'testuser' },
         firstVideoId: 'video123',
       });
     });

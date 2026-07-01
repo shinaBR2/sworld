@@ -74,7 +74,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
     [videos, activeVideoId],
   );
 
-  const isOwner = Boolean(user?.id) && videoDetail?.user.id === user?.id;
+  const isOwner = Boolean(user?.id) && videoDetail?.userId === user?.id;
 
   const { mutate: setVideoThumbnail } = useSetVideoThumbnail({
     getAccessToken,
