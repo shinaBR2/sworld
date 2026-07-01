@@ -133,6 +133,7 @@ select_permissions:
         - status
         - thumbnail_url
         - title
+        - user_id
       filter:
         _or:
           - user_id:
