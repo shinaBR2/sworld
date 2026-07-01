@@ -1,4 +1,5 @@
 import EditIcon from '@mui/icons-material/Edit';
+import ImageIcon from '@mui/icons-material/Image';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import ShareIcon from '@mui/icons-material/Share';
 import { Box, IconButton, Stack, Tooltip } from '@mui/material';
@@ -7,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from 'core/providers/auth';
 import { useSaveSubtitle } from 'core/watch/mutation-hooks/save-subtitle';
+import { useSetVideoThumbnail } from 'core/watch/mutation-hooks/set-video-thumbnail';
 import React, { Suspense } from 'react';
 import { getMediaDisplayName } from '../../utils';
 import { VideoContainer } from '../../videos/video-container';
@@ -45,21 +47,58 @@ const SubtitleDialog = React.lazy(() =>
 // long-lived event handlers.
 
 const MainContent = (props: VideoDetailContainerProps) => {
-  const { queryRs, activeVideoId, onVideoEnded, autoPlay, onShare } = props;
+  const {
+    queryRs,
+    activeVideoId,
+    onVideoEnded,
+    autoPlay,
+    onShare,
+    onNotify,
+    onThumbnailUpdated,
+  } = props;
   const { isLoading, videos, playlist } = queryRs;
   const isPlaylist = Boolean(playlist);
 
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, user } = useAuthContext();
 
   // All hooks at the top
   const shouldPlayNextRef = React.useRef(autoPlay);
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [isSubtitleDialogOpen, setIsSubtitleDialogOpen] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(false);
+  // Filled by the player with a getter for the current playback time (seconds).
+  const getCurrentTimeRef = React.useRef<(() => number | null) | null>(null);
 
   const videoDetail = React.useMemo(
     () => videos.find((video) => video.id === activeVideoId),
     [videos, activeVideoId],
   );
+
+  const isOwner = Boolean(user?.id) && videoDetail?.user.id === user?.id;
+
+  const { mutate: setVideoThumbnail } = useSetVideoThumbnail({
+    getAccessToken,
+    onSuccess: () => {
+      // Ask the route to refetch its own detail query so the new thumbnail is
+      // reflected without a hard reload (the route owns its query key).
+      onThumbnailUpdated?.();
+      onNotify?.({ message: 'Thumbnail updated', severity: 'success' });
+    },
+    onError: () => {
+      onNotify?.({ message: 'Failed to update thumbnail', severity: 'error' });
+    },
+  });
+
+  const handleSetThumbnail = React.useCallback(() => {
+    if (!videoDetail) return;
+
+    const atSeconds = getCurrentTimeRef.current?.() ?? null;
+    if (atSeconds === null) return;
+
+    setVideoThumbnail({
+      input: { videoId: videoDetail.id, atSeconds },
+    });
+  }, [videoDetail, setVideoThumbnail]);
 
   React.useEffect(() => {
     shouldPlayNextRef.current = autoPlay;
@@ -150,6 +189,8 @@ const MainContent = (props: VideoDetailContainerProps) => {
             console.log(err);
           }}
           onEnded={handleVideoEnd}
+          onPausedChange={setIsPaused}
+          getCurrentTimeRef={getCurrentTimeRef}
         />
       </Box>
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
@@ -175,6 +216,17 @@ const MainContent = (props: VideoDetailContainerProps) => {
             playlistName: playlist?.title,
           })}
         </Typography>
+        {isOwner && isPaused && (
+          <Tooltip title="Set as thumbnail">
+            <IconButton
+              onClick={handleSetThumbnail}
+              size="small"
+              aria-label="Set as thumbnail"
+            >
+              <ImageIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         {onShare && (
           <Tooltip title="Share video">
             <IconButton onClick={() => setShareDialogOpen(true)} size="small">
