@@ -227,7 +227,13 @@ const extractThumbnailAtTime = async (
     );
 
     const storagePath = `videos/${userId}/${videoId}/${thumbnailFilename}`;
-    await uploadFile(localThumbnailPath, storagePath);
+    // Non-resumable: a thumbnail is tiny, and resumable uploads retry a
+    // denied/blocked write instead of failing fast — turning a clean error
+    // (e.g. missing bucket-write IAM) into a request-killing multi-minute hang.
+    await uploadFile(localThumbnailPath, storagePath, {
+      resumable: false,
+      cacheControl: 'public, max-age=31536000',
+    });
 
     return getDownloadUrl(storagePath);
   } catch (error) {

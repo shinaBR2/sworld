@@ -224,6 +224,7 @@ describe('extractThumbnailAtTime', () => {
     expect(uploadFile).toHaveBeenCalledWith(
       expect.stringMatching(/^\/tmp\/work\/thumbnail--\d+\.jpg$/),
       expect.stringMatching(/^videos\/u1\/v1\/thumbnail--\d+\.jpg$/),
+      expect.objectContaining({ resumable: false }),
     );
     expect(url).toMatch(
       /^https:\/\/storage\.googleapis\.com\/bucket\/videos\/u1\/v1\/thumbnail--\d+\.jpg$/,
