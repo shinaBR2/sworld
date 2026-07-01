@@ -27,6 +27,7 @@ describe('useLoadHistory', () => {
           duration: 300,
           createdAt: '2023-01-01T00:00:00Z',
           user: {
+            id: 'user-1',
             username: 'user1',
           },
           playlist_videos: [
@@ -54,6 +55,7 @@ describe('useLoadHistory', () => {
           duration: 450,
           createdAt: '2023-01-10T00:00:00Z',
           user: {
+            id: 'user-2',
             username: 'user2',
           },
           playlist_videos: [
@@ -90,6 +92,7 @@ describe('useLoadHistory', () => {
         thumbnailUrl: 'https://example.com/playlist1.jpg',
       },
       user: {
+        id: 'user-1',
         username: 'user1',
       },
     },
@@ -111,6 +114,7 @@ describe('useLoadHistory', () => {
         thumbnailUrl: 'https://example.com/playlist2.jpg',
       },
       user: {
+        id: 'user-2',
         username: 'user2',
       },
     },

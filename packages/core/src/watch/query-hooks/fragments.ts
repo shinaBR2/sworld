@@ -2,6 +2,7 @@ import { graphql } from '../../graphql';
 
 const UserFragment = graphql(/* GraphQL */ `
   fragment UserFields on users {
+    id
     username
   }
 `);

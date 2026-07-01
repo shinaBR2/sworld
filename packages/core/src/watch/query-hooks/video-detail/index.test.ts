@@ -23,6 +23,7 @@ describe('useLoadVideoDetail', () => {
     createdAt: '2024-01-01',
     thumbnailUrl: 'test-thumbnail',
     user: {
+      id: 'test-user-id',
       username: 'testuser',
     },
     user_video_histories: [
@@ -55,6 +56,7 @@ describe('useLoadVideoDetail', () => {
     createdAt: '2024-01-01',
     thumbnailUrl: 'test-thumbnail',
     user: {
+      id: 'test-user-id',
       username: 'testuser',
     },
     lastWatchedAt: '2024-01-02',

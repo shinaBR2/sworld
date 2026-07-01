@@ -12474,6 +12474,7 @@ export type UpdateVideoProgressMutation = {
 
 export type UserFieldsFragment = {
   __typename?: 'users';
+  id: any;
   username?: string | null;
 } & { ' $fragmentName'?: 'UserFieldsFragment' };
 
@@ -12679,6 +12680,7 @@ export class TypedDocumentString<TResult, TVariables>
 export const UserFieldsFragmentDoc = new TypedDocumentString(
   `
     fragment UserFields on users {
+  id
   username
 }
     `,
@@ -12710,6 +12712,7 @@ export const VideoFieldsFragmentDoc = new TypedDocumentString(
   }
 }
     fragment UserFields on users {
+  id
   username
 }`,
   { fragmentName: 'VideoFields' },
@@ -12723,6 +12726,7 @@ export const PlaylistVideoFieldsFragmentDoc = new TypedDocumentString(
   }
 }
     fragment UserFields on users {
+  id
   username
 }
 fragment VideoFields on videos {
@@ -12770,6 +12774,7 @@ export const PlaylistFieldsFragmentDoc = new TypedDocumentString(
   }
 }
     fragment UserFields on users {
+  id
   username
 }
 fragment VideoFields on videos {
@@ -13421,6 +13426,7 @@ export const UserVideoHistoryDocument = new TypedDocumentString(`
   }
 }
     fragment UserFields on users {
+  id
   username
 }`) as unknown as TypedDocumentString<
   UserVideoHistoryQuery,
@@ -13433,6 +13439,7 @@ export const PlaylistDetailDocument = new TypedDocumentString(`
   }
 }
     fragment UserFields on users {
+  id
   username
 }
 fragment VideoFields on videos {
@@ -13513,6 +13520,7 @@ export const VideoDetailDocument = new TypedDocumentString(`
   }
 }
     fragment UserFields on users {
+  id
   username
 }
 fragment VideoFields on videos {
@@ -13585,6 +13593,7 @@ export const AllVideosDocument = new TypedDocumentString(`
   }
 }
     fragment UserFields on users {
+  id
   username
 }
 fragment VideoFields on videos {
