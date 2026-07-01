@@ -7092,6 +7092,23 @@ export type Reading_Progresses_Variance_Order_By = {
   totalPages?: InputMaybe<Order_By>;
 };
 
+export type SetVideoThumbnailAtTimeInput = {
+  atSeconds: Scalars['Float']['input'];
+  videoId: Scalars['String']['input'];
+};
+
+export type SetVideoThumbnailAtTimeOutput = {
+  __typename?: 'SetVideoThumbnailAtTimeOutput';
+  thumbnailUrl: Scalars['String']['output'];
+};
+
+export type SetVideoThumbnailAtTimeResponse = {
+  __typename?: 'SetVideoThumbnailAtTimeResponse';
+  dataObject?: Maybe<SetVideoThumbnailAtTimeOutput>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 /** This table tell us what playlist is shared to whom. All videos in the playlist should be shared, not selective */
 export type Shared_Playlist_Recipients = {
   __typename?: 'shared_playlist_recipients';
@@ -12446,6 +12463,23 @@ export type SharePlaylistMutation = {
   update_playlist_by_pk?: { __typename?: 'playlist'; id: any } | null;
 };
 
+export type SetVideoThumbnailAtTimeMutationVariables = Exact<{
+  input: SetVideoThumbnailAtTimeInput;
+}>;
+
+export type SetVideoThumbnailAtTimeMutation = {
+  __typename?: 'mutation_root';
+  setVideoThumbnailAtTime: {
+    __typename?: 'SetVideoThumbnailAtTimeResponse';
+    success: boolean;
+    message: string;
+    dataObject?: {
+      __typename?: 'SetVideoThumbnailAtTimeOutput';
+      thumbnailUrl: string;
+    } | null;
+  };
+};
+
 export type ShareVideoMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   emails?: InputMaybe<Scalars['jsonb']['input']>;
@@ -13352,6 +13386,20 @@ export const SaveSubtitleDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   SaveSubtitleMutation,
   SaveSubtitleMutationVariables
+>;
+export const SetVideoThumbnailAtTimeDocument = new TypedDocumentString(`
+    mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {
+  setVideoThumbnailAtTime(input: $input) {
+    success
+    message
+    dataObject {
+      thumbnailUrl
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  SetVideoThumbnailAtTimeMutation,
+  SetVideoThumbnailAtTimeMutationVariables
 >;
 export const SharePlaylistDocument = new TypedDocumentString(`
     mutation sharePlaylist($id: uuid!, $emails: jsonb) {

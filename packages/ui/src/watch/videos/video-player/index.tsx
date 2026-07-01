@@ -3,6 +3,7 @@ import { useAuthContext } from 'core/providers/auth';
 import { useVideoProgress } from 'core/watch/mutation-hooks/use-video-progress';
 import {
   lazy,
+  type MutableRefObject,
   Suspense,
   useCallback,
   useEffect,
@@ -31,6 +32,13 @@ interface VideoPlayerProps {
   video: PlayableVideo;
   onEnded?: () => void;
   onError?: (error: unknown) => void;
+  // Notifies the parent whenever the player is paused/resumed so owner-only
+  // controls (e.g. "Set as thumbnail") can react to the paused state.
+  onPausedChange?: (isPaused: boolean) => void;
+  // A ref the player fills with a getter for the current playback time in
+  // seconds, letting the parent read the paused frame without owning the
+  // player instance.
+  getCurrentTimeRef?: MutableRefObject<(() => number | null) | null>;
 }
 
 /**
@@ -56,7 +64,7 @@ interface VideoPlayerProps {
  */
 
 const VideoPlayer = (props: VideoPlayerProps) => {
-  const { video, onEnded, onError } = props;
+  const { video, onEnded, onError, onPausedChange, getCurrentTimeRef } = props;
   const { title, source, thumbnailUrl, subtitles } = video;
   const { isSignedIn, getAccessToken } = useAuthContext();
   const {
@@ -97,12 +105,34 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     hasResumedRef.current = false;
   }, [video.id]);
 
-  // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
-  const setPlayerRef = useCallback((player: any) => {
-    if (!player) return;
+  const setPlayerRef = useCallback(
+    // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
+    (player: any) => {
+      if (!player) return;
 
-    playerRef.current = player;
-  }, []);
+      playerRef.current = player;
+
+      // Expose a current-time getter to the parent so it can read the paused
+      // frame's timestamp without holding the player instance itself.
+      if (getCurrentTimeRef) {
+        getCurrentTimeRef.current = () =>
+          playerRef.current?.getCurrentTime?.() ?? null;
+      }
+    },
+    [getCurrentTimeRef],
+  );
+
+  // Wrap the progress-tracking pause/play handlers so the parent also learns
+  // about the paused state (native controls fire onPause/onPlay directly).
+  const handlePauseWithNotify = useCallback(() => {
+    handlePause();
+    onPausedChange?.(true);
+  }, [handlePause, onPausedChange]);
+
+  const handlePlayWithNotify = useCallback(() => {
+    handlePlay();
+    onPausedChange?.(false);
+  }, [handlePlay, onPausedChange]);
 
   // Handle keyboard shortcuts on the wrapper element
   useEffect(() => {
@@ -377,11 +407,12 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           playbackRate={playerState.playbackRate}
           onError={handleError}
           onProgress={handleProgress}
-          onPause={handlePause}
-          onPlay={handlePlay}
+          onPause={handlePauseWithNotify}
+          onPlay={handlePlayWithNotify}
           onSeek={handleSeek}
           onEnded={() => {
             handleEnded();
+            onPausedChange?.(false);
             onEnded?.();
           }}
           onReady={handleReady}

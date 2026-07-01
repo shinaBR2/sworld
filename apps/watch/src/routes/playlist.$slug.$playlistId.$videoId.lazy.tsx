@@ -1,5 +1,6 @@
 import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { Auth } from 'core';
+import { useQueryContext } from 'core/providers/query';
 import {
   buildVariables,
   formalize,
@@ -25,6 +26,7 @@ function VideoDetails(): JSX.Element {
   const { playlistId, videoId } = Route.useParams();
   const navigate = useNavigate();
   const authContext = Auth.useAuthContext();
+  const { invalidateQuery } = useQueryContext();
   const videoResult = useLoadPlaylistDetail({
     getAccessToken: authContext.getAccessToken,
     id: playlistId,
@@ -87,6 +89,10 @@ function VideoDetails(): JSX.Element {
         LinkComponent={Link}
         onVideoEnded={handleVideoEnded}
         onShare={handleShare}
+        onNotify={setNotification}
+        onThumbnailUpdated={() =>
+          invalidateQuery(['playlist-detail', playlistId])
+        }
       />
     </Layout>
   );

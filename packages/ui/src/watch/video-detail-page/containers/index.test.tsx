@@ -23,7 +23,7 @@ type MockVideo = {
   slug: string;
   duration: number;
   createdAt: string;
-  user: { username: string };
+  user: { id: string; username: string };
   lastWatchedAt: string | null;
   progressSeconds: number;
   subtitles: Array<{
@@ -73,12 +73,45 @@ vi.mock('@mui/material/Checkbox', () => ({
   ),
 }));
 
+// The mocked player exposes controls to drive paused state and the current
+// playback time (in seconds) from within tests.
+const mockCurrentTime = { value: 42 };
+
 // Create VideoContainer mock with a mock implementation
-const mockVideoContainer = vi.fn().mockImplementation(({ video, onEnded }) => (
-  <div data-testid="video-container" onClick={() => onEnded?.()}>
-    {video.title}
-  </div>
-));
+const mockVideoContainer = vi
+  .fn()
+  .mockImplementation(
+    ({ video, onEnded, onPausedChange, getCurrentTimeRef }) => {
+      if (getCurrentTimeRef) {
+        getCurrentTimeRef.current = () => mockCurrentTime.value;
+      }
+      return (
+        <div data-testid="video-container">
+          <button
+            type="button"
+            data-testid="video-container-ended"
+            onClick={() => onEnded?.()}
+          >
+            {video.title}
+          </button>
+          <button
+            type="button"
+            data-testid="video-container-pause"
+            onClick={() => onPausedChange?.(true)}
+          >
+            pause
+          </button>
+          <button
+            type="button"
+            data-testid="video-container-play"
+            onClick={() => onPausedChange?.(false)}
+          >
+            play
+          </button>
+        </div>
+      );
+    },
+  );
 
 // Mock the VideoContainer module
 vi.mock('../../videos/video-container', () => ({
@@ -86,7 +119,33 @@ vi.mock('../../videos/video-container', () => ({
     video: MockVideo;
     onEnded?: () => void;
     onError?: (error: unknown) => void;
+    onPausedChange?: (isPaused: boolean) => void;
+    getCurrentTimeRef?: {
+      current: (() => number | null) | null;
+    };
   }) => mockVideoContainer(props),
+}));
+
+// Mock the auth context so we can control the current user's id (owner check).
+const mockUseAuthContext = vi.fn();
+vi.mock('core/providers/auth', () => ({
+  useAuthContext: () => mockUseAuthContext(),
+}));
+
+// Mock the set-thumbnail mutation hook.
+const mockSetVideoThumbnail = vi.fn();
+let capturedThumbnailHandlers: {
+  onSuccess?: () => void;
+  onError?: () => void;
+} = {};
+vi.mock('core/watch/mutation-hooks/set-video-thumbnail', () => ({
+  useSetVideoThumbnail: (props: {
+    onSuccess?: () => void;
+    onError?: () => void;
+  }) => {
+    capturedThumbnailHandlers = props;
+    return { mutate: mockSetVideoThumbnail };
+  },
 }));
 
 vi.mock('../../dialogs/share', () => ({
@@ -197,7 +256,7 @@ const createMockVideo = (id: string, index: number) => ({
   slug: `video-${id}`,
   duration: 120 + index * 60,
   createdAt: `2023-01-${String(index + 1).padStart(2, '0')}`,
-  user: { username: 'testuser' },
+  user: { id: 'owner-1', username: 'testuser' },
   lastWatchedAt: null,
   progressSeconds: 0,
   subtitles: [
@@ -238,11 +297,45 @@ describe('VideoDetailContainer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockVideoContainer.mockImplementation(({ video, onEnded }) => (
-      <div data-testid="video-container" onClick={() => onEnded?.()}>
-        {video.title}
-      </div>
-    ));
+    mockCurrentTime.value = 42;
+    capturedThumbnailHandlers = {};
+    // Default: current user is the video owner.
+    mockUseAuthContext.mockReturnValue({
+      getAccessToken: vi.fn(),
+      user: { id: 'owner-1' },
+    });
+    mockVideoContainer.mockImplementation(
+      ({ video, onEnded, onPausedChange, getCurrentTimeRef }) => {
+        if (getCurrentTimeRef) {
+          getCurrentTimeRef.current = () => mockCurrentTime.value;
+        }
+        return (
+          <div data-testid="video-container">
+            <button
+              type="button"
+              data-testid="video-container-ended"
+              onClick={() => onEnded?.()}
+            >
+              {video.title}
+            </button>
+            <button
+              type="button"
+              data-testid="video-container-pause"
+              onClick={() => onPausedChange?.(true)}
+            >
+              pause
+            </button>
+            <button
+              type="button"
+              data-testid="video-container-play"
+              onClick={() => onPausedChange?.(false)}
+            >
+              play
+            </button>
+          </div>
+        );
+      },
+    );
   });
 
   it('should render loading skeletons when isLoading is true', async () => {
@@ -377,7 +470,7 @@ describe('VideoDetailContainer', () => {
     renderWithTheme(<VideoDetailContainer {...props} />);
 
     // Simulate video end
-    fireEvent.click(screen.getByTestId('video-container'));
+    fireEvent.click(screen.getByTestId('video-container-ended'));
 
     // Should trigger onVideoEnded with next video
     expect(onVideoEnded).toHaveBeenCalledWith(
@@ -491,6 +584,97 @@ describe('VideoDetailContainer', () => {
       });
 
       expect(onShare).toHaveBeenCalledWith(['test@example.com']);
+    });
+  });
+
+  describe('set as thumbnail', () => {
+    const thumbnailLabel = 'Set as thumbnail';
+
+    it('shows the button only when the owner has paused the video', async () => {
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      });
+
+      // Hidden while playing.
+      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+
+      // Pause -> visible for the owner.
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('video-container-pause'));
+      });
+      expect(screen.getByLabelText(thumbnailLabel)).toBeInTheDocument();
+
+      // Resume -> hidden again.
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('video-container-play'));
+      });
+      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+    });
+
+    it('never shows the button for a non-owner, even when paused', async () => {
+      mockUseAuthContext.mockReturnValue({
+        getAccessToken: vi.fn(),
+        user: { id: 'someone-else' },
+      });
+
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('video-container-pause'));
+      });
+
+      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+    });
+
+    it('calls the mutation with the video id and current time on click', async () => {
+      mockCurrentTime.value = 87;
+
+      await act(async () => {
+        renderWithTheme(<VideoDetailContainer {...createProps()} />);
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('video-container-pause'));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByLabelText(thumbnailLabel));
+      });
+
+      expect(mockSetVideoThumbnail).toHaveBeenCalledWith({
+        input: { videoId: 'video1', atSeconds: 87 },
+      });
+    });
+
+    it('notifies and refetches on success, notifies on error', async () => {
+      const onNotify = vi.fn();
+      const onThumbnailUpdated = vi.fn();
+
+      await act(async () => {
+        renderWithTheme(
+          <VideoDetailContainer
+            {...createProps({ onNotify, onThumbnailUpdated })}
+          />,
+        );
+      });
+
+      await act(async () => {
+        capturedThumbnailHandlers.onSuccess?.();
+      });
+      expect(onThumbnailUpdated).toHaveBeenCalledTimes(1);
+      expect(onNotify).toHaveBeenCalledWith({
+        message: 'Thumbnail updated',
+        severity: 'success',
+      });
+
+      await act(async () => {
+        capturedThumbnailHandlers.onError?.();
+      });
+      expect(onNotify).toHaveBeenCalledWith({
+        message: 'Failed to update thumbnail',
+        severity: 'error',
+      });
     });
   });
 
