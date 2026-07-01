@@ -1,3 +1,27 @@
+/**
+ * SERVER-SIDE thumbnail extraction — KEPT AS A REFERENCE/FALLBACK, no longer the
+ * primary path. Reached only via the `setVideoThumbnailAtTime` action.
+ *
+ * Why it was demoted (both observed in production, not on macOS):
+ *  1. Cloud Run cold starts routinely blow past Hasura's 30s action timeout, so
+ *     the request fails before a frame is ever produced.
+ *  2. The Linux ffmpeg build seeks unreliably into a single concatenated fMP4
+ *     fragment and sometimes emits NO frame at all (ENOENT on the output file),
+ *     even though the identical code works on macOS.
+ *
+ * Trade-offs:
+ *  - Server-side (this code): needs no browser/CORS setup and can target ANY
+ *    timestamp even if the user isn't watching — but it's slow and unreliable
+ *    (cold start + segment download + ffmpeg) and can't cheaply downscale.
+ *  - Client-side (the new PRIMARY path via `setVideoThumbnailUrl`): instant, the
+ *    exact frame the user sees, downscaled in-browser to a small thumbnail, no
+ *    ffmpeg or cold start — but requires the video to be CORS-clean so the canvas
+ *    can capture it.
+ *
+ * We moved the primary path to the browser for speed and reliability; this server
+ * code stays for the cases the client can't cover (e.g. future non-interactive /
+ * batch thumbnailing where no one is watching the frame).
+ */
 import { readFile, writeFile } from 'fs/promises';
 import { Parser } from 'm3u8-parser';
 import path from 'path';
