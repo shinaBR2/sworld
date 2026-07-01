@@ -8,6 +8,9 @@ type Mutation {
   setVideoThumbnailAtTime(
     input: SetVideoThumbnailAtTimeInput!
   ): SetVideoThumbnailAtTimeResponse!
+  setVideoThumbnailUrl(
+    input: SetVideoThumbnailUrlInput!
+  ): SetVideoThumbnailUrlResponse!
 }
 
 input CreateDeviceRequestInput {
@@ -77,5 +80,24 @@ type SetVideoThumbnailAtTimeResponse {
   success: Boolean!
   message: String!
   dataObject: SetVideoThumbnailAtTimeOutput
+}
+
+# Persists a thumbnail the browser captured + uploaded itself (via
+# createSignedUploadUrl). objectPath is the uploaded object's storage path;
+# ownership + path-safety are enforced server-side.
+input SetVideoThumbnailUrlInput {
+  videoId: String!
+  objectPath: String!
+}
+
+type SetVideoThumbnailUrlOutput {
+  thumbnailUrl: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+type SetVideoThumbnailUrlResponse {
+  success: Boolean!
+  message: String!
+  dataObject: SetVideoThumbnailUrlOutput
 }
 
