@@ -22,8 +22,8 @@ describe('useLoadVideoDetail', () => {
     slug: 'test-slug',
     createdAt: '2024-01-01',
     thumbnailUrl: 'test-thumbnail',
+    user_id: 'test-user-id',
     user: {
-      id: 'test-user-id',
       username: 'testuser',
     },
     user_video_histories: [
@@ -55,8 +55,8 @@ describe('useLoadVideoDetail', () => {
     slug: 'test-slug',
     createdAt: '2024-01-01',
     thumbnailUrl: 'test-thumbnail',
+    userId: 'test-user-id',
     user: {
-      id: 'test-user-id',
       username: 'testuser',
     },
     lastWatchedAt: '2024-01-02',

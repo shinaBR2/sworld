@@ -23,7 +23,8 @@ type MockVideo = {
   slug: string;
   duration: number;
   createdAt: string;
-  user: { id: string; username: string };
+  userId: string;
+  user: { username: string };
   lastWatchedAt: string | null;
   progressSeconds: number;
   subtitles: Array<{
@@ -256,7 +257,8 @@ const createMockVideo = (id: string, index: number) => ({
   slug: `video-${id}`,
   duration: 120 + index * 60,
   createdAt: `2023-01-${String(index + 1).padStart(2, '0')}`,
-  user: { id: 'owner-1', username: 'testuser' },
+  userId: 'owner-1',
+  user: { username: 'testuser' },
   lastWatchedAt: null,
   progressSeconds: 0,
   subtitles: [

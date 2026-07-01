@@ -12,7 +12,6 @@ import { MEDIA_TYPES } from './types';
 const transformUser = (userData: FragmentType<typeof UserFragment>) => {
   const user = getFragmentData(UserFragment, userData);
   return {
-    id: user.id,
     username: user.username || '',
   };
 };
@@ -51,6 +50,7 @@ const transformVideoFragment = (
     slug: video.slug,
     duration: video.duration || 0,
     createdAt: video.createdAt,
+    userId: video.user_id,
     user,
     lastWatchedAt: history?.last_watched_at ?? null,
     progressSeconds: history?.progress_seconds ?? 0,
