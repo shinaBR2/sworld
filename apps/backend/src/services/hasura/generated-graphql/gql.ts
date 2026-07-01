@@ -26,6 +26,7 @@ type Documents = {
   '\n  mutation FinalizeVideo(\n    $taskId: uuid!\n    $notificationObject: notifications_insert_input!\n    $videoId: uuid!\n    $videoUpdates: videos_set_input!\n  ) {\n    # Update task status to completed\n    update_tasks(where: { task_id: { _eq: $taskId } }, _set: { status: "completed" }) {\n      affected_rows\n      returning {\n        id\n      }\n    }\n\n    # Add notification\n    insert_notifications_one(object: $notificationObject) {\n      id\n    }\n\n    # Finalize video using the input type\n    update_videos_by_pk(pk_columns: { id: $videoId }, _set: $videoUpdates) {\n      id\n    }\n  }\n': typeof types.FinalizeVideoDocument;
   '\n  mutation FixVideoDuration($id: uuid!, $duration: Int!, $taskId: uuid!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { duration: $duration }) {\n      id\n    }\n    update_tasks(\n      where: { task_id: { _eq: $taskId } }\n      _set: { status: "completed", completed: true }\n    ) {\n      affected_rows\n    }\n  }\n': typeof types.FixVideoDurationDocument;
   '\n  mutation FixVideoThumbnail($id: uuid!, $thumbnailUrl: String!, $taskId: uuid!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n    update_tasks(\n      where: { task_id: { _eq: $taskId } }\n      _set: { status: "completed", completed: true }\n    ) {\n      affected_rows\n    }\n  }\n': typeof types.FixVideoThumbnailDocument;
+  '\n  mutation SetVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n      thumbnailUrl\n    }\n  }\n': typeof types.SetVideoThumbnailDocument;
   '\n  query VideoMetadata($videoId: uuid!) {\n    videos_by_pk(id: $videoId) {\n      metadata\n    }\n  }\n': typeof types.VideoMetadataDocument;
   '\n  mutation MarkVideoFailed($videoId: uuid!, $metadata: jsonb!) {\n    update_videos_by_pk(\n      pk_columns: { id: $videoId }\n      _set: { status: "failed", metadata: $metadata }\n    ) {\n      id\n    }\n  }\n': typeof types.MarkVideoFailedDocument;
   '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n': typeof types.SaveSubtitleDocument;
@@ -62,6 +63,8 @@ const documents: Documents = {
     types.FixVideoDurationDocument,
   '\n  mutation FixVideoThumbnail($id: uuid!, $thumbnailUrl: String!, $taskId: uuid!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n    update_tasks(\n      where: { task_id: { _eq: $taskId } }\n      _set: { status: "completed", completed: true }\n    ) {\n      affected_rows\n    }\n  }\n':
     types.FixVideoThumbnailDocument,
+  '\n  mutation SetVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n      thumbnailUrl\n    }\n  }\n':
+    types.SetVideoThumbnailDocument,
   '\n  query VideoMetadata($videoId: uuid!) {\n    videos_by_pk(id: $videoId) {\n      metadata\n    }\n  }\n':
     types.VideoMetadataDocument,
   '\n  mutation MarkVideoFailed($videoId: uuid!, $metadata: jsonb!) {\n    update_videos_by_pk(\n      pk_columns: { id: $videoId }\n      _set: { status: "failed", metadata: $metadata }\n    ) {\n      id\n    }\n  }\n':
@@ -158,6 +161,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation FixVideoThumbnail($id: uuid!, $thumbnailUrl: String!, $taskId: uuid!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n    update_tasks(\n      where: { task_id: { _eq: $taskId } }\n      _set: { status: "completed", completed: true }\n    ) {\n      affected_rows\n    }\n  }\n',
 ): typeof import('./graphql').FixVideoThumbnailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation SetVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n      thumbnailUrl\n    }\n  }\n',
+): typeof import('./graphql').SetVideoThumbnailDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

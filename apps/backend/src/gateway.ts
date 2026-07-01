@@ -11,6 +11,7 @@ import { rateLimiter } from 'hono-rate-limiter';
 import { authRouter } from './apps/gateway/auth';
 import { hashnodeRouter } from './apps/gateway/hashnode';
 import { storageRouter } from './apps/gateway/storage';
+import { videoActionsRouter } from './apps/gateway/videos-actions';
 import { videosRouter } from './apps/gateway/videos';
 import { envConfig } from './utils/envConfig';
 import { createHonoLoggingMiddleware, getCurrentLogger } from './utils/logger';
@@ -66,6 +67,7 @@ app.get('/hz', (c) => {
 });
 
 app.route('/videos', videosRouter);
+app.route('/videos-actions', videoActionsRouter);
 app.route('/hashnode', hashnodeRouter);
 app.route('/auth', authRouter);
 app.route('/storage', storageRouter);

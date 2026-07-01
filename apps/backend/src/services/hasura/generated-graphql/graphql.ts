@@ -12020,6 +12020,20 @@ export type FixVideoThumbnailMutation = {
   } | null;
 };
 
+export type SetVideoThumbnailMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  thumbnailUrl: Scalars['String']['input'];
+}>;
+
+export type SetVideoThumbnailMutation = {
+  __typename?: 'mutation_root';
+  update_videos_by_pk?: {
+    __typename?: 'videos';
+    id: any;
+    thumbnailUrl?: string | null;
+  } | null;
+};
+
 export type VideoMetadataQueryVariables = Exact<{
   videoId: Scalars['uuid']['input'];
 }>;
@@ -12333,6 +12347,17 @@ export const FixVideoThumbnailDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   FixVideoThumbnailMutation,
   FixVideoThumbnailMutationVariables
+>;
+export const SetVideoThumbnailDocument = new TypedDocumentString(`
+    mutation SetVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {
+  update_videos_by_pk(pk_columns: {id: $id}, _set: {thumbnailUrl: $thumbnailUrl}) {
+    id
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<
+  SetVideoThumbnailMutation,
+  SetVideoThumbnailMutationVariables
 >;
 export const VideoMetadataDocument = new TypedDocumentString(`
     query VideoMetadata($videoId: uuid!) {
