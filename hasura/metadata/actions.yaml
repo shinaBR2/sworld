@@ -70,5 +70,4 @@ custom_types:
     - name: SignedUploadUrlResponse
     - name: SetVideoThumbnailAtTimeOutput
     - name: SetVideoThumbnailAtTimeResponse
-  scalars:
-    - name: uuid
+  scalars: []
