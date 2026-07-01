@@ -41,6 +41,8 @@ type Documents = {
   '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n': typeof types.InsertVideosDocument;
   '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n': typeof types.SaveSubtitleDocument;
   '\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n': typeof types.SetVideoThumbnailAtTimeDocument;
+  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n': typeof types.CreateSignedUploadUrlDocument;
+  '\n  mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!) {\n    setVideoThumbnailUrl(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n': typeof types.SetVideoThumbnailUrlDocument;
   '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.SharePlaylistDocument;
   '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.ShareVideoDocument;
   '\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n': typeof types.UpdateVideoProgressDocument;
@@ -111,6 +113,10 @@ const documents: Documents = {
     types.SaveSubtitleDocument,
   '\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n':
     types.SetVideoThumbnailAtTimeDocument,
+  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n':
+    types.CreateSignedUploadUrlDocument,
+  '\n  mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!) {\n    setVideoThumbnailUrl(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n':
+    types.SetVideoThumbnailUrlDocument,
   '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n':
     types.SharePlaylistDocument,
   '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n':
@@ -305,6 +311,18 @@ export function graphql(
 export function graphql(
   source: '\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n',
 ): typeof import('./graphql').SetVideoThumbnailAtTimeDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n',
+): typeof import('./graphql').CreateSignedUploadUrlDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!) {\n    setVideoThumbnailUrl(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n',
+): typeof import('./graphql').SetVideoThumbnailUrlDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

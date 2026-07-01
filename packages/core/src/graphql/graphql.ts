@@ -88,6 +88,23 @@ export type Int_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+export type SetVideoThumbnailUrlInput = {
+  objectPath: Scalars['String']['input'];
+  videoId: Scalars['String']['input'];
+};
+
+export type SetVideoThumbnailUrlOutput = {
+  __typename?: 'SetVideoThumbnailUrlOutput';
+  thumbnailUrl: Scalars['String']['output'];
+};
+
+export type SetVideoThumbnailUrlResponse = {
+  __typename?: 'SetVideoThumbnailUrlResponse';
+  dataObject?: Maybe<SetVideoThumbnailUrlOutput>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type SignedUploadUrlInput = {
   action: Scalars['String']['input'];
   contentType: Scalars['String']['input'];
@@ -12480,6 +12497,43 @@ export type SetVideoThumbnailAtTimeMutation = {
   };
 };
 
+export type CreateSignedUploadUrlMutationVariables = Exact<{
+  input: SignedUploadUrlInput;
+}>;
+
+export type CreateSignedUploadUrlMutation = {
+  __typename?: 'mutation_root';
+  createSignedUploadUrl: {
+    __typename?: 'SignedUploadUrlResponse';
+    success: boolean;
+    message: string;
+    dataObject?: {
+      __typename?: 'SignedUploadUrlOutput';
+      uploadUrl: string;
+      publicUrl: string;
+      objectPath: string;
+      expiresAt: string;
+    } | null;
+  };
+};
+
+export type SetVideoThumbnailUrlMutationVariables = Exact<{
+  input: SetVideoThumbnailUrlInput;
+}>;
+
+export type SetVideoThumbnailUrlMutation = {
+  __typename?: 'mutation_root';
+  setVideoThumbnailUrl: {
+    __typename?: 'SetVideoThumbnailUrlResponse';
+    success: boolean;
+    message: string;
+    dataObject?: {
+      __typename?: 'SetVideoThumbnailUrlOutput';
+      thumbnailUrl: string;
+    } | null;
+  };
+};
+
 export type ShareVideoMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   emails?: InputMaybe<Scalars['jsonb']['input']>;
@@ -13399,6 +13453,37 @@ export const SetVideoThumbnailAtTimeDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   SetVideoThumbnailAtTimeMutation,
   SetVideoThumbnailAtTimeMutationVariables
+>;
+export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
+    mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {
+  createSignedUploadUrl(input: $input) {
+    success
+    message
+    dataObject {
+      uploadUrl
+      publicUrl
+      objectPath
+      expiresAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CreateSignedUploadUrlMutation,
+  CreateSignedUploadUrlMutationVariables
+>;
+export const SetVideoThumbnailUrlDocument = new TypedDocumentString(`
+    mutation SetVideoThumbnailUrl($input: SetVideoThumbnailUrlInput!) {
+  setVideoThumbnailUrl(input: $input) {
+    success
+    message
+    dataObject {
+      thumbnailUrl
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  SetVideoThumbnailUrlMutation,
+  SetVideoThumbnailUrlMutationVariables
 >;
 export const SharePlaylistDocument = new TypedDocumentString(`
     mutation sharePlaylist($id: uuid!, $emails: jsonb) {
