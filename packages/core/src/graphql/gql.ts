@@ -30,6 +30,11 @@ type Documents = {
   '\n  query GetReadingStats($monthStart: timestamptz!) {\n    books_aggregate {\n      aggregate {\n        count\n      }\n    }\n    completed_books: books_aggregate(where: { reading_progresses: { percentage: { _gte: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    currently_reading: books_aggregate(where: { reading_progresses: { percentage: { _gt: 0, _lt: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: $monthStart } }) {\n      aggregate {\n        sum {\n          readingTimeMinutes\n        }\n      }\n    }\n  }\n': typeof types.GetReadingStatsDocument;
   '\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetAudiosAndFeelingsDocument;
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetPublicAudiosAndFeelingsDocument;
+  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n': typeof types.AudioFieldsFragmentDoc;
+  '\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n': typeof types.PlaylistAudioFieldsFragmentDoc;
+  '\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n': typeof types.ListenPlaylistFieldsFragmentDoc;
+  '\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n': typeof types.ListenPlaylistDetailDocument;
+  '\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: "listen" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n': typeof types.ListenPlaylistsDocument;
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n': typeof types.InsertPostDocument;
   '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n': typeof types.UpdatePostDocument;
   '\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n      visibility\n      pinned\n    }\n  }\n': typeof types.PostDocument;
@@ -39,12 +44,12 @@ type Documents = {
   '\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: "now()" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n': typeof types.MarkNotificationsAsReadDocument;
   '\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n': typeof types.NotificationsDocument;
   '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n': typeof types.InsertVideosDocument;
+  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n': typeof types.CreateSignedUploadUrlDocument;
   '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n': typeof types.SaveSubtitleDocument;
   '\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n': typeof types.SetVideoThumbnailAtTimeDocument;
-  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n': typeof types.CreateSignedUploadUrlDocument;
-  '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n': typeof types.UpdateVideoThumbnailDocument;
   '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.SharePlaylistDocument;
   '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n': typeof types.ShareVideoDocument;
+  '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n': typeof types.UpdateVideoThumbnailDocument;
   '\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n': typeof types.UpdateVideoProgressDocument;
   '\n  fragment UserFields on users {\n    username\n  }\n': typeof types.UserFieldsFragmentDoc;
   '\n  fragment VideoFields on videos {\n    id\n    title\n    description\n    duration\n    thumbnailUrl\n    source\n    slug\n    createdAt\n    user_id\n    user {\n      ...UserFields\n    }\n    user_video_histories {\n      last_watched_at\n      progress_seconds\n    }\n    subtitles {\n      id\n      isDefault\n      lang\n      url\n    }\n  }\n': typeof types.VideoFieldsFragmentDoc;
@@ -91,6 +96,16 @@ const documents: Documents = {
     types.GetAudiosAndFeelingsDocument,
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n':
     types.GetPublicAudiosAndFeelingsDocument,
+  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n':
+    types.AudioFieldsFragmentDoc,
+  '\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n':
+    types.PlaylistAudioFieldsFragmentDoc,
+  '\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n':
+    types.ListenPlaylistFieldsFragmentDoc,
+  '\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n':
+    types.ListenPlaylistDetailDocument,
+  '\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: "listen" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n':
+    types.ListenPlaylistsDocument,
   '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n':
     types.InsertPostDocument,
   '\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n':
@@ -109,18 +124,18 @@ const documents: Documents = {
     types.NotificationsDocument,
   '\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n':
     types.InsertVideosDocument,
+  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n':
+    types.CreateSignedUploadUrlDocument,
   '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n':
     types.SaveSubtitleDocument,
   '\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n':
     types.SetVideoThumbnailAtTimeDocument,
-  '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n':
-    types.CreateSignedUploadUrlDocument,
-  '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n':
-    types.UpdateVideoThumbnailDocument,
   '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n':
     types.SharePlaylistDocument,
   '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n':
     types.ShareVideoDocument,
+  '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n':
+    types.UpdateVideoThumbnailDocument,
   '\n  mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {\n    insert_user_video_history_one(\n      object: { video_id: $videoId, progress_seconds: $progressSeconds, last_watched_at: $lastWatchedAt }\n      on_conflict: {\n        constraint: user_video_history_user_id_video_id_key\n        update_columns: [progress_seconds, last_watched_at]\n      }\n    ) {\n      id\n      progress_seconds\n      last_watched_at\n    }\n  }\n':
     types.UpdateVideoProgressDocument,
   '\n  fragment UserFields on users {\n    username\n  }\n':
@@ -249,6 +264,36 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n',
+): typeof import('./graphql').AudioFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n',
+): typeof import('./graphql').PlaylistAudioFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n',
+): typeof import('./graphql').ListenPlaylistFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n',
+): typeof import('./graphql').ListenPlaylistDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: "listen" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n',
+): typeof import('./graphql').ListenPlaylistsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n',
 ): typeof import('./graphql').InsertPostDocument;
 /**
@@ -303,6 +348,12 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n',
+): typeof import('./graphql').CreateSignedUploadUrlDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').SaveSubtitleDocument;
 /**
@@ -315,18 +366,6 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n',
-): typeof import('./graphql').CreateSignedUploadUrlDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n',
-): typeof import('./graphql').UpdateVideoThumbnailDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
   source: '\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').SharePlaylistDocument;
 /**
@@ -335,6 +374,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation shareVideo($id: uuid!, $emails: jsonb) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').ShareVideoDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {\n    update_videos_by_pk(pk_columns: { id: $id }, _set: { thumbnailUrl: $thumbnailUrl }) {\n      id\n      thumbnailUrl\n    }\n  }\n',
+): typeof import('./graphql').UpdateVideoThumbnailDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

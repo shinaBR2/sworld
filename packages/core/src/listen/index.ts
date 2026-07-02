@@ -1,1 +1,1 @@
-export * as queryHooks from './query-hooks/audios';
+export * as queryHooks from './query-hooks';

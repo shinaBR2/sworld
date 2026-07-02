@@ -72,6 +72,21 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
+input SetVideoThumbnailAtTimeInput {
+  atSeconds: Float!
+  videoId: String!
+}
+
+type SetVideoThumbnailAtTimeOutput {
+  thumbnailUrl: String!
+}
+
+type SetVideoThumbnailAtTimeResponse {
+  dataObject: SetVideoThumbnailAtTimeOutput
+  message: String!
+  success: Boolean!
+}
+
 input SignedUploadUrlInput {
   action: String!
   contentType: String!
@@ -480,6 +495,56 @@ type audios {
   createdAt: timestamptz!
   id: uuid!
   name: String!
+  """
+  An array relationship
+  """
+  playlist_audios(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): [playlist_audios!]!
+  """
+  An aggregate relationship
+  """
+  playlist_audios_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): playlist_audios_aggregate!
   public: Boolean!
   source: String!
   thumbnailUrl: String
@@ -568,6 +633,8 @@ input audios_bool_exp {
   createdAt: timestamptz_comparison_exp
   id: uuid_comparison_exp
   name: String_comparison_exp
+  playlist_audios: playlist_audios_bool_exp
+  playlist_audios_aggregate: playlist_audios_aggregate_bool_exp
   public: Boolean_comparison_exp
   source: String_comparison_exp
   thumbnailUrl: String_comparison_exp
@@ -595,6 +662,7 @@ input audios_insert_input {
   createdAt: timestamptz
   id: uuid
   name: String
+  playlist_audios: playlist_audios_arr_rel_insert_input
   public: Boolean
   source: String
   thumbnailUrl: String
@@ -702,6 +770,7 @@ input audios_order_by {
   createdAt: order_by
   id: order_by
   name: order_by
+  playlist_audios_aggregate: playlist_audios_aggregate_order_by
   public: order_by
   source: order_by
   thumbnailUrl: order_by
@@ -4220,6 +4289,22 @@ type mutation_root {
     where: playlist_bool_exp!
   ): playlist_mutation_response
   """
+  delete data from the table: "playlist_audios"
+  """
+  delete_playlist_audios(
+    """
+    filter the rows which have to be deleted
+    """
+    where: playlist_audios_bool_exp!
+  ): playlist_audios_mutation_response
+  """
+  delete single row from the table: "playlist_audios"
+  """
+  delete_playlist_audios_by_pk(
+    audio_id: uuid!
+    playlist_id: uuid!
+  ): playlist_audios
+  """
   delete single row from the table: "playlist"
   """
   delete_playlist_by_pk(id: uuid!): playlist
@@ -4682,6 +4767,32 @@ type mutation_root {
     on_conflict: playlist_on_conflict
   ): playlist_mutation_response
   """
+  insert data into the table: "playlist_audios"
+  """
+  insert_playlist_audios(
+    """
+    the rows to be inserted
+    """
+    objects: [playlist_audios_insert_input!]!
+    """
+    upsert condition
+    """
+    on_conflict: playlist_audios_on_conflict
+  ): playlist_audios_mutation_response
+  """
+  insert a single row into the table: "playlist_audios"
+  """
+  insert_playlist_audios_one(
+    """
+    the row to be inserted
+    """
+    object: playlist_audios_insert_input!
+    """
+    upsert condition
+    """
+    on_conflict: playlist_audios_on_conflict
+  ): playlist_audios
+  """
   insert a single row into the table: "playlist"
   """
   insert_playlist_one(
@@ -5058,6 +5169,12 @@ type mutation_root {
     """
     on_conflict: videos_on_conflict
   ): videos
+  """
+  Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
+  """
+  setVideoThumbnailAtTime(
+    input: SetVideoThumbnailAtTimeInput!
+  ): SetVideoThumbnailAtTimeResponse!
   """
   update data of the table: "audio_tags"
   """
@@ -5547,6 +5664,46 @@ type mutation_root {
     """
     where: playlist_bool_exp!
   ): playlist_mutation_response
+  """
+  update data of the table: "playlist_audios"
+  """
+  update_playlist_audios(
+    """
+    increments the numeric columns with given value of the filtered values
+    """
+    _inc: playlist_audios_inc_input
+    """
+    sets the columns of the filtered rows to the given values
+    """
+    _set: playlist_audios_set_input
+    """
+    filter the rows which have to be updated
+    """
+    where: playlist_audios_bool_exp!
+  ): playlist_audios_mutation_response
+  """
+  update single row of the table: "playlist_audios"
+  """
+  update_playlist_audios_by_pk(
+    """
+    increments the numeric columns with given value of the filtered values
+    """
+    _inc: playlist_audios_inc_input
+    """
+    sets the columns of the filtered rows to the given values
+    """
+    _set: playlist_audios_set_input
+    pk_columns: playlist_audios_pk_columns_input!
+  ): playlist_audios
+  """
+  update multiples rows of table: "playlist_audios"
+  """
+  update_playlist_audios_many(
+    """
+    updates to execute, in order
+    """
+    updates: [playlist_audios_updates!]!
+  ): [playlist_audios_mutation_response]
   """
   update single row of the table: "playlist"
   """
@@ -6667,6 +6824,56 @@ type playlist {
   """
   An array relationship
   """
+  playlist_audios(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): [playlist_audios!]!
+  """
+  An aggregate relationship
+  """
+  playlist_audios_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): playlist_audios_aggregate!
+  """
+  An array relationship
+  """
   playlist_videos(
     """
     distinct select on columns
@@ -6787,6 +6994,7 @@ type playlist {
     """
     where: shared_playlist_recipients_bool_exp
   ): shared_playlist_recipients_aggregate!
+  site: String!
   slug: String!
   thumbnailUrl: String
   title: String!
@@ -6877,6 +7085,438 @@ input playlist_arr_rel_insert_input {
 }
 
 """
+Junction table between audios and playlist
+"""
+type playlist_audios {
+  """
+  An object relationship
+  """
+  audio: audios!
+  audio_id: uuid!
+  createdAt: timestamptz!
+  """
+  An object relationship
+  """
+  playlist: playlist!
+  playlist_id: uuid!
+  position: Int!
+  updatedAt: timestamptz!
+}
+
+"""
+aggregated selection of "playlist_audios"
+"""
+type playlist_audios_aggregate {
+  aggregate: playlist_audios_aggregate_fields
+  nodes: [playlist_audios!]!
+}
+
+input playlist_audios_aggregate_bool_exp {
+  count: playlist_audios_aggregate_bool_exp_count
+}
+
+input playlist_audios_aggregate_bool_exp_count {
+  arguments: [playlist_audios_select_column!]
+  distinct: Boolean
+  filter: playlist_audios_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "playlist_audios"
+"""
+type playlist_audios_aggregate_fields {
+  avg: playlist_audios_avg_fields
+  count(columns: [playlist_audios_select_column!], distinct: Boolean): Int!
+  max: playlist_audios_max_fields
+  min: playlist_audios_min_fields
+  stddev: playlist_audios_stddev_fields
+  stddev_pop: playlist_audios_stddev_pop_fields
+  stddev_samp: playlist_audios_stddev_samp_fields
+  sum: playlist_audios_sum_fields
+  var_pop: playlist_audios_var_pop_fields
+  var_samp: playlist_audios_var_samp_fields
+  variance: playlist_audios_variance_fields
+}
+
+"""
+order by aggregate values of table "playlist_audios"
+"""
+input playlist_audios_aggregate_order_by {
+  avg: playlist_audios_avg_order_by
+  count: order_by
+  max: playlist_audios_max_order_by
+  min: playlist_audios_min_order_by
+  stddev: playlist_audios_stddev_order_by
+  stddev_pop: playlist_audios_stddev_pop_order_by
+  stddev_samp: playlist_audios_stddev_samp_order_by
+  sum: playlist_audios_sum_order_by
+  var_pop: playlist_audios_var_pop_order_by
+  var_samp: playlist_audios_var_samp_order_by
+  variance: playlist_audios_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "playlist_audios"
+"""
+input playlist_audios_arr_rel_insert_input {
+  data: [playlist_audios_insert_input!]!
+  """
+  upsert condition
+  """
+  on_conflict: playlist_audios_on_conflict
+}
+
+"""
+aggregate avg on columns
+"""
+type playlist_audios_avg_fields {
+  position: Float
+}
+
+"""
+order by avg() on columns of table "playlist_audios"
+"""
+input playlist_audios_avg_order_by {
+  position: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "playlist_audios". All fields are combined with a logical 'AND'.
+"""
+input playlist_audios_bool_exp {
+  _and: [playlist_audios_bool_exp!]
+  _not: playlist_audios_bool_exp
+  _or: [playlist_audios_bool_exp!]
+  audio: audios_bool_exp
+  audio_id: uuid_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  playlist: playlist_bool_exp
+  playlist_id: uuid_comparison_exp
+  position: Int_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "playlist_audios"
+"""
+enum playlist_audios_constraint {
+  """
+  unique or primary key constraint on columns "audio_id", "playlist_id"
+  """
+  playlist_audios_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "playlist_audios"
+"""
+input playlist_audios_inc_input {
+  position: Int
+}
+
+"""
+input type for inserting data into table "playlist_audios"
+"""
+input playlist_audios_insert_input {
+  audio: audios_obj_rel_insert_input
+  audio_id: uuid
+  createdAt: timestamptz
+  playlist: playlist_obj_rel_insert_input
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type playlist_audios_max_fields {
+  audio_id: uuid
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+order by max() on columns of table "playlist_audios"
+"""
+input playlist_audios_max_order_by {
+  audio_id: order_by
+  createdAt: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""
+aggregate min on columns
+"""
+type playlist_audios_min_fields {
+  audio_id: uuid
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+order by min() on columns of table "playlist_audios"
+"""
+input playlist_audios_min_order_by {
+  audio_id: order_by
+  createdAt: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""
+response of any mutation on the table "playlist_audios"
+"""
+type playlist_audios_mutation_response {
+  """
+  number of rows affected by the mutation
+  """
+  affected_rows: Int!
+  """
+  data from the rows affected by the mutation
+  """
+  returning: [playlist_audios!]!
+}
+
+"""
+on_conflict condition type for table "playlist_audios"
+"""
+input playlist_audios_on_conflict {
+  constraint: playlist_audios_constraint!
+  update_columns: [playlist_audios_update_column!]! = []
+  where: playlist_audios_bool_exp
+}
+
+"""
+Ordering options when selecting data from "playlist_audios".
+"""
+input playlist_audios_order_by {
+  audio: audios_order_by
+  audio_id: order_by
+  createdAt: order_by
+  playlist: playlist_order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""
+primary key columns input for table: playlist_audios
+"""
+input playlist_audios_pk_columns_input {
+  audio_id: uuid!
+  playlist_id: uuid!
+}
+
+"""
+select columns of table "playlist_audios"
+"""
+enum playlist_audios_select_column {
+  """
+  column name
+  """
+  audio_id
+  """
+  column name
+  """
+  createdAt
+  """
+  column name
+  """
+  playlist_id
+  """
+  column name
+  """
+  position
+  """
+  column name
+  """
+  updatedAt
+}
+
+"""
+input type for updating data in table "playlist_audios"
+"""
+input playlist_audios_set_input {
+  audio_id: uuid
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type playlist_audios_stddev_fields {
+  position: Float
+}
+
+"""
+order by stddev() on columns of table "playlist_audios"
+"""
+input playlist_audios_stddev_order_by {
+  position: order_by
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type playlist_audios_stddev_pop_fields {
+  position: Float
+}
+
+"""
+order by stddev_pop() on columns of table "playlist_audios"
+"""
+input playlist_audios_stddev_pop_order_by {
+  position: order_by
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type playlist_audios_stddev_samp_fields {
+  position: Float
+}
+
+"""
+order by stddev_samp() on columns of table "playlist_audios"
+"""
+input playlist_audios_stddev_samp_order_by {
+  position: order_by
+}
+
+"""
+Streaming cursor of the table "playlist_audios"
+"""
+input playlist_audios_stream_cursor_input {
+  """
+  Stream column input with initial value
+  """
+  initial_value: playlist_audios_stream_cursor_value_input!
+  """
+  cursor ordering
+  """
+  ordering: cursor_ordering
+}
+
+"""
+Initial value of the column from where the streaming should start
+"""
+input playlist_audios_stream_cursor_value_input {
+  audio_id: uuid
+  createdAt: timestamptz
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+aggregate sum on columns
+"""
+type playlist_audios_sum_fields {
+  position: Int
+}
+
+"""
+order by sum() on columns of table "playlist_audios"
+"""
+input playlist_audios_sum_order_by {
+  position: order_by
+}
+
+"""
+update columns of table "playlist_audios"
+"""
+enum playlist_audios_update_column {
+  """
+  column name
+  """
+  audio_id
+  """
+  column name
+  """
+  createdAt
+  """
+  column name
+  """
+  playlist_id
+  """
+  column name
+  """
+  position
+  """
+  column name
+  """
+  updatedAt
+}
+
+input playlist_audios_updates {
+  """
+  increments the numeric columns with given value of the filtered values
+  """
+  _inc: playlist_audios_inc_input
+  """
+  sets the columns of the filtered rows to the given values
+  """
+  _set: playlist_audios_set_input
+  """
+  filter the rows which have to be updated
+  """
+  where: playlist_audios_bool_exp!
+}
+
+"""
+aggregate var_pop on columns
+"""
+type playlist_audios_var_pop_fields {
+  position: Float
+}
+
+"""
+order by var_pop() on columns of table "playlist_audios"
+"""
+input playlist_audios_var_pop_order_by {
+  position: order_by
+}
+
+"""
+aggregate var_samp on columns
+"""
+type playlist_audios_var_samp_fields {
+  position: Float
+}
+
+"""
+order by var_samp() on columns of table "playlist_audios"
+"""
+input playlist_audios_var_samp_order_by {
+  position: order_by
+}
+
+"""
+aggregate variance on columns
+"""
+type playlist_audios_variance_fields {
+  position: Float
+}
+
+"""
+order by variance() on columns of table "playlist_audios"
+"""
+input playlist_audios_variance_order_by {
+  position: order_by
+}
+
+"""
 Boolean expression to filter rows from the table "playlist". All fields are combined with a logical 'AND'.
 """
 input playlist_bool_exp {
@@ -6886,6 +7526,8 @@ input playlist_bool_exp {
   createdAt: timestamptz_comparison_exp
   description: String_comparison_exp
   id: uuid_comparison_exp
+  playlist_audios: playlist_audios_bool_exp
+  playlist_audios_aggregate: playlist_audios_aggregate_bool_exp
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
@@ -6894,6 +7536,7 @@ input playlist_bool_exp {
   sharedRecipientsInput: jsonb_comparison_exp
   shared_playlist_recipients: shared_playlist_recipients_bool_exp
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_bool_exp
+  site: String_comparison_exp
   slug: String_comparison_exp
   thumbnailUrl: String_comparison_exp
   title: String_comparison_exp
@@ -6969,6 +7612,7 @@ input playlist_insert_input {
   createdAt: timestamptz
   description: String
   id: uuid
+  playlist_audios: playlist_audios_arr_rel_insert_input
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
   """
@@ -6984,6 +7628,7 @@ input playlist_insert_input {
   """
   sharedRecipientsInput: jsonb
   shared_playlist_recipients: shared_playlist_recipients_arr_rel_insert_input
+  site: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -7003,6 +7648,7 @@ type playlist_max_fields {
   Short id like Youtube video id
   """
   sId: String
+  site: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -7021,6 +7667,7 @@ input playlist_max_order_by {
   Short id like Youtube video id
   """
   sId: order_by
+  site: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -7039,6 +7686,7 @@ type playlist_min_fields {
   Short id like Youtube video id
   """
   sId: String
+  site: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -7057,6 +7705,7 @@ input playlist_min_order_by {
   Short id like Youtube video id
   """
   sId: order_by
+  site: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -7105,12 +7754,14 @@ input playlist_order_by {
   createdAt: order_by
   description: order_by
   id: order_by
+  playlist_audios_aggregate: playlist_audios_aggregate_order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
   sharedRecipients: order_by
   sharedRecipientsInput: order_by
   shared_playlist_recipients_aggregate: shared_playlist_recipients_aggregate_order_by
+  site: order_by
   slug: order_by
   thumbnailUrl: order_by
   title: order_by
@@ -7175,6 +7826,10 @@ enum playlist_select_column {
   """
   column name
   """
+  site
+  """
+  column name
+  """
   slug
   """
   column name
@@ -7234,6 +7889,7 @@ input playlist_set_input {
   List of recipient emails from user input, not validated yet. End user can update this.
   """
   sharedRecipientsInput: jsonb
+  site: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -7275,6 +7931,7 @@ input playlist_stream_cursor_value_input {
   List of recipient emails from user input, not validated yet. End user can update this.
   """
   sharedRecipientsInput: jsonb
+  site: String
   slug: String
   thumbnailUrl: String
   title: String
@@ -7314,6 +7971,10 @@ enum playlist_update_column {
   column name
   """
   sharedRecipientsInput
+  """
+  column name
+  """
+  site
   """
   column name
   """
@@ -7813,7 +8474,7 @@ type posts {
   """
   Hashnode public id
   """
-  hId: String
+  hId: String!
   id: uuid!
   markdownContent: String!
   pinned: Boolean!
@@ -8842,6 +9503,60 @@ type query_root {
     """
     where: playlist_bool_exp
   ): playlist_aggregate!
+  """
+  An array relationship
+  """
+  playlist_audios(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): [playlist_audios!]!
+  """
+  An aggregate relationship
+  """
+  playlist_audios_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): playlist_audios_aggregate!
+  """
+  fetch data from the table: "playlist_audios" using primary key columns
+  """
+  playlist_audios_by_pk(audio_id: uuid!, playlist_id: uuid!): playlist_audios
   """
   fetch data from the table: "playlist" using primary key columns
   """
@@ -10508,8 +11223,8 @@ type shared_video_recipients {
   """
   An object relationship
   """
-  video: videos
-  videoId: uuid
+  video: videos!
+  videoId: uuid!
   viewed: Boolean!
 }
 
@@ -11624,6 +12339,77 @@ type subscription_root {
     """
     where: playlist_bool_exp
   ): playlist_aggregate!
+  """
+  An array relationship
+  """
+  playlist_audios(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): [playlist_audios!]!
+  """
+  An aggregate relationship
+  """
+  playlist_audios_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [playlist_audios_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [playlist_audios_order_by!]
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): playlist_audios_aggregate!
+  """
+  fetch data from the table: "playlist_audios" using primary key columns
+  """
+  playlist_audios_by_pk(audio_id: uuid!, playlist_id: uuid!): playlist_audios
+  """
+  fetch data from the table in a streaming manner: "playlist_audios"
+  """
+  playlist_audios_stream(
+    """
+    maximum number of rows returned in a single batch
+    """
+    batch_size: Int!
+    """
+    cursor to stream the results returned by the query
+    """
+    cursor: [playlist_audios_stream_cursor_input]!
+    """
+    filter the rows returned
+    """
+    where: playlist_audios_bool_exp
+  ): [playlist_audios!]!
   """
   fetch data from the table: "playlist" using primary key columns
   """
