@@ -35,7 +35,6 @@ const FeelingList = (props: FeelingListProps) => {
       aria-label="feeling list"
       direction="row"
       spacing={1}
-      my={2}
       sx={{ overflowX: 'auto' }}
     >
       <Chip
