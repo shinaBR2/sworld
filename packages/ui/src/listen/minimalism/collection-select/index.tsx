@@ -47,7 +47,8 @@ const CollectionSelect = (props: CollectionSelectProps) => {
         }
 
         const playlist = playlists.find((p) => p.id === selected);
-        return playlist ? playlist.title : 'All';
+        // Surface an unknown/stale id rather than masking it as "All".
+        return playlist ? playlist.title : String(selected);
       }}
     >
       <MenuItem value={ALL_VALUE}>All</MenuItem>
