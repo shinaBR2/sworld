@@ -29,6 +29,13 @@ array_relationships:
         table:
           name: audio_tags
           schema: public
+  - name: playlist_audios
+    using:
+      foreign_key_constraint_on:
+        column: audio_id
+        table:
+          name: playlist_audios
+          schema: public
 insert_permissions:
   - role: user
     permission:

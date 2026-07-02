@@ -9,6 +9,7 @@
 - "!include public_journals.yaml"
 - "!include public_notifications.yaml"
 - "!include public_playlist.yaml"
+- "!include public_playlist_audios.yaml"
 - "!include public_playlist_videos.yaml"
 - "!include public_posts.yaml"
 - "!include public_reading_progresses.yaml"
