@@ -1,7 +1,7 @@
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import hooks, { type listenQueryHooks } from 'core';
+import hooks from 'core';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
@@ -15,7 +15,9 @@ const NoItem = () => {
 };
 
 interface AudioListProps {
-  queryRs: ReturnType<typeof listenQueryHooks.useLoadAudios>;
+  // Only `isLoading` is read here, so accept any loading-bearing result —
+  // this lets both the home (useLoadAudios) and a playlist feed the player.
+  queryRs: { isLoading: boolean };
   list: unknown[];
   activeFeelingId: string;
 }
