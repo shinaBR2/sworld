@@ -17,6 +17,7 @@ import { Route as rootRoute } from './routes/__root';
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')();
+const PlaylistsIndexLazyImport = createFileRoute('/playlists/')();
 
 // Create/Update Routes
 
@@ -25,6 +26,14 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+
+const PlaylistsIndexLazyRoute = PlaylistsIndexLazyImport.update({
+  id: '/playlists/',
+  path: '/playlists/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/playlists.index.lazy').then((d) => d.Route),
+);
 
 // Populate the FileRoutesByPath interface
 
@@ -37,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport;
       parentRoute: typeof rootRoute;
     };
+    '/playlists/': {
+      id: '/playlists/';
+      path: '/playlists';
+      fullPath: '/playlists';
+      preLoaderRoute: typeof PlaylistsIndexLazyImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
@@ -44,32 +60,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute;
+  '/playlists': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute;
+  '/playlists': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
+  '/playlists/': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/';
+  fullPaths: '/' | '/playlists';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/';
-  id: '__root__' | '/';
+  to: '/' | '/playlists';
+  id: '__root__' | '/' | '/playlists/';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
+  PlaylistsIndexLazyRoute: typeof PlaylistsIndexLazyRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  PlaylistsIndexLazyRoute: PlaylistsIndexLazyRoute,
 };
 
 export const routeTree = rootRoute
@@ -82,11 +103,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/playlists/"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/playlists/": {
+      "filePath": "playlists.index.lazy.tsx"
     }
   }
 }
