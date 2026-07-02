@@ -34,7 +34,6 @@ const Content = () => {
   });
   const { playlists } = listenQueryHooks.useLoadPlaylists({ getAccessToken });
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
-  const removeAudio = listenMutationHooks.useRemoveAudioFromPlaylist();
   const onSelectCollection = useCollectionNavigate();
 
   return (
@@ -52,7 +51,6 @@ const Content = () => {
       }
       isLoading={queryRs.isLoading}
       audios={queryRs.audios}
-      onRemove={(audioId) => removeAudio({ playlistId: id, audioId })}
     />
   );
 };
