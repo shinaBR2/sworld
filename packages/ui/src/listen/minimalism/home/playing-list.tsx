@@ -1,6 +1,4 @@
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -14,19 +12,16 @@ interface PlayingListItemProps {
   audioList: SAudioPlayerAudioItem[];
   currentId: string;
   onItemSelect: (id: string) => void;
-  // When provided (playlist mode), each track shows a remove action.
-  onRemove?: (id: string) => void;
 }
 
 interface ItemProps {
   audio: SAudioPlayerAudioItem;
   isPlaying: boolean;
   onSelect: (id: string) => void;
-  onRemove?: (id: string) => void;
 }
 
 const Item = (props: ItemProps) => {
-  const { audio, isPlaying, onSelect, onRemove } = props;
+  const { audio, isPlaying, onSelect } = props;
   const { id, image, name, artistName } = audio;
 
   return (
@@ -65,24 +60,12 @@ const Item = (props: ItemProps) => {
           </Stack>
         }
       />
-      {onRemove && (
-        <IconButton
-          edge="end"
-          aria-label={`remove ${name}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            onRemove(id);
-          }}
-        >
-          <DeleteOutlineIcon />
-        </IconButton>
-      )}
     </ListItemButton>
   );
 };
 
 const PlayingList = (props: PlayingListItemProps) => {
-  const { audioList, currentId, onItemSelect, onRemove } = props;
+  const { audioList, currentId, onItemSelect } = props;
 
   if (!audioList?.length) {
     return (
@@ -103,7 +86,6 @@ const PlayingList = (props: PlayingListItemProps) => {
             audio={a}
             isPlaying={id === currentId}
             onSelect={onItemSelect}
-            onRemove={onRemove}
           />
         );
       })}
