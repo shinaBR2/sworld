@@ -1,12 +1,22 @@
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import type { listenQueryHooks } from 'core';
 import { FeelingListSkeleton } from './skeleton';
+
+interface Feeling {
+  id: string;
+  name: string;
+}
+
+// Structural: any audios query (signed-in or public) that carries feeling tags.
+interface FeelingQueryRs {
+  isLoading: boolean;
+  data?: { tags?: Feeling[] } | null;
+}
 
 interface FeelingListProps {
   activeId: string;
   onSelect: React.Dispatch<React.SetStateAction<string>>;
-  queryRs: ReturnType<typeof listenQueryHooks.useLoadAudios>;
+  queryRs: FeelingQueryRs;
 }
 
 const FeelingList = (props: FeelingListProps) => {
@@ -17,8 +27,7 @@ const FeelingList = (props: FeelingListProps) => {
     return <FeelingListSkeleton />;
   }
 
-  // @ts-expect-error
-  const { tags: feelings } = data;
+  const feelings = data?.tags ?? [];
 
   return (
     <Stack
@@ -36,7 +45,7 @@ const FeelingList = (props: FeelingListProps) => {
         role="button"
         onClick={() => onSelect('')}
       />
-      {feelings.map((f: any) => {
+      {feelings.map((f) => {
         const isActive = !!activeId && f.id === activeId;
         const color = isActive ? 'primary' : 'default';
 
@@ -56,3 +65,4 @@ const FeelingList = (props: FeelingListProps) => {
 };
 
 export { FeelingList };
+export type { FeelingQueryRs };
