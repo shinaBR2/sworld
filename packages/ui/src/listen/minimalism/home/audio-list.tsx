@@ -20,6 +20,8 @@ interface AudioListProps {
   queryRs: { isLoading: boolean };
   list: unknown[];
   activeFeelingId: string;
+  // Playlist mode: remove a track from the playlist.
+  onRemove?: (id: string) => void;
 }
 
 const toAudioItem = (item: any) => {
@@ -36,7 +38,7 @@ const toAudioItem = (item: any) => {
 const PlayingList = lazy(() => import('./playing-list'));
 
 const Content = (props: AudioListProps) => {
-  const { list: originalList, activeFeelingId } = props;
+  const { list: originalList, activeFeelingId, onRemove } = props;
   // TODO
   // memorize on parent
   const list = useMemo(() => {
@@ -97,6 +99,7 @@ const Content = (props: AudioListProps) => {
                 audioList={list}
                 onItemSelect={onItemSelect}
                 currentId={currentAudio.id}
+                onRemove={onRemove}
               />
             </Suspense>
           </Card>

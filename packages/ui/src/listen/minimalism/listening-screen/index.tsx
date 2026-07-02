@@ -35,6 +35,8 @@ interface CommonProps {
   onCreate: (title: string) => void;
   // Raw audios for the player (AudioList maps them to player items).
   audios: unknown[];
+  // Playlist mode: remove a track from the playlist.
+  onRemove?: (id: string) => void;
 }
 
 interface AllModeProps extends CommonProps {
@@ -67,6 +69,7 @@ const ListeningScreen = (props: ListeningScreenProps) => {
     onSelectCollection,
     onCreate,
     audios,
+    onRemove,
   } = props;
 
   const [settingOpen, setSettingOpen] = useState(false);
@@ -123,6 +126,7 @@ const ListeningScreen = (props: ListeningScreenProps) => {
           queryRs={{ isLoading }}
           list={audios}
           activeFeelingId={mode === 'all' ? activeFeelingId : ''}
+          onRemove={onRemove}
         />
       </MainContainer>
       <CreatePlaylistDialog
