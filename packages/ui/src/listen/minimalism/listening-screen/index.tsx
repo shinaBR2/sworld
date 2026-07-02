@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import type { Auth, listenQueryHooks } from 'core';
+import type { Auth } from 'core';
 import { useState } from 'react';
 import { FullWidthContainer } from '../../../universal';
 import {
@@ -8,12 +8,10 @@ import {
 } from '../collection-select';
 import { Header } from '../header';
 import { AudioList } from '../home/audio-list';
-import { FeelingList } from '../home/feeling-list';
+import { FeelingList, type FeelingQueryRs } from '../home/feeling-list';
 import { MainContainer } from '../home/main-container';
 import { SettingsPanel } from '../home/settings';
 import { CreatePlaylistDialog } from '../playlists/create-dialog';
-
-type AudiosQueryRs = ReturnType<typeof listenQueryHooks.useLoadAudios>;
 
 interface HeaderSites {
   listen: string;
@@ -41,8 +39,8 @@ interface CommonProps {
 
 interface AllModeProps extends CommonProps {
   mode: 'all';
-  // Full home query result — also feeds the feeling filter.
-  queryRs: AudiosQueryRs;
+  // Any audios query (signed-in or public) — also feeds the feeling filter.
+  queryRs: FeelingQueryRs;
 }
 
 interface PlaylistModeProps extends CommonProps {
