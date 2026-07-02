@@ -104,6 +104,9 @@ const ListeningScreen = (props: ListeningScreenProps) => {
             alignItems: 'center',
             gap: 2,
             flexWrap: 'wrap',
+            // Owns the row's vertical spacing so it's identical whether the
+            // feeling chips are shown (All) or not (a playlist).
+            my: 2,
           }}
         >
           <CollectionSelect
