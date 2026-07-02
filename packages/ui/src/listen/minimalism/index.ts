@@ -7,8 +7,6 @@ import { SettingsPanel } from './home/settings';
 import { ListeningScreen } from './listening-screen';
 import MusicWidget from './music-widget';
 import { CreatePlaylistDialog } from './playlists/create-dialog';
-import { PlaylistDetail } from './playlists/detail';
-import { PlaylistLibrary } from './playlists/library';
 import MinimalismThemeProvider from './ThemeProvider';
 
 export {
@@ -19,8 +17,6 @@ export {
   FeelingList,
   AudioList,
   MainContainer,
-  PlaylistLibrary,
-  PlaylistDetail,
   CollectionSelect,
   CreatePlaylistDialog,
   ListeningScreen,
