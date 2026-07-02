@@ -12774,6 +12774,60 @@ export type GetReadingStatsQuery = {
   };
 };
 
+export type CreateListenPlaylistMutationVariables = Exact<{
+  object: Playlist_Insert_Input;
+}>;
+
+export type CreateListenPlaylistMutation = {
+  __typename?: 'mutation_root';
+  insert_playlist_one?: {
+    __typename?: 'playlist';
+    id: any;
+    slug: string;
+  } | null;
+};
+
+export type AddAudioToPlaylistMutationVariables = Exact<{
+  object: Playlist_Audios_Insert_Input;
+}>;
+
+export type AddAudioToPlaylistMutation = {
+  __typename?: 'mutation_root';
+  insert_playlist_audios_one?: {
+    __typename?: 'playlist_audios';
+    playlist_id: any;
+    audio_id: any;
+    position: number;
+  } | null;
+};
+
+export type RemoveAudioFromPlaylistMutationVariables = Exact<{
+  playlistId: Scalars['uuid']['input'];
+  audioId: Scalars['uuid']['input'];
+}>;
+
+export type RemoveAudioFromPlaylistMutation = {
+  __typename?: 'mutation_root';
+  delete_playlist_audios_by_pk?: {
+    __typename?: 'playlist_audios';
+    playlist_id: any;
+    audio_id: any;
+  } | null;
+};
+
+export type ReorderPlaylistAudiosMutationVariables = Exact<{
+  updates: Array<Playlist_Audios_Updates> | Playlist_Audios_Updates;
+}>;
+
+export type ReorderPlaylistAudiosMutation = {
+  __typename?: 'mutation_root';
+  update_playlist_audios_many?: Array<{
+    __typename?: 'playlist_audios_mutation_response';
+    affected_rows: number;
+    returning: Array<{ __typename?: 'playlist_audios'; playlist_id: any }>;
+  } | null> | null;
+};
+
 export type GetAudiosAndFeelingsQueryVariables = Exact<{
   [key: string]: never;
 }>;
@@ -13870,6 +13924,53 @@ export const GetReadingStatsDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   GetReadingStatsQuery,
   GetReadingStatsQueryVariables
+>;
+export const CreateListenPlaylistDocument = new TypedDocumentString(`
+    mutation CreateListenPlaylist($object: playlist_insert_input!) {
+  insert_playlist_one(object: $object) {
+    id
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CreateListenPlaylistMutation,
+  CreateListenPlaylistMutationVariables
+>;
+export const AddAudioToPlaylistDocument = new TypedDocumentString(`
+    mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {
+  insert_playlist_audios_one(object: $object) {
+    playlist_id
+    audio_id
+    position
+  }
+}
+    `) as unknown as TypedDocumentString<
+  AddAudioToPlaylistMutation,
+  AddAudioToPlaylistMutationVariables
+>;
+export const RemoveAudioFromPlaylistDocument = new TypedDocumentString(`
+    mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {
+  delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {
+    playlist_id
+    audio_id
+  }
+}
+    `) as unknown as TypedDocumentString<
+  RemoveAudioFromPlaylistMutation,
+  RemoveAudioFromPlaylistMutationVariables
+>;
+export const ReorderPlaylistAudiosDocument = new TypedDocumentString(`
+    mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {
+  update_playlist_audios_many(updates: $updates) {
+    affected_rows
+    returning {
+      playlist_id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ReorderPlaylistAudiosMutation,
+  ReorderPlaylistAudiosMutationVariables
 >;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {

@@ -1,4 +1,7 @@
-import { queryHooks as listenQueryHooks } from './listen';
+import {
+  mutationHooks as listenMutationHooks,
+  queryHooks as listenQueryHooks,
+} from './listen';
 import hooks, {
   commonHelpers,
   ErrorBoundary,
@@ -16,7 +19,12 @@ export * as Auth from './providers/auth';
 export * as Query from './providers/query';
 export { commonHelpers, requestHelpers };
 
-export { listenQueryHooks, watchMutationHooks, watchQueryHooks };
+export {
+  listenMutationHooks,
+  listenQueryHooks,
+  watchMutationHooks,
+  watchQueryHooks,
+};
 
 export { ErrorBoundary };
 export type { SAudioPlayerAudioItem, SAudioPlayerInputs, SAudioPlayerLoopMode };
