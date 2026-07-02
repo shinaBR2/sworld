@@ -91,7 +91,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
                 width: '100%',
                 height: '100%',
                 aspectRatio: '1 / 1',
-                objectFit: 'cover',
+                objectFit: 'contain',
               }}
             />
           </Box>
@@ -124,7 +124,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
         </CardContent>
         {isMobile && (
           <Slide
-            direction="down"
+            direction="up"
             in={showPlayinglist}
             container={contentRef.current}
           >

@@ -33,7 +33,7 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     position: 'absolute',
     width: '100%',
     height: '244px',
-    top: 56,
+    bottom: 0,
     overflowY: 'auto',
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
