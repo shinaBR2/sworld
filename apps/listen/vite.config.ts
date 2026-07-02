@@ -1,4 +1,5 @@
 import { codecovVitePlugin } from '@codecov/vite-plugin';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -52,6 +53,7 @@ export default defineConfig({
   },
   plugins: [
     // viteCommonjs(),
+    TanStackRouterVite(),
     react(),
     // Local bundle analyzer
     // visualizer({
