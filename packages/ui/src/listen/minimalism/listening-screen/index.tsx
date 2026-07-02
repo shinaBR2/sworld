@@ -113,6 +113,7 @@ const ListeningScreen = (props: ListeningScreenProps) => {
               playlists={playlists}
               onSelect={onSelectCollection}
               onCreateNew={() => setCreateOpen(true)}
+              canCreate={Boolean(user)}
             />
           </Box>
           {mode === 'all' && (
