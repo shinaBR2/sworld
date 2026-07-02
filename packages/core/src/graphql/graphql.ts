@@ -88,6 +88,23 @@ export type Int_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+export type SetVideoThumbnailAtTimeInput = {
+  atSeconds: Scalars['Float']['input'];
+  videoId: Scalars['String']['input'];
+};
+
+export type SetVideoThumbnailAtTimeOutput = {
+  __typename?: 'SetVideoThumbnailAtTimeOutput';
+  thumbnailUrl: Scalars['String']['output'];
+};
+
+export type SetVideoThumbnailAtTimeResponse = {
+  __typename?: 'SetVideoThumbnailAtTimeResponse';
+  dataObject?: Maybe<SetVideoThumbnailAtTimeOutput>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type SignedUploadUrlInput = {
   action: Scalars['String']['input'];
   contentType: Scalars['String']['input'];
@@ -363,6 +380,10 @@ export type Audios = {
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['uuid']['output'];
   name: Scalars['String']['output'];
+  /** An array relationship */
+  playlist_audios: Array<Playlist_Audios>;
+  /** An aggregate relationship */
+  playlist_audios_aggregate: Playlist_Audios_Aggregate;
   public: Scalars['Boolean']['output'];
   source: Scalars['String']['output'];
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
@@ -388,6 +409,24 @@ export type AudiosAudio_Tags_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Audio_Tags_Order_By>>;
   where?: InputMaybe<Audio_Tags_Bool_Exp>;
+};
+
+/** Audios for listen site */
+export type AudiosPlaylist_AudiosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+/** Audios for listen site */
+export type AudiosPlaylist_Audios_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
 };
 
 /** aggregated selection of "audios" */
@@ -463,6 +502,8 @@ export type Audios_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  playlist_audios?: InputMaybe<Playlist_Audios_Bool_Exp>;
+  playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
   source?: InputMaybe<String_Comparison_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
@@ -484,6 +525,7 @@ export type Audios_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  playlist_audios?: InputMaybe<Playlist_Audios_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
@@ -572,6 +614,7 @@ export type Audios_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   source?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
@@ -3091,6 +3134,10 @@ export type Mutation_Root = {
   delete_notifications_by_pk?: Maybe<Notifications>;
   /** delete data from the table: "playlist" */
   delete_playlist?: Maybe<Playlist_Mutation_Response>;
+  /** delete data from the table: "playlist_audios" */
+  delete_playlist_audios?: Maybe<Playlist_Audios_Mutation_Response>;
+  /** delete single row from the table: "playlist_audios" */
+  delete_playlist_audios_by_pk?: Maybe<Playlist_Audios>;
   /** delete single row from the table: "playlist" */
   delete_playlist_by_pk?: Maybe<Playlist>;
   /** delete data from the table: "playlist_videos" */
@@ -3191,6 +3238,10 @@ export type Mutation_Root = {
   insert_notifications_one?: Maybe<Notifications>;
   /** insert data into the table: "playlist" */
   insert_playlist?: Maybe<Playlist_Mutation_Response>;
+  /** insert data into the table: "playlist_audios" */
+  insert_playlist_audios?: Maybe<Playlist_Audios_Mutation_Response>;
+  /** insert a single row into the table: "playlist_audios" */
+  insert_playlist_audios_one?: Maybe<Playlist_Audios>;
   /** insert a single row into the table: "playlist" */
   insert_playlist_one?: Maybe<Playlist>;
   /** insert data into the table: "playlist_videos" */
@@ -3249,6 +3300,8 @@ export type Mutation_Root = {
   insert_videos?: Maybe<Videos_Mutation_Response>;
   /** insert a single row into the table: "videos" */
   insert_videos_one?: Maybe<Videos>;
+  /** Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user. */
+  setVideoThumbnailAtTime: SetVideoThumbnailAtTimeResponse;
   /** update data of the table: "audio_tags" */
   update_audio_tags?: Maybe<Audio_Tags_Mutation_Response>;
   /** update single row of the table: "audio_tags" */
@@ -3323,6 +3376,14 @@ export type Mutation_Root = {
   >;
   /** update data of the table: "playlist" */
   update_playlist?: Maybe<Playlist_Mutation_Response>;
+  /** update data of the table: "playlist_audios" */
+  update_playlist_audios?: Maybe<Playlist_Audios_Mutation_Response>;
+  /** update single row of the table: "playlist_audios" */
+  update_playlist_audios_by_pk?: Maybe<Playlist_Audios>;
+  /** update multiples rows of table: "playlist_audios" */
+  update_playlist_audios_many?: Maybe<
+    Array<Maybe<Playlist_Audios_Mutation_Response>>
+  >;
   /** update single row of the table: "playlist" */
   update_playlist_by_pk?: Maybe<Playlist>;
   /** update multiples rows of table: "playlist" */
@@ -3537,6 +3598,17 @@ export type Mutation_RootDelete_Notifications_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_PlaylistArgs = {
   where: Playlist_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Playlist_AudiosArgs = {
+  where: Playlist_Audios_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Playlist_Audios_By_PkArgs = {
+  audio_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
 };
 
 /** mutation root */
@@ -3813,6 +3885,18 @@ export type Mutation_RootInsert_PlaylistArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Playlist_AudiosArgs = {
+  objects: Array<Playlist_Audios_Insert_Input>;
+  on_conflict?: InputMaybe<Playlist_Audios_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Playlist_Audios_OneArgs = {
+  object: Playlist_Audios_Insert_Input;
+  on_conflict?: InputMaybe<Playlist_Audios_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Playlist_OneArgs = {
   object: Playlist_Insert_Input;
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
@@ -3984,6 +4068,11 @@ export type Mutation_RootInsert_VideosArgs = {
 export type Mutation_RootInsert_Videos_OneArgs = {
   object: Videos_Insert_Input;
   on_conflict?: InputMaybe<Videos_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootSetVideoThumbnailAtTimeArgs = {
+  input: SetVideoThumbnailAtTimeInput;
 };
 
 /** mutation root */
@@ -4199,6 +4288,25 @@ export type Mutation_RootUpdate_PlaylistArgs = {
   _prepend?: InputMaybe<Playlist_Prepend_Input>;
   _set?: InputMaybe<Playlist_Set_Input>;
   where: Playlist_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_AudiosArgs = {
+  _inc?: InputMaybe<Playlist_Audios_Inc_Input>;
+  _set?: InputMaybe<Playlist_Audios_Set_Input>;
+  where: Playlist_Audios_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_Audios_By_PkArgs = {
+  _inc?: InputMaybe<Playlist_Audios_Inc_Input>;
+  _set?: InputMaybe<Playlist_Audios_Set_Input>;
+  pk_columns: Playlist_Audios_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_Audios_ManyArgs = {
+  updates: Array<Playlist_Audios_Updates>;
 };
 
 /** mutation root */
@@ -4853,6 +4961,10 @@ export type Playlist = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['uuid']['output'];
   /** An array relationship */
+  playlist_audios: Array<Playlist_Audios>;
+  /** An aggregate relationship */
+  playlist_audios_aggregate: Playlist_Audios_Aggregate;
+  /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
   playlist_videos_aggregate: Playlist_Videos_Aggregate;
@@ -4867,6 +4979,7 @@ export type Playlist = {
   shared_playlist_recipients: Array<Shared_Playlist_Recipients>;
   /** An aggregate relationship */
   shared_playlist_recipients_aggregate: Shared_Playlist_Recipients_Aggregate;
+  site: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
@@ -4874,6 +4987,24 @@ export type Playlist = {
   /** An object relationship */
   user: Users;
   user_id: Scalars['uuid']['output'];
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistPlaylist_AudiosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+/** Playlist contain set of videos or audios */
+export type PlaylistPlaylist_Audios_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
 };
 
 /** Playlist contain set of videos or audios */
@@ -4992,6 +5123,340 @@ export type Playlist_Arr_Rel_Insert_Input = {
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
 };
 
+/** Junction table between audios and playlist */
+export type Playlist_Audios = {
+  __typename?: 'playlist_audios';
+  /** An object relationship */
+  audio: Audios;
+  audio_id: Scalars['uuid']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  playlist: Playlist;
+  playlist_id: Scalars['uuid']['output'];
+  position: Scalars['Int']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+};
+
+/** aggregated selection of "playlist_audios" */
+export type Playlist_Audios_Aggregate = {
+  __typename?: 'playlist_audios_aggregate';
+  aggregate?: Maybe<Playlist_Audios_Aggregate_Fields>;
+  nodes: Array<Playlist_Audios>;
+};
+
+export type Playlist_Audios_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Playlist_Audios_Aggregate_Bool_Exp_Count>;
+};
+
+export type Playlist_Audios_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Playlist_Audios_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "playlist_audios" */
+export type Playlist_Audios_Aggregate_Fields = {
+  __typename?: 'playlist_audios_aggregate_fields';
+  avg?: Maybe<Playlist_Audios_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Playlist_Audios_Max_Fields>;
+  min?: Maybe<Playlist_Audios_Min_Fields>;
+  stddev?: Maybe<Playlist_Audios_Stddev_Fields>;
+  stddev_pop?: Maybe<Playlist_Audios_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Playlist_Audios_Stddev_Samp_Fields>;
+  sum?: Maybe<Playlist_Audios_Sum_Fields>;
+  var_pop?: Maybe<Playlist_Audios_Var_Pop_Fields>;
+  var_samp?: Maybe<Playlist_Audios_Var_Samp_Fields>;
+  variance?: Maybe<Playlist_Audios_Variance_Fields>;
+};
+
+/** aggregate fields of "playlist_audios" */
+export type Playlist_Audios_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "playlist_audios" */
+export type Playlist_Audios_Aggregate_Order_By = {
+  avg?: InputMaybe<Playlist_Audios_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Playlist_Audios_Max_Order_By>;
+  min?: InputMaybe<Playlist_Audios_Min_Order_By>;
+  stddev?: InputMaybe<Playlist_Audios_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Playlist_Audios_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Playlist_Audios_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Playlist_Audios_Sum_Order_By>;
+  var_pop?: InputMaybe<Playlist_Audios_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Playlist_Audios_Var_Samp_Order_By>;
+  variance?: InputMaybe<Playlist_Audios_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "playlist_audios" */
+export type Playlist_Audios_Arr_Rel_Insert_Input = {
+  data: Array<Playlist_Audios_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Playlist_Audios_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Playlist_Audios_Avg_Fields = {
+  __typename?: 'playlist_audios_avg_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "playlist_audios" */
+export type Playlist_Audios_Avg_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "playlist_audios". All fields are combined with a logical 'AND'. */
+export type Playlist_Audios_Bool_Exp = {
+  _and?: InputMaybe<Array<Playlist_Audios_Bool_Exp>>;
+  _not?: InputMaybe<Playlist_Audios_Bool_Exp>;
+  _or?: InputMaybe<Array<Playlist_Audios_Bool_Exp>>;
+  audio?: InputMaybe<Audios_Bool_Exp>;
+  audio_id?: InputMaybe<Uuid_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  playlist?: InputMaybe<Playlist_Bool_Exp>;
+  playlist_id?: InputMaybe<Uuid_Comparison_Exp>;
+  position?: InputMaybe<Int_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "playlist_audios" */
+export enum Playlist_Audios_Constraint {
+  /** unique or primary key constraint on columns "audio_id", "playlist_id" */
+  PlaylistAudiosPkey = 'playlist_audios_pkey',
+}
+
+/** input type for incrementing numeric columns in table "playlist_audios" */
+export type Playlist_Audios_Inc_Input = {
+  position?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "playlist_audios" */
+export type Playlist_Audios_Insert_Input = {
+  audio?: InputMaybe<Audios_Obj_Rel_Insert_Input>;
+  audio_id?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  playlist?: InputMaybe<Playlist_Obj_Rel_Insert_Input>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate max on columns */
+export type Playlist_Audios_Max_Fields = {
+  __typename?: 'playlist_audios_max_fields';
+  audio_id?: Maybe<Scalars['uuid']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  playlist_id?: Maybe<Scalars['uuid']['output']>;
+  position?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by max() on columns of table "playlist_audios" */
+export type Playlist_Audios_Max_Order_By = {
+  audio_id?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Playlist_Audios_Min_Fields = {
+  __typename?: 'playlist_audios_min_fields';
+  audio_id?: Maybe<Scalars['uuid']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  playlist_id?: Maybe<Scalars['uuid']['output']>;
+  position?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by min() on columns of table "playlist_audios" */
+export type Playlist_Audios_Min_Order_By = {
+  audio_id?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "playlist_audios" */
+export type Playlist_Audios_Mutation_Response = {
+  __typename?: 'playlist_audios_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Playlist_Audios>;
+};
+
+/** on_conflict condition type for table "playlist_audios" */
+export type Playlist_Audios_On_Conflict = {
+  constraint: Playlist_Audios_Constraint;
+  update_columns?: Array<Playlist_Audios_Update_Column>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "playlist_audios". */
+export type Playlist_Audios_Order_By = {
+  audio?: InputMaybe<Audios_Order_By>;
+  audio_id?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  playlist?: InputMaybe<Playlist_Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: playlist_audios */
+export type Playlist_Audios_Pk_Columns_Input = {
+  audio_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "playlist_audios" */
+export enum Playlist_Audios_Select_Column {
+  /** column name */
+  AudioId = 'audio_id',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  PlaylistId = 'playlist_id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+}
+
+/** input type for updating data in table "playlist_audios" */
+export type Playlist_Audios_Set_Input = {
+  audio_id?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Playlist_Audios_Stddev_Fields = {
+  __typename?: 'playlist_audios_stddev_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "playlist_audios" */
+export type Playlist_Audios_Stddev_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Playlist_Audios_Stddev_Pop_Fields = {
+  __typename?: 'playlist_audios_stddev_pop_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "playlist_audios" */
+export type Playlist_Audios_Stddev_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Playlist_Audios_Stddev_Samp_Fields = {
+  __typename?: 'playlist_audios_stddev_samp_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "playlist_audios" */
+export type Playlist_Audios_Stddev_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "playlist_audios" */
+export type Playlist_Audios_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Playlist_Audios_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Playlist_Audios_Stream_Cursor_Value_Input = {
+  audio_id?: InputMaybe<Scalars['uuid']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Playlist_Audios_Sum_Fields = {
+  __typename?: 'playlist_audios_sum_fields';
+  position?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "playlist_audios" */
+export type Playlist_Audios_Sum_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "playlist_audios" */
+export enum Playlist_Audios_Update_Column {
+  /** column name */
+  AudioId = 'audio_id',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  PlaylistId = 'playlist_id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+}
+
+export type Playlist_Audios_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Playlist_Audios_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Playlist_Audios_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Playlist_Audios_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Playlist_Audios_Var_Pop_Fields = {
+  __typename?: 'playlist_audios_var_pop_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "playlist_audios" */
+export type Playlist_Audios_Var_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Playlist_Audios_Var_Samp_Fields = {
+  __typename?: 'playlist_audios_var_samp_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "playlist_audios" */
+export type Playlist_Audios_Var_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Playlist_Audios_Variance_Fields = {
+  __typename?: 'playlist_audios_variance_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "playlist_audios" */
+export type Playlist_Audios_Variance_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "playlist". All fields are combined with a logical 'AND'. */
 export type Playlist_Bool_Exp = {
   _and?: InputMaybe<Array<Playlist_Bool_Exp>>;
@@ -5000,6 +5465,8 @@ export type Playlist_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  playlist_audios?: InputMaybe<Playlist_Audios_Bool_Exp>;
+  playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Bool_Exp>;
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
@@ -5008,6 +5475,7 @@ export type Playlist_Bool_Exp = {
   sharedRecipientsInput?: InputMaybe<Jsonb_Comparison_Exp>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Bool_Exp>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Bool_Exp>;
+  site?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
@@ -5055,6 +5523,7 @@ export type Playlist_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist_audios?: InputMaybe<Playlist_Audios_Arr_Rel_Insert_Input>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** Short id like Youtube video id */
@@ -5064,6 +5533,7 @@ export type Playlist_Insert_Input = {
   /** List of recipient emails from user input, not validated yet. End user can update this. */
   sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
   shared_playlist_recipients?: InputMaybe<Shared_Playlist_Recipients_Arr_Rel_Insert_Input>;
+  site?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -5080,6 +5550,7 @@ export type Playlist_Max_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   /** Short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
@@ -5094,6 +5565,7 @@ export type Playlist_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   /** Short id like Youtube video id */
   sId?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -5109,6 +5581,7 @@ export type Playlist_Min_Fields = {
   id?: Maybe<Scalars['uuid']['output']>;
   /** Short id like Youtube video id */
   sId?: Maybe<Scalars['String']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
@@ -5123,6 +5596,7 @@ export type Playlist_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   /** Short id like Youtube video id */
   sId?: InputMaybe<Order_By>;
+  site?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -5158,12 +5632,14 @@ export type Playlist_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
   sharedRecipients?: InputMaybe<Order_By>;
   sharedRecipientsInput?: InputMaybe<Order_By>;
   shared_playlist_recipients_aggregate?: InputMaybe<Shared_Playlist_Recipients_Aggregate_Order_By>;
+  site?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -5202,6 +5678,8 @@ export enum Playlist_Select_Column {
   /** column name */
   SharedRecipientsInput = 'sharedRecipientsInput',
   /** column name */
+  Site = 'site',
+  /** column name */
   Slug = 'slug',
   /** column name */
   ThumbnailUrl = 'thumbnailUrl',
@@ -5237,6 +5715,7 @@ export type Playlist_Set_Input = {
   sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
   sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -5264,6 +5743,7 @@ export type Playlist_Stream_Cursor_Value_Input = {
   sharedRecipients?: InputMaybe<Scalars['jsonb']['input']>;
   /** List of recipient emails from user input, not validated yet. End user can update this. */
   sharedRecipientsInput?: InputMaybe<Scalars['jsonb']['input']>;
+  site?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -5287,6 +5767,8 @@ export enum Playlist_Update_Column {
   SharedRecipients = 'sharedRecipients',
   /** column name */
   SharedRecipientsInput = 'sharedRecipientsInput',
+  /** column name */
+  Site = 'site',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -5659,7 +6141,7 @@ export type Posts = {
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
-  hId?: Maybe<Scalars['String']['output']>;
+  hId: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   pinned: Scalars['Boolean']['output'];
@@ -6052,6 +6534,12 @@ export type Query_Root = {
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
   playlist_aggregate: Playlist_Aggregate;
+  /** An array relationship */
+  playlist_audios: Array<Playlist_Audios>;
+  /** An aggregate relationship */
+  playlist_audios_aggregate: Playlist_Audios_Aggregate;
+  /** fetch data from the table: "playlist_audios" using primary key columns */
+  playlist_audios_by_pk?: Maybe<Playlist_Audios>;
   /** fetch data from the table: "playlist" using primary key columns */
   playlist_by_pk?: Maybe<Playlist>;
   /** An array relationship */
@@ -6355,6 +6843,27 @@ export type Query_RootPlaylist_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Order_By>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
+};
+
+export type Query_RootPlaylist_AudiosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+export type Query_RootPlaylist_Audios_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+export type Query_RootPlaylist_Audios_By_PkArgs = {
+  audio_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
 };
 
 export type Query_RootPlaylist_By_PkArgs = {
@@ -7092,23 +7601,6 @@ export type Reading_Progresses_Variance_Order_By = {
   totalPages?: InputMaybe<Order_By>;
 };
 
-export type SetVideoThumbnailAtTimeInput = {
-  atSeconds: Scalars['Float']['input'];
-  videoId: Scalars['String']['input'];
-};
-
-export type SetVideoThumbnailAtTimeOutput = {
-  __typename?: 'SetVideoThumbnailAtTimeOutput';
-  thumbnailUrl: Scalars['String']['output'];
-};
-
-export type SetVideoThumbnailAtTimeResponse = {
-  __typename?: 'SetVideoThumbnailAtTimeResponse';
-  dataObject?: Maybe<SetVideoThumbnailAtTimeOutput>;
-  message: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-};
-
 /** This table tell us what playlist is shared to whom. All videos in the playlist should be shared, not selective */
 export type Shared_Playlist_Recipients = {
   __typename?: 'shared_playlist_recipients';
@@ -7344,8 +7836,8 @@ export type Shared_Video_Recipients = {
   recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
-  video?: Maybe<Videos>;
-  videoId?: Maybe<Scalars['uuid']['output']>;
+  video: Videos;
+  videoId: Scalars['uuid']['output'];
   viewed: Scalars['Boolean']['output'];
 };
 
@@ -7689,6 +8181,14 @@ export type Subscription_Root = {
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
   playlist_aggregate: Playlist_Aggregate;
+  /** An array relationship */
+  playlist_audios: Array<Playlist_Audios>;
+  /** An aggregate relationship */
+  playlist_audios_aggregate: Playlist_Audios_Aggregate;
+  /** fetch data from the table: "playlist_audios" using primary key columns */
+  playlist_audios_by_pk?: Maybe<Playlist_Audios>;
+  /** fetch data from the table in a streaming manner: "playlist_audios" */
+  playlist_audios_stream: Array<Playlist_Audios>;
   /** fetch data from the table: "playlist" using primary key columns */
   playlist_by_pk?: Maybe<Playlist>;
   /** fetch data from the table in a streaming manner: "playlist" */
@@ -8082,6 +8582,33 @@ export type Subscription_RootPlaylist_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Order_By>>;
   where?: InputMaybe<Playlist_Bool_Exp>;
+};
+
+export type Subscription_RootPlaylist_AudiosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+export type Subscription_RootPlaylist_Audios_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Audios_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+export type Subscription_RootPlaylist_Audios_By_PkArgs = {
+  audio_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
+};
+
+export type Subscription_RootPlaylist_Audios_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Playlist_Audios_Stream_Cursor_Input>>;
+  where?: InputMaybe<Playlist_Audios_Bool_Exp>;
 };
 
 export type Subscription_RootPlaylist_By_PkArgs = {
@@ -12247,6 +12774,60 @@ export type GetReadingStatsQuery = {
   };
 };
 
+export type CreateListenPlaylistMutationVariables = Exact<{
+  object: Playlist_Insert_Input;
+}>;
+
+export type CreateListenPlaylistMutation = {
+  __typename?: 'mutation_root';
+  insert_playlist_one?: {
+    __typename?: 'playlist';
+    id: any;
+    slug: string;
+  } | null;
+};
+
+export type AddAudioToPlaylistMutationVariables = Exact<{
+  object: Playlist_Audios_Insert_Input;
+}>;
+
+export type AddAudioToPlaylistMutation = {
+  __typename?: 'mutation_root';
+  insert_playlist_audios_one?: {
+    __typename?: 'playlist_audios';
+    playlist_id: any;
+    audio_id: any;
+    position: number;
+  } | null;
+};
+
+export type RemoveAudioFromPlaylistMutationVariables = Exact<{
+  playlistId: Scalars['uuid']['input'];
+  audioId: Scalars['uuid']['input'];
+}>;
+
+export type RemoveAudioFromPlaylistMutation = {
+  __typename?: 'mutation_root';
+  delete_playlist_audios_by_pk?: {
+    __typename?: 'playlist_audios';
+    playlist_id: any;
+    audio_id: any;
+  } | null;
+};
+
+export type ReorderPlaylistAudiosMutationVariables = Exact<{
+  updates: Array<Playlist_Audios_Updates> | Playlist_Audios_Updates;
+}>;
+
+export type ReorderPlaylistAudiosMutation = {
+  __typename?: 'mutation_root';
+  update_playlist_audios_many?: Array<{
+    __typename?: 'playlist_audios_mutation_response';
+    affected_rows: number;
+    returning: Array<{ __typename?: 'playlist_audios'; playlist_id: any }>;
+  } | null> | null;
+};
+
 export type GetAudiosAndFeelingsQueryVariables = Exact<{
   [key: string]: never;
 }>;
@@ -12443,43 +13024,6 @@ export type InsertVideosMutation = {
   } | null;
 };
 
-export type SaveSubtitleMutationVariables = Exact<{
-  id: Scalars['uuid']['input'];
-  object: Subtitles_Set_Input;
-}>;
-
-export type SaveSubtitleMutation = {
-  __typename?: 'mutation_root';
-  update_subtitles_by_pk?: { __typename?: 'subtitles'; id: any } | null;
-};
-
-export type SharePlaylistMutationVariables = Exact<{
-  id: Scalars['uuid']['input'];
-  emails?: InputMaybe<Scalars['jsonb']['input']>;
-}>;
-
-export type SharePlaylistMutation = {
-  __typename?: 'mutation_root';
-  update_playlist_by_pk?: { __typename?: 'playlist'; id: any } | null;
-};
-
-export type SetVideoThumbnailAtTimeMutationVariables = Exact<{
-  input: SetVideoThumbnailAtTimeInput;
-}>;
-
-export type SetVideoThumbnailAtTimeMutation = {
-  __typename?: 'mutation_root';
-  setVideoThumbnailAtTime: {
-    __typename?: 'SetVideoThumbnailAtTimeResponse';
-    success: boolean;
-    message: string;
-    dataObject?: {
-      __typename?: 'SetVideoThumbnailAtTimeOutput';
-      thumbnailUrl: string;
-    } | null;
-  };
-};
-
 export type CreateSignedUploadUrlMutationVariables = Exact<{
   input: SignedUploadUrlInput;
 }>;
@@ -12500,6 +13044,53 @@ export type CreateSignedUploadUrlMutation = {
   };
 };
 
+export type SaveSubtitleMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  object: Subtitles_Set_Input;
+}>;
+
+export type SaveSubtitleMutation = {
+  __typename?: 'mutation_root';
+  update_subtitles_by_pk?: { __typename?: 'subtitles'; id: any } | null;
+};
+
+export type SetVideoThumbnailAtTimeMutationVariables = Exact<{
+  input: SetVideoThumbnailAtTimeInput;
+}>;
+
+export type SetVideoThumbnailAtTimeMutation = {
+  __typename?: 'mutation_root';
+  setVideoThumbnailAtTime: {
+    __typename?: 'SetVideoThumbnailAtTimeResponse';
+    success: boolean;
+    message: string;
+    dataObject?: {
+      __typename?: 'SetVideoThumbnailAtTimeOutput';
+      thumbnailUrl: string;
+    } | null;
+  };
+};
+
+export type SharePlaylistMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  emails?: InputMaybe<Scalars['jsonb']['input']>;
+}>;
+
+export type SharePlaylistMutation = {
+  __typename?: 'mutation_root';
+  update_playlist_by_pk?: { __typename?: 'playlist'; id: any } | null;
+};
+
+export type ShareVideoMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  emails?: InputMaybe<Scalars['jsonb']['input']>;
+}>;
+
+export type ShareVideoMutation = {
+  __typename?: 'mutation_root';
+  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
+};
+
 export type UpdateVideoThumbnailMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   thumbnailUrl: Scalars['String']['input'];
@@ -12512,16 +13103,6 @@ export type UpdateVideoThumbnailMutation = {
     id: any;
     thumbnailUrl?: string | null;
   } | null;
-};
-
-export type ShareVideoMutationVariables = Exact<{
-  id: Scalars['uuid']['input'];
-  emails?: InputMaybe<Scalars['jsonb']['input']>;
-}>;
-
-export type ShareVideoMutation = {
-  __typename?: 'mutation_root';
-  update_videos_by_pk?: { __typename?: 'videos'; id: any } | null;
 };
 
 export type UpdateVideoProgressMutationVariables = Exact<{
@@ -13222,6 +13803,53 @@ export const GetReadingStatsDocument = new TypedDocumentString(`
   GetReadingStatsQuery,
   GetReadingStatsQueryVariables
 >;
+export const CreateListenPlaylistDocument = new TypedDocumentString(`
+    mutation CreateListenPlaylist($object: playlist_insert_input!) {
+  insert_playlist_one(object: $object) {
+    id
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CreateListenPlaylistMutation,
+  CreateListenPlaylistMutationVariables
+>;
+export const AddAudioToPlaylistDocument = new TypedDocumentString(`
+    mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {
+  insert_playlist_audios_one(object: $object) {
+    playlist_id
+    audio_id
+    position
+  }
+}
+    `) as unknown as TypedDocumentString<
+  AddAudioToPlaylistMutation,
+  AddAudioToPlaylistMutationVariables
+>;
+export const RemoveAudioFromPlaylistDocument = new TypedDocumentString(`
+    mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {
+  delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {
+    playlist_id
+    audio_id
+  }
+}
+    `) as unknown as TypedDocumentString<
+  RemoveAudioFromPlaylistMutation,
+  RemoveAudioFromPlaylistMutationVariables
+>;
+export const ReorderPlaylistAudiosDocument = new TypedDocumentString(`
+    mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {
+  update_playlist_audios_many(updates: $updates) {
+    affected_rows
+    returning {
+      playlist_id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ReorderPlaylistAudiosMutation,
+  ReorderPlaylistAudiosMutationVariables
+>;
 export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     query GetAudiosAndFeelings @cached {
   audios {
@@ -13410,6 +14038,23 @@ export const InsertVideosDocument = new TypedDocumentString(`
   InsertVideosMutation,
   InsertVideosMutationVariables
 >;
+export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
+    mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {
+  createSignedUploadUrl(input: $input) {
+    success
+    message
+    dataObject {
+      uploadUrl
+      publicUrl
+      objectPath
+      expiresAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  CreateSignedUploadUrlMutation,
+  CreateSignedUploadUrlMutationVariables
+>;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
   update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
@@ -13433,34 +14078,6 @@ export const SetVideoThumbnailAtTimeDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   SetVideoThumbnailAtTimeMutation,
   SetVideoThumbnailAtTimeMutationVariables
->;
-export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
-    mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {
-  createSignedUploadUrl(input: $input) {
-    success
-    message
-    dataObject {
-      uploadUrl
-      publicUrl
-      objectPath
-      expiresAt
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<
-  CreateSignedUploadUrlMutation,
-  CreateSignedUploadUrlMutationVariables
->;
-export const UpdateVideoThumbnailDocument = new TypedDocumentString(`
-    mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {
-  update_videos_by_pk(pk_columns: {id: $id}, _set: {thumbnailUrl: $thumbnailUrl}) {
-    id
-    thumbnailUrl
-  }
-}
-    `) as unknown as TypedDocumentString<
-  UpdateVideoThumbnailMutation,
-  UpdateVideoThumbnailMutationVariables
 >;
 export const SharePlaylistDocument = new TypedDocumentString(`
     mutation sharePlaylist($id: uuid!, $emails: jsonb) {
@@ -13487,6 +14104,17 @@ export const ShareVideoDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   ShareVideoMutation,
   ShareVideoMutationVariables
+>;
+export const UpdateVideoThumbnailDocument = new TypedDocumentString(`
+    mutation UpdateVideoThumbnail($id: uuid!, $thumbnailUrl: String!) {
+  update_videos_by_pk(pk_columns: {id: $id}, _set: {thumbnailUrl: $thumbnailUrl}) {
+    id
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<
+  UpdateVideoThumbnailMutation,
+  UpdateVideoThumbnailMutationVariables
 >;
 export const UpdateVideoProgressDocument = new TypedDocumentString(`
     mutation UpdateVideoProgress($videoId: uuid!, $progressSeconds: Int!, $lastWatchedAt: timestamptz!) {
