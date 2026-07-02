@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createContext, type FC, useContext } from 'react';
+import { createContext, type FC, useContext, useEffect } from 'react';
 import { useFeatureFlagSubscription } from '../../universal/hooks/useFeatureFlagSubscription';
 import { useNotificationsSubscription } from '../../universal/hooks/useNotificationsSubscription';
+import { useAuthContext } from '../auth';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,25 @@ const QueryContextProvider = (props: QueryContextProviderProps) => {
   const { hasuraUrl } = config;
   const featureFlags = useFeatureFlagSubscription(hasuraUrl);
   const notifications = useNotificationsSubscription(hasuraUrl);
+  const { user } = useAuthContext();
+  const userId = user?.id ?? null;
+
+  /**
+   * Reset the React Query cache whenever the signed-in user changes.
+   *
+   * `queryClient` is a module-level singleton and query keys are NOT scoped
+   * by userId, so without this the previous identity's data (or anonymous
+   * data) keeps being served from cache to the newly signed-in user until
+   * staleTime elapses. Clearing on userId change drops those entries; active
+   * observers then refetch with the new token. Only the query cache is
+   * affected — the feature-flag / notification WebSocket subscriptions are not.
+   *
+   * userId is the trigger, not a value read inside the effect body.
+   */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: userId is the change trigger, not read inside the effect.
+  useEffect(() => {
+    queryClient.clear();
+  }, [userId]);
 
   const contextValue: QueryContextValue = {
     hasuraUrl,

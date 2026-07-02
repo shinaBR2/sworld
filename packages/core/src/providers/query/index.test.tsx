@@ -12,9 +12,16 @@ vi.mock('@tanstack/react-query', () => ({
   QueryClient: vi.fn().mockImplementation(() => ({
     removeQueries: vi.fn(),
     refetchQueries: vi.fn(),
+    clear: vi.fn(),
   })),
   QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
     children,
+}));
+
+// Controllable auth context so we can drive userId changes in tests.
+const mockUser = vi.hoisted(() => ({ current: null as { id: string } | null }));
+vi.mock('../auth', () => ({
+  useAuthContext: () => ({ user: mockUser.current }),
 }));
 
 vi.mock('@rollbar/react', () => ({
@@ -220,6 +227,38 @@ describe('Query Provider and Context', () => {
 
     expect(outerContextValue).toEqual(expectedContextValue);
     expect(innerContextValue).toEqual(expectedNestedContextValue);
+  });
+
+  it('should reset the query cache when the signed-in user changes', () => {
+    const queryClientInstance = vi.mocked(QueryClient).mock.results[0].value;
+    queryClientInstance.clear.mockClear();
+
+    mockUser.current = { id: 'user-a' };
+    const { rerender } = render(
+      <QueryProvider config={mockConfig}>
+        <div>child</div>
+      </QueryProvider>,
+    );
+
+    // Cleared once on initial mount for user-a.
+    expect(queryClientInstance.clear).toHaveBeenCalledTimes(1);
+
+    // A re-render with the same user must NOT clear the cache again.
+    rerender(
+      <QueryProvider config={mockConfig}>
+        <div>child</div>
+      </QueryProvider>,
+    );
+    expect(queryClientInstance.clear).toHaveBeenCalledTimes(1);
+
+    // Switching to a different user clears the cache.
+    mockUser.current = { id: 'user-b' };
+    rerender(
+      <QueryProvider config={mockConfig}>
+        <div>child</div>
+      </QueryProvider>,
+    );
+    expect(queryClientInstance.clear).toHaveBeenCalledTimes(2);
   });
 
   it('should handle missing config gracefully', () => {
