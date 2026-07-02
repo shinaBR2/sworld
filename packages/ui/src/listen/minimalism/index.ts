@@ -1,3 +1,4 @@
+import { CollectionSelect } from './collection-select';
 import { Header } from './header';
 import { AudioList } from './home/audio-list';
 import { FeelingList } from './home/feeling-list';
@@ -19,5 +20,6 @@ export {
   MainContainer,
   PlaylistLibrary,
   PlaylistDetail,
+  CollectionSelect,
   CreatePlaylistDialog,
 };
