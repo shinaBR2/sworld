@@ -12866,6 +12866,68 @@ export type GetPublicAudiosAndFeelingsQuery = {
   tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
 };
 
+export type AudioFieldsFragment = {
+  __typename?: 'audios';
+  id: any;
+  name: string;
+  source: string;
+  thumbnailUrl?: string | null;
+  artistName: string;
+  createdAt: any;
+} & { ' $fragmentName'?: 'AudioFieldsFragment' };
+
+export type PlaylistAudioFieldsFragment = {
+  __typename?: 'playlist_audios';
+  position: number;
+  audio: { __typename?: 'audios' } & {
+    ' $fragmentRefs'?: { AudioFieldsFragment: AudioFieldsFragment };
+  };
+} & { ' $fragmentName'?: 'PlaylistAudioFieldsFragment' };
+
+export type ListenPlaylistFieldsFragment = {
+  __typename?: 'playlist';
+  id: any;
+  title: string;
+  thumbnailUrl?: string | null;
+  slug: string;
+  createdAt: any;
+  description?: string | null;
+  playlist_audios: Array<
+    { __typename?: 'playlist_audios' } & {
+      ' $fragmentRefs'?: {
+        PlaylistAudioFieldsFragment: PlaylistAudioFieldsFragment;
+      };
+    }
+  >;
+} & { ' $fragmentName'?: 'ListenPlaylistFieldsFragment' };
+
+export type ListenPlaylistDetailQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+export type ListenPlaylistDetailQuery = {
+  __typename?: 'query_root';
+  playlist_by_pk?:
+    | ({ __typename?: 'playlist' } & {
+        ' $fragmentRefs'?: {
+          ListenPlaylistFieldsFragment: ListenPlaylistFieldsFragment;
+        };
+      })
+    | null;
+};
+
+export type ListenPlaylistsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ListenPlaylistsQuery = {
+  __typename?: 'query_root';
+  playlist: Array<{
+    __typename?: 'playlist';
+    id: any;
+    title: string;
+    slug: string;
+  }>;
+};
+
 export type InsertPostMutationVariables = Exact<{
   object: Posts_Insert_Input;
 }>;
@@ -13326,6 +13388,66 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+export const AudioFieldsFragmentDoc = new TypedDocumentString(
+  `
+    fragment AudioFields on audios {
+  id
+  name
+  source
+  thumbnailUrl
+  artistName
+  createdAt
+}
+    `,
+  { fragmentName: 'AudioFields' },
+) as unknown as TypedDocumentString<AudioFieldsFragment, unknown>;
+export const PlaylistAudioFieldsFragmentDoc = new TypedDocumentString(
+  `
+    fragment PlaylistAudioFields on playlist_audios {
+  position
+  audio {
+    ...AudioFields
+  }
+}
+    fragment AudioFields on audios {
+  id
+  name
+  source
+  thumbnailUrl
+  artistName
+  createdAt
+}`,
+  { fragmentName: 'PlaylistAudioFields' },
+) as unknown as TypedDocumentString<PlaylistAudioFieldsFragment, unknown>;
+export const ListenPlaylistFieldsFragmentDoc = new TypedDocumentString(
+  `
+    fragment ListenPlaylistFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  playlist_audios(order_by: {position: asc}) {
+    ...PlaylistAudioFields
+  }
+}
+    fragment AudioFields on audios {
+  id
+  name
+  source
+  thumbnailUrl
+  artistName
+  createdAt
+}
+fragment PlaylistAudioFields on playlist_audios {
+  position
+  audio {
+    ...AudioFields
+  }
+}`,
+  { fragmentName: 'ListenPlaylistFields' },
+) as unknown as TypedDocumentString<ListenPlaylistFieldsFragment, unknown>;
 export const UserFieldsFragmentDoc = new TypedDocumentString(
   `
     fragment UserFields on users {
@@ -13893,6 +14015,52 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   GetPublicAudiosAndFeelingsQuery,
   GetPublicAudiosAndFeelingsQueryVariables
+>;
+export const ListenPlaylistDetailDocument = new TypedDocumentString(`
+    query ListenPlaylistDetail($id: uuid!) {
+  playlist_by_pk(id: $id) {
+    ...ListenPlaylistFields
+  }
+}
+    fragment AudioFields on audios {
+  id
+  name
+  source
+  thumbnailUrl
+  artistName
+  createdAt
+}
+fragment PlaylistAudioFields on playlist_audios {
+  position
+  audio {
+    ...AudioFields
+  }
+}
+fragment ListenPlaylistFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  playlist_audios(order_by: {position: asc}) {
+    ...PlaylistAudioFields
+  }
+}`) as unknown as TypedDocumentString<
+  ListenPlaylistDetailQuery,
+  ListenPlaylistDetailQueryVariables
+>;
+export const ListenPlaylistsDocument = new TypedDocumentString(`
+    query ListenPlaylists {
+  playlist(where: {site: {_eq: "listen"}}, order_by: {createdAt: desc}) {
+    id
+    title
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<
+  ListenPlaylistsQuery,
+  ListenPlaylistsQueryVariables
 >;
 export const InsertPostDocument = new TypedDocumentString(`
     mutation InsertPost($object: posts_insert_input!) {
