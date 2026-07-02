@@ -103,24 +103,31 @@ const ListeningScreen = (props: ListeningScreenProps) => {
             display: 'flex',
             alignItems: 'center',
             gap: 2,
-            flexWrap: 'wrap',
-            // Owns the row's vertical spacing so it's identical whether the
-            // feeling chips are shown (All) or not (a playlist).
+            // Single row on every viewport — the chips never wrap below the
+            // select. Owns the row's vertical spacing so it's identical
+            // whether the feeling chips are shown (All) or not (a playlist).
             my: 2,
           }}
         >
-          <CollectionSelect
-            value={collectionValue}
-            playlists={playlists}
-            onSelect={onSelectCollection}
-            onCreateNew={() => setCreateOpen(true)}
-          />
-          {mode === 'all' && (
-            <FeelingList
-              activeId={activeFeelingId}
-              onSelect={setActiveFeelingId}
-              queryRs={props.queryRs}
+          {/* Select stays fixed — it's not part of the scrollable chips. */}
+          <Box sx={{ flexShrink: 0 }}>
+            <CollectionSelect
+              value={collectionValue}
+              playlists={playlists}
+              onSelect={onSelectCollection}
+              onCreateNew={() => setCreateOpen(true)}
             />
+          </Box>
+          {mode === 'all' && (
+            // Only the chips scroll horizontally; minWidth:0 lets this flex
+            // item shrink so FeelingList's own overflow activates.
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <FeelingList
+                activeId={activeFeelingId}
+                onSelect={setActiveFeelingId}
+                queryRs={props.queryRs}
+              />
+            </Box>
           )}
         </Box>
         <AudioList
