@@ -19,10 +19,12 @@ interface CollectionSelectProps {
   playlists: CollectionSelectPlaylist[];
   onSelect: (value: 'all' | string) => void;
   onCreateNew: () => void;
+  // Only signed-in users can create playlists; hide the option otherwise.
+  canCreate?: boolean;
 }
 
 const CollectionSelect = (props: CollectionSelectProps) => {
-  const { value, playlists, onSelect, onCreateNew } = props;
+  const { value, playlists, onSelect, onCreateNew, canCreate = true } = props;
 
   const handleChange = (event: SelectChangeEvent) => {
     const next = event.target.value;
@@ -57,13 +59,15 @@ const CollectionSelect = (props: CollectionSelectProps) => {
           {playlist.title}
         </MenuItem>
       ))}
-      <Divider />
-      <MenuItem value={NEW_VALUE}>
-        <ListItemIcon>
-          <AddIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>New playlist…</ListItemText>
-      </MenuItem>
+      {canCreate && <Divider />}
+      {canCreate && (
+        <MenuItem value={NEW_VALUE}>
+          <ListItemIcon>
+            <AddIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>New playlist…</ListItemText>
+        </MenuItem>
+      )}
     </Select>
   );
 };

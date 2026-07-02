@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid';
 import Slide from '@mui/material/Slide';
 import Typography from '@mui/material/Typography';
 import hooks, {
@@ -63,59 +62,65 @@ const MusicWidget = (props: MusicWidgetProps) => {
 
   return (
     <StyledCard role="region" aria-label="music widget">
-      <ResponsiveCardMedia
-        aria-label="audio thumbnail"
-        src={image || defaultAudioThumbnailUrl}
-        alt={name}
-      />
       <StyledContent ref={contentRef}>
-        <CardContent>
-          <Box
-            component={Grid}
-            container
-            justifyContent="space-between"
-            alignItems="center"
-            mb={1}
-          >
-            <Typography
-              role="text"
-              aria-label="now playing"
-              gutterBottom
-              variant="body2"
-              component="p"
-            >
-              {showPlayinglist ? 'Playing list' : 'Now playing'}
-            </Typography>
-            {isMobile && (
+        <CardContent sx={{ pt: 3 }}>
+          {isMobile && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
               <PlaylistButton
                 onClick={() => setShowPlayinglist(!showPlayinglist)}
-                sx={{
-                  color: 'white',
-                }}
               />
-            )}
+            </Box>
+          )}
+          <Box
+            sx={{
+              width: 200,
+              maxWidth: '70%',
+              aspectRatio: '1 / 1',
+              mx: 'auto',
+              mb: 3,
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: 3,
+            }}
+          >
+            <ResponsiveCardMedia
+              aria-label="audio thumbnail"
+              src={image || defaultAudioThumbnailUrl}
+              alt={name}
+              sx={{
+                width: '100%',
+                height: '100%',
+                aspectRatio: '1 / 1',
+                objectFit: 'cover',
+              }}
+            />
           </Box>
           <Typography
             aria-label="audio title"
-            gutterBottom
-            variant="h4"
+            variant="h6"
+            align="center"
             sx={{
-              display: '-webkit-Box',
+              display: '-webkit-box',
               WebkitLineClamp: '1',
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              textOverflow: 'ellipsisBox',
             }}
           >
             {name}
           </Typography>
-          <Typography aria-label="audio artist" gutterBottom component="p">
+          <Typography
+            aria-label="audio artist"
+            variant="body2"
+            align="center"
+            color="text.secondary"
+            gutterBottom
+          >
             {artistName}
           </Typography>
-        </CardContent>
-        <CardContent>
-          <Seeker {...getSeekerProps()} />
-          <Controls {...controlProps} />
+          <Box sx={{ mt: 2 }}>
+            <Seeker {...getSeekerProps()} />
+            <Controls {...controlProps} />
+          </Box>
         </CardContent>
         {isMobile && (
           <Slide

@@ -1,6 +1,5 @@
-import type { BoxProps, CardProps } from '@mui/material';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
+import Box, { type BoxProps } from '@mui/material/Box';
+import Card, { type CardProps } from '@mui/material/Card';
 import { keyframes, styled } from '@mui/material/styles';
 
 const cardWidth = 345;
@@ -14,8 +13,12 @@ const StyledCard = styled(Card)<CardProps>(({ theme }) => {
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
-    background: `linear-gradient(to bottom, ${palette.grey[900]}, ${palette.grey[800]})`,
-    color: palette.common.white,
+    // One calm light surface that matches the page — no dark slab.
+    backgroundColor: palette.background.paper,
+    color: palette.text.primary,
+    borderRadius: 16,
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+    overflow: 'hidden',
   };
 }) as typeof Card;
 
@@ -30,7 +33,7 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     position: 'absolute',
     width: '100%',
     height: '244px',
-    top: 56,
+    bottom: 0,
     overflowY: 'auto',
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,

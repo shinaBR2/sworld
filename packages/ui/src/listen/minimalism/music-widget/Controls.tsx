@@ -31,24 +31,34 @@ const getWrapperStyles = () => ({
 const getCenterControlsStyles = () => ({
   display: 'flex',
   alignItems: 'center',
-  gap: 2,
+  gap: 1,
 });
 
-const getMainButtonStyles = () => ({
-  fontSize: '3rem',
-  p: 0,
-  color: 'white',
+// The play/pause button is the one filled focal point.
+const getPlayButtonStyles = () => ({
+  width: 56,
+  height: 56,
+  bgcolor: 'primary.main',
+  color: 'primary.contrastText',
   '&:hover': {
-    bgcolor: 'rgba(255,255,255,0.1)',
+    bgcolor: 'primary.dark',
   },
 });
 
-const getSideButtonStyles = (isActive = false) => ({
-  color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
-  fontSize: '1.75rem',
+// Prev / next — plain, quiet.
+const getStepButtonStyles = () => ({
+  color: 'text.primary',
   '&:hover': {
-    color: 'white',
-    bgcolor: 'rgba(255,255,255,0.1)',
+    bgcolor: 'action.hover',
+  },
+});
+
+// Loop / shuffle — secondary, dimmed until active.
+const getSideButtonStyles = (isActive = false) => ({
+  color: isActive ? 'primary.main' : 'text.secondary',
+  '&:hover': {
+    color: 'text.primary',
+    bgcolor: 'action.hover',
   },
 });
 
@@ -76,30 +86,22 @@ const Controls = (props: Props) => {
     handleNext,
   } = props;
 
-  const renderIcon = () => {
-    if (isPlay) {
-      return <PauseRounded sx={getMainButtonStyles()} />;
-    }
-
-    return <PlayArrowRounded sx={getMainButtonStyles()} />;
-  };
-
   const renderLoopMode = () => {
     if (loopMode === SAudioPlayerLoopMode.All) {
-      return <RepeatOnIcon fontSize="large" />;
+      return <RepeatOnIcon />;
     } else if (loopMode === SAudioPlayerLoopMode.One) {
-      return <RepeatOneIcon fontSize="large" />;
+      return <RepeatOneIcon />;
     } else {
-      return <RepeatIcon fontSize="large" />;
+      return <RepeatIcon />;
     }
   };
 
   const renderShuffle = () => {
     if (shuffle) {
-      return <ShuffleOnIcon fontSize="large" />;
+      return <ShuffleOnIcon />;
     }
 
-    return <ShuffleIcon fontSize="large" />;
+    return <ShuffleIcon />;
   };
 
   return (
@@ -108,32 +110,35 @@ const Controls = (props: Props) => {
         size="small"
         aria-label="toggle loop mode"
         onClick={onChangeLoopMode}
-        sx={getSideButtonStyles()}
+        sx={getSideButtonStyles(
+          loopMode !== undefined && loopMode !== SAudioPlayerLoopMode.None,
+        )}
       >
         {renderLoopMode()}
       </IconButton>
       <Box sx={getCenterControlsStyles()}>
         <IconButton
-          size="small"
           aria-label="previous audio"
           onClick={handlePrev}
-          sx={getMainButtonStyles()}
+          sx={getStepButtonStyles()}
         >
           <SkipPreviousRounded fontSize="large" />
         </IconButton>
         <IconButton
-          size="medium"
           aria-label={isPlay ? 'pause' : 'play'}
           onClick={handlePlay}
-          sx={getMainButtonStyles()}
+          sx={getPlayButtonStyles()}
         >
-          {renderIcon()}
+          {isPlay ? (
+            <PauseRounded fontSize="large" />
+          ) : (
+            <PlayArrowRounded fontSize="large" />
+          )}
         </IconButton>
         <IconButton
-          size="small"
           aria-label="next audio"
           onClick={handleNext}
-          sx={getMainButtonStyles()}
+          sx={getStepButtonStyles()}
         >
           <SkipNextRounded fontSize="large" />
         </IconButton>
@@ -142,7 +147,7 @@ const Controls = (props: Props) => {
         size="small"
         aria-label="shuffle"
         onClick={onShuffle}
-        sx={getSideButtonStyles()}
+        sx={getSideButtonStyles(shuffle)}
       >
         {renderShuffle()}
       </IconButton>

@@ -1,4 +1,4 @@
-import { styled, type Theme, useTheme } from '@mui/material';
+import { styled, type Theme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
@@ -13,26 +13,26 @@ interface Props {
 // https://mui.com/material-ui/react-slider/#music-player
 const getStyles = (theme: Theme) => {
   return {
-    color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
-    height: 8,
+    color: theme.palette.primary.main,
+    height: 4,
     '& .MuiSlider-thumb': {
-      width: 16,
-      height: 16,
-      backgroundColor: '#fff',
+      width: 12,
+      height: 12,
+      backgroundColor: theme.palette.primary.main,
       transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
       '&:before': {
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.2)',
       },
       '&:hover, &.Mui-focusVisible': {
-        boxShadow: `0px 0px 0px 8px ${theme.palette.mode === 'dark' ? 'rgb(255 255 255 / 16%)' : 'rgb(0 0 0 / 16%)'}`,
+        boxShadow: `0px 0px 0px 8px ${theme.palette.primary.main}29`,
       },
       '&.Mui-active': {
-        width: 24,
-        height: 24,
+        width: 18,
+        height: 18,
       },
     },
     '& .MuiSlider-rail': {
-      opacity: 0.28,
+      opacity: 0.24,
     },
   };
 };
@@ -46,17 +46,11 @@ const getInfoStyles = () => {
 };
 
 const TinyText = styled(Typography)(({ theme }) => {
-  const { white } = theme.palette.common;
-
   return {
     fontSize: '0.75rem',
-    opacity: 0.38,
     fontWeight: 500,
     letterSpacing: 0.2,
-    color: white,
-    [theme.breakpoints.down('sm')]: {
-      color: white,
-    },
+    color: theme.palette.text.secondary,
   };
 });
 
