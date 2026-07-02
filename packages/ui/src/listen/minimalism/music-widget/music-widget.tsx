@@ -87,6 +87,12 @@ const MusicWidget = (props: MusicWidgetProps) => {
               aria-label="audio thumbnail"
               src={image || defaultAudioThumbnailUrl}
               alt={name}
+              sx={{
+                width: '100%',
+                height: '100%',
+                aspectRatio: '1 / 1',
+                objectFit: 'cover',
+              }}
             />
           </Box>
           <Typography
@@ -118,7 +124,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
         </CardContent>
         {isMobile && (
           <Slide
-            direction="up"
+            direction="down"
             in={showPlayinglist}
             container={contentRef.current}
           >
