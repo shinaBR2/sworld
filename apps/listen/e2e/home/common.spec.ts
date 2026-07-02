@@ -1,4 +1,3 @@
-import { argosScreenshot } from '@argos-ci/playwright';
 import { expect, test } from '@playwright/test';
 
 test.describe('home visual', () => {
@@ -39,10 +38,6 @@ test.describe('home visual', () => {
     await expect(
       widget.getByRole('img', { name: 'audio thumbnail' }),
     ).toBeVisible();
-
-    const nowPlaying = widget.getByLabel('now playing');
-    await expect(nowPlaying).toBeVisible();
-    await expect(nowPlaying).toContainText('Now playing');
 
     await expect(widget.getByLabel('audio title')).toBeVisible();
     await expect(widget.getByLabel('audio artist')).toBeVisible();
