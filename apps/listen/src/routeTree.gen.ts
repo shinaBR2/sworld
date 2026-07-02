@@ -17,7 +17,6 @@ import { Route as rootRoute } from './routes/__root';
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')();
-const PlaylistsIndexLazyImport = createFileRoute('/playlists/')();
 const PlaylistsIdLazyImport = createFileRoute('/playlists/$id')();
 
 // Create/Update Routes
@@ -27,14 +26,6 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
-
-const PlaylistsIndexLazyRoute = PlaylistsIndexLazyImport.update({
-  id: '/playlists/',
-  path: '/playlists/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/playlists.index.lazy').then((d) => d.Route),
-);
 
 const PlaylistsIdLazyRoute = PlaylistsIdLazyImport.update({
   id: '/playlists/$id',
@@ -62,13 +53,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaylistsIdLazyImport;
       parentRoute: typeof rootRoute;
     };
-    '/playlists/': {
-      id: '/playlists/';
-      path: '/playlists';
-      fullPath: '/playlists';
-      preLoaderRoute: typeof PlaylistsIndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
   }
 }
 
@@ -77,41 +61,36 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute;
   '/playlists/$id': typeof PlaylistsIdLazyRoute;
-  '/playlists': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute;
   '/playlists/$id': typeof PlaylistsIdLazyRoute;
-  '/playlists': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
   '/playlists/$id': typeof PlaylistsIdLazyRoute;
-  '/playlists/': typeof PlaylistsIndexLazyRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/playlists/$id' | '/playlists';
+  fullPaths: '/' | '/playlists/$id';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/playlists/$id' | '/playlists';
-  id: '__root__' | '/' | '/playlists/$id' | '/playlists/';
+  to: '/' | '/playlists/$id';
+  id: '__root__' | '/' | '/playlists/$id';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   PlaylistsIdLazyRoute: typeof PlaylistsIdLazyRoute;
-  PlaylistsIndexLazyRoute: typeof PlaylistsIndexLazyRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   PlaylistsIdLazyRoute: PlaylistsIdLazyRoute,
-  PlaylistsIndexLazyRoute: PlaylistsIndexLazyRoute,
 };
 
 export const routeTree = rootRoute
@@ -125,8 +104,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/playlists/$id",
-        "/playlists/"
+        "/playlists/$id"
       ]
     },
     "/": {
@@ -134,9 +112,6 @@ export const routeTree = rootRoute
     },
     "/playlists/$id": {
       "filePath": "playlists.$id.lazy.tsx"
-    },
-    "/playlists/": {
-      "filePath": "playlists.index.lazy.tsx"
     }
   }
 }
