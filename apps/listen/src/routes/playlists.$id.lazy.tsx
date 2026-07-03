@@ -35,7 +35,7 @@ const AuthenticatedContent = ({ id }: ContentProps) => {
     id,
     getAccessToken,
   });
-  const { playlists } = listenQueryHooks.useLoadPlaylists({ getAccessToken });
+  const { playlists } = listenQueryHooks.useLoadPlaylists();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
