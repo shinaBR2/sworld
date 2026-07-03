@@ -1,5 +1,6 @@
 import { getFragmentData, graphql } from '../../graphql';
 import type { ListenPlaylistDetailQuery } from '../../graphql/graphql';
+import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 import { PlaylistAudioFragment, PlaylistFragment } from './fragments';
 import { transformAudioFragment } from './transformers';
@@ -14,7 +15,6 @@ const playlistDetailQuery = graphql(/* GraphQL */ `
 
 interface LoadPlaylistDetailProps {
   id: string;
-  getAccessToken: () => Promise<string>;
 }
 
 const transform = (data: ListenPlaylistDetailQuery) => {
@@ -31,15 +31,20 @@ const transform = (data: ListenPlaylistDetailQuery) => {
   };
 };
 
+// One hook for every role. The playlist detail query is identical for
+// authenticated and anonymous visitors — Hasura's row permissions restrict
+// `playlist_by_pk` / its audios to what each role may see. Attach the token
+// when signed in, omit it for anonymous so Hasura runs as the `anonymous` role.
 const useLoadPlaylistDetail = (props: LoadPlaylistDetailProps) => {
-  const { id, getAccessToken } = props;
+  const { id } = props;
+  const { isSignedIn, getAccessToken } = useAuthContext();
 
   const { data, isLoading, error } = useRequest<
     ListenPlaylistDetailQuery,
     { id: string }
   >({
-    queryKey: ['listen-playlist-detail', id],
-    getAccessToken,
+    queryKey: ['listen-playlist-detail', isSignedIn, id],
+    getAccessToken: isSignedIn ? getAccessToken : undefined,
     document: playlistDetailQuery,
     variables: {
       id,

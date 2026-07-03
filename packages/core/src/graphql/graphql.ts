@@ -12968,7 +12968,7 @@ export type ReorderPlaylistAudiosMutationVariables = Exact<{
 
 export type ReorderPlaylistAudiosMutation = { __typename?: 'mutation_root', update_playlist_audios_many?: Array<{ __typename?: 'playlist_audios_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'playlist_audios', playlist_id: any }> } | null> | null };
 
-export type AudioFieldsFragment = { __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, createdAt: any } & { ' $fragmentName'?: 'AudioFieldsFragment' };
+export type AudioFieldsFragment = { __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string } & { ' $fragmentName'?: 'AudioFieldsFragment' };
 
 export type PlaylistAudioFieldsFragment = { __typename?: 'playlist_audios', position: number, audio: (
     { __typename?: 'audios' }
@@ -13205,7 +13205,6 @@ export const AudioFieldsFragmentDoc = new TypedDocumentString(`
   source
   thumbnailUrl
   artistName
-  createdAt
 }
     `, {"fragmentName":"AudioFields"}) as unknown as TypedDocumentString<AudioFieldsFragment, unknown>;
 export const PlaylistAudioFieldsFragmentDoc = new TypedDocumentString(`
@@ -13221,7 +13220,6 @@ export const PlaylistAudioFieldsFragmentDoc = new TypedDocumentString(`
   source
   thumbnailUrl
   artistName
-  createdAt
 }`, {"fragmentName":"PlaylistAudioFields"}) as unknown as TypedDocumentString<PlaylistAudioFieldsFragment, unknown>;
 export const ListenPlaylistFieldsFragmentDoc = new TypedDocumentString(`
     fragment ListenPlaylistFields on playlist {
@@ -13241,7 +13239,6 @@ export const ListenPlaylistFieldsFragmentDoc = new TypedDocumentString(`
   source
   thumbnailUrl
   artistName
-  createdAt
 }
 fragment PlaylistAudioFields on playlist_audios {
   position
@@ -13742,7 +13739,6 @@ export const ListenPlaylistDetailDocument = new TypedDocumentString(`
   source
   thumbnailUrl
   artistName
-  createdAt
 }
 fragment PlaylistAudioFields on playlist_audios {
   position

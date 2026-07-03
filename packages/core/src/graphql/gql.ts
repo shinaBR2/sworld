@@ -34,7 +34,7 @@ type Documents = {
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": typeof types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": typeof types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": typeof types.ReorderPlaylistAudiosDocument,
-    "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n": typeof types.AudioFieldsFragmentDoc,
+    "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": typeof types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": typeof types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": typeof types.ListenPlaylistFieldsFragmentDoc,
     "\n  query ListenHome @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" } }) {\n      id\n      name\n    }\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": typeof types.ListenHomeDocument,
@@ -86,7 +86,7 @@ const documents: Documents = {
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": types.ReorderPlaylistAudiosDocument,
-    "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n": types.AudioFieldsFragmentDoc,
+    "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": types.ListenPlaylistFieldsFragmentDoc,
     "\n  query ListenHome @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: \"listen\" } }) {\n      id\n      name\n    }\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": types.ListenHomeDocument,
@@ -198,7 +198,7 @@ export function graphql(source: "\n  mutation ReorderPlaylistAudios($updates: [p
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n"): typeof import('./graphql').AudioFieldsFragmentDoc;
+export function graphql(source: "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n"): typeof import('./graphql').AudioFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

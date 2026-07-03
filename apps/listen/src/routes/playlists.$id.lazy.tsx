@@ -2,7 +2,7 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { listenMutationHooks, listenQueryHooks } from 'core';
 import { useAuthContext } from 'core/providers/auth';
 import { ListeningScreen } from 'ui/listen/minimalism';
-import { AuthRoute } from 'ui/universal/authRoute';
+import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
 
 const slugify = (value: string) =>
@@ -25,13 +25,13 @@ const useCollectionNavigate = () => {
   };
 };
 
+// One component for every role: the playlist detail and collection-select
+// queries are role-agnostic (Hasura filters by role). Only the "create"
+// affordance differs — signed-in users create, anonymous ones are prompted in.
 const Content = () => {
   const { id } = Route.useParams();
-  const { getAccessToken, user, signIn, signOut } = useAuthContext();
-  const queryRs = listenQueryHooks.useLoadPlaylistDetail({
-    id,
-    getAccessToken,
-  });
+  const { isSignedIn, user, signIn, signOut } = useAuthContext();
+  const queryRs = listenQueryHooks.useLoadPlaylistDetail({ id });
   const { playlists } = listenQueryHooks.useLoadPlaylists();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
@@ -46,8 +46,11 @@ const Content = () => {
       onLogout={signOut}
       playlists={playlists}
       onSelectCollection={onSelectCollection}
-      onCreate={(title) =>
-        createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+      onCreate={
+        isSignedIn
+          ? (title) =>
+              createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+          : () => signIn()
       }
       isLoading={queryRs.isLoading}
       audios={queryRs.audios}
@@ -55,10 +58,16 @@ const Content = () => {
   );
 };
 
+const PlaylistDetail = () => {
+  const { isLoading } = useAuthContext();
+
+  if (isLoading) {
+    return <LoadingBackdrop message="Valuable things deserve waiting" />;
+  }
+
+  return <Content />;
+};
+
 export const Route = createLazyFileRoute('/playlists/$id')({
-  component: () => (
-    <AuthRoute>
-      <Content />
-    </AuthRoute>
-  ),
+  component: PlaylistDetail,
 });
