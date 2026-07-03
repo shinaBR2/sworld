@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
 import { useLoadPlaylists } from './playlists';
 
@@ -7,40 +8,66 @@ vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
 }));
 
-describe('useLoadPlaylists', () => {
-  const mockGetAccessToken = vi.fn().mockResolvedValue('mock-token');
+vi.mock('../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
+}));
 
+const mockGetAccessToken = vi.fn().mockResolvedValue('mock-token');
+
+const setSignedIn = (isSignedIn: boolean) => {
+  vi.mocked(useAuthContext).mockReturnValue({
+    isSignedIn,
+    getAccessToken: mockGetAccessToken,
+  } as unknown as ReturnType<typeof useAuthContext>);
+};
+
+describe('useLoadPlaylists', () => {
   const mockPlaylists = [
     { id: '1', title: 'Chill', slug: 'chill' },
     { id: '2', title: 'Focus', slug: 'focus' },
   ];
 
   beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetAccessToken.mockResolvedValue('mock-token');
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: false,
     } as ReturnType<typeof useRequest>);
   });
 
-  it('should set up useRequest with the listen-playlists key', () => {
-    renderHook(() => useLoadPlaylists({ getAccessToken: mockGetAccessToken }));
+  it('attaches the token and role-scoped key when signed in', () => {
+    setSignedIn(true);
+
+    renderHook(() => useLoadPlaylists());
 
     expect(useRequest).toHaveBeenCalledWith({
-      queryKey: ['listen-playlists'],
+      queryKey: ['listen-playlists', true],
       getAccessToken: mockGetAccessToken,
       document: expect.anything(),
     });
   });
 
-  it('should return loading state from useRequest', () => {
+  it('omits the token when anonymous so Hasura runs the anonymous role', () => {
+    setSignedIn(false);
+
+    renderHook(() => useLoadPlaylists());
+
+    expect(useRequest).toHaveBeenCalledWith({
+      queryKey: ['listen-playlists', false],
+      getAccessToken: undefined,
+      document: expect.anything(),
+    });
+  });
+
+  it('returns loading state from useRequest', () => {
+    setSignedIn(false);
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
       isLoading: true,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() =>
-      useLoadPlaylists({ getAccessToken: mockGetAccessToken }),
-    );
+    const { result } = renderHook(() => useLoadPlaylists());
 
     expect(result.current).toEqual({
       playlists: [],
@@ -49,15 +76,14 @@ describe('useLoadPlaylists', () => {
     });
   });
 
-  it('should return data when loaded', () => {
+  it('returns data when loaded', () => {
+    setSignedIn(true);
     vi.mocked(useRequest).mockReturnValue({
       data: { playlist: mockPlaylists },
       isLoading: false,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() =>
-      useLoadPlaylists({ getAccessToken: mockGetAccessToken }),
-    );
+    const { result } = renderHook(() => useLoadPlaylists());
 
     expect(result.current).toEqual({
       playlists: mockPlaylists,
@@ -66,15 +92,14 @@ describe('useLoadPlaylists', () => {
     });
   });
 
-  it('should handle null response data', () => {
+  it('handles null response data', () => {
+    setSignedIn(false);
     vi.mocked(useRequest).mockReturnValue({
       data: null,
       isLoading: false,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() =>
-      useLoadPlaylists({ getAccessToken: mockGetAccessToken }),
-    );
+    const { result } = renderHook(() => useLoadPlaylists());
 
     expect(result.current).toEqual({
       playlists: [],
@@ -83,7 +108,8 @@ describe('useLoadPlaylists', () => {
     });
   });
 
-  it('should surface error from useRequest', () => {
+  it('surfaces error from useRequest', () => {
+    setSignedIn(true);
     const mockError = new Error('API Error');
     vi.mocked(useRequest).mockReturnValue({
       data: undefined,
@@ -91,9 +117,7 @@ describe('useLoadPlaylists', () => {
       error: mockError,
     } as ReturnType<typeof useRequest>);
 
-    const { result } = renderHook(() =>
-      useLoadPlaylists({ getAccessToken: mockGetAccessToken }),
-    );
+    const { result } = renderHook(() => useLoadPlaylists());
 
     expect(result.current).toEqual({
       playlists: [],
