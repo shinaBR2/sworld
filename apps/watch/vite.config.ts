@@ -20,38 +20,23 @@ export default defineConfig({
   // https://stackoverflow.com/a/76694634/8270395
   build: {
     sourcemap: true,
-    minify: 'esbuild',
     chunkSizeWarningLimit: 100,
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-          return;
-        }
-        warn(warning);
-      },
+    rolldownOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
+        advancedChunks: {
+          groups: [
             /** For error tracking, analytics */
-            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
-
-            if (
-              id.includes('/video.js@') ||
-              id.includes('/videojs-youtube@') ||
-              id.includes('/videojs-vtt.js@') ||
-              id.includes('/m3u8-parser/') ||
-              id.includes('/mpd-parser/')
-            ) {
-              return 'video-player';
-            }
-
+            { name: 'tracker-vendor', test: /\/node_modules\/rollbar/ },
+            {
+              name: 'video-player',
+              test: /\/video\.js@|\/videojs-youtube@|\/videojs-vtt\.js@|\/m3u8-parser\/|\/mpd-parser\//,
+            },
             /**
              * App broken if bundle mui separately
              */
-            if (id.includes('react')) return 'react-vendor';
-
-            return 'vendor';
-          }
+            { name: 'react-vendor', test: /node_modules.*react/ },
+            { name: 'vendor', test: /node_modules/ },
+          ],
         },
       },
     },

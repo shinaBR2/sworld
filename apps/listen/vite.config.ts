@@ -4,16 +4,6 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-/**
- * For debug production build
- * esbuild: {
-    keepNames: true,
-    minifyIdentifiers: false,
-    minifySyntax: true,
-    minifyWhitespace: false,
-  },
- */
-
 const codecovToken = process.env.CODECOV_TOKEN;
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
@@ -25,28 +15,19 @@ export default defineConfig({
   // https://stackoverflow.com/a/76694634/8270395
   build: {
     sourcemap: true,
-    minify: 'esbuild', // Use esbuild minifier instead of turning off completely
     chunkSizeWarningLimit: 100,
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-          return;
-        }
-        warn(warning);
-      },
+    rolldownOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
+        advancedChunks: {
+          groups: [
             /**
              * App broken if bundle mui separately
              */
-            if (id.includes('react')) return 'react-vendor';
-
+            { name: 'react-vendor', test: /node_modules.*react/ },
             /** For error tracking, analytics */
-            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
-
-            return 'vendor';
-          }
+            { name: 'tracker-vendor', test: /\/node_modules\/rollbar/ },
+            { name: 'vendor', test: /node_modules/ },
+          ],
         },
       },
     },
