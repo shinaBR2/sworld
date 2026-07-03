@@ -13,10 +13,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.10.12",
     "@tanstack/react-router": "^1.78.2",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-code-block": "^3.21.0",
