@@ -15,7 +15,6 @@ import crypto from 'crypto';
 // Mock all filesystem-related modules
 vi.mock('fs');
 vi.mock('fs/promises');
-vi.mock('firebase-admin/storage');
 vi.mock('path');
 vi.mock('crypto');
 vi.mock('os');
