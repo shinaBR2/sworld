@@ -16,7 +16,7 @@ const NoItem = () => {
 
 interface AudioListProps {
   // Only `isLoading` is read here, so accept any loading-bearing result —
-  // this lets both the home (useLoadAudios) and a playlist feed the player.
+  // this lets both the home (useLoadHome) and a playlist feed the player.
   queryRs: { isLoading: boolean };
   list: unknown[];
   activeFeelingId: string;

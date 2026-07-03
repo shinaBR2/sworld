@@ -25,10 +25,14 @@ const useCollectionNavigate = () => {
   };
 };
 
-const AuthenticatedContent = () => {
-  const { getAccessToken, user, signIn, signOut } = useAuthContext();
+// One page, one query. `useLoadHome` is role-agnostic — Hasura returns the
+// signed-in user's audios/playlists or the public ones for anonymous visitors,
+// so the same screen serves both. The only per-role difference is what the
+// create action does: create a playlist when signed in, otherwise sign in.
+const Content = () => {
+  const { user, signIn, signOut } = useAuthContext();
   const { audios, feelings, playlists, isLoading } =
-    listenQueryHooks.useLoadHome({ getAccessToken });
+    listenQueryHooks.useLoadHome();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
@@ -43,7 +47,9 @@ const AuthenticatedContent = () => {
       playlists={playlists}
       onSelectCollection={onSelectCollection}
       onCreate={(title) =>
-        createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+        user
+          ? createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+          : signIn()
       }
       feelings={feelings}
       isLoading={isLoading}
@@ -52,37 +58,14 @@ const AuthenticatedContent = () => {
   );
 };
 
-const AnonymousContent = () => {
-  const { user, signIn, signOut } = useAuthContext();
-  const { audios, feelings, isLoading } = listenQueryHooks.useLoadPublicHome();
-  const onSelectCollection = useCollectionNavigate();
-
-  return (
-    <ListeningScreen
-      mode="all"
-      collectionValue="all"
-      sites={appConfig.sites}
-      user={user}
-      onSignIn={signIn}
-      onLogout={signOut}
-      playlists={[]}
-      onSelectCollection={onSelectCollection}
-      onCreate={() => signIn()}
-      feelings={feelings}
-      isLoading={isLoading}
-      audios={audios}
-    />
-  );
-};
-
 const Home = () => {
-  const { isSignedIn, isLoading } = useAuthContext();
+  const { isLoading } = useAuthContext();
 
   if (isLoading) {
     return <LoadingBackdrop message="Valuable things deserve waiting" />;
   }
 
-  return isSignedIn ? <AuthenticatedContent /> : <AnonymousContent />;
+  return <Content />;
 };
 
 export const Route = createLazyFileRoute('/')({

@@ -1,34 +1,32 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { QueryProvider } from '../../providers/query';
-import { useLoadHome, useLoadPublicHome } from './home';
+import { useAuthContext } from '../../providers/auth';
+import { useRequest } from '../../universal/hooks/use-request';
+import { useLoadHome } from './home';
 
-const mockConfig = {
-  hasuraUrl: 'https://test-hasura.url',
+vi.mock('../../universal/hooks/use-request', () => ({
+  useRequest: vi.fn(),
+}));
+
+vi.mock('../../providers/auth', () => ({
+  useAuthContext: vi.fn(),
+}));
+
+const mockGetAccessToken = vi.fn().mockResolvedValue('mock-token');
+
+const setSignedIn = (isSignedIn: boolean) => {
+  vi.mocked(useAuthContext).mockReturnValue({
+    isSignedIn,
+    getAccessToken: mockGetAccessToken,
+  } as unknown as ReturnType<typeof useAuthContext>);
 };
 
-const queryContextValue = {
-  hasuraUrl: 'https://test-hasura.url',
+const setData = (data: unknown, isLoading = false) => {
+  vi.mocked(useRequest).mockReturnValue({
+    data,
+    isLoading,
+  } as ReturnType<typeof useRequest>);
 };
-
-const mockUseQuery = vi.fn();
-
-vi.mock('graphql-request', () => ({
-  default: vi.fn(),
-}));
-
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: (...args: any) => mockUseQuery(...args),
-}));
-
-vi.mock('../../providers/query', () => ({
-  QueryProvider: ({ children }: { children: React.ReactNode }) => children,
-  useQueryContext: () => queryContextValue,
-}));
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryProvider config={mockConfig}>{children}</QueryProvider>
-);
 
 const audio = (id: string) => ({
   id,
@@ -49,20 +47,41 @@ describe('useLoadHome', () => {
     playlist: [{ id: 'p1', title: 'Chill', slug: 'chill' }],
   };
 
-  const mockGetAccessToken = vi.fn().mockResolvedValue('test-token');
-
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseQuery.mockReturnValue({ data: undefined, isLoading: true });
+    mockGetAccessToken.mockResolvedValue('mock-token');
+    setData(undefined, false);
+  });
+
+  it('attaches the token and role-scoped key when signed in', () => {
+    setSignedIn(true);
+
+    renderHook(() => useLoadHome());
+
+    expect(useRequest).toHaveBeenCalledWith({
+      queryKey: ['listen-home', true],
+      getAccessToken: mockGetAccessToken,
+      document: expect.anything(),
+    });
+  });
+
+  it('omits the token when anonymous so Hasura runs the anonymous role', () => {
+    setSignedIn(false);
+
+    renderHook(() => useLoadHome());
+
+    expect(useRequest).toHaveBeenCalledWith({
+      queryKey: ['listen-home', false],
+      getAccessToken: undefined,
+      document: expect.anything(),
+    });
   });
 
   it('transforms audios, feelings and playlists from a single query', () => {
-    mockUseQuery.mockReturnValue({ data: mockData, isLoading: false });
+    setSignedIn(true);
+    setData(mockData);
 
-    const { result } = renderHook(
-      () => useLoadHome({ getAccessToken: mockGetAccessToken }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useLoadHome());
 
     expect(result.current.audios).toEqual([
       {
@@ -84,76 +103,13 @@ describe('useLoadHome', () => {
     ]);
     expect(result.current.feelings).toEqual(mockData.tags);
     expect(result.current.playlists).toEqual(mockData.playlist);
-    expect(result.current.isLoading).toBe(false);
   });
 
   it('returns empty collections while loading', () => {
-    mockUseQuery.mockReturnValue({ data: undefined, isLoading: true });
+    setSignedIn(false);
+    setData(undefined, true);
 
-    const { result } = renderHook(
-      () => useLoadHome({ getAccessToken: mockGetAccessToken }),
-      { wrapper },
-    );
-
-    expect(result.current.audios).toEqual([]);
-    expect(result.current.feelings).toEqual([]);
-    expect(result.current.playlists).toEqual([]);
-    expect(result.current.isLoading).toBe(true);
-  });
-
-  it('passes through the error', () => {
-    const networkError = new Error('Network error');
-    mockUseQuery.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: networkError,
-    });
-
-    const { result } = renderHook(
-      () => useLoadHome({ getAccessToken: mockGetAccessToken }),
-      { wrapper },
-    );
-
-    expect(result.current.error).toBe(networkError);
-    expect(result.current.audios).toEqual([]);
-  });
-});
-
-describe('useLoadPublicHome', () => {
-  const mockData = {
-    audios: [audio('1')],
-    tags: [{ id: 't1', name: 'happy' }],
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseQuery.mockReturnValue({ data: undefined, isLoading: true });
-  });
-
-  it('transforms public audios and feelings, with no playlists', () => {
-    mockUseQuery.mockReturnValue({ data: mockData, isLoading: false });
-
-    const { result } = renderHook(() => useLoadPublicHome(), { wrapper });
-
-    expect(result.current.audios).toEqual([
-      {
-        id: '1',
-        name: 'Test Audio 1',
-        source: 'source1.mp3',
-        thumbnailUrl: 'thumb1.jpg',
-        artistName: 'Artist 1',
-        audio_tags: [{ tag_id: 't1' }],
-      },
-    ]);
-    expect(result.current.feelings).toEqual(mockData.tags);
-    expect(result.current.playlists).toEqual([]);
-    expect(result.current.isLoading).toBe(false);
-  });
-
-  it('returns empty collections while loading', () => {
-    mockUseQuery.mockReturnValue({ data: undefined, isLoading: true });
-
-    const { result } = renderHook(() => useLoadPublicHome(), { wrapper });
+    const { result } = renderHook(() => useLoadHome());
 
     expect(result.current.audios).toEqual([]);
     expect(result.current.feelings).toEqual([]);
