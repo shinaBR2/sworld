@@ -79,7 +79,9 @@ describe('Header', () => {
     render(<Header {...defaultProps} />);
 
     const appBar = screen.getByRole('banner');
-    expect(appBar).toHaveStyle({ boxShadow: 'none' });
+    // elevation={0} → MUI applies the Paper elevation-0 class (v6 renders it
+    // via an emotion class, not an inline box-shadow, so assert the class).
+    expect(appBar).toHaveClass('MuiPaper-elevation0');
   });
 
   it('uses default color', () => {

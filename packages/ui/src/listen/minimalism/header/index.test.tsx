@@ -77,7 +77,9 @@ describe('Header', () => {
     const appBar = screen.getByRole('banner');
     expect(appBar).toHaveClass('MuiAppBar-positionSticky');
     expect(appBar).toHaveClass('MuiAppBar-colorDefault');
-    expect(appBar).toHaveStyle({ boxShadow: 'none' }); // elevation={0}
+    // elevation={0} → MUI applies the Paper elevation-0 class (v6 renders it
+    // via an emotion class, not an inline box-shadow).
+    expect(appBar).toHaveClass('MuiPaper-elevation0');
   });
 
   it('has correct layout structure', () => {

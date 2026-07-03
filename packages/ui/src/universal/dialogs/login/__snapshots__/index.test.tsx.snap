@@ -6,27 +6,27 @@ exports[`LoginDialog > matches snapshot 1`] = `
     data-testid="dialog"
   >
     <div
-      class="MuiDialogContent-root css-1ebihfo-MuiDialogContent-root"
+      class="MuiDialogContent-root css-10kiv34-MuiDialogContent-root"
     >
       <div
         class="MuiBox-root css-1h93ewi"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
         >
           Welcome Back
         </h5>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1poe5fq-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-orhv2b-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
           <span
-            class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
+            class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1sh91j5-MuiButton-startIcon"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
               data-testid="GoogleIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -37,9 +37,6 @@ exports[`LoginDialog > matches snapshot 1`] = `
             </svg>
           </span>
           FLOW
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
     </div>
