@@ -1,9 +1,11 @@
 // Standalone mode runs the Watch app on in-memory router history so navigation
 // never touches the browser URL or history stack — the app behaves like a
-// native app (SWO-326). The DB (`users.settings.watch.standaloneMode`) is the
-// source of truth; this localStorage entry is a synchronous cache read at boot
-// to pick the router history before the async DB value can arrive. The DB value
-// reconciles into this cache after auth (SWO-332).
+// native app (SWO-326). The DB (`user_settings.data.watch.standaloneMode`) is the
+// source of truth; this localStorage entry is a synchronous cache read at boot to
+// pick the router history before the async DB value can arrive. It is cleared on
+// sign-out, so a fresh sign-in always boots from the default until the DB value
+// reconciles in (SWO-332) — that's what keeps two accounts on the same browser
+// from inheriting each other's mode.
 const STANDALONE_STORAGE_KEY = 'watch:standalone';
 
 const readStandaloneCache = (): boolean => {
@@ -16,11 +18,8 @@ const readStandaloneCache = (): boolean => {
   }
 };
 
-// Mirror the resolved setting into the boot cache. Written after a successful DB
-// save (SWO-331) or conflict resolution (SWO-332); the next boot reads it to pick
-// the router history. Stored explicitly as `'true'`/`'false'` (not removed on
-// off) so the reconcile step (SWO-332) can tell an explicit off apart from a
-// never-set device — boot still treats `'false'` and absent identically.
+// Mirror the resolved DB value into the boot cache; the next boot reads it to
+// pick the router history.
 const writeStandaloneCache = (value: boolean): void => {
   try {
     localStorage.setItem(STANDALONE_STORAGE_KEY, value ? 'true' : 'false');
@@ -29,22 +28,19 @@ const writeStandaloneCache = (value: boolean): void => {
   }
 };
 
-// Raw cache read for reconciliation. Distinguishes an explicit `'true'`/`'false'`
-// (this device has a saved preference) from `null` (never set here) — the boot
-// reader collapses both to a boolean, but the reconcile step (SWO-332) needs the
-// three-way distinction to tell a real cross-device conflict from a fresh device.
-const readStandaloneCacheRaw = (): 'true' | 'false' | null => {
+// Cleared on sign-out so the flag never carries one account's preference into
+// another account's session on the same browser.
+const clearStandaloneCache = (): void => {
   try {
-    const value = localStorage.getItem(STANDALONE_STORAGE_KEY);
-    return value === 'true' || value === 'false' ? value : null;
+    localStorage.removeItem(STANDALONE_STORAGE_KEY);
   } catch {
-    return null;
+    // Ignore storage failures.
   }
 };
 
 export {
   STANDALONE_STORAGE_KEY,
   readStandaloneCache,
-  readStandaloneCacheRaw,
   writeStandaloneCache,
+  clearStandaloneCache,
 };
