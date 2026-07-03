@@ -1,10 +1,3 @@
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import {
   createFileRoute,
   useBlocker,
@@ -13,6 +6,7 @@ import {
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
 import { slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { EditorLoading, WriteForm } from 'ui/til/editor';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { Notification } from 'ui/universal/notification';
 import { UnsavedChangesDialog } from 'ui/universal/unsavedChangesDialog';
@@ -129,106 +123,39 @@ function WritePageContent() {
 
   return (
     <Layout>
-      <Stack sx={{ height: 'calc(100vh - 64px)' }}>
-        {/* Blocker Dialog */}
-        <UnsavedChangesDialog
-          open={blocker.status === 'blocked'}
-          onStay={() => blocker.reset?.()}
-          onLeave={() => blocker.proceed?.()}
+      {/* Blocker Dialog */}
+      <UnsavedChangesDialog
+        open={blocker.status === 'blocked'}
+        onStay={() => blocker.reset?.()}
+        onLeave={() => blocker.proceed?.()}
+      />
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          notification={notification}
+          onClose={() => setNotification(null)}
         />
+      )}
 
-        {/* Notification */}
-        {notification && (
-          <Notification
-            notification={notification}
-            onClose={() => setNotification(null)}
-          />
-        )}
-
-        {/* Header */}
-        <Container
-          maxWidth={false}
-          sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <TextField
-            fullWidth
-            placeholder="Post title..."
-            value={title}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.target.value)
-            }
-            disabled={isSubmitting}
-            variant="standard"
-            InputProps={{
-              style: {
-                fontSize: '1.5rem',
-                fontWeight: 600,
-              },
-            }}
-          />
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-        </Container>
-
+      <WriteForm
+        title={title}
+        onTitleChange={setTitle}
+        error={error}
+        isSubmitting={isSubmitting}
+        canSubmit={Boolean(title.trim() && editorContent.trim())}
+        onCancel={() => navigate({ to: '/' })}
+        onSubmit={handleSubmit}
+      >
         {/* Editor with lazy loading */}
-        <Suspense
-          fallback={
-            <Box
-              sx={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          }
-        >
+        <Suspense fallback={<EditorLoading />}>
           <TipTapEditor
             ref={editorRef}
             isSubmitting={isSubmitting}
             onUpdate={setEditorContent}
           />
         </Suspense>
-
-        {/* Footer */}
-        <Container
-          maxWidth={false}
-          sx={{
-            py: 2,
-            borderTop: 1,
-            borderColor: 'divider',
-          }}
-        >
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            justifyContent="flex-end"
-          >
-            <Button
-              variant="outlined"
-              onClick={() => navigate({ to: '/' })}
-              disabled={isSubmitting}
-              fullWidth
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={isSubmitting || !title.trim() || !editorContent.trim()}
-              startIcon={isSubmitting ? <CircularProgress size={16} /> : null}
-              fullWidth
-            >
-              {isSubmitting ? 'Publishing...' : 'Publish'}
-            </Button>
-          </Stack>
-        </Container>
-      </Stack>
+      </WriteForm>
     </Layout>
   );
 }
