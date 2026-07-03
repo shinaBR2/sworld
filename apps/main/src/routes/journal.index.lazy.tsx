@@ -119,7 +119,7 @@ const JournalPage = () => {
   );
 };
 
-export const Route = createLazyFileRoute('/journal')({
+export const Route = createLazyFileRoute('/journal/')({
   component: () => {
     return (
       <AuthRoute>
