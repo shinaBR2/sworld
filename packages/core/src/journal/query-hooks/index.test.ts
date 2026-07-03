@@ -1,7 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
-import { useLoadJournalById, useLoadJournalsByMonth } from './index';
+import {
+  useLoadJournalByDate,
+  useLoadJournalById,
+  useLoadJournalsByMonth,
+} from './index';
 
 // Mock the useRequest hook
 vi.mock('../../universal/hooks/use-request', () => ({
@@ -254,6 +258,89 @@ describe('Journal Query Hooks', () => {
         isLoading: false,
         error: mockError,
       });
+    });
+  });
+
+  describe('useLoadJournalByDate', () => {
+    const entry = {
+      id: '1',
+      date: '2026-03-18',
+      content: 'Test content',
+      mood: 'happy',
+    };
+
+    it('fetches the entry for a date', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: { journals: [entry] },
+        isLoading: false,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalByDate({
+          getAccessToken: mockAccessToken,
+          date: '2026-03-18',
+        }),
+      );
+
+      expect(useRequest).toHaveBeenCalledWith({
+        queryKey: ['journal-by-date', '2026-03-18'],
+        getAccessToken: mockAccessToken,
+        document: expect.anything(),
+        variables: { date: '2026-03-18' },
+        enabled: true,
+      });
+      expect(result.current.data).toEqual(entry);
+    });
+
+    it('returns null when the day has no entry', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: { journals: [] },
+        isLoading: false,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalByDate({
+          getAccessToken: mockAccessToken,
+          date: '2026-03-18',
+        }),
+      );
+
+      expect(result.current.data).toBeNull();
+    });
+
+    it('does not fetch when date is empty', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: null,
+        isLoading: false,
+        error: null,
+      });
+
+      renderHook(() =>
+        useLoadJournalByDate({ getAccessToken: mockAccessToken, date: '' }),
+      );
+
+      expect(useRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: false }),
+      );
+    });
+
+    it('returns null while loading', () => {
+      vi.mocked(useRequest).mockReturnValue({
+        data: null,
+        isLoading: true,
+        error: null,
+      });
+
+      const { result } = renderHook(() =>
+        useLoadJournalByDate({
+          getAccessToken: mockAccessToken,
+          date: '2026-03-18',
+        }),
+      );
+
+      expect(result.current.data).toBeNull();
     });
   });
 });
