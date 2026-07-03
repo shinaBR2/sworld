@@ -27,15 +27,18 @@ const HomeSearch = (props: HomeSearchProps) => {
       placeholder="Search videos"
       size="small"
       fullWidth
-      inputProps={{ 'aria-label': 'Search videos' }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon fontSize="small" />
-          </InputAdornment>
-        ),
-      }}
       sx={{ maxWidth: 360 }}
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" />
+            </InputAdornment>
+          ),
+        },
+
+        htmlInput: { 'aria-label': 'Search videos' },
+      }}
     />
   );
 };

@@ -8,7 +8,7 @@ import {
 } from '../collection-select';
 import { Header } from '../header';
 import { AudioList } from '../home/audio-list';
-import { FeelingList, type Feeling } from '../home/feeling-list';
+import { type Feeling, FeelingList } from '../home/feeling-list';
 import { MainContainer } from '../home/main-container';
 import { SettingsPanel } from '../home/settings';
 import { CreatePlaylistDialog } from '../playlists/create-dialog';

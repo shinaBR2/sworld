@@ -169,16 +169,17 @@ const AddExpenseButton = ({
           <AddIcon />
         </Fab>
       </Zoom>
-
       <Dialog
         open={open}
         onClose={handleClose}
         fullWidth
         maxWidth="xs"
         fullScreen={isMobile}
-        PaperProps={{
-          sx: {
-            borderRadius: isMobile ? 0 : 2,
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: isMobile ? 0 : 2,
+            },
           },
         }}
       >
@@ -213,16 +214,18 @@ const AddExpenseButton = ({
                 label="Amount"
                 sx={{ width: '50%' }}
                 type="number"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
                 value={formData.amount}
                 onChange={handleChange}
                 error={!!errors.amount}
                 helperText={errors.amount}
                 disabled={loading}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  },
+                }}
               />
 
               <FormControl

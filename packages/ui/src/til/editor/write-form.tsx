@@ -45,10 +45,12 @@ const WriteForm = (props: WriteFormProps) => {
           }
           disabled={isSubmitting}
           variant="standard"
-          InputProps={{
-            style: {
-              fontSize: '1.5rem',
-              fontWeight: 600,
+          slotProps={{
+            input: {
+              style: {
+                fontSize: '1.5rem',
+                fontWeight: 600,
+              },
             },
           }}
         />
@@ -58,10 +60,8 @@ const WriteForm = (props: WriteFormProps) => {
           </Alert>
         )}
       </Container>
-
       {/* Editor */}
       {children}
-
       {/* Footer */}
       <Container
         maxWidth={false}

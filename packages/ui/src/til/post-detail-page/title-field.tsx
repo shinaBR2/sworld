@@ -23,7 +23,9 @@ const PostTitleField = (props: PostTitleFieldProps) => {
         }
         placeholder={placeholder}
         variant="standard"
-        InputProps={{ style: { fontSize: '1.5rem', fontWeight: 600 } }}
+        slotProps={{
+          input: { style: { fontSize: '1.5rem', fontWeight: 600 } },
+        }}
       />
     </Container>
   );
