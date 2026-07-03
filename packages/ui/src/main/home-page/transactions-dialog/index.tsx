@@ -185,7 +185,10 @@ const TransactionsDialog = ({
                     sx={{
                       mt: 2,
                       p: 1.5,
-                      backgroundColor: theme.palette.grey[50],
+                      // Mode-aware surface: grey[50] is always near-white, so
+                      // in dark mode the secondary-coloured note text was
+                      // invisible. action.hover contrasts in both themes.
+                      backgroundColor: theme.palette.action.hover,
                       borderRadius: 1,
                     }}
                   >
