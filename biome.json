@@ -14,7 +14,9 @@
       "!**/.turbo",
       "!**/public/assets",
       "!**/storybook-static",
-      "!**/coverage"
+      "!**/coverage",
+      "!packages/core/src/graphql/**",
+      "!packages/core/schema.graphql"
     ],
     "ignoreUnknown": false
   },
