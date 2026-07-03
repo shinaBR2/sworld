@@ -58,6 +58,14 @@ export function useProjectQuery(id: string) {
 - NEVER manually edit generated files (`generated/graphql.ts`, `generated/gql.ts`, `schema.graphql`) — always run `pnpm codegen` (in `packages/core`).
 - All database operations go through Hasura. The backend (the separate `sworld-backend` repo) only handles Hasura Actions/Events.
 
+## Data layer: schema changes, codegen, and deploy
+
+Schema and permission changes live in the sibling **`sworld-hasura-v2`** repo (migrations + metadata), never here.
+
+- **Merging a `sworld-hasura-v2` PR auto-deploys to Hasura Cloud (prod).** This happens through Hasura Cloud's GitHub integration, **not** a GitHub Actions workflow — there is no deploy job in `.github/workflows` (only lint), so it's easy to assume merging is inert. It isn't: **merging a Hasura PR applies the migration + metadata to production.**
+- **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
+- **Sequence merges across repos.** A frontend query/mutation on a new table/column only works at runtime once the Hasura PR is merged (→ auto-deployed to prod). Land the data-layer PR (and let it deploy) before any frontend PR that reads/writes the new shape goes live.
+
 ## First principle: NEVER trust the frontend
 
 - All validation, calculations, and business logic belong on the server.
