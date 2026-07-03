@@ -10,7 +10,7 @@ test.describe('home visual', () => {
   });
 
   test('has logo', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Flow Logo' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'SWorld logo' })).toBeVisible();
   });
 
   test('has site choices', async ({ page }) => {
