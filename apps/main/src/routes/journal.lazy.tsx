@@ -1,14 +1,7 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import type { Journal } from 'core/journal';
-import {
-  useCreateJournal,
-  useDeleteJournal,
-  useUpdateJournal,
-} from 'core/journal/mutation-hooks';
-import {
-  useLoadJournalById,
-  useLoadJournalsByMonth,
-} from 'core/journal/query-hooks';
+import { useCreateJournal } from 'core/journal/mutation-hooks';
+import { useLoadJournalsByMonth } from 'core/journal/query-hooks';
 import { useAuthContext } from 'core/providers/auth';
 import { getCurrentMonthYear } from 'core/universal/common';
 import { lazy, Suspense, useState } from 'react';
@@ -18,11 +11,6 @@ import { AuthRoute } from 'ui/universal/authRoute';
 import { Container } from 'ui/universal/containers/generic';
 import { Layout } from '../components/layout';
 
-const JournalDetail = lazy(() =>
-  import('ui/journal/journal-detail').then((m) => ({
-    default: m.JournalDetail,
-  })),
-);
 const EditDialog = lazy(() =>
   import('ui/journal/edit-dialog').then((m) => ({ default: m.EditDialog })),
 );
@@ -32,22 +20,23 @@ const Notification = lazy(() =>
   })),
 );
 
+// The month list. Clicking a day navigates to its own route (`/journal/$date`)
+// instead of switching an in-page `view` — that's what makes the browser back
+// button work (SWO-341). This route only lists + creates; viewing/editing a day
+// lives on the day route.
 const JournalPage = () => {
   const { getAccessToken } = useAuthContext();
-  const [view, setView] = useState<'list' | 'detail' | 'edit'>('list');
-  const [selectedJournal, setSelectedJournal] = useState<Journal | null>(null);
+  const navigate = Route.useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notification, setNotification] = useState<{
     message: string;
     severity: 'success' | 'error';
   } | null>(null);
 
-  // Date navigation state
   const defaultDate = getCurrentMonthYear();
   const [month, setMonth] = useState(defaultDate.month);
   const [year, setYear] = useState(defaultDate.year);
 
-  // Data loading hooks
   const { data: journalData, isLoading: isLoadingJournals } =
     useLoadJournalsByMonth({
       getAccessToken,
@@ -55,51 +44,26 @@ const JournalPage = () => {
       year,
     });
 
-  const { data: journalDetail, isLoading: isLoadingDetail } =
-    useLoadJournalById({
-      getAccessToken,
-      id: selectedJournal?.id,
-    });
-
-  // Mutation hooks
   const createJournal = useCreateJournal({
     onSuccess: () => {
       setDialogOpen(false);
-      setView('list');
       setNotification({
         message: 'Journal entry created successfully',
         severity: 'success',
       });
     },
-  });
-
-  const updateJournal = useUpdateJournal({
-    onSuccess: () => {
-      setDialogOpen(false);
-      setView('detail');
+    onError: () => {
+      // One entry per day is DB-enforced — a same-day create is rejected.
       setNotification({
-        message: 'Journal entry updated successfully',
-        severity: 'success',
+        message:
+          'Could not create the entry — there may already be one for that day.',
+        severity: 'error',
       });
     },
   });
 
-  const deleteJournal = useDeleteJournal({
-    onSuccess: () => {
-      setDialogOpen(false);
-      setView('list');
-      setSelectedJournal(null);
-      setNotification({
-        message: 'Journal entry deleted successfully',
-        severity: 'success',
-      });
-    },
-  });
-
-  // Handler functions
   const handleJournalClick = (journal: Journal) => {
-    setSelectedJournal(journal);
-    setView('detail');
+    navigate({ to: '/journal/$date', params: { date: journal.date } });
   };
 
   const handleMonthChange = (newMonth: number, newYear: number) => {
@@ -107,112 +71,47 @@ const JournalPage = () => {
     setYear(newYear);
   };
 
-  const handleCreateNew = () => {
-    setSelectedJournal(null);
-    setDialogOpen(true);
-  };
-
-  const handleEdit = () => {
-    setDialogOpen(true);
-  };
-
-  const handleDelete = async () => {
-    if (selectedJournal?.id) {
-      if (
-        window.confirm('Are you sure you want to delete this journal entry?')
-      ) {
-        await deleteJournal({ id: selectedJournal.id });
-      }
-    }
-  };
-
   const handleSave = async (input: any) => {
-    if (selectedJournal?.id) {
-      await updateJournal({ id: selectedJournal.id, set: input });
-    } else {
-      await createJournal({
-        object: input,
-      });
-    }
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
-
-  const handleBackToList = () => {
-    setView('list');
-    setSelectedJournal(null);
-  };
-
-  const handleCloseNotification = () => {
-    setNotification(null);
-  };
-
-  // Render functions
-  const renderContent = () => {
-    switch (view) {
-      case 'detail':
-        return (
-          <Suspense fallback={null}>
-            <JournalDetail
-              journal={journalDetail}
-              isLoading={isLoadingDetail}
-              onBackClick={handleBackToList}
-              onEditClick={handleEdit}
-              onDeleteClick={handleDelete}
-            />
-          </Suspense>
-        );
-      default:
-        return (
-          <JournalList
-            journals={journalData?.journals || []}
-            stats={
-              journalData?.stats || {
-                categories: [],
-                oldest: { month: 0, year: 0 },
-              }
-            }
-            isLoading={isLoadingJournals}
-            month={month}
-            year={year}
-            onJournalClick={handleJournalClick}
-            onMonthChange={handleMonthChange}
-          />
-        );
-    }
+    await createJournal({ object: input });
   };
 
   return (
     <Layout>
       <Container maxWidth="sm" sx={{ pb: 8, position: 'relative' }}>
-        {renderContent()}
-
-        {/* FAB for creating new journal entry */}
-        {view === 'list' && <FabButton onClick={handleCreateNew} />}
-
-        {/* Edit Dialog */}
-        <Suspense fallback={null}>
-          {
-            <EditDialog
-              journalDetail={journalDetail!}
-              isLoadingDetail={isLoadingDetail}
-              open={dialogOpen}
-              onClose={handleCloseDialog}
-              createJournal={createJournal}
-              updateJournal={updateJournal}
-              onSave={handleSave}
-            />
+        <JournalList
+          journals={journalData?.journals || []}
+          stats={
+            journalData?.stats || {
+              categories: [],
+              oldest: { month: 0, year: 0 },
+            }
           }
+          isLoading={isLoadingJournals}
+          month={month}
+          year={year}
+          onJournalClick={handleJournalClick}
+          onMonthChange={handleMonthChange}
+        />
+
+        <FabButton onClick={() => setDialogOpen(true)} />
+
+        <Suspense fallback={null}>
+          <EditDialog
+            journalDetail={null}
+            isLoadingDetail={false}
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            createJournal={createJournal}
+            updateJournal={undefined}
+            onSave={handleSave}
+          />
         </Suspense>
 
-        {/* Notifications */}
         <Suspense fallback={null}>
           {notification && (
             <Notification
               notification={notification}
-              onClose={handleCloseNotification}
+              onClose={() => setNotification(null)}
             />
           )}
         </Suspense>

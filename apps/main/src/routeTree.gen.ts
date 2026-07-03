@@ -20,6 +20,7 @@ const JournalLazyImport = createFileRoute('/journal')();
 const FinanceLazyImport = createFileRoute('/finance')();
 const IndexLazyImport = createFileRoute('/')();
 const LibraryIndexLazyImport = createFileRoute('/library/')();
+const JournalDateLazyImport = createFileRoute('/journal/$date')();
 const LibraryBooksBookIdLazyImport = createFileRoute(
   '/library/books/$bookId',
 )();
@@ -50,6 +51,14 @@ const LibraryIndexLazyRoute = LibraryIndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
   import('./routes/library.index.lazy').then((d) => d.Route),
+);
+
+const JournalDateLazyRoute = JournalDateLazyImport.update({
+  id: '/$date',
+  path: '/$date',
+  getParentRoute: () => JournalLazyRoute,
+} as any).lazy(() =>
+  import('./routes/journal.$date.lazy').then((d) => d.Route),
 );
 
 const LibraryBooksBookIdLazyRoute = LibraryBooksBookIdLazyImport.update({
@@ -85,6 +94,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalLazyImport;
       parentRoute: typeof rootRoute;
     };
+    '/journal/$date': {
+      id: '/journal/$date';
+      path: '/$date';
+      fullPath: '/journal/$date';
+      preLoaderRoute: typeof JournalDateLazyImport;
+      parentRoute: typeof JournalLazyImport;
+    };
     '/library/': {
       id: '/library/';
       path: '/library';
@@ -104,10 +120,23 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface JournalLazyRouteChildren {
+  JournalDateLazyRoute: typeof JournalDateLazyRoute;
+}
+
+const JournalLazyRouteChildren: JournalLazyRouteChildren = {
+  JournalDateLazyRoute: JournalDateLazyRoute,
+};
+
+const JournalLazyRouteWithChildren = JournalLazyRoute._addFileChildren(
+  JournalLazyRouteChildren,
+);
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute;
   '/finance': typeof FinanceLazyRoute;
-  '/journal': typeof JournalLazyRoute;
+  '/journal': typeof JournalLazyRouteWithChildren;
+  '/journal/$date': typeof JournalDateLazyRoute;
   '/library': typeof LibraryIndexLazyRoute;
   '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute;
 }
@@ -115,7 +144,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute;
   '/finance': typeof FinanceLazyRoute;
-  '/journal': typeof JournalLazyRoute;
+  '/journal': typeof JournalLazyRouteWithChildren;
+  '/journal/$date': typeof JournalDateLazyRoute;
   '/library': typeof LibraryIndexLazyRoute;
   '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute;
 }
@@ -124,7 +154,8 @@ export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
   '/finance': typeof FinanceLazyRoute;
-  '/journal': typeof JournalLazyRoute;
+  '/journal': typeof JournalLazyRouteWithChildren;
+  '/journal/$date': typeof JournalDateLazyRoute;
   '/library/': typeof LibraryIndexLazyRoute;
   '/library/books/$bookId': typeof LibraryBooksBookIdLazyRoute;
 }
@@ -135,15 +166,23 @@ export interface FileRouteTypes {
     | '/'
     | '/finance'
     | '/journal'
+    | '/journal/$date'
     | '/library'
     | '/library/books/$bookId';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/finance' | '/journal' | '/library' | '/library/books/$bookId';
+  to:
+    | '/'
+    | '/finance'
+    | '/journal'
+    | '/journal/$date'
+    | '/library'
+    | '/library/books/$bookId';
   id:
     | '__root__'
     | '/'
     | '/finance'
     | '/journal'
+    | '/journal/$date'
     | '/library/'
     | '/library/books/$bookId';
   fileRoutesById: FileRoutesById;
@@ -152,7 +191,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   FinanceLazyRoute: typeof FinanceLazyRoute;
-  JournalLazyRoute: typeof JournalLazyRoute;
+  JournalLazyRoute: typeof JournalLazyRouteWithChildren;
   LibraryIndexLazyRoute: typeof LibraryIndexLazyRoute;
   LibraryBooksBookIdLazyRoute: typeof LibraryBooksBookIdLazyRoute;
 }
@@ -160,7 +199,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   FinanceLazyRoute: FinanceLazyRoute,
-  JournalLazyRoute: JournalLazyRoute,
+  JournalLazyRoute: JournalLazyRouteWithChildren,
   LibraryIndexLazyRoute: LibraryIndexLazyRoute,
   LibraryBooksBookIdLazyRoute: LibraryBooksBookIdLazyRoute,
 };
@@ -189,7 +228,14 @@ export const routeTree = rootRoute
       "filePath": "finance.lazy.tsx"
     },
     "/journal": {
-      "filePath": "journal.lazy.tsx"
+      "filePath": "journal.lazy.tsx",
+      "children": [
+        "/journal/$date"
+      ]
+    },
+    "/journal/$date": {
+      "filePath": "journal.$date.lazy.tsx",
+      "parent": "/journal"
     },
     "/library/": {
       "filePath": "library.index.lazy.tsx"
