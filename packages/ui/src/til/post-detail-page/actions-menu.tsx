@@ -18,6 +18,10 @@ interface PostActionsMenuProps {
 const PostActionsMenu = (props: PostActionsMenuProps) => {
   const { anchorEl, onOpen, onClose, actions } = props;
 
+  if (actions.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <IconButton onClick={onOpen} size="small">

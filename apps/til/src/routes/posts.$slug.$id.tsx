@@ -1,4 +1,5 @@
 import { createFileRoute, useBlocker } from '@tanstack/react-router';
+import { Auth } from 'core';
 import { POST_STATUS, POST_VISIBILITY } from 'core/til/constants';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
@@ -28,6 +29,7 @@ const TipTapEditor = lazy(() => import('../components/editor/tiptap-editor'));
 
 const RouteComponent = () => {
   const { id: postId } = Route.useParams();
+  const { isSignedIn } = Auth.useAuthContext();
   const queryRs = useLoadPostDetail(postId);
   const { post, isLoading, refetch } = queryRs;
   const [isEditing, setIsEditing] = useState(false);
@@ -264,7 +266,7 @@ const RouteComponent = () => {
             menuAnchorEl={menuAnchorEl}
             onMenuOpen={handleMenuOpen}
             onMenuClose={handleMenuClose}
-            actions={menuActions}
+            actions={isSignedIn ? menuActions : []}
           />
           <PostContent>
             <MarkdownContent content={mContent} />
