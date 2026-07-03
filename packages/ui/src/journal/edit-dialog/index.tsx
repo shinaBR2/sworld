@@ -44,7 +44,11 @@ const EditDialog = (props: EditDialogProps) => {
       slotProps={{
         paper: {
           sx: {
-            height: isMobile ? '100vh' : '80vh',
+            // On mobile, `fullScreen` already sizes the paper to the visible
+            // viewport. Forcing `100vh` here uses the *large* viewport (behind
+            // the address bar), making the dialog taller than the screen and
+            // clipping the header — so only set an explicit height on desktop.
+            ...(isMobile ? {} : { height: '80vh' }),
             display: 'flex',
             flexDirection: 'column',
             borderRadius: isMobile ? 0 : 3,
