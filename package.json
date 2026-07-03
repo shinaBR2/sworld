@@ -21,7 +21,8 @@
     "format": "biome format --write",
     "prepare": "husky",
     "lint": "biome check .",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck --filter=!docs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

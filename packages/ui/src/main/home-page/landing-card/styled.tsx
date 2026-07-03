@@ -1,5 +1,12 @@
-import { Box, Card, Typography } from '@mui/material';
+import {
+  Box,
+  type BoxProps,
+  Card,
+  Typography,
+  type TypographyProps,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
+import type { ComponentType } from 'react';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -27,14 +34,14 @@ const IconContainer = styled(Box, {
   height: 60,
   borderRadius: '50%',
   backgroundColor: `${customColor || theme.palette.primary.main}15`,
-}));
+})) as ComponentType<BoxProps & { customColor?: string }>;
 
 const IconTypography = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'customColor',
 })<{ customColor?: string }>(({ customColor, theme }) => ({
   fontSize: '2rem',
   color: customColor || theme.palette.primary.main,
-}));
+})) as ComponentType<TypographyProps & { customColor?: string }>;
 
 const TitleTypography = styled(Typography)(() => ({
   fontWeight: 600,

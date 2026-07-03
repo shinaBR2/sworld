@@ -12,7 +12,8 @@
     "e2e": "pnpm exec playwright test",
     "e2e-codegen": "pnpm exec playwright codegen",
     "lint": "biome lint --quit-on-problem .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",
