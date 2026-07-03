@@ -35,4 +35,17 @@ const useLoadPlaylists = (props: LoadPlaylistsProps) => {
   };
 };
 
-export { useLoadPlaylists };
+const useLoadPublicPlaylists = () => {
+  const { data, isLoading, error } = useRequest<ListenPlaylistsQuery>({
+    queryKey: ['listen-public-playlists'],
+    document: playlistsQuery,
+  });
+
+  return {
+    playlists: data ? data.playlist : [],
+    isLoading,
+    error,
+  };
+};
+
+export { useLoadPlaylists, useLoadPublicPlaylists };

@@ -1,7 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRequest } from '../../universal/hooks/use-request';
-import { useLoadPlaylistDetail } from './playlist-detail';
+import {
+  useLoadPlaylistDetail,
+  useLoadPublicPlaylistDetail,
+} from './playlist-detail';
 
 vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -170,6 +173,94 @@ describe('useLoadPlaylistDetail', () => {
       playlist: null,
       isLoading: false,
       error: mockError,
+    });
+  });
+});
+
+describe('useLoadPublicPlaylistDetail', () => {
+  const mockPlaylistData = {
+    id: 'playlist-123',
+    title: 'Chill',
+    thumbnailUrl: '',
+    slug: 'chill',
+    createdAt: '2024-01-01T00:00:00Z',
+    description: '',
+    playlist_audios: [
+      {
+        position: 1,
+        audio: {
+          id: 'audio-1',
+          name: 'First',
+          source: 'https://example.com/1.mp3',
+          thumbnailUrl: 'thumb1.jpg',
+          artistName: 'Artist 1',
+          createdAt: '2024-01-15T00:00:00Z',
+        },
+      },
+    ],
+  };
+
+  const expectedAudios = [
+    {
+      id: 'audio-1',
+      name: 'First',
+      source: 'https://example.com/1.mp3',
+      thumbnailUrl: 'thumb1.jpg',
+      artistName: 'Artist 1',
+      createdAt: '2024-01-15T00:00:00Z',
+    },
+  ];
+
+  beforeEach(() => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+  });
+
+  it('should set up useRequest without an access token', () => {
+    renderHook(() => useLoadPublicPlaylistDetail({ id: 'playlist-123' }));
+
+    expect(useRequest).toHaveBeenCalledWith({
+      queryKey: ['listen-public-playlist-detail', 'playlist-123'],
+      document: expect.anything(),
+      variables: { id: 'playlist-123' },
+    });
+  });
+
+  it('should return audios when a public playlist is loaded', () => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: { playlist_by_pk: mockPlaylistData },
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadPublicPlaylistDetail({ id: 'playlist-123' }),
+    );
+
+    expect(result.current).toEqual({
+      audios: expectedAudios,
+      playlist: mockPlaylistData,
+      isLoading: false,
+      error: undefined,
+    });
+  });
+
+  it('should return a graceful empty state for a private/nonexistent id', () => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: { playlist_by_pk: null },
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadPublicPlaylistDetail({ id: 'missing' }),
+    );
+
+    expect(result.current).toEqual({
+      audios: [],
+      playlist: null,
+      isLoading: false,
+      error: undefined,
     });
   });
 });

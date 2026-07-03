@@ -17,6 +17,10 @@ interface LoadPlaylistDetailProps {
   getAccessToken: () => Promise<string>;
 }
 
+interface LoadPublicPlaylistDetailProps {
+  id: string;
+}
+
 const transform = (data: ListenPlaylistDetailQuery) => {
   const playlist = getFragmentData(PlaylistFragment, data.playlist_by_pk);
   const audios =
@@ -28,6 +32,25 @@ const transform = (data: ListenPlaylistDetailQuery) => {
   return {
     audios,
     playlist,
+  };
+};
+
+const toResult = (
+  data: ListenPlaylistDetailQuery | undefined | null,
+  isLoading: boolean,
+  error: Error | null,
+) => {
+  const transformed = data
+    ? transform(data)
+    : {
+        audios: [],
+        playlist: null,
+      };
+
+  return {
+    ...transformed,
+    isLoading,
+    error,
   };
 };
 
@@ -46,18 +69,24 @@ const useLoadPlaylistDetail = (props: LoadPlaylistDetailProps) => {
     },
   });
 
-  const transformed = data
-    ? transform(data)
-    : {
-        audios: [],
-        playlist: null,
-      };
-
-  return {
-    ...transformed,
-    isLoading,
-    error,
-  };
+  return toResult(data, isLoading, error);
 };
 
-export { useLoadPlaylistDetail };
+const useLoadPublicPlaylistDetail = (props: LoadPublicPlaylistDetailProps) => {
+  const { id } = props;
+
+  const { data, isLoading, error } = useRequest<
+    ListenPlaylistDetailQuery,
+    { id: string }
+  >({
+    queryKey: ['listen-public-playlist-detail', id],
+    document: playlistDetailQuery,
+    variables: {
+      id,
+    },
+  });
+
+  return toResult(data, isLoading, error);
+};
+
+export { useLoadPlaylistDetail, useLoadPublicPlaylistDetail };
