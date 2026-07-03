@@ -265,7 +265,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.preventDefault();
           e.stopPropagation();
           player.seekTo(0, 'seconds');
-          handleSeek();
+          handleSeek(0);
           break;
 
         case 'End': // Jump to end
@@ -273,7 +273,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.stopPropagation();
           if (duration) {
             player.seekTo(duration - 1, 'seconds');
-            handleSeek();
+            handleSeek(duration - 1);
           }
           break;
 
@@ -318,7 +318,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             const percentage = Number.parseInt(e.key, 10) / 10;
             const newTime = duration * percentage;
             player.seekTo(newTime, 'seconds');
-            handleSeek();
+            handleSeek(newTime);
           }
           break;
 

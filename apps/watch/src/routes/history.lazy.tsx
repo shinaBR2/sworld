@@ -1,7 +1,7 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { useAuthContext } from 'core/providers/auth';
 import { useLoadHistory } from 'core/watch/query-hooks/history';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { HistoryContainer } from 'ui/watch/history-page/container';
 import { Layout } from '../components/layout';

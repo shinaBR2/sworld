@@ -7,7 +7,7 @@ import {
   useShareVideo,
 } from 'core/watch/mutation-hooks/share-videos';
 import { useLoadVideoDetail } from 'core/watch/query-hooks/video-detail';
-import React, { lazy, useState } from 'react';
+import { lazy, useState } from 'react';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { VideoDetailContainer } from 'ui/watch/video-detail-page/containers';
 import { Layout } from '../components/layout';

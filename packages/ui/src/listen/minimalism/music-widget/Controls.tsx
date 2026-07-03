@@ -9,11 +9,6 @@ import SkipNextRounded from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRounded from '@mui/icons-material/SkipPreviousRounded';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-
-//@ts-expect-error
-// import { SAudioPlayerLoopMode } from "core";
-
-// ts sucks
 enum SAudioPlayerLoopMode {
   None = 'none',
   All = 'all',
