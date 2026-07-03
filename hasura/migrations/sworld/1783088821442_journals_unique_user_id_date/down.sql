@@ -1,0 +1,1 @@
+ALTER TABLE "public"."journals" DROP CONSTRAINT "journals_user_id_date_key";
