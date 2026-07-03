@@ -1,6 +1,10 @@
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
+import type { Auth } from 'core';
+import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
 // TODO fix this
@@ -13,13 +17,22 @@ interface HeaderProps extends WithLinkComponent {
     play: string;
     til: string;
   };
+  user: Auth.CustomUser | null;
+  login: () => void;
+  toggleSidebar: () => void;
 }
 
 const Header = (props: HeaderProps) => {
-  const { sites, LinkComponent } = props;
+  const { sites, LinkComponent, user, login, toggleSidebar } = props;
+  const avatarUrl = user?.picture;
 
   return (
-    <AppBar position="sticky" color="default" elevation={0}>
+    <AppBar
+      position="sticky"
+      color="default"
+      elevation={0}
+      sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+    >
       <Toolbar
         sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}
       >
@@ -32,6 +45,28 @@ const Header = (props: HeaderProps) => {
         >
           <Logo LinkComponent={LinkComponent} />
           <SiteChoices activeSite="til" sites={sites} />
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            minWidth: 'fit-content',
+            gap: 1,
+            alignItems: 'center',
+          }}
+        >
+          <IconButton onClick={!user ? login : toggleSidebar}>
+            {avatarUrl ? (
+              <ResponsiveAvatar
+                src={avatarUrl}
+                alt={user?.name}
+                data-testid="user-avatar"
+                sx={{ width: 32, height: 32 }}
+              />
+            ) : (
+              <AccountCircle />
+            )}
+          </IconButton>
         </Box>
       </Toolbar>
     </AppBar>

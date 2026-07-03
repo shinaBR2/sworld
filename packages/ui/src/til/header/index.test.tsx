@@ -29,10 +29,16 @@ describe('Header', () => {
 
   const MockLink = () => <div>MockLink</div>;
 
+  const commonProps = {
+    sites: mockSites,
+    LinkComponent: MockLink,
+    user: null,
+    login: vi.fn(),
+    toggleSidebar: vi.fn(),
+  };
+
   it('renders header structure correctly', () => {
-    const { container } = render(
-      <Header sites={mockSites} LinkComponent={MockLink} />,
-    );
+    const { container } = render(<Header {...commonProps} />);
 
     // Verify AppBar structure
     const appBar = container.querySelector('.MuiAppBar-root');
@@ -45,9 +51,7 @@ describe('Header', () => {
   });
 
   it('passes correct props to child components', () => {
-    const { getByTestId, getByText } = render(
-      <Header sites={mockSites} LinkComponent={MockLink} />,
-    );
+    const { getByTestId, getByText } = render(<Header {...commonProps} />);
 
     // Verify Logo component
     expect(getByText('MockLink')).toBeInTheDocument();

@@ -1,15 +1,3 @@
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import { createFileRoute, useBlocker } from '@tanstack/react-router';
 import { POST_STATUS, POST_VISIBILITY } from 'core/til/constants';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
@@ -19,8 +7,14 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import {
   PostContent,
+  PostDetailCard,
   PostDetailPageContainer,
-  PostMetadata,
+  PostEditContainer,
+  PostEditFooter,
+  PostEditorLoading,
+  type PostMenuAction,
+  PostTitleField,
+  PostViewHeader,
   SkeletonPostContent,
   SkeletonPostMetadata,
 } from 'ui/til/post-detail-page';
@@ -171,12 +165,10 @@ const RouteComponent = () => {
     return (
       <Layout sx={{ overflow: 'auto', pb: 6 }}>
         <PostDetailPageContainer>
-          <Card sx={{ my: 3, border: '1px solid', borderColor: 'divider' }}>
-            <CardContent>
-              <SkeletonPostMetadata />
-              <SkeletonPostContent />
-            </CardContent>
-          </Card>
+          <PostDetailCard>
+            <SkeletonPostMetadata />
+            <SkeletonPostContent />
+          </PostDetailCard>
         </PostDetailPageContainer>
       </Layout>
     );
@@ -199,7 +191,7 @@ const RouteComponent = () => {
   if (isEditing) {
     return (
       <Layout>
-        <Stack sx={{ height: 'calc(100vh - 64px)' }}>
+        <PostEditContainer>
           {/* Blocker Dialog */}
           <UnsavedChangesDialog
             open={blocker.status === 'blocked'}
@@ -216,42 +208,14 @@ const RouteComponent = () => {
           )}
 
           {/* Header with title */}
-          <Container
-            maxWidth={false}
-            sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}
-          >
-            <TextField
-              fullWidth
-              value={editableTitle}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEditableTitle(e.target.value)
-              }
-              placeholder="Post title..."
-              variant="standard"
-              InputProps={{
-                style: {
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                },
-              }}
-            />
-          </Container>
+          <PostTitleField
+            value={editableTitle}
+            onChange={setEditableTitle}
+            placeholder="Post title..."
+          />
 
           {/* Editor */}
-          <Suspense
-            fallback={
-              <Box
-                sx={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            }
-          >
+          <Suspense fallback={<PostEditorLoading />}>
             <TipTapEditor
               key={id}
               ref={editorRef}
@@ -262,107 +226,50 @@ const RouteComponent = () => {
           </Suspense>
 
           {/* Footer with actions */}
-          <Container
-            maxWidth={false}
-            sx={{
-              py: 2,
-              borderTop: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              justifyContent="flex-end"
-            >
-              <Button
-                variant="outlined"
-                onClick={handleCancel}
-                disabled={isPending || isSaving}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleSave}
-                disabled={
-                  isPending ||
-                  isSaving ||
-                  !editorContent.trim() ||
-                  !editableTitle.trim()
-                }
-                startIcon={
-                  isPending || isSaving ? <CircularProgress size={16} /> : null
-                }
-              >
-                {isPending || isSaving ? 'Saving...' : 'Save'}
-              </Button>
-            </Stack>
-          </Container>
-        </Stack>
+          <PostEditFooter
+            onCancel={handleCancel}
+            onSave={handleSave}
+            isSaving={isPending || isSaving}
+            canSave={Boolean(editorContent.trim() && editableTitle.trim())}
+          />
+        </PostEditContainer>
       </Layout>
     );
   }
+
+  const menuActions: PostMenuAction[] = [
+    { label: 'Edit', onClick: handleEdit },
+    ...(status !== POST_STATUS.PUBLISHED
+      ? [{ label: 'Publish', onClick: handlePublish }]
+      : []),
+    {
+      label: `Make ${
+        post?.visibility === POST_VISIBILITY.PUBLIC ? 'Private' : 'Public'
+      }`,
+      onClick: handleToggleVisibility,
+    },
+    { label: post?.pinned ? 'Unpin' : 'Pin', onClick: handleTogglePin },
+  ];
 
   // View mode with toolbar
   return (
     <Layout sx={{ overflow: 'auto', pb: 6 }}>
       <PostDetailPageContainer>
-        <Card sx={{ my: 3, border: 1, borderColor: 'divider' }}>
-          <CardContent>
-            {/* Header with 3-dot menu */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                mb: 1,
-              }}
-            >
-              <Box sx={{ flex: 1 }}>
-                <PostMetadata
-                  title={title}
-                  readTimeInMinutes={readTimeInMinutes}
-                  createdAt={createdAt}
-                  status={status}
-                />
-              </Box>
-              <IconButton onClick={handleMenuOpen} size="small">
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                anchorEl={menuAnchorEl}
-                open={Boolean(menuAnchorEl)}
-                onClose={handleMenuClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                {status !== POST_STATUS.PUBLISHED && (
-                  <MenuItem onClick={handlePublish}>Publish</MenuItem>
-                )}
-                <MenuItem onClick={handleToggleVisibility}>
-                  Make{' '}
-                  {post?.visibility === POST_VISIBILITY.PUBLIC
-                    ? 'Private'
-                    : 'Public'}
-                </MenuItem>
-                <MenuItem onClick={handleTogglePin}>
-                  {post?.pinned ? 'Unpin' : 'Pin'}
-                </MenuItem>
-              </Menu>
-            </Box>
-            <PostContent>
-              <MarkdownContent content={mContent} />
-            </PostContent>
-          </CardContent>
-        </Card>
+        <PostDetailCard>
+          <PostViewHeader
+            title={title}
+            readTimeInMinutes={readTimeInMinutes}
+            createdAt={createdAt}
+            status={status}
+            menuAnchorEl={menuAnchorEl}
+            onMenuOpen={handleMenuOpen}
+            onMenuClose={handleMenuClose}
+            actions={menuActions}
+          />
+          <PostContent>
+            <MarkdownContent content={mContent} />
+          </PostContent>
+        </PostDetailCard>
       </PostDetailPageContainer>
     </Layout>
   );
