@@ -12,11 +12,21 @@ user-invocable: false
 - NEVER store server data in local state (`useState`) or a client store — use `useQuery` / `useMutation`.
 - Client state stores are only for client-side UI state (modals, selections, sidebar open/closed, etc.).
 
+## One page = one query = one transformer (MUST)
+
+This is the most fundamental data-fetching rule in this codebase. Hasura exposes a **single** GraphQL endpoint where any number of root fields compose into one request — use that.
+
+- **Exactly one query per page.** A page fires **one** Hasura request that returns **everything that page needs — no more, no less**. Never two hooks side by side on the same page (e.g. `useLoadAudios` + `useLoadPlaylists`); collapse their root fields (`audios`, `tags`, `playlist`, …) into a single query for that page.
+- **Never share a query/hook across pages.** Two pages needing "playlists" do **not** call one shared `useLoadPlaylists` — each page owns its own query that selects the playlist fields it needs. Reuse happens at the **fragment** level (`packages/core/src/<domain>/query-hooks/fragments.ts`), never at the query/hook level. Shared fields → shared fragment; per-page selection → per-page query.
+- **One transformer per query.** Each query owns its own transformer (via react-query `select` / the `useRequest` result), shaping that page's response into exactly the client model that page consumes. Do not reuse one transformer across queries.
+
+**Why:** the transformer is the single gate between server and client. One page → one query → one transformer means one place to look, one request on the wire, and one boundary to keep the frontend working regardless of what the backend does. Sharing a query across pages couples those pages to one server shape and breaks this guarantee.
+
 ## Transformer pattern (MUST)
 
 - ALWAYS have a transformer to convert server-side data into the format the frontend consumes.
-- Transformers decouple the frontend from the API shape — when the API changes, only the transformer needs updating.
-- Place transformers alongside their queries/mutations in `packages/core/src/<domain>/query-hooks` / `mutation-hooks`.
+- Transformers decouple the frontend from the API shape — when the API changes, only the transformer needs updating. The frontend must keep working regardless of the backend — the transformer is that gate.
+- Place transformers alongside their queries/mutations in `packages/core/src/<domain>/query-hooks` / `mutation-hooks`. Each query has its **own** transformer — never share one across queries.
 
 ```ts
 // Example: packages/core/src/<domain>/query-hooks/useProjectQuery.ts

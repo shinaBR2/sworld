@@ -27,8 +27,8 @@ const useCollectionNavigate = () => {
 
 const AuthenticatedContent = () => {
   const { getAccessToken, user, signIn, signOut } = useAuthContext();
-  const queryRs = listenQueryHooks.useLoadAudios({ getAccessToken });
-  const { playlists } = listenQueryHooks.useLoadPlaylists({ getAccessToken });
+  const { audios, feelings, playlists, isLoading } =
+    listenQueryHooks.useLoadHome({ getAccessToken });
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
@@ -45,15 +45,16 @@ const AuthenticatedContent = () => {
       onCreate={(title) =>
         createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
       }
-      queryRs={queryRs}
-      audios={queryRs.data?.audios ?? []}
+      feelings={feelings}
+      isLoading={isLoading}
+      audios={audios}
     />
   );
 };
 
 const AnonymousContent = () => {
   const { user, signIn, signOut } = useAuthContext();
-  const queryRs = listenQueryHooks.useLoadPublicAudios();
+  const { audios, feelings, isLoading } = listenQueryHooks.useLoadPublicHome();
   const onSelectCollection = useCollectionNavigate();
 
   return (
@@ -67,8 +68,9 @@ const AnonymousContent = () => {
       playlists={[]}
       onSelectCollection={onSelectCollection}
       onCreate={() => signIn()}
-      queryRs={queryRs}
-      audios={queryRs.data?.audios ?? []}
+      feelings={feelings}
+      isLoading={isLoading}
+      audios={audios}
     />
   );
 };

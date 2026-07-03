@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { listenQueryHooks } from 'core';
 import { ListeningScreen } from './index';
-
-type AudiosQueryRs = ReturnType<typeof listenQueryHooks.useLoadAudios>;
 
 const audios = [
   {
@@ -14,11 +11,6 @@ const audios = [
     audio_tags: [],
   },
 ];
-
-const allQueryRs = {
-  isLoading: false,
-  data: { audios, tags: [{ id: 't1', name: 'Chill' }] },
-} as unknown as AudiosQueryRs;
 
 const meta: Meta<typeof ListeningScreen> = {
   title: 'Listen/ListeningScreen',
@@ -36,6 +28,7 @@ const meta: Meta<typeof ListeningScreen> = {
     onSelectCollection: () => {},
     onCreate: () => {},
     audios,
+    isLoading: false,
   },
 };
 
@@ -46,7 +39,7 @@ export const AllWithFeelings: Story = {
   args: {
     mode: 'all',
     collectionValue: 'all',
-    queryRs: allQueryRs,
+    feelings: [{ id: 't1', name: 'Chill' }],
   },
 };
 
@@ -54,6 +47,5 @@ export const PlaylistNoFeelings: Story = {
   args: {
     mode: 'playlist',
     collectionValue: 'p1',
-    isLoading: false,
   },
 };

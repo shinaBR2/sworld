@@ -8,7 +8,7 @@ import {
 } from '../collection-select';
 import { Header } from '../header';
 import { AudioList } from '../home/audio-list';
-import { FeelingList, type FeelingQueryRs } from '../home/feeling-list';
+import { FeelingList, type Feeling } from '../home/feeling-list';
 import { MainContainer } from '../home/main-container';
 import { SettingsPanel } from '../home/settings';
 import { CreatePlaylistDialog } from '../playlists/create-dialog';
@@ -33,17 +33,17 @@ interface CommonProps {
   onCreate: (title: string) => void;
   // Raw audios for the player (AudioList maps them to player items).
   audios: unknown[];
+  isLoading: boolean;
 }
 
 interface AllModeProps extends CommonProps {
   mode: 'all';
-  // Any audios query (signed-in or public) — also feeds the feeling filter.
-  queryRs: FeelingQueryRs;
+  // Feeling chips for the filter (empty until the home query resolves).
+  feelings: Feeling[];
 }
 
 interface PlaylistModeProps extends CommonProps {
   mode: 'playlist';
-  isLoading: boolean;
 }
 
 type ListeningScreenProps = AllModeProps | PlaylistModeProps;
@@ -65,13 +65,12 @@ const ListeningScreen = (props: ListeningScreenProps) => {
     onSelectCollection,
     onCreate,
     audios,
+    isLoading,
   } = props;
 
   const [settingOpen, setSettingOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [activeFeelingId, setActiveFeelingId] = useState('');
-
-  const isLoading = mode === 'all' ? props.queryRs.isLoading : props.isLoading;
 
   const onProfileClick = () => {
     if (user) {
@@ -123,7 +122,8 @@ const ListeningScreen = (props: ListeningScreenProps) => {
               <FeelingList
                 activeId={activeFeelingId}
                 onSelect={setActiveFeelingId}
-                queryRs={props.queryRs}
+                feelings={props.feelings}
+                isLoading={isLoading}
               />
             </Box>
           )}

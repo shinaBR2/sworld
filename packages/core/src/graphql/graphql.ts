@@ -12828,44 +12828,6 @@ export type ReorderPlaylistAudiosMutation = {
   } | null> | null;
 };
 
-export type GetAudiosAndFeelingsQueryVariables = Exact<{
-  [key: string]: never;
-}>;
-
-export type GetAudiosAndFeelingsQuery = {
-  __typename?: 'query_root';
-  audios: Array<{
-    __typename?: 'audios';
-    id: any;
-    name: string;
-    source: string;
-    thumbnailUrl?: string | null;
-    public: boolean;
-    artistName: string;
-    createdAt: any;
-    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
-  }>;
-  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
-};
-
-export type GetPublicAudiosAndFeelingsQueryVariables = Exact<{
-  [key: string]: never;
-}>;
-
-export type GetPublicAudiosAndFeelingsQuery = {
-  __typename?: 'query_root';
-  audios: Array<{
-    __typename?: 'audios';
-    id: any;
-    name: string;
-    source: string;
-    thumbnailUrl?: string | null;
-    artistName: string;
-    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
-  }>;
-  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
-};
-
 export type AudioFieldsFragment = {
   __typename?: 'audios';
   id: any;
@@ -12900,6 +12862,44 @@ export type ListenPlaylistFieldsFragment = {
     }
   >;
 } & { ' $fragmentName'?: 'ListenPlaylistFieldsFragment' };
+
+export type ListenHomeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ListenHomeQuery = {
+  __typename?: 'query_root';
+  audios: Array<{
+    __typename?: 'audios';
+    id: any;
+    name: string;
+    source: string;
+    thumbnailUrl?: string | null;
+    artistName: string;
+    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
+  }>;
+  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
+  playlist: Array<{
+    __typename?: 'playlist';
+    id: any;
+    title: string;
+    slug: string;
+  }>;
+};
+
+export type ListenPublicHomeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ListenPublicHomeQuery = {
+  __typename?: 'query_root';
+  audios: Array<{
+    __typename?: 'audios';
+    id: any;
+    name: string;
+    source: string;
+    thumbnailUrl?: string | null;
+    artistName: string;
+    audio_tags: Array<{ __typename?: 'audio_tags'; tag_id: any }>;
+  }>;
+  tags: Array<{ __typename?: 'tags'; id: any; name: string }>;
+};
 
 export type ListenPlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -13972,16 +13972,14 @@ export const ReorderPlaylistAudiosDocument = new TypedDocumentString(`
   ReorderPlaylistAudiosMutation,
   ReorderPlaylistAudiosMutationVariables
 >;
-export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
-    query GetAudiosAndFeelings @cached {
+export const ListenHomeDocument = new TypedDocumentString(`
+    query ListenHome @cached {
   audios {
     id
     name
     source
     thumbnailUrl
-    public
     artistName
-    createdAt
     audio_tags {
       tag_id
     }
@@ -13990,13 +13988,18 @@ export const GetAudiosAndFeelingsDocument = new TypedDocumentString(`
     id
     name
   }
+  playlist(where: {site: {_eq: "listen"}}, order_by: {createdAt: desc}) {
+    id
+    title
+    slug
+  }
 }
     `) as unknown as TypedDocumentString<
-  GetAudiosAndFeelingsQuery,
-  GetAudiosAndFeelingsQueryVariables
+  ListenHomeQuery,
+  ListenHomeQueryVariables
 >;
-export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
-    query GetPublicAudiosAndFeelings @cached {
+export const ListenPublicHomeDocument = new TypedDocumentString(`
+    query ListenPublicHome @cached {
   audios(where: {public: {_eq: true}}) {
     id
     name
@@ -14013,8 +14016,8 @@ export const GetPublicAudiosAndFeelingsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<
-  GetPublicAudiosAndFeelingsQuery,
-  GetPublicAudiosAndFeelingsQueryVariables
+  ListenPublicHomeQuery,
+  ListenPublicHomeQueryVariables
 >;
 export const ListenPlaylistDetailDocument = new TypedDocumentString(`
     query ListenPlaylistDetail($id: uuid!) {

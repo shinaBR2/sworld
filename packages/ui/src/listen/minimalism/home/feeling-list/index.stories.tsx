@@ -25,17 +25,12 @@ export const Loaded: Story = {
   args: {
     activeId: '',
     onSelect: () => {},
-    queryRs: {
-      isLoading: false,
-      // @ts-expect-error
-      data: {
-        tags: [
-          { id: '1', name: 'Happy' },
-          { id: '2', name: 'Sad' },
-          { id: '3', name: 'Angry' },
-          { id: '4', name: 'Excited' },
-        ],
-      },
-    },
+    isLoading: false,
+    feelings: [
+      { id: '1', name: 'Happy' },
+      { id: '2', name: 'Sad' },
+      { id: '3', name: 'Angry' },
+      { id: '4', name: 'Excited' },
+    ],
   },
 };
