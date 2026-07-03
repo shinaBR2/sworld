@@ -13366,6 +13366,13 @@ export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }
 
 export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, link?: string | null, metadata?: any | null, video?: { __typename?: 'videos', id: any, title: string } | null }> };
 
+export type UpsertUserSettingsMutationVariables = Exact<{
+  data: Scalars['jsonb']['input'];
+}>;
+
+
+export type UpsertUserSettingsMutation = { __typename?: 'mutation_root', insert_user_settings_one?: { __typename?: 'user_settings', user_id: any, data: any } | null };
+
 export type GetUserSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -14198,6 +14205,17 @@ export const NotificationsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<NotificationsSubscription, NotificationsSubscriptionVariables>;
+export const UpsertUserSettingsDocument = new TypedDocumentString(`
+    mutation UpsertUserSettings($data: jsonb!) {
+  insert_user_settings_one(
+    object: {data: $data}
+    on_conflict: {constraint: user_settings_pkey, update_columns: [data]}
+  ) {
+    user_id
+    data
+  }
+}
+    `) as unknown as TypedDocumentString<UpsertUserSettingsMutation, UpsertUserSettingsMutationVariables>;
 export const GetUserSettingsDocument = new TypedDocumentString(`
     query GetUserSettings {
   user_settings {

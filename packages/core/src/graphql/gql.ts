@@ -48,6 +48,7 @@ type Documents = {
     "\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: \"now()\" }) {\n      id\n      readAt\n    }\n  }\n": typeof types.MarkNotificationAsReadDocument,
     "\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: \"now()\" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n": typeof types.MarkNotificationsAsReadDocument,
     "\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n": typeof types.NotificationsDocument,
+    "\n  mutation UpsertUserSettings($data: jsonb!) {\n    insert_user_settings_one(\n      object: { data: $data }\n      on_conflict: { constraint: user_settings_pkey, update_columns: [data] }\n    ) {\n      user_id\n      data\n    }\n  }\n": typeof types.UpsertUserSettingsDocument,
     "\n  query GetUserSettings {\n    user_settings {\n      data\n    }\n  }\n": typeof types.GetUserSettingsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": typeof types.InsertVideosDocument,
     "\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n": typeof types.CreateSignedUploadUrlDocument,
@@ -101,6 +102,7 @@ const documents: Documents = {
     "\n  mutation MarkNotificationAsRead($notificationId: uuid!) {\n    update_notifications_by_pk(pk_columns: { id: $notificationId }, _set: { readAt: \"now()\" }) {\n      id\n      readAt\n    }\n  }\n": types.MarkNotificationAsReadDocument,
     "\n  mutation MarkNotificationsAsRead($ids: [uuid!]!) {\n    update_notifications(where: { id: { _in: $ids }, readAt: { _is_null: true } }, _set: { readAt: \"now()\" }) {\n      affected_rows\n      returning {\n        id\n        readAt\n      }\n    }\n  }\n": types.MarkNotificationsAsReadDocument,
     "\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n": types.NotificationsDocument,
+    "\n  mutation UpsertUserSettings($data: jsonb!) {\n    insert_user_settings_one(\n      object: { data: $data }\n      on_conflict: { constraint: user_settings_pkey, update_columns: [data] }\n    ) {\n      user_id\n      data\n    }\n  }\n": types.UpsertUserSettingsDocument,
     "\n  query GetUserSettings {\n    user_settings {\n      data\n    }\n  }\n": types.GetUserSettingsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": types.InsertVideosDocument,
     "\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n": types.CreateSignedUploadUrlDocument,
@@ -253,6 +255,10 @@ export function graphql(source: "\n  mutation MarkNotificationsAsRead($ids: [uui
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  subscription Notifications {\n    notifications(order_by: { createdAt: desc }) {\n      id\n      entityId\n      entityType\n      type\n      readAt\n      link\n      metadata\n      video {\n        id\n        title\n      }\n    }\n  }\n"): typeof import('./graphql').NotificationsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpsertUserSettings($data: jsonb!) {\n    insert_user_settings_one(\n      object: { data: $data }\n      on_conflict: { constraint: user_settings_pkey, update_columns: [data] }\n    ) {\n      user_id\n      data\n    }\n  }\n"): typeof import('./graphql').UpsertUserSettingsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
