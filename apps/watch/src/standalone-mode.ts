@@ -29,4 +29,22 @@ const writeStandaloneCache = (value: boolean): void => {
   }
 };
 
-export { STANDALONE_STORAGE_KEY, readStandaloneCache, writeStandaloneCache };
+// Raw cache read for reconciliation. Distinguishes an explicit `'true'`/`'false'`
+// (this device has a saved preference) from `null` (never set here) — the boot
+// reader collapses both to a boolean, but the reconcile step (SWO-332) needs the
+// three-way distinction to tell a real cross-device conflict from a fresh device.
+const readStandaloneCacheRaw = (): 'true' | 'false' | null => {
+  try {
+    const value = localStorage.getItem(STANDALONE_STORAGE_KEY);
+    return value === 'true' || value === 'false' ? value : null;
+  } catch {
+    return null;
+  }
+};
+
+export {
+  STANDALONE_STORAGE_KEY,
+  readStandaloneCache,
+  readStandaloneCacheRaw,
+  writeStandaloneCache,
+};

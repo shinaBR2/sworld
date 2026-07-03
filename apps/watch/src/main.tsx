@@ -14,6 +14,7 @@ import {
   rollbarConfig,
   validateEnvVars,
 } from './config';
+import { StandaloneReconciler } from './components/standalone-reconciler';
 import { routeTree } from './routeTree.gen';
 import { readStandaloneCache } from './standalone-mode';
 
@@ -49,7 +50,12 @@ declare module '@tanstack/react-router' {
 const App = () => {
   const auth = Auth.useAuthContext();
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return (
+    <>
+      {auth.isSignedIn && <StandaloneReconciler />}
+      <RouterProvider router={router} context={{ auth }} />
+    </>
+  );
 };
 
 const AppWrapper = () => {
