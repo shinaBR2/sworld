@@ -579,9 +579,6 @@ importers:
         specifier: ^2.16.0
         version: 2.16.0(react@18.3.1)
     devDependencies:
-      '@babel/core':
-        specifier: ^7.20.2
-        version: 7.26.10
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
@@ -639,9 +636,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^3.2.6
         version: 3.2.6(vitest@3.2.6(@types/debug@4.1.12)(@types/node@18.19.130)(jiti@2.4.2)(jsdom@25.0.1)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))
-      babel-loader:
-        specifier: ^8.3.0
-        version: 8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.18.20))
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
@@ -20510,15 +20504,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-loader@8.4.1(@babel/core@7.26.10)(webpack@5.98.0(esbuild@0.18.20)):
-    dependencies:
-      '@babel/core': 7.26.10
-      find-cache-dir: 3.3.2
-      loader-utils: 2.0.4
-      make-dir: 3.1.0
-      schema-utils: 2.7.1
-      webpack: 5.98.0(esbuild@0.18.20)
-
   babel-loader@8.4.1(@babel/core@7.26.10)(webpack@5.98.0):
     dependencies:
       '@babel/core': 7.26.10
@@ -27443,17 +27428,6 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser-webpack-plugin@5.3.14(esbuild@0.18.20)(webpack@5.98.0(esbuild@0.18.20)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.39.0
-      webpack: 5.98.0(esbuild@0.18.20)
-    optionalDependencies:
-      esbuild: 0.18.20
-
   terser-webpack-plugin@5.3.14(webpack@5.98.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -28287,36 +28261,6 @@ snapshots:
       schema-utils: 4.3.0
       tapable: 2.2.1
       terser-webpack-plugin: 5.3.14(webpack@5.98.0)
-      watchpack: 2.4.2
-      webpack-sources: 3.2.3
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-
-  webpack@5.98.0(esbuild@0.18.20):
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.6
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.1
-      browserslist: 4.25.3
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.1
-      es-module-lexer: 1.6.0
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.0
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 4.3.0
-      tapable: 2.2.1
-      terser-webpack-plugin: 5.3.14(esbuild@0.18.20)(webpack@5.98.0(esbuild@0.18.20))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
