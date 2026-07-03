@@ -41,8 +41,7 @@ describe('EditDialog', () => {
     onClose: vi.fn(),
     journalDetail: null,
     isLoadingDetail: false,
-    createJournal: { isPending: false },
-    updateJournal: { isPending: false },
+    isSaving: false,
     onSave: vi.fn(),
   };
 
@@ -75,23 +74,8 @@ describe('EditDialog', () => {
     expect(loadingState.textContent).toBe('true');
   });
 
-  it('sets isSaving when createJournal is pending', () => {
-    render(
-      <EditDialog
-        {...{ ...defaultProps, createJournal: { isPending: true } }}
-      />,
-    );
-
-    const savingState = screen.getByTestId('saving-state');
-    expect(savingState.textContent).toBe('true');
-  });
-
-  it('sets isSaving when updateJournal is pending', () => {
-    render(
-      <EditDialog
-        {...{ ...defaultProps, updateJournal: { isPending: true } }}
-      />,
-    );
+  it('passes isSaving through to JournalEdit', () => {
+    render(<EditDialog {...{ ...defaultProps, isSaving: true }} />);
 
     const savingState = screen.getByTestId('saving-state');
     expect(savingState.textContent).toBe('true');

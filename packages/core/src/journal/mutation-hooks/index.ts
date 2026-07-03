@@ -78,7 +78,9 @@ const useCreateJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: createJournal } = useMutationRequest({
+  // Return the whole mutation result so callers get isPending (and mutate)
+  // straight from react-query — no manual saving state needed.
+  return useMutationRequest({
     document: createJournalMutation,
     getAccessToken,
     options: {
@@ -95,8 +97,6 @@ const useCreateJournal = (props: MutationProps) => {
       },
     },
   });
-
-  return createJournal;
 };
 
 const useUpdateJournal = (props: MutationProps) => {
@@ -104,7 +104,7 @@ const useUpdateJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: updateJournal } = useMutationRequest({
+  return useMutationRequest({
     document: updateJournalMutation,
     getAccessToken,
     options: {
@@ -121,8 +121,6 @@ const useUpdateJournal = (props: MutationProps) => {
       },
     },
   });
-
-  return updateJournal;
 };
 
 const useDeleteJournal = (props: MutationProps) => {
@@ -130,7 +128,7 @@ const useDeleteJournal = (props: MutationProps) => {
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
-  const { mutateAsync: deleteJournal } = useMutationRequest({
+  return useMutationRequest({
     document: deleteJournalMutation,
     getAccessToken,
     options: {
@@ -147,8 +145,6 @@ const useDeleteJournal = (props: MutationProps) => {
       },
     },
   });
-
-  return deleteJournal;
 };
 
 export { useCreateJournal, useDeleteJournal, useUpdateJournal };
