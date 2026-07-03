@@ -2,11 +2,41 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 
 type ThemeMode = 'light' | 'dark';
+
+const STORAGE_KEY = 'sworld-theme-mode';
+
+const isThemeMode = (value: unknown): value is ThemeMode =>
+  value === 'light' || value === 'dark';
+
+const readStoredMode = (): ThemeMode | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return isThemeMode(stored) ? stored : null;
+  } catch {
+    // localStorage can throw (private mode, blocked cookies) — treat as absent.
+    return null;
+  }
+};
+
+const writeStoredMode = (mode: ThemeMode): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    window.localStorage.setItem(STORAGE_KEY, mode);
+  } catch {
+    // Ignore write failures — persistence is best-effort.
+  }
+};
 
 interface ThemeContextValue {
   mode: ThemeMode;
@@ -23,7 +53,15 @@ interface ThemeProviderProps {
 
 const GlassmorphismThemeContextProvider = (props: ThemeProviderProps) => {
   const { children, defaultMode = 'light' } = props;
-  const [mode, setMode] = useState<ThemeMode>(defaultMode);
+  // Hydrate from localStorage so the user's choice survives reloads, falling
+  // back to defaultMode when nothing valid is stored.
+  const [mode, setMode] = useState<ThemeMode>(
+    () => readStoredMode() ?? defaultMode,
+  );
+
+  useEffect(() => {
+    writeStoredMode(mode);
+  }, [mode]);
 
   const toggleTheme = useCallback(() => {
     setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
