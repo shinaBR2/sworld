@@ -1,16 +1,9 @@
-import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -37,8 +30,9 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
   const [content, setContent] = useState('');
   const [date, setDate] = useState('');
   const [mood, setMood] = useState<MoodType>('neutral');
+  // Tags are no longer editable in the form, but we keep any existing tags in
+  // state so editing an already-tagged entry preserves them on save.
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
 
   useEffect(() => {
     if (journal) {
@@ -65,25 +59,6 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
     }
   };
 
-  const handleAddTag = () => {
-    const trimmedTag = newTag.trim();
-    if (trimmedTag !== '' && tags.indexOf(trimmedTag) === -1) {
-      setTags([...tags, trimmedTag]);
-      setNewTag('');
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleTagKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleAddTag();
-    }
-  };
-
   const handleSave = () => {
     const input = {
       date,
@@ -98,9 +73,6 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
     return (
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
-            <ArrowBackIcon fontSize="medium" />
-          </IconButton>
           <Typography variant="h6">
             {journal ? 'Edit Entry' : 'New Entry'}
           </Typography>
@@ -118,27 +90,16 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
     >
       <Box
         sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 2,
-          bgcolor: 'background.paper',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
           mb: 2,
+          pb: 1,
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-          pt: 0.5,
-          pb: 0.5,
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
-            <ArrowBackIcon fontSize="medium" />
-          </IconButton>
-          <Typography variant="h6">
-            {journal ? 'Edit Entry' : 'New Entry'}
-          </Typography>
-        </Box>
+        <Typography variant="h6">
+          {journal ? 'Edit Entry' : 'New Entry'}
+        </Typography>
       </Box>
       {/* Non-scrollable date + mood controls */}
       <Box
@@ -215,7 +176,7 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
         sx={{
           flex: 1,
           overflow: 'auto',
-          pb: { xs: '84px', sm: '76px' },
+          pb: 1,
           display: 'flex',
           flexDirection: 'column',
           // Custom scrollbar styling
@@ -241,91 +202,28 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           sx={{
-            mb: 2,
             flex: 1, // Allow TextField to grow and fill space
             '& .MuiOutlinedInput-root': {
-              height: '100%',
+              // flex (not height:100%) fills the flex-column form control.
+              flex: 1,
               alignItems: 'flex-start',
+              bgcolor: 'action.hover',
+              fontSize: '1rem',
+              lineHeight: 1.7,
+            },
+            // Multiline textareas autosize to content, leaving dead space in a
+            // full-height field — force the textarea to fill and scroll itself.
+            '& .MuiInputBase-inputMultiline': {
+              height: '100% !important',
+              overflow: 'auto !important',
             },
           }}
         />
-
-        <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocalOfferIcon sx={{ fontSize: 16, color: '#666' }} />
-            <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
-              Add tags
-            </Typography>
-          </Box>
-
-          <Paper
-            sx={{
-              p: 1,
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 0.5,
-              mb: 1,
-            }}
-            variant="outlined"
-          >
-            {tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                size="small"
-                onDelete={() => handleRemoveTag(tag)}
-                sx={{
-                  bgcolor: 'primary.light',
-                  color: 'primary.main',
-                  '& .MuiChip-deleteIcon': {
-                    color: 'primary.main',
-                    '&:hover': {
-                      color: 'primary.dark',
-                    },
-                  },
-                }}
-              />
-            ))}
-
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexGrow: 1,
-                minWidth: 100,
-              }}
-            >
-              <InputBase
-                placeholder="New tag..."
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                sx={{ ml: 1, flex: 1, fontSize: '0.875rem' }}
-              />
-              <IconButton
-                size="small"
-                onClick={handleAddTag}
-                disabled={!newTag.trim()}
-                sx={{ p: 0.5 }}
-              >
-                <AddIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Paper>
-
-          <Typography variant="caption" color="text.secondary">
-            Press Enter to add a tag
-          </Typography>
-        </Box>
       </Box>
-      {/* Sticky bottom action bar */}
+      {/* Bottom action bar — blends into the dialog surface (the textarea
+          scrolls internally, so no opaque background is needed here). */}
       <Box
         sx={{
-          position: 'sticky',
-          bottom: 0,
-          zIndex: 2,
-          bgcolor: 'background.paper',
           borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 1,
           pb: 'max(8px, env(safe-area-inset-bottom))',

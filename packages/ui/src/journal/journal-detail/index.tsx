@@ -1,19 +1,29 @@
-// packages/ui/src/journal/journal-detail.tsx
+// packages/ui/src/journal/journal-detail/index.tsx
 
 // MUI Icons imports
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import EditIcon from '@mui/icons-material/Edit';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
+import { alpha } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import type { Journal, MoodType } from 'core/src/journal';
 import { formatDate, formatDateTime } from 'core/universal/common';
 import type React from 'react';
-import { MoodIcon } from '../mood-icons';
+import { useState } from 'react';
+import { MOOD_CONFIG, MoodIcon } from '../mood-icons';
 
 interface JournalDetailProps {
   journal: Journal | null;
@@ -30,6 +40,27 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(menuAnchor);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
+
+  const handleEdit = () => {
+    handleMenuClose();
+    onEditClick();
+  };
+
+  const handleDelete = () => {
+    handleMenuClose();
+    onDeleteClick();
+  };
+
   if (isLoading) {
     return (
       <Box sx={{ p: 2 }}>
@@ -40,35 +71,26 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           <Skeleton width={200} height={32} />
         </Box>
 
-        <Paper sx={{ p: 3, boxShadow: 1 }}>
+        <Paper sx={{ p: 3, borderRadius: 3 }}>
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               mb: 3,
             }}
           >
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <Skeleton width={60} height={24} />
-              <Skeleton width={80} height={24} />
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Skeleton variant="circular" width={24} height={24} />
-              <Skeleton variant="circular" width={24} height={24} />
-              <Skeleton variant="circular" width={24} height={24} />
-            </Box>
+            <Skeleton variant="rounded" width={96} height={32} />
+            <Skeleton variant="circular" width={32} height={32} />
           </Box>
 
-          <Skeleton height={24} />
           <Skeleton height={24} />
           <Skeleton height={24} />
           <Skeleton height={24} />
           <Skeleton height={24} width="60%" />
 
           <Box sx={{ mt: 4 }}>
-            <Skeleton width={200} height={16} />
-            <Skeleton width={200} height={16} sx={{ mt: 0.5 }} />
+            <Skeleton width={180} height={16} />
           </Box>
         </Paper>
       </Box>
@@ -85,13 +107,7 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           <Typography variant="h6">Journal Entry</Typography>
         </Box>
 
-        <Paper
-          sx={{
-            p: 3,
-            textAlign: 'center',
-            bgcolor: 'background.default',
-          }}
-        >
+        <Paper sx={{ p: 3, borderRadius: 3, textAlign: 'center' }}>
           <Typography variant="body1" color="text.secondary">
             Journal entry not found.
           </Typography>
@@ -100,60 +116,100 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
     );
   }
 
+  const mood = MOOD_CONFIG[journal.mood as MoodType];
+  const isEdited = journal.updatedAt !== journal.createdAt;
+
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
-          <ArrowBackIcon fontSize="medium" />
-        </IconButton>
-        <Typography variant="h6">{formatDate(journal.date)}</Typography>
-      </Box>
+      {/* Pin the date under the app bar so long entries never lose the "which
+          day am I reading" context. Rendered as an AppBar so it reuses the
+          theme's frosted header surface (light + dark) instead of a hardcoded
+          colour, reading as a seamless second row of the header. */}
+      <AppBar
+        position="sticky"
+        color="default"
+        elevation={0}
+        sx={{
+          // Full-bleed to match the full-width app bar exactly (the page
+          // Container is maxWidth=sm, so plain margins leave it inset and
+          // misaligned). No card-like border or radius — AppBar extends Paper,
+          // so we clear the theme's Paper border — it reads as a seamless
+          // second row of the header, flush beneath it.
+          top: { xs: 56, sm: 64 },
+          width: '100vw',
+          ml: 'calc(50% - 50vw)',
+          mt: -2,
+          mb: 2,
+          border: 'none',
+          borderRadius: 0,
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Toolbar variant="dense" disableGutters sx={{ px: 2 }}>
+          <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
+            <ArrowBackIcon fontSize="medium" />
+          </IconButton>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            {formatDate(journal.date)}
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-      <Paper sx={{ p: 3, boxShadow: 1 }}>
+      <Paper sx={{ p: 3, borderRadius: 3 }}>
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            mb: 3,
+            alignItems: 'center',
+            mb: 2.5,
           }}
         >
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {journal.tags.map((tag: string) => (
-              <Chip
-                key={tag}
-                label={tag}
-                size="small"
-                sx={{
-                  height: 24,
-                  fontSize: '0.75rem',
-                  bgcolor: 'action.hover',
-                }}
-              />
-            ))}
-          </Box>
+          {mood ? (
+            <Chip
+              icon={<MoodIcon mood={journal.mood as MoodType} size={18} />}
+              label={mood.label}
+              sx={{
+                fontWeight: 600,
+                color: `${mood.color}.main`,
+                // The glassmorphism theme paints chips with a purple gradient
+                // (a background-image), so clear it before applying our tint.
+                backgroundImage: 'none',
+                bgcolor: (theme) => alpha(theme.palette[mood.color].main, 0.12),
+                border: 'none',
+                '& .MuiChip-icon': { color: 'inherit', ml: 0.5 },
+              }}
+            />
+          ) : (
+            <Box />
+          )}
 
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <MoodIcon mood={journal.mood as MoodType} size={20} />
-
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={onEditClick}
-              sx={{ p: 0.5 }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-
-            <IconButton
-              size="small"
-              color="error"
-              onClick={onDeleteClick}
-              sx={{ p: 0.5 }}
-            >
-              <DeleteOutlineIcon fontSize="small" />
-            </IconButton>
-          </Box>
+          <IconButton
+            aria-label="entry actions"
+            onClick={handleMenuOpen}
+            size="small"
+          >
+            <MoreVertIcon fontSize="small" />
+          </IconButton>
+          <Menu
+            anchorEl={menuAnchor}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <MenuItem onClick={handleEdit}>
+              <ListItemIcon>
+                <EditOutlinedIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Edit</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+              <ListItemIcon>
+                <DeleteOutlineIcon fontSize="small" color="error" />
+              </ListItemIcon>
+              <ListItemText>Delete</ListItemText>
+            </MenuItem>
+          </Menu>
         </Box>
 
         <Typography
@@ -162,20 +218,37 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           sx={{
             whiteSpace: 'pre-wrap',
             fontFamily: 'inherit',
-            lineHeight: 1.6,
+            fontSize: '1.05rem',
+            lineHeight: 1.7,
           }}
         >
           {journal.content}
         </Typography>
 
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="caption" color="text.secondary" display="block">
-            Created: {formatDateTime(journal.createdAt)}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" display="block">
-            Updated: {formatDateTime(journal.updatedAt)}
-          </Typography>
-        </Box>
+        {journal.tags.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 2.5 }}>
+            {journal.tags.map((tag: string) => (
+              <Chip
+                key={tag}
+                label={tag}
+                size="small"
+                sx={{
+                  backgroundImage: 'none',
+                  bgcolor: 'action.hover',
+                  border: 'none',
+                }}
+              />
+            ))}
+          </Box>
+        )}
+
+        <Divider sx={{ mt: 3, mb: 1.5 }} />
+
+        <Typography variant="caption" color="text.secondary">
+          {isEdited
+            ? `Edited ${formatDateTime(journal.updatedAt)}`
+            : formatDateTime(journal.createdAt)}
+        </Typography>
       </Paper>
     </Box>
   );

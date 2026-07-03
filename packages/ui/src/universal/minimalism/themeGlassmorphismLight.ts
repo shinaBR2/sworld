@@ -95,9 +95,12 @@ const lightGlassmorphismTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          // Opaque enough to stay legible: at low opacity the backdrop scrim
+          // bleeds through and content reads as muddy grey (worst as a
+          // fullscreen modal on mobile).
+          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
           border: '1px solid rgba(255, 255, 255, 0.5)',
           boxShadow: '0 16px 64px rgba(0, 0, 0, 0.2)',
         },

@@ -93,9 +93,10 @@ const glassmorphismTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          backgroundColor: 'rgba(26, 26, 62, 0.8)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          // Opaque enough to keep content legible over the backdrop scrim.
+          backgroundColor: 'rgba(26, 26, 62, 0.92)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: '0 16px 64px rgba(0, 0, 0, 0.5)',
         },
