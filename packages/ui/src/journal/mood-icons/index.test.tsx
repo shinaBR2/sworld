@@ -5,29 +5,29 @@ import { MoodIcon } from './index';
 describe('MoodIcon', () => {
   it('renders happy mood icon correctly', () => {
     render(<MoodIcon mood="happy" />);
-    const icon = screen.getByTestId('SentimentSatisfiedAltIcon');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveStyle({ color: 'rgb(0, 128, 0)' });
+    expect(
+      screen.getByTestId('SentimentVerySatisfiedRoundedIcon'),
+    ).toBeInTheDocument();
   });
 
   it('renders sad mood icon correctly', () => {
     render(<MoodIcon mood="sad" />);
-    const icon = screen.getByTestId('SentimentVeryDissatisfiedIcon');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+    expect(
+      screen.getByTestId('SentimentDissatisfiedRoundedIcon'),
+    ).toBeInTheDocument();
   });
 
   it('renders neutral mood icon correctly', () => {
     render(<MoodIcon mood="neutral" />);
-    const icon = screen.getByTestId('SentimentNeutralIcon');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveStyle({ color: 'rgb(0, 0, 255)' });
+    expect(
+      screen.getByTestId('SentimentNeutralRoundedIcon'),
+    ).toBeInTheDocument();
   });
 
   it('applies custom size correctly', () => {
     const customSize = 32;
     render(<MoodIcon mood="happy" size={customSize} />);
-    const icon = screen.getByTestId('SentimentSatisfiedAltIcon');
+    const icon = screen.getByTestId('SentimentVerySatisfiedRoundedIcon');
     expect(icon).toHaveStyle({
       width: `${customSize}px`,
       height: `${customSize}px`,
@@ -37,7 +37,7 @@ describe('MoodIcon', () => {
   it('applies custom className correctly', () => {
     const customClass = 'custom-icon';
     render(<MoodIcon mood="happy" className={customClass} />);
-    const icon = screen.getByTestId('SentimentSatisfiedAltIcon');
+    const icon = screen.getByTestId('SentimentVerySatisfiedRoundedIcon');
     expect(icon).toHaveClass(customClass);
   });
 

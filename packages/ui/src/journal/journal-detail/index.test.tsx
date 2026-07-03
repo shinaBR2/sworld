@@ -1,4 +1,4 @@
-// packages/ui/src/journal/journal-detail.test.tsx
+// packages/ui/src/journal/journal-detail/index.test.tsx
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { formatDate, formatDateTime } from 'core/universal/common';
@@ -13,7 +13,12 @@ vi.mock('core/universal/common', () => ({
 }));
 
 vi.mock('../mood-icons', () => ({
-  MoodIcon: vi.fn(() => null), // Mocking the MoodIcon component
+  MoodIcon: vi.fn(() => null),
+  MOOD_CONFIG: {
+    happy: { label: 'Happy', color: 'success' },
+    neutral: { label: 'Neutral', color: 'info' },
+    sad: { label: 'Sad', color: 'error' },
+  },
 }));
 
 // Constants for testing
@@ -52,15 +57,12 @@ describe('JournalDetail', () => {
   it('should render loading skeleton when isLoading is true', () => {
     renderComponent({ isLoading: true });
 
-    // Check for skeletons using MUI class
     const skeletons = document.getElementsByClassName('MuiSkeleton-root');
     expect(skeletons.length).toBeGreaterThan(0);
 
-    // Back button should still be present during loading
     const backButton = screen.getByTestId('ArrowBackIcon').closest('button');
     expect(backButton).toBeInTheDocument();
 
-    // Content should not be visible
     expect(screen.queryByText(mockJournal.content)).not.toBeInTheDocument();
   });
 
@@ -69,13 +71,11 @@ describe('JournalDetail', () => {
 
     expect(screen.getByText(/Journal entry not found/i)).toBeInTheDocument();
 
-    // Back button should be present
     const backButton = screen.getByTestId('ArrowBackIcon').closest('button');
     expect(backButton).toBeInTheDocument();
 
-    // Edit and delete buttons should not be present
-    expect(screen.queryByTestId('EditIcon')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('DeleteOutlineIcon')).not.toBeInTheDocument();
+    // Actions menu should not be present in the not-found state
+    expect(screen.queryByTestId('MoreVertIcon')).not.toBeInTheDocument();
   });
 
   it('should render journal details correctly', () => {
@@ -90,31 +90,34 @@ describe('JournalDetail', () => {
     // Check content
     expect(screen.getByText(mockJournal.content)).toBeInTheDocument();
 
+    // Mood label chip
+    expect(screen.getByText('Happy')).toBeInTheDocument();
+
     // Check tags
     mockJournal.tags.forEach((tag) => {
       expect(screen.getByText(tag)).toBeInTheDocument();
     });
 
-    // Check timestamps
-    expect(formatDateTime).toHaveBeenCalledWith(mockJournal.createdAt);
+    // Timestamp collapses to a single "Edited" line when updatedAt differs
     expect(formatDateTime).toHaveBeenCalledWith(mockJournal.updatedAt);
-
-    // Check for the combined text of label and formatted datetime
     expect(
       screen.getByText(
         (content) =>
-          content.includes('Created:') &&
-          content.includes(`formatted-datetime-${mockJournal.createdAt}`),
-      ),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(
-        (content) =>
-          content.includes('Updated:') &&
+          content.includes('Edited') &&
           content.includes(`formatted-datetime-${mockJournal.updatedAt}`),
       ),
     ).toBeInTheDocument();
+  });
+
+  it('should show the created timestamp when the entry was never edited', () => {
+    renderComponent({
+      journal: { ...mockJournal, updatedAt: mockJournal.createdAt },
+    });
+
+    expect(
+      screen.getByText(`formatted-datetime-${mockJournal.createdAt}`),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Edited/)).not.toBeInTheDocument();
   });
 
   it('should handle back button click', () => {
@@ -126,38 +129,26 @@ describe('JournalDetail', () => {
     expect(mockOnBackClick).toHaveBeenCalledTimes(1);
   });
 
-  it('should handle edit button click', () => {
+  it('should edit via the actions menu', () => {
     renderComponent();
 
-    // Using the EditIcon test ID since that's what's rendered
-    const editButton = screen.getByTestId('EditIcon').closest('button');
-    fireEvent.click(editButton!);
+    fireEvent.click(screen.getByLabelText('entry actions'));
+    fireEvent.click(screen.getByText('Edit'));
 
     expect(mockOnEditClick).toHaveBeenCalledTimes(1);
   });
 
-  it('should handle delete button click', () => {
+  it('should delete via the actions menu', () => {
     renderComponent();
 
-    // Using the DeleteOutlineIcon test ID since that's what's rendered
-    const deleteButton = screen
-      .getByTestId('DeleteOutlineIcon')
-      .closest('button');
-    fireEvent.click(deleteButton!);
+    fireEvent.click(screen.getByLabelText('entry actions'));
+    fireEvent.click(screen.getByText('Delete'));
 
     expect(mockOnDeleteClick).toHaveBeenCalledTimes(1);
   });
 
   it('should render MoodIcon with correct mood type', () => {
     renderComponent();
-
-    // We're not directly testing the MoodIcon component,
-    // but we can verify it receives the correct mood prop
-    // by checking the component structure
-    const actionButtons = screen.getAllByRole('button');
-
-    // At least 3 buttons should be present (back, edit, delete)
-    expect(actionButtons.length).toBeGreaterThanOrEqual(3);
 
     const mockMoodIcon = vi.mocked(MoodIcon);
     expect(mockMoodIcon).toHaveBeenCalledWith(

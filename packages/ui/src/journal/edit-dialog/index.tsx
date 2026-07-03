@@ -47,7 +47,7 @@ const EditDialog = (props: EditDialogProps) => {
             height: isMobile ? '100vh' : '80vh',
             display: 'flex',
             flexDirection: 'column',
-            borderRadius: isMobile ? 0 : undefined,
+            borderRadius: isMobile ? 0 : 3,
           },
         },
       }}

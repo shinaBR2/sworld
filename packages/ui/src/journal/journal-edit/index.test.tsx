@@ -35,7 +35,6 @@ describe('JournalEdit', () => {
     expect(
       screen.getByPlaceholderText("What's on your mind today?"),
     ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('New tag...')).toBeInTheDocument();
   });
 
   it('renders edit form with journal data', () => {
@@ -43,9 +42,6 @@ describe('JournalEdit', () => {
 
     expect(screen.getByText('Edit Entry')).toBeInTheDocument();
     expect(screen.getByDisplayValue(mockJournal.content)).toBeInTheDocument();
-    mockJournal.tags.forEach((tag) => {
-      expect(screen.getByText(tag)).toBeInTheDocument();
-    });
   });
 
   it('handles content changes', () => {
@@ -73,26 +69,17 @@ describe('JournalEdit', () => {
     expect(sadButton).not.toHaveClass('Mui-selected');
   });
 
-  it('handles tag addition', () => {
-    render(<JournalEdit {...defaultProps} />);
+  it('preserves existing tags on save even though they are not editable', () => {
+    const onSave = vi.fn();
+    render(
+      <JournalEdit {...defaultProps} journal={mockJournal} onSave={onSave} />,
+    );
 
-    const tagInput = screen.getByPlaceholderText('New tag...');
-    fireEvent.change(tagInput, { target: { value: 'newtag' } });
-    fireEvent.keyDown(tagInput, { key: 'Enter' });
+    fireEvent.click(screen.getByText('Save'));
 
-    expect(screen.getByText('newtag')).toBeInTheDocument();
-    expect(tagInput).toHaveValue('');
-  });
-
-  it('handles tag removal', () => {
-    render(<JournalEdit {...defaultProps} journal={mockJournal} />);
-
-    // Find the Chip component with the tag text and click its delete button
-    const chip = screen.getByText(mockJournal.tags[0]).closest('.MuiChip-root');
-    const deleteButton = chip?.querySelector('.MuiChip-deleteIcon');
-    fireEvent.click(deleteButton!);
-
-    expect(screen.queryByText(mockJournal.tags[0])).not.toBeInTheDocument();
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ tags: mockJournal.tags }),
+    );
   });
 
   it('handles save button click', () => {
@@ -137,12 +124,11 @@ describe('JournalEdit', () => {
     expect(saveButton).toBeDisabled();
   });
 
-  it('handles back button click', () => {
+  it('handles cancel button click', () => {
     const onBackClick = vi.fn();
     render(<JournalEdit {...defaultProps} onBackClick={onBackClick} />);
 
-    const backButton = screen.getByTestId('ArrowBackIcon').closest('button');
-    fireEvent.click(backButton!);
+    fireEvent.click(screen.getByText('Cancel'));
 
     expect(onBackClick).toHaveBeenCalledTimes(1);
   });
