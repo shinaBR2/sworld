@@ -49,11 +49,13 @@ const PlayingList = (
                 }}
               >
                 <ListItemText
-                  primaryTypographyProps={{
-                    sx: {
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      },
                     },
                   }}
                 >

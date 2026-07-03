@@ -140,7 +140,6 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
           </Typography>
         </Box>
       </Box>
-
       {/* Non-scrollable date + mood controls */}
       <Box
         sx={{
@@ -156,8 +155,10 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
           onChange={(e) => setDate(e.target.value)}
           size="small"
           sx={{ width: '50%' }}
-          InputProps={{
-            sx: { bgcolor: 'action.hover', borderRadius: 1 },
+          slotProps={{
+            input: {
+              sx: { bgcolor: 'action.hover', borderRadius: 1 },
+            },
           }}
         />
 
@@ -209,7 +210,6 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
-
       {/* Scrollable content area */}
       <Box
         sx={{
@@ -319,7 +319,6 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
           </Typography>
         </Box>
       </Box>
-
       {/* Sticky bottom action bar */}
       <Box
         sx={{

@@ -1,21 +1,8 @@
-import { fileURLToPath } from 'node:url';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-
-// In dev, consume the `ui`/`core` workspace packages from SOURCE instead of
-// their built dist. Importing the built dist makes MUI a transitive dep that
-// Vite's optimizer splits across circular chunks, so MUI's Box.js calls
-// createTheme() before its chunk initialises (`createTheme_default is not a
-// function`). From source, Vite optimizes MUI once in the app's own graph
-// (like a normal MUI app) and the circular init resolves. Also gives instant
-// HMR on ui/core edits. Prod build is untouched (see the `serve`-only guard).
-const workspaceSrc = (pkg: string) =>
-  fileURLToPath(new URL(`../../packages/${pkg}/src`, import.meta.url));
-const uiSrc = workspaceSrc('ui');
-const coreSrc = workspaceSrc('core');
 
 /**
  * For debug production build
@@ -30,27 +17,10 @@ const coreSrc = workspaceSrc('core');
 const codecovToken = process.env.CODECOV_TOKEN;
 
 // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   server: {
     port: 3001,
     host: '0.0.0.0',
-  },
-  resolve: {
-    // Dev only: point the workspace packages at their source. The production
-    // build keeps using the built dist, so prod output is unchanged.
-    alias:
-      command === 'serve'
-        ? [
-            { find: /^ui\/(.*)$/, replacement: `${uiSrc}/$1` },
-            { find: /^ui$/, replacement: uiSrc },
-            { find: /^core\/(.*)$/, replacement: `${coreSrc}/$1` },
-            { find: /^core$/, replacement: coreSrc },
-          ]
-        : [],
-    dedupe:
-      command === 'serve'
-        ? ['react', 'react-dom', '@emotion/react', '@emotion/styled']
-        : [],
   },
   // https://stackoverflow.com/a/76694634/8270395
   build: {
@@ -138,4 +108,4 @@ export default defineConfig(({ command }) => ({
       uploadToken: codecovToken,
     }),
   ],
-}));
+});

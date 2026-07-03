@@ -193,7 +193,6 @@ const DialogComponent = (props: DialogComponentProps) => {
           <CloseIcon />
         </StyledCloseButton>
       </DialogTitle>
-
       <DialogContent>
         <Box
           component="form"
@@ -259,14 +258,16 @@ const DialogComponent = (props: DialogComponentProps) => {
           )}
           <TextField
             type="number"
-            InputProps={{
-              inputProps: {
-                min: 0,
-              },
-            }}
             value={videoPositionInPlaylist || 0}
             onChange={onFormFieldChange('videoPositionInPlaylist')}
             {...videoPositionInPlaylistTextFieldProps}
+            slotProps={{
+              input: {
+                inputProps: {
+                  min: 0,
+                },
+              },
+            }}
           />
 
           <Grid container spacing={1} sx={{ mt: 2, mb: 2 }}>

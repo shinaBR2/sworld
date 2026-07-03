@@ -41,12 +41,14 @@ const EditDialog = (props: EditDialogProps) => {
       fullWidth
       fullScreen={isMobile}
       maxWidth="sm"
-      PaperProps={{
-        sx: {
-          height: isMobile ? '100vh' : '80vh',
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: isMobile ? 0 : undefined,
+      slotProps={{
+        paper: {
+          sx: {
+            height: isMobile ? '100vh' : '80vh',
+            display: 'flex',
+            flexDirection: 'column',
+            borderRadius: isMobile ? 0 : undefined,
+          },
         },
       }}
     >
