@@ -35,4 +35,20 @@ const useLoadPlaylists = (props: LoadPlaylistsProps) => {
   };
 };
 
-export { useLoadPlaylists };
+// Anonymous variant: no access token, so Hasura runs the query as the `anonymous`
+// role, whose permissions already restrict `playlist` to public rows. Reuses the
+// same document because the shape is identical — the only difference is the token.
+const useLoadPublicPlaylists = () => {
+  const { data, isLoading, error } = useRequest<ListenPlaylistsQuery>({
+    queryKey: ['listen-public-playlists'],
+    document: playlistsQuery,
+  });
+
+  return {
+    playlists: data ? data.playlist : [],
+    isLoading,
+    error,
+  };
+};
+
+export { useLoadPlaylists, useLoadPublicPlaylists };
