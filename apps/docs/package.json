@@ -28,7 +28,7 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.29.6",
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
     "@originjs/vite-plugin-commonjs": "^1.0.3",

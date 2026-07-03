@@ -42,7 +42,7 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.29.6",
     "@jest/globals": "^29.7.0",
     "@storybook/addon-actions": "^7.0.0",
     "@storybook/addon-essentials": "^7.0.0",
