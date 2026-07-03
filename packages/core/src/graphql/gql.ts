@@ -34,7 +34,7 @@ type Documents = {
   '\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n': typeof types.ReorderPlaylistAudiosDocument;
   '\n  query GetAudiosAndFeelings @cached {\n    audios {\n      id\n      name\n      source\n      thumbnailUrl\n      public\n      artistName\n      createdAt\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetAudiosAndFeelingsDocument;
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n': typeof types.GetPublicAudiosAndFeelingsDocument;
-  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n': typeof types.AudioFieldsFragmentDoc;
+  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n': typeof types.AudioFieldsFragmentDoc;
   '\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n': typeof types.PlaylistAudioFieldsFragmentDoc;
   '\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n': typeof types.ListenPlaylistFieldsFragmentDoc;
   '\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n': typeof types.ListenPlaylistDetailDocument;
@@ -108,7 +108,7 @@ const documents: Documents = {
     types.GetAudiosAndFeelingsDocument,
   '\n  query GetPublicAudiosAndFeelings @cached {\n    audios(where: { public: { _eq: true } }) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(where: { site: { _eq: "listen" }, audio_tags: { audio: { public: { _eq: true } } } }) {\n      id\n      name\n    }\n  }\n':
     types.GetPublicAudiosAndFeelingsDocument,
-  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n':
+  '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n':
     types.AudioFieldsFragmentDoc,
   '\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n':
     types.PlaylistAudioFieldsFragmentDoc,
@@ -300,7 +300,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n    createdAt\n  }\n',
+  source: '\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n',
 ): typeof import('./graphql').AudioFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

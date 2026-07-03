@@ -7,7 +7,6 @@ const AudioFragment = graphql(/* GraphQL */ `
     source
     thumbnailUrl
     artistName
-    createdAt
   }
 `);
 

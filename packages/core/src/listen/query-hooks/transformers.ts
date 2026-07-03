@@ -12,7 +12,6 @@ const transformAudioFragment = (
     source: audio.source,
     thumbnailUrl: audio.thumbnailUrl || '',
     artistName: audio.artistName,
-    createdAt: audio.createdAt,
   };
 };
 

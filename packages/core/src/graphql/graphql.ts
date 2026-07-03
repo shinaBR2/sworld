@@ -12873,7 +12873,6 @@ export type AudioFieldsFragment = {
   source: string;
   thumbnailUrl?: string | null;
   artistName: string;
-  createdAt: any;
 } & { ' $fragmentName'?: 'AudioFieldsFragment' };
 
 export type PlaylistAudioFieldsFragment = {
@@ -13396,7 +13395,6 @@ export const AudioFieldsFragmentDoc = new TypedDocumentString(
   source
   thumbnailUrl
   artistName
-  createdAt
 }
     `,
   { fragmentName: 'AudioFields' },
@@ -13415,7 +13413,6 @@ export const PlaylistAudioFieldsFragmentDoc = new TypedDocumentString(
   source
   thumbnailUrl
   artistName
-  createdAt
 }`,
   { fragmentName: 'PlaylistAudioFields' },
 ) as unknown as TypedDocumentString<PlaylistAudioFieldsFragment, unknown>;
@@ -13438,7 +13435,6 @@ export const ListenPlaylistFieldsFragmentDoc = new TypedDocumentString(
   source
   thumbnailUrl
   artistName
-  createdAt
 }
 fragment PlaylistAudioFields on playlist_audios {
   position
@@ -14028,7 +14024,6 @@ export const ListenPlaylistDetailDocument = new TypedDocumentString(`
   source
   thumbnailUrl
   artistName
-  createdAt
 }
 fragment PlaylistAudioFields on playlist_audios {
   position

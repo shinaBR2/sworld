@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthContext } from '../../providers/auth';
 import { useRequest } from '../../universal/hooks/use-request';
-import { useLoadPlaylists, useLoadPublicPlaylists } from './playlists';
+import { useLoadPlaylists } from './playlists';
 
 vi.mock('../../universal/hooks/use-request', () => ({
   useRequest: vi.fn(),
@@ -123,59 +123,6 @@ describe('useLoadPlaylists', () => {
       playlists: [],
       isLoading: false,
       error: mockError,
-    });
-  });
-});
-
-describe('useLoadPublicPlaylists', () => {
-  const mockPlaylists = [
-    { id: '1', title: 'Chill', slug: 'chill' },
-    { id: '2', title: 'Focus', slug: 'focus' },
-  ];
-
-  beforeEach(() => {
-    vi.mocked(useRequest).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-    } as ReturnType<typeof useRequest>);
-  });
-
-  it('should set up useRequest without an access token', () => {
-    renderHook(() => useLoadPublicPlaylists());
-
-    expect(useRequest).toHaveBeenCalledWith({
-      queryKey: ['listen-public-playlists'],
-      document: expect.anything(),
-    });
-  });
-
-  it('should return data when loaded', () => {
-    vi.mocked(useRequest).mockReturnValue({
-      data: { playlist: mockPlaylists },
-      isLoading: false,
-    } as ReturnType<typeof useRequest>);
-
-    const { result } = renderHook(() => useLoadPublicPlaylists());
-
-    expect(result.current).toEqual({
-      playlists: mockPlaylists,
-      isLoading: false,
-      error: undefined,
-    });
-  });
-
-  it('should handle null response data', () => {
-    vi.mocked(useRequest).mockReturnValue({
-      data: null,
-      isLoading: false,
-    } as ReturnType<typeof useRequest>);
-
-    const { result } = renderHook(() => useLoadPublicPlaylists());
-
-    expect(result.current).toEqual({
-      playlists: [],
-      isLoading: false,
-      error: undefined,
     });
   });
 });
