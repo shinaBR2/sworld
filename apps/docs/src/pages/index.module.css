@@ -1,11 +1,74 @@
 .techStackSection {
-  padding: 2rem 0;
-  background: #f8f9fa;
+  padding: 3rem 0;
+  background: var(--ifm-background-surface-color);
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+@media screen and (max-width: 996px) {
+  .techGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .techGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.techCardLink {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.techCardLink:hover {
+  text-decoration: none;
+  color: inherit;
 }
 
 .techCard {
   height: 100%;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 8px;
+  background: var(--ifm-card-background-color, #fff);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.techCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.techIcon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.techTitle {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.techDescription {
+  margin-bottom: 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
 }
 
 .heroBanner {
