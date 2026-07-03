@@ -9,21 +9,14 @@ interface EditDialogProps {
   onClose: () => void;
   journalDetail: Journal | null;
   isLoadingDetail: boolean;
-  createJournal: any;
-  updateJournal: any;
+  // Whether a save is in flight (create or update, whichever this caller does).
+  isSaving: boolean;
   onSave: (journal: Journal) => void;
 }
 
 const EditDialog = (props: EditDialogProps) => {
-  const {
-    open,
-    onClose,
-    journalDetail,
-    isLoadingDetail,
-    createJournal,
-    updateJournal,
-    onSave,
-  } = props;
+  const { open, onClose, journalDetail, isLoadingDetail, isSaving, onSave } =
+    props;
   const isMobile = useIsMobile();
 
   return (
@@ -60,7 +53,7 @@ const EditDialog = (props: EditDialogProps) => {
         <JournalEdit
           journal={journalDetail}
           isLoading={isLoadingDetail}
-          isSaving={createJournal.isPending || updateJournal.isPending}
+          isSaving={isSaving}
           onBackClick={onClose}
           onSave={onSave}
         />

@@ -44,7 +44,7 @@ const JournalPage = () => {
       year,
     });
 
-  const createJournal = useCreateJournal({
+  const createMutation = useCreateJournal({
     onSuccess: () => {
       setDialogOpen(false);
       setNotification({
@@ -71,8 +71,8 @@ const JournalPage = () => {
     setYear(newYear);
   };
 
-  const handleSave = async (input: any) => {
-    await createJournal({ object: input });
+  const handleSave = (input: any) => {
+    createMutation.mutate({ object: input });
   };
 
   return (
@@ -101,8 +101,7 @@ const JournalPage = () => {
             isLoadingDetail={false}
             open={dialogOpen}
             onClose={() => setDialogOpen(false)}
-            createJournal={createJournal}
-            updateJournal={undefined}
+            isSaving={createMutation.isPending}
             onSave={handleSave}
           />
         </Suspense>

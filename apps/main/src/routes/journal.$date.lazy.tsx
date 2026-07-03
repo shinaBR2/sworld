@@ -1,6 +1,5 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import {
-  useCreateJournal,
   useDeleteJournal,
   useUpdateJournal,
 } from 'core/journal/mutation-hooks';
@@ -42,10 +41,7 @@ const JournalDayPage = () => {
     date,
   });
 
-  // EditDialog requires both mutations; only update is used here (editing an
-  // existing day), but the prop is required so we pass both.
-  const createJournal = useCreateJournal({ onSuccess: () => {} });
-  const updateJournal = useUpdateJournal({
+  const updateMutation = useUpdateJournal({
     onSuccess: () => {
       setDialogOpen(false);
       invalidateQuery(['journal-by-date', date]);
@@ -55,7 +51,7 @@ const JournalDayPage = () => {
       });
     },
   });
-  const deleteJournal = useDeleteJournal({
+  const deleteMutation = useDeleteJournal({
     onSuccess: () => {
       navigate({ to: '/journal' });
     },
@@ -63,18 +59,18 @@ const JournalDayPage = () => {
 
   const goBack = () => navigate({ to: '/journal' });
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (
       journal?.id &&
       window.confirm('Are you sure you want to delete this journal entry?')
     ) {
-      await deleteJournal({ id: journal.id });
+      deleteMutation.mutate({ id: journal.id });
     }
   };
 
-  const handleSave = async (input: any) => {
+  const handleSave = (input: any) => {
     if (journal?.id) {
-      await updateJournal({ id: journal.id, set: input });
+      updateMutation.mutate({ id: journal.id, set: input });
     }
   };
 
@@ -95,8 +91,7 @@ const JournalDayPage = () => {
             isLoadingDetail={isLoading}
             open={dialogOpen}
             onClose={() => setDialogOpen(false)}
-            createJournal={createJournal}
-            updateJournal={updateJournal}
+            isSaving={updateMutation.isPending}
             onSave={handleSave}
           />
         </Suspense>
