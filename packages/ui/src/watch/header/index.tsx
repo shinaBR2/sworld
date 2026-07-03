@@ -9,11 +9,14 @@ import { lazy, Suspense } from 'react';
 import { ResponsiveAvatar } from '../../universal';
 import Logo from '../../universal/logo';
 import SiteChoices from '../../universal/site-choices';
-import type { RequiredLinkComponent } from '../videos/types';
+import type { RequiredLinkComponentWithoutLinkProps } from '../videos/types';
 
 const Notifications = lazy(() => import('./notifications'));
 
-interface HeaderProps extends RequiredLinkComponent {
+// Header only forwards LinkComponent (to Logo/Notifications) and never uses
+// linkProps, so it requires the LinkComponent-only variant — otherwise every
+// caller has to pass a dead linkProps.
+interface HeaderProps extends RequiredLinkComponentWithoutLinkProps {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
   sites: {
     listen: string;
