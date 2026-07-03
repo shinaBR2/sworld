@@ -47,6 +47,35 @@ describe('SettingsPanel', () => {
     expect(defaultProps.actions.logout).toHaveBeenCalledTimes(1);
   });
 
+  it('renders the standalone toggle reflecting the current value', () => {
+    render(<SettingsPanel {...defaultProps} standaloneMode={true} />);
+
+    const toggle = screen.getByLabelText('Standalone mode');
+    expect(toggle).toBeChecked();
+  });
+
+  it('reports standalone toggle changes', () => {
+    const onStandaloneModeChange = vi.fn();
+    render(
+      <SettingsPanel
+        {...defaultProps}
+        standaloneMode={false}
+        onStandaloneModeChange={onStandaloneModeChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByLabelText('Standalone mode'));
+    expect(onStandaloneModeChange).toHaveBeenCalledWith(true);
+  });
+
+  it('disables the standalone toggle while saving', () => {
+    render(
+      <SettingsPanel {...defaultProps} standaloneMode={false} saving={true} />,
+    );
+
+    expect(screen.getByLabelText('Standalone mode')).toBeDisabled();
+  });
+
   it('calls toggle function when drawer is closed', () => {
     render(<SettingsPanel {...defaultProps} />);
 

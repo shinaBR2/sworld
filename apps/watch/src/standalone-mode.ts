@@ -16,4 +16,17 @@ const readStandaloneCache = (): boolean => {
   }
 };
 
-export { STANDALONE_STORAGE_KEY, readStandaloneCache };
+// Mirror the resolved setting into the boot cache. Written after a successful DB
+// save (SWO-331) or conflict resolution (SWO-332); the next boot reads it to pick
+// the router history. Stored explicitly as `'true'`/`'false'` (not removed on
+// off) so the reconcile step (SWO-332) can tell an explicit off apart from a
+// never-set device — boot still treats `'false'` and absent identically.
+const writeStandaloneCache = (value: boolean): void => {
+  try {
+    localStorage.setItem(STANDALONE_STORAGE_KEY, value ? 'true' : 'false');
+  } catch {
+    // Ignore storage failures — the DB remains the source of truth.
+  }
+};
+
+export { STANDALONE_STORAGE_KEY, readStandaloneCache, writeStandaloneCache };
