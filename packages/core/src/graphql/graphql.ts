@@ -3180,6 +3180,10 @@ export type Mutation_Root = {
   delete_test?: Maybe<Test_Mutation_Response>;
   /** delete single row from the table: "test" */
   delete_test_by_pk?: Maybe<Test>;
+  /** delete data from the table: "user_settings" */
+  delete_user_settings?: Maybe<User_Settings_Mutation_Response>;
+  /** delete single row from the table: "user_settings" */
+  delete_user_settings_by_pk?: Maybe<User_Settings>;
   /** delete data from the table: "user_video_history" */
   delete_user_video_history?: Maybe<User_Video_History_Mutation_Response>;
   /** delete single row from the table: "user_video_history" */
@@ -3284,6 +3288,10 @@ export type Mutation_Root = {
   insert_test?: Maybe<Test_Mutation_Response>;
   /** insert a single row into the table: "test" */
   insert_test_one?: Maybe<Test>;
+  /** insert data into the table: "user_settings" */
+  insert_user_settings?: Maybe<User_Settings_Mutation_Response>;
+  /** insert a single row into the table: "user_settings" */
+  insert_user_settings_one?: Maybe<User_Settings>;
   /** insert data into the table: "user_video_history" */
   insert_user_video_history?: Maybe<User_Video_History_Mutation_Response>;
   /** insert a single row into the table: "user_video_history" */
@@ -3432,6 +3440,12 @@ export type Mutation_Root = {
   update_test_by_pk?: Maybe<Test>;
   /** update multiples rows of table: "test" */
   update_test_many?: Maybe<Array<Maybe<Test_Mutation_Response>>>;
+  /** update data of the table: "user_settings" */
+  update_user_settings?: Maybe<User_Settings_Mutation_Response>;
+  /** update single row of the table: "user_settings" */
+  update_user_settings_by_pk?: Maybe<User_Settings>;
+  /** update multiples rows of table: "user_settings" */
+  update_user_settings_many?: Maybe<Array<Maybe<User_Settings_Mutation_Response>>>;
   /** update data of the table: "user_video_history" */
   update_user_video_history?: Maybe<User_Video_History_Mutation_Response>;
   /** update single row of the table: "user_video_history" */
@@ -3729,6 +3743,18 @@ export type Mutation_RootDelete_TestArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Test_By_PkArgs = {
   id: Scalars['Int']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_User_SettingsArgs = {
+  where: User_Settings_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_User_Settings_By_PkArgs = {
+  user_id: Scalars['uuid']['input'];
 };
 
 
@@ -4084,6 +4110,20 @@ export type Mutation_RootInsert_TestArgs = {
 export type Mutation_RootInsert_Test_OneArgs = {
   object: Test_Insert_Input;
   on_conflict?: InputMaybe<Test_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_User_SettingsArgs = {
+  objects: Array<User_Settings_Insert_Input>;
+  on_conflict?: InputMaybe<User_Settings_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_User_Settings_OneArgs = {
+  object: User_Settings_Insert_Input;
+  on_conflict?: InputMaybe<User_Settings_On_Conflict>;
 };
 
 
@@ -4646,6 +4686,36 @@ export type Mutation_RootUpdate_Test_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Test_ManyArgs = {
   updates: Array<Test_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_User_SettingsArgs = {
+  _append?: InputMaybe<User_Settings_Append_Input>;
+  _delete_at_path?: InputMaybe<User_Settings_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<User_Settings_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<User_Settings_Delete_Key_Input>;
+  _prepend?: InputMaybe<User_Settings_Prepend_Input>;
+  _set?: InputMaybe<User_Settings_Set_Input>;
+  where: User_Settings_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_User_Settings_By_PkArgs = {
+  _append?: InputMaybe<User_Settings_Append_Input>;
+  _delete_at_path?: InputMaybe<User_Settings_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<User_Settings_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<User_Settings_Delete_Key_Input>;
+  _prepend?: InputMaybe<User_Settings_Prepend_Input>;
+  _set?: InputMaybe<User_Settings_Set_Input>;
+  pk_columns: User_Settings_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_User_Settings_ManyArgs = {
+  updates: Array<User_Settings_Updates>;
 };
 
 
@@ -6775,6 +6845,12 @@ export type Query_Root = {
   test_aggregate: Test_Aggregate;
   /** fetch data from the table: "test" using primary key columns */
   test_by_pk?: Maybe<Test>;
+  /** fetch data from the table: "user_settings" */
+  user_settings: Array<User_Settings>;
+  /** fetch aggregated fields from the table: "user_settings" */
+  user_settings_aggregate: User_Settings_Aggregate;
+  /** fetch data from the table: "user_settings" using primary key columns */
+  user_settings_by_pk?: Maybe<User_Settings>;
   /** fetch data from the table: "user_video_history" */
   user_video_history: Array<User_Video_History>;
   /** fetch aggregated fields from the table: "user_video_history" */
@@ -7291,6 +7367,29 @@ export type Query_RootTest_AggregateArgs = {
 
 export type Query_RootTest_By_PkArgs = {
   id: Scalars['Int']['input'];
+};
+
+
+export type Query_RootUser_SettingsArgs = {
+  distinct_on?: InputMaybe<Array<User_Settings_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Settings_Order_By>>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
+};
+
+
+export type Query_RootUser_Settings_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<User_Settings_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Settings_Order_By>>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
+};
+
+
+export type Query_RootUser_Settings_By_PkArgs = {
+  user_id: Scalars['uuid']['input'];
 };
 
 
@@ -8525,6 +8624,14 @@ export type Subscription_Root = {
   test_by_pk?: Maybe<Test>;
   /** fetch data from the table in a streaming manner: "test" */
   test_stream: Array<Test>;
+  /** fetch data from the table: "user_settings" */
+  user_settings: Array<User_Settings>;
+  /** fetch aggregated fields from the table: "user_settings" */
+  user_settings_aggregate: User_Settings_Aggregate;
+  /** fetch data from the table: "user_settings" using primary key columns */
+  user_settings_by_pk?: Maybe<User_Settings>;
+  /** fetch data from the table in a streaming manner: "user_settings" */
+  user_settings_stream: Array<User_Settings>;
   /** fetch data from the table: "user_video_history" */
   user_video_history: Array<User_Video_History>;
   /** fetch aggregated fields from the table: "user_video_history" */
@@ -9198,6 +9305,36 @@ export type Subscription_RootTest_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Test_Stream_Cursor_Input>>;
   where?: InputMaybe<Test_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_SettingsArgs = {
+  distinct_on?: InputMaybe<Array<User_Settings_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Settings_Order_By>>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_Settings_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<User_Settings_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Settings_Order_By>>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_Settings_By_PkArgs = {
+  user_id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootUser_Settings_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<User_Settings_Stream_Cursor_Input>>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
 };
 
 
@@ -10483,6 +10620,184 @@ export type Timestamptz_Comparison_Exp = {
   _lte?: InputMaybe<Scalars['timestamptz']['input']>;
   _neq?: InputMaybe<Scalars['timestamptz']['input']>;
   _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
+};
+
+/** columns and relationships of "user_settings" */
+export type User_Settings = {
+  __typename?: 'user_settings';
+  data: Scalars['jsonb']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+
+/** columns and relationships of "user_settings" */
+export type User_SettingsDataArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "user_settings" */
+export type User_Settings_Aggregate = {
+  __typename?: 'user_settings_aggregate';
+  aggregate?: Maybe<User_Settings_Aggregate_Fields>;
+  nodes: Array<User_Settings>;
+};
+
+/** aggregate fields of "user_settings" */
+export type User_Settings_Aggregate_Fields = {
+  __typename?: 'user_settings_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<User_Settings_Max_Fields>;
+  min?: Maybe<User_Settings_Min_Fields>;
+};
+
+
+/** aggregate fields of "user_settings" */
+export type User_Settings_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<User_Settings_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type User_Settings_Append_Input = {
+  data?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "user_settings". All fields are combined with a logical 'AND'. */
+export type User_Settings_Bool_Exp = {
+  _and?: InputMaybe<Array<User_Settings_Bool_Exp>>;
+  _not?: InputMaybe<User_Settings_Bool_Exp>;
+  _or?: InputMaybe<Array<User_Settings_Bool_Exp>>;
+  data?: InputMaybe<Jsonb_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "user_settings" */
+export enum User_Settings_Constraint {
+  /** unique or primary key constraint on columns "user_id" */
+  UserSettingsPkey = 'user_settings_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type User_Settings_Delete_At_Path_Input = {
+  data?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type User_Settings_Delete_Elem_Input = {
+  data?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type User_Settings_Delete_Key_Input = {
+  data?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** input type for inserting data into table "user_settings" */
+export type User_Settings_Insert_Input = {
+  data?: InputMaybe<Scalars['jsonb']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type User_Settings_Max_Fields = {
+  __typename?: 'user_settings_max_fields';
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type User_Settings_Min_Fields = {
+  __typename?: 'user_settings_min_fields';
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** response of any mutation on the table "user_settings" */
+export type User_Settings_Mutation_Response = {
+  __typename?: 'user_settings_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<User_Settings>;
+};
+
+/** on_conflict condition type for table "user_settings" */
+export type User_Settings_On_Conflict = {
+  constraint: User_Settings_Constraint;
+  update_columns?: Array<User_Settings_Update_Column>;
+  where?: InputMaybe<User_Settings_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "user_settings". */
+export type User_Settings_Order_By = {
+  data?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: user_settings */
+export type User_Settings_Pk_Columns_Input = {
+  user_id: Scalars['uuid']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type User_Settings_Prepend_Input = {
+  data?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
+/** select columns of table "user_settings" */
+export enum User_Settings_Select_Column {
+  /** column name */
+  Data = 'data',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** input type for updating data in table "user_settings" */
+export type User_Settings_Set_Input = {
+  data?: InputMaybe<Scalars['jsonb']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "user_settings" */
+export type User_Settings_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: User_Settings_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type User_Settings_Stream_Cursor_Value_Input = {
+  data?: InputMaybe<Scalars['jsonb']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "user_settings" */
+export enum User_Settings_Update_Column {
+  /** column name */
+  Data = 'data',
+  /** column name */
+  UserId = 'user_id'
+}
+
+export type User_Settings_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<User_Settings_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<User_Settings_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<User_Settings_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<User_Settings_Delete_Key_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<User_Settings_Prepend_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<User_Settings_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: User_Settings_Bool_Exp;
 };
 
 /** Pivot table between user and video, let we know how do end user interact with video */
@@ -13051,6 +13366,11 @@ export type NotificationsSubscriptionVariables = Exact<{ [key: string]: never; }
 
 export type NotificationsSubscription = { __typename?: 'subscription_root', notifications: Array<{ __typename?: 'notifications', id: any, entityId: any, entityType: string, type: string, readAt?: any | null, link?: string | null, metadata?: any | null, video?: { __typename?: 'videos', id: any, title: string } | null }> };
 
+export type GetUserSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserSettingsQuery = { __typename?: 'query_root', user_settings: Array<{ __typename?: 'user_settings', data: any }> };
+
 export type InsertVideosMutationVariables = Exact<{
   objects: Array<Videos_Insert_Input> | Videos_Insert_Input;
 }>;
@@ -13878,6 +14198,13 @@ export const NotificationsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<NotificationsSubscription, NotificationsSubscriptionVariables>;
+export const GetUserSettingsDocument = new TypedDocumentString(`
+    query GetUserSettings {
+  user_settings {
+    data
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserSettingsQuery, GetUserSettingsQueryVariables>;
 export const InsertVideosDocument = new TypedDocumentString(`
     mutation InsertVideos($objects: [videos_insert_input!]!) {
   insert_videos(objects: $objects) {
