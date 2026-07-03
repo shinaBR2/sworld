@@ -1,3 +1,4 @@
+import MusicNoteRounded from '@mui/icons-material/MusicNoteRounded';
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Slide from '@mui/material/Slide';
@@ -8,7 +9,6 @@ import hooks, {
 } from 'core';
 import { useRef, useState } from 'react';
 import { ResponsiveCardMedia } from '../../../universal';
-import { defaultAudioThumbnailUrl } from '../../../universal/images/default-thumbnail';
 import { useIsMobile } from '../../../universal/responsive';
 import Controls from './Controls';
 import PlaylistButton from './PlaylistButton';
@@ -61,7 +61,7 @@ const MusicWidget = (props: MusicWidgetProps) => {
   };
 
   return (
-    <StyledCard role="region" aria-label="music widget">
+    <StyledCard component="section" aria-label="music widget">
       <StyledContent ref={contentRef}>
         <CardContent sx={{ pt: 3 }}>
           {isMobile && (
@@ -83,17 +83,44 @@ const MusicWidget = (props: MusicWidgetProps) => {
               boxShadow: 3,
             }}
           >
-            <ResponsiveCardMedia
-              aria-label="audio thumbnail"
-              src={image || defaultAudioThumbnailUrl}
-              alt={name}
-              sx={{
-                width: '100%',
-                height: '100%',
-                aspectRatio: '1 / 1',
-                objectFit: 'cover',
-              }}
-            />
+            {image ? (
+              <ResponsiveCardMedia
+                aria-label="audio thumbnail"
+                src={image}
+                alt={name}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  aspectRatio: '1 / 1',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              // No artwork: a calm theme-tinted panel, never a grey hole. It's
+              // a composite graphic (gradient + note), so role="img" is correct
+              // here — there's no real <img> to use a semantic element for.
+              <Box
+                role="img"
+                aria-label="audio thumbnail"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: (theme) =>
+                    `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+                }}
+              >
+                <MusicNoteRounded
+                  sx={{
+                    fontSize: 88,
+                    color: 'primary.contrastText',
+                    opacity: 0.9,
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <Typography
             aria-label="audio title"
