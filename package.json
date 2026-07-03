@@ -31,5 +31,12 @@
     "turbo": "2.8.21",
     "typescript": "^5.6.2"
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.4.0",
+  "pnpm": {
+    "overrides": {
+      "form-data@>=4.0.0 <4.0.4": "4.0.4",
+      "shell-quote@<1.8.4": "1.8.4",
+      "preact@>=10.26.5 <10.26.10": "10.26.10"
+    }
+  }
 }

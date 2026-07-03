@@ -17,8 +17,8 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
     "@mdx-js/react": "3.1.1",
     "clsx": "^1.2.1",
     "core": "workspace:*",
@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
-    "@docusaurus/module-type-aliases": "3.8.1",
-    "@docusaurus/tsconfig": "3.8.1",
+    "@docusaurus/module-type-aliases": "3.10.1",
+    "@docusaurus/tsconfig": "3.10.1",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
