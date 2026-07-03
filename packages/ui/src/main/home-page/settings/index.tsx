@@ -1,5 +1,6 @@
 import Logout from '@mui/icons-material/Logout';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,8 +25,18 @@ const SettingsPanel = (props: SettingsPanelProps) => {
 
   return (
     <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
-      <Box sx={{ width: 250, height: '100%' }}>
-        <List>
+      <Box
+        sx={{
+          width: 250,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Logout pinned to the bottom of the drawer (mt: auto pushes the
+            trailing list down as more items are added above). */}
+        <List sx={{ mt: 'auto' }}>
+          <Divider />
           <ListItemButton
             onClick={() => {
               toggle(false);
