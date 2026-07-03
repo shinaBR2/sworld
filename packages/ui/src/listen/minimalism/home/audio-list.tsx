@@ -6,6 +6,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
+import { panelSurface } from '../music-widget/Styled';
 import { PlayingListSkeleton } from './playing-list-skeleton';
 
 const { useSAudioPlayer } = hooks;
@@ -91,7 +92,16 @@ const Content = (props: AudioListProps) => {
     <Grid container spacing={2}>
       {showPlayingList && (
         <Grid item md={8} sm={6} xs={0}>
-          <Card sx={{ height: '100%', maxHeight: '462px', overflowY: 'auto' }}>
+          <Card
+            elevation={0}
+            sx={{
+              height: '100%',
+              maxHeight: '462px',
+              overflowY: 'auto',
+              // Same soft surface as the player card — one panel language.
+              ...panelSurface,
+            }}
+          >
             <Suspense fallback={<PlayingListSkeleton />}>
               <PlayingList
                 audioList={list}

@@ -64,8 +64,8 @@ describe('PlayingList Component', () => {
       backgroundColor: 'action.selected',
     });
 
-    // Check "Now Playing" text appears for current track
-    expect(screen.getByText('• Now Playing')).toBeInTheDocument();
+    // The now-playing row shows the equalizer, labelled for screen readers.
+    expect(screen.getByText('Now Playing')).toBeInTheDocument();
   });
 
   it('calls onItemSelect when a track is clicked', () => {
