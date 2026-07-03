@@ -15,28 +15,19 @@ export default defineConfig({
   // https://stackoverflow.com/a/76694634/8270395
   build: {
     sourcemap: true,
-    minify: 'esbuild',
     chunkSizeWarningLimit: 100,
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-          return;
-        }
-        warn(warning);
-      },
+    rolldownOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
+        advancedChunks: {
+          groups: [
             /**
              * App broken if bundle mui separately
              */
-            if (id.includes('react')) return 'react-vendor';
-
+            { name: 'react-vendor', test: /node_modules.*react/ },
             /** For error tracking, analytics */
-            if (id.includes('/node_modules/rollbar')) return 'tracker-vendor';
-
-            return 'vendor';
-          }
+            { name: 'tracker-vendor', test: /\/node_modules\/rollbar/ },
+            { name: 'vendor', test: /node_modules/ },
+          ],
         },
       },
     },
