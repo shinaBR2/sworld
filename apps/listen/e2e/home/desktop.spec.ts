@@ -93,7 +93,9 @@ test.describe('music widget', () => {
       await expect(playingList.getByRole('button').first()).not.toContainText(
         'Now Playing',
       );
-      await expect(playingList.getByRole('button').nth(1)).toContainText(
+      // Previous from the first track wraps to the last, so the last item is
+      // now playing (matches the mobile spec; independent of list length).
+      await expect(playingList.getByRole('button').last()).toContainText(
         'Now Playing',
       );
     });
