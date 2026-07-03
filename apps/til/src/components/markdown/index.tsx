@@ -21,7 +21,7 @@ const MarkdownContent = React.memo((props: MarkdownContentProps) => {
       .replace(/\\n/g, '\n')
       .replace(
         /!\[(.*?)\]\((.*?)( align=(.*?))?\)/g,
-        (_match, alt, url, alignFull, alignValue) => {
+        (_match, alt, url, _alignFull, alignValue) => {
           return alignValue
             ? `![${alt}](${url}#align=${alignValue})`
             : `![${alt}](${url})`;
@@ -35,10 +35,12 @@ const MarkdownContent = React.memo((props: MarkdownContentProps) => {
         blockquote({ children }) {
           return <MarkdownBlockquote>{children}</MarkdownBlockquote>;
         },
-        code({ node, inline, className, children, ...props }) {
+        code({ node, className, children, ...props }) {
+          // react-markdown v9 no longer passes `inline`; a `language-*` class
+          // means a fenced code block, otherwise it's inline code.
           const match = /language-(\w+)/.exec(className || '');
 
-          if (!inline && match) {
+          if (match) {
             const [, language] = match;
             const code = String(children).replace(/\n$/, '');
 

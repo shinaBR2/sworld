@@ -14,7 +14,6 @@ import { routeTree } from './routeTree.gen';
 
 validateEnvVars();
 
-// @ts-expect-error
 const router = createRouter({
   routeTree,
   defaultViewTransition: true,

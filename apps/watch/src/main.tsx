@@ -4,7 +4,7 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 import { Auth, ErrorBoundary, Query } from 'core';
-import React, { StrictMode } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorFallback } from 'ui/universal/error-boundary';
 import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
@@ -26,7 +26,6 @@ validateEnvVars();
 // cache; the default (browser history) is unchanged when off.
 const standalone = readStandaloneCache();
 
-// @ts-expect-error
 const router = createRouter({
   routeTree,
   history: standalone

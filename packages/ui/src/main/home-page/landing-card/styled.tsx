@@ -27,14 +27,14 @@ const IconContainer = styled(Box, {
   height: 60,
   borderRadius: '50%',
   backgroundColor: `${customColor || theme.palette.primary.main}15`,
-})) as typeof Box;
+}));
 
 const IconTypography = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'customColor',
 })<{ customColor?: string }>(({ customColor, theme }) => ({
   fontSize: '2rem',
   color: customColor || theme.palette.primary.main,
-})) as typeof Typography;
+}));
 
 const TitleTypography = styled(Typography)(() => ({
   fontWeight: 600,

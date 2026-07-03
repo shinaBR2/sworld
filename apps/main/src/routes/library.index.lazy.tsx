@@ -95,7 +95,7 @@ const LibraryPage: React.FC = () => {
   //   console.log('Search:', query);
   // };
 
-  const handleBookClick = (book: BookWithProgress) => {
+  const handleBookClick = (book: { id: string }) => {
     // Navigate to book reader
     navigate({
       to: '/library/books/$bookId',
@@ -103,7 +103,7 @@ const LibraryPage: React.FC = () => {
     });
   };
 
-  const handleContinueReading = (book: CurrentBook) => {
+  const handleContinueReading = (book: { id: string }) => {
     // Navigate to continue reading
     navigate({
       to: '/library/books/$bookId',
@@ -142,7 +142,7 @@ const LibraryPage: React.FC = () => {
     isCompleted: book.isCompleted,
     isNew: book.isNew,
     coverGradient: getCoverGradient(book.id), // Generate consistent gradient based on ID
-    thumbnailUrl: book.thumbnailUrl,
+    thumbnailUrl: book.thumbnailUrl ?? undefined,
   }));
 
   // Show error state

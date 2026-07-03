@@ -1,3 +1,19 @@
+// Minimal typing for the Chrome extension messaging API used below. The app
+// runs in browsers where `chrome` may be undefined (no extension), so it's
+// optional and guarded before use.
+declare const chrome:
+  | {
+      runtime?: {
+        sendMessage: (
+          extensionId: string,
+          message: unknown,
+          responseCallback?: () => void,
+        ) => void;
+        lastError?: { message?: string };
+      };
+    }
+  | undefined;
+
 interface NotifyExtensionParams<T> {
   id: string;
   type: string;
@@ -15,7 +31,7 @@ const notifyExtension = <T>({ id, type, data }: NotifyExtensionParams<T>) => {
   if (typeof chrome !== 'undefined' && chrome.runtime) {
     chrome.runtime.sendMessage(id, { type, data }, () => {
       // Ignore errors - extension might not be installed
-      if (chrome.runtime.lastError) {
+      if (chrome.runtime?.lastError) {
         console.log('Extension not available');
       }
     });
