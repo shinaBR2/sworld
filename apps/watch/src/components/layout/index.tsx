@@ -9,7 +9,10 @@ import { Notification } from 'ui/universal/notification';
 import { Header } from 'ui/watch/header';
 import { SettingsPanel } from 'ui/watch/home-page/settings';
 import { appConfig } from '../../config';
-import { writeStandaloneCache } from '../../standalone-mode';
+import {
+  clearStandaloneCache,
+  writeStandaloneCache,
+} from '../../standalone-mode';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -59,7 +62,12 @@ const Layout = (props: LayoutProps) => {
         open={settingOpen}
         toggle={toggleSetting}
         actions={{
-          logout: signOut,
+          // Clear the boot cache on sign-out so the next account on this browser
+          // starts from the default instead of inheriting this account's mode.
+          logout: () => {
+            clearStandaloneCache();
+            signOut();
+          },
         }}
         standaloneMode={settings?.watch.standaloneMode ?? false}
         onStandaloneModeChange={handleStandaloneModeChange}
