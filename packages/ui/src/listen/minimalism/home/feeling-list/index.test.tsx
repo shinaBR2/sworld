@@ -3,22 +3,18 @@ import { describe, expect, it, vi } from 'vitest';
 import { FeelingList } from './index';
 
 describe('FeelingList', () => {
-  const mockFeelings = {
-    data: {
-      tags: [
-        { id: '1', name: 'Happy' },
-        { id: '2', name: 'Sad' },
-      ],
-    },
-    isLoading: false,
-  };
+  const mockFeelings = [
+    { id: '1', name: 'Happy' },
+    { id: '2', name: 'Sad' },
+  ];
 
   it('renders loading skeleton when loading', () => {
     render(
       <FeelingList
         activeId=""
         onSelect={() => {}}
-        queryRs={{ ...mockFeelings, isLoading: true }}
+        feelings={mockFeelings}
+        isLoading
       />,
     );
     expect(screen.getByRole('status')).toHaveAttribute(
@@ -30,7 +26,12 @@ describe('FeelingList', () => {
 
   it('renders chips with feelings', () => {
     render(
-      <FeelingList activeId="" onSelect={() => {}} queryRs={mockFeelings} />,
+      <FeelingList
+        activeId=""
+        onSelect={() => {}}
+        feelings={mockFeelings}
+        isLoading={false}
+      />,
     );
 
     expect(screen.getByText('Default')).toBeInTheDocument();
@@ -41,7 +42,12 @@ describe('FeelingList', () => {
   it('handles chip selection', () => {
     const onSelect = vi.fn();
     render(
-      <FeelingList activeId="" onSelect={onSelect} queryRs={mockFeelings} />,
+      <FeelingList
+        activeId=""
+        onSelect={onSelect}
+        feelings={mockFeelings}
+        isLoading={false}
+      />,
     );
 
     fireEvent.click(screen.getByText('Happy'));
@@ -50,7 +56,12 @@ describe('FeelingList', () => {
 
   it('highlights active chip', () => {
     render(
-      <FeelingList activeId="1" onSelect={() => {}} queryRs={mockFeelings} />,
+      <FeelingList
+        activeId="1"
+        onSelect={() => {}}
+        feelings={mockFeelings}
+        isLoading={false}
+      />,
     );
 
     expect(screen.getByRole('button', { name: 'Happy' })).toHaveAttribute(

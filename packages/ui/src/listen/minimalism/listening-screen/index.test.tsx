@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { listenQueryHooks } from 'core';
 import { describe, expect, it, vi } from 'vitest';
 import { ListeningScreen } from './index';
 
@@ -26,12 +25,6 @@ vi.mock('../collection-select', () => ({
   ),
 }));
 
-type AudiosQueryRs = ReturnType<typeof listenQueryHooks.useLoadAudios>;
-const allQueryRs = {
-  isLoading: false,
-  data: { audios: [], tags: [] },
-} as unknown as AudiosQueryRs;
-
 const baseProps = {
   sites: { listen: '', watch: '', play: '', til: '' },
   user: null,
@@ -41,6 +34,7 @@ const baseProps = {
   onSelectCollection: vi.fn(),
   onCreate: vi.fn(),
   audios: [],
+  isLoading: false,
 };
 
 describe('ListeningScreen', () => {
@@ -50,7 +44,7 @@ describe('ListeningScreen', () => {
         {...baseProps}
         mode="all"
         collectionValue="all"
-        queryRs={allQueryRs}
+        feelings={[]}
       />,
     );
 
@@ -78,7 +72,7 @@ describe('ListeningScreen', () => {
         {...baseProps}
         mode="all"
         collectionValue="all"
-        queryRs={allQueryRs}
+        feelings={[]}
       />,
     );
 

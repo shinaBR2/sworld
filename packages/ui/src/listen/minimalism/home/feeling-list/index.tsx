@@ -7,27 +7,19 @@ interface Feeling {
   name: string;
 }
 
-// Structural: any audios query (signed-in or public) that carries feeling tags.
-interface FeelingQueryRs {
-  isLoading: boolean;
-  data?: { tags?: Feeling[] } | null;
-}
-
 interface FeelingListProps {
   activeId: string;
   onSelect: React.Dispatch<React.SetStateAction<string>>;
-  queryRs: FeelingQueryRs;
+  feelings: Feeling[];
+  isLoading: boolean;
 }
 
 const FeelingList = (props: FeelingListProps) => {
-  const { activeId, onSelect, queryRs } = props;
-  const { isLoading, data } = queryRs;
+  const { activeId, onSelect, feelings, isLoading } = props;
 
   if (isLoading) {
     return <FeelingListSkeleton />;
   }
-
-  const feelings = data?.tags ?? [];
 
   return (
     <Stack
@@ -64,4 +56,4 @@ const FeelingList = (props: FeelingListProps) => {
 };
 
 export { FeelingList };
-export type { FeelingQueryRs };
+export type { Feeling };
