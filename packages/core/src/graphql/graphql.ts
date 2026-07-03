@@ -13220,6 +13220,13 @@ export type GetJournalByIdQueryVariables = Exact<{
 
 export type GetJournalByIdQuery = { __typename?: 'query_root', journals_by_pk?: { __typename?: 'journals', id: any, user_id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any } | null };
 
+export type GetJournalByDateQueryVariables = Exact<{
+  date: Scalars['date']['input'];
+}>;
+
+
+export type GetJournalByDateQuery = { __typename?: 'query_root', journals: Array<{ __typename?: 'journals', id: any, user_id: any, date: any, content: string, mood: string, tags: any, createdAt: any, updatedAt: any }> };
+
 export type UpsertReadingProgressMutationVariables = Exact<{
   bookId: Scalars['uuid']['input'];
   currentPage: Scalars['Int']['input'];
@@ -13885,6 +13892,20 @@ export const GetJournalByIdDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetJournalByIdQuery, GetJournalByIdQueryVariables>;
+export const GetJournalByDateDocument = new TypedDocumentString(`
+    query GetJournalByDate($date: date!) {
+  journals(where: {date: {_eq: $date}}, limit: 1) {
+    id
+    user_id
+    date
+    content
+    mood
+    tags
+    createdAt
+    updatedAt
+  }
+}
+    `) as unknown as TypedDocumentString<GetJournalByDateQuery, GetJournalByDateQueryVariables>;
 export const UpsertReadingProgressDocument = new TypedDocumentString(`
     mutation UpsertReadingProgress($bookId: uuid!, $currentPage: Int!, $totalPages: Int, $readingTimeMinutes: Int) {
   insert_reading_progresses_one(

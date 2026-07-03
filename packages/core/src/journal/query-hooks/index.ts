@@ -1,5 +1,7 @@
 import { graphql } from '../../graphql';
 import type {
+  GetJournalByDateQuery,
+  GetJournalByDateQueryVariables,
   GetJournalByIdQuery,
   GetJournalByIdQueryVariables,
   GetJournalsByMonthQuery,
@@ -58,6 +60,21 @@ const journalByIdQuery = graphql(/* GraphQL */ `
   }
 `);
 
+const journalByDateQuery = graphql(/* GraphQL */ `
+  query GetJournalByDate($date: date!) {
+    journals(where: { date: { _eq: $date } }, limit: 1) {
+      id
+      user_id
+      date
+      content
+      mood
+      tags
+      createdAt
+      updatedAt
+    }
+  }
+`);
+
 interface LoadJournalsByMonthProps {
   getAccessToken: () => Promise<string>;
   month: number;
@@ -67,6 +84,11 @@ interface LoadJournalsByMonthProps {
 interface LoadJournalByIdProps {
   getAccessToken: () => Promise<string>;
   id: string;
+}
+
+interface LoadJournalByDateProps {
+  getAccessToken: () => Promise<string>;
+  date: string;
 }
 
 const getStartEndDates = (month: number, year: number) => {
@@ -166,8 +188,36 @@ const useLoadJournalById = (props: LoadJournalByIdProps) => {
   };
 };
 
+// Loads the caller's entry for a specific day (YYYY-MM-DD). Owner-scoped by
+// Hasura permission; `limit: 1` returns the single entry (exact once the
+// unique (user_id, date) constraint lands), or null when the day has none.
+const useLoadJournalByDate = (props: LoadJournalByDateProps) => {
+  const { getAccessToken, date } = props;
+
+  const { data, isLoading, error } = useRequest<
+    GetJournalByDateQuery,
+    GetJournalByDateQueryVariables
+  >({
+    queryKey: ['journal-by-date', date],
+    getAccessToken,
+    document: journalByDateQuery,
+    variables: {
+      date,
+    },
+    enabled: !!date,
+  });
+
+  return {
+    data: !isLoading && data ? (data.journals[0] ?? null) : null,
+    isLoading,
+    error,
+  };
+};
+
 export {
   useLoadJournalById,
+  useLoadJournalByDate,
   useLoadJournalsByMonth,
   type LoadJournalByIdProps,
+  type LoadJournalByDateProps,
 };
