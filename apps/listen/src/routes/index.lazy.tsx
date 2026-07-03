@@ -28,7 +28,7 @@ const useCollectionNavigate = () => {
 const AuthenticatedContent = () => {
   const { getAccessToken, user, signIn, signOut } = useAuthContext();
   const queryRs = listenQueryHooks.useLoadAudios({ getAccessToken });
-  const { playlists } = listenQueryHooks.useLoadPlaylists({ getAccessToken });
+  const { playlists } = listenQueryHooks.useLoadPlaylists();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
@@ -54,7 +54,7 @@ const AuthenticatedContent = () => {
 const AnonymousContent = () => {
   const { user, signIn, signOut } = useAuthContext();
   const queryRs = listenQueryHooks.useLoadPublicAudios();
-  const { playlists } = listenQueryHooks.useLoadPublicPlaylists();
+  const { playlists } = listenQueryHooks.useLoadPlaylists();
   const onSelectCollection = useCollectionNavigate();
 
   return (
