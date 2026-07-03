@@ -17,7 +17,6 @@ import {
 import { routeTree } from './routeTree.gen';
 import { readStandaloneCache } from './standalone-mode';
 
-// Trigger a production build to verify the Cloudflare Pages deploy pipeline.
 validateEnvVars();
 
 // In standalone mode the router runs on in-memory history so navigation never
