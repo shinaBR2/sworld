@@ -1,4 +1,8 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import {
+  createMemoryHistory,
+  createRouter,
+  RouterProvider,
+} from '@tanstack/react-router';
 import { Auth, ErrorBoundary, Query } from 'core';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -11,13 +15,23 @@ import {
   validateEnvVars,
 } from './config';
 import { routeTree } from './routeTree.gen';
+import { readStandaloneCache } from './standalone-mode';
 
 // Trigger a production build to verify the Cloudflare Pages deploy pipeline.
 validateEnvVars();
 
+// In standalone mode the router runs on in-memory history so navigation never
+// changes the URL or grows the browser history stack, and a refresh always
+// lands on home (SWO-326). Decided synchronously at boot from the localStorage
+// cache; the default (browser history) is unchanged when off.
+const standalone = readStandaloneCache();
+
 // @ts-expect-error
 const router = createRouter({
   routeTree,
+  history: standalone
+    ? createMemoryHistory({ initialEntries: ['/'] })
+    : undefined,
   defaultViewTransition: true,
   defaultPreload: 'intent',
   scrollRestoration: true,
