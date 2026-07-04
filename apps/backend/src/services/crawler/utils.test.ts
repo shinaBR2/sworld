@@ -20,7 +20,7 @@ describe('Request Handler Utilities', () => {
     vi.spyOn(hh3dModule, 'hh3dHandler').mockImplementation((_options) => {
       return {
         handler: () => {},
-        initialState: {},
+        initialState: { data: [], processedUrls: [] },
       };
     });
   });
@@ -53,10 +53,16 @@ describe('Request Handler Utilities', () => {
     const mockOptions = {
       startUrls: ['https://example.com/hoathinh3d'],
       maxConcurrency: 1,
+      selectors: [] as SelectorConfig[],
+      title: 'test',
+      getSingleVideo: false,
     };
 
     it('should call hh3dHandler for "hh3d" handler type', () => {
-      const mockHandlerResult = { handler: () => {}, initialState: {} };
+      const mockHandlerResult = {
+        handler: () => {},
+        initialState: { data: [], processedUrls: [] },
+      };
       vi.spyOn(hh3dModule, 'hh3dHandler').mockReturnValue(mockHandlerResult);
 
       const result = createRequestHandler('hh3d', mockOptions);
@@ -88,6 +94,7 @@ describe('simpleScraper', () => {
       name: 'test',
       selector: '.test-selector',
       waitForSelectorTimeout: 1000,
+      required: true,
     };
 
     const result = await simpleScraper(mockPage, mockSelector);
@@ -110,6 +117,7 @@ describe('simpleScraper', () => {
       name: 'test',
       selector: '.test-selector',
       waitForSelectorTimeout: 1000,
+      required: true,
     };
 
     const result = await simpleScraper(mockPage, mockSelector);
@@ -132,6 +140,7 @@ describe('simpleScraper', () => {
       name: 'test',
       selector: '.test-selector',
       waitForSelectorTimeout: 1000,
+      required: true,
     };
 
     const result = await simpleScraper(mockPage, mockSelector);

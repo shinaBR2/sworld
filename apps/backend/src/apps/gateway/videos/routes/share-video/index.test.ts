@@ -66,7 +66,7 @@ describe('shareVideoHandler', () => {
   it('should return error if no valid users found', async () => {
     vi.mocked(getUsers).mockResolvedValue({
       users: null,
-    });
+    } as unknown as Awaited<ReturnType<typeof getUsers>>);
 
     const result = await shareVideoHandler(mockValidatedData);
 

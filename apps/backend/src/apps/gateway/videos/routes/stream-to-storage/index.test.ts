@@ -8,7 +8,10 @@ import { createCloudTasks } from 'src/utils/cloud-task';
 import { envConfig } from 'src/utils/envConfig';
 import { queues } from 'src/utils/systemConfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { transformEvent } from 'src/schema/videos/convert';
+import {
+  type ConvertBodySchema,
+  transformEvent,
+} from 'src/schema/videos/convert';
 import { streamToStorage } from './index';
 
 vi.mock('src/utils/schema', () => ({
@@ -57,7 +60,7 @@ describe('streamToStorage', () => {
     vi.mocked(envConfig).computeServiceUrl = 'http://test-compute-service';
     vi.mocked(envConfig).ioServiceUrl = 'http://test-io-service';
     vi.mocked(verifySignature).mockReturnValue(true);
-    vi.mocked(createCloudTasks).mockResolvedValue({ taskId: 'test-task' });
+    vi.mocked(createCloudTasks).mockResolvedValue({ name: 'test-task' });
 
     mockValidatedData = {
       signatureHeader: 'test-signature',
@@ -68,21 +71,22 @@ describe('streamToStorage', () => {
     };
   });
 
-  const createMockData = (data: Record<string, unknown>) => ({
-    signatureHeader: 'test-signature',
-    event: {
-      data: {
-        id: 'test-video',
-        videoUrl: 'https://example.com/video.mp4',
-        ...data,
+  const createMockData = (data: Record<string, unknown>) =>
+    ({
+      signatureHeader: 'test-signature',
+      event: {
+        data: {
+          id: 'test-video',
+          videoUrl: 'https://example.com/video.mp4',
+          ...data,
+        },
+        metadata: {
+          id: 'test-event',
+          span_id: 'test-span',
+          trace_id: 'test-trace',
+        },
       },
-      metadata: {
-        id: 'test-event',
-        span_id: 'test-span',
-        trace_id: 'test-trace',
-      },
-    },
-  });
+    }) as unknown as ConvertBodySchema;
 
   it('should create cloud task for HLS file type', async () => {
     const newData = createMockData({

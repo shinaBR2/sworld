@@ -33,6 +33,7 @@ describe('streamM3U8 (backend adapter)', () => {
     duration: 120,
     thumbnailUrl: 'https://storage.test/thumb.jpg',
     segments: { included: [], excluded: [] },
+    modifiedContent: '#EXTM3U',
   };
 
   beforeEach(() => {

@@ -226,7 +226,7 @@ describe('CrawlSchema', () => {
 
     // Assert
     expect(result.event.data.slugPrefix).toBeUndefined();
-    expect(result.userId).toBeUndefined();
+    expect((result as Record<string, unknown>).userId).toBeUndefined();
   });
 
   it('should call the transform functions with correct parameters', () => {

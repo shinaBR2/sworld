@@ -56,7 +56,7 @@ describe('crawl', () => {
 
     vi.mocked(envConfig).ioServiceUrl = 'http://test-io-service';
     vi.mocked(verifySignature).mockReturnValue(true);
-    vi.mocked(createCloudTasks).mockResolvedValue({ taskId: 'test-task' });
+    vi.mocked(createCloudTasks).mockResolvedValue({ name: 'test-task' });
 
     validatedData = {
       signatureHeader: 'test-signature',

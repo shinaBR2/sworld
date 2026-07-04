@@ -25,7 +25,7 @@ const generateOptions = async (userId: string) => {
     })),
   });
 
-  logger.info('auth generateOptions', options);
+  logger.info(options, 'auth generateOptions');
 
   await setCurrentAuthenticationOptions(userId, options);
   return options;
@@ -46,7 +46,7 @@ const verify = async (userId: string, credential: any) => {
   // @ts-expect-error
   const user = userSnapshot.data();
   logger.info('user data', user);
-  logger.info('user id', userId);
+  logger.info({ userId }, 'user id');
   logger.info('passkey id', credential.id);
   const { passkeyAuthenticationOptions: currentOptions } = user;
   const passkey = await getUserPasskey(userId, credential.id);

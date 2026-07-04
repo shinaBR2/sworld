@@ -1,6 +1,6 @@
 import { zValidator as zv } from '@hono/zod-validator';
-import type { ValidationTargets } from 'hono';
-import type { ZodError, ZodSchema } from 'zod';
+import type { Context, MiddlewareHandler, ValidationTargets } from 'hono';
+import type { ZodError, ZodSchema, z } from 'zod';
 
 // TODO: upgrade zod to use its native formatter
 const formatZodError = (error: ZodError): string => {
@@ -23,6 +23,19 @@ const formatZodError = (error: ZodError): string => {
     .join(', ');
 };
 
+type ZodValidatorHookResult<T extends ZodSchema> =
+  | { success: true; data: z.output<T> }
+  | { success: false; error: ZodError };
+
+type ZodValidatorFn = <
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets,
+>(
+  target: Target,
+  schema: T,
+  hook: (result: ZodValidatorHookResult<T>, c: Context) => Response | undefined,
+) => MiddlewareHandler;
+
 /**
  * This damn schema ONLY for request body
  * We CAN'T validate headers or query params
@@ -34,7 +47,7 @@ const zodValidator = <
   target: Target,
   schema: T,
 ) =>
-  zv(target, schema, (result, c) => {
+  (zv as unknown as ZodValidatorFn)(target, schema, (result, c) => {
     console.log(`result`, result);
     if (!result.success) {
       const message = formatZodError(result.error);
@@ -46,6 +59,7 @@ const zodValidator = <
         dataObject: null,
       });
     }
+    return undefined;
   });
 
 export { zodValidator };

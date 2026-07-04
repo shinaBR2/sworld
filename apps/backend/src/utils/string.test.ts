@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { randomBytes } from 'crypto';
 import { generateSecureCode, generateHumanCode } from './string';
 
@@ -7,7 +7,9 @@ vi.mock('crypto', () => ({
   randomBytes: vi.fn(),
 }));
 
-const mockedRandomBytes = vi.mocked(randomBytes);
+const mockedRandomBytes = randomBytes as unknown as Mock<
+  (size: number) => Buffer
+>;
 
 describe('generateSecureCode', () => {
   beforeEach(() => {

@@ -136,6 +136,23 @@ describe('fixThumbnailHandler', () => {
     });
   });
 
+  it('should throw error when video has no source', async () => {
+    (getVideoById as Mock).mockResolvedValue({ id: 'video-123', source: null });
+
+    await expect(fixThumbnailHandler(mockContext)).rejects.toThrow(
+      'Video source is missing',
+    );
+
+    expect(CustomError.medium).toHaveBeenCalledWith('Video source is missing', {
+      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+      context: {
+        id: 'video-123',
+        taskId: 'task-456',
+      },
+      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
+    });
+  });
+
   it('should handle empty segments error', async () => {
     const mockVideo = {
       id: 'video-123',

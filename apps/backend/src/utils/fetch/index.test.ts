@@ -145,7 +145,7 @@ describe('fetchWithError', () => {
       expect(error).toBeInstanceOf(CustomError);
       expect((error as CustomError).errorCode).toBe(HTTP_ERRORS.NETWORK_ERROR);
       expect((error as CustomError).shouldRetry).toBe(true);
-      expect(error.message).toBe('Request timed out');
+      expect((error as CustomError).message).toBe('Request timed out');
     }
   });
 });

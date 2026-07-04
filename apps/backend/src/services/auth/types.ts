@@ -26,7 +26,7 @@ export type Passkey = {
   // SQL: Store raw bytes as `BYTEA`/`BLOB`/etc...
   //      Caution: Node ORM's may map this to a Buffer on retrieval,
   //      convert to Uint8Array as necessary
-  publicKey: Uint8Array;
+  publicKey: Uint8Array<ArrayBuffer>;
   // SQL: Foreign Key to an instance of your internal user model
   user: UserModel;
   // SQL: Store as `TEXT`. Index this column. A UNIQUE constraint on

@@ -21,11 +21,17 @@ describe('ImportHandlerSchema', () => {
   };
 
   // Helper function to create test request
+  interface CreateRequestParams {
+    data?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+    headers?: Record<string, unknown>;
+  }
+
   const createRequest = ({
     data = validData,
     metadata = validMetadata,
     headers = validHeaders,
-  } = {}) => ({
+  }: CreateRequestParams = {}) => ({
     body: { data, metadata },
     headers,
   });
@@ -33,7 +39,6 @@ describe('ImportHandlerSchema', () => {
   describe('headers validation', () => {
     it('should reject request with missing x-task-id headers', () => {
       const { 'x-task-id': _, ...headersWithoutTaskId } = validHeaders;
-      // @ts-expect-error
       const result = importHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutTaskId }),
       );
@@ -42,7 +47,6 @@ describe('ImportHandlerSchema', () => {
 
     it('should reject request with missing content-type headers', () => {
       const { 'content-type': _, ...headersWithoutContentType } = validHeaders;
-      // @ts-expect-error
       const result = importHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutContentType }),
       );
@@ -53,7 +57,6 @@ describe('ImportHandlerSchema', () => {
   describe('data validation', () => {
     it('should reject request with missing required fields', () => {
       const { id: _, ...dataWithoutId } = validData;
-      // @ts-expect-error
       const result = importHandlerSchema.safeParse(
         createRequest({ data: dataWithoutId }),
       );

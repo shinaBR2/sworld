@@ -7,6 +7,11 @@ import {
   verifyFileSize,
 } from '.';
 import { createWriteStream, unlink, stat } from 'fs';
+
+type StatCallback = (
+  err: NodeJS.ErrnoException | null,
+  stats?: unknown,
+) => void;
 import { mkdir, rm } from 'fs/promises';
 import path from 'path';
 import os from 'os';
@@ -179,11 +184,13 @@ describe('File Handlers', () => {
 
     it('handles stream error', async () => {
       const mockError = new Error('Stream error');
-      mockWriteStream.on.mockImplementation((event, callback) => {
-        if (event === 'error') {
-          callback(mockError);
-        }
-      });
+      mockWriteStream.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'error') {
+            callback(mockError);
+          }
+        },
+      );
 
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
@@ -220,14 +227,14 @@ describe('File Handlers', () => {
   describe('cleanupDirectory', () => {
     beforeEach(() => {
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(null, { isFile: () => false }),
+        (callback as unknown as StatCallback)(null, { isFile: () => false }),
       );
       vi.mocked(unlink).mockImplementation((_, callback) => callback(null));
     });
 
     it('removes directory successfully', async () => {
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(null, { isFile: () => false }),
+        (callback as unknown as StatCallback)(null, { isFile: () => false }),
       );
       vi.mocked(rm).mockResolvedValue(undefined);
 
@@ -241,7 +248,7 @@ describe('File Handlers', () => {
 
     it('removes file successfully', async () => {
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(null, { isFile: () => true }),
+        (callback as unknown as StatCallback)(null, { isFile: () => true }),
       );
 
       await cleanupDirectory('/test/file.mp4');
@@ -258,7 +265,9 @@ describe('File Handlers', () => {
 
     it('handles stat error gracefully', async () => {
       const error = new Error('Stat failed');
-      vi.mocked(stat).mockImplementation((_, callback) => callback(error));
+      vi.mocked(stat).mockImplementation((_, callback) =>
+        (callback as unknown as StatCallback)(error),
+      );
 
       await cleanupDirectory('/test/dir');
     });
@@ -267,7 +276,7 @@ describe('File Handlers', () => {
   describe('verifyFileSize', () => {
     it('accepts file within size limit', async () => {
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(null, { size: 1000 } as any),
+        (callback as unknown as StatCallback)(null, { size: 1000 }),
       );
 
       await expect(
@@ -277,7 +286,7 @@ describe('File Handlers', () => {
 
     it('rejects file exceeding size limit', async () => {
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(null, { size: 3000 } as any),
+        (callback as unknown as StatCallback)(null, { size: 3000 }),
       );
 
       await expect(verifyFileSize('/test/file.mp4', 2000)).rejects.toThrow(
@@ -288,7 +297,7 @@ describe('File Handlers', () => {
     it('handles stat error', async () => {
       const error = new Error('File not found');
       vi.mocked(stat).mockImplementation((_, callback) =>
-        callback(error, null as any),
+        (callback as unknown as StatCallback)(error, null),
       );
 
       await expect(verifyFileSize('/test/file.mp4', 2000)).rejects.toThrow(

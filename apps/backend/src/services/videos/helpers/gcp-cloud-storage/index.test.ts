@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/complexity/useArrowFunction: it breaks the test */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import {
   getDownloadUrl,
   getSignedUploadUrl,
@@ -11,13 +11,15 @@ import {
 import { existsSync } from 'fs';
 import { PassThrough, Readable } from 'node:stream';
 
-interface MockReadable extends NodeJS.ReadableStream {
-  on: (event: string, handler: (...args: any[]) => void) => MockReadable;
-  pipe: (dest: NodeJS.WritableStream) => MockReadable;
-  emit: (event: string | symbol, ...args: any[]) => boolean;
+interface MockReadable {
+  on: Mock<(event: string, handler: (...args: any[]) => void) => MockReadable>;
+  pipe: Mock<(dest: NodeJS.WritableStream) => MockReadable>;
+  emit: Mock<(event: string | symbol, ...args: any[]) => boolean>;
+  dest?: NodeJS.WritableStream;
+  [key: string]: unknown;
 }
 
-const mockReadable: MockReadable = {
+const mockReadable = {
   readable: true,
   read: vi.fn(),
   setEncoding: vi.fn().mockReturnThis(),
@@ -70,7 +72,7 @@ const mockReadable: MockReadable = {
   eventNames: vi.fn(),
   prependListener: vi.fn(),
   prependOnceListener: vi.fn(),
-};
+} as unknown as MockReadable;
 
 vi.spyOn(Readable, 'from').mockImplementation(
   () => mockReadable as unknown as Readable,
@@ -300,7 +302,7 @@ describe('gcp-cloud-storage-helpers', () => {
     });
 
     const testParams = {
-      stream: mockReadable,
+      stream: mockReadable as unknown as NodeJS.ReadableStream,
       storagePath: 'test-path',
       options: {
         contentType: 'test/type',

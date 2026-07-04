@@ -19,11 +19,17 @@ describe('convertHandlerSchema', () => {
     videoUrl: 'https://storage.example.com/video.mp4',
   };
 
+  interface CreateRequestParams {
+    data?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+    headers?: Record<string, unknown>;
+  }
+
   const createRequest = ({
     data = validData,
     metadata = validMetadata,
     headers = validHeaders,
-  } = {}) => ({
+  }: CreateRequestParams = {}) => ({
     body: { data, metadata },
     headers,
   });
@@ -31,7 +37,6 @@ describe('convertHandlerSchema', () => {
   describe('headers validation', () => {
     it('should reject request with missing x-task-id headers', () => {
       const { 'x-task-id': _, ...headersWithoutTaskId } = validHeaders;
-      // @ts-expect-error
       const result = convertHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutTaskId }),
       );
@@ -40,7 +45,6 @@ describe('convertHandlerSchema', () => {
 
     it('should reject request with missing content-type headers', () => {
       const { 'content-type': _, ...headersWithoutContentType } = validHeaders;
-      // @ts-expect-error
       const result = convertHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutContentType }),
       );
@@ -50,7 +54,6 @@ describe('convertHandlerSchema', () => {
 
   it('should reject request with missing required fields', () => {
     const { id: _, ...dataWithoutId } = validData;
-    // @ts-expect-error
     const result = convertHandlerSchema.safeParse(
       createRequest({ data: dataWithoutId }),
     );

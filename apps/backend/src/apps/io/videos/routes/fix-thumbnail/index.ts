@@ -38,6 +38,17 @@ const fixThumbnailHandler = async (
   }
 
   const { source, user_id: userId } = video;
+
+  if (!source) {
+    throw CustomError.medium('Video source is missing', {
+      errorCode: VIDEO_ERRORS.FIX_THUMBNAIL_ERROR,
+      context: {
+        ...metadata,
+      },
+      source: 'apps/io/videos/routes/fix-thumbnail/index.ts',
+    });
+  }
+
   const { segments } = await parseM3U8Content(
     source,
     videoConfig.excludePatterns,

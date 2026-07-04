@@ -47,7 +47,6 @@ describe('validateHashnodeSignature', async () => {
   it('should pass validation with valid signature', async () => {
     mockValidateSignature.mockReturnValue({
       isValid: true,
-      reason: null,
     });
 
     const middleware = validateHashnodeSignature();

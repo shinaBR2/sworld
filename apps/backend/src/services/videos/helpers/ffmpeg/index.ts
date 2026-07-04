@@ -163,8 +163,8 @@ const takeScreenshot = async (
       })
       .on('end', () => resolve())
       .on('error', (err, stdout, stderr) => {
-        logger.error('FFmpeg stdout:', stdout);
-        logger.error('FFmpeg stderr:', stderr);
+        logger.error({ stdout }, 'FFmpeg stdout:');
+        logger.error({ stderr }, 'FFmpeg stderr:');
         reject(new Error(`FFmpeg error: ${err.message}`));
       });
   });

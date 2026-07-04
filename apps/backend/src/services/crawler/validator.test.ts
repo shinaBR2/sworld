@@ -1,6 +1,7 @@
 import { CustomError } from 'src/utils/custom-error';
 import { CRAWL_ERRORS } from 'src/utils/error-codes';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { SelectorConfig } from './types';
 import { getHandlerType, getSelectors } from './utils';
 import { validateUrlInput } from './validator';
 
@@ -34,7 +35,9 @@ describe('validateUrlInput', () => {
     ];
 
     vi.mocked(getHandlerType).mockReturnValue('test-handler');
-    vi.mocked(getSelectors).mockReturnValue(mockSelectors);
+    vi.mocked(getSelectors).mockReturnValue(
+      mockSelectors as unknown as SelectorConfig[],
+    );
 
     const result = validateUrlInput(url);
 
@@ -54,7 +57,7 @@ describe('validateUrlInput', () => {
     vi.mocked(getHandlerType).mockReturnValue('');
 
     vi.mocked(CustomError.high).mockImplementation((message, metadata) => {
-      throw new Error(`${message}: ${metadata.errorCode}`);
+      throw new Error(`${message}: ${metadata?.errorCode}`);
     });
 
     expect(() => validateUrlInput(url)).toThrow(
@@ -74,7 +77,7 @@ describe('validateUrlInput', () => {
     vi.mocked(getSelectors).mockReturnValue([]);
 
     vi.mocked(CustomError.high).mockImplementation((message, metadata) => {
-      throw new Error(`${message}: ${metadata.errorCode}`);
+      throw new Error(`${message}: ${metadata?.errorCode}`);
     });
 
     expect(() => validateUrlInput(url)).toThrow(

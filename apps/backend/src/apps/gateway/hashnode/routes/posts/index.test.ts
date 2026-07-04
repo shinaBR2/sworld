@@ -28,6 +28,7 @@ describe('postEventsHandler', () => {
     id: 'post-123',
     title: 'Test Post',
     brief: 'Test Brief',
+    url: 'https://blog.example.com/test-post',
     content: {
       markdown: 'Test Content',
     },
@@ -35,9 +36,16 @@ describe('postEventsHandler', () => {
     slug: 'test-post',
   };
 
+  type HashnodeEventType = 'post_published' | 'post_updated' | 'post_deleted';
+
   const mockValidatedData = {
+    metadata: {
+      uuid: '8ebc1c40-4689-4896-a3fa-e98974d9c64a',
+    },
     data: {
       post: { id: mockPost.id },
+      publication: { id: 'pub-123' },
+      eventType: 'post_published' as HashnodeEventType,
     },
   };
 

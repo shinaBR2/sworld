@@ -25,7 +25,7 @@ describe('hashnodeWebhookSchema', () => {
     });
 
     it('should fail without content-type header', () => {
-      const invalidHeaders = { ...validHeaders };
+      const invalidHeaders: Partial<typeof validHeaders> = { ...validHeaders };
       delete invalidHeaders['content-type'];
       const result = hashnodeHeadersSchema.safeParse(invalidHeaders);
       expect(result.success).toBe(false);
@@ -40,7 +40,7 @@ describe('hashnodeWebhookSchema', () => {
     });
 
     it('should fail without x-hashnode-signature', () => {
-      const invalidHeaders = { ...validHeaders };
+      const invalidHeaders: Partial<typeof validHeaders> = { ...validHeaders };
       delete invalidHeaders['x-hashnode-signature'];
       const result = hashnodeHeadersSchema.safeParse(invalidHeaders);
       expect(result.success).toBe(false);

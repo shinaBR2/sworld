@@ -10,6 +10,7 @@ import type { ConvertHandlerRequest } from 'src/schema/videos/convert';
 interface MockContext extends Context {
   json: Mock;
   set: Mock;
+  validatedData: ConvertHandlerRequest;
 }
 
 interface TestContext {
@@ -92,7 +93,7 @@ const createMockContext = (
 
 const setupSuccessfulMocks = (context: TestContext) => {
   vi.mocked(convertVideo).mockResolvedValueOnce(context.mockPlayableUrl);
-  vi.mocked(completeTask).mockResolvedValueOnce(undefined);
+  vi.mocked(completeTask).mockResolvedValueOnce(1);
 };
 
 describe('convertHandler', () => {

@@ -108,7 +108,7 @@ const cleanupDirectory = async (dirPath: string): Promise<void> => {
       await rm(dirPath, { recursive: true, force: true });
     }
   } catch (error) {
-    logger.error('Cleanup failed:', error);
+    logger.error({ error }, 'Cleanup failed:');
   }
 };
 

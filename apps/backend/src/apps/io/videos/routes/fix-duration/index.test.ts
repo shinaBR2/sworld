@@ -111,6 +111,23 @@ describe('fixDurationHandler', () => {
     });
   });
 
+  it('should throw error when video has no source', async () => {
+    (getVideoById as Mock).mockResolvedValue({ id: 'video-123', source: null });
+
+    await expect(fixDurationHandler(mockContext)).rejects.toThrow(
+      'Fix duration failed',
+    );
+
+    expect(CustomError.medium).toHaveBeenCalledWith('Video source is missing', {
+      errorCode: VIDEO_ERRORS.FIX_DURATION_ERROR,
+      context: {
+        id: 'video-123',
+        taskId: 'task-456',
+      },
+      source: 'apps/io/videos/routes/fix-duration/index.ts',
+    });
+  });
+
   it('should handle errors during duration parsing', async () => {
     const mockVideo = {
       id: 'video-123',

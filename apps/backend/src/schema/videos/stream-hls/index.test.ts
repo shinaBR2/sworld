@@ -22,11 +22,17 @@ describe('streamHandlerSchema', () => {
   };
 
   // Helper function to create test request
+  interface CreateRequestParams {
+    data?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+    headers?: Record<string, unknown>;
+  }
+
   const createRequest = ({
     data = validData,
     metadata = validMetadata,
     headers = validHeaders,
-  } = {}) => ({
+  }: CreateRequestParams = {}) => ({
     body: { data, metadata },
     headers,
   });
@@ -34,7 +40,6 @@ describe('streamHandlerSchema', () => {
   describe('headers validation', () => {
     it('should reject request with missing x-task-id headers', () => {
       const { 'x-task-id': _, ...headersWithoutTaskId } = validHeaders;
-      // @ts-expect-error
       const result = streamHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutTaskId }),
       );
@@ -43,7 +48,6 @@ describe('streamHandlerSchema', () => {
 
     it('should reject request with missing content-type headers', () => {
       const { 'content-type': _, ...headersWithoutContentType } = validHeaders;
-      // @ts-expect-error
       const result = streamHandlerSchema.safeParse(
         createRequest({ headers: headersWithoutContentType }),
       );
@@ -54,7 +58,6 @@ describe('streamHandlerSchema', () => {
   describe('data validation', () => {
     it('should reject request with missing required fields', () => {
       const { id: _, ...dataWithoutId } = validData;
-      // @ts-expect-error
       const result = streamHandlerSchema.safeParse(
         createRequest({ data: dataWithoutId }),
       );

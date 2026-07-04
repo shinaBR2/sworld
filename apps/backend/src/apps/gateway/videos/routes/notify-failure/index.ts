@@ -1,6 +1,7 @@
 import type { NotifyFailureRequest } from 'src/schema/videos/notify-failure';
 import { postToSlack } from 'src/services/slack';
 import type { HandlerContext } from 'src/utils/requestHandler';
+import type { ServiceResponse } from 'src/utils/schema';
 
 const FAILED_STATUS = 'failed';
 
@@ -11,7 +12,7 @@ const FAILED_STATUS = 'failed';
  */
 const notifyFailureHandler = async (
   context: HandlerContext<NotifyFailureRequest>,
-) => {
+): Promise<ServiceResponse<{ id: string; status?: string }>> => {
   const { event } = context.validatedData;
   const { id, title, status, metadata } = event.data;
 

@@ -45,8 +45,17 @@ vi.mock('src/utils/logger', () => ({
   }),
 }));
 
+interface MockLogger {
+  info: Mock;
+  error: Mock;
+  warn: Mock;
+  debug: Mock;
+}
+
 const { logger: mockLogger, getCurrentLogger: getCurrentLoggerMock } =
-  await vi.importMock('src/utils/logger');
+  await vi.importMock<{ logger: MockLogger; getCurrentLogger: Mock }>(
+    'src/utils/logger',
+  );
 
 describe('FFmpeg Helpers', () => {
   let mockFFmpeg: any;
@@ -113,12 +122,14 @@ describe('FFmpeg Helpers', () => {
 
     it('should convert video successfully', async () => {
       // Mock successful conversion
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') {
-          callback();
-        }
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') {
+            callback();
+          }
+          return mockFFmpeg;
+        },
+      );
 
       await expect(convertToHLS(inputPath, outputDir)).resolves.not.toThrow();
 
@@ -143,12 +154,14 @@ describe('FFmpeg Helpers', () => {
 
     it('should handle conversion errors', async () => {
       const error = new Error('Conversion failed');
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'error') {
-          callback(error, '', '');
-        }
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'error') {
+            callback(error, '', '');
+          }
+          return mockFFmpeg;
+        },
+      );
 
       await expect(convertToHLS(inputPath, outputDir)).rejects.toThrow(
         'Conversion failed',
@@ -160,15 +173,17 @@ describe('FFmpeg Helpers', () => {
 
     it('should log progress during conversion', async () => {
       const progress = { percent: 50 };
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'progress') {
-          callback(progress);
-        }
-        if (event === 'end') {
-          callback();
-        }
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'progress') {
+            callback(progress);
+          }
+          if (event === 'end') {
+            callback();
+          }
+          return mockFFmpeg;
+        },
+      );
 
       await convertToHLS(inputPath, outputDir);
       expect(mockLogger.debug).toHaveBeenCalledWith(
@@ -196,7 +211,12 @@ describe('FFmpeg Helpers', () => {
       } as FfprobeData);
 
       vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: mockDuration } } as FfprobeData);
+        (
+          callback as unknown as (
+            err: Error | null,
+            data: FfprobeData | null,
+          ) => void
+        )(null, { format: { duration: mockDuration } } as FfprobeData);
       });
 
       const duration = await getDuration(videoPath);
@@ -205,7 +225,12 @@ describe('FFmpeg Helpers', () => {
 
     it('should return default duration if ffprobe fails', async () => {
       vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(new Error('ffprobe failed'), null);
+        (
+          callback as unknown as (
+            err: Error | null,
+            data: FfprobeData | null,
+          ) => void
+        )(new Error('ffprobe failed'), null);
       });
 
       const duration = await getDuration(videoPath);
@@ -215,7 +240,12 @@ describe('FFmpeg Helpers', () => {
 
     it('should return default duration if duration is undefined', async () => {
       vi.spyOn(ffmpeg, 'ffprobe').mockImplementation((_, callback) => {
-        callback(null, { format: { duration: undefined } } as FfprobeData);
+        (
+          callback as unknown as (
+            err: Error | null,
+            data: FfprobeData | null,
+          ) => void
+        )(null, { format: { duration: undefined } } as FfprobeData);
       });
 
       const duration = await getDuration(videoPath);
@@ -239,10 +269,12 @@ describe('FFmpeg Helpers', () => {
     const videoDuration = 100;
 
     it('should take screenshot at correct timestamp for short video', async () => {
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        },
+      );
 
       await takeScreenshot(videoPath, outputDir, filename, 1);
 
@@ -254,10 +286,12 @@ describe('FFmpeg Helpers', () => {
     });
 
     it('should take screenshot at correct timestamp for medium length video', async () => {
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        },
+      );
 
       await takeScreenshot(videoPath, outputDir, filename, 15);
 
@@ -269,10 +303,12 @@ describe('FFmpeg Helpers', () => {
     });
 
     it('should cap screenshot timestamp at 10 seconds for long video', async () => {
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        },
+      );
 
       await takeScreenshot(videoPath, outputDir, filename, 60);
 
@@ -285,10 +321,12 @@ describe('FFmpeg Helpers', () => {
 
     it('should handle screenshot errors', async () => {
       const error = new Error('Screenshot failed');
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'error') callback(error, '', '');
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'error') callback(error, '', '');
+          return mockFFmpeg;
+        },
+      );
 
       await expect(
         takeScreenshot(videoPath, outputDir, filename, videoDuration),
@@ -302,13 +340,15 @@ describe('FFmpeg Helpers', () => {
       mockFFmpeg.inputFormat = inputFormatMock;
 
       // Set up the on method to trigger the 'end' event immediately
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') {
-          // Execute callback immediately
-          setTimeout(callback, 0);
-        }
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') {
+            // Execute callback immediately
+            setTimeout(callback, 0);
+          }
+          return mockFFmpeg;
+        },
+      );
 
       // Execute function with isSegment = true
       await takeScreenshot(videoPath, outputDir, filename, videoDuration, true);
@@ -324,10 +364,12 @@ describe('FFmpeg Helpers', () => {
 
     describe('path handling', () => {
       beforeEach(() => {
-        mockFFmpeg.on.mockImplementation((event, callback) => {
-          if (event === 'end') callback();
-          return mockFFmpeg;
-        });
+        mockFFmpeg.on.mockImplementation(
+          (event: string, callback: (...args: unknown[]) => void) => {
+            if (event === 'end') callback();
+            return mockFFmpeg;
+          },
+        );
       });
 
       it('should work with absolute paths', async () => {
@@ -395,10 +437,12 @@ describe('FFmpeg Helpers', () => {
     const filename = 'thumbnail--123.jpg';
 
     it('seeks to the exact ABSOLUTE timestamp (before input) and grabs one frame', async () => {
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        },
+      );
 
       // A large absolute media time (as passed for a later fMP4 segment) must be
       // forwarded to `-ss` verbatim, not reduced to an in-segment offset.
@@ -422,10 +466,12 @@ describe('FFmpeg Helpers', () => {
     });
 
     it('clamps a negative timestamp to 0', async () => {
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'end') callback();
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'end') callback();
+          return mockFFmpeg;
+        },
+      );
 
       await takeScreenshotAtTime(videoPath, outputDir, filename, -5);
 
@@ -434,10 +480,12 @@ describe('FFmpeg Helpers', () => {
 
     it('rejects on ffmpeg error', async () => {
       const error = new Error('boom');
-      mockFFmpeg.on.mockImplementation((event, callback) => {
-        if (event === 'error') callback(error, '', '');
-        return mockFFmpeg;
-      });
+      mockFFmpeg.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === 'error') callback(error, '', '');
+          return mockFFmpeg;
+        },
+      );
 
       await expect(
         takeScreenshotAtTime(videoPath, outputDir, filename, 1),

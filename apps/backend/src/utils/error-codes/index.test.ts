@@ -93,7 +93,9 @@ describe('error-codes', () => {
     };
 
     Object.entries(VIDEO_ERRORS).forEach(([key, value]) => {
-      const prefix = Object.keys(prefixMap).find((p) => key.startsWith(p));
+      const prefix = (
+        Object.keys(prefixMap) as Array<keyof typeof prefixMap>
+      ).find((p) => key.startsWith(p));
       if (prefix) {
         expect(value.startsWith(prefixMap[prefix])).toBeTruthy();
       }

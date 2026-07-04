@@ -33,7 +33,17 @@ import { CustomError } from 'src/utils/custom-error';
 import { scrapeUrl } from './scrapers';
 
 // Helper function to create common mocks
-const createMocks = (options = {}) => {
+type MockPageWithRouteHandler = Page & {
+  routeHandler: (route: unknown) => Promise<void>;
+};
+
+interface CreateMocksOptions {
+  route?: Record<string, unknown>;
+  page?: Record<string, unknown>;
+  request?: Record<string, unknown>;
+}
+
+const createMocks = (options: CreateMocksOptions = {}) => {
   const mockRoute = {
     request: vi.fn().mockReturnValue({
       url: () => 'https://example.com/player.php',
@@ -124,7 +134,7 @@ describe('hh3dHandler', () => {
         page: mockPage,
         request: mockRequest,
         enqueueLinks: mockEnqueueLinks,
-      });
+      } as unknown as Parameters<typeof handler>[0]);
 
       // Verify scrapeUrl was called
       expect(scrapeUrl).toHaveBeenCalled();
@@ -166,7 +176,7 @@ describe('hh3dHandler', () => {
         page: mockPage,
         request: mockRequest,
         enqueueLinks: mockEnqueueLinks,
-      });
+      } as unknown as Parameters<typeof handler>[0]);
 
       expect(scrapeUrl).toHaveBeenCalled();
       expect(mockPage.goto).toHaveBeenCalledWith('https://example.com/video');
@@ -191,7 +201,7 @@ describe('hh3dHandler', () => {
       // Reset the CustomError.high mock to just return a value
       // not throw (which is breaking our test flow)
       vi.mocked(CustomError.high).mockImplementation(() => {
-        return new Error('Request failed');
+        return new Error('Request failed') as CustomError;
       });
 
       const { handler } = hh3dHandler(defaultOptions);
@@ -203,7 +213,7 @@ describe('hh3dHandler', () => {
           page: {
             goto: vi.fn().mockResolvedValue(undefined),
             route: vi.fn().mockImplementation((pattern, handler) => {
-              mockPage.routeHandler = handler;
+              (mockPage as MockPageWithRouteHandler).routeHandler = handler;
             }),
             waitForSelector: vi.fn(),
             routeHandler: null,
@@ -215,13 +225,13 @@ describe('hh3dHandler', () => {
         page: mockPage,
         request: mockRequest,
         enqueueLinks: mockEnqueueLinks,
-      });
+      } as unknown as Parameters<typeof handler>[0]);
 
       // Start the handler but don't await it
 
       // Execute the route handler in isolation
       try {
-        await mockPage.routeHandler(mockRoute);
+        await (mockPage as MockPageWithRouteHandler).routeHandler(mockRoute);
         // If it doesn't throw, fail the test
         expect('should throw').toBe('but did not');
       } catch (error) {
@@ -264,7 +274,7 @@ describe('hh3dHandler', () => {
           page: mockPage,
           request: mockRequest,
           enqueueLinks: mockEnqueueLinks,
-        }),
+        } as unknown as Parameters<typeof handler>[0]),
       ).rejects.toThrow();
 
       expect(CustomError.high).toHaveBeenCalledWith('Enqueue links failed', {
@@ -289,7 +299,7 @@ describe('hh3dHandler', () => {
         page: mockPage,
         request: mockRequest,
         enqueueLinks: mockEnqueueLinks,
-      });
+      } as unknown as Parameters<typeof handler>[0]);
 
       expect(initialState.data).toEqual([
         {

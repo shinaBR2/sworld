@@ -26,7 +26,7 @@ const uploadFromLocalFilePath = async (localFilePath: string, options = {}) => {
 
     throw new Error('Upload failed: No result returned');
   } catch (error) {
-    logger.error('Cloudinary upload failed:', error);
+    logger.error({ error }, 'Cloudinary upload failed:');
     throw error;
   }
 };

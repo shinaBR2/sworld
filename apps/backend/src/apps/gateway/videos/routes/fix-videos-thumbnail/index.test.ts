@@ -38,7 +38,7 @@ describe('fixVideosThumbnail', () => {
 
     // Setup default mocks
     vi.mocked(getVideoMissingThumbnail).mockResolvedValue(mockVideos);
-    vi.mocked(createCloudTasks).mockResolvedValue(undefined);
+    vi.mocked(createCloudTasks).mockResolvedValue(null);
 
     // Setup environment config
     envConfig.ioServiceUrl = 'http://test-service.com';

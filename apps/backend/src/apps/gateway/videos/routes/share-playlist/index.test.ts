@@ -100,7 +100,7 @@ describe('sharePlaylistHandler', () => {
         playlist_videos: [{ video: { id: 'video-1', status: 'ready' } }],
       },
       users: null,
-    });
+    } as unknown as Awaited<ReturnType<typeof getPlaylistVideos>>);
 
     const result = await sharePlaylistHandler(mockValidatedData);
 

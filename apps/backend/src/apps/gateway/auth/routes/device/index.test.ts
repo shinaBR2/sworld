@@ -33,14 +33,12 @@ describe('createDeviceRequest', () => {
           extensionId: 'ext-123',
         },
       },
+      action: {
+        name: 'createDeviceRequest',
+      },
+      hasuraActionHeader: 'createDeviceRequest',
+      contentTypeHeader: 'application/json',
     },
-    action: {
-      name: 'createDeviceRequest',
-    },
-    hasuraActionHeader: 'createDeviceRequest',
-    contentTypeHeader: 'application/json',
-    ip: '192.168.1.1',
-    userAgent: 'Test User Agent',
   };
 
   const mockDate = new Date('2025-01-01T00:00:00Z');
@@ -116,7 +114,7 @@ describe('createDeviceRequest', () => {
 
     const result = await createDeviceRequest(mockInput);
 
-    expect(result.dataObject.verification_uri_complete).toBe(
+    expect(result.dataObject?.verification_uri_complete).toBe(
       'https://watch.sworld.dev/pair?code=TEST-456',
     );
   });

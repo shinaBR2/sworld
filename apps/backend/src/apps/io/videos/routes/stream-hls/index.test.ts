@@ -58,11 +58,13 @@ vi.mock('src/utils/custom-error', () => ({
 }));
 
 // Test interfaces
+type StreamHandlerData = StreamHandlerRequest['body']['data'];
+
 interface MockContext {
   json: Mock;
   validatedData: {
     body: {
-      data: StreamHandlerRequest;
+      data: StreamHandlerData;
       metadata: Record<string, unknown>;
     };
     headers: {
@@ -73,7 +75,7 @@ interface MockContext {
 
 interface TestContext {
   mockContext: MockContext;
-  defaultData: StreamHandlerRequest;
+  defaultData: StreamHandlerData;
   defaultMetadata: {
     id: string;
   };
@@ -82,7 +84,7 @@ interface TestContext {
 
 // Helper function to create mock context
 const createMockContext = (
-  data: Partial<StreamHandlerRequest> = {},
+  data: Partial<StreamHandlerData> = {},
   metadata: Record<string, unknown> = {},
   taskId = 'task-123',
 ): MockContext => ({
@@ -120,7 +122,7 @@ describe('streamHLSHandler', () => {
         id: 'event123',
       },
       defaultTaskId: 'task-123',
-    };
+    } as TestContext;
 
     context.mockContext = createMockContext(
       context.defaultData,
@@ -137,6 +139,8 @@ describe('streamHLSHandler', () => {
       playlistUrl: expectedPlayableUrl,
       duration: 100,
       thumbnailUrl: 'cloud-storage-url',
+      segments: { included: [], excluded: [] },
+      modifiedContent: '#EXTM3U',
     });
 
     const result = await streamHLSHandler(

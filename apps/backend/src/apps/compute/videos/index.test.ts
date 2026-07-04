@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
+import type { Context, Next } from 'hono';
 import { videosRouter } from './index';
 
 // Mock the handler functions
@@ -9,7 +10,7 @@ vi.mock('./routes/convert', () => ({
 
 // Mock the request validation and handler utilities
 vi.mock('src/utils/validators/request', () => ({
-  honoValidateRequest: vi.fn(() => (c, next) => next()),
+  honoValidateRequest: vi.fn(() => (c: Context, next: Next) => next()),
 }));
 
 vi.mock('src/utils/requestHandler', () => ({
