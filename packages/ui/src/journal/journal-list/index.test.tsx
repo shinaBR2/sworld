@@ -141,10 +141,12 @@ describe('JournalList', () => {
   it('handles journal card click', () => {
     render(<JournalList {...defaultProps} />);
 
-    const journalCard = screen
-      .getByText(mockJournals[0].content)
-      .closest('.MuiCard-root');
-    fireEvent.click(journalCard!);
+    // The card is a CardActionArea (a button) whose accessible name is the
+    // formatted date — click it the way a user/AT would reach it.
+    const journalCard = screen.getByRole('button', {
+      name: `formatted-date-${mockJournals[0].date}`,
+    });
+    fireEvent.click(journalCard);
 
     expect(defaultProps.onJournalClick).toHaveBeenCalledWith(mockJournals[0]);
   });
