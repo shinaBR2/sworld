@@ -153,7 +153,7 @@ describe('JournalDetail', () => {
     const mockMoodIcon = vi.mocked(MoodIcon);
     expect(mockMoodIcon).toHaveBeenCalledWith(
       expect.objectContaining({ mood: mockJournal.mood }),
-      expect.anything(),
+      undefined,
     );
   });
 });

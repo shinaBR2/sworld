@@ -94,7 +94,7 @@ describe('HomeContainer', () => {
         asLink: true,
         LinkComponent: MockLink,
       }),
-      expect.anything(),
+      undefined,
     );
   });
 
@@ -149,7 +149,7 @@ describe('HomeContainer', () => {
         videos: continueWatching,
         LinkComponent: MockLink,
       }),
-      expect.anything(),
+      undefined,
     );
   });
 
@@ -180,7 +180,7 @@ describe('HomeContainer', () => {
     expect(VideoCard).toHaveBeenCalledTimes(1);
     expect(VideoCard).toHaveBeenCalledWith(
       expect.objectContaining({ video: mockVideos[1] }),
-      expect.anything(),
+      undefined,
     );
   });
 

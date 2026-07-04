@@ -44,7 +44,7 @@ describe('VideoContainer', () => {
         onError: mockOnError,
         onEnded: mockOnEnded,
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 
@@ -57,7 +57,7 @@ describe('VideoContainer', () => {
         onError: undefined,
         onEnded: undefined,
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 });

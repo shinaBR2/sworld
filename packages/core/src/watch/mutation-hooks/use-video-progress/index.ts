@@ -69,7 +69,7 @@ const useVideoProgress = (props: UseVideoProgressProps) => {
    * - Access latest progress in event listeners/callbacks
    * - Prevent stale closures in callbacks
    */
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const currentProgressRef = useRef<number>(0);
 
   const { mutate } = useMutationRequest({
