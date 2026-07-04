@@ -1,8 +1,18 @@
 import EditIcon from '@mui/icons-material/Edit';
 import ImageIcon from '@mui/icons-material/Image';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import ShareIcon from '@mui/icons-material/Share';
-import { Box, IconButton, Stack, Tooltip } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Tooltip,
+} from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -75,6 +85,9 @@ const MainContent = (props: VideoDetailContainerProps) => {
   const shouldPlayNextRef = React.useRef(autoPlay);
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [isSubtitleDialogOpen, setIsSubtitleDialogOpen] = React.useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<HTMLElement | null>(
+    null,
+  );
   const [isPaused, setIsPaused] = React.useState(false);
   // Filled by the player with a getter for the current playback time (seconds).
   const getCurrentTimeRef = React.useRef<(() => number | null) | null>(null);
@@ -287,34 +300,61 @@ const MainContent = (props: VideoDetailContainerProps) => {
             playlistName: playlist?.title,
           })}
         </Typography>
-        {isOwner && isPaused && (
-          <Tooltip title="Set as thumbnail">
-            <IconButton
-              onClick={handleSetThumbnail}
-              size="small"
-              aria-label="Set as thumbnail"
-            >
-              <ImageIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        {onShare && (
-          <Tooltip title="Share video">
-            <IconButton onClick={() => setShareDialogOpen(true)} size="small">
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        <Tooltip title="Edit subtitle">
+        <Tooltip title="More actions">
           <IconButton
-            onClick={() => setIsSubtitleDialogOpen(true)}
+            onClick={(event) => setMenuAnchorEl(event.currentTarget)}
             size="small"
-            sx={{ ml: 1 }}
+            aria-label="More actions"
+            aria-haspopup="true"
+            aria-expanded={menuAnchorEl ? 'true' : undefined}
           >
-            <EditIcon />
+            <MoreVertIcon />
           </IconButton>
         </Tooltip>
       </Stack>
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={() => setMenuAnchorEl(null)}
+      >
+        {isOwner && isPaused && (
+          <MenuItem
+            onClick={() => {
+              setMenuAnchorEl(null);
+              handleSetThumbnail();
+            }}
+          >
+            <ListItemIcon>
+              <ImageIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Set as thumbnail</ListItemText>
+          </MenuItem>
+        )}
+        {onShare && (
+          <MenuItem
+            onClick={() => {
+              setMenuAnchorEl(null);
+              setShareDialogOpen(true);
+            }}
+          >
+            <ListItemIcon>
+              <ShareIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Share video</ListItemText>
+          </MenuItem>
+        )}
+        <MenuItem
+          onClick={() => {
+            setMenuAnchorEl(null);
+            setIsSubtitleDialogOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <EditIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Edit subtitle</ListItemText>
+        </MenuItem>
+      </Menu>
       {videoDetail.subtitles && videoDetail.subtitles.length > 0 && (
         <Stack
           direction="row"

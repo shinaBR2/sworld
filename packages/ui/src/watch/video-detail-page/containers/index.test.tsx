@@ -347,6 +347,13 @@ describe('VideoDetailContainer', () => {
     ...overrides,
   });
 
+  // All page actions live behind the single overflow (3-dot) menu.
+  const openActionsMenu = async () => {
+    await act(async () => {
+      fireEvent.click(screen.getByLabelText('More actions'));
+    });
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockCurrentTime.value = 42;
@@ -445,8 +452,8 @@ describe('VideoDetailContainer', () => {
     );
     expect(screen.getByTestId('video-container')).toHaveTextContent('Video 1');
 
-    // Share button should not be present by default
-    expect(screen.queryByTitle('Share video')).not.toBeInTheDocument();
+    // Actions are collapsed behind the single overflow menu button.
+    expect(screen.getByLabelText('More actions')).toBeInTheDocument();
 
     // Related content checks
     expect(screen.getByTestId('related-list')).toBeInTheDocument();
@@ -579,15 +586,18 @@ describe('VideoDetailContainer', () => {
   });
 
   describe('share functionality', () => {
-    it('should not show share button when onShare prop is not provided', async () => {
+    it('should not show share menu item when onShare prop is not provided', async () => {
       const props = createProps();
       await act(async () => {
         renderWithTheme(<VideoDetailContainer {...props} />);
       });
-      expect(screen.queryByLabelText('Share video')).not.toBeInTheDocument();
+      await openActionsMenu();
+      expect(
+        screen.queryByRole('menuitem', { name: 'Share video' }),
+      ).not.toBeInTheDocument();
     });
 
-    it('should show share button when onShare prop is provided', async () => {
+    it('should show share menu item when onShare prop is provided', async () => {
       const onShare = vi.fn();
       const props = createProps({
         onShare,
@@ -595,10 +605,13 @@ describe('VideoDetailContainer', () => {
       await act(async () => {
         renderWithTheme(<VideoDetailContainer {...props} />);
       });
-      expect(screen.getByLabelText('Share video')).toBeInTheDocument();
+      await openActionsMenu();
+      expect(
+        screen.getByRole('menuitem', { name: 'Share video' }),
+      ).toBeInTheDocument();
     });
 
-    it('should call onShare with correct data when share button is clicked', async () => {
+    it('should open the share dialog when the share menu item is clicked', async () => {
       const onShare = vi.fn();
       const props = createProps({
         onShare,
@@ -606,9 +619,9 @@ describe('VideoDetailContainer', () => {
       await act(async () => {
         renderWithTheme(<VideoDetailContainer {...props} />);
       });
-      const shareButton = screen.getByLabelText('Share video');
+      await openActionsMenu();
       await act(async () => {
-        fireEvent.click(shareButton);
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Share video' }));
       });
 
       const shareDialog = screen.getByTestId('share-dialog');
@@ -624,9 +637,9 @@ describe('VideoDetailContainer', () => {
         renderWithTheme(<VideoDetailContainer {...props} />);
       });
       // Open dialog
-      const shareButton = screen.getByLabelText('Share video');
+      await openActionsMenu();
       await act(async () => {
-        fireEvent.click(shareButton);
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Share video' }));
       });
 
       // Close dialog
@@ -648,9 +661,9 @@ describe('VideoDetailContainer', () => {
         renderWithTheme(<VideoDetailContainer {...props} />);
       });
       // Open dialog
-      const shareButton = screen.getByLabelText('Share video');
+      await openActionsMenu();
       await act(async () => {
-        fireEvent.click(shareButton);
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Share video' }));
       });
 
       // Click share button in dialog
@@ -666,28 +679,37 @@ describe('VideoDetailContainer', () => {
   describe('set as thumbnail', () => {
     const thumbnailLabel = 'Set as thumbnail';
 
-    it('shows the button only when the owner has paused the video', async () => {
+    it('shows the menu item only when the owner has paused the video', async () => {
       await act(async () => {
         renderWithTheme(<VideoDetailContainer {...createProps()} />);
       });
 
+      // The open menu re-renders as the paused state changes.
+      await openActionsMenu();
+
       // Hidden while playing.
-      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('menuitem', { name: thumbnailLabel }),
+      ).not.toBeInTheDocument();
 
       // Pause -> visible for the owner.
       await act(async () => {
         fireEvent.click(screen.getByTestId('video-container-pause'));
       });
-      expect(screen.getByLabelText(thumbnailLabel)).toBeInTheDocument();
+      expect(
+        screen.getByRole('menuitem', { name: thumbnailLabel }),
+      ).toBeInTheDocument();
 
       // Resume -> hidden again.
       await act(async () => {
         fireEvent.click(screen.getByTestId('video-container-play'));
       });
-      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('menuitem', { name: thumbnailLabel }),
+      ).not.toBeInTheDocument();
     });
 
-    it('never shows the button for a non-owner, even when paused', async () => {
+    it('never shows the menu item for a non-owner, even when paused', async () => {
       mockUseAuthContext.mockReturnValue({
         getAccessToken: vi.fn(),
         user: { id: 'someone-else' },
@@ -700,16 +722,20 @@ describe('VideoDetailContainer', () => {
       await act(async () => {
         fireEvent.click(screen.getByTestId('video-container-pause'));
       });
+      await openActionsMenu();
 
-      expect(screen.queryByLabelText(thumbnailLabel)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('menuitem', { name: thumbnailLabel }),
+      ).not.toBeInTheDocument();
     });
 
     const pauseAndCapture = async () => {
       await act(async () => {
         fireEvent.click(screen.getByTestId('video-container-pause'));
       });
+      await openActionsMenu();
       await act(async () => {
-        fireEvent.click(screen.getByLabelText(thumbnailLabel));
+        fireEvent.click(screen.getByRole('menuitem', { name: thumbnailLabel }));
       });
     };
 
@@ -815,17 +841,23 @@ describe('VideoDetailContainer', () => {
       expect(screen.getByText('English')).toBeInTheDocument();
     });
 
-    it('opens subtitle dialog when edit button is clicked', async () => {
+    it('opens subtitle dialog when the edit menu item is clicked', async () => {
       renderWithTheme(<VideoDetailContainer {...createProps()} />);
-      userEvent.click(screen.getByRole('button', { name: /edit subtitle/i }));
+      await openActionsMenu();
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: /edit subtitle/i }),
+      );
       expect(await screen.findByTestId('subtitle-dialog')).toBeInTheDocument();
     });
 
     it('calls useSaveSubtitle and closes dialog on save', async () => {
       renderWithTheme(<VideoDetailContainer {...createProps()} />);
-      userEvent.click(screen.getByRole('button', { name: /edit subtitle/i }));
+      await openActionsMenu();
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: /edit subtitle/i }),
+      );
       await screen.findByTestId('save-subtitle-button');
-      userEvent.click(screen.getByTestId('save-subtitle-button'));
+      await userEvent.click(screen.getByTestId('save-subtitle-button'));
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
           id: 'sub-1',
