@@ -3,7 +3,7 @@
   "private": false,
   "engines": {
     "node": ">=24",
-    "pnpm": ">=9.4.0"
+    "pnpm": ">=10.34.3"
   },
   "scripts": {
     "build": "turbo run build",
@@ -21,7 +21,8 @@
     "format": "biome format --write",
     "prepare": "husky",
     "lint": "biome check .",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck --filter=!docs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
@@ -31,7 +32,7 @@
     "turbo": "2.9.14",
     "typescript": "^5.6.2"
   },
-  "packageManager": "pnpm@9.4.0",
+  "packageManager": "pnpm@10.34.3",
   "pnpm": {
     "overrides": {
       "form-data@>=4.0.0 <4.0.4": "4.0.4",

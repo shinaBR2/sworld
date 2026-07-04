@@ -10,7 +10,8 @@
     "format": "biome format --write .",
     "dev": "pnpm run pre-dev && vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.78.2",
@@ -24,10 +25,10 @@
     "@tanstack/router-plugin": "^1.78.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.2.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "globals": "^15.12.0",
     "rollup-plugin-visualizer": "^5.8.3",
     "tsconfig": "workspace:*",
-    "vite": "^6.4.3"
+    "vite": "^8.1.2"
   }
 }

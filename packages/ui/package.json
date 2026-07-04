@@ -39,7 +39,8 @@
     "format": "biome format --write .",
     "test": "vitest --coverage",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

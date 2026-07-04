@@ -29,7 +29,7 @@ vi.mock('echarts/renderers', () => ({
 }));
 
 // Mock the echarts-for-react core component
-vi.mock('echarts-for-react/lib/core', () => ({
+vi.mock('echarts-for-react/esm/core', () => ({
   default: ({ onEvents, option }: any) => {
     return (
       <div

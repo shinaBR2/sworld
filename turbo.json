@@ -36,6 +36,10 @@
     },
     "db:push": {
       "cache": false
+    },
+    "typecheck": {
+      "inputs": ["src/**/*.{ts,tsx}", "tsconfig*.json"],
+      "dependsOn": []
     }
   }
 }
