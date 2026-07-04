@@ -3,7 +3,7 @@ import type {
   Base64URLString,
   CredentialDeviceType,
   AuthenticatorTransportFuture,
-} from '@simplewebauthn/types';
+} from '@simplewebauthn/server';
 
 export type UserModel = {
   id: string;

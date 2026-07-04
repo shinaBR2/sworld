@@ -56,7 +56,6 @@
     "@sentry/cli": "^2.39.1",
     "@shinabr2/core": "^1.1.1",
     "@simplewebauthn/server": "^13.0.0",
-    "@simplewebauthn/types": "^12.0.0",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "crawlee": "^3.13.0",
@@ -68,11 +67,11 @@
     "hono-rate-limiter": "^0.4.2",
     "m3u8-parser": "^7.2.0",
     "nanoid": "^5.1.5",
-    "pino": "^9.6.0",
-    "pino-http": "^10.3.0",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
     "playwright": "^1.52.0",
     "posthog-node": "^5.9.1",
-    "uuid": "^11.0.5",
+    "uuid": "^14.0.1",
     "zod": "^3.24.1"
   },
   "overrides": {

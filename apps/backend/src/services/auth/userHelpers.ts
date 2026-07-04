@@ -1,10 +1,10 @@
-import type { VerifiedRegistrationResponse } from '@simplewebauthn/server';
-// import { dbAddDocWithId, dbRead, dbUpdateDoc } from '../singleton/db';
-import type { Passkey, UserModel } from './types';
 import type {
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
-} from '@simplewebauthn/types';
+  VerifiedRegistrationResponse,
+} from '@simplewebauthn/server';
+// import { dbAddDocWithId, dbRead, dbUpdateDoc } from '../singleton/db';
+import type { Passkey, UserModel } from './types';
 
 const getUserPasskeys = async (userId: string): Promise<Passkey[]> => {
   // const existingPasskeysSnapshot = await dbRead(`passkeys/${userId}/items`);
