@@ -3,11 +3,18 @@
 
 name: Deploy Live Main Frontend
 'on':
+  # Also deploy when the shared packages the app bundles change — otherwise a
+  # fix in packages/ui or packages/core (like the finance React #130 hotfix)
+  # merges but never ships to prod. Mirrors the live listen/watch/game configs.
+  workflow_dispatch: {}
   push:
     branches:
       - main
     paths:
       - 'apps/main/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - '.github/workflows/live-main-fe.yml'
 jobs:
   dev_deploy:
     runs-on: ubuntu-latest
