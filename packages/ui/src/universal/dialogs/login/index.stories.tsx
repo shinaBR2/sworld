@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/tanstack-react';
 import { LoginDialog } from './index';
 
 const meta: Meta<typeof LoginDialog> = {

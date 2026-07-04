@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/tanstack-react';
 import type { LinkComponentType } from '../../videos/types';
 import { ContinueWatchingSection } from '.';
 import type { ContinueWatchingItem } from './types';

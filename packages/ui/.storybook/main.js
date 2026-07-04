@@ -1,33 +1,25 @@
-import path, { dirname, join } from 'path';
+import path from 'node:path';
 
 const config = {
   framework: {
-    name: '@storybook/react-vite',
+    name: '@storybook/tanstack-react',
     options: {},
   },
-  stories: [
-    '../stories/**/*.stories.mdx',
-    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-  ],
-  addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
-  ],
-  docs: {
-    autodocs: 'tag',
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  addons: ['@storybook/addon-links', '@storybook/addon-docs'],
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
   },
   viteFinal: async (config) => {
-    // Add any custom config here
     config.resolve = {
       ...config.resolve,
       alias: {
         ...config.resolve?.alias,
-        core: path.resolve(__dirname, '../../core/src'),
+        core: path.resolve(import.meta.dirname, '../../core/src'),
       },
     };
     return config;
   },
 };
 
-module.exports = config;
+export default config;

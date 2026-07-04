@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/tanstack-react';
+import { action } from 'storybook/actions';
 import { DialogComponent } from './dialog';
 import { CREATE_NEW_PLAYLIST } from './utils';
 

@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/tanstack-react';
 
 import hooks from 'core';
 import theme from '../theme';
