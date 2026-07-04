@@ -31,10 +31,16 @@ Use semantic MUI components instead:
 
 Always use `sx` prop or theme — no `className` on MUI components.
 
-## 4. Styling strategy
+## 4. Styling strategy — the two-case mental model
 
-- **Global** → theme (`src/lib/theme`)
-- **Situational** → `sx` prop
+There are exactly TWO places a style can live. There is no third case.
+
+- **Global** (a design decision that applies everywhere — colors, surfaces, glass effects, radii, typography, component looks) → the **theme** (`packages/ui/src/universal/minimalism/`), via palette + `components` styleOverrides.
+- **Situational** (one single component, one spot) → the `sx` prop on that component.
+
+**The litmus test: swapping the theme provider must be the ENTIRE re-skin of an app.** Wrap the app in a different provider and every screen must look right with zero extra work. If a screen looks wrong after a provider swap, that is a styling hack in our code — a component hardcoding what the theme owns — and the hack gets fixed (moved into the theme, or reduced to a real one-off `sx`), never patched around with app-specific styling.
+
+Corollary: never restyle a component to "match" a design system — if many components need the same look, that look belongs in the theme's `styleOverrides`, once.
 
 ## 5. NEVER use px units
 
@@ -51,7 +57,8 @@ Use relative units that scale with user preferences:
 ## 6. NEVER hardcode colors
 
 - No hex/rgb in components — always use theme palette.
-- Missing color? Add it to `src/lib/theme/index.ts` first.
+- Missing color? Add it to the theme first.
+- Every color must survive BOTH light and dark mode. `grey[100]`, `#e0e0e0`, `'white'` in a component are latent dark-mode bugs — use mode-aware tokens (`background.paper`, `action.hover`, `text.secondary`, …) that the theme resolves per mode.
 
 ```tsx
 // Bad

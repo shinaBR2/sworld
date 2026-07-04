@@ -1,6 +1,6 @@
 ---
 name: reviewing-pull-requests
-description: This skill should be used whenever the user asks to "review this PR", "review the PR", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where a pull request or branch is being evaluated for merge. Also use when the user has just pushed up work and is asking for a sanity check. Enforces a judgment-driven review approach — scaled to risk and size, with colleague-tone feedback ending in a clear merge recommendation.
+description: This skill should be used as the mandatory pre-PR self-review gate in the parallel workflow (step 11) — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where the current work is being evaluated. The review target is ALWAYS the local diff, never a remote PR. Enforces a judgment-driven review approach — scaled to risk and size, with colleague-tone feedback ending in a clear merge recommendation.
 ---
 
 # Reviewing Pull Requests
@@ -9,35 +9,46 @@ Act as a thoughtful colleague reviewing a teammate's work — not a checklist ro
 
 ## Critical rules
 
-- Wait for the user to tell you how to access the PR. Do not pull or refresh diffs on your own initiative. The user will either put you on the branch already, or explicitly ask you to fetch the PR.
-- Never re-pull or re-fetch the PR during a review unless the user asks. If a follow-up question comes up, work from what's already in context.
-- If the PR is too large or sprawling to confidently review, push back before doing the review. Do not power through a review you don't trust.
+- **The review target is the LOCAL working diff, never a remote PR.** Get it with `git fetch origin main`, then `git diff origin/main`. No PR exists at review time — the local diff and the eventual PR diff are the same thing.
+- Never touch `gh pr` in this skill. Post-PR concerns (review threads, CI, bots) belong to the CI loop in `parallel-workflow`.
+- For follow-up questions, work from what's already in context. Re-run the diff only when the code has changed (e.g. the next iteration of the self-review loop).
+- If the diff is too large or sprawling to confidently review, push back before doing the review. Do not power through a review you don't trust.
 - Be direct and conversational, like a colleague leaving a comment on the PR. No padded preamble, no exhaustive bullet lists, no review-theatre.
 
 ## How to start a review
 
-The user controls the context. Two patterns:
+Two patterns — the target is the local working diff in both:
 
-**Pattern A — User has already put you on the branch.** They'll say something like "review this PR" or "what do you think of this" with the branch already checked out and context loaded. Use what's in context. Do not pull or refresh.
+**Pattern A — Self-review gate (pre-PR, the parallel-workflow default).** Invoked as step 11 of the parallel workflow, inside the worktree, before the PR is created. Commits may already be pushed — pushing is backup, not publication; the PR is what this gate unlocks. Target: the local working diff (`git fetch origin main && git diff origin/main`). See "Self-review mode" below for how the output semantics change.
 
-**Pattern B — User asks you to pull it.** They'll say "pull PR #1234 and review it" or "fetch this and look it over". Use `gh pr view` and `gh pr diff` to get the PR description, diff, and comments. Then review.
+**Pattern B — User asks for a review.** They'll say "review this", "look at this branch", or "what do you think of this" with the branch checked out and context loaded. Same target: the local diff vs `origin/main`. Use what's in context.
 
-If it's ambiguous which pattern, ask once: "Do you want me to pull the PR or are you already on the branch?"
+## Self-review mode (Pattern A — the pre-PR gate)
+
+When this skill runs as the parallel-workflow step-11 gate, the review itself is identical — same hierarchy, same depth-scaling, same format — but the output semantics change, because the reviewer and the developer are the same party and the point is to fix, not to inform:
+
+- **Concerns are work items, not feedback.** Every concern MUST be fixed before the gate passes. There is no "merge with changes" exit — the changes get made.
+- **Suggestions must be resolved, not parked.** Apply each one, or explicitly reject it with reasoning. Never silently drop a suggestion.
+- **It loops.** This skill runs alongside `/code-review`, and after any fix the loop restarts — fixes are new code and have not been reviewed. The gate exits only when a full pass is clean on BOTH: verdict "Merge" with zero concerns here, zero confirmed findings from `/code-review`.
+- **A clean pass is the successful exit, not a failure to find something.** Never manufacture a concern to keep the loop going — the anti-pattern rules apply doubly here.
+- **The reviewability judgment still applies.** If the local diff is too sprawling or mixes concerns, that IS the finding: stop and split the work (`micro-prs`) before shipping anything.
+
+The goal of this mode: the PR that eventually goes up is already a good PR — bugbot/CodeRabbit and the human reviewer should find nothing substantive.
 
 ## Step 1 — Reviewability judgment
 
-Before reviewing the code itself, make a fast judgment about whether this PR is actually reviewable.
+Before reviewing the code itself, make a fast judgment about whether this diff is actually reviewable.
 
 Look at:
 
-- **Scope.** Does this PR do one thing, or is it touching too many unrelated concerns?
+- **Scope.** Does this change do one thing, or is it touching too many unrelated concerns?
 - **Surface area.** How many files? How many distinct changes?
 - **Risk profile.** Auth, data access, database migrations, shared logic in `packages/core` or `packages/ui` that many apps depend on? Or buttons, copy, styling, internal renames?
 - **Coherence.** Is it easy to hold the change in your head, or does it sprawl across the codebase in ways that are hard to reason about?
 
 There is no hard line count. A 150-line button-rename across 20 files can be trivial. A 60-line auth change can be terrifying. Make the call.
 
-If the PR feels too big or too tangled to review with confidence, **push back before reviewing**:
+If the diff feels too big or too tangled to review with confidence, **push back before reviewing**:
 
 > "This is too sprawling for me to review with confidence. It mixes [X] and [Y]. I'd suggest splitting it — [X] could go in its own PR and ship independently. Want me to break it down, or do you want to do that and come back?"
 
@@ -64,7 +75,7 @@ Match the depth of review to the risk and surface area of the change. Three roug
 - New patterns or architectural decisions that will be copied later
 - Think deeply: walk through edge cases, consider how it could break, look for missed scenarios, check it against the intended behaviour
 
-The user may tell you what depth they want. If they don't, decide based on the PR.
+The user may tell you what depth they want. If they don't, decide based on the diff.
 
 ## Step 3 — What to look for
 
@@ -72,7 +83,7 @@ The hierarchy below is in order of importance. A correctness issue is always mor
 
 ### Correctness (most important)
 
-- Does it actually do what the description says it does?
+- Does it actually do what the Linear issue (or the stated intent) says it should?
 - Are there obvious logic errors?
 - Edge cases — what about empty arrays, null values, very large inputs, negative numbers, zero, dates that span timezones?
 - Round-tripping, what happens at boundaries
@@ -83,7 +94,7 @@ The hierarchy below is in order of importance. A correctness issue is always mor
 
 If the code looks AI-generated (which most of this code is), specifically check for:
 
-- **Scope creep.** Did the PR change only what was asked? Files modified outside the stated scope are a red flag.
+- **Scope creep.** Did the change touch only what was asked? Files modified outside the stated scope are a red flag.
 - **Duplicated logic.** Did the AI write a new utility that already exists somewhere in `packages/core`, `packages/ui`, or one of the apps? Search for the function name and similar patterns. Reusing existing utilities is almost always better than creating a parallel one.
 - **Weakened tests.** Were tests deleted or skipped instead of fixed? That is never the right move without explicit justification.
 - **Hallucinated APIs.** Calls to functions or properties that don't actually exist, or that exist but with different signatures.
@@ -189,11 +200,11 @@ Avoid:
 
 ## Step 5 — After delivering the review
 
-If the user asks follow-up questions, work from context. Do not re-pull the PR. If you genuinely need information that isn't in context (e.g. "what does this function do in the rest of the codebase"), say so and ask the user whether to dig in.
+If the user asks follow-up questions, work from context. Do not re-fetch anything. If you genuinely need information that isn't in context (e.g. "what does this function do in the rest of the codebase"), say so and ask the user whether to dig in.
 
 ## Worked example — light review
 
-For a copy change across 5 files (PR: "rename Listen tab labels for consistency"):
+For a copy change across 5 files (change: "rename Listen tab labels for consistency"):
 
 ```markdown
 **Verdict:** Merge
@@ -215,7 +226,7 @@ One quick thing before you merge — eyeball that second "Currently playing" in 
 
 ## Worked example — deep review
 
-For a behaviour change (PR: "persist playback position across reloads"):
+For a behaviour change (change: "persist playback position across reloads"):
 
 ```markdown
 **Verdict:** Merge with changes
@@ -239,7 +250,7 @@ The one I'd want nailed before this goes in: confirm playback doesn't silently j
 
 ## Worked example — clean PR
 
-For a small, well-tested change you're fully confident in (PR: "add empty state to the Library list"):
+For a small, well-tested change you're fully confident in (change: "add empty state to the Library list"):
 
 ```markdown
 **Verdict:** Merge
@@ -258,7 +269,8 @@ Good to go — merging.
 
 ## Validation before delivering the review
 
-- Did I respect the user's instruction about how to access the PR (didn't pull when they put me on the branch, did pull when they asked)?
+- Did I review the LOCAL working diff vs `origin/main` (fetched `origin main` first, never touched `gh pr`)?
+- In self-review mode: did I treat every concern as a work item to fix, and is the loop exit (verdict "Merge", zero concerns) genuinely earned rather than declared?
 - Did I make a judgment call about reviewability before diving in?
 - Did I match depth to risk and surface area?
 - Is the feedback ordered by importance (correctness first, style last)?
