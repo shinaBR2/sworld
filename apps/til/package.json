@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.78.2",
+    "@tanstack/react-router": "^1.170.16",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-code-block": "^3.21.0",
     "@tiptap/extension-placeholder": "^3.0.0",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@codecov/vite-plugin": "^1.9.1",
-    "@tanstack/router-plugin": "^1.78.2",
+    "@tanstack/router-plugin": "^1.168.18",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.0.3",

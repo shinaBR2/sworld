@@ -1,4 +1,7 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import type {
   SharePlaylistMutation,
@@ -69,10 +72,11 @@ const useSharePlaylist = (props: UseSharePlaylistProps) => {
       onError: (
         error: unknown,
         variables: SharePlaylistMutationVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Share playlist failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });
@@ -89,10 +93,11 @@ const useShareVideo = (props: UseShareVideoProps) => {
       onError: (
         error: unknown,
         variables: ShareVideoMutationVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Share video failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });

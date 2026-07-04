@@ -1,4 +1,7 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import type {
   SaveSubtitleMutation,
@@ -49,10 +52,11 @@ const useSaveSubtitle = (props: UseSaveSubtitleProps) => {
       onError: (
         error: unknown,
         variables: SaveSubtitleMutationVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Save subtitle failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });
