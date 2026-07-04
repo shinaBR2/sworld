@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.3",
-    "@dotenvx/dotenvx": "^1.36.0",
+    "@dotenvx/dotenvx": "^1.75.1",
     "@graphql-codegen/cli": "^5.0.3",
     "@types/chrome": "^0.0.268",
     "@vitejs/plugin-react": "^6.0.3",
