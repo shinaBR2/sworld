@@ -11,6 +11,15 @@ user-invocable: false
 - **The Linear issue is the source of truth.** A Linear issue (in the **SWorld** team) is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`).
 - **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean.
 
+## Scope: all three repos
+
+This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: Linear issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
+
+- **Substitute the repo name in `gh` commands.** The CI-loop Step 3 GraphQL query below takes a `name:"<repo>"` placeholder — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing.
+- **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
+- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
+- **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in Linear with a blocking relation from the Hasura issue.
+
 ## Git fundamentals
 
 - "main branch" ALWAYS means `origin/main` — fetch first with `git fetch origin main`. The local `main` is often stale.
@@ -34,10 +43,16 @@ user-invocable: false
 
 9. The 3 files limit is soft — more is fine if changes are small, cohesive, and easy to review.
 10. NEVER bypass commit hooks — code MUST be formatted, linted, and type-checked.
-11. Self-review all work.
+11. Self-review all work — this is a mandatory gate, not eyeballing the diff, and it is a **loop, not a single pass**. It gates **PR creation, NOT pushing** — commits are pushed freely and immediately (see step 14). When the work is done, BEFORE creating the PR:
+    1. Run the `code-review` skill (`/code-review`) at **high** effort on the working diff (`git diff origin/main`) — the mechanical finder: verified correctness/quality findings.
+    2. Run the `reviewing-pull-requests` skill in self-review mode on the same diff — the judgment pass: sworld conventions, AI failure modes, reviewability, risk-scaled depth.
+    3. Fix EVERYTHING actionable from both (dedupe overlapping findings — one fix), re-run lint/type-check, commit, push, and **restart this loop from sub-step 1**. Fixes are new code — they have NOT been reviewed and can introduce new defects. Never trust a fixing pass without re-reviewing it.
+    4. Exit only when a full pass is clean on BOTH: **zero confirmed findings** from `/code-review` AND **verdict "Merge" with zero concerns** from `reviewing-pull-requests`. Never create a PR on hope.
+
+    The local diff and the PR diff are the same thing — this loop does bugbot/CodeRabbit's job *before* the PR exists. **The bar: bugbot/CodeRabbit should find nothing.** A substantive bot finding on the PR means this gate failed. The goal: every PR that goes up is already a good PR.
 12. Always verify `git branch --show-current` before committing.
 13. Don't dismiss automated review findings without thorough verification.
-14. Commit and push as soon as possible — never ask, just do it.
+14. Commit often and push immediately — never ask, just do it. Pushing is **backup, not publication**: a pushed branch with no PR is invisible, and it means a broken laptop loses zero work. Pushing is NEVER gated; only PR creation is (step 11).
 
 ## Codegen
 
@@ -53,6 +68,7 @@ user-invocable: false
 
 ## PR submission
 
+- A PR may ONLY be created after the self-review loop (step 11) has exited clean on BOTH review skills. Pushing commits needs no gate; creating the PR does.
 - Create PR with `[WIP]` prefix (not draft).
 - Reference the Linear issue in the PR description (e.g. `SWO-123`) so the integration links them.
 - ALWAYS assign PR to the user (`--assignee "@me"`).
@@ -81,9 +97,9 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 
 ### Step 3: Check unresolved review comments
 
-- Query via GitHub **GraphQL API** (REST doesn't expose resolved status):
-  ```
-  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"sworld") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
+- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Substitute `<repo>` with the repo the PR actually lives in — `sworld`, `sworld-backend`, or `sworld-hasura-v2` — and `NUMBER` with the PR number. Querying the wrong repo silently returns nothing:
+  ```bash
+  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"<repo>") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
   ```
 - Filter to `isResolved: false` threads only.
 - If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
