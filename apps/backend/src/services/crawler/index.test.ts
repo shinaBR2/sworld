@@ -6,10 +6,20 @@ import { validateUrlInput } from './validator';
 
 // Update the crawlee mock
 vi.mock('crawlee', () => ({
-  PlaywrightCrawler: vi.fn((options, config) => ({
-    run: vi.fn().mockResolvedValue(undefined),
-  })),
-  Configuration: vi.fn((options) => options),
+  PlaywrightCrawler: vi.fn(
+    class {
+      constructor() {
+        return { run: vi.fn().mockResolvedValue(undefined) };
+      }
+    },
+  ),
+  Configuration: vi.fn(
+    class {
+      constructor(options: unknown) {
+        return options as object;
+      }
+    },
+  ),
 }));
 
 vi.mock('./utils', () => ({

@@ -78,7 +78,13 @@ describe('getHashnodeClient', () => {
 
     // Setup mocks
     mockClient = { test: 'client' };
-    vi.mocked(GraphQLClient).mockReturnValue(mockClient);
+    vi.mocked(GraphQLClient).mockImplementation(
+      class {
+        constructor() {
+          return mockClient;
+        }
+      } as unknown as typeof GraphQLClient,
+    );
     vi.mocked(envConfig).hashnodeEndpoint = 'https://api.hashnode.com';
     vi.mocked(envConfig).hashnodePersonalToken = 'test-token';
   });

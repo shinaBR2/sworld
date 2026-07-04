@@ -23,10 +23,16 @@ vi.mock('./logger', () => ({
 }));
 
 vi.mock('@google-cloud/tasks', () => ({
-  CloudTasksClient: vi.fn().mockImplementation(() => ({
-    createTask: mockCreateTask,
-    queuePath: mockQueuePath,
-  })),
+  CloudTasksClient: vi.fn(
+    class {
+      constructor() {
+        return {
+          createTask: mockCreateTask,
+          queuePath: mockQueuePath,
+        };
+      }
+    },
+  ),
 }));
 
 vi.mock('src/services/hasura/mutations/tasks', () => ({

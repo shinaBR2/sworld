@@ -60,11 +60,3 @@ vi.mock('sequelize', async (importOriginal) => {
     mockTransaction,
   };
 });
-
-vi.mock('src/utils/envConfig', () => ({
-  envConfig: {
-    databaseUrl: 'postgres://test-user:test-password@localhost:5432/test-db',
-    computeServiceUrl: 'http://test-compute-service',
-    ioServiceUrl: 'http://test-io-service',
-  },
-}));

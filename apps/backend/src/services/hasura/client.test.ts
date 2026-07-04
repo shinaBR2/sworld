@@ -4,9 +4,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('graphql-request', () => ({
-  GraphQLClient: vi.fn().mockImplementation(() => ({
-    request: vi.fn(),
-  })),
+  GraphQLClient: vi.fn(
+    class {
+      constructor() {
+        return { request: vi.fn() };
+      }
+    },
+  ),
 }));
 
 vi.mock('src/utils/envConfig', () => ({

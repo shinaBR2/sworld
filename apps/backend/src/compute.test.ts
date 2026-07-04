@@ -5,7 +5,6 @@ import { serve } from '@hono/node-server';
 vi.mock('@hono/node-server');
 vi.mock('@hono/sentry');
 vi.mock('hono/body-limit');
-vi.mock('hono/context-storage');
 vi.mock('hono/request-id');
 vi.mock('hono-rate-limiter');
 vi.mock('src/utils/envConfig');
@@ -50,13 +49,19 @@ vi.mock('hono/context-storage', () => ({
 }));
 
 vi.mock('hono', () => ({
-  Hono: vi.fn(() => ({
-    use: mockUse,
-    get: mockGet,
-    route: mockRoute,
-    onError: mockOnError,
-    fetch: vi.fn(),
-  })),
+  Hono: vi.fn(
+    class {
+      constructor() {
+        return {
+          use: mockUse,
+          get: mockGet,
+          route: mockRoute,
+          onError: mockOnError,
+          fetch: vi.fn(),
+        };
+      }
+    },
+  ),
 }));
 
 describe('Compute Application', () => {

@@ -2,9 +2,13 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 // Mock Hono
 const mockPost = vi.fn();
-const mockHono = vi.fn(() => ({
-  post: mockPost,
-}));
+const mockHono = vi.fn(
+  class {
+    constructor() {
+      return { post: mockPost };
+    }
+  },
+);
 
 vi.mock('hono', () => ({
   Hono: mockHono,

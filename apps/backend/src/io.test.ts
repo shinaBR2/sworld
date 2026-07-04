@@ -23,13 +23,19 @@ vi.mock('@hono/node-server', () => ({
 }));
 
 vi.mock('hono', () => ({
-  Hono: vi.fn(() => ({
-    use: mockUse,
-    get: mockGet,
-    route: mockRoute,
-    onError: mockOnError,
-    fetch: vi.fn(),
-  })),
+  Hono: vi.fn(
+    class {
+      constructor() {
+        return {
+          use: mockUse,
+          get: mockGet,
+          route: mockRoute,
+          onError: mockOnError,
+          fetch: vi.fn(),
+        };
+      }
+    },
+  ),
 }));
 
 // Mock environment variables

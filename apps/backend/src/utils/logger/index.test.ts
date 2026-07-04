@@ -37,10 +37,16 @@ vi.mock('pino-http', () => ({
 const mockGetStore = vi.fn();
 const mockRun = vi.fn((_store: unknown, callback: () => void) => callback());
 vi.mock('node:async_hooks', () => ({
-  AsyncLocalStorage: vi.fn(() => ({
-    getStore: mockGetStore,
-    run: mockRun,
-  })),
+  AsyncLocalStorage: vi.fn(
+    class {
+      constructor() {
+        return {
+          getStore: mockGetStore,
+          run: mockRun,
+        };
+      }
+    },
+  ),
 }));
 
 describe('logger', () => {

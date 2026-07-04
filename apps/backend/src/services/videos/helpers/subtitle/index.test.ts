@@ -30,11 +30,15 @@ vi.mock('src/utils/logger', () => {
 });
 
 vi.mock('src/utils/custom-error', () => ({
-  CustomError: vi.fn().mockImplementation((message, options) => {
-    const error = new Error(message);
-    Object.assign(error, options);
-    return error;
-  }),
+  CustomError: vi.fn(
+    class {
+      constructor(message: string, options: object) {
+        const error = new Error(message);
+        Object.assign(error, options);
+        return error;
+      }
+    },
+  ),
 }));
 
 describe('Subtitle Helper', () => {

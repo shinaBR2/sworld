@@ -24,10 +24,16 @@ vi.mock('../../utils/envConfig', () => ({
 }));
 
 vi.mock('posthog-node', () => ({
-  PostHog: vi.fn().mockImplementation(() => ({
-    captureException: vi.fn(),
-    shutdown: vi.fn(),
-  })),
+  PostHog: vi.fn(
+    class {
+      constructor() {
+        return {
+          captureException: vi.fn(),
+          shutdown: vi.fn(),
+        };
+      }
+    },
+  ),
 }));
 
 // Mock both import paths for @shinabr2/core
@@ -235,7 +241,13 @@ describe('errorHandler', () => {
       };
       vi.mocked(PostHog)
         .mockClear()
-        .mockImplementation(() => mockPostHog as any);
+        .mockImplementation(
+          class {
+            constructor() {
+              return mockPostHog;
+            }
+          } as unknown as typeof PostHog,
+        );
 
       // Enable PostHog
       envConfig.errorTracker.posthogPublicKey = 'test-key';
@@ -263,9 +275,13 @@ describe('errorHandler', () => {
       const posthogError = new Error('PostHog connection failed');
       vi.mocked(PostHog)
         .mockClear()
-        .mockImplementation(() => {
-          throw posthogError;
-        });
+        .mockImplementation(
+          class {
+            constructor() {
+              throw posthogError;
+            }
+          } as unknown as typeof PostHog,
+        );
 
       envConfig.errorTracker.posthogPublicKey = 'test-key';
       envConfig.errorTracker.posthogHost = 'https://posthog.example.com';

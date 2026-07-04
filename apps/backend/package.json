@@ -37,13 +37,13 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/m3u8-parser": "^7.2.0",
     "@types/node": "^24",
-    "@vitest/coverage-v8": "^3.0.5",
+    "@vitest/coverage-v8": "^4",
     "husky": "^8.0.0",
     "pino-pretty": "^13.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.2.2",
-    "vitest": "^3.0.5"
+    "vitest": "^4"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
