@@ -9,11 +9,14 @@ import type { QueryContextValue } from './index';
 import { QueryProvider, useQueryContext } from './index';
 
 vi.mock('@tanstack/react-query', () => ({
-  QueryClient: vi.fn().mockImplementation(() => ({
-    removeQueries: vi.fn(),
-    refetchQueries: vi.fn(),
-    clear: vi.fn(),
-  })),
+  // Vitest 4 requires constructor mocks to be class/function based.
+  QueryClient: vi.fn(
+    class {
+      removeQueries = vi.fn();
+      refetchQueries = vi.fn();
+      clear = vi.fn();
+    },
+  ),
   QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
     children,
 }));
@@ -59,14 +62,16 @@ vi.mock('../../universal/hooks/useFeatureFlagSubscription', () => ({
 
 // Mock WebSocket
 // @ts-expect-error
-global.WebSocket = vi.fn().mockImplementation(() => ({
-  onopen: vi.fn(),
-  onmessage: vi.fn(),
-  onerror: vi.fn(),
-  close: vi.fn(),
-  send: vi.fn(),
-  readyState: WebSocket.OPEN,
-}));
+global.WebSocket = vi.fn(
+  class {
+    onopen = vi.fn();
+    onmessage = vi.fn();
+    onerror = vi.fn();
+    close = vi.fn();
+    send = vi.fn();
+    readyState = 1; // WebSocket.OPEN
+  },
+);
 
 describe('Query Provider and Context', () => {
   const mockConfig = {
