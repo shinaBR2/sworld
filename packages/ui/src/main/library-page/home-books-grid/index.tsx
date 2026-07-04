@@ -125,11 +125,18 @@ const BooksGridSkeleton = ({ count = 12 }: { count?: number }) => {
           </Box>
         </Box>
       </Box>
-
       {/* Books Grid Skeleton */}
       <Grid container spacing={{ xs: 2, md: 3 }}>
         {Array.from({ length: count }).map((_, index) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={`skeleton-${index}`}>
+          <Grid
+            key={`skeleton-${index}`}
+            size={{
+              xs: 6,
+              sm: 4,
+              md: 3,
+              lg: 2,
+            }}
+          >
             <BookCardSkeleton />
           </Grid>
         ))}
@@ -184,7 +191,6 @@ const BooksGridEmpty = () => {
           </Box>
         </Box>
       </Box>
-
       {/* Empty State */}
       <Box
         sx={{
@@ -211,13 +217,20 @@ const BooksGridEmpty = () => {
 
         <Typography
           variant="h4"
-          fontSize="1.25rem"
-          fontWeight="medium"
-          sx={{ mb: 1 }}
+          sx={{
+            fontSize: '1.25rem',
+            fontWeight: 'medium',
+            mb: 1,
+          }}
         >
           No books in your library
         </Typography>
-        <Typography color="text.secondary" fontSize="0.875rem">
+        <Typography
+          sx={{
+            color: 'text.secondary',
+            fontSize: '0.875rem',
+          }}
+        >
           Add your first book to start building your personal library
         </Typography>
       </Box>
@@ -295,11 +308,18 @@ const BooksGrid: React.FC<BooksGridProps> = (props) => {
           </Box>
         </Box>
       </Box>
-
       {/* Books Grid */}
       <Grid container spacing={{ xs: 2, md: 3 }}>
         {books?.map((book) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={book.id}>
+          <Grid
+            key={book.id}
+            size={{
+              xs: 6,
+              sm: 4,
+              md: 3,
+              lg: 2,
+            }}
+          >
             <BookCard book={book} onClick={onBookClick} />
           </Grid>
         ))}
@@ -307,7 +327,6 @@ const BooksGrid: React.FC<BooksGridProps> = (props) => {
           <BookCardSkeleton />
         </Grid> */}
       </Grid>
-
       {/* Load More */}
       {hasMore && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>

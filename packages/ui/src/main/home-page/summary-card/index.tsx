@@ -53,7 +53,12 @@ const SummaryCard = (props: SummaryCardProps) => {
           {formatNumber(amount)}
         </StyledAmount>
 
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {count > 0
             ? `${count} transaction${count !== 1 ? 's' : ''}`
             : '\u00A0'}

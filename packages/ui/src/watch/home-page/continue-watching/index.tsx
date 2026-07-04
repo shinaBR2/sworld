@@ -60,7 +60,7 @@ const ContinueWatchingSection = (props: ContinueWatchingSectionProps) => {
       </Box>
       <Grid container spacing={3}>
         {visibleVideos.map((video) => (
-          <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
+          <Grid size={GRID_COLUMN_PROPS} key={video.id}>
             <VideoCard
               video={video}
               asLink={true}

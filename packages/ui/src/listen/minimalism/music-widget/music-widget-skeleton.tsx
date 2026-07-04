@@ -10,14 +10,22 @@ const MusicWidgetSkeleton = () => {
       aria-label="Loading music player"
       aria-busy="true"
     >
-      <Box p={2}>
+      <Box
+        sx={{
+          p: 2,
+        }}
+      >
         <Skeleton
           variant="rectangular"
           width="100%"
           height={194}
           animation="wave"
         />
-        <Box mt={2}>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Skeleton variant="text" width="20%" animation="wave" />
           <Skeleton
             sx={{ fontSize: '2rem' }}

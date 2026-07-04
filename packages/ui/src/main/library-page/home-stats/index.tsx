@@ -70,7 +70,13 @@ const StatsGridSkeleton = () => {
           const IconComponent = item.icon;
 
           return (
-            <Grid item xs={6} md={3} key={item.key}>
+            <Grid
+              key={item.key}
+              size={{
+                xs: 6,
+                md: 3,
+              }}
+            >
               <Card>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   {/* Icon - Same as actual with muted colors */}
@@ -141,7 +147,13 @@ const StatsGrid: React.FC<StatsGridProps> = (props) => {
           }
 
           return (
-            <Grid item xs={6} md={3} key={item.key}>
+            <Grid
+              key={item.key}
+              size={{
+                xs: 6,
+                md: 3,
+              }}
+            >
               <Card>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   <Box
@@ -164,7 +176,12 @@ const StatsGrid: React.FC<StatsGridProps> = (props) => {
                     {value ?? 0}
                     {item.suffix || ''}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     {item.label}
                   </Typography>
                 </CardContent>

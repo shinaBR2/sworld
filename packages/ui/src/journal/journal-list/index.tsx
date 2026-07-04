@@ -122,16 +122,32 @@ export const JournalList: React.FC<JournalListProps> = ({
             >
               {icon}
             </Box>
-            <Typography variant="body2" fontWeight="medium">
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 'medium',
+              }}
+            >
               {label}
             </Typography>
           </Box>
 
-          <Typography variant="h5" component="div" fontWeight="bold">
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{
+              fontWeight: 'bold',
+            }}
+          >
             {count}
           </Typography>
 
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             entries this month
           </Typography>
         </CardContent>
@@ -156,7 +172,12 @@ export const JournalList: React.FC<JournalListProps> = ({
             }}
           >
             <Box>
-              <Typography variant="body1" fontWeight="medium">
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 'medium',
+                }}
+              >
                 {formatDate(journal.date)}
               </Typography>
               <Box
@@ -181,8 +202,8 @@ export const JournalList: React.FC<JournalListProps> = ({
 
           <Typography
             variant="body2"
-            color="text.secondary"
             sx={{
+              color: 'text.secondary',
               mt: 1,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -232,7 +253,12 @@ export const JournalList: React.FC<JournalListProps> = ({
           mb: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 'bold',
+          }}
+        >
           Journals
         </Typography>
 
@@ -250,7 +276,6 @@ export const JournalList: React.FC<JournalListProps> = ({
           </IconButton>
         </Box>
       </Box>
-
       {/* Stats Cards */}
       <Box
         sx={{
@@ -280,11 +305,15 @@ export const JournalList: React.FC<JournalListProps> = ({
               renderStatCard(category.mood, category.count),
             )}
       </Box>
-
-      <Typography variant="h6" fontWeight="medium" sx={{ mb: 2 }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 'medium',
+          mb: 2,
+        }}
+      >
         Recent Entries
       </Typography>
-
       {isLoading ? (
         Array(3)
           .fill(0)
@@ -299,10 +328,20 @@ export const JournalList: React.FC<JournalListProps> = ({
             bgcolor: 'background.default',
           }}
         >
-          <Typography variant="body1" color="text.secondary">
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             No journal entries for this month.
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Click the + button to create your first entry.
           </Typography>
         </Paper>

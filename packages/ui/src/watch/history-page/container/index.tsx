@@ -11,7 +11,15 @@ const Loading = () => {
       {Array(12)
         .fill(0)
         .map((_, i) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+          <Grid
+            key={i}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            }}
+          >
             <VideoSkeleton />
           </Grid>
         ))}
@@ -32,7 +40,16 @@ const HistoryContainer = (props: HistoryContainerProps) => {
         {isLoading && <Loading />}
         {!isLoading &&
           videos.map((video) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={video.id}>
+            <Grid
+              key={video.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+                xl: 2.4,
+              }}
+            >
               <VideoCard
                 video={video}
                 asLink={true}

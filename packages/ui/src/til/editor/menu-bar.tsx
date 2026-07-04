@@ -45,7 +45,13 @@ const EditorMenuBar = (props: EditorMenuBarProps) => {
   const { items } = props;
 
   return (
-    <Stack direction="row" spacing={0.5} alignItems="center">
+    <Stack
+      direction="row"
+      spacing={0.5}
+      sx={{
+        alignItems: 'center',
+      }}
+    >
       {items.map((item) =>
         item.type === 'divider' ? (
           <Box

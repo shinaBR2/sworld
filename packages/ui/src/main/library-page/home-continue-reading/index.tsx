@@ -213,13 +213,20 @@ const ContinueReadingEmpty = () => {
 
               <Typography
                 variant="h4"
-                fontSize="1.125rem"
-                fontWeight="medium"
-                sx={{ mb: 0.5 }}
+                sx={{
+                  fontSize: '1.125rem',
+                  fontWeight: 'medium',
+                  mb: 0.5,
+                }}
               >
                 No books in progress
               </Typography>
-              <Typography color="text.secondary" fontSize="0.875rem">
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '0.875rem',
+                }}
+              >
                 Start reading a book to see your progress here
               </Typography>
             </Box>
@@ -299,9 +306,9 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   variant="h4"
-                  fontSize={{ xs: '1rem', sm: '1.125rem' }}
-                  fontWeight="medium"
                   sx={{
+                    fontSize: { xs: '1rem', sm: '1.125rem' },
+                    fontWeight: 'medium',
                     mb: 0.5,
                     lineHeight: 1.3,
                   }}
@@ -309,9 +316,11 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
                   {book.title}
                 </Typography>
                 <Typography
-                  color="text.secondary"
-                  fontSize={{ xs: '0.8125rem', sm: '0.875rem' }}
-                  sx={{ mb: { xs: 1, sm: 1.5 } }}
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                    mb: { xs: 1, sm: 1.5 },
+                  }}
                 >
                   by {book.author}
                 </Typography>
@@ -320,8 +329,10 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
                 <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 1 }}>
                   <Typography
                     variant="body2"
-                    color="text.secondary"
-                    fontSize="0.8125rem"
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: '0.8125rem',
+                    }}
                   >
                     Last read {book.lastReadAt}
                   </Typography>
@@ -353,9 +364,11 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
                 />
                 <Typography
                   variant="body2"
-                  color="text.secondary"
-                  fontSize={{ xs: '0.8125rem', sm: '0.875rem' }}
-                  sx={{ whiteSpace: 'nowrap' }}
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                    whiteSpace: 'nowrap',
+                  }}
                 >
                   Page {book.currentPage} of {book.totalPages}
                 </Typography>
@@ -372,16 +385,20 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
             >
               <Typography
                 variant="body2"
-                color="text.secondary"
-                fontSize="0.875rem"
-                sx={{ mb: 0.5 }}
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '0.875rem',
+                  mb: 0.5,
+                }}
               >
                 Last read
               </Typography>
               <Typography
                 variant="body2"
-                fontWeight="medium"
-                fontSize="0.875rem"
+                sx={{
+                  fontWeight: 'medium',
+                  fontSize: '0.875rem',
+                }}
               >
                 {book.lastReadAt}
               </Typography>

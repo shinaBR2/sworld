@@ -27,7 +27,12 @@ const SummaryCardSkeleton = () => {
           <Skeleton width={100} height={40} />
         </StyledAmount>
 
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           <Skeleton width={80} />
         </Typography>
       </CardContent>

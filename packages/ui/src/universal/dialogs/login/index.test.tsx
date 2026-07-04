@@ -55,7 +55,7 @@ describe('LoginDialog', () => {
 
     const button = screen.getByText('FLOW').closest('button');
     expect(button).toHaveClass('MuiButton-outlined');
-    expect(button).toHaveClass('MuiButton-outlinedPrimary');
+    expect(button).toHaveClass('MuiButton-colorPrimary');
   });
 
   it('renders dialog content with correct MUI classes', () => {

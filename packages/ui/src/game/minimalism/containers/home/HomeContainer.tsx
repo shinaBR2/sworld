@@ -16,9 +16,18 @@ const HomeContainer = (props: HomeContainerProps) => {
       {/* <Helmet>
         <title>{htmlTitle}</title>
       </Helmet> */}
-
-      <Box my={4}>
-        <Typography variant="h3" component="h1" fontWeight={700}>
+      <Box
+        sx={{
+          my: 4,
+        }}
+      >
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            fontWeight: 700,
+          }}
+        >
           Just play
         </Typography>
       </Box>

@@ -14,9 +14,21 @@ const LoadingBackdrop = (props: LoadingBackdropProps) => {
 
   return (
     <Backdrop {...props} open={true}>
-      <Box textAlign="center">
+      <Box
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         <CircularProgress />
-        {!!message && <Typography color="common.white">{message}</Typography>}
+        {!!message && (
+          <Typography
+            sx={{
+              color: 'common.white',
+            }}
+          >
+            {message}
+          </Typography>
+        )}
       </Box>
     </Backdrop>
   );

@@ -2,18 +2,16 @@ import type { StyledComponent } from '@emotion/styled';
 import Box, { type BoxProps } from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import type { CSSProperties } from 'react';
-
 // Constants
 export const THUMBNAIL_HEIGHT = 64;
 export const THUMBNAIL_WIDTH = (THUMBNAIL_HEIGHT / 9) * 16;
 
 // Shared styles
-export const thumbnailImgStyle: CSSProperties = {
+export const thumbnailImgStyle = {
   width: '100%',
   height: '100%',
   objectFit: 'cover',
-};
+} as const;
 
 // Styled components
 const ListItemContainer: StyledComponent<BoxProps & { isActive?: boolean }> =

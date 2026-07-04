@@ -19,7 +19,7 @@ const Loading = () => {
   return (
     <>
       {SKELETON_KEYS.map((key) => (
-        <Grid item {...GRID_COLUMN_PROPS} key={key}>
+        <Grid size={GRID_COLUMN_PROPS} key={key}>
           <VideoSkeleton />
         </Grid>
       ))}
@@ -72,7 +72,13 @@ const HomeContainer = (props: HomeContainerProps) => {
             <HomeSearch onQueryChange={setQuery} />
           </Box>
           {noResults ? (
-            <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                py: 4,
+              }}
+            >
               No videos match “{query.trim()}”.
             </Typography>
           ) : (
@@ -80,7 +86,7 @@ const HomeContainer = (props: HomeContainerProps) => {
               {isLoading && <Loading />}
               {!isLoading &&
                 filteredVideos.map((video) => (
-                  <Grid item {...GRID_COLUMN_PROPS} key={video.id}>
+                  <Grid size={GRID_COLUMN_PROPS} key={video.id}>
                     <VideoCard
                       video={video}
                       asLink={true}

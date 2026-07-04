@@ -13,7 +13,15 @@ const Loading = () => {
       {Array(12)
         .fill(0)
         .map((_, i) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+          <Grid
+            key={i}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            }}
+          >
             <SkeletonPostCard />
           </Grid>
         ))}
@@ -39,7 +47,15 @@ const HomeContainer = (props: HomeContainerProps) => {
       ) : posts.length > 0 ? (
         <Grid container spacing={2}>
           {posts.map((p) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
+            <Grid
+              key={p.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+              }}
+            >
               <PostCard post={p} LinkComponent={Link} />
             </Grid>
           ))}

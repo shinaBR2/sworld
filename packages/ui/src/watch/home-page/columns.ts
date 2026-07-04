@@ -1,5 +1,5 @@
 // Single source of truth for the watch home-page grid responsive layout.
-// GRID_COLUMN_PROPS feeds the MUI <Grid item> size props; COLUMNS_PER_ROW is
+// GRID_COLUMN_PROPS feeds the MUI <Grid> `size` prop; COLUMNS_PER_ROW is
 // the matching number of cards that fit one row at each breakpoint — used to
 // slice the "Continue watching" row so it never wraps. Keep the two in sync.
 const GRID_COLUMN_PROPS = { xs: 12, sm: 6, md: 4, lg: 3, xl: 2.4 } as const;

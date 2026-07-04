@@ -10,7 +10,11 @@ const meta: Meta<typeof CollectionSelect> = {
   },
   decorators: [
     (Story) => (
-      <Box width={'240px'}>
+      <Box
+        sx={{
+          width: '240px',
+        }}
+      >
         <Story />
       </Box>
     ),

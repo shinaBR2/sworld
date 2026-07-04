@@ -19,7 +19,7 @@ export const StyledCloseButton = styled(IconButton)(({ theme }) => ({
 })) as typeof IconButton;
 
 export const StyledResultsStack = styled(Stack)(({ theme }) => {
-  const { borderRadius } = theme.shape;
+  const borderRadius = Number(theme.shape.borderRadius);
 
   return {
     maxHeight: '200px',

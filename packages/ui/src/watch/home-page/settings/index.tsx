@@ -66,7 +66,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
               onChange={(event) =>
                 onStandaloneModeChange?.(event.target.checked)
               }
-              inputProps={{ 'aria-label': texts.standalone }}
+              slotProps={{ input: { 'aria-label': texts.standalone } }}
             />
           </ListItem>
         </List>

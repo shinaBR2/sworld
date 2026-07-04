@@ -21,7 +21,11 @@ const SignIn = (props: SignInProps) => {
           image="/assets/beach.png"
           title="beach"
         />
-        <Box mt={2}>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Button
             fullWidth
             variant="outlined"

@@ -91,7 +91,7 @@ const Content = (props: AudioListProps) => {
   return (
     <Grid container spacing={2}>
       {showPlayingList && (
-        <Grid item md={8} sm={6} xs={0}>
+        <Grid size={{ md: 8, sm: 6 }}>
           <Card
             elevation={0}
             sx={{
@@ -112,7 +112,17 @@ const Content = (props: AudioListProps) => {
           </Card>
         </Grid>
       )}
-      <Grid item md={4} sm={6} xs={12} container justifyContent="center">
+      <Grid
+        container
+        size={{
+          md: 4,
+          sm: 6,
+          xs: 12,
+        }}
+        sx={{
+          justifyContent: 'center',
+        }}
+      >
         <MusicWidget
           audioList={list}
           hookResult={hookResult}
@@ -132,12 +142,21 @@ const AudioList = (props: AudioListProps) => {
     return (
       <Grid container spacing={2}>
         {!isMobile && (
-          <Grid item md={8} sm={6} xs={0}>
+          <Grid size={{ md: 8, sm: 6 }}>
             <PlayingListSkeleton />
           </Grid>
         )}
-
-        <Grid item md={4} sm={6} xs={12} container justifyContent="center">
+        <Grid
+          container
+          size={{
+            md: 4,
+            sm: 6,
+            xs: 12,
+          }}
+          sx={{
+            justifyContent: 'center',
+          }}
+        >
           <MusicWidgetSkeleton />
         </Grid>
       </Grid>

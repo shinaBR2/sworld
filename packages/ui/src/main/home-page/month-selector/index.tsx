@@ -35,7 +35,13 @@ const MonthSelector = ({
         <ChevronLeft />
       </IconButton>
 
-      <Typography variant="h6" component="div" fontWeight="medium">
+      <Typography
+        variant="h6"
+        component="div"
+        sx={{
+          fontWeight: 'medium',
+        }}
+      >
         {displayMonth}
       </Typography>
 

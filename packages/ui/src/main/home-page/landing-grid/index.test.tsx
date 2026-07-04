@@ -72,11 +72,13 @@ describe('LandingGrid', () => {
     expect(container).toBeInTheDocument();
 
     // Check for Grid items with correct props
-    const items = document.querySelectorAll('.MuiGrid-item');
+    const items = document.querySelectorAll(
+      '.MuiGrid-root:not(.MuiGrid-container)',
+    );
     expect(items.length).toBe(4);
 
     items.forEach((item) => {
-      // Check for xs={6} and md={3} classes
+      // Check for size={{ xs: 6, md: 3 }} classes
       expect(item.className).toContain('MuiGrid-grid-xs-6');
       expect(item.className).toContain('MuiGrid-grid-md-3');
     });

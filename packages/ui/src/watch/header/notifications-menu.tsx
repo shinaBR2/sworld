@@ -63,12 +63,16 @@ const NotificationsMenu = ({
         ))
       ) : (
         <MenuItem disabled>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             No notifications
           </Typography>
         </MenuItem>
       )}
-
       {(notifications.data?.length ?? 0) > 0 && (
         <>
           <Divider />

@@ -114,11 +114,14 @@ const TransactionsDialog = ({
           </IconButton>
         </DialogTitle>
       )}
-
       <DialogContent dividers sx={{ p: 0 }}>
         {filteredTransactions.length === 0 ? (
           <Box sx={{ py: 4, textAlign: 'center' }}>
-            <Typography color="text.secondary">
+            <Typography
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               No expenses found for this category
             </Typography>
           </Box>
@@ -146,7 +149,12 @@ const TransactionsDialog = ({
                     <Typography variant="subtitle1">
                       {transaction.name}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                      }}
+                    >
                       {new Date(transaction.createdAt).toLocaleDateString()}
                     </Typography>
                   </Box>
@@ -167,7 +175,12 @@ const TransactionsDialog = ({
                         ),
                       }}
                     >
-                      <Typography variant="body2" fontSize="0.75rem">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: '0.75rem',
+                        }}
+                      >
                         {
                           getCategoryLabel(
                             transaction.category as CategoryType,
@@ -175,7 +188,12 @@ const TransactionsDialog = ({
                         }
                       </Typography>
                     </Box>
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {formatNumber(transaction.amount)}
                     </Typography>
                   </Box>
@@ -192,7 +210,12 @@ const TransactionsDialog = ({
                       borderRadius: 1,
                     }}
                   >
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'text.secondary',
+                      }}
+                    >
                       {transaction.note}
                     </Typography>
                   </Box>

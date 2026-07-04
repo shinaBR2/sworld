@@ -1,4 +1,4 @@
-import { Link } from '@mui/material';
+import { Link, MenuList } from '@mui/material';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -24,10 +24,19 @@ describe('NotificationItem', () => {
     LinkComponent: Link,
   };
 
+  // MenuItems must live inside a Menu/MenuList since MUI v9 — mirror the
+  // production wrapping from notifications-menu.
+  const renderItem = (props: typeof defaultProps) =>
+    render(
+      <MenuList>
+        <NotificationItem {...props} />
+      </MenuList>,
+    );
+
   // Update test case for click handler
   it('calls onClick when clicked', async () => {
     const user = userEvent.setup();
-    render(<NotificationItem {...defaultProps} />);
+    renderItem(defaultProps);
 
     await user.click(screen.getByRole('menuitem'));
     expect(defaultProps.onClick).toHaveBeenCalledTimes(1); // Changed from onClose to onClick
@@ -36,7 +45,7 @@ describe('NotificationItem', () => {
   // Remove onClose references from read/unread tests
   describe('read/unread states', () => {
     it('shows unread state for notification without readAt', () => {
-      render(<NotificationItem {...defaultProps} />);
+      renderItem(defaultProps);
       const title = screen.getByText((content) =>
         content.includes(
           NOTIFICATION_TEXTS[NOTIFICATION_TYPES.VIDEO_READY].title,
@@ -54,7 +63,7 @@ describe('NotificationItem', () => {
         },
       };
 
-      render(<NotificationItem {...readProps} />);
+      renderItem(readProps);
 
       const title = screen.getByText((content) =>
         content.includes(
@@ -67,7 +76,7 @@ describe('NotificationItem', () => {
 
   describe('notification icons', () => {
     it('shows correct icon for video ready notification', () => {
-      const { container } = render(<NotificationItem {...defaultProps} />);
+      const { container } = renderItem(defaultProps);
       expect(container.textContent).toContain('🎥');
     });
 
@@ -80,7 +89,7 @@ describe('NotificationItem', () => {
         },
       };
 
-      const { container } = render(<NotificationItem {...unknownTypeProps} />);
+      const { container } = renderItem(unknownTypeProps);
       expect(container.textContent).toContain('📢');
     });
   });

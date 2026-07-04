@@ -171,11 +171,17 @@ const Content = () => {
       <Container maxWidth="xl">
         <Grid
           container
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 4 }}
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 4,
+          }}
         >
-          <Typography variant="h4" component="h1" fontWeight="bold" py={2}>
+          <Typography
+            variant="h4"
+            component="h1"
+            sx={{ fontWeight: 'bold', py: 2 }}
+          >
             Finance Dashboard
           </Typography>
 
@@ -193,10 +199,10 @@ const Content = () => {
       <Container maxWidth="xl" component="main" sx={{ mb: 12 }}>
         <Grid container spacing={3}>
           {/* Summary Cards */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Grid container spacing={2}>
               {categories?.map((data) => (
-                <Grid item xs={6} md={3} key={data.category}>
+                <Grid size={{ xs: 6, md: 3 }} key={data.category}>
                   <SummaryCard
                     isLoading={isLoading}
                     category={data.category}
@@ -211,7 +217,7 @@ const Content = () => {
           </Grid>
 
           {/* Charts Section */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <SpendingBreakdown
               isLoading={isLoading}
               categoryData={data?.categories}
@@ -220,7 +226,7 @@ const Content = () => {
             />
           </Grid>
 
-          {/* <Grid item xs={12} md={6}>
+          {/* <Grid size={{ xs: 12, md: 6 }}>
             <MonthComparison data={monthlyData} currentMonthIndex={currentMonthIndex} />
           </Grid> */}
         </Grid>

@@ -21,7 +21,9 @@ const PostEditFooter = (props: PostEditFooterProps) => {
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
-        justifyContent="flex-end"
+        sx={{
+          justifyContent: 'flex-end',
+        }}
       >
         <Button variant="outlined" onClick={onCancel} disabled={isSaving}>
           Cancel

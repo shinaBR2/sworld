@@ -22,9 +22,11 @@ export const PostCard = (props: PostCardProps) => {
         <CardContent>
           <Stack
             direction="row"
-            alignItems="flex-start"
-            justifyContent="space-between"
             spacing={1}
+            sx={{
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+            }}
           >
             <Typography variant="h6" gutterBottom>
               {title}
@@ -40,12 +42,23 @@ export const PostCard = (props: PostCardProps) => {
           <StyledDescription variant="body2" color="text.secondary">
             {brief}
           </StyledDescription>
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              alignItems: 'center',
+            }}
+          >
             <ReadTimeBadge variant="caption">
               {readTimeInMinutes} min read
             </ReadTimeBadge>
             {createdAt && (
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {formatDateTime(createdAt)}
               </Typography>
             )}

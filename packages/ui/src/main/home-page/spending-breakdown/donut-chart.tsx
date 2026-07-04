@@ -176,7 +176,6 @@ const DonutChart = ({
         opts={{ renderer: 'canvas' }}
         onEvents={handleChartEvents}
       />
-
       {/* Center text */}
       <Box
         sx={{
@@ -188,7 +187,12 @@ const DonutChart = ({
           pointerEvents: 'none', // So clicks pass through to the chart
         }}
       >
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Total
         </Typography>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>

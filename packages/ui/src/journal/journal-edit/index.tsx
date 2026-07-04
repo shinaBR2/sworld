@@ -4,7 +4,6 @@ import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDiss
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -138,11 +137,11 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
               color: 'error.main',
               '&.Mui-selected': {
                 backgroundColor: (theme) =>
-                  alpha(theme.palette.error.main, 0.16),
+                  theme.alpha(theme.palette.error.main, 0.16),
                 color: 'error.main',
                 '&:hover': {
                   backgroundColor: (theme) =>
-                    alpha(theme.palette.error.main, 0.24),
+                    theme.alpha(theme.palette.error.main, 0.24),
                 },
               },
             }}
@@ -156,11 +155,11 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
               color: 'info.main',
               '&.Mui-selected': {
                 backgroundColor: (theme) =>
-                  alpha(theme.palette.info.main, 0.16),
+                  theme.alpha(theme.palette.info.main, 0.16),
                 color: 'info.main',
                 '&:hover': {
                   backgroundColor: (theme) =>
-                    alpha(theme.palette.info.main, 0.24),
+                    theme.alpha(theme.palette.info.main, 0.24),
                 },
               },
             }}
@@ -174,11 +173,11 @@ export const JournalEdit: React.FC<JournalEditProps> = ({
               color: 'success.main',
               '&.Mui-selected': {
                 backgroundColor: (theme) =>
-                  alpha(theme.palette.success.main, 0.16),
+                  theme.alpha(theme.palette.success.main, 0.16),
                 color: 'success.main',
                 '&:hover': {
                   backgroundColor: (theme) =>
-                    alpha(theme.palette.success.main, 0.24),
+                    theme.alpha(theme.palette.success.main, 0.24),
                 },
               },
             }}

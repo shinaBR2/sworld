@@ -29,7 +29,13 @@ const PlayingList = (
   return (
     <StyledPlayingList ref={ref}>
       <Divider />
-      <Box height="100%" pb={2} mb={2}>
+      <Box
+        sx={{
+          height: '100%',
+          pb: 2,
+          mb: 2,
+        }}
+      >
         <List aria-label="audio tracks" role="listbox">
           {audioList.map((a) => {
             const selected = a.id === currentId;
