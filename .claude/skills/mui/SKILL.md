@@ -65,7 +65,7 @@ Use relative units that scale with user preferences:
 <Paper sx={{ bgcolor: '#193c4d' }} />
 
 // Good
-<Paper sx={{ bgcolor: 'background.main' }} />
+<Paper sx={{ bgcolor: 'background.paper' }} />
 ```
 
 ## 7. Container/Presentational pattern

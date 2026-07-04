@@ -46,7 +46,7 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 11. Self-review all work — this is a mandatory gate, not eyeballing the diff, and it is a **loop, not a single pass**. It gates **PR creation, NOT pushing** — commits are pushed freely and immediately (see step 14). When the work is done, BEFORE creating the PR:
     1. Run the `code-review` skill (`/code-review`) at **high** effort on the working diff (`git diff origin/main`) — the mechanical finder: verified correctness/quality findings.
     2. Run the `reviewing-pull-requests` skill in self-review mode on the same diff — the judgment pass: sworld conventions, AI failure modes, reviewability, risk-scaled depth.
-    3. Fix EVERYTHING actionable from both (dedupe overlapping findings — one fix), re-run lint/type-check, commit, push, and **go back to (a)**. Fixes are new code — they have NOT been reviewed and can introduce new defects. Never trust a fixing pass without re-reviewing it.
+    3. Fix EVERYTHING actionable from both (dedupe overlapping findings — one fix), re-run lint/type-check, commit, push, and **restart this loop from sub-step 1**. Fixes are new code — they have NOT been reviewed and can introduce new defects. Never trust a fixing pass without re-reviewing it.
     4. Exit only when a full pass is clean on BOTH: **zero confirmed findings** from `/code-review` AND **verdict "Merge" with zero concerns** from `reviewing-pull-requests`. Never create a PR on hope.
 
     The local diff and the PR diff are the same thing — this loop does bugbot/CodeRabbit's job *before* the PR exists. **The bar: bugbot/CodeRabbit should find nothing.** A substantive bot finding on the PR means this gate failed. The goal: every PR that goes up is already a good PR.
