@@ -13,11 +13,9 @@ const lastErrorSchema = z.object({
   at: z.string(),
 });
 
-const videoFailureMetadataSchema = z
-  .object({
-    lastError: lastErrorSchema.optional(),
-  })
-  .passthrough();
+const videoFailureMetadataSchema = z.looseObject({
+  lastError: lastErrorSchema.optional(),
+});
 
 /**
  * The `videos` row delivered by the `status -> failed` event trigger (B2a).
@@ -25,7 +23,7 @@ const videoFailureMetadataSchema = z
  * the handler filters on it.
  */
 const videoFailureDataSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   title: z.string(),
   status: z.string(),
   metadata: videoFailureMetadataSchema.nullable().optional(),
@@ -41,12 +39,10 @@ const notifyFailureSchema = z
     body: z.object({
       event: eventSchema,
     }),
-    headers: z
-      .object({
-        'content-type': z.string(),
-        'x-webhook-signature': z.string(),
-      })
-      .passthrough(),
+    headers: z.looseObject({
+      'content-type': z.string(),
+      'x-webhook-signature': z.string(),
+    }),
   })
   .transform((req) => ({
     event: req.body.event,

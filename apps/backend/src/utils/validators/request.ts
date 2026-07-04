@@ -1,5 +1,5 @@
 import type { Context, Next } from 'hono';
-import type { ZodError, ZodSchema, z } from 'zod';
+import type { ZodError, z } from 'zod';
 import { getClientIP } from '../ip';
 import { getCurrentLogger } from '../logger';
 import type { ServiceResponse } from '../schema';
@@ -23,7 +23,7 @@ interface ValidationResult<T> {
 
 // Pure validation logic (framework-independent)
 const validateData = <T>(
-  schema: ZodSchema<T, any, any>,
+  schema: z.ZodType<T>,
   context: ValidationContext,
 ): ValidationResult<T> => {
   try {
@@ -41,28 +41,43 @@ const validateData = <T>(
   }
 };
 
+// zod 4 dropped the `received` field from invalid_type issues and rephrased
+// the default message ("Invalid input: expected string, received number").
+// Recover expected/received from that message so the user-facing text keeps
+// the zod 3 era wording ("x is required", "x: Expected string, received
+// number") instead of leaking the raw zod 4 phrasing.
+const INVALID_TYPE_MESSAGE = /^Invalid input: expected (.+), received (.+)$/;
+
 const formatZodError = (error: ZodError): string => {
-  return error.errors
-    .map((err) => {
-      const path = err.path
+  return error.issues
+    .map((issue) => {
+      const path = issue.path
         .map((p) => {
           if (p === 'headers') return 'Header';
-          if (typeof p === 'string') return p;
-          return `[${p}]`;
+          if (typeof p === 'number') return `[${p}]`;
+          return String(p);
         })
         .join(' ');
 
-      if (err.message === 'Required') {
-        return `${path} is required`;
+      const invalidType =
+        issue.code === 'invalid_type'
+          ? issue.message.match(INVALID_TYPE_MESSAGE)
+          : null;
+      if (invalidType) {
+        const [, expected, received] = invalidType;
+        if (received === 'undefined') {
+          return `${path} is required`;
+        }
+        return `${path}: Expected ${expected}, received ${received}`;
       }
 
-      return path ? `${path}: ${err.message}` : err.message;
+      return path ? `${path}: ${issue.message}` : issue.message;
     })
     .join(', ');
 };
 
 // Hono wrapper
-const honoValidateRequest = <T>(schema: ZodSchema<T, any, any>) => {
+const honoValidateRequest = <T>(schema: z.ZodType<T>) => {
   return async (c: Context, next: Next) => {
     try {
       const logger = getCurrentLogger();

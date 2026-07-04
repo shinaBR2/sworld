@@ -16,7 +16,7 @@ const importHandlerSchema = z.object({
       traceId: hasuraEventMetadataSchema.shape.trace_id,
     }),
   }),
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
 });
 
 export type ImportHandlerRequest = z.infer<typeof importHandlerSchema>;

@@ -43,7 +43,7 @@ describe('Subtitle Schema', () => {
       // Test invalid UUID
       expect(() =>
         subtitleDataSchema.parse({ ...validSubtitleData, id: 'invalid-uuid' }),
-      ).toThrow('Invalid uuid');
+      ).toThrow('Invalid GUID');
 
       // Test valid UUID
       expect(() =>
@@ -61,7 +61,7 @@ describe('Subtitle Schema', () => {
           ...validSubtitleData,
           videoId: 'invalid-uuid',
         }),
-      ).toThrow('Invalid uuid');
+      ).toThrow('Invalid GUID');
 
       // Test valid UUID
       expect(() =>
@@ -79,7 +79,7 @@ describe('Subtitle Schema', () => {
           ...validSubtitleData,
           userId: 'invalid-uuid',
         }),
-      ).toThrow('Invalid uuid');
+      ).toThrow('Invalid GUID');
 
       // Test valid UUID
       expect(() =>

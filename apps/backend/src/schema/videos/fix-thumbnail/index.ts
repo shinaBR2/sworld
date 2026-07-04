@@ -6,7 +6,7 @@ const fixThumbnailHandlerSchema = z.object({
   body: z.object({
     id: videoDataSchema.shape.id,
   }),
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
 });
 
 export type FixThumbnailHandlerRequest = z.infer<

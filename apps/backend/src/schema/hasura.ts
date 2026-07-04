@@ -5,7 +5,7 @@ const hasuraHeadersSchema = z.object({
   'x-webhook-signature': z.string(),
 });
 const schema = {
-  headers: hasuraHeadersSchema.passthrough(),
+  headers: z.looseObject(hasuraHeadersSchema.shape),
 };
 const transformHeaders = (req: any) => ({
   contentTypeHeader: req.headers['content-type'] as string,

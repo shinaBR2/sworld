@@ -5,14 +5,14 @@ import { hasuraEventMetadataSchema } from '../../hasura';
  * Schema for subtitle data
  */
 const subtitleDataSchema = z.object({
-  id: z.string().uuid(),
-  videoId: z.string().uuid(),
-  userId: z.string().uuid(),
+  id: z.guid(),
+  videoId: z.guid(),
+  userId: z.guid(),
   lang: z.string(),
-  url: z.string().url(),
+  url: z.url(),
   isDefault: z.boolean(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 /**
@@ -31,12 +31,10 @@ const subtitleCreatedSchema = z
     body: z.object({
       event: eventSchema,
     }),
-    headers: z
-      .object({
-        'content-type': z.string(),
-        'x-webhook-signature': z.string(),
-      })
-      .passthrough(),
+    headers: z.looseObject({
+      'content-type': z.string(),
+      'x-webhook-signature': z.string(),
+    }),
   })
   .transform((req) => ({
     event: req.body.event,

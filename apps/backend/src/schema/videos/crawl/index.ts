@@ -8,9 +8,9 @@ import { taskHandlerHeaderSchema } from 'src/utils/cloud-task/schema';
 import { z } from 'zod';
 
 const CrawlRequestSchema = z.object({
-  id: z.string().uuid(),
-  user_id: z.string().uuid(),
-  url: z.string().url(),
+  id: z.guid(),
+  user_id: z.guid(),
+  url: z.url(),
   get_single_video: z.boolean(),
   title: z.string().min(1),
   slug_prefix: z.string().optional(),
@@ -50,14 +50,14 @@ const crawlSchema = z
   }));
 
 const crawlHandlerSchema = z.object({
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
   body: z.object({
     data: z.object({
       getSingleVideo: z.boolean(),
-      url: z.string().url(),
+      url: z.url(),
       title: z.string().min(1),
       slugPrefix: z.string().optional().default(''),
-      userId: z.string().uuid(),
+      userId: z.guid(),
     }),
     metadata: z.object({
       id: hasuraEventMetadataSchema.shape.id,

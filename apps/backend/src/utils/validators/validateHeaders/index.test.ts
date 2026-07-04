@@ -118,7 +118,7 @@ describe('validateHeaders', () => {
   it('should work with complex zod schema', async () => {
     const headerSchema = z.object({
       'x-api-version': z.enum(['v1', 'v2']),
-      'x-user-id': z.string().uuid(),
+      'x-user-id': z.guid(),
       authorization: z.string().startsWith('Bearer '),
     });
 

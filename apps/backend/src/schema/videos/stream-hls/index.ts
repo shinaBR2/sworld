@@ -10,7 +10,7 @@ const streamHandlerSchema = z.object({
       userId: videoDataSchema.shape.user_id,
       videoUrl: videoDataSchema.shape.video_url,
       keepOriginalSource: videoDataSchema.shape.keep_original_source,
-      customRequestHeaders: z.record(z.string()).optional(),
+      customRequestHeaders: z.record(z.string(), z.string()).optional(),
     }),
     metadata: z.object({
       id: hasuraEventMetadataSchema.shape.id,
@@ -18,7 +18,7 @@ const streamHandlerSchema = z.object({
       traceId: hasuraEventMetadataSchema.shape.trace_id,
     }),
   }),
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
 });
 
 export type StreamHandlerRequest = z.infer<typeof streamHandlerSchema>;

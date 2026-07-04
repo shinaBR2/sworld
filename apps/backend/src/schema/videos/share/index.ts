@@ -16,9 +16,9 @@ import { videoDataSchema } from '../convert';
  * These schemas from hasura, for gateway
  */
 const playlistSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   shared_recipients_input: z
-    .array(z.string().email())
+    .array(z.email())
     .min(1, 'At least one recipient is required'),
 });
 
@@ -31,12 +31,10 @@ const originalShareSchema = z.object({
   body: z.object({
     event: eventSchema,
   }),
-  headers: z
-    .object({
-      'content-type': z.string(),
-      'x-webhook-signature': z.string(),
-    })
-    .passthrough(),
+  headers: z.looseObject({
+    'content-type': z.string(),
+    'x-webhook-signature': z.string(),
+  }),
 });
 
 const transformEvent = (event: z.infer<typeof eventSchema>) => {

@@ -12,12 +12,10 @@ const deviceRequestCreateSchema = z
         }),
       }),
     }),
-    headers: z
-      .object({
-        'content-type': z.string(),
-        'x-hasura-action': z.string(),
-      })
-      .passthrough(),
+    headers: z.looseObject({
+      'content-type': z.string(),
+      'x-hasura-action': z.string(),
+    }),
     // Add ip and userAgent to the schema
     ip: z.string(),
     userAgent: z.string().optional(),

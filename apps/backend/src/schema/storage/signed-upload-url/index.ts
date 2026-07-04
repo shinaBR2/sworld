@@ -22,13 +22,11 @@ const signedUploadUrlSchema = z
         input: z.object({
           site: z.enum(UPLOAD_SITES),
           action: z.enum(UPLOAD_ACTIONS),
-          id: z.string().uuid().optional(),
+          id: z.guid().optional(),
           contentType: z.string().min(1),
         }),
       }),
-      session_variables: z
-        .object({ 'x-hasura-user-id': z.string().uuid() })
-        .passthrough(),
+      session_variables: z.looseObject({ 'x-hasura-user-id': z.guid() }),
     }),
   })
   .transform((req) => ({

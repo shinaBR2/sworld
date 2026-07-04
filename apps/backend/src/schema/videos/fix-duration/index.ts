@@ -6,7 +6,7 @@ const fixDurationHandlerSchema = z.object({
   body: z.object({
     id: videoDataSchema.shape.id,
   }),
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
 });
 
 export type FixDurationHandlerRequest = z.infer<

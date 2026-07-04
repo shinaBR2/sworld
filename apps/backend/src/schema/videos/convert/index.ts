@@ -10,18 +10,16 @@ import { videoUrlSchema } from '../common';
 
 /**
  * `videos.metadata` jsonb (F1). Input side: `customRequestHeaders` are forwarded
- * to outbound fetches (A2/A3/A4). `.passthrough()` keeps other keys (e.g. the
+ * to outbound fetches (A2/A3/A4). `z.looseObject()` keeps other keys (e.g. the
  * `lastError` output written by B1) without this schema needing to model them.
  */
-const videoMetadataSchema = z
-  .object({
-    customRequestHeaders: z.record(z.string()).optional(),
-  })
-  .passthrough();
+const videoMetadataSchema = z.looseObject({
+  customRequestHeaders: z.record(z.string(), z.string()).optional(),
+});
 
 const videoDataSchema = z.object({
-  id: z.string().uuid(),
-  user_id: z.string().uuid(),
+  id: z.guid(),
+  user_id: z.guid(),
   video_url: videoUrlSchema,
   skip_process: z.boolean(),
   keep_original_source: z.boolean(),
@@ -70,7 +68,7 @@ const convertHandlerSchema = z.object({
       id: videoDataSchema.shape.id,
       userId: videoDataSchema.shape.user_id,
       videoUrl: videoDataSchema.shape.video_url,
-      customRequestHeaders: z.record(z.string()).optional(),
+      customRequestHeaders: z.record(z.string(), z.string()).optional(),
     }),
     metadata: z.object({
       id: hasuraEventMetadataSchema.shape.id, // Can we reuse somehow?
@@ -78,7 +76,7 @@ const convertHandlerSchema = z.object({
       traceId: hasuraEventMetadataSchema.shape.trace_id,
     }),
   }),
-  headers: taskHandlerHeaderSchema.passthrough(),
+  headers: z.looseObject(taskHandlerHeaderSchema.shape),
 });
 
 export {

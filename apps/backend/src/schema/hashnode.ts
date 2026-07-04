@@ -6,7 +6,7 @@ const hashnodeHeadersSchema = z.object({
 });
 
 const metadataSchema = z.object({
-  uuid: z.string().uuid(),
+  uuid: z.guid(),
 });
 
 const publicationSchema = z.object({

@@ -9,13 +9,11 @@ const setThumbnailAtTimeSchema = z
       action: z.object({ name: z.string() }),
       input: z.object({
         input: z.object({
-          videoId: z.string().uuid(),
+          videoId: z.guid(),
           atSeconds: z.number().min(0),
         }),
       }),
-      session_variables: z
-        .object({ 'x-hasura-user-id': z.string().uuid() })
-        .passthrough(),
+      session_variables: z.looseObject({ 'x-hasura-user-id': z.guid() }),
     }),
   })
   .transform((req) => ({

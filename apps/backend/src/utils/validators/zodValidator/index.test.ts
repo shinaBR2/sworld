@@ -64,4 +64,19 @@ describe('zodValidator', () => {
       dataObject: null,
     });
   });
+
+  it('should pass through the zod message for non-type issues', async () => {
+    const app = new Hono();
+    app.post('/items', zodValidator('json', z.object({ id: z.guid() })), (c) =>
+      c.json({ success: true }),
+    );
+
+    const res = await postJson(app, { id: 'not-a-guid' });
+
+    expect(await res.json()).toEqual({
+      success: false,
+      message: 'id: Invalid GUID',
+      dataObject: null,
+    });
+  });
 });
