@@ -14,6 +14,11 @@ name: Deploy Live Main Frontend
       - 'apps/main/**'
       - 'packages/core/**'
       - 'packages/ui/**'
+      # The lockfile and workspace config change what gets bundled (dependency
+      # versions, packageExtensions) — a fix landing only there (like the
+      # duplicate-React removal in #392) must still deploy.
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/live-main-fe.yml'
 jobs:
   dev_deploy:
