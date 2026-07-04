@@ -9,6 +9,7 @@ import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
@@ -139,59 +140,61 @@ export const JournalList: React.FC<JournalListProps> = ({
   };
 
   const renderJournalCard = (journal: Journal) => (
-    <Card
-      key={journal.id}
-      sx={{
-        mb: 2,
-        cursor: 'pointer',
-      }}
-      onClick={() => onJournalClick(journal)}
-    >
-      <CardContent>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-          }}
-        >
-          <Box>
-            <Typography variant="body1" fontWeight="medium">
-              {formatDate(journal.date)}
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-              {journal.tags.map((tag: string) => (
-                <Chip
-                  key={tag}
-                  label={tag}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    fontSize: '0.7rem',
-                    bgcolor: 'action.hover',
-                  }}
-                />
-              ))}
+    <Card key={journal.id} sx={{ mb: 2 }}>
+      {/* CardActionArea (not an onClick div) so the entry is keyboard- and
+          screen-reader-operable; the formatted date is its accessible name. */}
+      <CardActionArea
+        aria-label={formatDate(journal.date)}
+        onClick={() => onJournalClick(journal)}
+      >
+        <CardContent>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Box>
+              <Typography variant="body1" fontWeight="medium">
+                {formatDate(journal.date)}
+              </Typography>
+              <Box
+                sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}
+              >
+                {journal.tags.map((tag: string) => (
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    size="small"
+                    sx={{
+                      height: 20,
+                      fontSize: '0.7rem',
+                      bgcolor: 'action.hover',
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
+            <MoodIcon mood={journal.mood as MoodType} size={20} />
           </Box>
-          <MoodIcon mood={journal.mood as MoodType} size={20} />
-        </Box>
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mt: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {journal.content}
-        </Typography>
-      </CardContent>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mt: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {journal.content}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
     </Card>
   );
 
