@@ -9,7 +9,6 @@ import { useQueryContext } from 'core/providers/query';
 import { lazy, Suspense, useState } from 'react';
 import { JournalDetail } from 'ui/journal/journal-detail';
 import { AuthRoute } from 'ui/universal/authRoute';
-import { Container } from 'ui/universal/containers/generic';
 import { Layout } from '../components/layout';
 
 const EditDialog = lazy(() =>
@@ -76,35 +75,35 @@ const JournalDayPage = () => {
 
   return (
     <Layout>
-      <Container maxWidth="sm" sx={{ pb: 8, position: 'relative' }}>
-        <JournalDetail
-          journal={journal}
-          isLoading={isLoading}
-          onBackClick={goBack}
-          onEditClick={() => setDialogOpen(true)}
-          onDeleteClick={handleDelete}
+      {/* No wrapping Container: JournalDetail owns its layout (full-width sticky
+          header + `sm`-constrained content). The dialogs portal to the body. */}
+      <JournalDetail
+        journal={journal}
+        isLoading={isLoading}
+        onBackClick={goBack}
+        onEditClick={() => setDialogOpen(true)}
+        onDeleteClick={handleDelete}
+      />
+
+      <Suspense fallback={null}>
+        <EditDialog
+          journalDetail={journal}
+          isLoadingDetail={isLoading}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          isSaving={updateMutation.isPending}
+          onSave={handleSave}
         />
+      </Suspense>
 
-        <Suspense fallback={null}>
-          <EditDialog
-            journalDetail={journal}
-            isLoadingDetail={isLoading}
-            open={dialogOpen}
-            onClose={() => setDialogOpen(false)}
-            isSaving={updateMutation.isPending}
-            onSave={handleSave}
+      <Suspense fallback={null}>
+        {notification && (
+          <Notification
+            notification={notification}
+            onClose={() => setNotification(null)}
           />
-        </Suspense>
-
-        <Suspense fallback={null}>
-          {notification && (
-            <Notification
-              notification={notification}
-              onClose={() => setNotification(null)}
-            />
-          )}
-        </Suspense>
-      </Container>
+        )}
+      </Suspense>
     </Layout>
   );
 };
