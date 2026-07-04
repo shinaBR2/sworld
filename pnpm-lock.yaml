@@ -10,6 +10,8 @@ overrides:
   preact@>=10.26.5 <10.26.10: 10.26.10
   '@testing-library/dom': 10.4.0
 
+packageExtensionsChecksum: sha256-Z4VzRPmKENuiiMGZ9FrMLoVVMQAi0jexcBOQ/Zpa4pM=
+
 importers:
 
   .:
@@ -284,7 +286,7 @@ importers:
         version: link:../../packages/core
       posthog-js:
         specifier: ^1.395.0
-        version: 1.395.0
+        version: 1.395.0(react@19.2.7)
       react:
         specifier: ^19.2.0
         version: 19.2.7
@@ -10029,6 +10031,11 @@ packages:
 
   posthog-js@1.395.0:
     resolution: {integrity: sha512-5iTb00CGt2eQUUiBQysQiX89RAbCN6wK2sDNzvs9zv0alaY8mJ0ZySrUD3LQ+XyLhgM5pCpacBuUwChqiYDLDw==}
+    peerDependencies:
+      react: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   preact@10.29.3:
     resolution: {integrity: sha512-D9NL1GAnJZhc3RndVs4gDdxEeU9TcHgywMrhhOsnpdlvFjdbx0gAsLUnH6JEhlJH5giL7Tx5biWPUSEXE/HPzw==}
@@ -24325,7 +24332,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.395.0:
+  posthog-js@1.395.0(react@19.2.7):
     dependencies:
       '@posthog/core': 1.38.0
       '@posthog/types': 1.391.1
@@ -24335,6 +24342,8 @@ snapshots:
       preact: 10.29.3
       query-selector-shadow-dom: 1.0.1
       web-vitals: 5.3.0
+    optionalDependencies:
+      react: 19.2.7
 
   preact@10.29.3: {}
 

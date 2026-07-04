@@ -19,3 +19,16 @@ minimumReleaseAgeExclude:
 # Dependency lifecycle scripts are blocked (pnpm 10 default); nothing in the
 # workspace needs one — build/test verified green with all scripts ignored.
 onlyBuiltDependencies: []
+
+# posthog-js's react entry does a bare `import 'react'` without declaring it,
+# so resolution falls to whatever react pnpm happens to hoist — the cause of
+# the prod duplicate-React crash (#392) and, once react 18 was removed, of
+# builds failing to resolve react at all. Declare the peer so pnpm links the
+# importing app's own react next to posthog-js deterministically.
+packageExtensions:
+  posthog-js:
+    peerDependencies:
+      react: "*"
+    peerDependenciesMeta:
+      react:
+        optional: true
