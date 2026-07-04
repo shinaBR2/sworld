@@ -23,22 +23,19 @@
     "clsx": "^1.2.1",
     "core": "workspace:*",
     "prism-react-renderer": "^2.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "ui": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/node": "^18.11.9",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.8",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "babel-loader": "^8.3.0",
-    "tsconfig": "workspace:*",
-    "vite": "^6.4.3"
+    "tsconfig": "workspace:*"
   },
   "browserslist": {
     "production": [

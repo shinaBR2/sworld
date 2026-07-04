@@ -54,7 +54,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 - **Testing:** Vitest, Playwright, Jest, Storybook
 - **Build:** Turborepo, pnpm, tsup
 - **Gaming:** Phaser.js, Matter.js physics
-- **Package Manager:** pnpm (>=10.34.3) · **Node:** >=22.14.0
+- **Package Manager:** pnpm (>=10.34.3) · **Node:** >=24
 
 ## Where knowledge lives
 
