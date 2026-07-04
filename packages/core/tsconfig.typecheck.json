@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["."],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
+}
