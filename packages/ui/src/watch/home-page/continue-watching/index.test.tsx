@@ -56,7 +56,7 @@ describe('ContinueWatchingSection', () => {
     expect(screen.getByText('Show all')).toBeInTheDocument();
     expect(MockLink).toHaveBeenCalledWith(
       expect.objectContaining({ to: '/history' }),
-      expect.anything(),
+      undefined,
     );
   });
 

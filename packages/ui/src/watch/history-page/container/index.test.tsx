@@ -83,7 +83,7 @@ describe('HistoryContainer', () => {
           },
         },
       },
-      expect.anything(),
+      undefined,
     );
   });
 

@@ -70,7 +70,10 @@ describe('AuthRoute', () => {
     );
 
     expect(screen.getByTestId('mock-login-dialog')).toBeInTheDocument();
-    expect(mockLoginDialog).toHaveBeenCalledWith({ onAction: signIn }, {});
+    expect(mockLoginDialog).toHaveBeenCalledWith(
+      { onAction: signIn },
+      undefined,
+    );
   });
 
   it('does not render children when not authenticated', () => {

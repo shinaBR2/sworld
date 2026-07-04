@@ -2,7 +2,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
-import React from 'react';
+import type { JSX } from 'react';
 import styles from './index.module.css';
 
 // Tech stack items with descriptions and links

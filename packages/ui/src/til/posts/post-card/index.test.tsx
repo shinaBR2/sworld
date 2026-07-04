@@ -44,7 +44,7 @@ describe('PostCard', () => {
         children: expect.anything(),
         style: { textDecoration: 'none' },
       }),
-      expect.anything(),
+      undefined,
     );
   });
 

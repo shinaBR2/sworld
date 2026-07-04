@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import type React from 'react';
+import type { JSX } from 'react';
 import styles from './styles.module.css';
 
 type FeatureItem = {
