@@ -9,6 +9,9 @@
     "deploy": "vercel deploy dist --team=turborepo --confirm",
     "pre-dev": "cp ../../.env.development.local .env",
     "dev": "pnpm run pre-dev && vite",
+    "build:e2e": "VITE_HASURA_DOMAIN=https://hasura.e2e.local VITE_AUTH0_DOMAIN=auth.e2e.local VITE_AUTH0_CLIENT_ID=e2e-client-id VITE_MAIN_SITE_URL=e2e.local VITE_ROLLBAR_TOKEN=e2e-token VITE_ROLLBAR_ENV=test vite build",
+    "preview:e2e": "vite preview --port 4000 --strictPort",
+    "e2e": "playwright test",
     "lint": "biome lint --quit-on-problem .",
     "format": "biome format --write ."
   },
@@ -22,6 +25,7 @@
   },
   "devDependencies": {
     "@codecov/vite-plugin": "^1.9.1",
+    "@playwright/test": "^1.52.0",
     "@tanstack/router-plugin": "^1.78.2",
     "@types/node": "^18.11.9",
     "@types/react": "^18.3.12",

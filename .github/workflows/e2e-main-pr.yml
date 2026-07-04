@@ -1,0 +1,63 @@
+name: Main E2E on PR
+
+# Runs the main-app journal smoke test against a locally-built, locally-served
+# bundle (fake Auth0 session + mocked Hasura — see apps/main/e2e/support). It is
+# independent of the Firebase preview deploy on purpose, so it runs on every PR
+# that touches the main app or its shared packages.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/main/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - '.github/workflows/e2e-main-pr.yml'
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.0.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # main's build:e2e resolves `core`/`ui` from their dist, so build those first.
+      - name: Build shared packages
+        run: pnpm turbo run build --filter=core --filter=ui
+
+      - name: Install Playwright browser
+        run: pnpm --filter main exec playwright install --with-deps chromium
+
+      # The e2e script's webServer runs build:e2e (fixed test env) + preview.
+      - name: Run Playwright tests
+        run: pnpm --filter main run e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: apps/main/playwright-report/
+          retention-days: 30
