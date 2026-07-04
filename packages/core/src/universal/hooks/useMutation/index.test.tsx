@@ -216,6 +216,7 @@ describe('useMutationRequest', () => {
       mockResponse,
       mockVariables,
       undefined,
+      expect.objectContaining({ client: expect.anything() }),
     );
   });
 

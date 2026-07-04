@@ -8,111 +8,73 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
 
-import { Route as rootRoute } from './routes/__root';
+const IndexLazyRouteImport = createFileRoute('/')()
+const PlaylistsIdLazyRouteImport = createFileRoute('/playlists/$id')()
 
-// Create Virtual Routes
-
-const IndexLazyImport = createFileRoute('/')();
-const PlaylistsIdLazyImport = createFileRoute('/playlists/$id')();
-
-// Create/Update Routes
-
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
-
-const PlaylistsIdLazyRoute = PlaylistsIdLazyImport.update({
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const PlaylistsIdLazyRoute = PlaylistsIdLazyRouteImport.update({
   id: '/playlists/$id',
   path: '/playlists/$id',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/playlists.$id.lazy').then((d) => d.Route),
-);
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/playlists.$id.lazy').then((d) => d.Route))
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof IndexLazyRoute
+  '/playlists/$id': typeof PlaylistsIdLazyRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexLazyRoute
+  '/playlists/$id': typeof PlaylistsIdLazyRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexLazyRoute
+  '/playlists/$id': typeof PlaylistsIdLazyRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/playlists/$id'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/playlists/$id'
+  id: '__root__' | '/' | '/playlists/$id'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexLazyRoute: typeof IndexLazyRoute
+  PlaylistsIdLazyRoute: typeof PlaylistsIdLazyRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/playlists/$id': {
-      id: '/playlists/$id';
-      path: '/playlists/$id';
-      fullPath: '/playlists/$id';
-      preLoaderRoute: typeof PlaylistsIdLazyImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/playlists/$id'
+      path: '/playlists/$id'
+      fullPath: '/playlists/$id'
+      preLoaderRoute: typeof PlaylistsIdLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
-}
-
-// Create and export the route tree
-
-export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute;
-  '/playlists/$id': typeof PlaylistsIdLazyRoute;
-}
-
-export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute;
-  '/playlists/$id': typeof PlaylistsIdLazyRoute;
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  '/': typeof IndexLazyRoute;
-  '/playlists/$id': typeof PlaylistsIdLazyRoute;
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/playlists/$id';
-  fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/playlists/$id';
-  id: '__root__' | '/' | '/playlists/$id';
-  fileRoutesById: FileRoutesById;
-}
-
-export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute;
-  PlaylistsIdLazyRoute: typeof PlaylistsIdLazyRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   PlaylistsIdLazyRoute: PlaylistsIdLazyRoute,
-};
-
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/playlists/$id"
-      ]
-    },
-    "/": {
-      "filePath": "index.lazy.tsx"
-    },
-    "/playlists/$id": {
-      "filePath": "playlists.$id.lazy.tsx"
-    }
-  }
 }
-ROUTE_MANIFEST_END */
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()

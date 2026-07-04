@@ -1,4 +1,7 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import type {
   InsertVideosMutation,
@@ -54,10 +57,11 @@ const useBulkConvertVideos = (props: UseBulkConvertVideosProps) => {
       onError: (
         error: unknown,
         variables: BulkConvertVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Bulk convert videos failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });

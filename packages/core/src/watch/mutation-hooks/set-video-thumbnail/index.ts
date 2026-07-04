@@ -1,4 +1,7 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import type {
   SetVideoThumbnailAtTimeMutation,
@@ -41,10 +44,11 @@ const useSetVideoThumbnail = (props: UseSetVideoThumbnailProps) => {
       onError: (
         error: unknown,
         variables: SetVideoThumbnailAtTimeMutationVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Set video thumbnail failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });

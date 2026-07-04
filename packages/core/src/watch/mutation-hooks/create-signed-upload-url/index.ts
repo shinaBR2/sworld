@@ -1,4 +1,7 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { graphql } from '../../../graphql';
 import type {
   CreateSignedUploadUrlMutation,
@@ -44,10 +47,11 @@ const useCreateSignedUploadUrl = (props: UseCreateSignedUploadUrlProps) => {
       onError: (
         error: unknown,
         variables: CreateSignedUploadUrlMutationVariables,
-        context: unknown,
+        onMutateResult: unknown,
+        context: MutationFunctionContext,
       ) => {
         console.error('Create signed upload URL failed:', error);
-        onError?.(error, variables, context);
+        onError?.(error, variables, onMutateResult, context);
       },
     },
   });
