@@ -7,25 +7,25 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 Produce clear, consistent task specs in **Linear** that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the connected **Linear MCP tools** (`save_issue`, `save_project`, `save_document`) — these come from the session's Linear MCP server, not from any code in this repo. They take `state`, `project`, and `labels` **by name** (e.g. `state: "In Progress"`, `project: "Main"`) and resolve them to the workspace's IDs for you — you never pass raw UUIDs. If the matching project for an app doesn't exist yet, create it with `save_project` first. The short version of the model:
+Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the **`linear` CLI** ([schpet/linear-cli](https://github.com/schpet/linear-cli), installed via `brew install schpet/tap/linear`, authenticated with `linear auth login`) run with Bash — **never through any Linear MCP tools** (a connected Linear MCP server authenticates as the wrong account; if the CLI is missing or broken, stop and tell the user instead of falling back to MCP). The CLI takes `--state`, `--project`, and `--label` **by name** (e.g. `-s "In Progress"`, `--project "Main"`) and resolves them to the workspace's IDs for you — you never pass raw UUIDs. Pass markdown bodies with `--description-file` (issues) / `--content-file` (documents) rather than inline strings, and add `--no-interactive` when creating issues so it never prompts. If the matching project for an app doesn't exist yet, create it with `linear project create` first. For anything the CLI doesn't expose (e.g. querying parent/sub-issue relationships), use `linear auth token` + a direct Linear GraphQL API call with curl. The short version of the model:
 
-**A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`, `Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library areas). For a brand-new app surface, create the project with `save_project` first. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
+**A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`, `Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library areas). For a brand-new app surface, create the project with `linear project create` first. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
 
-- **Bug / small feature** → a single **issue** (`save_issue`) in the app's project. Bugs carry the `bug` label.
+- **Bug / small feature** → a single **issue** (`linear issue create`) in the app's project. Bugs carry the `bug` label.
 - **User story** → an **issue in `Backlog`** in the app's project, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
-- **Large feature (scoped)** → a **parent issue** in the app's project, with one **sub-issue** per sub-task (`parentId` = the parent issue). The parent issue's description + (for a heavy concept) a **Linear document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (optionally a `wave-N` label); **blocked-by** is a **blocking relation**; **estimate** is the issue **estimate** field.
+- **Large feature (scoped)** → a **parent issue** in the app's project, with one **sub-issue** per sub-task (`--parent SWO-NNN` = the parent issue). The parent issue's description + (for a heavy concept) a **Linear document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (`linear issue relation add`, optionally a `wave-N` label); **blocked-by** is a **blocking relation**; **estimate** is the issue **estimate** field (`--estimate`).
 
 The fields that an in-repo tracker would keep in frontmatter are native Linear fields:
 
-| Was frontmatter | Linear field (via `save_issue`) |
-|-----------------|---------------------------------|
-| `status:` | `state` — `Backlog` / `Todo` / `In Progress` / `In Review` / `Done` |
-| `estimate:` | `estimate` |
-| which app | `project` |
-| `parent:` (which feature) | `parentId` (the feature's parent issue) |
-| `blocked-by:` | `blockedBy` (issue identifiers) |
-| wave grouping | `blockedBy` relations (optionally a `wave-N` label) |
-| bug / user-story tagging | `labels` |
+| Was frontmatter | Linear field (via `linear issue create` / `update`) |
+|-----------------|------------------------------------------------------|
+| `status:` | `-s/--state` — `Backlog` / `Todo` / `In Progress` / `In Review` / `Done` |
+| `estimate:` | `--estimate` |
+| which app | `--project` |
+| `parent:` (which feature) | `--parent SWO-NNN` (the feature's parent issue) |
+| `blocked-by:` | `linear issue relation add SWO-child blocked-by SWO-dep` |
+| wave grouping | blocked-by relations (optionally a `wave-N` label) |
+| bug / user-story tagging | `-l/--label` (repeatable) |
 
 ## Critical rules
 
@@ -114,7 +114,7 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 
 ### Example — the library progress bug
 
-Created with `save_issue`: `team: "SWorld"`, `project: "Main"` (library is a feature area of the main app), `labels: ["bug"]`, `state: "Todo"`, `estimate: 1`, `title: "Library reading progress bar loses its label on long books"`, and this description:
+Created with `linear issue create --team SWO --project "Main" -l bug -s "Todo" --estimate 1 -t "Library reading progress bar loses its label on long books" --description-file <spec.md> --no-interactive` (library is a feature area of the main app), where the description file holds:
 
 ```markdown
 **Problem**
@@ -171,7 +171,7 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 
 ### Example
 
-`save_issue`: `team: "SWorld"`, `project: "Listen"`, `state: "Todo"`, `estimate: 4`, `title: "Add bulk import for listen playlist tracks"`, description:
+`linear issue create --team SWO --project "Listen" -s "Todo" --estimate 4 -t "Add bulk import for listen playlist tracks" --description-file <spec.md> --no-interactive`, description:
 
 ```markdown
 **Problem**
@@ -248,7 +248,7 @@ A user story captures a user need or product direction in plain language. It doe
 
 ### Example — document ingestion for the til app
 
-`save_issue`: `team: "SWorld"`, `project: "Til"`, `state: "Backlog"`, `title: "Import notes from existing documents into til"`, description:
+`linear issue create --team SWO --project "Til" -s "Backlog" -t "Import notes from existing documents into til" --description-file <spec.md> --no-interactive`, description:
 
 ```markdown
 **The user's problem**
@@ -313,7 +313,7 @@ Out of scope: file upload, AI extraction, auto-tagging, duplicate detection. The
 
 ## Shape 4 — Large feature (scoped)
 
-A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** (`save_issue`, `team: "SWorld"`, attached to the app's `project`) whose **description** carries the technical scope, with one **sub-issue per sub-task** (`parentId` = the parent issue), and **blocking relations** for the dependency graph (which also encode the waves).
+A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** (`linear issue create --team SWO --project "<app>" …`) whose **description** carries the technical scope, with one **sub-issue per sub-task** (`--parent SWO-NNN` = the parent issue), and **blocking relations** (`linear issue relation add`) for the dependency graph (which also encode the waves).
 
 ### When this shape is created
 
@@ -394,7 +394,7 @@ For features involving data models or complex logic, include sections like:
 
 ### Sub-task issue structure
 
-Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create with `save_issue`: `team: "SWorld"`, `project: "<app>"`, `parentId: "SWO-NNN"` (the parent issue), `state: "Todo"`, `estimate`, and `blockedBy: ["SWO-NNN", …]` for its dependencies.
+Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create with `linear issue create --team SWO --project "<app>" --parent SWO-NNN -s "Todo" --estimate N …`, then `linear issue relation add SWO-<new> blocked-by SWO-<dep>` for each dependency.
 
 ```markdown
 **What**
@@ -449,7 +449,7 @@ When Claude has been working with the developer and a spec is needed:
 2. **For user stories** — focus on capturing the user's problem and ideas in plain language, as an issue in `Backlog`. Do not jump to technical scoping.
 3. **For large features** — run the scoping conversation before creating anything. Confirm the breakdown with the user. If there's an existing user story, start from it.
 4. **Draft the spec** matching the shape's structure. Use the developer's existing context, do not re-investigate things already discussed.
-5. **Create in Linear** — `save_issue` for a bug / small feature / user story; for a large feature: `save_issue` for the parent (attached to the app `project`), then `save_issue` per sub-task with `parentId`, `project`, `estimate`, and `blockedBy` set. For a heavy domain concept, add a `save_document` attached to the app's project.
+5. **Create in Linear** — `linear issue create` for a bug / small feature / user story; for a large feature: `linear issue create` for the parent (attached to the app `--project`), then `linear issue create` per sub-task with `--parent`, `--project`, and `--estimate` set, plus `linear issue relation add … blocked-by …` for dependencies. For a heavy domain concept, add a `linear document create --project "<app>" -t "…" -f <doc.md>`.
 6. **Confirm to the user** what was created, with the issue identifiers and URLs.
 
 ## Validation checklist
@@ -460,7 +460,7 @@ Before creating a spec:
 - Created in the **SWorld** team and attached to the right app **project**
 - Shape matches the work (bug / small feature / user story / large feature)
 - Detail level matches the shape — not over-documented, not under-documented
-- Linear fields set: `state`, plus `estimate` / `labels` / `parentId` / `blockedBy` where relevant
+- Linear fields set: `--state`, plus `--estimate` / `--label` / `--parent` / blocked-by relations where relevant
 - For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
 - For small features: problem, proposed solution, acceptance criteria
 - For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly

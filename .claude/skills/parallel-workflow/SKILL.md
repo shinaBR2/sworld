@@ -18,10 +18,10 @@ user-invocable: false
 
 ## Before starting
 
-1. Read the current Linear issue (`get_issue`) and confirm its `state`.
+1. Read the current Linear issue (`linear issue view SWO-NNN`) and confirm its `state`. All Linear operations go through the `linear` CLI via Bash — NEVER through Linear MCP tools (they authenticate as the wrong account).
 2. Verify an issue exists for this work — a sub-issue under a feature's parent issue, or a standalone issue. If none exists, create it first (`writing-task-specs`).
-3. Check the issue's blocking relations (`blockedBy`); resolve those blockers first.
-4. Set the issue's `state` to `In Progress` (`save_issue`) before starting.
+3. Check the issue's blocking relations (`linear issue relation list SWO-NNN`); resolve those blockers first.
+4. Set the issue's `state` to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`) before starting.
 
 ## Creating a worktree
 
@@ -56,7 +56,7 @@ user-invocable: false
 - Create PR with `[WIP]` prefix (not draft).
 - Reference the Linear issue in the PR description (e.g. `SWO-123`) so the integration links them.
 - ALWAYS assign PR to the user (`--assignee "@me"`).
-- Set the issue's `state` to `In Review` (`save_issue`) after the PR is created.
+- Set the issue's `state` to `In Review` (`linear issue update SWO-NNN -s "In Review"`) after the PR is created.
 - Ensure PR is independent and mergeable without other PRs.
 - Run the CI loop after pushing.
 
@@ -69,7 +69,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 ### Step 1: Check merge status
 
 - Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → set the issue's `state` to `Done` (`save_issue`), clean up worktree + delete local branch. Loop is done.
+- If `MERGED` → set the issue's `state` to `Done` (`linear issue update SWO-NNN -s "Done"`), clean up worktree + delete local branch. Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 
@@ -110,7 +110,7 @@ After each iteration, report what you found and fixed. Lead with unresolved comm
 
 - States follow the SWorld team lifecycle: `Backlog → Todo → In Progress → In Review → Done`.
 - A **project** is an app (Til, Watch, Listen, Game, Docs, Main) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
-- Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`save_issue`).
+- Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`).
 - Each sub-task **sub-issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
 - Last sub-issue of a parent done → set the **parent issue** to `Done`.
 
