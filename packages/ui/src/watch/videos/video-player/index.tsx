@@ -26,7 +26,14 @@ const RESUME_END_THRESHOLD_SECONDS = 10;
 
 // Lazy load the VideoJS component that contains video.js
 // const VideoJS = lazy(() => import('./videojs'));
-const ReactPlayer = lazy(() => import('react-player'));
+// react-player is CJS; rolldown-vite's prebundle exposes its exports object as
+// the ESM default instead of unwrapping `.default`, so unwrap both shapes here.
+const ReactPlayer = lazy(async () => {
+  const mod = await import('react-player');
+  const unwrapped = (mod.default as unknown as { default?: typeof mod.default })
+    .default;
+  return { default: unwrapped ?? mod.default };
+});
 
 interface VideoPlayerProps {
   video: PlayableVideo;
