@@ -4,8 +4,10 @@ import type { PlayableVideo } from '../types';
 import { VideoPlayer } from '../video-player';
 import { VideoContainer } from './index';
 
+// No JSX inside the factory: Vitest 4 hoists vi.mock above the jsx-runtime
+// import, so JSX here would reference an uninitialized module binding.
 vi.mock('../video-player', () => ({
-  VideoPlayer: vi.fn().mockReturnValue(<div data-testid="video-player" />),
+  VideoPlayer: vi.fn(() => null),
 }));
 
 describe('VideoContainer', () => {

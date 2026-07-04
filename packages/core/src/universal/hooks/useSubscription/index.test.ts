@@ -53,19 +53,16 @@ class MockWebSocket {
 
 let mockWsInstance: MockWebSocket;
 
-const MockWebSocketSpy = vi
-  .fn()
-  .mockImplementation((url: string, protocol: string) => {
-    mockWsInstance = new MockWebSocket(url, protocol);
-    return mockWsInstance;
-  });
-
-Object.assign(MockWebSocketSpy, {
-  CONNECTING: MockWebSocket.CONNECTING,
-  OPEN: MockWebSocket.OPEN,
-  CLOSING: MockWebSocket.CLOSING,
-  CLOSED: MockWebSocket.CLOSED,
-});
+// Vitest 4 requires constructor mocks to be class/function based.
+// Static readyState constants are inherited from MockWebSocket.
+const MockWebSocketSpy = vi.fn(
+  class extends MockWebSocket {
+    constructor(url: string, protocol: string) {
+      super(url, protocol);
+      mockWsInstance = this;
+    }
+  },
+);
 
 vi.stubGlobal('WebSocket', MockWebSocketSpy);
 
