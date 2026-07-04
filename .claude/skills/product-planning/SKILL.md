@@ -41,7 +41,7 @@ and offer**, you don't enforce.
 Don't assume where the user is. They may have planned this deeply with an agent already, or may be
 starting cold and have skipped straight to "let's build it." Find out before you start:
 
-- If they reference a Linear issue or project, pull it (`get_issue` / `get_project`) and work from it.
+- If they reference a Linear issue or project, pull it (`linear issue view SWO-NNN` / `linear project view` — always the `linear` CLI, never Linear MCP tools) and work from it.
 - Check whether a Linear **document** already exists for the concept in play — if it does, that's
   a strong signal they've already worked the concept through. If it doesn't and the work needs one,
   that's a signal it's missing.
@@ -90,7 +90,7 @@ bring it back to pressure-test their model — exactly as you'd research anythin
 the path.
 
 **Capture the domain/feature concept as a short Linear document if it's non-obvious** — pure concept
-truth ("what is it", "how it works", "the rules"). Use `save_document`: attach it to the app's
+truth ("what is it", "how it works", "the rules"). Use `linear document create -t "…" -f <doc.md>`: attach it (`--project`) to the app's
 **project** for a feature concept, or to the **SWorld team** for a cross-cutting domain concept. Write it
 **before** the code, not retrofitted after — defining it first is the point. Keep the feature's
 architecture and trade-offs out of it — those live in the parent issue (Step 3).
