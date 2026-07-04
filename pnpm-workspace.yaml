@@ -5,6 +5,17 @@ packages:
 # Supply-chain hardening (SWO-355)
 # Refuse to resolve versions published <7 days ago; frozen installs (CI) are unaffected.
 minimumReleaseAge: 10080
+# Grandfather the vite 8 / rolldown build toolchain (+ postcss it pulls) from the
+# cooldown. They arrived via a reviewed upgrade (#372) but their releases are
+# <7 days old, which otherwise blocks EVERY re-resolve (any dependency change)
+# until they age out. First-party build tooling, vetted at upgrade time; the
+# cooldown still guards every other package.
+minimumReleaseAgeExclude:
+  - "@rolldown/*"
+  - "rolldown"
+  - "vite"
+  - "@vitejs/*"
+  - "postcss"
 # Dependency lifecycle scripts are blocked (pnpm 10 default); nothing in the
 # workspace needs one — build/test verified green with all scripts ignored.
 onlyBuiltDependencies: []
