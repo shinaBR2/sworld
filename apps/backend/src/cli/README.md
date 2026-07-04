@@ -25,7 +25,9 @@ media into our own Google Cloud Storage (GCS) bucket and flips the row to
 
 The CLI tools in this folder (`stream-m3u8.ts`, `upload-subtitle.ts`,
 `repair-fmp4.ts`) do the **same work by hand** when the automated pipeline fails
-— they are operator tools, not part of the running services.
+— they are operator tools, not part of the running services. `audio.ts` is the
+odd one out: audio has no automated pipeline (an mp3 needs no processing), so it
+is the **only** way to publish a local audio file to the listen library.
 
 ---
 
@@ -332,6 +334,58 @@ converted video has none, like the stream CLI).
 Both CLIs re-host the image in our bucket (`<storagePath>/thumbnail.<ext>`) — they
 never point `thumbnailUrl` at the third-party URL, which may be referer-gated or
 expire.
+
+Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
+it once via `stream-m3u8.ts config set <key> <value>`.
+
+### `audio.ts` — publish a local audio file to the listen library
+
+The audio counterpart to `convert.ts`, and far simpler: audio needs **no
+transcode**. Point it at a local `.mp3`; it uploads the file verbatim to GCS and
+inserts the `audios` row. No ffmpeg, no HLS, no `videos` pipeline — the mp3 is
+served straight from GCS.
+
+Unlike videos, there is no automated audio pipeline, so this CLI is the primary
+way audios get into the library (not just a manual-fix fallback).
+
+```bash
+# Publish one file (name + artist parsed from "Title - Artist.mp3"):
+npx tsx src/cli/audio.ts --file './Shape of You - Ed Sheeran.mp3'
+
+# Override the parsed metadata:
+npx tsx src/cli/audio.ts --file ./track.mp3 --name 'Shape of You' --artist 'Ed Sheeran'
+
+# Publish a whole folder (one artist), dry-run first:
+npx tsx src/cli/audio.ts --dir ./album --artist 'Ed Sheeran' --dry-run
+```
+
+What it does, per file:
+
+1. **Derive metadata** — `name` + `artist` from the `Title - Artist.mp3`
+   filename (`--name` / `--artist` override). `artist_name` is NOT NULL, so a
+   file with no parseable artist and no `--artist` is reported and skipped.
+2. **Dup-check** — an existing `(user_id, name)` is skipped (no duplicate).
+3. **Upload** the mp3 → `audios/{userId}/{slug}.mp3` (`slug = slugify(name)`,
+   content-type `audio/mpeg`).
+4. **Insert** the `audios` row → `{ name, artistName, source, user_id, public }`,
+   where `source` is the public GCS URL.
+
+A batch (`--dir`) reports a `Created / Skipped / Failed` tally at the end; one
+bad file doesn't abort the rest, and any failure makes the process exit non-zero.
+
+V1 scope: **local mp3 only** (`--url` is rejected); playlist linking is a future
+enhancement (see SWO-372).
+
+| Flag | Meaning |
+| ---- | ------- |
+| `--file <path>` | Local `.mp3` to publish. Use this **or** `--dir`. |
+| `--dir <path>` | Publish every `.mp3` in the folder. |
+| `--name <name>` | Track name (default: parsed from filename; `--file` only). |
+| `--artist <name>` | Artist (default: parsed from filename). |
+| `--public` | Mark the audio public (default: private). |
+| `--dry-run` | Show the plan; no uploads/DB writes, no creds needed. |
+| `--skip-db` | Upload to GCS but skip the Hasura insert. |
+| `--user-id <uuid>` | Owner (from `--user-id` > env > config `user-id`). |
 
 Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
 it once via `stream-m3u8.ts config set <key> <value>`.
