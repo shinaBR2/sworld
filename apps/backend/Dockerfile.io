@@ -9,7 +9,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 
 # Install Playwright and its dependencies with a single command
 RUN npx playwright install --with-deps chromium
