@@ -2,7 +2,7 @@
 
 // MUI Icons imports
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppBar from '@mui/material/AppBar';
@@ -17,7 +17,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
-import { alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import type { Journal, MoodType } from 'core/src/journal';
@@ -112,9 +111,13 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           </IconButton>
           <Typography variant="h6">Journal Entry</Typography>
         </Box>
-
         <Paper sx={{ p: 3, borderRadius: 3, textAlign: 'center' }}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Journal entry not found.
           </Typography>
         </Paper>
@@ -154,7 +157,6 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
           </Typography>
         </Toolbar>
       </AppBar>
-
       <Container maxWidth={CONTENT_MAX_WIDTH} sx={{ pt: 2, pb: 8 }}>
         <Paper sx={{ p: 3, borderRadius: 3 }}>
           <Box
@@ -176,7 +178,7 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
                   // (a background-image), so clear it before applying our tint.
                   backgroundImage: 'none',
                   bgcolor: (theme) =>
-                    alpha(theme.palette[mood.color].main, 0.12),
+                    theme.alpha(theme.palette[mood.color].main, 0.12),
                   border: 'none',
                   '& .MuiChip-icon': { color: 'inherit', ml: 0.5 },
                 }}
@@ -246,7 +248,12 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
 
           <Divider sx={{ mt: 3, mb: 1.5 }} />
 
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             {isEdited
               ? `Edited ${formatDateTime(journal.updatedAt)}`
               : formatDateTime(journal.createdAt)}

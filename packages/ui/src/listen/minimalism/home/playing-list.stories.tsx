@@ -11,7 +11,11 @@ const meta: Meta<typeof PlayingList> = {
   },
   decorators: [
     (Story) => (
-      <Box width={'600px'}>
+      <Box
+        sx={{
+          width: '600px',
+        }}
+      >
         <Story />
       </Box>
     ),

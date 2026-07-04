@@ -81,7 +81,11 @@ export const CloudinaryImage: Story = {
   render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
-      <Box px={2}>
+      <Box
+        sx={{
+          px: 2,
+        }}
+      >
         <p>Responsive Cloudinary Image with automatic srcSet generation</p>
       </Box>
     </Box>
@@ -107,7 +111,11 @@ export const StandardImage: Story = {
   render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
-      <Box px={2}>
+      <Box
+        sx={{
+          px: 2,
+        }}
+      >
         <p>Standard image without Cloudinary-specific optimizations</p>
       </Box>
     </Box>
@@ -134,7 +142,11 @@ export const CustomSizesImage: Story = {
   render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
-      <Box px={2}>
+      <Box
+        sx={{
+          px: 2,
+        }}
+      >
         <p>Image with custom sizes and srcSet generation</p>
       </Box>
     </Box>
@@ -186,7 +198,11 @@ export const NoSourceImage: Story = {
   render: (args) => (
     <Box sx={{ border: '1px solid #ddd' }}>
       <ResponsiveImage {...args} />
-      <Box px={2}>
+      <Box
+        sx={{
+          px: 2,
+        }}
+      >
         <p>Handling scenario with no image source</p>
       </Box>
     </Box>

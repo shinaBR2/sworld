@@ -132,7 +132,12 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
                 {percentage.toFixed(1)}%
               </Typography>
             </Box>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {isIncrease ? 'more than' : 'less than'} last month
             </Typography>
           </Box>
@@ -148,7 +153,12 @@ const MonthComparison = ({ data, currentMonthIndex }: MonthComparisonProps) => {
                 justifyContent: 'center',
               }}
             >
-              <Typography variant="body1" color="text.secondary">
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 No data available
               </Typography>
             </Box>

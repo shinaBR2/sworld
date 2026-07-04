@@ -1,4 +1,4 @@
-import { ErrorOutline } from '@mui/icons-material';
+import { ErrorOutlined } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -17,31 +17,48 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
 
   return (
     <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh"
-      bgcolor="background.default"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+      }}
     >
       <Container maxWidth="sm">
         <Card elevation={12}>
           <CardContent sx={{ textAlign: 'center' }}>
-            <ErrorOutline
+            <ErrorOutlined
               color="error"
               sx={{
                 fontSize: 80,
                 mb: 2,
               }}
             />
-            <Box textAlign="center" py={2}>
+            <Box
+              sx={{
+                textAlign: 'center',
+                py: 2,
+              }}
+            >
               <Typography variant="h5" component="h2" gutterBottom>
                 {texts.title}
               </Typography>
-              <Typography color="text.secondary" variant="body2" gutterBottom>
+              <Typography
+                variant="body2"
+                gutterBottom
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {errorMessage}
               </Typography>
               {canRetry && (
-                <Box mt={3}>
+                <Box
+                  sx={{
+                    mt: 3,
+                  }}
+                >
                   <Button
                     variant="contained"
                     fullWidth

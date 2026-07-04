@@ -262,16 +262,14 @@ const DialogComponent = (props: DialogComponentProps) => {
             onChange={onFormFieldChange('videoPositionInPlaylist')}
             {...videoPositionInPlaylistTextFieldProps}
             slotProps={{
-              input: {
-                inputProps: {
-                  min: 0,
-                },
+              htmlInput: {
+                min: 0,
               },
             }}
           />
 
           <Grid container spacing={1} sx={{ mt: 2, mb: 2 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -283,7 +281,7 @@ const DialogComponent = (props: DialogComponentProps) => {
                 label="Keep original source"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Checkbox

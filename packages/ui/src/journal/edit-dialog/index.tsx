@@ -29,7 +29,6 @@ const EditDialog = (props: EditDialogProps) => {
         }
         onClose();
       }}
-      disableEscapeKeyDown
       keepMounted
       fullWidth
       fullScreen={isMobile}

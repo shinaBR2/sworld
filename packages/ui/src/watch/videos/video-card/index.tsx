@@ -49,7 +49,13 @@ const VideoCardContent = (props: VideoCardContentProps) => {
       <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
       </StyledTitle>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+          mb: 0.5,
+        }}
+      >
         {creator} • {createdTime}
       </Typography>
     </CardContent>

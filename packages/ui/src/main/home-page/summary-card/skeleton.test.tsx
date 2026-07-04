@@ -43,8 +43,8 @@ vi.mock('@mui/material', () => ({
       data-height={height}
     />
   ),
-  Typography: ({ children, variant, color }: any) => (
-    <div data-testid={`typography-${variant}`} data-color={color}>
+  Typography: ({ children, variant, sx }: any) => (
+    <div data-testid={`typography-${variant}`} data-color={sx?.color}>
       {children}
     </div>
   ),

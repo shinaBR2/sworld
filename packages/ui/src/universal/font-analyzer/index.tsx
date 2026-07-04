@@ -69,14 +69,23 @@ const FontWeightAnalyzer = () => {
             <Typography variant="h6" className="mb-2">
               Weight {weight} ({count} occurrences)
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               Used in: {Array.from(components).join(', ')}
             </Typography>
           </Box>
         ))}
 
         {fontUsage.size === 0 && (
-          <Typography color="text.secondary">
+          <Typography
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Analyzing font usage... Interact with your app to see results.
           </Typography>
         )}

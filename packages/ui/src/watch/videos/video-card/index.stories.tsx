@@ -10,7 +10,11 @@ const meta: Meta<typeof VideoCard> = {
   },
   decorators: [
     (Story) => (
-      <Box width={'400px'}>
+      <Box
+        sx={{
+          width: '400px',
+        }}
+      >
         <Story />
       </Box>
     ),

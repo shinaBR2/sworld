@@ -22,12 +22,15 @@ const PostMetadata = (props: Props) => {
         variant="h4"
         component="h1"
         gutterBottom
-        fontWeight="bold"
-        sx={sx}
+        sx={[
+          {
+            fontWeight: 'bold',
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
       >
         {title}
       </Typography>
-
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
         <Chip
           label={status || 'Published'}
@@ -36,19 +39,27 @@ const PostMetadata = (props: Props) => {
           variant="outlined"
         />
         {createdAt && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             {formatDateTime(createdAt)}
           </Typography>
         )}
       </Box>
-
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <AccessTimeIcon fontSize="small" color="action" />
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {readTimeInMinutes} min read
         </Typography>
       </Box>
-
       <Divider />
     </>
   );

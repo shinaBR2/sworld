@@ -407,7 +407,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       data-testid="video-player-wrapper"
       sx={(theme) => ({
         aspectRatio: '16/9',
-        borderRadius: theme.shape.borderRadius / 12,
+        borderRadius: Number(theme.shape.borderRadius) / 12,
         overflow: 'hidden',
         width: '100%',
         height: '100%',

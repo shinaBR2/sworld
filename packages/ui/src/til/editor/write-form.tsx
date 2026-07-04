@@ -74,7 +74,9 @@ const WriteForm = (props: WriteFormProps) => {
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
-          justifyContent="flex-end"
+          sx={{
+            justifyContent: 'flex-end',
+          }}
         >
           <Button
             variant="outlined"

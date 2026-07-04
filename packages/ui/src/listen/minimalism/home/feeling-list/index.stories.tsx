@@ -10,7 +10,11 @@ const meta: Meta<typeof FeelingList> = {
   },
   decorators: [
     (Story) => (
-      <Box width={'600px'}>
+      <Box
+        sx={{
+          width: '600px',
+        }}
+      >
         <Story />
       </Box>
     ),

@@ -18,7 +18,7 @@ export const LoginDialog = (props: LoginDialogProps) => {
   const { onAction } = props;
 
   return (
-    <Dialog open={true} onClose={() => {}} disableEscapeKeyDown={true}>
+    <Dialog open={true} onClose={() => {}}>
       <DialogContent sx={{ width: 400, maxWidth: '100%', py: 4 }}>
         <Box
           sx={{

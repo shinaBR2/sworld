@@ -127,13 +127,12 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
             </Box>
           )}
       </Box>
-
       {/* Book Info */}
       <Box>
         <Typography
           variant="body2"
-          fontWeight="medium"
           sx={{
+            fontWeight: 'medium',
             mb: 0.5,
             lineHeight: 1.3,
             display: '-webkit-box',
@@ -144,7 +143,12 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
         >
           {book.title}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {book.author}
         </Typography>
       </Box>

@@ -32,7 +32,13 @@ const WatchEmptyState = () => {
       }}
     >
       <CloudUpload sx={{ fontSize: 64, opacity: 0.4 }} />
-      <Typography variant="h6" component="p" color="text.primary">
+      <Typography
+        variant="h6"
+        component="p"
+        sx={{
+          color: 'text.primary',
+        }}
+      >
         No videos yet
       </Typography>
       <Typography variant="body2" sx={{ maxWidth: 360 }}>
@@ -47,7 +53,6 @@ const WatchEmptyState = () => {
           Upload a video
         </Button>
       )}
-
       {open && uploadEnabled && (
         <Suspense fallback={null}>
           <VideoUploadDialog open={open} onOpenChange={setOpen} />

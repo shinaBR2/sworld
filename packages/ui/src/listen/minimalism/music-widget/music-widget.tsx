@@ -139,8 +139,10 @@ const MusicWidget = (props: MusicWidgetProps) => {
             aria-label="audio artist"
             variant="body2"
             align="center"
-            color="text.secondary"
             gutterBottom
+            sx={{
+              color: 'text.secondary',
+            }}
           >
             {artistName}
           </Typography>

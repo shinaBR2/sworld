@@ -225,7 +225,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
   // Conditional rendering after all hooks
   if (isLoading) {
     return (
-      <Grid item sx={{ width: '100%', px: 2 }}>
+      <Grid sx={{ width: '100%', px: 2 }}>
         <MainContentSkeleton />
       </Grid>
     );
@@ -236,7 +236,7 @@ const MainContent = (props: VideoDetailContainerProps) => {
   }
 
   return (
-    <Grid item sx={{ width: '100%', px: 2 }}>
+    <Grid sx={{ width: '100%', px: 2 }}>
       <Box
         sx={{
           width: '100%',
@@ -257,7 +257,14 @@ const MainContent = (props: VideoDetailContainerProps) => {
           getVideoElementRef={getVideoElementRef}
         />
       </Box>
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          alignItems: 'center',
+          mt: 2,
+        }}
+      >
         {isPlaylist && (
           <Tooltip title="Playlist">
             <PlaylistPlayIcon color="action" titleAccess="Playlist" />
@@ -308,14 +315,19 @@ const MainContent = (props: VideoDetailContainerProps) => {
           </IconButton>
         </Tooltip>
       </Stack>
-
       {videoDetail.subtitles && videoDetail.subtitles.length > 0 && (
         <Stack
           direction="row"
           spacing={1}
           sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap', gap: 1 }}
         >
-          <Typography variant="body2" color="text.secondary" sx={{ mr: 0.5 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              mr: 0.5,
+            }}
+          >
             Subtitle(s):
           </Typography>
           <Stack
@@ -339,7 +351,6 @@ const MainContent = (props: VideoDetailContainerProps) => {
           </Stack>
         </Stack>
       )}
-
       <Suspense fallback={null}>
         <ShareDialog
           open={shareDialogOpen}
@@ -402,14 +413,34 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
 
   return (
     <Grid container spacing={2} sx={{ mt: 0 }}>
-      <Grid container item alignItems="flex-start" xs={12} sm={6} md={8} lg={9}>
+      <Grid
+        container
+        size={{
+          xs: 12,
+          sm: 6,
+          md: 8,
+          lg: 9,
+        }}
+        sx={{
+          alignItems: 'flex-start',
+        }}
+      >
         <MainContent
           {...props}
           onVideoEnded={handleVideoEnded}
           autoPlay={autoPlay}
         />
       </Grid>
-      <Grid container direction="column" item xs={12} sm={6} md={4} lg={3}>
+      <Grid
+        container
+        size={{
+          xs: 12,
+          sm: 6,
+          md: 4,
+          lg: 3,
+        }}
+        sx={{ flexDirection: 'column' }}
+      >
         <StyledRelatedContainer>
           <RelatedContent
             {...props}

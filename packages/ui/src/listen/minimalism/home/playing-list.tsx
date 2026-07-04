@@ -109,19 +109,31 @@ const Item = (props: ItemProps) => {
       </ListItemAvatar>
       <ListItemText
         primary={name}
-        primaryTypographyProps={{
-          fontWeight: 600,
-          color: isPlaying ? 'primary.main' : 'text.primary',
-          noWrap: true,
+        slotProps={{
+          primary: {
+            noWrap: true,
+            sx: {
+              fontWeight: 600,
+              color: isPlaying ? 'primary.main' : 'text.primary',
+            },
+          },
         }}
         secondary={
           <Stack
             component="span"
             direction="row"
             spacing={1}
-            alignItems="center"
+            sx={{
+              alignItems: 'center',
+            }}
           >
-            <Typography component="span" variant="body2" color="text.secondary">
+            <Typography
+              component="span"
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {artistName}
             </Typography>
             {isPlaying && <NowPlayingIndicator />}

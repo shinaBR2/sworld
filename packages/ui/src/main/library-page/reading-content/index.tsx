@@ -46,12 +46,16 @@ const ReadingContent = (props: ReadingContentProps) => {
           }}
         >
           <CircularProgress />
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Loading PDF...
           </Typography>
         </Box>
       )}
-
       {/* Error State */}
       {error && !isLoading && (
         <Box sx={{ width: '100%', maxWidth: 600, mt: 4 }}>
@@ -63,7 +67,6 @@ const ReadingContent = (props: ReadingContentProps) => {
           </Button>
         </Box>
       )}
-
       {notAvailable && (
         <Box
           sx={{
@@ -81,7 +84,6 @@ const ReadingContent = (props: ReadingContentProps) => {
           </Alert>
         </Box>
       )}
-
       {/* PDF Document */}
       {!error && !isLoading && pdfUrl && (
         <Box
