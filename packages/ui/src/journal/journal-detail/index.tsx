@@ -8,6 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -32,6 +33,11 @@ interface JournalDetailProps {
   onEditClick: () => void;
   onDeleteClick: () => void;
 }
+
+// The page owns its own width: the date header spans the full viewport as a
+// sibling of the content, and only the content is constrained to `sm`. The
+// route therefore renders this WITHOUT a wrapping Container.
+const CONTENT_MAX_WIDTH = 'sm';
 
 const JournalDetail: React.FC<JournalDetailProps> = ({
   journal,
@@ -63,7 +69,7 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
 
   if (isLoading) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Container maxWidth={CONTENT_MAX_WIDTH} sx={{ pt: 2, pb: 8 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
             <ArrowBackIcon fontSize="medium" />
@@ -93,13 +99,13 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
             <Skeleton width={180} height={16} />
           </Box>
         </Paper>
-      </Box>
+      </Container>
     );
   }
 
   if (!journal) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Container maxWidth={CONTENT_MAX_WIDTH} sx={{ pt: 2, pb: 8 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <IconButton onClick={onBackClick} sx={{ mr: 1 }}>
             <ArrowBackIcon fontSize="medium" />
@@ -112,7 +118,7 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
             Journal entry not found.
           </Typography>
         </Paper>
-      </Box>
+      </Container>
     );
   }
 
@@ -120,26 +126,20 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
   const isEdited = journal.updatedAt !== journal.createdAt;
 
   return (
-    <Box sx={{ p: 2 }}>
-      {/* Pin the date under the app bar so long entries never lose the "which
-          day am I reading" context. Rendered as an AppBar so it reuses the
-          theme's frosted header surface (light + dark) instead of a hardcoded
-          colour, reading as a seamless second row of the header. */}
+    <>
+      {/* Full-width sticky date header. It's a sibling of the content (a direct
+          child of the full-width page layout), so it spans the viewport
+          naturally — no `100vw` breakout, which used to include the scrollbar
+          width and give the whole page a horizontal scrollbar (SWO-371). It
+          pins the date under the main app bar so long entries never lose the
+          "which day am I reading" context, and renders as an AppBar to reuse
+          the theme's frosted header surface as a seamless second row. */}
       <AppBar
         position="sticky"
         color="default"
         elevation={0}
         sx={{
-          // Full-bleed to match the full-width app bar exactly (the page
-          // Container is maxWidth=sm, so plain margins leave it inset and
-          // misaligned). No card-like border or radius — AppBar extends Paper,
-          // so we clear the theme's Paper border — it reads as a seamless
-          // second row of the header, flush beneath it.
           top: { xs: 56, sm: 64 },
-          width: '100vw',
-          ml: 'calc(50% - 50vw)',
-          mt: -2,
-          mb: 2,
           border: 'none',
           borderRadius: 0,
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
@@ -155,102 +155,105 @@ const JournalDetail: React.FC<JournalDetailProps> = ({
         </Toolbar>
       </AppBar>
 
-      <Paper sx={{ p: 3, borderRadius: 3 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 2.5,
-          }}
-        >
-          {mood ? (
-            <Chip
-              icon={<MoodIcon mood={journal.mood as MoodType} size={18} />}
-              label={mood.label}
-              sx={{
-                fontWeight: 600,
-                color: `${mood.color}.main`,
-                // The glassmorphism theme paints chips with a purple gradient
-                // (a background-image), so clear it before applying our tint.
-                backgroundImage: 'none',
-                bgcolor: (theme) => alpha(theme.palette[mood.color].main, 0.12),
-                border: 'none',
-                '& .MuiChip-icon': { color: 'inherit', ml: 0.5 },
-              }}
-            />
-          ) : (
-            <Box />
-          )}
-
-          <IconButton
-            aria-label="entry actions"
-            onClick={handleMenuOpen}
-            size="small"
+      <Container maxWidth={CONTENT_MAX_WIDTH} sx={{ pt: 2, pb: 8 }}>
+        <Paper sx={{ p: 3, borderRadius: 3 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 2.5,
+            }}
           >
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
-          <Menu
-            anchorEl={menuAnchor}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <MenuItem onClick={handleEdit}>
-              <ListItemIcon>
-                <EditOutlinedIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Edit</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-              <ListItemIcon>
-                <DeleteOutlineIcon fontSize="small" color="error" />
-              </ListItemIcon>
-              <ListItemText>Delete</ListItemText>
-            </MenuItem>
-          </Menu>
-        </Box>
-
-        <Typography
-          variant="body1"
-          component="pre"
-          sx={{
-            whiteSpace: 'pre-wrap',
-            fontFamily: 'inherit',
-            fontSize: '1.05rem',
-            lineHeight: 1.7,
-          }}
-        >
-          {journal.content}
-        </Typography>
-
-        {journal.tags.length > 0 && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 2.5 }}>
-            {journal.tags.map((tag: string) => (
+            {mood ? (
               <Chip
-                key={tag}
-                label={tag}
-                size="small"
+                icon={<MoodIcon mood={journal.mood as MoodType} size={18} />}
+                label={mood.label}
                 sx={{
+                  fontWeight: 600,
+                  color: `${mood.color}.main`,
+                  // The glassmorphism theme paints chips with a purple gradient
+                  // (a background-image), so clear it before applying our tint.
                   backgroundImage: 'none',
-                  bgcolor: 'action.hover',
+                  bgcolor: (theme) =>
+                    alpha(theme.palette[mood.color].main, 0.12),
                   border: 'none',
+                  '& .MuiChip-icon': { color: 'inherit', ml: 0.5 },
                 }}
               />
-            ))}
+            ) : (
+              <Box />
+            )}
+
+            <IconButton
+              aria-label="entry actions"
+              onClick={handleMenuOpen}
+              size="small"
+            >
+              <MoreVertIcon fontSize="small" />
+            </IconButton>
+            <Menu
+              anchorEl={menuAnchor}
+              open={isMenuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem onClick={handleEdit}>
+                <ListItemIcon>
+                  <EditOutlinedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Edit</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+                <ListItemIcon>
+                  <DeleteOutlineIcon fontSize="small" color="error" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+              </MenuItem>
+            </Menu>
           </Box>
-        )}
 
-        <Divider sx={{ mt: 3, mb: 1.5 }} />
+          <Typography
+            variant="body1"
+            component="pre"
+            sx={{
+              whiteSpace: 'pre-wrap',
+              fontFamily: 'inherit',
+              fontSize: '1.05rem',
+              lineHeight: 1.7,
+            }}
+          >
+            {journal.content}
+          </Typography>
 
-        <Typography variant="caption" color="text.secondary">
-          {isEdited
-            ? `Edited ${formatDateTime(journal.updatedAt)}`
-            : formatDateTime(journal.createdAt)}
-        </Typography>
-      </Paper>
-    </Box>
+          {journal.tags.length > 0 && (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 2.5 }}>
+              {journal.tags.map((tag: string) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  sx={{
+                    backgroundImage: 'none',
+                    bgcolor: 'action.hover',
+                    border: 'none',
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+
+          <Divider sx={{ mt: 3, mb: 1.5 }} />
+
+          <Typography variant="caption" color="text.secondary">
+            {isEdited
+              ? `Edited ${formatDateTime(journal.updatedAt)}`
+              : formatDateTime(journal.createdAt)}
+          </Typography>
+        </Paper>
+      </Container>
+    </>
   );
 };
 
