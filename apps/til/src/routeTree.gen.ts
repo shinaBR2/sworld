@@ -8,83 +8,83 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as WriteRouteImport } from './routes/write'
-import { Route as PostsSlugIdRouteImport } from './routes/posts.$slug.$id'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as WriteRouteImport } from './routes/write';
+import { Route as PostsSlugIdRouteImport } from './routes/posts.$slug.$id';
 
-const IndexLazyRouteImport = createFileRoute('/')()
+const IndexLazyRouteImport = createFileRoute('/')();
 
 const WriteRoute = WriteRouteImport.update({
   id: '/write',
   path: '/write',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 const PostsSlugIdRoute = PostsSlugIdRouteImport.update({
   id: '/posts/$slug/$id',
   path: '/posts/$slug/$id',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/write': typeof WriteRoute
-  '/posts/$slug/$id': typeof PostsSlugIdRoute
+  '/': typeof IndexLazyRoute;
+  '/write': typeof WriteRoute;
+  '/posts/$slug/$id': typeof PostsSlugIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/write': typeof WriteRoute
-  '/posts/$slug/$id': typeof PostsSlugIdRoute
+  '/': typeof IndexLazyRoute;
+  '/write': typeof WriteRoute;
+  '/posts/$slug/$id': typeof PostsSlugIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
-  '/write': typeof WriteRoute
-  '/posts/$slug/$id': typeof PostsSlugIdRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexLazyRoute;
+  '/write': typeof WriteRoute;
+  '/posts/$slug/$id': typeof PostsSlugIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/write' | '/posts/$slug/$id'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/write' | '/posts/$slug/$id'
-  id: '__root__' | '/' | '/write' | '/posts/$slug/$id'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/write' | '/posts/$slug/$id';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/write' | '/posts/$slug/$id';
+  id: '__root__' | '/' | '/write' | '/posts/$slug/$id';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  WriteRoute: typeof WriteRoute
-  PostsSlugIdRoute: typeof PostsSlugIdRoute
+  IndexLazyRoute: typeof IndexLazyRoute;
+  WriteRoute: typeof WriteRoute;
+  PostsSlugIdRoute: typeof PostsSlugIdRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/write': {
-      id: '/write'
-      path: '/write'
-      fullPath: '/write'
-      preLoaderRoute: typeof WriteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/write';
+      path: '/write';
+      fullPath: '/write';
+      preLoaderRoute: typeof WriteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/posts/$slug/$id': {
-      id: '/posts/$slug/$id'
-      path: '/posts/$slug/$id'
-      fullPath: '/posts/$slug/$id'
-      preLoaderRoute: typeof PostsSlugIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/posts/$slug/$id';
+      path: '/posts/$slug/$id';
+      fullPath: '/posts/$slug/$id';
+      preLoaderRoute: typeof PostsSlugIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -92,7 +92,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   WriteRoute: WriteRoute,
   PostsSlugIdRoute: PostsSlugIdRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

@@ -8,73 +8,73 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as GameSlugRouteImport } from './routes/$gameSlug'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as GameSlugRouteImport } from './routes/$gameSlug';
 
-const IndexLazyRouteImport = createFileRoute('/')()
+const IndexLazyRouteImport = createFileRoute('/')();
 
 const GameSlugRoute = GameSlugRouteImport.update({
   id: '/$gameSlug',
   path: '/$gameSlug',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/$gameSlug.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/$gameSlug.lazy').then((d) => d.Route));
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/$gameSlug': typeof GameSlugRoute
+  '/': typeof IndexLazyRoute;
+  '/$gameSlug': typeof GameSlugRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/$gameSlug': typeof GameSlugRoute
+  '/': typeof IndexLazyRoute;
+  '/$gameSlug': typeof GameSlugRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
-  '/$gameSlug': typeof GameSlugRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexLazyRoute;
+  '/$gameSlug': typeof GameSlugRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$gameSlug'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$gameSlug'
-  id: '__root__' | '/' | '/$gameSlug'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/$gameSlug';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/$gameSlug';
+  id: '__root__' | '/' | '/$gameSlug';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  GameSlugRoute: typeof GameSlugRoute
+  IndexLazyRoute: typeof IndexLazyRoute;
+  GameSlugRoute: typeof GameSlugRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/$gameSlug': {
-      id: '/$gameSlug'
-      path: '/$gameSlug'
-      fullPath: '/$gameSlug'
-      preLoaderRoute: typeof GameSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/$gameSlug';
+      path: '/$gameSlug';
+      fullPath: '/$gameSlug';
+      preLoaderRoute: typeof GameSlugRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   GameSlugRoute: GameSlugRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
