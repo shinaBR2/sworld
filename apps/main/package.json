@@ -19,7 +19,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.170.16",
     "core": "workspace:*",
-    "posthog-js": "^1.256.1",
+    "posthog-js": "^1.395.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "ui": "workspace:*"
