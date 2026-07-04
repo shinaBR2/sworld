@@ -5,7 +5,11 @@ import { PieChart } from 'echarts/charts';
 import { LegendComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import ReactEChartsCore from 'echarts-for-react/lib/core';
+// Import the ESM build (real `export default`), not lib/core (CJS with
+// `__esModule` + `exports.default`). Under the vite 8/rolldown build the CJS
+// default import resolves to the module object instead of the component,
+// which crashes the finance page with React error #130 (SWO-356).
+import ReactEChartsCore from 'echarts-for-react/esm/core';
 
 echarts.use([PieChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
