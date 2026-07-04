@@ -15,7 +15,7 @@ user-invocable: false
 
 This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: Linear issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
 
-- **Substitute the repo name in `gh` commands.** The CI-loop Step 3 GraphQL query below uses `name:"sworld"` — for the other repos use `name:"sworld-backend"` / `name:"sworld-hasura-v2"`. Querying the wrong repo silently returns nothing.
+- **Substitute the repo name in `gh` commands.** The CI-loop Step 3 GraphQL query below takes a `name:"<repo>"` placeholder — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing.
 - **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in Linear with a blocking relation from the Hasura issue.
@@ -97,9 +97,9 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 
 ### Step 3: Check unresolved review comments
 
-- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Use the repo the PR actually lives in — `sworld`, `sworld-backend`, or `sworld-hasura-v2`:
-  ```
-  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"sworld") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
+- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Substitute `<repo>` with the repo the PR actually lives in — `sworld`, `sworld-backend`, or `sworld-hasura-v2` — and `NUMBER` with the PR number. Querying the wrong repo silently returns nothing:
+  ```bash
+  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"<repo>") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
   ```
 - Filter to `isResolved: false` threads only.
 - If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
