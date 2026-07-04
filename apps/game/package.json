@@ -24,8 +24,8 @@
     "grid-engine": "^2.45.5",
     "phaser": "^3.86.0",
     "phaser-matter-collision-plugin": "^1.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "ui": "workspace:*"
   },
   "devDependencies": {
@@ -35,8 +35,8 @@
     "@tanstack/router-devtools": "^1.167.0",
     "@tanstack/router-plugin": "^1.168.18",
     "@types/node": "^18.11.9",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.8",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^2.1.0",
     "phaser3-docs": "github:photonstorm/phaser3-docs",
     "tsconfig": "workspace:*",

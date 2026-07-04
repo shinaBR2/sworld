@@ -138,13 +138,13 @@ importers:
         version: 11.0.0
       '@tanstack/react-query':
         specifier: ^5.101.1
-        version: 5.101.1(react@18.3.1)
+        version: 5.101.1(react@19.2.7)
       '@tanstack/react-query-devtools':
         specifier: ^5.101.1
-        version: 5.101.1(@tanstack/react-query@5.101.1(react@18.3.1))(react@18.3.1)
+        version: 5.101.1(@tanstack/react-query@5.101.1(react@19.2.7))(react@19.2.7)
       '@tanstack/react-router':
         specifier: ^1.170.16
-        version: 1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       a-promise-wrapper:
         specifier: ^1.1.3
         version: 1.1.3
@@ -161,11 +161,11 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(phaser@3.88.2)
       react:
-        specifier: ^18.2.0
-        version: 18.3.1
+        specifier: ^19.2.0
+        version: 19.2.7
       react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
+        specifier: ^19.2.0
+        version: 19.2.7(react@19.2.7)
       ui:
         specifier: workspace:*
         version: link:../../packages/ui
@@ -181,19 +181,19 @@ importers:
         version: link:../../packages/jest-dom-preset
       '@tanstack/router-devtools':
         specifier: ^1.167.0
-        version: 1.167.0(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.167.0(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-plugin':
         specifier: ^1.168.18
-        version: 1.168.18(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@2.79.2)(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))(webpack@5.98.0(esbuild@0.28.1))
+        version: 1.168.18(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@2.79.2)(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))(webpack@5.98.0(esbuild@0.28.1))
       '@types/node':
         specifier: ^18.11.9
         version: 18.19.80
       '@types/react':
-        specifier: ^18.0.25
-        version: 18.3.18
+        specifier: ^19.2.0
+        version: 19.2.17
       '@types/react-dom':
-        specifier: ^18.0.8
-        version: 18.3.5(@types/react@18.3.18)
+        specifier: ^19.2.0
+        version: 19.2.3(@types/react@19.2.17)
       '@vitejs/plugin-react':
         specifier: ^2.1.0
         version: 2.2.0(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))
@@ -5403,9 +5403,6 @@ packages:
   '@types/prismjs@1.26.5':
     resolution: {integrity: sha512-AUZTa7hQ2KY5L7AmtSiqxlhWxb4ina0yd8hNbl4TWuqnv/pFP0nDMb3YrfSBf4hJVGLh2YEIBfKaBW/9UEl6IQ==}
 
-  '@types/prop-types@15.7.14':
-    resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
-
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
 
@@ -5414,11 +5411,6 @@ packages:
 
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
-
-  '@types/react-dom@18.3.5':
-    resolution: {integrity: sha512-P4t6saawp+b/dFrUr2cvkVsfvPguwsxtH6dNIYRllMsefqFzkZk5UIjzyDOv5g1dXIPdG4Sp1yCR4Z6RCUsG/Q==}
-    peerDependencies:
-      '@types/react': ^18.0.0
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -5441,9 +5433,6 @@ packages:
     resolution: {integrity: sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==}
     peerDependencies:
       '@types/react': '*'
-
-  '@types/react@18.3.18':
-    resolution: {integrity: sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==}
 
   '@types/react@19.2.17':
     resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
@@ -6621,9 +6610,6 @@ packages:
   cssstyle@4.3.0:
     resolution: {integrity: sha512-6r0NiY0xizYqfBvWp1G7WXJ06/bZyrk7Dc6PHql82C/pKGUTKu4yAX4Y8JPamb1ob9nBKuxWzCGTRuGwU3yxJQ==}
     engines: {node: '>=18'}
-
-  csstype@3.1.3:
-    resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
@@ -9569,7 +9555,7 @@ packages:
       phaser: ^3.55.2
 
   phaser3-docs@https://codeload.github.com/photonstorm/phaser3-docs/tar.gz/c249e38a121effaa1382fb237542b817f4bf6bb3:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/photonstorm/phaser3-docs/tar.gz/c249e38a121effaa1382fb237542b817f4bf6bb3}
+    resolution: {gitHosted: true, integrity: sha512-oCzw3WaX2jtK/F8/2Qp83FdDoOG70c1FNyU4ZYbdAW9jSmm5sJcMbJJXPrhX/sqkOCGEp/OtQXP4zF+bZ01cww==, tarball: https://codeload.github.com/photonstorm/phaser3-docs/tar.gz/c249e38a121effaa1382fb237542b817f4bf6bb3}
     version: 0.0.0
 
   phaser@3.88.2:
@@ -10249,11 +10235,6 @@ packages:
     resolution: {integrity: sha512-aEZ9qP+/M+58x2qgfSFEWH1BxLyHe5+qkLNJOZQb5iGS017jpbRnoKhNRrXPeA6RfBrZO5wZrT9DMC1UqE1f1w==}
     engines: {node: ^20.9.0 || >=22}
 
-  react-dom@18.3.1:
-    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
-    peerDependencies:
-      react: ^18.3.1
-
   react-dom@19.2.7:
     resolution: {integrity: sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==}
     peerDependencies:
@@ -10345,10 +10326,6 @@ packages:
     peerDependencies:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
-
-  react@18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
-    engines: {node: '>=0.10.0'}
 
   react@19.2.7:
     resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
@@ -10666,9 +10643,6 @@ packages:
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
-
-  scheduler@0.23.2:
-    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
@@ -18197,41 +18171,27 @@ snapshots:
 
   '@tanstack/query-devtools@5.101.1': {}
 
-  '@tanstack/react-query-devtools@5.101.1(@tanstack/react-query@5.101.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-query-devtools@5.101.1(@tanstack/react-query@5.101.1(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/query-devtools': 5.101.1
-      '@tanstack/react-query': 5.101.1(react@18.3.1)
-      react: 18.3.1
-
-  '@tanstack/react-query@5.101.1(react@18.3.1)':
-    dependencies:
-      '@tanstack/query-core': 5.101.1
-      react: 18.3.1
+      '@tanstack/react-query': 5.101.1(react@19.2.7)
+      react: 19.2.7
 
   '@tanstack/react-query@5.101.1(react@19.2.7)':
     dependencies:
       '@tanstack/query-core': 5.101.1
       react: 19.2.7
 
-  '@tanstack/react-router-devtools@1.167.0(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router-devtools@1.167.0(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@tanstack/react-router': 1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-router': 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-devtools-core': 1.168.0(@tanstack/router-core@1.171.13)(csstype@3.2.3)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
     optionalDependencies:
       '@tanstack/router-core': 1.171.13
     transitivePeerDependencies:
       - csstype
-
-  '@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@tanstack/history': 1.162.0
-      '@tanstack/react-store': 0.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/router-core': 1.171.13
-      isbot: 5.1.44
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   '@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -18241,13 +18201,6 @@ snapshots:
       isbot: 5.1.44
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-
-  '@tanstack/react-store@0.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@tanstack/store': 0.9.3
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      use-sync-external-store: 1.6.0(react@18.3.1)
 
   '@tanstack/react-store@0.9.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -18271,14 +18224,14 @@ snapshots:
     optionalDependencies:
       csstype: 3.2.3
 
-  '@tanstack/router-devtools@1.167.0(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/router-devtools@1.167.0(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@tanstack/react-router': 1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/react-router-devtools': 1.167.0(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-router': 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@tanstack/react-router-devtools': 1.167.0(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.13)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       clsx: 2.1.1
       goober: 2.1.16(csstype@3.2.3)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
     optionalDependencies:
       csstype: 3.2.3
     transitivePeerDependencies:
@@ -18297,7 +18250,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/router-plugin@1.168.18(@tanstack/react-router@1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@2.79.2)(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))(webpack@5.98.0(esbuild@0.28.1))':
+  '@tanstack/router-plugin@1.168.18(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@2.79.2)(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))(webpack@5.98.0(esbuild@0.28.1))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/template': 7.29.7
@@ -18309,7 +18262,7 @@ snapshots:
       unplugin: 3.2.0(esbuild@0.28.1)(rolldown@1.1.4)(rollup@2.79.2)(vite@6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0))(webpack@5.98.0(esbuild@0.28.1))
       zod: 4.4.3
     optionalDependencies:
-      '@tanstack/react-router': 1.170.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-router': 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       vite: 6.4.3(@types/node@18.19.80)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.19.3)(yaml@2.7.0)
       webpack: 5.98.0(esbuild@0.28.1)
     transitivePeerDependencies:
@@ -18826,17 +18779,11 @@ snapshots:
 
   '@types/prismjs@1.26.5': {}
 
-  '@types/prop-types@15.7.14': {}
-
   '@types/prop-types@15.7.15': {}
 
   '@types/qs@6.9.18': {}
 
   '@types/range-parser@1.2.7': {}
-
-  '@types/react-dom@18.3.5(@types/react@18.3.18)':
-    dependencies:
-      '@types/react': 18.3.18
 
   '@types/react-dom@19.2.3(@types/react@19.2.17)':
     dependencies:
@@ -18866,11 +18813,6 @@ snapshots:
   '@types/react-transition-group@4.4.12(@types/react@19.2.17)':
     dependencies:
       '@types/react': 19.2.17
-
-  '@types/react@18.3.18':
-    dependencies:
-      '@types/prop-types': 15.7.14
-      csstype: 3.1.3
 
   '@types/react@19.2.17':
     dependencies:
@@ -20276,8 +20218,6 @@ snapshots:
     dependencies:
       '@asamuzakjp/css-color': 3.1.1
       rrweb-cssom: 0.8.0
-
-  csstype@3.1.3: {}
 
   csstype@3.2.3: {}
 
@@ -24641,12 +24581,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-dom@18.3.1(react@18.3.1):
-    dependencies:
-      loose-envify: 1.4.0
-      react: 18.3.1
-      scheduler: 0.23.2
-
   react-dom@19.2.7(react@19.2.7):
     dependencies:
       react: 19.2.7
@@ -24760,10 +24694,6 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
 
   react@19.2.7: {}
 
@@ -25216,10 +25146,6 @@ snapshots:
   saxes@6.0.0:
     dependencies:
       xmlchars: 2.2.0
-
-  scheduler@0.23.2:
-    dependencies:
-      loose-envify: 1.4.0
 
   scheduler@0.27.0: {}
 
@@ -26315,10 +26241,6 @@ snapshots:
   use-sync-external-store@1.4.0(react@19.2.7):
     dependencies:
       react: 19.2.7
-
-  use-sync-external-store@1.6.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   use-sync-external-store@1.6.0(react@19.2.7):
     dependencies:
