@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useAuthContext } from 'core/providers/auth';
 import { useQueryContext } from 'core/providers/query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import Notifications from './notifications';
+import Notifications from '.';
 import { NotificationsMenu } from './notifications-menu';
 
 // Update auth mock to provide full context structure

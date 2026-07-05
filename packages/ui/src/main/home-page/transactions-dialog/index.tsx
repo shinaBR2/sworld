@@ -11,7 +11,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
 
 interface Transaction {
@@ -42,19 +44,6 @@ const getCategoryLabel = (category: CategoryType): string => {
       return 'Waste Expenses';
     default:
       return 'All Expenses';
-  }
-};
-
-const getCategoryColor = (category: CategoryType): string => {
-  switch (category) {
-    case 'must':
-      return '#ef444420';
-    case 'nice':
-      return '#3b82f620';
-    case 'waste':
-      return '#f59e0b20';
-    default:
-      return '#6b728020';
   }
 };
 
@@ -170,8 +159,12 @@ const TransactionsDialog = ({
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 1,
-                        backgroundColor: getCategoryColor(
-                          transaction.category as CategoryType,
+                        backgroundColor: alpha(
+                          getFinanceColor(
+                            theme,
+                            transaction.category as CategoryType,
+                          ),
+                          0.125,
                         ),
                       }}
                     >

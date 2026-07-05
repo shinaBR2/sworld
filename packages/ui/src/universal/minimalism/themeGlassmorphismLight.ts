@@ -1,4 +1,5 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import { financePalette } from './domainPalette';
 
 // Menus/popovers float over arbitrary busy content with no backdrop scrim, so
 // at the base Paper opacity the content behind bleeds through and the items
@@ -13,6 +14,7 @@ const menuPaper = {
 const lightGlassmorphismTheme = createTheme({
   palette: {
     mode: 'light',
+    finance: financePalette,
     background: {
       default: 'transparent',
       paper: 'rgba(255, 255, 255, 0.15)',

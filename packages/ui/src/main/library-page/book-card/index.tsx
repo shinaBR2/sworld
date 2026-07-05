@@ -1,6 +1,8 @@
 import { PlayArrow as PlayIcon } from '@mui/icons-material';
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type React from 'react';
+import { BOOK_COVER_GRADIENTS } from '../cover-gradients';
 
 interface BookCardProps {
   book: {
@@ -16,19 +18,13 @@ interface BookCardProps {
   onClick?: (book: BookCardProps['book']) => void;
 }
 
-const defaultGradients = [
-  'linear-gradient(135deg, #ef4444, #ec4899)',
-  'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-  'linear-gradient(135deg, #10b981, #06b6d4)',
-  'linear-gradient(135deg, #f59e0b, #ea580c)',
-  'linear-gradient(135deg, #8b5cf6, #6366f1)',
-  'linear-gradient(135deg, #6b7280, #374151)',
-];
-
 const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
+  const theme = useTheme();
   const gradient =
     book.coverGradient ||
-    defaultGradients[Math.floor(Math.random() * defaultGradients.length)];
+    BOOK_COVER_GRADIENTS[
+      Math.floor(Math.random() * BOOK_COVER_GRADIENTS.length)
+    ];
 
   return (
     <Box
@@ -56,7 +52,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          boxShadow: theme.shadows[1],
           '&:hover .cover-overlay': {
             opacity: 1,
           },
@@ -68,7 +64,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
           sx={{
             position: 'absolute',
             inset: 0,
-            bgcolor: 'rgba(0, 0, 0, 0.3)',
+            bgcolor: alpha(theme.palette.common.black, 0.3),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -76,7 +72,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
             transition: 'opacity 0.3s',
           }}
         >
-          <PlayIcon sx={{ color: 'white', fontSize: 32 }} />
+          <PlayIcon sx={{ color: 'common.white', fontSize: 32 }} />
         </Box>
 
         {/* Status Badge */}
@@ -89,8 +85,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
                 height: 20,
                 fontSize: '0.75rem',
                 fontWeight: 500,
-                color: 'white',
-                bgcolor: book.isCompleted ? '#16a34a' : '#6b7280',
+                color: 'common.white',
+                bgcolor: book.isCompleted ? 'success.main' : 'grey.600',
                 '& .MuiChip-label': {
                   px: 1,
                 },
@@ -111,7 +107,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
                 left: 8,
                 right: 8,
                 height: 4,
-                bgcolor: 'rgba(255, 255, 255, 0.9)',
+                bgcolor: alpha(theme.palette.common.white, 0.9),
                 borderRadius: 0.5,
                 overflow: 'hidden',
               }}

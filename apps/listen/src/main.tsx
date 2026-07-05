@@ -2,8 +2,8 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Auth, ErrorBoundary, Query } from 'core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { MinimalismThemeProvider } from 'ui/listen/minimalism';
 import { ErrorFallback } from 'ui/universal/error-boundary';
+import { GlassmorphismProvider } from 'ui/universal/minimalism';
 import {
   auth0Config,
   queryConfig,
@@ -42,7 +42,7 @@ const root = ReactDOM.createRoot(
 );
 
 /**
- * Put MinimalismThemeProvider under App component will cause the error:
+ * Put GlassmorphismProvider under App component will cause the error:
  * Uncaught TypeError: createTheme_default is not a function
  */
 
@@ -51,9 +51,9 @@ root.render(
     <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
       <Auth.AuthProvider config={auth0Config}>
         <Query.QueryProvider config={queryConfig}>
-          <MinimalismThemeProvider>
+          <GlassmorphismProvider>
             <App />
-          </MinimalismThemeProvider>
+          </GlassmorphismProvider>
         </Query.QueryProvider>
       </Auth.AuthProvider>
     </ErrorBoundary>

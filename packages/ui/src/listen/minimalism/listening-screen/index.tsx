@@ -2,11 +2,11 @@ import Box from '@mui/material/Box';
 import type { Auth } from 'core';
 import { useState } from 'react';
 import { FullWidthContainer } from '../../../universal';
+import { Header } from '../../../universal/header';
 import {
   CollectionSelect,
   type CollectionSelectPlaylist,
 } from '../collection-select';
-import { Header } from '../header';
 import { AudioList } from '../home/audio-list';
 import { type Feeling, FeelingList } from '../home/feeling-list';
 import { MainContainer } from '../home/main-container';
@@ -87,7 +87,11 @@ const ListeningScreen = (props: ListeningScreenProps) => {
 
   return (
     <FullWidthContainer>
-      <Header sites={sites} onProfileClick={onProfileClick} user={user} />
+      <Header
+        user={user}
+        onAvatarClick={onProfileClick}
+        siteChoices={{ sites, activeSite: 'listen' }}
+      />
       <SettingsPanel
         open={settingOpen}
         toggle={setSettingOpen}
