@@ -1,9 +1,9 @@
 import { useAuthContext } from 'core/providers/auth';
 import type React from 'react';
 import { useState } from 'react';
-import { Header } from 'ui/main/header';
 import { SettingsPanel } from 'ui/main/home-page/settings';
 import { FullWidthContainer } from 'ui/universal/containers/full-width';
+import { Header } from 'ui/universal/header';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ const Layout = (props: LayoutProps) => {
 
   return (
     <FullWidthContainer>
-      <Header user={user} onProfileClick={onProfileClick} />
+      <Header user={user} onAvatarClick={onProfileClick} />
       <SettingsPanel
         open={settingsOpen}
         toggle={toggleSettings}
