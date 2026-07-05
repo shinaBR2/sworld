@@ -253,9 +253,10 @@ const MainContent = (props: VideoDetailContainerProps) => {
       <Box
         sx={{
           width: '100%',
-          // Cap the player so its 16:9 height never exceeds the viewport
-          // minus room for the header and the title/actions row below it.
-          maxWidth: 'calc((100vh - 220px) * 16 / 9)',
+          // Cap the player so its 16:9 height never exceeds the viewport minus
+          // room for the container's top padding (pt: 3 = 24px), the header,
+          // and the title/actions row below it.
+          maxWidth: 'calc((100vh - 244px) * 16 / 9)',
           mx: 'auto',
         }}
       >
@@ -452,7 +453,9 @@ const VideoDetailContainer = (props: VideoDetailContainerProps) => {
   };
 
   return (
-    <Grid container spacing={2} sx={{ mt: 0 }}>
+    // Top padding for breathing room below the sticky header, matching the
+    // home page's `py: 3` spacing.
+    <Grid container spacing={2} sx={{ pt: 3 }}>
       <Grid
         container
         size={{
