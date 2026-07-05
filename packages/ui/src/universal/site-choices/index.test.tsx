@@ -91,6 +91,20 @@ describe('SiteChoices', () => {
     expect(menuItems[3]).toHaveAttribute('href', 'http://til.example.com');
   });
 
+  // Regression guard for SWO-393: the Main entry (added in SWO-380) shipped as a
+  // scheme-less bare domain, which the browser treats as a relative path. Every
+  // site link, Main included, must be an absolute URL with a scheme.
+  it('renders every site link as an absolute URL', () => {
+    render(<SiteChoices {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('button'));
+
+    const menuItems = screen.getAllByRole('menuitem');
+    for (const menuItem of menuItems) {
+      expect(menuItem.getAttribute('href')).toMatch(/^https?:\/\//);
+    }
+  });
+
   it('shows correct selected state for active site', () => {
     render(<SiteChoices {...defaultProps} />);
 
