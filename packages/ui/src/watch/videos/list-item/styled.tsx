@@ -79,14 +79,17 @@ const Progress = styled(Box)({
   height: '100%', // bgColor
 }) as typeof Box;
 
-const TitleText = styled(Typography)({
+const TitleText = styled(Typography)(({ theme }) => ({
+  // Explicit theme colour so the title doesn't inherit the surrounding
+  // anchor's default link colour (blue/visited-purple) — broken on dark theme.
+  color: theme.palette.text.primary,
   fontWeight: 500,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   display: '-webkit-box',
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
-}) as typeof Typography;
+})) as typeof Typography;
 
 const UsernameText = styled(Typography)({
   display: 'block',
