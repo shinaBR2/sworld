@@ -25,10 +25,30 @@ const RESUME_REWIND_SECONDS = 5;
 const RESUME_END_THRESHOLD_SECONDS = 10;
 
 // Elements whose own keyboard behavior must win over the page-wide player
-// shortcuts: text entry and focusable controls (so e.g. Space/Enter on a
-// focused button activates the button instead of toggling the video).
-const INTERACTIVE_TARGET_SELECTOR =
-  'input, textarea, select, button, a[href], [role="button"], [role="link"], [role="menuitem"], [role="tab"], [role="option"]';
+// shortcuts: text entry and focusable controls (native or ARIA-role), so e.g.
+// Space/Enter on a focused button, or arrows on a focused slider/switch, drive
+// that control instead of the video.
+const INTERACTIVE_TARGET_SELECTOR = [
+  'input',
+  'textarea',
+  'select',
+  'button',
+  'a[href]',
+  '[role="button"]',
+  '[role="link"]',
+  '[role="menuitem"]',
+  '[role="menuitemcheckbox"]',
+  '[role="menuitemradio"]',
+  '[role="tab"]',
+  '[role="option"]',
+  '[role="checkbox"]',
+  '[role="radio"]',
+  '[role="switch"]',
+  '[role="slider"]',
+  '[role="spinbutton"]',
+  '[role="combobox"]',
+  '[role="textbox"]',
+].join(', ');
 
 const isInteractiveTarget = (target: HTMLElement | null) => {
   if (!target) return false;
@@ -177,9 +197,19 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   }, [handlePlay, onPausedChange]);
 
   // Handle keyboard shortcuts page-wide (YouTube style) — the shortcuts work
-  // whenever the user is on the video detail page, regardless of focus.
+  // whenever the user is on the video detail page, regardless of focus. Assumes
+  // one player per page (the detail/playlist routes mount a single VideoPlayer):
+  // this hotkey layer intentionally supersedes the native controls' own
+  // keyboard handling, mirroring the same actions (play/pause, seek, volume).
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Let browser/OS shortcuts through — the player hotkeys are unmodified keys
+      // only (YouTube-style), so e.g. Cmd/Ctrl+F still opens the browser find bar
+      // instead of toggling fullscreen.
+      if (e.metaKey || e.ctrlKey || e.altKey) {
+        return;
+      }
+
       // The listener is on document (shortcuts work page-wide, not only when the
       // player is focused), so bail when the keystroke is aimed at something the
       // user is operating — text entry or a focusable control — inspecting the
@@ -273,7 +303,9 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.stopPropagation();
           const wrapper = wrapperRef.current;
           if (wrapper) {
-            if (document.fullscreenElement) {
+            // Only exit when THIS wrapper is the fullscreen element, so we never
+            // collapse some other element's fullscreen; otherwise enter it.
+            if (document.fullscreenElement === wrapper) {
               document.exitFullscreen();
             } else if (wrapper.requestFullscreen) {
               wrapper.requestFullscreen();

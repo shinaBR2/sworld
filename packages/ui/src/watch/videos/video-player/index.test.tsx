@@ -309,6 +309,40 @@ describe('VideoPlayer keyboard hotkeys', () => {
     expect(mockReactPlayerRef().volume).toBeCloseTo(0.95);
   });
 
+  it('raises the volume page-wide (ArrowUp key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+
+    // Volume starts maxed (1), so drop it twice first, then ArrowUp raises it.
+    pressKey(document.body, 'ArrowDown');
+    pressKey(document.body, 'ArrowDown');
+    expect(mockReactPlayerRef().volume).toBeCloseTo(0.9);
+
+    const event = pressKey(document.body, 'ArrowUp');
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockReactPlayerRef().volume).toBeCloseTo(0.95);
+  });
+
+  it('lets modifier combos (e.g. Cmd/Ctrl+F) through to the browser', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+
+    // Ctrl+F must not be swallowed as the fullscreen hotkey — the browser find
+    // bar should still open.
+    const event = new KeyboardEvent('keydown', {
+      key: 'f',
+      ctrlKey: true,
+      bubbles: true,
+    });
+    Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+    act(() => {
+      fireEvent(document.body, event);
+    });
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+  });
+
   it('handles the fullscreen key page-wide (f key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
     await screen.findByTestId('mock-react-player');
@@ -388,6 +422,25 @@ describe('VideoPlayer keyboard hotkeys', () => {
     // Space/typing on a focused button must activate the button, not toggle the
     // video — the interactive-target guard leaves the event untouched.
     const event = pressKey(screen.getByTestId('test-button'), ' ');
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
+  });
+
+  it('ignores shortcuts bubbling from inside a focusable control', async () => {
+    render(
+      <div>
+        <button type="button">
+          <span data-testid="test-button-child">Label</span>
+        </button>
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    // Event target is the inner <span>, not the button — closest() must still
+    // find the enclosing control and skip the shortcut.
+    const event = pressKey(screen.getByTestId('test-button-child'), 'k');
 
     expect(event.preventDefault).not.toHaveBeenCalled();
     expect(mockReactPlayerRef().playing).toBe(false);
