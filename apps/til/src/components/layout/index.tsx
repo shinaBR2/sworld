@@ -37,7 +37,6 @@ const Layout = (props: LayoutProps) => {
       <SettingsPanel
         open={sidebarOpen}
         toggle={setSidebarOpen}
-        LinkComponent={Link}
         actions={{
           logout: signOut,
         }}

@@ -1,4 +1,3 @@
-import EditIcon from '@mui/icons-material/Edit';
 import Logout from '@mui/icons-material/Logout';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -7,7 +6,6 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import type { ReactNode } from 'react';
 
 interface SettingsPanelProps {
   open: boolean;
@@ -15,22 +13,14 @@ interface SettingsPanelProps {
   actions: {
     logout: () => void;
   };
-  LinkComponent?: ({
-    to,
-    children,
-  }: {
-    to: string;
-    children: ReactNode;
-  }) => ReactNode;
 }
 
 const texts = {
   logout: 'Logout',
-  write: 'Write',
 };
 
 const SettingsPanel = (props: SettingsPanelProps) => {
-  const { open, toggle, actions, LinkComponent } = props;
+  const { open, toggle, actions } = props;
   const { logout } = actions;
 
   return (
@@ -43,16 +33,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
           flexDirection: 'column',
         }}
       >
-        <List sx={{ flex: 1 }}>
-          {LinkComponent && (
-            <ListItemButton component={LinkComponent} to="/write">
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary={texts.write} />
-            </ListItemButton>
-          )}
-        </List>
+        <List sx={{ flex: 1 }} />
         <Divider />
         <List>
           <ListItemButton onClick={logout}>
