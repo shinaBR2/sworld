@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { SettingsPanel } from 'ui/til/settings';
 import type { MuiStyledProps } from 'ui/universal';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
+import { Header } from 'ui/universal/header';
 import { appConfig } from '../../config';
-import { Header } from './Header';
 
 interface LayoutProps extends MuiStyledProps {
   children: React.ReactNode;
@@ -18,18 +18,21 @@ const Layout = (props: LayoutProps) => {
   const { user, signIn, signOut } = Auth.useAuthContext();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  const onAvatarClick = () => {
+    if (user) {
+      setSidebarOpen(true);
+    } else {
+      signIn();
+    }
   };
 
   return (
     <FullPageContainer sx={sx}>
       <Header
         LinkComponent={Link}
-        sites={sites}
         user={user}
-        login={signIn}
-        toggleSidebar={toggleSidebar}
+        onAvatarClick={onAvatarClick}
+        siteChoices={{ activeSite: 'til', sites }}
       />
       <SettingsPanel
         open={sidebarOpen}
