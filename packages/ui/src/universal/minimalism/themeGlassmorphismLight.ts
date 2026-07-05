@@ -1,5 +1,15 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
+// Menus/popovers float over arbitrary busy content with no backdrop scrim, so
+// at the base Paper opacity the content behind bleeds through and the items
+// read as muddy grey. Bump opacity like the Dialog so the surface stays
+// legible; Paper still supplies the border and shadow.
+const menuPaper = {
+  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+};
+
 const lightGlassmorphismTheme = createTheme({
   palette: {
     mode: 'light',
@@ -73,11 +83,14 @@ const lightGlassmorphismTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          // Mirror the light Paper treatment (white tint, light border and
+          // shadow); keep the Card's stronger blur so it stays a touch more
+          // solid than a plain Paper, matching the dark Card↔Paper relation.
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.37)',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         },
       },
     },
@@ -104,6 +117,16 @@ const lightGlassmorphismTheme = createTheme({
           border: '1px solid rgba(255, 255, 255, 0.5)',
           boxShadow: '0 16px 64px rgba(0, 0, 0, 0.2)',
         },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: menuPaper,
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: menuPaper,
       },
     },
     MuiTextField: {
