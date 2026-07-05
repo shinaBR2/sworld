@@ -11,6 +11,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
 import { formatNumber } from 'core/universal/common';
 
@@ -45,19 +46,6 @@ const getCategoryLabel = (category: CategoryType): string => {
   }
 };
 
-const getCategoryColor = (category: CategoryType): string => {
-  switch (category) {
-    case 'must':
-      return '#ef444420';
-    case 'nice':
-      return '#3b82f620';
-    case 'waste':
-      return '#f59e0b20';
-    default:
-      return '#6b728020';
-  }
-};
-
 const TransactionsDialog = ({
   open,
   onClose,
@@ -66,6 +54,12 @@ const TransactionsDialog = ({
 }: TransactionsDialogProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const getCategoryColor = (category: CategoryType): string =>
+    alpha(
+      theme.palette.finance[category] ?? theme.palette.finance.default,
+      0.125,
+    );
 
   // Filter transactions based on selected category
   const filteredTransactions =

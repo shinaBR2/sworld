@@ -6,6 +6,7 @@ import {
 } from 'core/library/query-hooks';
 import type React from 'react';
 import { useState } from 'react';
+import { getCoverGradient } from 'ui/main/library-page/cover-gradients';
 import { BooksGrid } from 'ui/main/library-page/home-books-grid';
 import { ContinueReading } from 'ui/main/library-page/home-continue-reading';
 import { StatsGrid } from 'ui/main/library-page/home-stats';
@@ -16,32 +17,6 @@ import { AuthRoute } from 'ui/universal/authRoute';
 import { Container } from 'ui/universal/containers/generic';
 import { useIsMobile } from 'ui/universal/responsive';
 import { Layout } from '../components/layout';
-
-// Helper function to generate consistent gradients based on book ID
-const gradients = [
-  'linear-gradient(135deg, #ef4444, #ec4899)',
-  'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-  'linear-gradient(135deg, #10b981, #06b6d4)',
-  'linear-gradient(135deg, #f59e0b, #ea580c)',
-  'linear-gradient(135deg, #8b5cf6, #6366f1)',
-  'linear-gradient(135deg, #6b7280, #374151)',
-  'linear-gradient(135deg, #14b8a6, #0891b2)',
-  'linear-gradient(135deg, #f97316, #dc2626)',
-  'linear-gradient(135deg, #a855f7, #e11d48)',
-  'linear-gradient(135deg, #059669, #7c3aed)',
-];
-
-const getCoverGradient = (bookId: string): string => {
-  // Create a simple hash from the book ID to ensure consistent colors
-  let hash = 0;
-  for (let i = 0; i < bookId.length; i++) {
-    const char = bookId.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  const index = Math.abs(hash) % gradients.length;
-  return gradients[index];
-};
 
 const LibraryPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState(0);

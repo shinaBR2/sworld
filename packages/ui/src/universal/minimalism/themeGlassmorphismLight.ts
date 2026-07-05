@@ -1,8 +1,10 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import { financePalette } from './domainPalette';
 
 const lightGlassmorphismTheme = createTheme({
   palette: {
     mode: 'light',
+    finance: financePalette,
     background: {
       default: 'transparent',
       paper: 'rgba(255, 255, 255, 0.15)',

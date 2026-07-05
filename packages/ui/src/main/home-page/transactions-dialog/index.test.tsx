@@ -1,6 +1,7 @@
-import { createTheme, ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { theme } from '../../../universal/minimalism/themeGlassmorphismLight';
 import { TransactionsDialog } from './index';
 
 // Mock the useMediaQuery hook
@@ -53,7 +54,7 @@ describe('TransactionsDialog', () => {
 
   const renderWithTheme = (props = {}) => {
     return render(
-      <ThemeProvider theme={createTheme()}>
+      <ThemeProvider theme={theme}>
         <TransactionsDialog {...defaultProps} {...props} />
       </ThemeProvider>,
     );
