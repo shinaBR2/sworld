@@ -1,39 +1,28 @@
-// Videos have no persisted "finished" flag — completion is derived from how
-// close the saved progress is to the end. The 10s end-window matches the feel
-// of the player's own resume-vs-restart threshold; it is the continue-watching
-// domain's own constant, deliberately not code-coupled to the player package.
+// Videos have no persisted "finished" flag, so the continue-watching row derives
+// completion from how close the saved progress is to the end. It uses the same
+// end-window the player applies to decide resume-vs-restart (the player's
+// RESUME_END_THRESHOLD_SECONDS), so a video the player would restart from the
+// beginning is the same one the row treats as finished.
 const VIDEO_FINISHED_END_THRESHOLD_SECONDS = 10;
-
-// Shortest fraction of a clip that must be watched before it can count as
-// finished. Guards short clips, where a flat 10s end-window would otherwise
-// exceed (or dwarf) the runtime and flag a barely-watched clip as finished.
-const VIDEO_FINISHED_MIN_WATCHED_RATIO = 0.9;
 
 interface IsVideoFinishedProps {
   progressSeconds: number;
   duration: number;
 }
 
-// A video is finished once progress reaches within the end threshold of its
-// duration. When duration is unknown (0), we cannot judge completion — return
-// false so we never wrongly hide an item.
+// A video is finished once its saved progress reaches within the end window of
+// its duration. Clips whose whole runtime is within that window (or whose
+// duration is unknown) are too short to judge by a fixed window — never treat
+// them as finished, so a clip the viewer only just started is never hidden.
 const isVideoFinished = ({
   progressSeconds,
   duration,
 }: IsVideoFinishedProps) => {
-  if (duration <= 0) {
+  if (duration <= VIDEO_FINISHED_END_THRESHOLD_SECONDS) {
     return false;
   }
 
-  // Cap the end-window at the clip's final 10% so "finished" always means "near
-  // the actual end" regardless of length: a flat 10s window is right for a
-  // feature-length movie but would flag a 20s clip as finished at its midpoint.
-  const endThreshold = Math.min(
-    VIDEO_FINISHED_END_THRESHOLD_SECONDS,
-    duration * (1 - VIDEO_FINISHED_MIN_WATCHED_RATIO),
-  );
-
-  return progressSeconds >= duration - endThreshold;
+  return progressSeconds >= duration - VIDEO_FINISHED_END_THRESHOLD_SECONDS;
 };
 
 export { VIDEO_FINISHED_END_THRESHOLD_SECONDS, isVideoFinished };
