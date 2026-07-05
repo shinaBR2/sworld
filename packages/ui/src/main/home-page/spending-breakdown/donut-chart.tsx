@@ -1,5 +1,7 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TooltipComponent } from 'echarts/components';
@@ -26,21 +28,6 @@ export interface DonutChartProps {
   selectedCategory?: CategoryType;
 }
 
-const getCategoryColor = (category: CategoryType) => {
-  switch (category) {
-    case 'must':
-      return '#ef4444'; // red-500
-    case 'nice':
-      return '#3b82f6'; // blue-500
-    case 'waste':
-      return '#f59e0b'; // amber-500
-    case 'total':
-      return '#8b5cf6'; // violet-500
-    default:
-      return '#6b7280'; // gray-500
-  }
-};
-
 const getCategoryTitle = (category: CategoryType) => {
   switch (category) {
     case 'must':
@@ -64,6 +51,11 @@ const DonutChart = ({
 }: DonutChartProps) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
+  const { grey, common, text, divider } = theme.palette;
+  // Canvas (not CSS) surfaces read from the theme's mode: the glass tokens are
+  // translucent, so an opaque tooltip/slice-gap colour comes from the grey
+  // scale picked by mode. Everything else is a real, mode-aware theme token.
+  const chartSurface = isDarkMode ? grey[900] : common.white;
 
   // Filter out any 'total' category and zero values for chart display
   const chartData = data
@@ -74,7 +66,7 @@ const DonutChart = ({
       category: item.category,
       // Reduce opacity for non-selected categories if a category is selected
       itemStyle: {
-        color: getCategoryColor(item.category),
+        color: getFinanceColor(theme, item.category),
         opacity:
           selectedCategory && item.category !== selectedCategory ? 0.6 : 1,
       },
@@ -95,10 +87,10 @@ const DonutChart = ({
           const { name, value, percent } = params;
           return `${name}: ${formatNumber(value)} (${percent}%)`;
         },
-        backgroundColor: isDarkMode ? '#1e1e1e' : 'white',
-        borderColor: isDarkMode ? '#333' : '#ddd',
+        backgroundColor: chartSurface,
+        borderColor: divider,
         textStyle: {
-          color: isDarkMode ? '#fff' : '#333',
+          color: text.primary,
         },
       },
       series: [
@@ -109,7 +101,7 @@ const DonutChart = ({
           avoidLabelOverlap: false,
           itemStyle: {
             borderRadius: 4,
-            borderColor: isDarkMode ? '#121212' : '#ffffff',
+            borderColor: chartSurface,
             borderWidth: 2,
           },
           label: {
@@ -121,7 +113,7 @@ const DonutChart = ({
             itemStyle: {
               shadowBlur: 10,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              shadowColor: alpha(common.black, 0.5),
             },
           },
           labelLine: {

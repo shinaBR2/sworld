@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Skeleton,
   Typography,
+  useTheme,
 } from '@mui/material';
 
 // TODO infer from GraphQL
@@ -25,6 +26,14 @@ interface ContinueReadingProps {
 }
 
 const ContinueReadingSkeleton = () => {
+  const { grey, mode } = useTheme().palette;
+  // Mode-aware placeholder gradient: a fixed light grey would render a bright
+  // box against the dark surface, so darken the pair in dark mode.
+  const placeholderGradient =
+    mode === 'dark'
+      ? `linear-gradient(135deg, ${grey[700]}, ${grey[800]})`
+      : `linear-gradient(135deg, ${grey[300]}, ${grey[400]})`;
+
   return (
     <Box sx={{ mb: 6 }}>
       <Typography variant="h3" sx={{ mb: 2 }}>
@@ -60,7 +69,7 @@ const ContinueReadingSkeleton = () => {
                 sx={{
                   width: { xs: 56, sm: 64 },
                   height: { xs: 70, sm: 80 },
-                  background: 'linear-gradient(135deg, #e0e0e0, #bdbdbd)',
+                  background: placeholderGradient,
                   borderRadius: 1,
                   display: 'flex',
                   alignItems: 'center',
@@ -242,6 +251,8 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
   book,
   onBookClick,
 }) => {
+  const theme = useTheme();
+
   if (isLoading) {
     return <ContinueReadingSkeleton />;
   }
@@ -262,7 +273,7 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
           cursor: 'pointer',
           transition: 'box-shadow 0.2s',
           '&:hover': {
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            boxShadow: theme.shadows[3],
           },
         }}
         onClick={() => onBookClick?.(book)}
@@ -290,12 +301,12 @@ const ContinueReading: React.FC<ContinueReadingProps> = ({
                 sx={{
                   width: { xs: 56, sm: 64 },
                   height: { xs: 70, sm: 80 },
-                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                   borderRadius: 1,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'white',
+                  color: 'common.white',
                   flexShrink: 0,
                 }}
               >

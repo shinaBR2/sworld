@@ -11,7 +11,9 @@ import {
   Grid,
   Skeleton,
   Typography,
+  useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type React from 'react';
 
 interface StatsData {
@@ -27,37 +29,36 @@ interface StatsGridProps {
   stats: StatsData | null;
 }
 
+// `color` is a theme palette key so each tile reads from a mode-aware token
+// (the old hardcoded pastel `bgcolor` was light-only — invisible in dark mode).
+// The icon circle background is derived from the same colour via alpha().
 const statItems = [
   {
     key: 'completedBooks',
     label: 'Books Completed',
     icon: CheckIcon,
-    color: '#16a34a',
-    bgcolor: '#dcfce7',
+    color: 'success',
     suffix: '',
   },
   {
     key: 'currentlyReading',
     label: 'Currently Reading',
     icon: BookIcon,
-    color: '#2563eb',
-    bgcolor: '#dbeafe',
+    color: 'info',
     suffix: '',
   },
   {
     key: 'readingTimeThisMonth',
     label: 'This Month',
     icon: ScheduleIcon,
-    color: '#9333ea',
-    bgcolor: '#f3e8ff',
+    color: 'secondary',
     suffix: 'h',
   },
   {
     key: 'wishlist',
     label: 'Wishlist',
     icon: FavoriteIcon,
-    color: '#ea580c',
-    bgcolor: '#fed7aa',
+    color: 'warning',
     suffix: '',
   },
 ] as const;
@@ -130,6 +131,7 @@ const StatsGridSkeleton = () => {
 
 const StatsGrid: React.FC<StatsGridProps> = (props) => {
   const { isLoading, stats } = props;
+  const theme = useTheme();
 
   if (isLoading) {
     return <StatsGridSkeleton />;
@@ -145,6 +147,7 @@ const StatsGrid: React.FC<StatsGridProps> = (props) => {
           if (item.key === 'readingTimeThisMonth') {
             value = Math.round(value / 60);
           }
+          const tileColor = theme.palette[item.color].main;
 
           return (
             <Grid
@@ -161,8 +164,8 @@ const StatsGrid: React.FC<StatsGridProps> = (props) => {
                       width: 48,
                       height: 48,
                       borderRadius: '50%',
-                      bgcolor: item.bgcolor,
-                      color: item.color,
+                      bgcolor: alpha(tileColor, 0.15),
+                      color: tileColor,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

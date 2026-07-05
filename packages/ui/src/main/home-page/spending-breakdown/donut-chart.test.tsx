@@ -1,6 +1,7 @@
-import { createTheme, ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { theme } from '../../../universal/minimalism/themeGlassmorphismLight';
 import { type CategoryData, DonutChart } from './donut-chart';
 
 // Mock echarts core modules
@@ -54,8 +55,6 @@ vi.mock('echarts-for-react/esm/core', () => ({
 }));
 
 describe('DonutChart', () => {
-  const theme = createTheme();
-
   const mockData: CategoryData[] = [
     { category: 'must', amount: 100, count: 2 },
     { category: 'nice', amount: 50, count: 1 },
@@ -178,9 +177,9 @@ describe('DonutChart', () => {
       (d: any) => d.category === 'waste',
     );
 
-    // Check colors
-    expect(mustData.itemStyle.color).toBe('#ef4444');
-    expect(niceData.itemStyle.color).toBe('#3b82f6');
-    expect(wasteData.itemStyle.color).toBe('#f59e0b');
+    // Colours are read from the theme's finance palette, not hardcoded.
+    expect(mustData.itemStyle.color).toBe(theme.palette.finance.must);
+    expect(niceData.itemStyle.color).toBe(theme.palette.finance.nice);
+    expect(wasteData.itemStyle.color).toBe(theme.palette.finance.waste);
   });
 });

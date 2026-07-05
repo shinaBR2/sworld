@@ -15,11 +15,12 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
+import { alpha, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import type { Journal, JournalStats, MoodType } from 'core/src/journal/types';
 import { formatDate, getMonthName } from 'core/universal/common';
 import type React from 'react';
-import { MoodIcon } from '../mood-icons';
+import { MOOD_CONFIG, MoodIcon } from '../mood-icons';
 
 interface JournalListProps {
   journals: Journal[];
@@ -40,6 +41,8 @@ export const JournalList: React.FC<JournalListProps> = ({
   onJournalClick,
   onMonthChange,
 }) => {
+  const theme = useTheme();
+
   const handlePrevMonth = () => {
     let newMonth = month - 1;
     let newYear = year;
@@ -66,35 +69,36 @@ export const JournalList: React.FC<JournalListProps> = ({
 
   const renderStatCard = (mood: MoodType | 'total', count: number) => {
     let icon;
-    let color;
     let label;
 
     switch (mood) {
       case 'happy':
         icon = <SentimentSatisfiedAltIcon fontSize="small" />;
-        color = '#4caf50';
         label = 'Happy';
         break;
       case 'neutral':
         icon = <SentimentNeutralIcon fontSize="small" />;
-        color = '#2196f3';
         label = 'Neutral';
         break;
       case 'sad':
         icon = <SentimentVeryDissatisfiedIcon fontSize="small" />;
-        color = '#f44336';
         label = 'Sad';
         break;
       case 'total':
         icon = <CalendarTodayIcon fontSize="small" />;
-        color = '#9c27b0';
         label = 'Total';
         break;
       default:
         icon = null;
-        color = '#cccccc';
         label = 'Unknown';
     }
+
+    // One mood → palette mapping, shared with journal-detail via MOOD_CONFIG.
+    // 'total' is a summary row (not a mood); anything unexpected (the 'Unknown'
+    // branch above) also falls back to the primary accent rather than crashing.
+    const paletteKey =
+      mood === 'total' ? 'primary' : (MOOD_CONFIG[mood]?.color ?? 'primary');
+    const color = theme.palette[paletteKey].main;
 
     return (
       <Card
@@ -112,7 +116,7 @@ export const JournalList: React.FC<JournalListProps> = ({
                 width: 24,
                 height: 24,
                 borderRadius: '50%',
-                bgcolor: `${color}20`,
+                bgcolor: alpha(color, 0.125),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
