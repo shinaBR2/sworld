@@ -42,12 +42,7 @@ const Header = (props: HeaderProps) => {
           }}
         >
           <Logo LinkComponent={LinkComponent} />
-          {siteChoices ? (
-            <SiteChoices
-              activeSite={siteChoices.activeSite}
-              sites={siteChoices.sites}
-            />
-          ) : null}
+          {siteChoices ? <SiteChoices {...siteChoices} /> : null}
         </Box>
 
         <Box
