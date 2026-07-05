@@ -7,14 +7,14 @@ import { Auth, ErrorBoundary, Query } from 'core';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorFallback } from 'ui/universal/error-boundary';
-import { UniversalMinimalismThemeProvider } from 'ui/universal/minimalism';
+import { GlassmorphismProvider } from 'ui/universal/minimalism';
+import { StandaloneReconciler } from './components/standalone-reconciler';
 import {
   auth0Config,
   queryConfig,
   rollbarConfig,
   validateEnvVars,
 } from './config';
-import { StandaloneReconciler } from './components/standalone-reconciler';
 import { routeTree } from './routeTree.gen';
 import { readStandaloneCache } from './standalone-mode';
 
@@ -63,9 +63,9 @@ const AppWrapper = () => {
       <ErrorBoundary config={rollbarConfig} FallbackComponent={ErrorFallback}>
         <Auth.AuthProvider config={auth0Config}>
           <Query.QueryProvider config={queryConfig}>
-            <UniversalMinimalismThemeProvider>
+            <GlassmorphismProvider>
               <App />
-            </UniversalMinimalismThemeProvider>
+            </GlassmorphismProvider>
           </Query.QueryProvider>
         </Auth.AuthProvider>
       </ErrorBoundary>
