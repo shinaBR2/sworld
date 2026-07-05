@@ -24,6 +24,20 @@ const RESUME_REWIND_SECONDS = 5;
 // as finished and start from the beginning instead of resuming at the very end.
 const RESUME_END_THRESHOLD_SECONDS = 10;
 
+// Elements whose own keyboard behavior must win over the page-wide player
+// shortcuts: text entry and focusable controls (so e.g. Space/Enter on a
+// focused button activates the button instead of toggling the video).
+const INTERACTIVE_TARGET_SELECTOR =
+  'input, textarea, select, button, a[href], [role="button"], [role="link"], [role="menuitem"], [role="tab"], [role="option"]';
+
+const isInteractiveTarget = (target: HTMLElement | null) => {
+  if (!target) return false;
+  if (target.isContentEditable) return true;
+  // closest() matches the element itself too, so a focused <input>/<button>/…
+  // is caught, as is any keystroke bubbling from inside such a control.
+  return target.closest(INTERACTIVE_TARGET_SELECTOR) !== null;
+};
+
 // Lazy load the VideoJS component that contains video.js
 // const VideoJS = lazy(() => import('./videojs'));
 // react-player is CJS; rolldown-vite's prebundle exposes its exports object as
@@ -166,24 +180,16 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // whenever the user is on the video detail page, regardless of focus.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if the user is typing (inputs, textareas, or any contenteditable
-      // element). Inspect the actual event target rather than document's
-      // activeElement so text entry anywhere on the page never triggers a
-      // shortcut.
-      const target = e.target as HTMLElement | null;
-      const tagName = target?.tagName;
-      if (
-        tagName === 'INPUT' ||
-        tagName === 'TEXTAREA' ||
-        target?.isContentEditable
-      ) {
+      // The listener is on document (shortcuts work page-wide, not only when the
+      // player is focused), so bail when the keystroke is aimed at something the
+      // user is operating — text entry or a focusable control — inspecting the
+      // real event target rather than document.activeElement.
+      if (isInteractiveTarget(e.target as HTMLElement | null)) {
         return;
       }
 
       const player = playerRef.current;
       if (!player) return;
-
-      const wrapper = wrapperRef.current;
 
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
@@ -261,10 +267,11 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           }));
           break;
 
-        case 'f': // Fullscreen
+        case 'f': {
+          // Fullscreen — toggle on the player wrapper.
           e.preventDefault();
           e.stopPropagation();
-          // Get the wrapper element for fullscreen
+          const wrapper = wrapperRef.current;
           if (wrapper) {
             if (document.fullscreenElement) {
               document.exitFullscreen();
@@ -273,6 +280,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
             }
           }
           break;
+        }
 
         case 'Home': // Jump to start
           e.preventDefault();

@@ -262,76 +262,63 @@ describe('VideoPlayer keyboard hotkeys', () => {
     mockGetDuration.mockReturnValue(100);
   });
 
-  it('should handle keyboard events for play/pause (k key) page-wide', async () => {
-    render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
-
-    // Dispatch 'k' on document (without focusing the wrapper) — the listener is
-    // document-level, so the shortcut fires regardless of focus.
-    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
-    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
-
-    fireEvent(document.body, kEvent);
-
-    expect(kEvent.preventDefault).toHaveBeenCalled();
-  });
-
-  it('should handle keyboard events for mute (m key) page-wide', async () => {
-    render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
-
-    // Dispatch 'm' on document (without focusing the wrapper).
-    const mEvent = new KeyboardEvent('keydown', { key: 'm', bubbles: true });
-    Object.defineProperty(mEvent, 'preventDefault', { value: vi.fn() });
-
-    fireEvent(document.body, mEvent);
-
-    expect(mEvent.preventDefault).toHaveBeenCalled();
-  });
-
-  it('should handle keyboard events for volume up (ArrowUp key) page-wide', async () => {
-    render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
-
-    const upEvent = new KeyboardEvent('keydown', {
-      key: 'ArrowUp',
-      bubbles: true,
+  // Dispatches a keydown from `target` and returns the event (with a spied
+  // preventDefault). Wrapped in act so the document-listener's setState flushes.
+  const pressKey = (target: HTMLElement, key: string) => {
+    const event = new KeyboardEvent('keydown', { key, bubbles: true });
+    Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+    act(() => {
+      fireEvent(target, event);
     });
-    Object.defineProperty(upEvent, 'preventDefault', { value: vi.fn() });
+    return event;
+  };
 
-    fireEvent(document.body, upEvent);
+  it('toggles play/pause page-wide (k key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+    expect(mockReactPlayerRef().playing).toBe(false);
 
-    expect(upEvent.preventDefault).toHaveBeenCalled();
+    // Dispatch on document.body (the wrapper is never focused) — the listener is
+    // document-level, so the shortcut fires regardless of focus AND the player
+    // actually starts playing.
+    const event = pressKey(document.body, 'k');
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(true);
   });
 
-  it('should handle keyboard events for volume down (ArrowDown key) page-wide', async () => {
+  it('toggles mute page-wide (m key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+    expect(mockReactPlayerRef().muted).toBe(false);
+
+    const event = pressKey(document.body, 'm');
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockReactPlayerRef().muted).toBe(true);
+  });
+
+  it('lowers the volume page-wide (ArrowDown key)', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+    expect(mockReactPlayerRef().volume).toBe(1);
+
+    const event = pressKey(document.body, 'ArrowDown');
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockReactPlayerRef().volume).toBeCloseTo(0.95);
+  });
+
+  it('handles the fullscreen key page-wide (f key)', async () => {
     render(<VideoPlayer video={mockVideo} />);
     await screen.findByTestId('mock-react-player');
 
-    const downEvent = new KeyboardEvent('keydown', {
-      key: 'ArrowDown',
-      bubbles: true,
-    });
-    Object.defineProperty(downEvent, 'preventDefault', { value: vi.fn() });
+    const event = pressKey(document.body, 'f');
 
-    fireEvent(document.body, downEvent);
-
-    expect(downEvent.preventDefault).toHaveBeenCalled();
+    expect(event.preventDefault).toHaveBeenCalled();
   });
 
-  it('should handle keyboard events for fullscreen (f key) page-wide', async () => {
-    render(<VideoPlayer video={mockVideo} />);
-    await screen.findByTestId('mock-react-player');
-
-    const fEvent = new KeyboardEvent('keydown', { key: 'f', bubbles: true });
-    Object.defineProperty(fEvent, 'preventDefault', { value: vi.fn() });
-
-    fireEvent(document.body, fEvent);
-
-    expect(fEvent.preventDefault).toHaveBeenCalled();
-  });
-
-  it('should ignore keyboard events originating from an input', async () => {
+  it('ignores shortcuts typed into an input', async () => {
     render(
       <div>
         <input data-testid="test-input" />
@@ -340,18 +327,15 @@ describe('VideoPlayer keyboard hotkeys', () => {
     );
     await screen.findByTestId('mock-react-player');
 
-    const input = screen.getByTestId('test-input');
+    // 'k' from the input must be skipped — no preventDefault, and the player
+    // does not start playing.
+    const event = pressKey(screen.getByTestId('test-input'), 'k');
 
-    // Dispatch 'k' from the input — the target-based guard must skip it.
-    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
-    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
-
-    fireEvent(input, kEvent);
-
-    expect(kEvent.preventDefault).not.toHaveBeenCalled();
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
   });
 
-  it('should ignore keyboard events originating from a textarea', async () => {
+  it('ignores shortcuts typed into a textarea', async () => {
     render(
       <div>
         <textarea data-testid="test-textarea" />
@@ -360,17 +344,13 @@ describe('VideoPlayer keyboard hotkeys', () => {
     );
     await screen.findByTestId('mock-react-player');
 
-    const textarea = screen.getByTestId('test-textarea');
+    const event = pressKey(screen.getByTestId('test-textarea'), 'k');
 
-    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
-    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
-
-    fireEvent(textarea, kEvent);
-
-    expect(kEvent.preventDefault).not.toHaveBeenCalled();
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
   });
 
-  it('should ignore keyboard events originating from a contenteditable element', async () => {
+  it('ignores shortcuts typed into a contenteditable element', async () => {
     render(
       <div>
         <div
@@ -388,11 +368,28 @@ describe('VideoPlayer keyboard hotkeys', () => {
     // explicitly to mirror a real browser's editable target.
     Object.defineProperty(editable, 'isContentEditable', { value: true });
 
-    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
-    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
+    const event = pressKey(editable, 'k');
 
-    fireEvent(editable, kEvent);
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
+  });
 
-    expect(kEvent.preventDefault).not.toHaveBeenCalled();
+  it('ignores shortcuts when a focusable control is the target', async () => {
+    render(
+      <div>
+        <button type="button" data-testid="test-button">
+          Add to list
+        </button>
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    // Space/typing on a focused button must activate the button, not toggle the
+    // video — the interactive-target guard leaves the event untouched.
+    const event = pressKey(screen.getByTestId('test-button'), ' ');
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
   });
 });
