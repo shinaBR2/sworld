@@ -149,4 +149,12 @@ const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-export { compareString, slugify, isValidId, isValidEmail };
+// Average adult reading speed, used to estimate a post's read time.
+const WORDS_PER_MINUTE = 200;
+
+const calculateReadTime = (text: string): number => {
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+};
+
+export { compareString, slugify, isValidId, isValidEmail, calculateReadTime };

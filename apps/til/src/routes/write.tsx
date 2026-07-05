@@ -4,7 +4,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import { useInsertPost } from 'core/til/mutation-hooks/insertPost';
-import { slugify } from 'core/universal/common';
+import { calculateReadTime, slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { EditorLoading, WriteForm } from 'ui/til/editor';
 import { AuthRoute } from 'ui/universal/authRoute';
@@ -107,10 +107,7 @@ function WritePageContent() {
           slug,
           markdownContent: content,
           brief: text.substring(0, 200) + (text.length > 200 ? '...' : ''),
-          readTimeInMinutes: Math.max(
-            1,
-            Math.ceil(text.split(/\s+/).filter(Boolean).length / 200),
-          ),
+          readTimeInMinutes: calculateReadTime(text),
         },
       });
     } catch (error) {

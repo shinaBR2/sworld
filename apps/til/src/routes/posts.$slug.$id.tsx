@@ -3,7 +3,7 @@ import { Auth } from 'core';
 import { POST_STATUS, POST_VISIBILITY } from 'core/til/constants';
 import { useUpdatePost } from 'core/til/mutation-hooks/updatePost';
 import { useLoadPostDetail } from 'core/til/query-hooks/post-detail';
-import { slugify } from 'core/universal/common';
+import { calculateReadTime, slugify } from 'core/universal/common';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import {
@@ -88,12 +88,14 @@ const RouteComponent = () => {
     if (!editorRef.current) return;
     setIsSaving(true);
     const markdown = editorRef.current.getMarkdown() || '';
+    const text = editorRef.current.getText().trim() || '';
     await updatePost({
       id: postId,
       object: {
         title: editableTitle.trim(),
         slug: slugify(editableTitle),
         markdownContent: markdown,
+        readTimeInMinutes: calculateReadTime(text),
       },
     });
     setIsSaving(false);
