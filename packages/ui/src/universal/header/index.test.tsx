@@ -134,9 +134,15 @@ describe('Header', () => {
       />,
     );
 
+    const logo = screen.getByTestId('mock-logo');
     const switcher = screen.getByTestId('mock-site-choices');
     expect(switcher).toBeInTheDocument();
     expect(switcher).toHaveAttribute('data-active-site', 'watch');
+
+    // Positioned next to (immediately following) the logo.
+    expect(
+      logo.compareDocumentPosition(switcher) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it('renders slot content between the theme toggle and the avatar', () => {
