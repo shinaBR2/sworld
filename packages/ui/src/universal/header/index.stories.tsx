@@ -34,9 +34,9 @@ const user = {
 const siteChoices = {
   activeSite: 'watch',
   sites: {
+    main: 'https://main.example.com',
     listen: 'https://listen.example.com',
     watch: 'https://watch.example.com',
-    play: 'https://play.example.com',
     til: 'https://til.example.com',
   },
 };
