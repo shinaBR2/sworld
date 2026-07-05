@@ -56,9 +56,6 @@ const TransactionsDialog = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const getCategoryColor = (category: CategoryType): string =>
-    alpha(getFinanceColor(theme, category), 0.125);
-
   // Filter transactions based on selected category
   const filteredTransactions =
     selectedCategory && selectedCategory !== 'total'
@@ -162,8 +159,12 @@ const TransactionsDialog = ({
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 1,
-                        backgroundColor: getCategoryColor(
-                          transaction.category as CategoryType,
+                        backgroundColor: alpha(
+                          getFinanceColor(
+                            theme,
+                            transaction.category as CategoryType,
+                          ),
+                          0.125,
                         ),
                       }}
                     >

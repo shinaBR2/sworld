@@ -26,7 +26,13 @@ interface ContinueReadingProps {
 }
 
 const ContinueReadingSkeleton = () => {
-  const theme = useTheme();
+  const { grey, mode } = useTheme().palette;
+  // Mode-aware placeholder gradient: a fixed light grey would render a bright
+  // box against the dark surface, so darken the pair in dark mode.
+  const placeholderGradient =
+    mode === 'dark'
+      ? `linear-gradient(135deg, ${grey[700]}, ${grey[800]})`
+      : `linear-gradient(135deg, ${grey[300]}, ${grey[400]})`;
 
   return (
     <Box sx={{ mb: 6 }}>
@@ -63,7 +69,7 @@ const ContinueReadingSkeleton = () => {
                 sx={{
                   width: { xs: 56, sm: 64 },
                   height: { xs: 70, sm: 80 },
-                  background: `linear-gradient(135deg, ${theme.palette.grey[300]}, ${theme.palette.grey[400]})`,
+                  background: placeholderGradient,
                   borderRadius: 1,
                   display: 'flex',
                   alignItems: 'center',
