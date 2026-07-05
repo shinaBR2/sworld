@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
 
 interface Transaction {
@@ -56,10 +57,7 @@ const TransactionsDialog = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const getCategoryColor = (category: CategoryType): string =>
-    alpha(
-      theme.palette.finance[category] ?? theme.palette.finance.default,
-      0.125,
-    );
+    alpha(getFinanceColor(theme, category), 0.125);
 
   // Filter transactions based on selected category
   const filteredTransactions =

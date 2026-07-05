@@ -1,6 +1,7 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TooltipComponent } from 'echarts/components';
@@ -50,14 +51,11 @@ const DonutChart = ({
 }: DonutChartProps) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
-  const { finance, grey, common, text, divider } = theme.palette;
+  const { grey, common, text, divider } = theme.palette;
   // Canvas (not CSS) surfaces read from the theme's mode: the glass tokens are
   // translucent, so an opaque tooltip/slice-gap colour comes from the grey
   // scale picked by mode. Everything else is a real, mode-aware theme token.
   const chartSurface = isDarkMode ? grey[900] : common.white;
-
-  const getCategoryColor = (category: CategoryType) =>
-    finance[category] ?? finance.default;
 
   // Filter out any 'total' category and zero values for chart display
   const chartData = data
@@ -68,7 +66,7 @@ const DonutChart = ({
       category: item.category,
       // Reduce opacity for non-selected categories if a category is selected
       itemStyle: {
-        color: getCategoryColor(item.category),
+        color: getFinanceColor(theme, item.category),
         opacity:
           selectedCategory && item.category !== selectedCategory ? 0.6 : 1,
       },

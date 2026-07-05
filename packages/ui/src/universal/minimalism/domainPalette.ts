@@ -5,6 +5,9 @@
 // colours intentionally identical across modes; only mode-dependent surfaces
 // (chart tooltip/borders) are derived from the theme's mode at the point of use.
 
+import type { Theme } from '@mui/material/styles';
+import type { CategoryType } from 'core/finance';
+
 interface FinancePalette {
   must: string;
   nice: string;
@@ -31,5 +34,10 @@ declare module '@mui/material/styles' {
   }
 }
 
-export { financePalette };
+// Single lookup for a finance category's colour, derived from the theme. The
+// `?? default` guards call sites that cast an arbitrary string to CategoryType.
+const getFinanceColor = (theme: Theme, category: CategoryType): string =>
+  theme.palette.finance[category] ?? theme.palette.finance.default;
+
+export { financePalette, getFinanceColor };
 export type { FinancePalette };

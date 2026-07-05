@@ -94,8 +94,10 @@ export const JournalList: React.FC<JournalListProps> = ({
     }
 
     // One mood → palette mapping, shared with journal-detail via MOOD_CONFIG.
-    // 'total' is a summary row (not a mood), so it uses the primary accent.
-    const paletteKey = mood === 'total' ? 'primary' : MOOD_CONFIG[mood].color;
+    // 'total' is a summary row (not a mood); anything unexpected (the 'Unknown'
+    // branch above) also falls back to the primary accent rather than crashing.
+    const paletteKey =
+      mood === 'total' ? 'primary' : (MOOD_CONFIG[mood]?.color ?? 'primary');
     const color = theme.palette[paletteKey].main;
 
     return (
