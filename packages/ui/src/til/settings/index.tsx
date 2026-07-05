@@ -31,9 +31,9 @@ const SettingsPanel = (props: SettingsPanelProps) => {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
         }}
       >
-        <List sx={{ flex: 1 }} />
         <Divider />
         <List>
           <ListItemButton onClick={logout}>

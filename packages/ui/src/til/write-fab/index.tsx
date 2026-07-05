@@ -1,13 +1,11 @@
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
-import type { RequiredLinkComponent } from '../../watch/videos/types';
-
-type WriteFabProps = Omit<RequiredLinkComponent, 'linkProps'>;
+import type { RequiredLinkComponentWithoutLinkProps } from '../../watch/videos/types';
 
 const label = 'Write a new post';
 
-const WriteFab = (props: WriteFabProps) => {
+const WriteFab = (props: RequiredLinkComponentWithoutLinkProps) => {
   const { LinkComponent } = props;
 
   return (
