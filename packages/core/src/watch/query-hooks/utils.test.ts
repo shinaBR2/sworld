@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { VIDEO_FINISHED_END_THRESHOLD_SECONDS, isVideoFinished } from './utils';
+import { isVideoFinished, VIDEO_FINISHED_END_THRESHOLD_SECONDS } from './utils';
 
 describe('isVideoFinished', () => {
   it('mirrors the player end threshold of 10 seconds', () => {
@@ -27,5 +27,17 @@ describe('isVideoFinished', () => {
 
   it('is not finished at the very start', () => {
     expect(isVideoFinished({ progressSeconds: 0, duration: 120 })).toBe(false);
+  });
+
+  it('does not flag a barely-watched short clip as finished', () => {
+    // For an 8s clip a flat 10s threshold would make `duration - threshold`
+    // negative, wrongly hiding a clip the user only just started.
+    expect(isVideoFinished({ progressSeconds: 2, duration: 8 })).toBe(false);
+  });
+
+  it('flags a short clip as finished only near its end', () => {
+    // Threshold caps at half the duration (4s), so an 8s clip is finished once
+    // the viewer is within its last 4 seconds.
+    expect(isVideoFinished({ progressSeconds: 5, duration: 8 })).toBe(true);
   });
 });

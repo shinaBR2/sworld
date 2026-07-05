@@ -20,7 +20,16 @@ const isVideoFinished = ({
     return false;
   }
 
-  return progressSeconds >= duration - VIDEO_FINISHED_END_THRESHOLD_SECONDS;
+  // Cap the threshold at half the duration so a clip shorter than the fixed
+  // end-threshold isn't flagged as finished the instant it starts (for an 8s
+  // clip a flat 10s threshold would make `duration - threshold` negative, so
+  // any progress would count as finished).
+  const endThreshold = Math.min(
+    VIDEO_FINISHED_END_THRESHOLD_SECONDS,
+    duration / 2,
+  );
+
+  return progressSeconds >= duration - endThreshold;
 };
 
 export { VIDEO_FINISHED_END_THRESHOLD_SECONDS, isVideoFinished };
