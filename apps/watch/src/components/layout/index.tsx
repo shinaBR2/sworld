@@ -1,18 +1,20 @@
 import { Link } from '@tanstack/react-router';
 import { Auth } from 'core';
-import { useLoadUserSettings } from 'core/user-settings/query-hooks';
 import { useSaveUserSettings } from 'core/user-settings/mutation-hooks';
+import { useLoadUserSettings } from 'core/user-settings/query-hooks';
 import type React from 'react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
+import { Header } from 'ui/universal/header';
 import { Notification } from 'ui/universal/notification';
-import { Header } from 'ui/watch/header';
 import { SettingsPanel } from 'ui/watch/home-page/settings';
 import { appConfig } from '../../config';
 import {
   clearStandaloneCache,
   writeStandaloneCache,
 } from '../../standalone-mode';
+
+const Notifications = lazy(() => import('ui/watch/notifications'));
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -54,9 +56,14 @@ const Layout = (props: LayoutProps) => {
     <FullPageContainer>
       <Header
         LinkComponent={Link}
-        toggleSetting={toggleSetting}
-        sites={sites}
         user={user}
+        onAvatarClick={() => toggleSetting(true)}
+        siteChoices={{ activeSite: 'watch', sites }}
+        actions={
+          <Suspense fallback={null}>
+            <Notifications LinkComponent={Link} />
+          </Suspense>
+        }
       />
       <SettingsPanel
         open={settingOpen}
