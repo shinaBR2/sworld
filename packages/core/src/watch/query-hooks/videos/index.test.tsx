@@ -275,4 +275,76 @@ describe('useLoadVideos', () => {
       },
     ]);
   });
+
+  it('filters finished videos out of continueWatching', () => {
+    vi.mocked(useRequest).mockReturnValue({
+      data: {
+        videos: [],
+        playlist: [],
+        user_video_history: [
+          {
+            // Finished: progress at (duration - 10) → hidden.
+            id: 'h1',
+            last_watched_at: '2024-02-03',
+            progress_seconds: 110,
+            video: {
+              id: '1',
+              title: 'Finished Video',
+              source: 'source1',
+              slug: 'finished',
+              thumbnailUrl: 'thumb1.jpg',
+              duration: 120,
+              createdAt: '2024-01-01',
+              user: { username: 'user1' },
+              playlist_videos: [],
+            },
+          },
+          {
+            // Partway through: progress just before threshold → still shown.
+            id: 'h2',
+            last_watched_at: '2024-02-02',
+            progress_seconds: 109,
+            video: {
+              id: '2',
+              title: 'Partway Video',
+              source: 'source2',
+              slug: 'partway',
+              thumbnailUrl: 'thumb2.jpg',
+              duration: 120,
+              createdAt: '2024-01-02',
+              user: { username: 'user2' },
+              playlist_videos: [],
+            },
+          },
+          {
+            // Unknown duration (0): never treated as finished → still shown.
+            id: 'h3',
+            last_watched_at: '2024-02-01',
+            progress_seconds: 500,
+            video: {
+              id: '3',
+              title: 'Unknown Duration Video',
+              source: 'source3',
+              slug: 'unknown',
+              thumbnailUrl: 'thumb3.jpg',
+              duration: 0,
+              createdAt: '2024-01-03',
+              user: { username: 'user3' },
+              playlist_videos: [],
+            },
+          },
+        ],
+      },
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadVideos({ getAccessToken: mockGetAccessToken }),
+    );
+
+    expect(result.current.continueWatching.map((item) => item.id)).toEqual([
+      '2',
+      '3',
+    ]);
+  });
 });

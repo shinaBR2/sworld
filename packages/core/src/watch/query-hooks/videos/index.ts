@@ -7,6 +7,7 @@ import {
   transformVideoFragment,
 } from '../transformers';
 import { MEDIA_TYPES } from '../types';
+import { isVideoFinished } from '../utils';
 
 const videosQuery = graphql(/* GraphQL */ `
   query AllVideos @cached {
@@ -89,31 +90,39 @@ const transformContinueWatching = (data: AllVideosQuery) => {
     return [];
   }
 
-  return data.user_video_history.map((item) => {
-    const {
-      last_watched_at: lastWatchedAt,
-      progress_seconds: progressSeconds,
-      video,
-    } = item;
-    // A video can belong to many playlists; today each has at most one.
-    const playlist = video.playlist_videos[0]?.playlist;
-    const user = transformUser(video.user);
+  return data.user_video_history
+    .filter(
+      (item) =>
+        !isVideoFinished({
+          progressSeconds: item.progress_seconds,
+          duration: item.video.duration || 0,
+        }),
+    )
+    .map((item) => {
+      const {
+        last_watched_at: lastWatchedAt,
+        progress_seconds: progressSeconds,
+        video,
+      } = item;
+      // A video can belong to many playlists; today each has at most one.
+      const playlist = video.playlist_videos[0]?.playlist;
+      const user = transformUser(video.user);
 
-    return {
-      id: video.id,
-      type: MEDIA_TYPES.VIDEO,
-      title: video.title,
-      source: video.source || '',
-      slug: video.slug,
-      thumbnailUrl: video.thumbnailUrl || '',
-      duration: video.duration || 0,
-      createdAt: video.createdAt,
-      lastWatchedAt,
-      progressSeconds,
-      playlist,
-      user,
-    };
-  });
+      return {
+        id: video.id,
+        type: MEDIA_TYPES.VIDEO,
+        title: video.title,
+        source: video.source || '',
+        slug: video.slug,
+        thumbnailUrl: video.thumbnailUrl || '',
+        duration: video.duration || 0,
+        createdAt: video.createdAt,
+        lastWatchedAt,
+        progressSeconds,
+        playlist,
+        user,
+      };
+    });
 };
 
 const useLoadVideos = (props: LoadVideosProps) => {

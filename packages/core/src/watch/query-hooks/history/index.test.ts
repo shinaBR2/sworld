@@ -295,4 +295,60 @@ describe('useLoadHistory', () => {
 
     expect(result.current.videos[0].playlist).toBeUndefined();
   });
+
+  it('filters finished videos out of the history', () => {
+    const dataWithFinished: UserVideoHistoryQuery = {
+      user_video_history: [
+        {
+          // Finished: progress at (duration - 10) → hidden.
+          ...mockHistoryData.user_video_history[0],
+          id: 'finished',
+          progress_seconds: 290,
+          video: {
+            ...mockHistoryData.user_video_history[0].video,
+            id: 'video-finished',
+            duration: 300,
+          },
+        },
+        {
+          // Partway through: progress just before threshold → still shown.
+          ...mockHistoryData.user_video_history[0],
+          id: 'partway',
+          progress_seconds: 289,
+          video: {
+            ...mockHistoryData.user_video_history[0].video,
+            id: 'video-partway',
+            duration: 300,
+          },
+        },
+        {
+          // Unknown duration (0): never treated as finished → still shown.
+          ...mockHistoryData.user_video_history[0],
+          id: 'unknown-duration',
+          progress_seconds: 9999,
+          video: {
+            ...mockHistoryData.user_video_history[0].video,
+            id: 'video-unknown',
+            duration: 0,
+          },
+        },
+      ],
+    };
+
+    vi.mocked(useRequest).mockReturnValue({
+      data: dataWithFinished,
+      isLoading: false,
+    } as ReturnType<typeof useRequest>);
+
+    const { result } = renderHook(() =>
+      useLoadHistory({
+        getAccessToken: mockGetAccessToken,
+      }),
+    );
+
+    expect(result.current.videos.map((video) => video.id)).toEqual([
+      'video-partway',
+      'video-unknown',
+    ]);
+  });
 });

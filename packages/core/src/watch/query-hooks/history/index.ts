@@ -3,6 +3,7 @@ import type { UserVideoHistoryQuery } from '../../../graphql/graphql';
 import { useRequest } from '../../../universal/hooks/use-request';
 import { transformUser } from '../transformers';
 import { type BaseQueryProps, MEDIA_TYPES } from '../types';
+import { isVideoFinished } from '../utils';
 
 const historyQuery = graphql(/* GraphQL */ `
   query UserVideoHistory {
@@ -44,32 +45,40 @@ const historyQuery = graphql(/* GraphQL */ `
 `);
 
 const transform = (data: UserVideoHistoryQuery) => {
-  const videos = data.user_video_history.map((item) => {
-    const {
-      last_watched_at: lastWatchedAt,
-      progress_seconds: progressSeconds,
-      video,
-    } = item;
-    // Video can belong to many playlist
-    // For now it's fine because all videos has one playlist only
-    const playlist = video.playlist_videos[0]?.playlist;
-    const user = transformUser(video.user);
+  const videos = data.user_video_history
+    .filter(
+      (item) =>
+        !isVideoFinished({
+          progressSeconds: item.progress_seconds,
+          duration: item.video.duration || 0,
+        }),
+    )
+    .map((item) => {
+      const {
+        last_watched_at: lastWatchedAt,
+        progress_seconds: progressSeconds,
+        video,
+      } = item;
+      // Video can belong to many playlist
+      // For now it's fine because all videos has one playlist only
+      const playlist = video.playlist_videos[0]?.playlist;
+      const user = transformUser(video.user);
 
-    return {
-      id: video.id,
-      type: MEDIA_TYPES.VIDEO,
-      title: video.title,
-      source: video.source || '',
-      slug: video.slug,
-      thumbnailUrl: video.thumbnailUrl || '',
-      duration: video.duration || 0,
-      createdAt: video.createdAt,
-      lastWatchedAt,
-      progressSeconds,
-      playlist,
-      user,
-    };
-  });
+      return {
+        id: video.id,
+        type: MEDIA_TYPES.VIDEO,
+        title: video.title,
+        source: video.source || '',
+        slug: video.slug,
+        thumbnailUrl: video.thumbnailUrl || '',
+        duration: video.duration || 0,
+        createdAt: video.createdAt,
+        lastWatchedAt,
+        progressSeconds,
+        playlist,
+        user,
+      };
+    });
 
   return videos;
 };
