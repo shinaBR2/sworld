@@ -6,12 +6,11 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: '100%',
   marginBottom: theme.spacing(3),
   borderRadius: theme.spacing(1.5),
-  boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)',
-  transition: 'all 0.2s ease-in-out',
-  border: '1px solid rgba(0,0,0,0.06)',
+  // Background, border and shadow are owned by the theme's Card override — only
+  // layout, radius and the hover lift belong here.
+  transition: 'transform 0.2s ease-in-out',
   '&:hover': {
     transform: 'translateY(-4px)',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.08)',
   },
 })) as typeof Card;
 
@@ -30,8 +29,8 @@ export const ReadTimeBadge = styled(Typography)(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(0.5, 1.5),
   borderRadius: theme.spacing(1),
-  backgroundColor: theme.palette.grey[100],
-  color: theme.palette.grey[600],
+  backgroundColor: theme.palette.action.hover,
+  color: theme.palette.text.secondary,
   fontWeight: 500,
   fontSize: '0.75rem',
   letterSpacing: '0.025em',

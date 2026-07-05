@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import SiteChoices from './index';
 import '@testing-library/jest-dom';
 
@@ -7,9 +7,9 @@ describe('SiteChoices', () => {
   const defaultProps = {
     activeSite: 'listen',
     sites: {
+      main: 'http://example.com',
       listen: 'http://listen.example.com',
       watch: 'http://watch.example.com',
-      play: 'http://play.example.com',
       til: 'http://til.example.com',
     },
   };
@@ -45,10 +45,10 @@ describe('SiteChoices', () => {
     const menuItems = screen.getAllByRole('menuitem');
     expect(menuItems).toHaveLength(4);
 
-    // Check all menu items are present
-    expect(menuItems[0]).toHaveTextContent('Watch');
-    expect(menuItems[1]).toHaveTextContent('Listen');
-    expect(menuItems[2]).toHaveTextContent('Play');
+    // Check all menu items are present, Main first
+    expect(menuItems[0]).toHaveTextContent('Main');
+    expect(menuItems[1]).toHaveTextContent('Watch');
+    expect(menuItems[2]).toHaveTextContent('Listen');
     expect(menuItems[3]).toHaveTextContent('TIL');
   });
 
@@ -62,20 +62,18 @@ describe('SiteChoices', () => {
     const menuItems = screen.getAllByRole('menuitem');
 
     // Check icons within menu items
-    const watchIcon = menuItems[0].querySelector(
+    const mainIcon = menuItems[0].querySelector('[data-testid="HomeIcon"]');
+    const watchIcon = menuItems[1].querySelector(
       '[data-testid="OndemandVideoIcon"]',
     );
-    const listenIcon = menuItems[1].querySelector(
+    const listenIcon = menuItems[2].querySelector(
       '[data-testid="HeadphonesIcon"]',
-    );
-    const playIcon = menuItems[2].querySelector(
-      '[data-testid="PlayCircleIcon"]',
     );
     const tilIcon = menuItems[3].querySelector('[data-testid="MenuBookIcon"]');
 
+    expect(mainIcon).toBeInTheDocument();
     expect(watchIcon).toBeInTheDocument();
     expect(listenIcon).toBeInTheDocument();
-    expect(playIcon).toBeInTheDocument();
     expect(tilIcon).toBeInTheDocument();
   });
 
@@ -87,9 +85,9 @@ describe('SiteChoices', () => {
 
     // Check hrefs
     const menuItems = screen.getAllByRole('menuitem');
-    expect(menuItems[0]).toHaveAttribute('href', 'http://watch.example.com');
-    expect(menuItems[1]).toHaveAttribute('href', 'http://listen.example.com');
-    expect(menuItems[2]).toHaveAttribute('href', 'http://play.example.com');
+    expect(menuItems[0]).toHaveAttribute('href', 'http://example.com');
+    expect(menuItems[1]).toHaveAttribute('href', 'http://watch.example.com');
+    expect(menuItems[2]).toHaveAttribute('href', 'http://listen.example.com');
     expect(menuItems[3]).toHaveAttribute('href', 'http://til.example.com');
   });
 
@@ -102,12 +100,13 @@ describe('SiteChoices', () => {
     // Get all menu items
     const menuItems = screen.getAllByRole('menuitem');
 
-    // Listen should be selected (index 1 in the menu items array)
-    expect(menuItems[1]).toHaveClass('Mui-selected');
+    // Listen should be selected (index 2 in the menu items array)
+    expect(menuItems[2]).toHaveClass('Mui-selected');
 
     // Others should not be selected
     expect(menuItems[0]).not.toHaveClass('Mui-selected');
-    expect(menuItems[2]).not.toHaveClass('Mui-selected');
+    expect(menuItems[1]).not.toHaveClass('Mui-selected');
+    expect(menuItems[3]).not.toHaveClass('Mui-selected');
   });
 
   it('closes menu when clicking outside', () => {
@@ -139,11 +138,11 @@ describe('SiteChoices', () => {
     ).toBeInTheDocument();
 
     // Rerender with different active site
-    rerender(<SiteChoices {...defaultProps} activeSite="play" />);
+    rerender(<SiteChoices {...defaultProps} activeSite="main" />);
 
-    const playButton = screen.getByRole('button', { name: /site choices/i });
+    const mainButton = screen.getByRole('button', { name: /site choices/i });
     expect(
-      playButton.querySelector('[data-testid="PlayCircleIcon"]'),
+      mainButton.querySelector('[data-testid="HomeIcon"]'),
     ).toBeInTheDocument();
   });
 });

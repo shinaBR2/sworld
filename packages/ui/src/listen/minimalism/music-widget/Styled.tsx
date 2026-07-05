@@ -4,28 +4,15 @@ import { keyframes, styled } from '@mui/material/styles';
 
 const cardWidth = 345;
 
-// The one panel language for the listen screen. Both the player card and the
-// song list share this soft surface so they read as the same app — string
-// literals so the identical values are valid in both a styled() block and an
-// sx prop (where a numeric borderRadius would be multiplied by the theme).
-const panelSurface = {
-  borderRadius: '16px',
-  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
-} as const;
-
 const StyledCard = styled(Card)<CardProps>(({ theme }) => {
-  const { palette } = theme;
-
   return {
     width: cardWidth,
     maxWidth: '100%',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
-    // One calm light surface that matches the page — no dark slab.
-    backgroundColor: palette.background.paper,
-    color: palette.text.primary,
-    ...panelSurface,
+    // Surface (background, border, radius, shadow) is painted by the theme's
+    // Card override so a provider swap re-skins it — this only owns layout.
     overflow: 'hidden',
   };
 }) as typeof Card;
@@ -43,8 +30,8 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     height: '244px',
     bottom: 0,
     overflowY: 'auto',
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   };
 }) as any;
 
@@ -57,10 +44,4 @@ const pulseAnimation = keyframes`
   100% { opacity: 0.6 }
 `;
 
-export {
-  StyledCard,
-  StyledContent,
-  StyledPlayingList,
-  pulseAnimation,
-  panelSurface,
-};
+export { StyledCard, StyledContent, StyledPlayingList, pulseAnimation };

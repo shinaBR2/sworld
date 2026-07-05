@@ -1,6 +1,16 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import { financePalette } from './domainPalette';
 
+// Menus/popovers float over arbitrary busy content with no backdrop scrim, so
+// at the base 5%-white Paper opacity the content behind bleeds through and the
+// items read as muddy. Bump opacity like the Dialog so the surface stays
+// legible; Paper still supplies the border and shadow.
+const menuPaper = {
+  backgroundColor: 'rgba(26, 26, 62, 0.92)',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+};
+
 const glassmorphismTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -102,6 +112,16 @@ const glassmorphismTheme = createTheme({
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: '0 16px 64px rgba(0, 0, 0, 0.5)',
         },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: menuPaper,
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: menuPaper,
       },
     },
     MuiTextField: {

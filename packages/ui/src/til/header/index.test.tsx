@@ -21,9 +21,9 @@ vi.mock('../../universal/site-choices', () => ({
 
 describe('Header', () => {
   const mockSites = {
+    main: '/main',
     listen: '/listen',
     watch: '/watch',
-    play: '/play',
     til: '/til',
   };
 

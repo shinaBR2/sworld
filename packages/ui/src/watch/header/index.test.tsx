@@ -27,9 +27,9 @@ describe('Header', () => {
   const defaultProps = {
     toggleSetting: vi.fn(),
     sites: {
+      main: 'main',
       listen: 'listen',
       watch: 'watch',
-      play: 'play',
       til: 'til',
     },
     user: null,

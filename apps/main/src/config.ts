@@ -23,7 +23,6 @@ const appConfig = {
     main: import.meta.env.VITE_MAIN_SITE_URL,
     listen: `https://listen.${mainDomain}`,
     watch: `https://watch.${mainDomain}`,
-    play: `https://play.${mainDomain}`,
     til: `https://til.${mainDomain}`,
   },
 };

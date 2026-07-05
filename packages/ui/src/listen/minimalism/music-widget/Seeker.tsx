@@ -21,10 +21,10 @@ const getStyles = (theme: Theme) => {
       backgroundColor: theme.palette.primary.main,
       transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
       '&:before': {
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.2)',
+        boxShadow: `0 2px 12px 0 ${theme.alpha(theme.palette.common.black, 0.2)}`,
       },
       '&:hover, &.Mui-focusVisible': {
-        boxShadow: `0px 0px 0px 8px ${theme.palette.primary.main}29`,
+        boxShadow: `0px 0px 0px 8px ${theme.alpha(theme.palette.primary.main, 0.16)}`,
       },
       '&.Mui-active': {
         width: 18,
