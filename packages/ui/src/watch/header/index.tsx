@@ -19,9 +19,9 @@ const Notifications = lazy(() => import('./notifications'));
 interface HeaderProps extends RequiredLinkComponentWithoutLinkProps {
   toggleSetting: React.Dispatch<React.SetStateAction<boolean>>;
   sites: {
+    main: string;
     listen: string;
     watch: string;
-    play: string;
     til: string;
   };
   user: Auth.CustomUser | null;

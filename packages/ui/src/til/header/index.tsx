@@ -12,9 +12,9 @@ import type { WithLinkComponent } from '../../watch/videos/types';
 
 interface HeaderProps extends WithLinkComponent {
   sites: {
+    main: string;
     listen: string;
     watch: string;
-    play: string;
     til: string;
   };
   user: Auth.CustomUser | null;

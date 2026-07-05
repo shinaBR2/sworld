@@ -26,7 +26,7 @@ vi.mock('../collection-select', () => ({
 }));
 
 const baseProps = {
-  sites: { listen: '', watch: '', play: '', til: '' },
+  sites: { main: '', listen: '', watch: '', til: '' },
   user: null,
   onSignIn: vi.fn(),
   onLogout: vi.fn(),

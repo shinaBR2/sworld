@@ -11,9 +11,9 @@ import SiteChoices from '../../../universal/site-choices';
 interface HeaderProps {
   onProfileClick: () => void;
   sites: {
+    main: string;
     listen: string;
     watch: string;
-    play: string;
     til: string;
   };
   user: Auth.CustomUser | null;
