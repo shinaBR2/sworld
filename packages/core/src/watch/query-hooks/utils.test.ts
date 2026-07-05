@@ -30,14 +30,20 @@ describe('isVideoFinished', () => {
   });
 
   it('does not flag a barely-watched short clip as finished', () => {
-    // For an 8s clip a flat 10s threshold would make `duration - threshold`
+    // For an 8s clip a flat 10s window would make `duration - threshold`
     // negative, wrongly hiding a clip the user only just started.
     expect(isVideoFinished({ progressSeconds: 2, duration: 8 })).toBe(false);
   });
 
-  it('flags a short clip as finished only near its end', () => {
-    // Threshold caps at half the duration (4s), so an 8s clip is finished once
-    // the viewer is within its last 4 seconds.
-    expect(isVideoFinished({ progressSeconds: 5, duration: 8 })).toBe(true);
+  it('does not flag a short clip as finished at its midpoint', () => {
+    // A 20s clip watched to 0:10 still has half its runtime left — the end
+    // window caps at the final 10% (2s), so this is not finished.
+    expect(isVideoFinished({ progressSeconds: 10, duration: 20 })).toBe(false);
+  });
+
+  it('flags a short clip as finished only within its final tenth', () => {
+    // 8s clip → window caps at 0.8s, so it is finished once past 7.2s.
+    expect(isVideoFinished({ progressSeconds: 7, duration: 8 })).toBe(false);
+    expect(isVideoFinished({ progressSeconds: 8, duration: 8 })).toBe(true);
   });
 });

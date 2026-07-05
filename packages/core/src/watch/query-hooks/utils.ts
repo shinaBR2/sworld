@@ -1,8 +1,13 @@
 // Videos have no persisted "finished" flag — completion is derived from how
-// close the saved progress is to the end. Mirrors the player's
-// RESUME_END_THRESHOLD_SECONDS (packages/ui/.../video-player) so the "continue
-// watching" rows and the player agree on when a video counts as finished.
+// close the saved progress is to the end. The 10s end-window matches the feel
+// of the player's own resume-vs-restart threshold; it is the continue-watching
+// domain's own constant, deliberately not code-coupled to the player package.
 const VIDEO_FINISHED_END_THRESHOLD_SECONDS = 10;
+
+// Shortest fraction of a clip that must be watched before it can count as
+// finished. Guards short clips, where a flat 10s end-window would otherwise
+// exceed (or dwarf) the runtime and flag a barely-watched clip as finished.
+const VIDEO_FINISHED_MIN_WATCHED_RATIO = 0.9;
 
 interface IsVideoFinishedProps {
   progressSeconds: number;
@@ -20,13 +25,12 @@ const isVideoFinished = ({
     return false;
   }
 
-  // Cap the threshold at half the duration so a clip shorter than the fixed
-  // end-threshold isn't flagged as finished the instant it starts (for an 8s
-  // clip a flat 10s threshold would make `duration - threshold` negative, so
-  // any progress would count as finished).
+  // Cap the end-window at the clip's final 10% so "finished" always means "near
+  // the actual end" regardless of length: a flat 10s window is right for a
+  // feature-length movie but would flag a 20s clip as finished at its midpoint.
   const endThreshold = Math.min(
     VIDEO_FINISHED_END_THRESHOLD_SECONDS,
-    duration / 2,
+    duration * (1 - VIDEO_FINISHED_MIN_WATCHED_RATIO),
   );
 
   return progressSeconds >= duration - endThreshold;

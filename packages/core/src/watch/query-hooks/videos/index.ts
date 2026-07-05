@@ -33,7 +33,7 @@ const videosQuery = graphql(/* GraphQL */ `
         }
       }
       order_by: { last_watched_at: desc }
-      limit: 5
+      limit: 20
     ) {
       id
       last_watched_at
@@ -85,6 +85,11 @@ const transform = (data: AllVideosQuery) => {
 // recently watched videos for the "Continue watching" row. Kept local to
 // useLoadVideos rather than shared with useLoadHistory: each query declares
 // what it selects and maps it independently.
+//
+// Finished videos are dropped here (client-side); the query deliberately
+// over-fetches (limit: 20) rather than the ~5 the row shows so this filter can
+// backfill from older history instead of leaving the row short when the most
+// recent items are all finished.
 const transformContinueWatching = (data: AllVideosQuery) => {
   if (!data.user_video_history) {
     return [];
