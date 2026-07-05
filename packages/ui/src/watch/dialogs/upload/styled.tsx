@@ -15,7 +15,7 @@ export const StyledCloseButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
   right: theme.spacing(1),
   top: theme.spacing(1),
-  color: theme.palette.grey[500],
+  color: theme.palette.text.secondary,
 })) as typeof IconButton;
 
 export const StyledResultsStack = styled(Stack)(({ theme }) => {
@@ -28,11 +28,11 @@ export const StyledResultsStack = styled(Stack)(({ theme }) => {
       width: borderRadius / 1.5,
     },
     '&::-webkit-scrollbar-track': {
-      background: theme.palette.grey[100],
+      background: theme.palette.action.hover,
       borderRadius: borderRadius / 3,
     },
     '&::-webkit-scrollbar-thumb': {
-      background: theme.palette.grey[400],
+      background: theme.palette.action.disabled,
       borderRadius: borderRadius / 3,
     },
   };
