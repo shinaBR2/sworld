@@ -33,6 +33,7 @@ const INTERACTIVE_TARGET_SELECTOR = [
   'textarea',
   'select',
   'button',
+  'summary',
   'a[href]',
   '[role="button"]',
   '[role="link"]',
@@ -48,18 +49,23 @@ const INTERACTIVE_TARGET_SELECTOR = [
   '[role="spinbutton"]',
   '[role="combobox"]',
   '[role="textbox"]',
-  // Focus-trapping overlays (dialogs, menus, listboxes) own the keyboard while
-  // open — never let a key reach the video behind them.
+  // Focus-trapping overlays (dialogs, menus, listboxes) and arrow-navigable
+  // composites own the keyboard — never let a key reach the video behind them.
   '[role="dialog"]',
   '[role="alertdialog"]',
   '[role="menu"]',
   '[role="listbox"]',
+  '[role="tree"]',
+  '[role="treeitem"]',
+  '[role="grid"]',
+  '[role="gridcell"]',
   '[aria-modal="true"]',
 ].join(', ');
 
-const isInteractiveTarget = (target: HTMLElement | null) => {
-  if (!target) return false;
-  if (target.isContentEditable) return true;
+const isInteractiveTarget = (target: EventTarget | null) => {
+  // Guard non-Element targets (e.g. document) before calling Element-only APIs.
+  if (!(target instanceof Element)) return false;
+  if (target instanceof HTMLElement && target.isContentEditable) return true;
   // closest() matches the element itself too, so a focused <input>/<button>/…
   // is caught, as is any keystroke bubbling from inside such a control.
   return target.closest(INTERACTIVE_TARGET_SELECTOR) !== null;
@@ -221,7 +227,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       // player is focused), so bail when the keystroke is aimed at something the
       // user is operating — text entry or a focusable control — inspecting the
       // real event target rather than document.activeElement.
-      if (isInteractiveTarget(e.target as HTMLElement | null)) {
+      if (isInteractiveTarget(e.target)) {
         return;
       }
 

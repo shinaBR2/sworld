@@ -379,6 +379,36 @@ describe('VideoPlayer keyboard hotkeys', () => {
     });
   });
 
+  it('ignores shortcuts when a native summary element is the target', async () => {
+    render(
+      <div>
+        <details>
+          <summary data-testid="test-summary">More</summary>
+          <p>Details</p>
+        </details>
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    // Space on a <summary> must expand the <details>, not toggle the video.
+    const event = pressKey(screen.getByTestId('test-summary'), ' ');
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
+  });
+
+  it('does not throw when the keydown target is not an element', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+
+    // A keydown dispatched on the document node (no closest()/isContentEditable)
+    // must be handled gracefully by the guard rather than throwing.
+    expect(() =>
+      pressKey(document as unknown as HTMLElement, 'k'),
+    ).not.toThrow();
+  });
+
   it('ignores shortcuts when a focused dialog is the target', async () => {
     render(
       <div>
