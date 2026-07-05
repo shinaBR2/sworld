@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  calculateReadTime,
   compareString,
   isValidEmail,
   isValidId,
@@ -189,5 +190,24 @@ describe('isValidEmail', () => {
     expect(isValidEmail('user_name@example.com')).toBe(true);
     expect(isValidEmail("!#$%&'*+-/=?^_`{|}~@example.com")).toBe(true);
     expect(isValidEmail("user!#$%&'*+-/=?^_`{|}~tag@example.com")).toBe(true);
+  });
+});
+
+describe('calculateReadTime', () => {
+  it('should return at least 1 minute for empty or short text', () => {
+    expect(calculateReadTime('')).toBe(1);
+    expect(calculateReadTime('   ')).toBe(1);
+    expect(calculateReadTime('a few words here')).toBe(1);
+  });
+
+  it('should round up to the nearest minute at 200 words per minute', () => {
+    expect(calculateReadTime('word '.repeat(200).trim())).toBe(1);
+    expect(calculateReadTime('word '.repeat(201).trim())).toBe(2);
+    expect(calculateReadTime('word '.repeat(400).trim())).toBe(2);
+    expect(calculateReadTime('word '.repeat(401).trim())).toBe(3);
+  });
+
+  it('should ignore extra whitespace between words', () => {
+    expect(calculateReadTime('one    two\n\tthree')).toBe(1);
   });
 });

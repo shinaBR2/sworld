@@ -6,9 +6,10 @@ import {
   getStartEndDates,
 } from './dateHelpers';
 import { formatNumber } from './numberHelpers';
-import { compareString, slugify } from './stringHelpers';
+import { calculateReadTime, compareString, slugify } from './stringHelpers';
 
 export {
+  calculateReadTime,
   compareString,
   formatDate,
   formatDateTime,
