@@ -17,7 +17,7 @@ const meta: Meta<typeof ListeningScreen> = {
   component: ListeningScreen,
   parameters: { layout: 'fullscreen' },
   args: {
-    sites: { listen: '#', watch: '#', play: '#', til: '#' },
+    sites: { main: '#', listen: '#', watch: '#', til: '#' },
     user: null,
     onSignIn: () => {},
     onLogout: () => {},

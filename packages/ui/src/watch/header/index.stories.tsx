@@ -62,7 +62,10 @@ The header is built using Material-UI's AppBar and Toolbar components with the f
       description: 'Site choices for navigation links',
       control: 'object',
       table: {
-        type: { summary: '{ listen: string; watch: string; play: string }' },
+        type: {
+          summary:
+            '{ main: string; listen: string; watch: string; til: string }',
+        },
       },
     },
   },
@@ -76,9 +79,10 @@ const defaultArgs = {
     console.log(value);
   },
   sites: {
+    main: 'Main',
     listen: 'Listen',
     watch: 'Watch',
-    play: 'Play',
+    til: 'TIL',
   },
 };
 

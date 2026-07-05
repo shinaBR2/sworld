@@ -14,9 +14,9 @@ import { SettingsPanel } from '../home/settings';
 import { CreatePlaylistDialog } from '../playlists/create-dialog';
 
 interface HeaderSites {
+  main: string;
   listen: string;
   watch: string;
-  play: string;
   til: string;
 }
 

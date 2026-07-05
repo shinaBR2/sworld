@@ -17,7 +17,7 @@ const VideoThumbnail = (props: VideoThumnailProps) => {
       sx={{
         aspectRatio: '16/9',
         objectFit: 'cover',
-        bgcolor: '#e0e0e0',
+        bgcolor: 'action.hover',
       }}
     />
   );

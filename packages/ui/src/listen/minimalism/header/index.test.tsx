@@ -16,9 +16,10 @@ describe('Header', () => {
   const defaultProps = {
     onProfileClick: vi.fn(),
     sites: {
+      main: 'main',
       listen: 'listen',
       watch: 'watch',
-      play: 'play',
+      til: 'til',
     },
     user: null,
   };

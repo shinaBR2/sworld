@@ -13,7 +13,7 @@ const SearchBar = () => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        bgcolor: '#f0f0f0',
+        bgcolor: 'action.hover',
         borderRadius: 2,
         px: 2,
         py: 0.5,

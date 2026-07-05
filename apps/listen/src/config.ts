@@ -16,7 +16,6 @@ const appConfig = {
     main: mainDomain,
     listen: `https://listen.${mainDomain}`,
     watch: `https://watch.${mainDomain}`,
-    play: `https://play.${mainDomain}`,
     til: `https://til.${mainDomain}`,
   },
 };
