@@ -1,8 +1,7 @@
-import { ThemeProvider } from '@emotion/react';
 import type { Meta, StoryObj } from '@storybook/tanstack-react';
 
 import hooks from 'core';
-import theme from '../theme';
+import { GlassmorphismProvider } from '../../../universal/minimalism';
 
 const { useSAudioPlayer } = hooks;
 
@@ -32,9 +31,9 @@ const meta: Meta<typeof MusicWidget> = {
   component: MusicWidget,
   decorators: [
     (Story) => (
-      <ThemeProvider theme={theme}>
+      <GlassmorphismProvider>
         <Story />
-      </ThemeProvider>
+      </GlassmorphismProvider>
     ),
   ],
 } satisfies Meta<typeof MusicWidget>;

@@ -4,7 +4,9 @@ import { ListeningScreen } from './index';
 
 // Stub the heavy children; this test covers ListeningScreen's own wiring
 // (mode-driven feeling filter, and opening the create dialog from the select).
-vi.mock('../header', () => ({ Header: () => <div>Header</div> }));
+vi.mock('../../../universal/header', () => ({
+  Header: () => <div>Header</div>,
+}));
 vi.mock('../home/settings', () => ({
   SettingsPanel: () => <div>SettingsPanel</div>,
 }));

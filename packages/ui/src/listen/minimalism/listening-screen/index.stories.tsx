@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/tanstack-react';
+import { GlassmorphismProvider } from '../../../universal/minimalism';
 import { ListeningScreen } from './index';
 
 const audios = [
@@ -16,6 +17,14 @@ const meta: Meta<typeof ListeningScreen> = {
   title: 'Listen/ListeningScreen',
   component: ListeningScreen,
   parameters: { layout: 'fullscreen' },
+  // The shared Header's ThemeToggleButton reads the glassmorphism theme context.
+  decorators: [
+    (Story) => (
+      <GlassmorphismProvider>
+        <Story />
+      </GlassmorphismProvider>
+    ),
+  ],
   args: {
     sites: { main: '#', listen: '#', watch: '#', til: '#' },
     user: null,
