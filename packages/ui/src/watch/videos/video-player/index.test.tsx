@@ -352,6 +352,52 @@ describe('VideoPlayer keyboard hotkeys', () => {
     expect(event.preventDefault).toHaveBeenCalled();
   });
 
+  it('exits fullscreen with f when the player video is fullscreen', async () => {
+    render(<VideoPlayer video={mockVideo} />);
+    await screen.findByTestId('mock-react-player');
+
+    // Native controls fullscreen the <video> element (a descendant of the
+    // wrapper), not the wrapper itself — the `f` hotkey must still exit it.
+    const descendant = screen.getByTestId('mock-react-player');
+    const exitFullscreen = vi.fn();
+    Object.defineProperty(document, 'exitFullscreen', {
+      configurable: true,
+      value: exitFullscreen,
+    });
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      get: () => descendant,
+    });
+
+    pressKey(document.body, 'f');
+
+    expect(exitFullscreen).toHaveBeenCalled();
+
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      get: () => null,
+    });
+  });
+
+  it('ignores shortcuts when a focused dialog is the target', async () => {
+    render(
+      <div>
+        <div role="dialog" aria-modal="true" data-testid="test-dialog">
+          <span data-testid="test-dialog-content">Content</span>
+        </div>
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    // A key pressed inside an open dialog over the video must not reach the
+    // video behind it.
+    const event = pressKey(screen.getByTestId('test-dialog-content'), ' ');
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(false);
+  });
+
   it('ignores shortcuts typed into an input', async () => {
     render(
       <div>

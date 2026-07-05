@@ -48,6 +48,13 @@ const INTERACTIVE_TARGET_SELECTOR = [
   '[role="spinbutton"]',
   '[role="combobox"]',
   '[role="textbox"]',
+  // Focus-trapping overlays (dialogs, menus, listboxes) own the keyboard while
+  // open — never let a key reach the video behind them.
+  '[role="dialog"]',
+  '[role="alertdialog"]',
+  '[role="menu"]',
+  '[role="listbox"]',
+  '[aria-modal="true"]',
 ].join(', ');
 
 const isInteractiveTarget = (target: HTMLElement | null) => {
@@ -303,11 +310,14 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           e.stopPropagation();
           const wrapper = wrapperRef.current;
           if (wrapper) {
-            // Only exit when THIS wrapper is the fullscreen element, so we never
-            // collapse some other element's fullscreen; otherwise enter it.
-            if (document.fullscreenElement === wrapper) {
+            const fullscreenElement = document.fullscreenElement;
+            if (fullscreenElement && wrapper.contains(fullscreenElement)) {
+              // Exit when this player is fullscreen — whether the wrapper itself
+              // or its <video> (the native controls' fullscreen button
+              // fullscreens the video element, a descendant). Never collapse an
+              // unrelated element's fullscreen.
               document.exitFullscreen();
-            } else if (wrapper.requestFullscreen) {
+            } else if (!fullscreenElement && wrapper.requestFullscreen) {
               wrapper.requestFullscreen();
             }
           }
