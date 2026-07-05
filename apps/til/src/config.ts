@@ -15,7 +15,7 @@ const queryConfig = {
 const mainDomain = import.meta.env.VITE_MAIN_SITE_URL;
 const appConfig = {
   sites: {
-    main: mainDomain,
+    main: `https://${mainDomain}`,
     listen: `https://listen.${mainDomain}`,
     watch: `https://watch.${mainDomain}`,
     til: `https://til.${mainDomain}`,

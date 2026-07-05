@@ -20,7 +20,7 @@ const rollbarConfig = {
 const mainDomain = import.meta.env.VITE_MAIN_SITE_URL;
 const appConfig = {
   sites: {
-    main: import.meta.env.VITE_MAIN_SITE_URL,
+    main: `https://${mainDomain}`,
     listen: `https://listen.${mainDomain}`,
     watch: `https://watch.${mainDomain}`,
     til: `https://til.${mainDomain}`,
