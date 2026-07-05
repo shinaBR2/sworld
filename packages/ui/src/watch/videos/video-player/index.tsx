@@ -162,22 +162,28 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     onPausedChange?.(false);
   }, [handlePlay, onPausedChange]);
 
-  // Handle keyboard shortcuts on the wrapper element
+  // Handle keyboard shortcuts page-wide (YouTube style) — the shortcuts work
+  // whenever the user is on the video detail page, regardless of focus.
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if typing in inputs (just like YouTube)
+      // Skip if the user is typing (inputs, textareas, or any contenteditable
+      // element). Inspect the actual event target rather than document's
+      // activeElement so text entry anywhere on the page never triggers a
+      // shortcut.
+      const target = e.target as HTMLElement | null;
+      const tagName = target?.tagName;
       if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
+        tagName === 'INPUT' ||
+        tagName === 'TEXTAREA' ||
+        target?.isContentEditable
       ) {
         return;
       }
 
       const player = playerRef.current;
       if (!player) return;
+
+      const wrapper = wrapperRef.current;
 
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
@@ -334,30 +340,12 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }
     };
 
-    // Fullscreen change handler - add document-level listener in fullscreen
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement === wrapper) {
-        // Entering fullscreen - add document-level listener for global shortcuts
-        document.addEventListener('keydown', handleKeyDown, { capture: true });
-      } else {
-        // Exiting fullscreen - remove document-level listener
-        document.removeEventListener('keydown', handleKeyDown, {
-          capture: true,
-        });
-      }
-    };
-
-    // Listen on the wrapper element in capture phase
-    // This intercepts events before they reach the video element
-    wrapper.addEventListener('keydown', handleKeyDown, { capture: true });
-
-    // Listen for fullscreen changes to enable/disable document-level shortcuts
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    // Listen on the document in the capture phase so the shortcuts fire no
+    // matter where focus is, while still intercepting events before they reach
+    // the video element.
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
 
     return () => {
-      wrapper.removeEventListener('keydown', handleKeyDown, { capture: true });
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      // Cleanup document listener if still attached (in case component unmounts while in fullscreen)
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [handleSeek]);

@@ -262,78 +262,76 @@ describe('VideoPlayer keyboard hotkeys', () => {
     mockGetDuration.mockReturnValue(100);
   });
 
-  it('should handle keyboard events for play/pause (k key)', async () => {
+  it('should handle keyboard events for play/pause (k key) page-wide', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const wrapper = await screen.findByTestId('video-player-wrapper');
+    await screen.findByTestId('mock-react-player');
 
-    // Simulate 'k' key press on wrapper (scoped listener)
+    // Dispatch 'k' on document (without focusing the wrapper) — the listener is
+    // document-level, so the shortcut fires regardless of focus.
     const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
     Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(wrapper, kEvent);
+    fireEvent(document.body, kEvent);
 
     expect(kEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should handle keyboard events for mute (m key)', async () => {
+  it('should handle keyboard events for mute (m key) page-wide', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const wrapper = await screen.findByTestId('video-player-wrapper');
+    await screen.findByTestId('mock-react-player');
 
-    // Simulate 'm' key press on wrapper (scoped listener)
+    // Dispatch 'm' on document (without focusing the wrapper).
     const mEvent = new KeyboardEvent('keydown', { key: 'm', bubbles: true });
     Object.defineProperty(mEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(wrapper, mEvent);
+    fireEvent(document.body, mEvent);
 
     expect(mEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should handle keyboard events for volume up (ArrowUp key)', async () => {
+  it('should handle keyboard events for volume up (ArrowUp key) page-wide', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const wrapper = await screen.findByTestId('video-player-wrapper');
+    await screen.findByTestId('mock-react-player');
 
-    // Simulate 'ArrowUp' key press on wrapper (scoped listener)
     const upEvent = new KeyboardEvent('keydown', {
       key: 'ArrowUp',
       bubbles: true,
     });
     Object.defineProperty(upEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(wrapper, upEvent);
+    fireEvent(document.body, upEvent);
 
     expect(upEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should handle keyboard events for volume down (ArrowDown key)', async () => {
+  it('should handle keyboard events for volume down (ArrowDown key) page-wide', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const wrapper = await screen.findByTestId('video-player-wrapper');
+    await screen.findByTestId('mock-react-player');
 
-    // Simulate 'ArrowDown' key press on wrapper (scoped listener)
     const downEvent = new KeyboardEvent('keydown', {
       key: 'ArrowDown',
       bubbles: true,
     });
     Object.defineProperty(downEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(wrapper, downEvent);
+    fireEvent(document.body, downEvent);
 
     expect(downEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should handle keyboard events for fullscreen (f key)', async () => {
+  it('should handle keyboard events for fullscreen (f key) page-wide', async () => {
     render(<VideoPlayer video={mockVideo} />);
-    const wrapper = await screen.findByTestId('video-player-wrapper');
+    await screen.findByTestId('mock-react-player');
 
-    // Simulate 'f' key press on wrapper (scoped listener)
     const fEvent = new KeyboardEvent('keydown', { key: 'f', bubbles: true });
     Object.defineProperty(fEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(wrapper, fEvent);
+    fireEvent(document.body, fEvent);
 
     expect(fEvent.preventDefault).toHaveBeenCalled();
   });
 
-  it('should ignore keyboard events when typing in input fields', async () => {
+  it('should ignore keyboard events originating from an input', async () => {
     render(
       <div>
         <input data-testid="test-input" />
@@ -343,15 +341,58 @@ describe('VideoPlayer keyboard hotkeys', () => {
     await screen.findByTestId('mock-react-player');
 
     const input = screen.getByTestId('test-input');
-    input.focus();
 
-    // Simulate 'k' key press while input is focused
-    const kEvent = new KeyboardEvent('keydown', { key: 'k' });
+    // Dispatch 'k' from the input — the target-based guard must skip it.
+    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
     Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
 
-    fireEvent(document, kEvent);
+    fireEvent(input, kEvent);
 
-    // Should not prevent default since we're typing in an input
+    expect(kEvent.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('should ignore keyboard events originating from a textarea', async () => {
+    render(
+      <div>
+        <textarea data-testid="test-textarea" />
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    const textarea = screen.getByTestId('test-textarea');
+
+    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
+    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
+
+    fireEvent(textarea, kEvent);
+
+    expect(kEvent.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('should ignore keyboard events originating from a contenteditable element', async () => {
+    render(
+      <div>
+        <div
+          data-testid="test-editable"
+          contentEditable
+          suppressContentEditableWarning
+        />
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    const editable = screen.getByTestId('test-editable');
+    // jsdom does not derive isContentEditable from the attribute, so set it
+    // explicitly to mirror a real browser's editable target.
+    Object.defineProperty(editable, 'isContentEditable', { value: true });
+
+    const kEvent = new KeyboardEvent('keydown', { key: 'k', bubbles: true });
+    Object.defineProperty(kEvent, 'preventDefault', { value: vi.fn() });
+
+    fireEvent(editable, kEvent);
+
     expect(kEvent.preventDefault).not.toHaveBeenCalled();
   });
 });
