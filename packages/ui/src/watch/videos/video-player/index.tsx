@@ -62,13 +62,22 @@ const INTERACTIVE_TARGET_SELECTOR = [
   '[aria-modal="true"]',
 ].join(', ');
 
-const isInteractiveTarget = (target: EventTarget | null) => {
+const isInteractiveTarget = (
+  target: EventTarget | null,
+  playerRoot: HTMLElement | null,
+) => {
   // Guard non-Element targets (e.g. document) before calling Element-only APIs.
   if (!(target instanceof Element)) return false;
   if (target instanceof HTMLElement && target.isContentEditable) return true;
   // closest() matches the element itself too, so a focused <input>/<button>/…
   // is caught, as is any keystroke bubbling from inside such a control.
-  return target.closest(INTERACTIVE_TARGET_SELECTOR) !== null;
+  const match = target.closest(INTERACTIVE_TARGET_SELECTOR);
+  if (!match) return false;
+  // A match that WRAPS the player is the player's own ancestor (e.g. the player
+  // mounted inside a dialog/grid). Don't let it disable the hotkeys — only defer
+  // to controls/overlays that sit outside the player.
+  if (playerRoot && match.contains(playerRoot)) return false;
+  return true;
 };
 
 // Lazy load the VideoJS component that contains video.js
@@ -227,7 +236,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       // player is focused), so bail when the keystroke is aimed at something the
       // user is operating — text entry or a focusable control — inspecting the
       // real event target rather than document.activeElement.
-      if (isInteractiveTarget(e.target)) {
+      if (isInteractiveTarget(e.target, wrapperRef.current)) {
         return;
       }
 

@@ -409,6 +409,23 @@ describe('VideoPlayer keyboard hotkeys', () => {
     ).not.toThrow();
   });
 
+  it('keeps hotkeys working when the player is mounted inside a whitelisted container', async () => {
+    render(
+      <div role="dialog" aria-modal="true">
+        <VideoPlayer video={mockVideo} />
+      </div>,
+    );
+    await screen.findByTestId('mock-react-player');
+
+    // The dialog is the player's ANCESTOR here (not an adjacent overlay), so a
+    // keydown from inside the player must still trigger the shortcut rather than
+    // being swallowed by the ancestor-matching guard.
+    const event = pressKey(screen.getByTestId('mock-react-player'), 'k');
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockReactPlayerRef().playing).toBe(true);
+  });
+
   it('ignores shortcuts when a focused dialog is the target', async () => {
     render(
       <div>
