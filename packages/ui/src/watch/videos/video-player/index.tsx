@@ -24,6 +24,62 @@ const RESUME_REWIND_SECONDS = 5;
 // as finished and start from the beginning instead of resuming at the very end.
 const RESUME_END_THRESHOLD_SECONDS = 10;
 
+// Elements whose own keyboard behavior must win over the page-wide player
+// shortcuts: text entry and focusable controls (native or ARIA-role), so e.g.
+// Space/Enter on a focused button, or arrows on a focused slider/switch, drive
+// that control instead of the video.
+const INTERACTIVE_TARGET_SELECTOR = [
+  'input',
+  'textarea',
+  'select',
+  'button',
+  'summary',
+  'a[href]',
+  '[role="button"]',
+  '[role="link"]',
+  '[role="menuitem"]',
+  '[role="menuitemcheckbox"]',
+  '[role="menuitemradio"]',
+  '[role="tab"]',
+  '[role="option"]',
+  '[role="checkbox"]',
+  '[role="radio"]',
+  '[role="switch"]',
+  '[role="slider"]',
+  '[role="spinbutton"]',
+  '[role="combobox"]',
+  '[role="textbox"]',
+  // Focus-trapping overlays (dialogs, menus, listboxes) and arrow-navigable
+  // composites own the keyboard — never let a key reach the video behind them.
+  '[role="dialog"]',
+  '[role="alertdialog"]',
+  '[role="menu"]',
+  '[role="listbox"]',
+  '[role="tree"]',
+  '[role="treeitem"]',
+  '[role="grid"]',
+  '[role="gridcell"]',
+  '[aria-modal="true"]',
+].join(', ');
+
+const isInteractiveTarget = (
+  target: EventTarget | null,
+  playerRoot: HTMLElement | null,
+) => {
+  // Guard non-Element targets (e.g. document) before calling Element-only APIs.
+  if (!(target instanceof Element)) return false;
+  if (target instanceof HTMLElement && target.isContentEditable) return true;
+  // closest() matches the element itself too, so a focused <input>/<button>/…
+  // is caught, as is any keystroke bubbling from inside such a control.
+  const match = target.closest(INTERACTIVE_TARGET_SELECTOR);
+  if (!match) return false;
+  // A match that WRAPS the player is the player's own ancestor (e.g. the player
+  // mounted inside a dialog/grid). Don't let it disable the hotkeys — only defer
+  // to controls/overlays that sit outside the player.
+  if (playerRoot && match.contains(playerRoot)) return false;
+  return true;
+};
+
 // Lazy load the VideoJS component that contains video.js
 // const VideoJS = lazy(() => import('./videojs'));
 // react-player is CJS; rolldown-vite's prebundle exposes its exports object as
@@ -162,17 +218,25 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     onPausedChange?.(false);
   }, [handlePlay, onPausedChange]);
 
-  // Handle keyboard shortcuts on the wrapper element
+  // Handle keyboard shortcuts page-wide (YouTube style) — the shortcuts work
+  // whenever the user is on the video detail page, regardless of focus. Assumes
+  // one player per page (the detail/playlist routes mount a single VideoPlayer):
+  // this hotkey layer intentionally supersedes the native controls' own
+  // keyboard handling, mirroring the same actions (play/pause, seek, volume).
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if typing in inputs (just like YouTube)
-      if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
-      ) {
+      // Let browser/OS shortcuts through — the player hotkeys are unmodified keys
+      // only (YouTube-style), so e.g. Cmd/Ctrl+F still opens the browser find bar
+      // instead of toggling fullscreen.
+      if (e.metaKey || e.ctrlKey || e.altKey) {
+        return;
+      }
+
+      // The listener is on document (shortcuts work page-wide, not only when the
+      // player is focused), so bail when the keystroke is aimed at something the
+      // user is operating — text entry or a focusable control — inspecting the
+      // real event target rather than document.activeElement.
+      if (isInteractiveTarget(e.target, wrapperRef.current)) {
         return;
       }
 
@@ -255,18 +319,25 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           }));
           break;
 
-        case 'f': // Fullscreen
+        case 'f': {
+          // Fullscreen — toggle on the player wrapper.
           e.preventDefault();
           e.stopPropagation();
-          // Get the wrapper element for fullscreen
+          const wrapper = wrapperRef.current;
           if (wrapper) {
-            if (document.fullscreenElement) {
+            const fullscreenElement = document.fullscreenElement;
+            if (fullscreenElement && wrapper.contains(fullscreenElement)) {
+              // Exit when this player is fullscreen — whether the wrapper itself
+              // or its <video> (the native controls' fullscreen button
+              // fullscreens the video element, a descendant). Never collapse an
+              // unrelated element's fullscreen.
               document.exitFullscreen();
-            } else if (wrapper.requestFullscreen) {
+            } else if (!fullscreenElement && wrapper.requestFullscreen) {
               wrapper.requestFullscreen();
             }
           }
           break;
+        }
 
         case 'Home': // Jump to start
           e.preventDefault();
@@ -334,30 +405,12 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       }
     };
 
-    // Fullscreen change handler - add document-level listener in fullscreen
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement === wrapper) {
-        // Entering fullscreen - add document-level listener for global shortcuts
-        document.addEventListener('keydown', handleKeyDown, { capture: true });
-      } else {
-        // Exiting fullscreen - remove document-level listener
-        document.removeEventListener('keydown', handleKeyDown, {
-          capture: true,
-        });
-      }
-    };
-
-    // Listen on the wrapper element in capture phase
-    // This intercepts events before they reach the video element
-    wrapper.addEventListener('keydown', handleKeyDown, { capture: true });
-
-    // Listen for fullscreen changes to enable/disable document-level shortcuts
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    // Listen on the document in the capture phase so the shortcuts fire no
+    // matter where focus is, while still intercepting events before they reach
+    // the video element.
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
 
     return () => {
-      wrapper.removeEventListener('keydown', handleKeyDown, { capture: true });
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      // Cleanup document listener if still attached (in case component unmounts while in fullscreen)
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [handleSeek]);
