@@ -14485,7 +14485,7 @@ export const AllVideosDocument = new TypedDocumentString(`
   user_video_history(
     where: {_and: {last_watched_at: {_is_null: false}, progress_seconds: {_gt: 0}, video: {source: {_is_null: false}}}}
     order_by: {last_watched_at: desc}
-    limit: 5
+    limit: 20
   ) {
     id
     last_watched_at
