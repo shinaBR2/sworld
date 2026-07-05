@@ -1,8 +1,8 @@
 // Videos have no persisted "finished" flag, so the continue-watching row derives
-// completion from how close the saved progress is to the end. It uses the same
-// end-window the player applies to decide resume-vs-restart (the player's
-// RESUME_END_THRESHOLD_SECONDS), so a video the player would restart from the
-// beginning is the same one the row treats as finished.
+// completion from how close the saved progress is to the end: a video within
+// this many seconds of its end counts as finished and drops off the row. This is
+// the row's own threshold — the player happens to use a similar end-window to
+// choose resume-vs-restart, but the two are independent and need not match.
 const VIDEO_FINISHED_END_THRESHOLD_SECONDS = 10;
 
 interface IsVideoFinishedProps {
