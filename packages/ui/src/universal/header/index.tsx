@@ -4,17 +4,29 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import type { CustomUser } from 'core/providers/auth';
-import { ResponsiveAvatar } from '../../universal/images/image';
-import Logo from '../../universal/logo';
-import { ThemeToggleButton } from '../../universal/minimalism';
+import type { ComponentProps, ReactNode } from 'react';
+import type { WithLinkComponent } from '../../watch/videos/types';
+import { ResponsiveAvatar } from '../images/image';
+import Logo from '../logo';
+import { ThemeToggleButton } from '../minimalism';
+import SiteChoices from '../site-choices';
 
-interface HeaderProps {
-  onProfileClick: () => void;
+// Derive the switcher config from SiteChoices so the two never drift apart.
+type SiteChoicesConfig = ComponentProps<typeof SiteChoices>;
+
+// The shared header owns only the true commons — logo, optional site switcher,
+// theme toggle and avatar. App-specific extras arrive exclusively through the
+// `actions` slot, rendered between the toggle and the avatar. No app-specific
+// branching ever lives inside this component.
+interface HeaderProps extends WithLinkComponent {
   user: CustomUser | null;
+  onAvatarClick: () => void;
+  siteChoices?: SiteChoicesConfig;
+  actions?: ReactNode;
 }
 
 const Header = (props: HeaderProps) => {
-  const { onProfileClick, user } = props;
+  const { user, onAvatarClick, siteChoices, actions, LinkComponent } = props;
   const avatarUrl = user?.picture;
 
   return (
@@ -29,7 +41,8 @@ const Header = (props: HeaderProps) => {
             minWidth: 'fit-content',
           }}
         >
-          <Logo />
+          <Logo LinkComponent={LinkComponent} />
+          {siteChoices ? <SiteChoices {...siteChoices} /> : null}
         </Box>
 
         <Box
@@ -41,11 +54,12 @@ const Header = (props: HeaderProps) => {
           }}
         >
           <ThemeToggleButton />
-          <IconButton onClick={onProfileClick} aria-label="account options">
+          {actions}
+          <IconButton onClick={onAvatarClick} aria-label="account options">
             {avatarUrl ? (
               <ResponsiveAvatar
                 src={avatarUrl}
-                alt={user.name}
+                alt={user?.name}
                 data-testid="user-avatar"
               />
             ) : (
@@ -59,3 +73,4 @@ const Header = (props: HeaderProps) => {
 };
 
 export { Header };
+export type { HeaderProps, SiteChoicesConfig };
