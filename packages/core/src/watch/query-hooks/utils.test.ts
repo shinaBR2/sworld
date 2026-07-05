@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { isVideoFinished, VIDEO_FINISHED_END_THRESHOLD_SECONDS } from './utils';
+import { isVideoFinished } from './utils';
 
 describe('isVideoFinished', () => {
-  it('mirrors the player end threshold of 10 seconds', () => {
-    expect(VIDEO_FINISHED_END_THRESHOLD_SECONDS).toBe(10);
-  });
-
   it('is not finished just before the end threshold', () => {
     // duration - 10 = 110, progress below that is still partway through
     expect(isVideoFinished({ progressSeconds: 109, duration: 120 })).toBe(
@@ -37,9 +33,8 @@ describe('isVideoFinished', () => {
     expect(isVideoFinished({ progressSeconds: 10, duration: 10 })).toBe(false);
   });
 
-  it('uses the flat end window for longer clips, matching the player', () => {
-    // A 20s clip is finished within its last 10s — the same threshold the
-    // player uses to restart rather than resume, so the two agree.
+  it('treats a longer clip as finished within its last 10 seconds', () => {
+    // A 20s clip is finished once the viewer is within its final 10s.
     expect(isVideoFinished({ progressSeconds: 9, duration: 20 })).toBe(false);
     expect(isVideoFinished({ progressSeconds: 10, duration: 20 })).toBe(true);
   });
