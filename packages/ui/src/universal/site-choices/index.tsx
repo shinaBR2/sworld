@@ -1,8 +1,8 @@
 import { MenuBook } from '@mui/icons-material';
 import Headphones from '@mui/icons-material/Headphones';
+import Home from '@mui/icons-material/Home';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import OndemandVideo from '@mui/icons-material/OndemandVideo';
-import PlayCircle from '@mui/icons-material/PlayCircle';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -12,6 +12,10 @@ import { useState } from 'react';
 
 const sites = [
   {
+    name: 'Main',
+    value: 'main',
+  },
+  {
     name: 'Watch',
     value: 'watch',
   },
@@ -20,30 +24,26 @@ const sites = [
     value: 'listen',
   },
   {
-    name: 'Play',
-    value: 'play',
-  },
-  {
     name: 'TIL',
     value: 'til',
   },
 ];
 
 const siteIcons = {
+  main: <Home fontSize="small" />,
   listen: <Headphones fontSize="small" />,
   watch: <OndemandVideo fontSize="small" />,
-  play: <PlayCircle fontSize="small" />,
   til: <MenuBook fontSize="small" />,
 } as const;
 
-type SiteName = 'listen' | 'watch' | 'play' | 'til';
+type SiteName = 'main' | 'listen' | 'watch' | 'til';
 
 interface SiteChoicesProps {
   activeSite: string;
   sites: {
+    main: string;
     listen: string;
     watch: string;
-    play: string;
     til: string;
   };
 }
