@@ -30,7 +30,12 @@ const StyledPlayingList = styled(Box)<BoxProps>(({ theme }) => {
     height: '244px',
     bottom: 0,
     overflowY: 'auto',
-    backgroundColor: theme.palette.background.paper,
+    // This list slides up directly over the player controls with no backdrop
+    // scrim, so the base translucent glass Paper let them bleed through. Use the
+    // theme's opaque `overlay` surface; fall back to Paper for any non-glass
+    // theme (where Paper is already opaque) so the panel is never transparent.
+    backgroundColor:
+      theme.palette.background.overlay ?? theme.palette.background.paper,
     color: theme.palette.text.primary,
   };
 }) as any;

@@ -18,6 +18,12 @@ const lightGlassmorphismTheme = createTheme({
     background: {
       default: 'transparent',
       paper: 'rgba(255, 255, 255, 0.15)',
+      // Fully opaque surface for the playing list, which slides up over the
+      // player controls and must hide them completely. Menus use a 0.92 glass
+      // tint because they float over a page, but this panel covers same-card
+      // content, so it goes solid (the opaque form of the menu hue). Typed in
+      // `./domainPalette`.
+      overlay: 'rgb(255, 255, 255)',
     },
     primary: {
       main: '#667eea',

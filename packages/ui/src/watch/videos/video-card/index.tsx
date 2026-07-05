@@ -45,7 +45,7 @@ const VideoCardContent = (props: VideoCardContentProps) => {
   const { title, creator, createdTime } = props;
 
   return (
-    <CardContent sx={{ px: 0, pt: 2, '&:last-child': { pb: 1 } }}>
+    <CardContent sx={{ px: 2, pt: 2, '&:last-child': { pb: 2 } }}>
       <StyledTitle gutterBottom variant="body1" component="h3">
         {title}
       </StyledTitle>
@@ -205,9 +205,7 @@ const VideoCard = (props: VideoCardProps) => {
 
   const cardContent = (
     <StyledCard>
-      <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden' }}>
-        <VideoContent video={video} asLink={asLink} />
-      </Box>
+      <VideoContent video={video} asLink={asLink} />
       <VideoCardContent
         title={getMediaDisplayName({
           videoTitle: video.title,
