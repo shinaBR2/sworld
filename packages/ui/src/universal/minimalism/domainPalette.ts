@@ -24,13 +24,21 @@ const financePalette: FinancePalette = {
   default: '#6b7280', // gray-500
 };
 
-// Augment MUI's palette so `theme.palette.finance` is typed everywhere.
+// Augment MUI's palette so `theme.palette.finance` is typed everywhere, plus a
+// `background.overlay` surface — the fully opaque background for scrim-less
+// panels (the player's playing list) that slide over other content, where the
+// base translucent glass Paper would let it bleed through. Optional: only the
+// glassmorphism themes define it, so reads under any other theme are honestly
+// `string | undefined`.
 declare module '@mui/material/styles' {
   interface Palette {
     finance: FinancePalette;
   }
   interface PaletteOptions {
     finance?: FinancePalette;
+  }
+  interface TypeBackground {
+    overlay?: string;
   }
 }
 
