@@ -111,7 +111,8 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   };
 
   const onEnded = () => {
-    // One: replay the current track without moving through the list.
+    // All and None move through the list; One skips this and just replays
+    // the current track via the shared play tail below.
     if (loopMode !== SAudioPlayerLoopMode.One) {
       if (isLast) {
         // All wraps back to the start; None stops at the end of the list.
