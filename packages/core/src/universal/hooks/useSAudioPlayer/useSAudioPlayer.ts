@@ -111,6 +111,8 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   };
 
   const onEnded = () => {
+    // One: the same track repeats. src doesn't change, so onLoadedData won't
+    // refire — start playback on the current element directly.
     if (loopMode === SAudioPlayerLoopMode.One) {
       if (!ref.current) {
         return;
@@ -120,35 +122,24 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
       playAudio(ref.current);
 
       return;
-    } else if (loopMode === SAudioPlayerLoopMode.All) {
-      if (isLast) {
-        setCurrentIndex(0);
-      } else {
-        setCurrentIndex(currentIndex + 1);
-      }
+    }
 
-      if (!ref.current) {
-        return;
-      }
-
-      setPlay(true);
-      playAudio(ref.current);
-
-      return;
-    } else {
-      if (isLast) {
+    // End of the list: All wraps back to the start, None stops.
+    if (isLast) {
+      if (loopMode === SAudioPlayerLoopMode.None) {
         return setPlay(false);
       }
 
-      if (!ref.current) {
-        return;
-      }
-
-      setPlay(true);
-      playAudio(ref.current);
-
-      return;
+      setCurrentIndex(firstIndex);
+    } else {
+      // All and None both auto-advance to the next track mid-list.
+      setCurrentIndex(currentIndex + 1);
     }
+
+    // Advancing swaps src on the next render; onLoadedData resumes the new
+    // track when isPlay is true. Don't call playAudio here — it would toggle
+    // the just-ended element before the new src is committed.
+    setPlay(true);
   };
 
   const onPlay = () => {
