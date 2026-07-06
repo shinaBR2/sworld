@@ -82,6 +82,23 @@ describe('useSAudioPlayer onEnded', () => {
         }),
       ).toEqual({ index: 2, isPlay: false });
     });
+
+    it('resumes the newly advanced track once its data loads', () => {
+      const view = render(
+        <Harness loopMode={SAudioPlayerLoopMode.None} index={0} />,
+      );
+      const audio = view.getByTestId('audio');
+
+      fireEvent.ended(audio); // advances and marks the player as playing
+
+      // The advance path defers playback to onLoadedData rather than replaying
+      // the just-ended element, so the next track starts when its data loads.
+      const play = vi.mocked(HTMLMediaElement.prototype.play);
+      play.mockClear();
+      fireEvent.loadedData(audio);
+
+      expect(play).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('loopMode All', () => {
