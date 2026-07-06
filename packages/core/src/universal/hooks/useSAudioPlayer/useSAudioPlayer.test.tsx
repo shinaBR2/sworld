@@ -22,7 +22,7 @@ beforeAll(() => {
 // the setPlay/playAudio tail — renderHook alone leaves ref.current null and
 // short-circuits before it, so playback state would never be exercised.
 const Harness = (props: { loopMode: SAudioPlayerLoopMode; index: number }) => {
-  const { getAudioProps, playerState } = useSAudioPlayer({
+  const { getAudioProps, getControlsProps, playerState } = useSAudioPlayer({
     audioList,
     index: props.index,
     configs: { loopMode: props.loopMode },
@@ -31,14 +31,32 @@ const Harness = (props: { loopMode: SAudioPlayerLoopMode; index: number }) => {
   return (
     <div>
       <audio {...getAudioProps()} data-testid="audio" />
+      <button
+        type="button"
+        data-testid="play"
+        onClick={getControlsProps().onPlay}
+      >
+        play
+      </button>
       <span data-testid="index">{playerState.currentIndex}</span>
       <span data-testid="isPlay">{String(playerState.isPlay)}</span>
     </div>
   );
 };
 
-const endTrack = (loopMode: SAudioPlayerLoopMode, index: number) => {
+interface EndTrackOptions {
+  loopMode: SAudioPlayerLoopMode;
+  index: number;
+  // Start from a playing state so a stop (isPlay true -> false) is a real
+  // transition rather than the never-played initial value.
+  startPlaying?: boolean;
+}
+
+const endTrack = ({ loopMode, index, startPlaying }: EndTrackOptions) => {
   const view = render(<Harness loopMode={loopMode} index={index} />);
+  if (startPlaying) {
+    fireEvent.click(view.getByTestId('play'));
+  }
   fireEvent.ended(view.getByTestId('audio'));
 
   return {
@@ -50,23 +68,27 @@ const endTrack = (loopMode: SAudioPlayerLoopMode, index: number) => {
 describe('useSAudioPlayer onEnded', () => {
   describe('loopMode None', () => {
     it('advances to the next audio and keeps playing mid-list', () => {
-      expect(endTrack(SAudioPlayerLoopMode.None, 0)).toEqual({
-        index: 1,
-        isPlay: true,
-      });
+      expect(
+        endTrack({ loopMode: SAudioPlayerLoopMode.None, index: 0 }),
+      ).toEqual({ index: 1, isPlay: true });
     });
 
     it('stops without wrapping when the last audio ends', () => {
-      expect(endTrack(SAudioPlayerLoopMode.None, 2)).toEqual({
-        index: 2,
-        isPlay: false,
-      });
+      expect(
+        endTrack({
+          loopMode: SAudioPlayerLoopMode.None,
+          index: 2,
+          startPlaying: true,
+        }),
+      ).toEqual({ index: 2, isPlay: false });
     });
   });
 
   describe('loopMode All', () => {
     it('wraps back to the first audio and keeps playing', () => {
-      expect(endTrack(SAudioPlayerLoopMode.All, 2)).toEqual({
+      expect(
+        endTrack({ loopMode: SAudioPlayerLoopMode.All, index: 2 }),
+      ).toEqual({
         index: 0,
         isPlay: true,
       });
@@ -75,7 +97,9 @@ describe('useSAudioPlayer onEnded', () => {
 
   describe('loopMode One', () => {
     it('keeps the same audio and keeps playing', () => {
-      expect(endTrack(SAudioPlayerLoopMode.One, 1)).toEqual({
+      expect(
+        endTrack({ loopMode: SAudioPlayerLoopMode.One, index: 1 }),
+      ).toEqual({
         index: 1,
         isPlay: true,
       });
