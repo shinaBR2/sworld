@@ -111,46 +111,27 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   };
 
   const onEnded = () => {
-    if (loopMode === SAudioPlayerLoopMode.One) {
-      if (!ref.current) {
-        return;
-      }
-
-      setPlay(true);
-      playAudio(ref.current);
-
-      return;
-    } else if (loopMode === SAudioPlayerLoopMode.All) {
+    // One: replay the current track without moving through the list.
+    if (loopMode !== SAudioPlayerLoopMode.One) {
       if (isLast) {
-        setCurrentIndex(0);
+        // All wraps back to the start; None stops at the end of the list.
+        if (loopMode === SAudioPlayerLoopMode.None) {
+          return setPlay(false);
+        }
+
+        setCurrentIndex(firstIndex);
       } else {
+        // All and None both auto-advance to the next track mid-list.
         setCurrentIndex(currentIndex + 1);
       }
+    }
 
-      if (!ref.current) {
-        return;
-      }
-
-      setPlay(true);
-      playAudio(ref.current);
-
-      return;
-    } else {
-      if (isLast) {
-        return setPlay(false);
-      }
-
-      setCurrentIndex(currentIndex + 1);
-
-      if (!ref.current) {
-        return;
-      }
-
-      setPlay(true);
-      playAudio(ref.current);
-
+    if (!ref.current) {
       return;
     }
+
+    setPlay(true);
+    playAudio(ref.current);
   };
 
   const onPlay = () => {
