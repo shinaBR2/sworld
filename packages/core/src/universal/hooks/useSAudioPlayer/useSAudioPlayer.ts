@@ -140,6 +140,8 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
         return setPlay(false);
       }
 
+      setCurrentIndex(currentIndex + 1);
+
       if (!ref.current) {
         return;
       }
