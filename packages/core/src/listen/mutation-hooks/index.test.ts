@@ -5,10 +5,12 @@ import { useQueryContext } from '../../providers/query';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
 import {
   useAddAudioToPlaylist,
+  useAssignFeeling,
   useCreatePlaylist,
   useDeleteAudio,
   useRemoveAudioFromPlaylist,
   useReorderPlaylistAudios,
+  useUnassignFeeling,
   useUpdateAudio,
 } from './index';
 
@@ -233,6 +235,70 @@ describe('Listen playlist mutation hooks', () => {
       renderHook(() => useDeleteAudio());
 
       getOnSuccess()?.({ delete_audios_by_pk: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useAssignFeeling', () => {
+    it('builds the audio_tags insert object', () => {
+      const { result } = renderHook(() => useAssignFeeling());
+
+      result.current({ audioId: 'a1', tagId: 't1' });
+
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        object: { audio_id: 'a1', tag_id: 't1' },
+      });
+    });
+
+    it('invalidates the manage and home lists on success', () => {
+      const onSuccess = vi.fn();
+      renderHook(() => useAssignFeeling({ onSuccess }));
+
+      const data = { insert_audio_tags_one: { audio_id: 'a1', tag_id: 't1' } };
+      getOnSuccess()?.(data);
+
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
+      expect(onSuccess).toHaveBeenCalledWith(data);
+    });
+
+    it('does not invalidate on a no-op re-assign (on_conflict returns null)', () => {
+      renderHook(() => useAssignFeeling());
+
+      getOnSuccess()?.({ insert_audio_tags_one: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useUnassignFeeling', () => {
+    it('builds the by-pk delete variables', () => {
+      const { result } = renderHook(() => useUnassignFeeling());
+
+      result.current({ audioId: 'a1', tagId: 't1' });
+
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        audioId: 'a1',
+        tagId: 't1',
+      });
+    });
+
+    it('invalidates the manage and home lists on success', () => {
+      renderHook(() => useUnassignFeeling());
+
+      getOnSuccess()?.({
+        delete_audio_tags_by_pk: { audio_id: 'a1', tag_id: 't1' },
+      });
+
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
+    });
+
+    it('does not invalidate when no row was deleted', () => {
+      renderHook(() => useUnassignFeeling());
+
+      getOnSuccess()?.({ delete_audio_tags_by_pk: null });
 
       expect(mockInvalidateQuery).not.toHaveBeenCalled();
     });

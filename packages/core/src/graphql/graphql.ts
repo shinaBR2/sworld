@@ -13305,6 +13305,21 @@ export type DeleteAudioMutationVariables = Exact<{
 
 export type DeleteAudioMutation = { __typename?: 'mutation_root', delete_audios_by_pk?: { __typename?: 'audios', id: any } | null };
 
+export type AssignFeelingMutationVariables = Exact<{
+  object: Audio_Tags_Insert_Input;
+}>;
+
+
+export type AssignFeelingMutation = { __typename?: 'mutation_root', insert_audio_tags_one?: { __typename?: 'audio_tags', audio_id: any, tag_id: any } | null };
+
+export type UnassignFeelingMutationVariables = Exact<{
+  audioId: Scalars['uuid']['input'];
+  tagId: Scalars['uuid']['input'];
+}>;
+
+
+export type UnassignFeelingMutation = { __typename?: 'mutation_root', delete_audio_tags_by_pk?: { __typename?: 'audio_tags', audio_id: any, tag_id: any } | null };
+
 export type AudioFieldsFragment = { __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string } & { ' $fragmentName'?: 'AudioFieldsFragment' };
 
 export type PlaylistAudioFieldsFragment = { __typename?: 'playlist_audios', position: number, audio: (
@@ -14088,6 +14103,25 @@ export const DeleteAudioDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<DeleteAudioMutation, DeleteAudioMutationVariables>;
+export const AssignFeelingDocument = new TypedDocumentString(`
+    mutation AssignFeeling($object: audio_tags_insert_input!) {
+  insert_audio_tags_one(
+    object: $object
+    on_conflict: {constraint: audio_tags_pkey, update_columns: []}
+  ) {
+    audio_id
+    tag_id
+  }
+}
+    `) as unknown as TypedDocumentString<AssignFeelingMutation, AssignFeelingMutationVariables>;
+export const UnassignFeelingDocument = new TypedDocumentString(`
+    mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {
+  delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {
+    audio_id
+    tag_id
+  }
+}
+    `) as unknown as TypedDocumentString<UnassignFeelingMutation, UnassignFeelingMutationVariables>;
 export const ListenHomeDocument = new TypedDocumentString(`
     query ListenHome @cached {
   audios {
