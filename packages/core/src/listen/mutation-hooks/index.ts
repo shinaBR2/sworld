@@ -62,7 +62,10 @@ const deleteAudioMutation = graphql(/* GraphQL */ `
 
 const assignFeelingMutation = graphql(/* GraphQL */ `
   mutation AssignFeeling($object: audio_tags_insert_input!) {
-    insert_audio_tags_one(object: $object) {
+    insert_audio_tags_one(
+      object: $object
+      on_conflict: { constraint: audio_tags_pkey, update_columns: [] }
+    ) {
       audio_id
       tag_id
     }
@@ -315,7 +318,7 @@ const useDeleteAudio = (props: MutationProps = {}) => {
 };
 
 const useAssignFeeling = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -324,8 +327,12 @@ const useAssignFeeling = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
+        // on_conflict makes a re-assign a no-op: insert_audio_tags_one is null
+        // and nothing changed, so leave the caches alone. The home screen also
+        // reads each audio's feelings, so refresh it alongside the manage list.
         if (data.insert_audio_tags_one) {
           invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
         }
         onSuccess?.(data);
       },
@@ -343,7 +350,7 @@ const useAssignFeeling = (props: MutationProps = {}) => {
 };
 
 const useUnassignFeeling = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -354,6 +361,7 @@ const useUnassignFeeling = (props: MutationProps = {}) => {
       onSuccess: (data) => {
         if (data.delete_audio_tags_by_pk) {
           invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
         }
         onSuccess?.(data);
       },

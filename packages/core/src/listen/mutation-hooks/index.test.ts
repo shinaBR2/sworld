@@ -251,7 +251,7 @@ describe('Listen playlist mutation hooks', () => {
       });
     });
 
-    it('invalidates the manage list on success', () => {
+    it('invalidates the manage and home lists on success', () => {
       const onSuccess = vi.fn();
       renderHook(() => useAssignFeeling({ onSuccess }));
 
@@ -259,7 +259,16 @@ describe('Listen playlist mutation hooks', () => {
       getOnSuccess()?.(data);
 
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
       expect(onSuccess).toHaveBeenCalledWith(data);
+    });
+
+    it('does not invalidate on a no-op re-assign (on_conflict returns null)', () => {
+      renderHook(() => useAssignFeeling());
+
+      getOnSuccess()?.({ insert_audio_tags_one: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
     });
   });
 
@@ -275,7 +284,7 @@ describe('Listen playlist mutation hooks', () => {
       });
     });
 
-    it('invalidates the manage list on success', () => {
+    it('invalidates the manage and home lists on success', () => {
       renderHook(() => useUnassignFeeling());
 
       getOnSuccess()?.({
@@ -283,6 +292,7 @@ describe('Listen playlist mutation hooks', () => {
       });
 
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
     });
 
     it('does not invalidate when no row was deleted', () => {

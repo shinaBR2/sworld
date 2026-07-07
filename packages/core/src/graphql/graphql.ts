@@ -14098,7 +14098,10 @@ export const DeleteAudioDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<DeleteAudioMutation, DeleteAudioMutationVariables>;
 export const AssignFeelingDocument = new TypedDocumentString(`
     mutation AssignFeeling($object: audio_tags_insert_input!) {
-  insert_audio_tags_one(object: $object) {
+  insert_audio_tags_one(
+    object: $object
+    on_conflict: {constraint: audio_tags_pkey, update_columns: []}
+  ) {
     audio_id
     tag_id
   }
