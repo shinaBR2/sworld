@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { playAudio, seek } from './utils/actions';
 
+// The player addresses tracks two ways. A "slot" is a position in the play
+// order (`indexes`), which shuffle permutes; `currentIndex` state is a slot.
+// A "flat index" is a position in the untouched `audioList` — that's what the
+// `index` input and the `currentIndex` output both speak, so callers never
+// have to know about the shuffle permutation. `indexes[slot]` maps slot -> flat;
+// `indexes.indexOf(flat)` maps flat -> slot.
+
 export interface SAudioPlayerAudioItem {
   id: string;
   src: string;
@@ -34,6 +41,9 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const ref = useRef<HTMLAudioElement>(null);
 
   const [indexes, setIndexes] = useState<number[]>();
+  // A live handle on `indexes` so the flat -> slot conversion below reads the
+  // current play order without re-running every time the order changes.
+  const indexesRef = useRef<number[] | undefined>(undefined);
   const [currentIndex, setCurrentIndex] = useState<number>(index);
 
   const [isShuffled, setIsShuffled] = useState(shuffle);
@@ -47,15 +57,35 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const loopModes = ['all', 'one', 'none'];
 
   useEffect(() => {
-    if (total) {
-      const indexes = Array.from({ length: total }).map((_v, i) => i);
+    indexesRef.current = indexes;
+  }, [indexes]);
 
-      setIndexes(indexes);
+  useEffect(() => {
+    if (total) {
+      const next = Array.from({ length: total }).map((_v, i) => i);
+
+      setIndexes(next);
     }
   }, [total]);
 
+  // `index` is a flat position; select the slot that plays that track. Under
+  // shuffle the two differ, so converting here is what makes external selection
+  // (a deep link, a clicked track) land on the intended song rather than
+  // whatever sits at that slot in the shuffled order.
   useEffect(() => {
-    setCurrentIndex(index);
+    const order = indexesRef.current;
+
+    if (!order) {
+      setCurrentIndex(index);
+
+      return;
+    }
+
+    const slot = order.indexOf(index);
+
+    if (slot >= 0) {
+      setCurrentIndex(slot);
+    }
   }, [index]);
 
   useEffect(() => {
@@ -181,15 +211,17 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
       return;
     }
 
-    if (!isShuffled) {
-      const sortFunc = () => (Math.random() > 0.5 ? 1 : -1);
-      const newIndexes = [...indexes.sort(sortFunc)];
-      const newCurrentIndex = newIndexes.findIndex((i) => i === currentIndex);
+    // Keep the current track playing across the toggle: remember its flat
+    // position, rebuild the order (shuffled copy, or identity when turning
+    // shuffle off), then re-point currentIndex at that same track's new slot.
+    const currentFlat = indexes[currentIndex];
+    const identity = Array.from({ length: total }).map((_v, k) => k);
+    const sortFunc = () => (Math.random() > 0.5 ? 1 : -1);
+    const nextOrder = isShuffled ? identity : [...indexes].sort(sortFunc);
+    const nextSlot = nextOrder.indexOf(currentFlat);
 
-      setIndexes(newIndexes);
-      setCurrentIndex(newCurrentIndex);
-    }
-
+    setIndexes(nextOrder);
+    setCurrentIndex(nextSlot < 0 ? 0 : nextSlot);
     setIsShuffled(!isShuffled);
   };
 

@@ -65,6 +65,53 @@ const endTrack = ({ loopMode, index, startPlaying }: EndTrackOptions) => {
   };
 };
 
+// `playerState.currentIndex` is a flat position in `audioList`, and so is the
+// `index` input — these tests pin that contract across the shuffle permutation,
+// which is where the two used to diverge.
+const SelectHarness = (props: { index: number }) => {
+  const { getControlsProps, playerState } = useSAudioPlayer({
+    audioList,
+    index: props.index,
+  });
+
+  return (
+    <div>
+      <button
+        type="button"
+        data-testid="shuffle"
+        onClick={getControlsProps().onShuffle}
+      >
+        shuffle
+      </button>
+      <span data-testid="index">{playerState.currentIndex}</span>
+    </div>
+  );
+};
+
+describe('useSAudioPlayer track addressing', () => {
+  it('selects the track at the given flat index while shuffled', () => {
+    const view = render(<SelectHarness index={0} />);
+
+    fireEvent.click(view.getByTestId('shuffle'));
+    // Selecting flat index 2 must land on audioList[2] regardless of the
+    // shuffled play order, not on whatever slot 2 happens to hold.
+    view.rerender(<SelectHarness index={2} />);
+
+    expect(view.getByTestId('index').textContent).toBe('2');
+  });
+
+  it('keeps the current track when shuffle is toggled on and off', () => {
+    const view = render(<SelectHarness index={1} />);
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // on
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // off
+    expect(view.getByTestId('index').textContent).toBe('1');
+  });
+});
+
 describe('useSAudioPlayer onEnded', () => {
   describe('loopMode None', () => {
     it('advances to the next audio and keeps playing mid-list', () => {
