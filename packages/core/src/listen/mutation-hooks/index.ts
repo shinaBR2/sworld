@@ -146,7 +146,7 @@ const MANAGE_QUERY_KEY = ['listen-manage'];
 const HOME_QUERY_KEY = 'listen-home';
 
 const useCreatePlaylist = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -155,7 +155,15 @@ const useCreatePlaylist = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        invalidateQuery(['listen-playlists']);
+        // invalidateQuery matches exactly, so rebuild the full playlists-list
+        // key; also refresh the manage list. Deliberately NOT the home query:
+        // invalidateQuery removes-then-refetches, which would blank the whole
+        // active home screen to spinners on create — the collection select
+        // picks up the new playlist on its next mount instead.
+        if (data.insert_playlist_one) {
+          invalidateQuery(['listen-playlists', isSignedIn]);
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
         onSuccess?.(data);
       },
       onError: (error) => {

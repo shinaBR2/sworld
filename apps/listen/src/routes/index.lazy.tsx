@@ -4,13 +4,7 @@ import { useAuthContext } from 'core/providers/auth';
 import { ListeningScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { createPlaylistSlug } from '../utils/slug';
 
 // Selecting a collection is navigation, not state: All → `/`, a playlist → its URL.
 const useCollectionNavigate = () => {
@@ -31,6 +25,7 @@ const useCollectionNavigate = () => {
 // create action does: create a playlist when signed in, otherwise sign in.
 const Content = () => {
   const { user, signIn, signOut } = useAuthContext();
+  const navigate = useNavigate();
   const { audios, feelings, playlists, isLoading } =
     listenQueryHooks.useLoadHome();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
@@ -48,12 +43,17 @@ const Content = () => {
       onSelectCollection={onSelectCollection}
       onCreate={(title) =>
         user
-          ? createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+          ? createPlaylist({
+              title,
+              slug: createPlaylistSlug(title),
+              thumbnailUrl: '',
+            })
           : signIn()
       }
       feelings={feelings}
       isLoading={isLoading}
       audios={audios}
+      onManage={user ? () => navigate({ to: '/manage' }) : undefined}
     />
   );
 };

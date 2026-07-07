@@ -12,9 +12,15 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 
+const ManageLazyRouteImport = createFileRoute('/manage')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const PlaylistsIdLazyRouteImport = createFileRoute('/playlists/$id')()
 
+const ManageLazyRoute = ManageLazyRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -28,32 +34,43 @@ const PlaylistsIdLazyRoute = PlaylistsIdLazyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/playlists/$id': typeof PlaylistsIdLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/playlists/$id': typeof PlaylistsIdLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/playlists/$id': typeof PlaylistsIdLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/playlists/$id'
+  fullPaths: '/' | '/manage' | '/playlists/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/playlists/$id'
-  id: '__root__' | '/' | '/playlists/$id'
+  to: '/' | '/manage' | '/playlists/$id'
+  id: '__root__' | '/' | '/manage' | '/playlists/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  ManageLazyRoute: typeof ManageLazyRoute
   PlaylistsIdLazyRoute: typeof PlaylistsIdLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -73,6 +90,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  ManageLazyRoute: ManageLazyRoute,
   PlaylistsIdLazyRoute: PlaylistsIdLazyRoute,
 }
 export const routeTree = rootRouteImport

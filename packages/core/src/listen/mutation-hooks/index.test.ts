@@ -72,15 +72,32 @@ describe('Listen playlist mutation hooks', () => {
       });
     });
 
-    it('invalidates the playlists list on success', () => {
+    it('invalidates the playlists and manage lists on success', () => {
       const onSuccess = vi.fn();
       renderHook(() => useCreatePlaylist({ onSuccess }));
 
       const data = { insert_playlist_one: { id: '1', slug: 'chill' } };
       getOnSuccess()?.(data);
 
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-playlists']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'listen-playlists',
+        true,
+      ]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      // Not the home query — invalidating it would blank the active home screen.
+      expect(mockInvalidateQuery).not.toHaveBeenCalledWith([
+        'listen-home',
+        true,
+      ]);
       expect(onSuccess).toHaveBeenCalledWith(data);
+    });
+
+    it('does not invalidate when no row was created', () => {
+      renderHook(() => useCreatePlaylist());
+
+      getOnSuccess()?.({ insert_playlist_one: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
     });
   });
 

@@ -53,4 +53,23 @@ describe('SettingsPanel', () => {
     // Check if toggle function was called with false
     expect(defaultProps.toggle).toHaveBeenCalledWith(false);
   });
+
+  it('omits the manage entry when no manage action is provided', () => {
+    render(<SettingsPanel {...defaultProps} />);
+
+    expect(screen.queryByText('Manage library')).not.toBeInTheDocument();
+  });
+
+  it('renders and wires the manage entry when provided', () => {
+    const manage = vi.fn();
+    render(
+      <SettingsPanel {...defaultProps} actions={{ logout: vi.fn(), manage }} />,
+    );
+
+    const manageButton = screen.getByText('Manage library');
+    expect(manageButton).toBeInTheDocument();
+
+    fireEvent.click(manageButton);
+    expect(manage).toHaveBeenCalledTimes(1);
+  });
 });
