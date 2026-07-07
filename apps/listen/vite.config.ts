@@ -21,11 +21,28 @@ export default defineConfig({
         advancedChunks: {
           groups: [
             /**
-             * App broken if bundle mui separately
+             * Keep React, MUI, Emotion and their eval-time React helpers
+             * (react-is, react-transition-group, hoist-non-react-statics)
+             * together — the app breaks if MUI is split from React. Anchored to
+             * real package names so pnpm's `_react@x` peer-dep suffix in
+             * dependency paths doesn't sweep every package into this chunk.
              */
-            { name: 'react-vendor', test: /node_modules.*react/ },
-            /** For error tracking, analytics */
-            { name: 'tracker-vendor', test: /\/node_modules\/rollbar/ },
+            {
+              name: 'react-vendor',
+              test: /node_modules\/(react|react-dom|react-is|react-transition-group|hoist-non-react-statics|scheduler|use-sync-external-store|@emotion|@mui)\//,
+            },
+            /**
+             * Rollbar in its own chunk. It stays eager because it's a static
+             * import on the entry graph (via core's ErrorBoundary), not because
+             * of this group — a group only routes code, it doesn't set load
+             * timing. Eager is required to catch load-time crashes.
+             */
+            { name: 'tracker-vendor', test: /node_modules\/(rollbar|@rollbar)\// },
+            /**
+             * Remaining third-party code (Auth0, TanStack, popper, …) in its
+             * own chunk so it stays cacheable across app-code changes instead
+             * of being glued into the app entry chunk.
+             */
             { name: 'vendor', test: /node_modules/ },
           ],
         },
