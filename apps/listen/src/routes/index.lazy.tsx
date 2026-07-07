@@ -31,6 +31,7 @@ const useCollectionNavigate = () => {
 // create action does: create a playlist when signed in, otherwise sign in.
 const Content = () => {
   const { user, signIn, signOut } = useAuthContext();
+  const navigate = useNavigate();
   const { audios, feelings, playlists, isLoading } =
     listenQueryHooks.useLoadHome();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
@@ -54,6 +55,7 @@ const Content = () => {
       feelings={feelings}
       isLoading={isLoading}
       audios={audios}
+      onManage={user ? () => navigate({ to: '/manage' }) : undefined}
     />
   );
 };
