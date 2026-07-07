@@ -54,7 +54,6 @@ interface CreateListenPlaylistInput {
   slug: string;
   thumbnailUrl: string;
   description?: string;
-  public?: boolean;
 }
 
 interface PlaylistAudioRef {

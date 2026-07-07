@@ -52,7 +52,6 @@ describe('Listen playlist mutation hooks', () => {
         slug: 'chill',
         thumbnailUrl: 'thumb.jpg',
         description: 'relax',
-        public: true,
       });
 
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -61,7 +60,6 @@ describe('Listen playlist mutation hooks', () => {
           slug: 'chill',
           thumbnailUrl: 'thumb.jpg',
           description: 'relax',
-          public: true,
           site: 'listen',
         },
       });
