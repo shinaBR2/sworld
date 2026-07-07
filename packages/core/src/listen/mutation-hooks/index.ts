@@ -173,7 +173,7 @@ const useCreatePlaylist = (props: MutationProps = {}) => {
 };
 
 const useUpdatePlaylist = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -182,9 +182,14 @@ const useUpdatePlaylist = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        if (data.update_playlist_by_pk) {
-          invalidateQuery(['listen-playlists']);
+        // The playlists list and detail queries key on isSignedIn (detail also
+        // on the id); invalidateQuery matches exactly, so the full keys are
+        // rebuilt here or the refetch silently no-ops.
+        const playlist = data.update_playlist_by_pk;
+        if (playlist) {
+          invalidateQuery(['listen-playlists', isSignedIn]);
           invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery(['listen-playlist-detail', isSignedIn, playlist.id]);
         }
         onSuccess?.(data);
       },
@@ -204,7 +209,7 @@ const useUpdatePlaylist = (props: MutationProps = {}) => {
 };
 
 const useDeletePlaylist = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -213,9 +218,11 @@ const useDeletePlaylist = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        if (data.delete_playlist_by_pk) {
-          invalidateQuery(['listen-playlists']);
+        const playlist = data.delete_playlist_by_pk;
+        if (playlist) {
+          invalidateQuery(['listen-playlists', isSignedIn]);
           invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery(['listen-playlist-detail', isSignedIn, playlist.id]);
         }
         onSuccess?.(data);
       },

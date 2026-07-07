@@ -318,15 +318,23 @@ describe('Listen playlist mutation hooks', () => {
       });
     });
 
-    it('invalidates the playlists and manage lists on success', () => {
+    it('invalidates the playlists, manage and detail queries on success', () => {
       const onSuccess = vi.fn();
       renderHook(() => useUpdatePlaylist({ onSuccess }));
 
       const data = { update_playlist_by_pk: { id: 'p1' } };
       getOnSuccess()?.(data);
 
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-playlists']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'listen-playlists',
+        true,
+      ]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'listen-playlist-detail',
+        true,
+        'p1',
+      ]);
       expect(onSuccess).toHaveBeenCalledWith(data);
     });
 
@@ -348,13 +356,21 @@ describe('Listen playlist mutation hooks', () => {
       expect(mockMutateAsync).toHaveBeenCalledWith({ id: 'p1' });
     });
 
-    it('invalidates the playlists and manage lists on success', () => {
+    it('invalidates the playlists, manage and detail queries on success', () => {
       renderHook(() => useDeletePlaylist());
 
       getOnSuccess()?.({ delete_playlist_by_pk: { id: 'p1' } });
 
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-playlists']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'listen-playlists',
+        true,
+      ]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith([
+        'listen-playlist-detail',
+        true,
+        'p1',
+      ]);
     });
 
     it('does not invalidate when no row was deleted', () => {
