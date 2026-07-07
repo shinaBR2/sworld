@@ -31,6 +31,8 @@ interface CommonProps {
   playlists: CollectionSelectPlaylist[];
   onSelectCollection: (value: 'all' | string) => void;
   onCreate: (title: string) => void;
+  // Opens the management dashboard (signed-in only). Omit for anonymous.
+  onManage?: () => void;
   // Raw audios for the player (AudioList maps them to player items).
   audios: unknown[];
   isLoading: boolean;
@@ -69,6 +71,7 @@ const ListeningScreen = (props: ListeningScreenProps) => {
     playlists,
     onSelectCollection,
     onCreate,
+    onManage,
     audios,
     isLoading,
     activeAudioId,
@@ -102,7 +105,7 @@ const ListeningScreen = (props: ListeningScreenProps) => {
       <SettingsPanel
         open={settingOpen}
         toggle={setSettingOpen}
-        actions={{ logout: onLogout }}
+        actions={{ logout: onLogout, manage: onManage }}
       />
       <MainContainer>
         <Box

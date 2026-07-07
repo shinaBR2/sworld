@@ -13268,6 +13268,21 @@ export type CreateListenPlaylistMutationVariables = Exact<{
 
 export type CreateListenPlaylistMutation = { __typename?: 'mutation_root', insert_playlist_one?: { __typename?: 'playlist', id: any, slug: string } | null };
 
+export type UpdatePlaylistMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  set: Playlist_Set_Input;
+}>;
+
+
+export type UpdatePlaylistMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
+export type DeletePlaylistMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeletePlaylistMutation = { __typename?: 'mutation_root', delete_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
 export type AddAudioToPlaylistMutationVariables = Exact<{
   object: Playlist_Audios_Insert_Input;
 }>;
@@ -13290,6 +13305,36 @@ export type ReorderPlaylistAudiosMutationVariables = Exact<{
 
 export type ReorderPlaylistAudiosMutation = { __typename?: 'mutation_root', update_playlist_audios_many?: Array<{ __typename?: 'playlist_audios_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'playlist_audios', playlist_id: any }> } | null> | null };
 
+export type UpdateAudioMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  set: Audios_Set_Input;
+}>;
+
+
+export type UpdateAudioMutation = { __typename?: 'mutation_root', update_audios_by_pk?: { __typename?: 'audios', id: any } | null };
+
+export type DeleteAudioMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeleteAudioMutation = { __typename?: 'mutation_root', delete_audios_by_pk?: { __typename?: 'audios', id: any } | null };
+
+export type AssignFeelingMutationVariables = Exact<{
+  object: Audio_Tags_Insert_Input;
+}>;
+
+
+export type AssignFeelingMutation = { __typename?: 'mutation_root', insert_audio_tags_one?: { __typename?: 'audio_tags', audio_id: any, tag_id: any } | null };
+
+export type UnassignFeelingMutationVariables = Exact<{
+  audioId: Scalars['uuid']['input'];
+  tagId: Scalars['uuid']['input'];
+}>;
+
+
+export type UnassignFeelingMutation = { __typename?: 'mutation_root', delete_audio_tags_by_pk?: { __typename?: 'audio_tags', audio_id: any, tag_id: any } | null };
+
 export type AudioFieldsFragment = { __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string } & { ' $fragmentName'?: 'AudioFieldsFragment' };
 
 export type PlaylistAudioFieldsFragment = { __typename?: 'playlist_audios', position: number, audio: (
@@ -13306,6 +13351,13 @@ export type ListenHomeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListenHomeQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string }> };
+
+export type ListenManageQueryVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+}>;
+
+
+export type ListenManageQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string, description?: string | null, thumbnailUrl?: string | null }> };
 
 export type ListenPlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -14025,6 +14077,20 @@ export const CreateListenPlaylistDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateListenPlaylistMutation, CreateListenPlaylistMutationVariables>;
+export const UpdatePlaylistDocument = new TypedDocumentString(`
+    mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {
+  update_playlist_by_pk(pk_columns: {id: $id}, _set: $set) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdatePlaylistMutation, UpdatePlaylistMutationVariables>;
+export const DeletePlaylistDocument = new TypedDocumentString(`
+    mutation DeletePlaylist($id: uuid!) {
+  delete_playlist_by_pk(id: $id) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<DeletePlaylistMutation, DeletePlaylistMutationVariables>;
 export const AddAudioToPlaylistDocument = new TypedDocumentString(`
     mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {
   insert_playlist_audios_one(object: $object) {
@@ -14052,6 +14118,39 @@ export const ReorderPlaylistAudiosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ReorderPlaylistAudiosMutation, ReorderPlaylistAudiosMutationVariables>;
+export const UpdateAudioDocument = new TypedDocumentString(`
+    mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {
+  update_audios_by_pk(pk_columns: {id: $id}, _set: $set) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateAudioMutation, UpdateAudioMutationVariables>;
+export const DeleteAudioDocument = new TypedDocumentString(`
+    mutation DeleteAudio($id: uuid!) {
+  delete_audios_by_pk(id: $id) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<DeleteAudioMutation, DeleteAudioMutationVariables>;
+export const AssignFeelingDocument = new TypedDocumentString(`
+    mutation AssignFeeling($object: audio_tags_insert_input!) {
+  insert_audio_tags_one(
+    object: $object
+    on_conflict: {constraint: audio_tags_pkey, update_columns: []}
+  ) {
+    audio_id
+    tag_id
+  }
+}
+    `) as unknown as TypedDocumentString<AssignFeelingMutation, AssignFeelingMutationVariables>;
+export const UnassignFeelingDocument = new TypedDocumentString(`
+    mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {
+  delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {
+    audio_id
+    tag_id
+  }
+}
+    `) as unknown as TypedDocumentString<UnassignFeelingMutation, UnassignFeelingMutationVariables>;
 export const ListenHomeDocument = new TypedDocumentString(`
     query ListenHome @cached {
   audios {
@@ -14075,6 +14174,34 @@ export const ListenHomeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ListenHomeQuery, ListenHomeQueryVariables>;
+export const ListenManageDocument = new TypedDocumentString(`
+    query ListenManage($userId: uuid!) {
+  audios(where: {user_id: {_eq: $userId}}, order_by: {createdAt: desc}) {
+    id
+    name
+    source
+    thumbnailUrl
+    artistName
+    audio_tags {
+      tag_id
+    }
+  }
+  tags(where: {site: {_eq: "listen"}}, order_by: {display_order: asc}) {
+    id
+    name
+  }
+  playlist(
+    where: {user_id: {_eq: $userId}, site: {_eq: "listen"}}
+    order_by: {createdAt: desc}
+  ) {
+    id
+    title
+    slug
+    description
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<ListenManageQuery, ListenManageQueryVariables>;
 export const ListenPlaylistDetailDocument = new TypedDocumentString(`
     query ListenPlaylistDetail($id: uuid!) {
   playlist_by_pk(id: $id) {

@@ -4,6 +4,16 @@ import { FeelingList } from './home/feeling-list';
 import { MainContainer } from './home/main-container';
 import { SettingsPanel } from './home/settings';
 import { ListeningScreen } from './listening-screen';
+import { ManageScreen } from './manage';
+import type {
+  AudioEdit,
+  FeelingRef,
+  ManageAudio,
+  ManageFeeling,
+  ManagePlaylist,
+  PlaylistCreate,
+  PlaylistEdit,
+} from './manage/types';
 import MusicWidget from './music-widget';
 import { CreatePlaylistDialog } from './playlists/create-dialog';
 
@@ -16,4 +26,14 @@ export {
   CollectionSelect,
   CreatePlaylistDialog,
   ListeningScreen,
+  ManageScreen,
+};
+export type {
+  AudioEdit,
+  FeelingRef,
+  ManageAudio,
+  ManageFeeling,
+  ManagePlaylist,
+  PlaylistCreate,
+  PlaylistEdit,
 };

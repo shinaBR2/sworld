@@ -5,13 +5,7 @@ import { useCallback } from 'react';
 import { ListeningScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { createPlaylistSlug } from '../utils/slug';
 
 // Selecting a collection is navigation, not state: All → `/`, a playlist → its URL.
 const useCollectionNavigate = () => {
@@ -32,6 +26,7 @@ const useCollectionNavigate = () => {
 // create action does: create a playlist when signed in, otherwise sign in.
 const Content = () => {
   const { user, signIn, signOut } = useAuthContext();
+  const navigate = useNavigate();
   const { audios, feelings, playlists, isLoading } =
     listenQueryHooks.useLoadHome();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
@@ -41,11 +36,14 @@ const Content = () => {
   // player, and mirror the player's current track back with `replace` so the
   // URL always reflects what's playing without piling up history entries.
   const { audio: activeAudioId = '' } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const searchNavigate = Route.useNavigate();
   const onAudioChange = useCallback(
     (id: string) =>
-      navigate({ search: (prev) => ({ ...prev, audio: id }), replace: true }),
-    [navigate],
+      searchNavigate({
+        search: (prev) => ({ ...prev, audio: id }),
+        replace: true,
+      }),
+    [searchNavigate],
   );
 
   return (
@@ -62,12 +60,17 @@ const Content = () => {
       onAudioChange={onAudioChange}
       onCreate={(title) =>
         user
-          ? createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+          ? createPlaylist({
+              title,
+              slug: createPlaylistSlug(title),
+              thumbnailUrl: '',
+            })
           : signIn()
       }
       feelings={feelings}
       isLoading={isLoading}
       audios={audios}
+      onManage={user ? () => navigate({ to: '/manage' }) : undefined}
     />
   );
 };
