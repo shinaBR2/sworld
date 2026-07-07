@@ -32,6 +32,8 @@ type Documents = {
     "\n  query GetCurrentReading {\n    reading_progresses(where: { percentage: { _gt: 0, _lt: 100 } }, order_by: { lastReadAt: desc }, limit: 1) {\n      id\n      currentPage\n      totalPages\n      percentage\n      lastReadAt\n      book {\n        id\n        title\n        author\n        totalPages\n        thumbnailUrl\n      }\n    }\n  }\n": typeof types.GetCurrentReadingDocument,
     "\n  query GetReadingStats($monthStart: timestamptz!) {\n    books_aggregate {\n      aggregate {\n        count\n      }\n    }\n    completed_books: books_aggregate(where: { reading_progresses: { percentage: { _gte: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    currently_reading: books_aggregate(where: { reading_progresses: { percentage: { _gt: 0, _lt: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: $monthStart } }) {\n      aggregate {\n        sum {\n          readingTimeMinutes\n        }\n      }\n    }\n  }\n": typeof types.GetReadingStatsDocument,
     "\n  mutation CreateListenPlaylist($object: playlist_insert_input!) {\n    insert_playlist_one(object: $object) {\n      id\n      slug\n    }\n  }\n": typeof types.CreateListenPlaylistDocument,
+    "\n  mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": typeof types.UpdatePlaylistDocument,
+    "\n  mutation DeletePlaylist($id: uuid!) {\n    delete_playlist_by_pk(id: $id) {\n      id\n    }\n  }\n": typeof types.DeletePlaylistDocument,
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": typeof types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": typeof types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": typeof types.ReorderPlaylistAudiosDocument,
@@ -92,6 +94,8 @@ const documents: Documents = {
     "\n  query GetCurrentReading {\n    reading_progresses(where: { percentage: { _gt: 0, _lt: 100 } }, order_by: { lastReadAt: desc }, limit: 1) {\n      id\n      currentPage\n      totalPages\n      percentage\n      lastReadAt\n      book {\n        id\n        title\n        author\n        totalPages\n        thumbnailUrl\n      }\n    }\n  }\n": types.GetCurrentReadingDocument,
     "\n  query GetReadingStats($monthStart: timestamptz!) {\n    books_aggregate {\n      aggregate {\n        count\n      }\n    }\n    completed_books: books_aggregate(where: { reading_progresses: { percentage: { _gte: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    currently_reading: books_aggregate(where: { reading_progresses: { percentage: { _gt: 0, _lt: 100 } } }) {\n      aggregate {\n        count\n      }\n    }\n    reading_time_this_month: reading_progresses_aggregate(where: { lastReadAt: { _gte: $monthStart } }) {\n      aggregate {\n        sum {\n          readingTimeMinutes\n        }\n      }\n    }\n  }\n": types.GetReadingStatsDocument,
     "\n  mutation CreateListenPlaylist($object: playlist_insert_input!) {\n    insert_playlist_one(object: $object) {\n      id\n      slug\n    }\n  }\n": types.CreateListenPlaylistDocument,
+    "\n  mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": types.UpdatePlaylistDocument,
+    "\n  mutation DeletePlaylist($id: uuid!) {\n    delete_playlist_by_pk(id: $id) {\n      id\n    }\n  }\n": types.DeletePlaylistDocument,
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": types.ReorderPlaylistAudiosDocument,
@@ -203,6 +207,14 @@ export function graphql(source: "\n  query GetReadingStats($monthStart: timestam
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateListenPlaylist($object: playlist_insert_input!) {\n    insert_playlist_one(object: $object) {\n      id\n      slug\n    }\n  }\n"): typeof import('./graphql').CreateListenPlaylistDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n"): typeof import('./graphql').UpdatePlaylistDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeletePlaylist($id: uuid!) {\n    delete_playlist_by_pk(id: $id) {\n      id\n    }\n  }\n"): typeof import('./graphql').DeletePlaylistDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

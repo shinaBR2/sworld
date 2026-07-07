@@ -14,6 +14,22 @@ const createPlaylistMutation = graphql(/* GraphQL */ `
   }
 `);
 
+const updatePlaylistMutation = graphql(/* GraphQL */ `
+  mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {
+    update_playlist_by_pk(pk_columns: { id: $id }, _set: $set) {
+      id
+    }
+  }
+`);
+
+const deletePlaylistMutation = graphql(/* GraphQL */ `
+  mutation DeletePlaylist($id: uuid!) {
+    delete_playlist_by_pk(id: $id) {
+      id
+    }
+  }
+`);
+
 const addAudioMutation = graphql(/* GraphQL */ `
   mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {
     insert_playlist_audios_one(object: $object) {
@@ -93,6 +109,14 @@ interface CreateListenPlaylistInput {
   description?: string;
 }
 
+// The user role may only update a playlist's title and description
+// (thumbnail/public are not user-writable — see the Hasura playlist perms).
+interface UpdatePlaylistInput {
+  id: string;
+  title?: string;
+  description?: string;
+}
+
 interface PlaylistAudioRef {
   playlistId: string;
   audioId: string;
@@ -146,6 +170,65 @@ const useCreatePlaylist = (props: MutationProps = {}) => {
     mutateAsync({ object: { ...input, site: LISTEN_SITE } });
 
   return createPlaylist;
+};
+
+const useUpdatePlaylist = (props: MutationProps = {}) => {
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: updatePlaylistMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        if (data.update_playlist_by_pk) {
+          invalidateQuery(['listen-playlists']);
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Update playlist failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  const updatePlaylist = (input: UpdatePlaylistInput) => {
+    const { id, ...fields } = input;
+    return mutateAsync({ id, set: fields });
+  };
+
+  return updatePlaylist;
+};
+
+const useDeletePlaylist = (props: MutationProps = {}) => {
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: deletePlaylistMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        if (data.delete_playlist_by_pk) {
+          invalidateQuery(['listen-playlists']);
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Delete playlist failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  const deletePlaylist = (id: string) => mutateAsync({ id });
+
+  return deletePlaylist;
 };
 
 const useAddAudioToPlaylist = (props: MutationProps = {}) => {
@@ -385,12 +468,15 @@ export {
   type PlaylistAudioRef,
   type ReorderUpdate,
   type UpdateAudioInput,
+  type UpdatePlaylistInput,
   useAddAudioToPlaylist,
   useAssignFeeling,
   useCreatePlaylist,
   useDeleteAudio,
+  useDeletePlaylist,
   useRemoveAudioFromPlaylist,
   useReorderPlaylistAudios,
   useUnassignFeeling,
   useUpdateAudio,
+  useUpdatePlaylist,
 };
