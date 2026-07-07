@@ -73,11 +73,11 @@ const Content = (props: AudioListProps) => {
   // first available (deep link / refresh). `seededRef` also makes this a no-op
   // on every later `activeAudioId` change — including the ones our own mirror
   // causes — so the URL never re-drives the player. That one-way flow is what
-  // makes the whole thing race-free.
+  // makes the whole thing race-free. `lastSyncedId` starts at whatever the URL
+  // started as, so a matching deep link isn't rewritten.
   const seededRef = useRef(false);
   const lastSyncedId = useRef(activeAudioId);
-  const seededTrackId = useRef<string | null>(null);
-  const armed = useRef(false);
+  const engaged = useRef(false);
 
   useEffect(() => {
     if (seededRef.current || !list.length) {
@@ -85,49 +85,37 @@ const Content = (props: AudioListProps) => {
     }
 
     seededRef.current = true;
+    lastSyncedId.current = activeAudioId;
 
     const found = list.findIndex((a) => a.id === activeAudioId);
 
     if (found >= 0) {
       onSelect(found);
     }
-
-    // Record the track we're starting on so the mirror knows not to re-write a
-    // URL that already matches. Exception: a *stale* `?audio=` id (present but
-    // not in the list) is left as `lastSyncedId` so the mirror corrects the URL
-    // to the fallback track once the player settles.
-    const startId = list[found >= 0 ? found : 0].id;
-    seededTrackId.current = startId;
-    lastSyncedId.current = activeAudioId && found < 0 ? activeAudioId : startId;
   }, [list, activeAudioId, onSelect]);
 
-  // player -> URL (the only direction that writes): replace `?audio=` with the
-  // current track whenever the player moves. It stays disarmed until the player
-  // has actually settled on the seeded track — that skips the mount transient
-  // and, unlike a "skip first run" flag, survives StrictMode's double effect
-  // invocation, so a freshly loaded page keeps a clean URL.
+  // player -> URL (the only direction that writes): mirror the current track to
+  // `?audio=` once the user has engaged — i.e. playback has started (pressing
+  // play, or selecting a track, which also plays). Until then a freshly loaded
+  // page keeps a clean URL. Gating on "has ever played" also skips the mount
+  // transient and survives StrictMode's double invocation, since neither starts
+  // playback. After engaging, every track change (next/prev/shuffle/auto) and
+  // the initial play all publish the current track; a stale/absent `?audio=`
+  // self-corrects to whatever actually plays.
   useEffect(() => {
-    if (!currentTrackId) {
-      return;
+    if (isPlay) {
+      engaged.current = true;
     }
 
-    // Stay disarmed until the player settles on the seeded track (skips the
-    // mount transient; StrictMode-safe). Once it does, arm and fall through —
-    // that corrects a *stale* `?audio=` (a URL id not in the list, so the
-    // player fell back to another track) on the same pass.
-    if (!armed.current) {
-      if (currentTrackId !== seededTrackId.current) {
-        return;
-      }
-
-      armed.current = true;
+    if (!engaged.current || !currentTrackId) {
+      return;
     }
 
     if (currentTrackId !== lastSyncedId.current) {
       lastSyncedId.current = currentTrackId;
       onAudioChange(currentTrackId);
     }
-  }, [currentTrackId, onAudioChange]);
+  }, [currentTrackId, isPlay, onAudioChange]);
 
   // Changing the feeling filter (setting OR clearing it) rebuilds the list;
   // reset to its first track. A ref tracks the previous value so this fires only
