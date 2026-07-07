@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import hooks from 'core';
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
@@ -58,36 +58,26 @@ const Content = (props: AudioListProps) => {
       );
   }, [originalList, activeFeelingId]);
 
-  // Which track is selected, as a position in `list`. The player owns this from
-  // here on; the URL is seeded into it once (below) and is otherwise a one-way
-  // output, so nothing the URL does can feed back and fight the player.
-  const [index, setIndex] = useState(0);
-
   const isMobile = useIsMobile();
 
-  const hookResult = useSAudioPlayer({
-    audioList: list,
-    index,
-  });
+  const hookResult = useSAudioPlayer({ audioList: list });
   const { getControlsProps, playerState } = hookResult;
-  const { isPlay, currentIndex } = playerState;
-  const { onPlay } = getControlsProps();
+  const { isPlay, audioItem } = playerState;
+  const { onPlay, onSelect } = getControlsProps();
+  // The player's actual current track. Keying the mirror on this (not a numeric
+  // index) is what makes a feeling filter that swaps the track at a given
+  // position still update the URL.
+  const currentTrackId = audioItem?.id;
 
-  // Seed the selection from the URL exactly once, when the list is first
-  // available (deep link / refresh). `seededRef` also makes this a no-op on
-  // every later `activeAudioId` change — including the ones our own mirror
+  // Seed the player's selection from the URL exactly once, when the list is
+  // first available (deep link / refresh). `seededRef` also makes this a no-op
+  // on every later `activeAudioId` change — including the ones our own mirror
   // causes — so the URL never re-drives the player. That one-way flow is what
-  // makes the whole thing race-free. It also records the track we started on so
-  // the mirror below knows not to re-write it.
+  // makes the whole thing race-free.
   const seededRef = useRef(false);
   const lastSyncedId = useRef(activeAudioId);
   const seededTrackId = useRef<string | null>(null);
   const armed = useRef(false);
-  const listRef = useRef(list);
-
-  useEffect(() => {
-    listRef.current = list;
-  }, [list]);
 
   useEffect(() => {
     if (seededRef.current || !list.length) {
@@ -99,53 +89,59 @@ const Content = (props: AudioListProps) => {
     const found = list.findIndex((a) => a.id === activeAudioId);
 
     if (found >= 0) {
-      setIndex(found);
+      onSelect(found);
     }
 
+    // Record the track we're starting on so the mirror knows not to re-write a
+    // URL that already matches. Exception: a *stale* `?audio=` id (present but
+    // not in the list) is left as `lastSyncedId` so the mirror corrects the URL
+    // to the fallback track once the player settles.
     const startId = list[found >= 0 ? found : 0].id;
     seededTrackId.current = startId;
-    lastSyncedId.current = startId;
-  }, [list, activeAudioId]);
+    lastSyncedId.current = activeAudioId && found < 0 ? activeAudioId : startId;
+  }, [list, activeAudioId, onSelect]);
 
   // player -> URL (the only direction that writes): replace `?audio=` with the
-  // current track whenever the player moves. It reads `list` through a ref and
-  // depends only on `currentIndex`, so it fires on real track changes, not on
-  // unrelated churn. It stays disarmed until the player has actually settled on
-  // the seeded track — that skips the mount transient (currentIndex lags the
-  // seed by a render) and, unlike a "skip first run" flag, survives StrictMode's
-  // double effect invocation, so a freshly loaded page keeps a clean URL.
+  // current track whenever the player moves. It stays disarmed until the player
+  // has actually settled on the seeded track — that skips the mount transient
+  // and, unlike a "skip first run" flag, survives StrictMode's double effect
+  // invocation, so a freshly loaded page keeps a clean URL.
   useEffect(() => {
-    const current = listRef.current[currentIndex];
-
-    if (!current) {
+    if (!currentTrackId) {
       return;
     }
 
+    // Stay disarmed until the player settles on the seeded track (skips the
+    // mount transient; StrictMode-safe). Once it does, arm and fall through —
+    // that corrects a *stale* `?audio=` (a URL id not in the list, so the
+    // player fell back to another track) on the same pass.
     if (!armed.current) {
-      if (current.id === seededTrackId.current) {
-        armed.current = true;
+      if (currentTrackId !== seededTrackId.current) {
+        return;
       }
 
-      return;
+      armed.current = true;
     }
 
-    if (current.id !== lastSyncedId.current) {
-      lastSyncedId.current = current.id;
-      onAudioChange(current.id);
+    if (currentTrackId !== lastSyncedId.current) {
+      lastSyncedId.current = currentTrackId;
+      onAudioChange(currentTrackId);
     }
-  }, [currentIndex, onAudioChange]);
+  }, [currentTrackId, onAudioChange]);
 
   // Filtering rebuilds the list; reset to its first track (pre-URL behaviour).
   useEffect(() => {
     if (activeFeelingId) {
-      setIndex(0);
+      onSelect(0);
     }
-  }, [activeFeelingId]);
+  }, [activeFeelingId, onSelect]);
 
   const onItemSelect = (id: string) => {
     const found = list.findIndex((a) => a.id === id);
 
-    setIndex(found < 0 ? 0 : found);
+    if (found >= 0) {
+      onSelect(found);
+    }
 
     if (!isPlay) {
       onPlay();
@@ -153,8 +149,7 @@ const Content = (props: AudioListProps) => {
   };
 
   const hasNoItem = !list.length;
-  const currentAudio =
-    list[typeof currentIndex === 'number' ? currentIndex : 0];
+  const currentAudio = audioItem;
   const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
 
   if (hasNoItem) {
@@ -177,7 +172,7 @@ const Content = (props: AudioListProps) => {
               <PlayingList
                 audioList={list}
                 onItemSelect={onItemSelect}
-                currentId={currentAudio.id}
+                currentId={currentAudio?.id ?? ''}
               />
             </Suspense>
           </Card>

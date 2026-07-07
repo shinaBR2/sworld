@@ -65,23 +65,30 @@ const endTrack = ({ loopMode, index, startPlaying }: EndTrackOptions) => {
   };
 };
 
-// `playerState.currentIndex` is a flat position in `audioList`, and so is the
-// `index` input — these tests pin that contract across the shuffle permutation,
-// which is where the two used to diverge.
+// `playerState.currentIndex` is a flat position in `audioList`. `onSelect` takes
+// a flat position too; these tests pin that contract across the shuffle
+// permutation, which is where selection used to land on the wrong track.
 const SelectHarness = (props: { index: number }) => {
   const { getControlsProps, playerState } = useSAudioPlayer({
     audioList,
     index: props.index,
   });
+  const controls = getControlsProps();
 
   return (
     <div>
+      <button type="button" data-testid="shuffle" onClick={controls.onShuffle}>
+        shuffle
+      </button>
+      <button type="button" data-testid="next" onClick={controls.onNext}>
+        next
+      </button>
       <button
         type="button"
-        data-testid="shuffle"
-        onClick={getControlsProps().onShuffle}
+        data-testid="select2"
+        onClick={() => controls.onSelect(2)}
       >
-        shuffle
+        select 2
       </button>
       <span data-testid="index">{playerState.currentIndex}</span>
     </div>
@@ -120,7 +127,7 @@ describe('useSAudioPlayer track addressing', () => {
     fireEvent.click(view.getByTestId('shuffle'));
     // Selecting flat index 2 must land on audioList[2] regardless of the
     // shuffled play order, not on whatever slot 2 happens to hold.
-    view.rerender(<SelectHarness index={2} />);
+    fireEvent.click(view.getByTestId('select2'));
 
     expect(view.getByTestId('index').textContent).toBe('2');
   });
@@ -133,6 +140,18 @@ describe('useSAudioPlayer track addressing', () => {
     expect(view.getByTestId('index').textContent).toBe('1');
 
     fireEvent.click(view.getByTestId('shuffle')); // off
+    expect(view.getByTestId('index').textContent).toBe('1');
+  });
+
+  it('does not snap back to the seed after advancing then shuffling', () => {
+    // Regression: shuffle must preserve the *current* track (index 1 after a
+    // next), not re-derive from the original seed index (0).
+    const view = render(<SelectHarness index={0} />);
+
+    fireEvent.click(view.getByTestId('next')); // advance to flat 1
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // shuffle on
     expect(view.getByTestId('index').textContent).toBe('1');
   });
 

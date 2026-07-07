@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { playAudio, seek } from './utils/actions';
 
 // The player addresses tracks two ways. A "slot" is a position in the play
@@ -44,6 +44,9 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const ref = useRef<HTMLAudioElement>(null);
 
   const [indexes, setIndexes] = useState<number[]>();
+  // Latest play order, read by the imperative `onSelect` without making it
+  // re-create on every reorder.
+  const indexesRef = useRef<number[] | undefined>(undefined);
   const [currentIndex, setCurrentIndex] = useState<number>(index);
 
   const [isShuffled, setIsShuffled] = useState(shuffle);
@@ -57,30 +60,34 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const loopModes = ['all', 'one', 'none'];
 
   useEffect(() => {
+    indexesRef.current = indexes;
+  }, [indexes]);
+
+  useEffect(() => {
     if (total) {
       setIndexes(buildOrder(total));
     }
   }, [total]);
 
-  // `index` is a flat position; select the slot that plays that track. Under
-  // shuffle the two differ, so converting here is what makes external selection
-  // (a deep link, a clicked track) land on the intended song rather than
-  // whatever sits at that slot in the shuffled order. Re-runs when the order
-  // itself changes (e.g. the list is filtered and rebuilt) so the slot stays in
-  // range instead of pointing past the end of a now-shorter order.
+  // Selection is imperative (`onSelect`), not derived from the `index` input —
+  // deriving it re-applied a stale value on every reorder and fought both
+  // auto-advance and shuffle. `onSelect` takes a flat position and converts it
+  // to the matching slot in the current play order (identity unless shuffled),
+  // so a clicked/deep-linked track always lands on the intended song.
+  const onSelect = useCallback((flatIndex: number) => {
+    const order = indexesRef.current;
+    const slot = order ? order.indexOf(flatIndex) : flatIndex;
+
+    setCurrentIndex(slot < 0 ? 0 : slot);
+  }, []);
+
+  // Keep the slot in range when the list shrinks (e.g. a feeling filter): a slot
+  // from the previous, longer order would otherwise point past the end.
   useEffect(() => {
-    if (!indexes) {
-      setCurrentIndex(index);
-
-      return;
+    if (indexes && currentIndex > indexes.length - 1) {
+      setCurrentIndex(0);
     }
-
-    const slot = indexes.indexOf(index);
-
-    if (slot >= 0) {
-      setCurrentIndex(slot);
-    }
-  }, [index, indexes]);
+  }, [indexes, currentIndex]);
 
   useEffect(() => {
     setIsShuffled(shuffle);
@@ -263,6 +270,7 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
       onNext,
       onShuffle,
       onChangeLoopMode,
+      onSelect,
     };
   };
 
