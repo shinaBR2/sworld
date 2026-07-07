@@ -13268,6 +13268,21 @@ export type CreateListenPlaylistMutationVariables = Exact<{
 
 export type CreateListenPlaylistMutation = { __typename?: 'mutation_root', insert_playlist_one?: { __typename?: 'playlist', id: any, slug: string } | null };
 
+export type UpdatePlaylistMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  set: Playlist_Set_Input;
+}>;
+
+
+export type UpdatePlaylistMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
+export type DeletePlaylistMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeletePlaylistMutation = { __typename?: 'mutation_root', delete_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
 export type AddAudioToPlaylistMutationVariables = Exact<{
   object: Playlist_Audios_Insert_Input;
 }>;
@@ -14062,6 +14077,20 @@ export const CreateListenPlaylistDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateListenPlaylistMutation, CreateListenPlaylistMutationVariables>;
+export const UpdatePlaylistDocument = new TypedDocumentString(`
+    mutation UpdatePlaylist($id: uuid!, $set: playlist_set_input!) {
+  update_playlist_by_pk(pk_columns: {id: $id}, _set: $set) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdatePlaylistMutation, UpdatePlaylistMutationVariables>;
+export const DeletePlaylistDocument = new TypedDocumentString(`
+    mutation DeletePlaylist($id: uuid!) {
+  delete_playlist_by_pk(id: $id) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<DeletePlaylistMutation, DeletePlaylistMutationVariables>;
 export const AddAudioToPlaylistDocument = new TypedDocumentString(`
     mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {
   insert_playlist_audios_one(object: $object) {
