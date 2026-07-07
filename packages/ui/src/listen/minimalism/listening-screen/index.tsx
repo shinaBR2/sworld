@@ -36,10 +36,9 @@ interface CommonProps {
   isLoading: boolean;
   // The playing track, mirrored to the URL. `activeAudioId` is the audio id
   // from the route (empty when nothing is selected yet); `onAudioChange` writes
-  // the current track's id back to the route as playback moves (`replace` picks
-  // push vs replace history).
+  // the current track's id back to the route as playback moves (one-way).
   activeAudioId: string;
-  onAudioChange: (id: string, replace: boolean) => void;
+  onAudioChange: (id: string) => void;
 }
 
 interface AllModeProps extends CommonProps {

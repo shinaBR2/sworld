@@ -37,15 +37,14 @@ const Content = () => {
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
-  // The playing track is a URL search param (YouTube's `?v=`). Read it in, and
-  // update it as the player moves between tracks — pushing a history entry for
-  // an explicit pick, replacing for player-driven changes so auto-advance
-  // doesn't bury the back button.
+  // The playing track is a URL search param (YouTube's `?v=`). Seed it into the
+  // player, and mirror the player's current track back with `replace` so the
+  // URL always reflects what's playing without piling up history entries.
   const { audio: activeAudioId = '' } = Route.useSearch();
   const navigate = Route.useNavigate();
   const onAudioChange = useCallback(
-    (id: string, replace: boolean) =>
-      navigate({ search: (prev) => ({ ...prev, audio: id }), replace }),
+    (id: string) =>
+      navigate({ search: (prev) => ({ ...prev, audio: id }), replace: true }),
     [navigate],
   );
 

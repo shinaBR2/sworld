@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import hooks from 'core';
-import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
@@ -21,10 +21,11 @@ interface AudioListProps {
   list: unknown[];
   activeFeelingId: string;
   // The playing track as an id, mirrored to the URL. `activeAudioId` seeds the
-  // player's index; `onAudioChange` reports the current track's id back up
-  // (`replace` = false pushes a history entry, true replaces the current one).
+  // player's initial selection; `onAudioChange` writes the current track's id
+  // back to the URL as the player moves (one-way — the URL never re-drives the
+  // player).
   activeAudioId: string;
-  onAudioChange: (id: string, replace: boolean) => void;
+  onAudioChange: (id: string) => void;
 }
 
 const toAudioItem = (item: any) => {
@@ -57,18 +58,10 @@ const Content = (props: AudioListProps) => {
       );
   }, [originalList, activeFeelingId]);
 
-  // The URL is the source of truth for the selected track: derive the player's
-  // flat index from `activeAudioId` (a missing/stale id falls back to the first
-  // track). The player now addresses tracks by flat position, so a mirrored id
-  // fed back through here resolves to the same track — the round-trip is
-  // idempotent, which is what lets both directions share one piece of state
-  // without any anti-loop bookkeeping. Filtering by feeling recomputes here too:
-  // the active track is kept if still present, otherwise it falls back to first.
-  const index = useMemo(() => {
-    const found = list.findIndex((a) => a.id === activeAudioId);
-
-    return found < 0 ? 0 : found;
-  }, [list, activeAudioId]);
+  // Which track is selected, as a position in `list`. The player owns this from
+  // here on; the URL is seeded into it once (below) and is otherwise a one-way
+  // output, so nothing the URL does can feed back and fight the player.
+  const [index, setIndex] = useState(0);
 
   const isMobile = useIsMobile();
 
@@ -80,47 +73,79 @@ const Content = (props: AudioListProps) => {
   const { isPlay, currentIndex } = playerState;
   const { onPlay } = getControlsProps();
 
-  // `lastSyncedId` is the track the URL and player currently agree on. Both the
-  // URL->player and player->URL directions update it, so neither treats the
-  // other's change as new work to undo.
+  // Seed the selection from the URL exactly once, when the list is first
+  // available (deep link / refresh). `seededRef` also makes this a no-op on
+  // every later `activeAudioId` change — including the ones our own mirror
+  // causes — so the URL never re-drives the player. That one-way flow is what
+  // makes the whole thing race-free. It also records the track we started on so
+  // the mirror below knows not to re-write it.
+  const seededRef = useRef(false);
   const lastSyncedId = useRef(activeAudioId);
-  // Whether we're past the initial mount settle — a freshly loaded page mustn't
-  // write the default first track into the URL before the user does anything.
-  const hasSettled = useRef(false);
+  const seededTrackId = useRef<string | null>(null);
+  const armed = useRef(false);
+  const listRef = useRef(list);
 
-  // An external URL change (browser back/forward, a shared link) is the source
-  // of truth: record it so the mirror below doesn't mistake it for a
-  // player-driven change and revert it.
   useEffect(() => {
-    lastSyncedId.current = activeAudioId;
-  }, [activeAudioId]);
+    listRef.current = list;
+  }, [list]);
 
-  // player -> URL: mirror a track change the player made itself (next/prev,
-  // shuffle, auto-advance). Depending only on `currentIndex` is deliberate — it
-  // means this never runs on the same commit an external URL change arrives
-  // (when `currentIndex` still lags a render behind), which is what stops
-  // back/forward navigation from oscillating. Uses replace so a run of
-  // auto-advances doesn't bury the back button.
   useEffect(() => {
-    if (!hasSettled.current) {
-      hasSettled.current = true;
+    if (seededRef.current || !list.length) {
+      return;
+    }
+
+    seededRef.current = true;
+
+    const found = list.findIndex((a) => a.id === activeAudioId);
+
+    if (found >= 0) {
+      setIndex(found);
+    }
+
+    const startId = list[found >= 0 ? found : 0].id;
+    seededTrackId.current = startId;
+    lastSyncedId.current = startId;
+  }, [list, activeAudioId]);
+
+  // player -> URL (the only direction that writes): replace `?audio=` with the
+  // current track whenever the player moves. It reads `list` through a ref and
+  // depends only on `currentIndex`, so it fires on real track changes, not on
+  // unrelated churn. It stays disarmed until the player has actually settled on
+  // the seeded track — that skips the mount transient (currentIndex lags the
+  // seed by a render) and, unlike a "skip first run" flag, survives StrictMode's
+  // double effect invocation, so a freshly loaded page keeps a clean URL.
+  useEffect(() => {
+    const current = listRef.current[currentIndex];
+
+    if (!current) {
+      return;
+    }
+
+    if (!armed.current) {
+      if (current.id === seededTrackId.current) {
+        armed.current = true;
+      }
 
       return;
     }
 
-    const current = list[currentIndex];
-
-    if (current && current.id !== lastSyncedId.current) {
+    if (current.id !== lastSyncedId.current) {
       lastSyncedId.current = current.id;
-      onAudioChange(current.id, true);
+      onAudioChange(current.id);
     }
-  }, [currentIndex, list, onAudioChange]);
+  }, [currentIndex, onAudioChange]);
+
+  // Filtering rebuilds the list; reset to its first track (pre-URL behaviour).
+  useEffect(() => {
+    if (activeFeelingId) {
+      setIndex(0);
+    }
+  }, [activeFeelingId]);
 
   const onItemSelect = (id: string) => {
-    // An explicit pick is a real navigation, so push a history entry (the back
-    // button returns to the previous track); player-driven changes replace.
-    lastSyncedId.current = id;
-    onAudioChange(id, false);
+    const found = list.findIndex((a) => a.id === id);
+
+    setIndex(found < 0 ? 0 : found);
 
     if (!isPlay) {
       onPlay();
