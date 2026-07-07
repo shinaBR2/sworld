@@ -59,7 +59,6 @@ insert_permissions:
         user_id: x-hasura-User-Id
       columns:
         - description
-        - public
         - shared_recipients_input
         - site
         - slug
@@ -111,7 +110,6 @@ update_permissions:
     permission:
       columns:
         - description
-        - public
         - shared_recipients_input
         - title
       filter:
