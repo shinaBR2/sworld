@@ -60,6 +60,24 @@ const deleteAudioMutation = graphql(/* GraphQL */ `
   }
 `);
 
+const assignFeelingMutation = graphql(/* GraphQL */ `
+  mutation AssignFeeling($object: audio_tags_insert_input!) {
+    insert_audio_tags_one(object: $object) {
+      audio_id
+      tag_id
+    }
+  }
+`);
+
+const unassignFeelingMutation = graphql(/* GraphQL */ `
+  mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {
+    delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {
+      audio_id
+      tag_id
+    }
+  }
+`);
+
 interface MutationProps {
   onSuccess?: (data: any) => void;
   onError?: (error: unknown) => void;
@@ -85,6 +103,12 @@ interface UpdateAudioInput {
   name?: string;
   artistName?: string;
   thumbnailUrl?: string;
+}
+
+// A feeling assignment is one row in the audio_tags join (audio <-> listen tag).
+interface FeelingRef {
+  audioId: string;
+  tagId: string;
 }
 
 // The management dashboard (SWO-411) is a signed-in, user-only screen, so its
@@ -290,16 +314,75 @@ const useDeleteAudio = (props: MutationProps = {}) => {
   return deleteAudio;
 };
 
+const useAssignFeeling = (props: MutationProps = {}) => {
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: assignFeelingMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        if (data.insert_audio_tags_one) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Assign feeling failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  const assignFeeling = (input: FeelingRef) =>
+    mutateAsync({ object: { audio_id: input.audioId, tag_id: input.tagId } });
+
+  return assignFeeling;
+};
+
+const useUnassignFeeling = (props: MutationProps = {}) => {
+  const { getAccessToken } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: unassignFeelingMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        if (data.delete_audio_tags_by_pk) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Unassign feeling failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  const unassignFeeling = (input: FeelingRef) =>
+    mutateAsync({ audioId: input.audioId, tagId: input.tagId });
+
+  return unassignFeeling;
+};
+
 export {
   type AddAudioInput,
   type CreateListenPlaylistInput,
+  type FeelingRef,
   type PlaylistAudioRef,
   type ReorderUpdate,
   type UpdateAudioInput,
   useAddAudioToPlaylist,
+  useAssignFeeling,
   useCreatePlaylist,
   useDeleteAudio,
   useRemoveAudioFromPlaylist,
   useReorderPlaylistAudios,
+  useUnassignFeeling,
   useUpdateAudio,
 };

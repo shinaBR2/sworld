@@ -37,6 +37,8 @@ type Documents = {
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": typeof types.ReorderPlaylistAudiosDocument,
     "\n  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {\n    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": typeof types.UpdateAudioDocument,
     "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteAudioDocument,
+    "\n  mutation AssignFeeling($object: audio_tags_insert_input!) {\n    insert_audio_tags_one(object: $object) {\n      audio_id\n      tag_id\n    }\n  }\n": typeof types.AssignFeelingDocument,
+    "\n  mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {\n    delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {\n      audio_id\n      tag_id\n    }\n  }\n": typeof types.UnassignFeelingDocument,
     "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": typeof types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": typeof types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": typeof types.ListenPlaylistFieldsFragmentDoc,
@@ -94,6 +96,8 @@ const documents: Documents = {
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": types.ReorderPlaylistAudiosDocument,
     "\n  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {\n    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": types.UpdateAudioDocument,
     "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n": types.DeleteAudioDocument,
+    "\n  mutation AssignFeeling($object: audio_tags_insert_input!) {\n    insert_audio_tags_one(object: $object) {\n      audio_id\n      tag_id\n    }\n  }\n": types.AssignFeelingDocument,
+    "\n  mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {\n    delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {\n      audio_id\n      tag_id\n    }\n  }\n": types.UnassignFeelingDocument,
     "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": types.ListenPlaylistFieldsFragmentDoc,
@@ -217,6 +221,14 @@ export function graphql(source: "\n  mutation UpdateAudio($id: uuid!, $set: audi
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n"): typeof import('./graphql').DeleteAudioDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AssignFeeling($object: audio_tags_insert_input!) {\n    insert_audio_tags_one(object: $object) {\n      audio_id\n      tag_id\n    }\n  }\n"): typeof import('./graphql').AssignFeelingDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UnassignFeeling($audioId: uuid!, $tagId: uuid!) {\n    delete_audio_tags_by_pk(audio_id: $audioId, tag_id: $tagId) {\n      audio_id\n      tag_id\n    }\n  }\n"): typeof import('./graphql').UnassignFeelingDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
