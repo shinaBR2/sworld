@@ -9,14 +9,16 @@ interface ListenSearch {
   audio?: string;
 }
 
-const validateSearch = (search: Record<string, unknown>): ListenSearch =>
+// Shared by both listen routes (home and a playlist) — the `audio` param is
+// the same everywhere; only the collection part of the URL differs.
+const validateAudioSearch = (search: Record<string, unknown>): ListenSearch =>
   typeof search.audio === 'string' && search.audio
     ? { audio: search.audio }
     : {};
 
 const Route = createFileRoute('/')({
-  validateSearch,
+  validateSearch: validateAudioSearch,
 });
 
-export { Route };
+export { Route, validateAudioSearch };
 export type { ListenSearch };
