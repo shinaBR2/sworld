@@ -13290,6 +13290,21 @@ export type ReorderPlaylistAudiosMutationVariables = Exact<{
 
 export type ReorderPlaylistAudiosMutation = { __typename?: 'mutation_root', update_playlist_audios_many?: Array<{ __typename?: 'playlist_audios_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'playlist_audios', playlist_id: any }> } | null> | null };
 
+export type UpdateAudioMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  set: Audios_Set_Input;
+}>;
+
+
+export type UpdateAudioMutation = { __typename?: 'mutation_root', update_audios_by_pk?: { __typename?: 'audios', id: any } | null };
+
+export type DeleteAudioMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeleteAudioMutation = { __typename?: 'mutation_root', delete_audios_by_pk?: { __typename?: 'audios', id: any } | null };
+
 export type AudioFieldsFragment = { __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string } & { ' $fragmentName'?: 'AudioFieldsFragment' };
 
 export type PlaylistAudioFieldsFragment = { __typename?: 'playlist_audios', position: number, audio: (
@@ -14052,6 +14067,20 @@ export const ReorderPlaylistAudiosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ReorderPlaylistAudiosMutation, ReorderPlaylistAudiosMutationVariables>;
+export const UpdateAudioDocument = new TypedDocumentString(`
+    mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {
+  update_audios_by_pk(pk_columns: {id: $id}, _set: $set) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateAudioMutation, UpdateAudioMutationVariables>;
+export const DeleteAudioDocument = new TypedDocumentString(`
+    mutation DeleteAudio($id: uuid!) {
+  delete_audios_by_pk(id: $id) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<DeleteAudioMutation, DeleteAudioMutationVariables>;
 export const ListenHomeDocument = new TypedDocumentString(`
     query ListenHome @cached {
   audios {

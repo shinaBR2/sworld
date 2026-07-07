@@ -6,8 +6,10 @@ import { useMutationRequest } from '../../universal/hooks/useMutation';
 import {
   useAddAudioToPlaylist,
   useCreatePlaylist,
+  useDeleteAudio,
   useRemoveAudioFromPlaylist,
   useReorderPlaylistAudios,
+  useUpdateAudio,
 } from './index';
 
 vi.mock('../../providers/auth');
@@ -30,6 +32,7 @@ describe('Listen playlist mutation hooks', () => {
     vi.clearAllMocks();
     vi.mocked(useAuthContext).mockReturnValue({
       getAccessToken: mockAccessToken,
+      isSignedIn: true,
     });
     vi.mocked(useQueryContext).mockReturnValue({
       invalidateQuery: mockInvalidateQuery,
@@ -169,6 +172,69 @@ describe('Listen playlist mutation hooks', () => {
         'listen-playlist-detail',
         'p1',
       ]);
+    });
+  });
+
+  describe('useUpdateAudio', () => {
+    it('sends id plus only the provided fields as _set', () => {
+      const { result } = renderHook(() => useUpdateAudio());
+
+      result.current({ id: 'a1', name: 'New name', artistName: 'New artist' });
+
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        id: 'a1',
+        set: { name: 'New name', artistName: 'New artist' },
+      });
+    });
+
+    it('invalidates the manage and home lists on success', () => {
+      const onSuccess = vi.fn();
+      renderHook(() => useUpdateAudio({ onSuccess }));
+
+      const data = { update_audios_by_pk: { id: 'a1' } };
+      getOnSuccess()?.(data);
+
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
+      expect(onSuccess).toHaveBeenCalledWith(data);
+    });
+
+    it('does not invalidate when no row was updated', () => {
+      const onSuccess = vi.fn();
+      renderHook(() => useUpdateAudio({ onSuccess }));
+
+      const data = { update_audios_by_pk: null };
+      getOnSuccess()?.(data);
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
+      expect(onSuccess).toHaveBeenCalledWith(data);
+    });
+  });
+
+  describe('useDeleteAudio', () => {
+    it('passes the id as the delete variable', () => {
+      const { result } = renderHook(() => useDeleteAudio());
+
+      result.current('a1');
+
+      expect(mockMutateAsync).toHaveBeenCalledWith({ id: 'a1' });
+    });
+
+    it('invalidates the manage and home lists on success', () => {
+      renderHook(() => useDeleteAudio());
+
+      getOnSuccess()?.({ delete_audios_by_pk: { id: 'a1' } });
+
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
+    });
+
+    it('does not invalidate when no row was deleted', () => {
+      renderHook(() => useDeleteAudio());
+
+      getOnSuccess()?.({ delete_audios_by_pk: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
     });
   });
 });

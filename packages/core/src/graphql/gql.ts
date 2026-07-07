@@ -35,6 +35,8 @@ type Documents = {
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": typeof types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": typeof types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": typeof types.ReorderPlaylistAudiosDocument,
+    "\n  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {\n    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": typeof types.UpdateAudioDocument,
+    "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteAudioDocument,
     "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": typeof types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": typeof types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": typeof types.ListenPlaylistFieldsFragmentDoc,
@@ -90,6 +92,8 @@ const documents: Documents = {
     "\n  mutation AddAudioToPlaylist($object: playlist_audios_insert_input!) {\n    insert_playlist_audios_one(object: $object) {\n      playlist_id\n      audio_id\n      position\n    }\n  }\n": types.AddAudioToPlaylistDocument,
     "\n  mutation RemoveAudioFromPlaylist($playlistId: uuid!, $audioId: uuid!) {\n    delete_playlist_audios_by_pk(playlist_id: $playlistId, audio_id: $audioId) {\n      playlist_id\n      audio_id\n    }\n  }\n": types.RemoveAudioFromPlaylistDocument,
     "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n": types.ReorderPlaylistAudiosDocument,
+    "\n  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {\n    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n": types.UpdateAudioDocument,
+    "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n": types.DeleteAudioDocument,
     "\n  fragment AudioFields on audios {\n    id\n    name\n    source\n    thumbnailUrl\n    artistName\n  }\n": types.AudioFieldsFragmentDoc,
     "\n  fragment PlaylistAudioFields on playlist_audios {\n    position\n    audio {\n      ...AudioFields\n    }\n  }\n": types.PlaylistAudioFieldsFragmentDoc,
     "\n  fragment ListenPlaylistFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_audios(order_by: { position: asc }) {\n      ...PlaylistAudioFields\n    }\n  }\n": types.ListenPlaylistFieldsFragmentDoc,
@@ -205,6 +209,14 @@ export function graphql(source: "\n  mutation RemoveAudioFromPlaylist($playlistI
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation ReorderPlaylistAudios($updates: [playlist_audios_updates!]!) {\n    update_playlist_audios_many(updates: $updates) {\n      affected_rows\n      returning {\n        playlist_id\n      }\n    }\n  }\n"): typeof import('./graphql').ReorderPlaylistAudiosDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {\n    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {\n      id\n    }\n  }\n"): typeof import('./graphql').UpdateAudioDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteAudio($id: uuid!) {\n    delete_audios_by_pk(id: $id) {\n      id\n    }\n  }\n"): typeof import('./graphql').DeleteAudioDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

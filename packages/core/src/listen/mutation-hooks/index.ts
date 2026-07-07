@@ -44,6 +44,22 @@ const reorderAudiosMutation = graphql(/* GraphQL */ `
   }
 `);
 
+const updateAudioMutation = graphql(/* GraphQL */ `
+  mutation UpdateAudio($id: uuid!, $set: audios_set_input!) {
+    update_audios_by_pk(pk_columns: { id: $id }, _set: $set) {
+      id
+    }
+  }
+`);
+
+const deleteAudioMutation = graphql(/* GraphQL */ `
+  mutation DeleteAudio($id: uuid!) {
+    delete_audios_by_pk(id: $id) {
+      id
+    }
+  }
+`);
+
 interface MutationProps {
   onSuccess?: (data: any) => void;
   onError?: (error: unknown) => void;
@@ -63,6 +79,20 @@ interface PlaylistAudioRef {
 
 type AddAudioInput = PlaylistAudioRef & { position: number };
 type ReorderUpdate = PlaylistAudioRef & { position: number };
+
+interface UpdateAudioInput {
+  id: string;
+  name?: string;
+  artistName?: string;
+  thumbnailUrl?: string;
+}
+
+// The management dashboard (SWO-411) is a signed-in, user-only screen, so its
+// query has no anonymous variant — a single exact key is enough. Audio edits
+// also touch the home screen (a public audio the owner renamed), so both are
+// invalidated on success.
+const MANAGE_QUERY_KEY = ['listen-manage'];
+const HOME_QUERY_KEY = 'listen-home';
 
 const useCreatePlaylist = (props: MutationProps = {}) => {
   const { getAccessToken } = useAuthContext();
@@ -196,13 +226,80 @@ const useReorderPlaylistAudios = (props: MutationProps = {}) => {
   return reorderAudios;
 };
 
+const useUpdateAudio = (props: MutationProps = {}) => {
+  const { getAccessToken, isSignedIn } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: updateAudioMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        // A null pk result means no row matched (absent or filtered by
+        // permissions) — nothing changed, so leave the caches untouched.
+        if (data.update_audios_by_pk) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Update audio failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  // Only the provided fields are sent; undefined ones drop out on serialisation
+  // so they are left untouched.
+  const updateAudio = (input: UpdateAudioInput) => {
+    const { id, ...fields } = input;
+    return mutateAsync({ id, set: fields });
+  };
+
+  return updateAudio;
+};
+
+const useDeleteAudio = (props: MutationProps = {}) => {
+  const { getAccessToken, isSignedIn } = useAuthContext();
+  const { invalidateQuery } = useQueryContext();
+  const { onSuccess, onError } = props;
+
+  const { mutateAsync } = useMutationRequest({
+    document: deleteAudioMutation,
+    getAccessToken,
+    options: {
+      onSuccess: (data) => {
+        // Only refresh caches when a row was actually deleted.
+        if (data.delete_audios_by_pk) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        }
+        onSuccess?.(data);
+      },
+      onError: (error) => {
+        console.error('Delete audio failed:', error);
+        onError?.(error);
+      },
+    },
+  });
+
+  const deleteAudio = (id: string) => mutateAsync({ id });
+
+  return deleteAudio;
+};
+
 export {
   type AddAudioInput,
   type CreateListenPlaylistInput,
   type PlaylistAudioRef,
   type ReorderUpdate,
+  type UpdateAudioInput,
   useAddAudioToPlaylist,
   useCreatePlaylist,
+  useDeleteAudio,
   useRemoveAudioFromPlaylist,
   useReorderPlaylistAudios,
+  useUpdateAudio,
 };
