@@ -18,8 +18,8 @@ vi.mock('core', () => ({
         getSeekerProps: () => ({}),
         getControlsProps: () => ({
           onPlay: () => setPlaying((p) => !p),
-          onPrev: () => {},
-          onNext: () => {},
+          onPrev: () => setIndex((i) => Math.max(0, i - 1)),
+          onNext: () => setIndex((i) => Math.min(audioList.length - 1, i + 1)),
           onShuffle: () => {},
           onChangeLoopMode: () => {},
           onSelect: (flat: number) => setIndex(flat),
@@ -44,12 +44,17 @@ vi.mock('../music-widget', () => ({
     onItemSelect,
   }: {
     audioList: { id: string }[];
-    hookResult: { getControlsProps: () => { onPlay: () => void } };
+    hookResult: {
+      getControlsProps: () => { onPlay: () => void; onNext: () => void };
+    };
     onItemSelect: (id: string) => void;
   }) => (
     <div>
       <button type="button" onClick={hookResult.getControlsProps().onPlay}>
         play
+      </button>
+      <button type="button" onClick={hookResult.getControlsProps().onNext}>
+        next
       </button>
       {audioList.map((a) => (
         <button key={a.id} type="button" onClick={() => onItemSelect(a.id)}>
@@ -88,6 +93,8 @@ const setup = (activeAudioId: string) => {
 
 const play = () =>
   fireEvent.click(screen.getByRole('button', { name: 'play' }));
+const next = () =>
+  fireEvent.click(screen.getByRole('button', { name: 'next' }));
 const select = (id: string) =>
   fireEvent.click(screen.getByRole('button', { name: `select-${id}` }));
 
@@ -120,6 +127,16 @@ describe('AudioList URL mirror', () => {
     play();
 
     expect(onAudioChange).not.toHaveBeenCalled();
+  });
+
+  it('mirrors a next/prev move made before playback starts', () => {
+    // Deep link to b, then preview the next track while still paused — the URL
+    // must follow to c, not stay stale on b.
+    const onAudioChange = setup('b');
+
+    next();
+
+    expect(onAudioChange).toHaveBeenCalledWith('c');
   });
 
   it('corrects a stale deep-link id to the actual track on play', () => {

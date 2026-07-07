@@ -77,6 +77,8 @@ const Content = (props: AudioListProps) => {
   // started as, so a matching deep link isn't rewritten.
   const seededRef = useRef(false);
   const lastSyncedId = useRef(activeAudioId);
+  const seededTrackId = useRef<string | null>(null);
+  const armed = useRef(false);
   const engaged = useRef(false);
 
   useEffect(() => {
@@ -89,25 +91,40 @@ const Content = (props: AudioListProps) => {
 
     const found = list.findIndex((a) => a.id === activeAudioId);
 
+    seededTrackId.current = list[found >= 0 ? found : 0].id;
+
     if (found >= 0) {
       onSelect(found);
     }
   }, [list, activeAudioId, onSelect]);
 
   // player -> URL (the only direction that writes): mirror the current track to
-  // `?audio=` once the user has engaged — i.e. playback has started (pressing
-  // play, or selecting a track, which also plays). Until then a freshly loaded
-  // page keeps a clean URL. Gating on "has ever played" also skips the mount
-  // transient and survives StrictMode's double invocation, since neither starts
-  // playback. After engaging, every track change (next/prev/shuffle/auto) and
-  // the initial play all publish the current track; a stale/absent `?audio=`
-  // self-corrects to whatever actually plays.
+  // `?audio=`.
   useEffect(() => {
-    if (isPlay) {
+    if (!currentTrackId) {
+      return;
+    }
+
+    // Skip the mount transient: don't mirror until the player has actually
+    // settled on the track we seeded. This is ref state, so it's idempotent
+    // across StrictMode's double effect invocation — a freshly loaded page
+    // stays clean.
+    if (!armed.current) {
+      if (currentTrackId !== seededTrackId.current) {
+        return;
+      }
+
+      armed.current = true;
+    }
+
+    // Engage once the user acts — playback started, or they moved off the track
+    // the page loaded on (next/prev/select/shuffle). Latched, so returning to
+    // the first track still mirrors, and next/prev while paused count too.
+    if (isPlay || currentTrackId !== seededTrackId.current) {
       engaged.current = true;
     }
 
-    if (!engaged.current || !currentTrackId) {
+    if (!engaged.current) {
       return;
     }
 
