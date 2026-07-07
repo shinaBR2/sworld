@@ -1,5 +1,6 @@
 import { expect } from "vitest";
 import {
+  MutationTestCase,
   QueryTestCase,
   ROLE_ANONYMOUS,
   ROLE_USER,
@@ -164,6 +165,41 @@ const emptyResponseQueries = [
   },
 ];
 
+// audio_tags is select-only for anonymous — writing feeling tags is never allowed.
+const anonymousDeniedMutations: MutationTestCase[] = [
+  {
+    name: "insert audio_tag",
+    mutation: `
+      mutation InsertAudioTag($audioId: uuid!, $tagId: uuid!) {
+        insert_audio_tags_one(object: { audio_id: $audioId, tag_id: $tagId }) {
+          audio_id
+          tag_id
+        }
+      }
+    `,
+    variables: {
+      audioId: "123e4567-e89b-12d3-a456-426614174000",
+      tagId: "123e4567-e89b-12d3-a456-426614174001",
+    },
+  },
+  {
+    name: "delete audio_tag",
+    mutation: `
+      mutation DeleteAudioTag($audioId: uuid!, $tagId: uuid!) {
+        delete_audio_tags(
+          where: { audio_id: { _eq: $audioId }, tag_id: { _eq: $tagId } }
+        ) {
+          affected_rows
+        }
+      }
+    `,
+    variables: {
+      audioId: "123e4567-e89b-12d3-a456-426614174000",
+      tagId: "123e4567-e89b-12d3-a456-426614174001",
+    },
+  },
+];
+
 await createRoleTestSuite(ROLE_ANONYMOUS, {
   queries: {
     allowed: anonymousAllowedQueries,
@@ -204,7 +240,7 @@ await createRoleTestSuite(ROLE_ANONYMOUS, {
   },
   mutations: {
     allowed: [],
-    denied: [],
+    denied: anonymousDeniedMutations,
   },
 });
 
