@@ -134,19 +134,13 @@ const Content = (props: AudioListProps) => {
     }
   }, [currentTrackId, isPlay, onAudioChange]);
 
-  // Changing the feeling filter (setting OR clearing it) rebuilds the list;
-  // reset to its first track. A ref tracks the previous value so this fires only
-  // on an actual change, never on the initial mount (which would clobber the
-  // deep-link seed above).
-  const prevFeeling = useRef(activeFeelingId);
-
+  // Applying a feeling filter narrows the list, so jump to its first track
+  // (pre-URL behaviour). Only on *set*, not on clear — clearing shouldn't
+  // interrupt the song that's already playing.
   useEffect(() => {
-    if (prevFeeling.current === activeFeelingId) {
-      return;
+    if (activeFeelingId) {
+      onSelect(0);
     }
-
-    prevFeeling.current = activeFeelingId;
-    onSelect(0);
   }, [activeFeelingId, onSelect]);
 
   const onItemSelect = (id: string) => {
