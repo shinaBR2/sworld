@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import hooks from 'core';
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
@@ -20,6 +20,12 @@ interface AudioListProps {
   queryRs: { isLoading: boolean };
   list: unknown[];
   activeFeelingId: string;
+  // The playing track as an id, mirrored to the URL. `activeAudioId` seeds the
+  // player's initial selection; `onAudioChange` writes the current track's id
+  // back to the URL as the player moves (one-way — the URL never re-drives the
+  // player).
+  activeAudioId: string;
+  onAudioChange: (id: string) => void;
 }
 
 const toAudioItem = (item: any) => {
@@ -36,7 +42,12 @@ const toAudioItem = (item: any) => {
 const PlayingList = lazy(() => import('./playing-list'));
 
 const Content = (props: AudioListProps) => {
-  const { list: originalList, activeFeelingId } = props;
+  const {
+    list: originalList,
+    activeFeelingId,
+    activeAudioId,
+    onAudioChange,
+  } = props;
   // TODO
   // memorize on parent
   const list = useMemo(() => {
@@ -47,24 +58,96 @@ const Content = (props: AudioListProps) => {
       );
   }, [originalList, activeFeelingId]);
 
-  const [index, setIndex] = useState(0);
   const isMobile = useIsMobile();
 
-  const hookResult = useSAudioPlayer({
-    audioList: list,
-    index,
-  });
+  const hookResult = useSAudioPlayer({ audioList: list });
   const { getControlsProps, playerState } = hookResult;
-  const { isPlay, currentIndex } = playerState;
-  const { onPlay } = getControlsProps();
+  const { isPlay, audioItem } = playerState;
+  const { onPlay, onSelect } = getControlsProps();
+  // The player's actual current track. Keying the mirror on this (not a numeric
+  // index) is what makes a feeling filter that swaps the track at a given
+  // position still update the URL.
+  const currentTrackId = audioItem?.id;
+
+  // Seed the player's selection from the URL exactly once, when the list is
+  // first available (deep link / refresh). `seededRef` also makes this a no-op
+  // on every later `activeAudioId` change — including the ones our own mirror
+  // causes — so the URL never re-drives the player. That one-way flow is what
+  // makes the whole thing race-free. `lastSyncedId` starts at whatever the URL
+  // started as, so a matching deep link isn't rewritten.
+  const seededRef = useRef(false);
+  const lastSyncedId = useRef(activeAudioId);
+  const seededTrackId = useRef<string | null>(null);
+  const armed = useRef(false);
+  const engaged = useRef(false);
+
+  useEffect(() => {
+    if (seededRef.current || !list.length) {
+      return;
+    }
+
+    seededRef.current = true;
+    lastSyncedId.current = activeAudioId;
+
+    const found = list.findIndex((a) => a.id === activeAudioId);
+
+    seededTrackId.current = list[found >= 0 ? found : 0].id;
+
+    if (found >= 0) {
+      onSelect(found);
+    }
+  }, [list, activeAudioId, onSelect]);
+
+  // player -> URL (the only direction that writes): mirror the current track to
+  // `?audio=`.
+  useEffect(() => {
+    if (!currentTrackId) {
+      return;
+    }
+
+    // Skip the mount transient: don't mirror until the player has actually
+    // settled on the track we seeded. This is ref state, so it's idempotent
+    // across StrictMode's double effect invocation — a freshly loaded page
+    // stays clean.
+    if (!armed.current) {
+      if (currentTrackId !== seededTrackId.current) {
+        return;
+      }
+
+      armed.current = true;
+    }
+
+    // Engage once the user acts — playback started, or they moved off the track
+    // the page loaded on (next/prev/select/shuffle). Latched, so returning to
+    // the first track still mirrors, and next/prev while paused count too.
+    if (isPlay || currentTrackId !== seededTrackId.current) {
+      engaged.current = true;
+    }
+
+    if (!engaged.current) {
+      return;
+    }
+
+    if (currentTrackId !== lastSyncedId.current) {
+      lastSyncedId.current = currentTrackId;
+      onAudioChange(currentTrackId);
+    }
+  }, [currentTrackId, isPlay, onAudioChange]);
+
+  // Applying a feeling filter narrows the list, so jump to its first track
+  // (pre-URL behaviour). Only on *set*, not on clear — clearing shouldn't
+  // interrupt the song that's already playing.
+  useEffect(() => {
+    if (activeFeelingId) {
+      onSelect(0);
+    }
+  }, [activeFeelingId, onSelect]);
 
   const onItemSelect = (id: string) => {
-    const index = list.findIndex((a) => a.id === id);
+    const found = list.findIndex((a) => a.id === id);
 
-    if (index < 0) {
-      setIndex(0);
-    } else {
-      setIndex(index);
+    if (found >= 0) {
+      onSelect(found);
     }
 
     if (!isPlay) {
@@ -72,15 +155,8 @@ const Content = (props: AudioListProps) => {
     }
   };
 
-  useEffect(() => {
-    if (activeFeelingId) {
-      setIndex(0);
-    }
-  }, [activeFeelingId]);
-
   const hasNoItem = !list.length;
-  const currentAudio =
-    list[typeof currentIndex === 'number' ? currentIndex : 0];
+  const currentAudio = audioItem;
   const showPlayingList = !isMobile && !hasNoItem && !!currentAudio;
 
   if (hasNoItem) {
@@ -103,7 +179,7 @@ const Content = (props: AudioListProps) => {
               <PlayingList
                 audioList={list}
                 onItemSelect={onItemSelect}
-                currentId={currentAudio.id}
+                currentId={currentAudio?.id ?? ''}
               />
             </Suspense>
           </Card>

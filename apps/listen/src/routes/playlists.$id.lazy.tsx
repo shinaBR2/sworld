@@ -1,6 +1,7 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { listenMutationHooks, listenQueryHooks } from 'core';
 import { useAuthContext } from 'core/providers/auth';
+import { useCallback } from 'react';
 import { ListeningScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
@@ -31,6 +32,18 @@ const Content = () => {
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
+  // Same `audio` search param as home, alongside the playlist id in the path.
+  const { audio: activeAudioId = '' } = Route.useSearch();
+  const searchNavigate = Route.useNavigate();
+  const onAudioChange = useCallback(
+    (id: string) =>
+      searchNavigate({
+        search: (prev) => ({ ...prev, audio: id }),
+        replace: true,
+      }),
+    [searchNavigate],
+  );
+
   return (
     <ListeningScreen
       mode="playlist"
@@ -41,6 +54,8 @@ const Content = () => {
       onLogout={signOut}
       playlists={playlists}
       onSelectCollection={onSelectCollection}
+      activeAudioId={activeAudioId}
+      onAudioChange={onAudioChange}
       onCreate={
         isSignedIn
           ? (title) =>

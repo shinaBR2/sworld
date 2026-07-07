@@ -65,6 +65,109 @@ const endTrack = ({ loopMode, index, startPlaying }: EndTrackOptions) => {
   };
 };
 
+// `playerState.currentIndex` is a flat position in `audioList`. `onSelect` takes
+// a flat position too; these tests pin that contract across the shuffle
+// permutation, which is where selection used to land on the wrong track.
+const SelectHarness = (props: { index: number }) => {
+  const { getControlsProps, playerState } = useSAudioPlayer({
+    audioList,
+    index: props.index,
+  });
+  const controls = getControlsProps();
+
+  return (
+    <div>
+      <button type="button" data-testid="shuffle" onClick={controls.onShuffle}>
+        shuffle
+      </button>
+      <button type="button" data-testid="next" onClick={controls.onNext}>
+        next
+      </button>
+      <button
+        type="button"
+        data-testid="select2"
+        onClick={() => controls.onSelect(2)}
+      >
+        select 2
+      </button>
+      <span data-testid="index">{playerState.currentIndex}</span>
+    </div>
+  );
+};
+
+// A variant that can change its `audioList`, to exercise the list being
+// filtered/rebuilt underneath the player.
+const ResizeHarness = (props: {
+  list: SAudioPlayerAudioItem[];
+  index: number;
+}) => {
+  const { getControlsProps, playerState } = useSAudioPlayer({
+    audioList: props.list,
+    index: props.index,
+  });
+
+  return (
+    <div>
+      <button
+        type="button"
+        data-testid="shuffle"
+        onClick={getControlsProps().onShuffle}
+      >
+        shuffle
+      </button>
+      <span data-testid="track">{playerState.audioItem?.id ?? 'none'}</span>
+    </div>
+  );
+};
+
+describe('useSAudioPlayer track addressing', () => {
+  it('selects the track at the given flat index while shuffled', () => {
+    const view = render(<SelectHarness index={0} />);
+
+    fireEvent.click(view.getByTestId('shuffle'));
+    // Selecting flat index 2 must land on audioList[2] regardless of the
+    // shuffled play order, not on whatever slot 2 happens to hold.
+    fireEvent.click(view.getByTestId('select2'));
+
+    expect(view.getByTestId('index').textContent).toBe('2');
+  });
+
+  it('keeps the current track when shuffle is toggled on and off', () => {
+    const view = render(<SelectHarness index={1} />);
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // on
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // off
+    expect(view.getByTestId('index').textContent).toBe('1');
+  });
+
+  it('does not snap back to the seed after advancing then shuffling', () => {
+    // Regression: shuffle must preserve the *current* track (index 1 after a
+    // next), not re-derive from the original seed index (0).
+    const view = render(<SelectHarness index={0} />);
+
+    fireEvent.click(view.getByTestId('next')); // advance to flat 1
+    expect(view.getByTestId('index').textContent).toBe('1');
+
+    fireEvent.click(view.getByTestId('shuffle')); // shuffle on
+    expect(view.getByTestId('index').textContent).toBe('1');
+  });
+
+  it('stays on a valid track when the list shrinks while shuffled', () => {
+    const view = render(<ResizeHarness list={audioList} index={2} />);
+
+    fireEvent.click(view.getByTestId('shuffle'));
+    // Filter the list down to one track: the slot must be rebuilt in range,
+    // not left pointing past the end of the now-shorter order (which would
+    // null out the current track and stop playback).
+    view.rerender(<ResizeHarness list={audioList.slice(0, 1)} index={0} />);
+
+    expect(view.getByTestId('track').textContent).toBe('1');
+  });
+});
+
 describe('useSAudioPlayer onEnded', () => {
   describe('loopMode None', () => {
     it('advances to the next audio and keeps playing mid-list', () => {

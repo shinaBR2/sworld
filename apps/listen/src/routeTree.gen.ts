@@ -11,42 +11,42 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlaylistsIdRouteImport } from './routes/playlists.$id'
 
 const ManageLazyRouteImport = createFileRoute('/manage')()
-const IndexLazyRouteImport = createFileRoute('/')()
-const PlaylistsIdLazyRouteImport = createFileRoute('/playlists/$id')()
 
 const ManageLazyRoute = ManageLazyRouteImport.update({
   id: '/manage',
   path: '/manage',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
-const IndexLazyRoute = IndexLazyRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-const PlaylistsIdLazyRoute = PlaylistsIdLazyRouteImport.update({
+const PlaylistsIdRoute = PlaylistsIdRouteImport.update({
   id: '/playlists/$id',
   path: '/playlists/$id',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/playlists.$id.lazy').then((d) => d.Route))
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/manage': typeof ManageLazyRoute
-  '/playlists/$id': typeof PlaylistsIdLazyRoute
+  '/playlists/$id': typeof PlaylistsIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/manage': typeof ManageLazyRoute
-  '/playlists/$id': typeof PlaylistsIdLazyRoute
+  '/playlists/$id': typeof PlaylistsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/manage': typeof ManageLazyRoute
-  '/playlists/$id': typeof PlaylistsIdLazyRoute
+  '/playlists/$id': typeof PlaylistsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -57,9 +57,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   ManageLazyRoute: typeof ManageLazyRoute
-  PlaylistsIdLazyRoute: typeof PlaylistsIdLazyRoute
+  PlaylistsIdRoute: typeof PlaylistsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,23 +75,23 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playlists/$id': {
       id: '/playlists/$id'
       path: '/playlists/$id'
       fullPath: '/playlists/$id'
-      preLoaderRoute: typeof PlaylistsIdLazyRouteImport
+      preLoaderRoute: typeof PlaylistsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   ManageLazyRoute: ManageLazyRoute,
-  PlaylistsIdLazyRoute: PlaylistsIdLazyRoute,
+  PlaylistsIdRoute: PlaylistsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
