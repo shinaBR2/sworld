@@ -1,15 +1,13 @@
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { slugify } from 'core/universal/common';
 
 // Playlist slugs must be unique per site but aren't user-facing (routes address
-// playlists by id), so append a short random suffix — and fall back when the
-// title has no slug-able characters (emoji/punctuation-only) — to avoid unique
-// constraint violations and empty slugs.
-const createPlaylistSlug = (title: string) =>
-  `${slugify(title) || 'playlist'}-${crypto.randomUUID().slice(0, 8)}`;
+// playlists by id). Reuse core's accent-aware slugify (handles Vietnamese
+// titles), append a short random suffix, and fall back when the title has no
+// slug-able characters — so duplicate/emoji titles don't collide on the slug
+// unique constraint or produce an empty slug.
+const randomSuffix = () => Math.random().toString(36).slice(2, 10);
 
-export { slugify, createPlaylistSlug };
+const createPlaylistSlug = (title: string) =>
+  `${slugify(title) || 'playlist'}-${randomSuffix()}`;
+
+export { createPlaylistSlug };

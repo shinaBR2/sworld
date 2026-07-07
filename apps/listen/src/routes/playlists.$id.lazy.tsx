@@ -25,6 +25,7 @@ const useCollectionNavigate = () => {
 const Content = () => {
   const { id } = Route.useParams();
   const { isSignedIn, user, signIn, signOut } = useAuthContext();
+  const navigate = useNavigate();
   const queryRs = listenQueryHooks.useLoadPlaylistDetail({ id });
   const { playlists } = listenQueryHooks.useLoadPlaylists();
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
@@ -50,6 +51,7 @@ const Content = () => {
               })
           : () => signIn()
       }
+      onManage={user ? () => navigate({ to: '/manage' }) : undefined}
       isLoading={queryRs.isLoading}
       audios={queryRs.audios}
     />

@@ -83,6 +83,7 @@ describe('Listen playlist mutation hooks', () => {
         'listen-playlists',
         true,
       ]);
+      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
       expect(onSuccess).toHaveBeenCalledWith(data);
     });
