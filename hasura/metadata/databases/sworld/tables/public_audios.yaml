@@ -77,6 +77,7 @@ select_permissions:
         - source
         - thumbnail_url
         - updated_at
+        - user_id
       filter:
         _or:
           - user_id:
