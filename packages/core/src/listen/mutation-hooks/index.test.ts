@@ -198,6 +198,17 @@ describe('Listen playlist mutation hooks', () => {
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
       expect(onSuccess).toHaveBeenCalledWith(data);
     });
+
+    it('does not invalidate when no row was updated', () => {
+      const onSuccess = vi.fn();
+      renderHook(() => useUpdateAudio({ onSuccess }));
+
+      const data = { update_audios_by_pk: null };
+      getOnSuccess()?.(data);
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
+      expect(onSuccess).toHaveBeenCalledWith(data);
+    });
   });
 
   describe('useDeleteAudio', () => {
@@ -216,6 +227,14 @@ describe('Listen playlist mutation hooks', () => {
 
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
+    });
+
+    it('does not invalidate when no row was deleted', () => {
+      renderHook(() => useDeleteAudio());
+
+      getOnSuccess()?.({ delete_audios_by_pk: null });
+
+      expect(mockInvalidateQuery).not.toHaveBeenCalled();
     });
   });
 });

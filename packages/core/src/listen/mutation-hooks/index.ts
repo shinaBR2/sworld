@@ -236,8 +236,12 @@ const useUpdateAudio = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        invalidateQuery(MANAGE_QUERY_KEY);
-        invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        // A null pk result means no row matched (absent or filtered by
+        // permissions) — nothing changed, so leave the caches untouched.
+        if (data.update_audios_by_pk) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        }
         onSuccess?.(data);
       },
       onError: (error) => {
@@ -267,8 +271,11 @@ const useDeleteAudio = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        invalidateQuery(MANAGE_QUERY_KEY);
-        invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        // Only refresh caches when a row was actually deleted.
+        if (data.delete_audios_by_pk) {
+          invalidateQuery(MANAGE_QUERY_KEY);
+          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
+        }
         onSuccess?.(data);
       },
       onError: (error) => {
