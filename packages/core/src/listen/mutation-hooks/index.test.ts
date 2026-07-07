@@ -83,8 +83,12 @@ describe('Listen playlist mutation hooks', () => {
         'listen-playlists',
         true,
       ]);
-      expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-home', true]);
       expect(mockInvalidateQuery).toHaveBeenCalledWith(['listen-manage']);
+      // Not the home query — invalidating it would blank the active home screen.
+      expect(mockInvalidateQuery).not.toHaveBeenCalledWith([
+        'listen-home',
+        true,
+      ]);
       expect(onSuccess).toHaveBeenCalledWith(data);
     });
 

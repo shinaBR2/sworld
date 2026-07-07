@@ -155,12 +155,13 @@ const useCreatePlaylist = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        // invalidateQuery matches exactly, so rebuild the full keys. All three
-        // screens list playlists: the collection select (home), the playlists
-        // list, and the manage dashboard.
+        // invalidateQuery matches exactly, so rebuild the full playlists-list
+        // key; also refresh the manage list. Deliberately NOT the home query:
+        // invalidateQuery removes-then-refetches, which would blank the whole
+        // active home screen to spinners on create — the collection select
+        // picks up the new playlist on its next mount instead.
         if (data.insert_playlist_one) {
           invalidateQuery(['listen-playlists', isSignedIn]);
-          invalidateQuery([HOME_QUERY_KEY, isSignedIn]);
           invalidateQuery(MANAGE_QUERY_KEY);
         }
         onSuccess?.(data);
