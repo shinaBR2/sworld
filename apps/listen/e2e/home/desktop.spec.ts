@@ -24,6 +24,8 @@ test.describe('playing list', () => {
     await secondItem.click();
     await expect(firstItem).not.toContainText('Now Playing');
     await expect(secondItem).toContainText('Now Playing');
+    // Selecting a track mirrors it to the URL, YouTube-style (`?audio=<id>`).
+    await expect(page).toHaveURL(/[?&]audio=/);
   });
 });
 

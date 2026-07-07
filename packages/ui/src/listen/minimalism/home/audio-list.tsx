@@ -20,6 +20,10 @@ interface AudioListProps {
   queryRs: { isLoading: boolean };
   list: unknown[];
   activeFeelingId: string;
+  // The playing track as an id, mirrored to the URL. `activeAudioId` seeds the
+  // player's index; `onAudioChange` reports the current track's id back up.
+  activeAudioId: string;
+  onAudioChange: (id: string) => void;
 }
 
 const toAudioItem = (item: any) => {
@@ -36,7 +40,12 @@ const toAudioItem = (item: any) => {
 const PlayingList = lazy(() => import('./playing-list'));
 
 const Content = (props: AudioListProps) => {
-  const { list: originalList, activeFeelingId } = props;
+  const {
+    list: originalList,
+    activeFeelingId,
+    activeAudioId,
+    onAudioChange,
+  } = props;
   // TODO
   // memorize on parent
   const list = useMemo(() => {
@@ -47,7 +56,17 @@ const Content = (props: AudioListProps) => {
       );
   }, [originalList, activeFeelingId]);
 
-  const [index, setIndex] = useState(0);
+  // The URL is the source of truth for which track is selected: derive the
+  // player's index from `activeAudioId`. A missing/stale id falls back to the
+  // first track. (This also replaces the old "reset to 0 when the feeling
+  // filter changes" effect — a filter change that drops the active track
+  // recomputes to 0 here for free.)
+  const index = useMemo(() => {
+    const found = list.findIndex((a) => a.id === activeAudioId);
+
+    return found < 0 ? 0 : found;
+  }, [list, activeAudioId]);
+
   const isMobile = useIsMobile();
 
   const hookResult = useSAudioPlayer({
@@ -58,25 +77,37 @@ const Content = (props: AudioListProps) => {
   const { isPlay, currentIndex } = playerState;
   const { onPlay } = getControlsProps();
 
-  const onItemSelect = (id: string) => {
-    const index = list.findIndex((a) => a.id === id);
+  // Once the user has engaged (started playback, or picked a track), mirror
+  // every player-driven track change — next/prev, shuffle, auto-advance — back
+  // to the URL. A freshly loaded page stays engaged=false so its URL is clean.
+  const [engaged, setEngaged] = useState(false);
 
-    if (index < 0) {
-      setIndex(0);
-    } else {
-      setIndex(index);
+  useEffect(() => {
+    if (isPlay) {
+      setEngaged(true);
     }
+  }, [isPlay]);
+
+  useEffect(() => {
+    if (!engaged) {
+      return;
+    }
+
+    const current = list[currentIndex];
+
+    if (current && current.id !== activeAudioId) {
+      onAudioChange(current.id);
+    }
+  }, [engaged, currentIndex, list, activeAudioId, onAudioChange]);
+
+  const onItemSelect = (id: string) => {
+    setEngaged(true);
+    onAudioChange(id);
 
     if (!isPlay) {
       onPlay();
     }
   };
-
-  useEffect(() => {
-    if (activeFeelingId) {
-      setIndex(0);
-    }
-  }, [activeFeelingId]);
 
   const hasNoItem = !list.length;
   const currentAudio =

@@ -1,6 +1,7 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { listenMutationHooks, listenQueryHooks } from 'core';
 import { useAuthContext } from 'core/providers/auth';
+import { useCallback } from 'react';
 import { ListeningScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
@@ -36,6 +37,17 @@ const Content = () => {
   const createPlaylist = listenMutationHooks.useCreatePlaylist();
   const onSelectCollection = useCollectionNavigate();
 
+  // The playing track is a URL search param (YouTube's `?v=`). Read it in,
+  // and update it (replace, so auto-advance doesn't spam history) as the
+  // player moves between tracks.
+  const { audio: activeAudioId = '' } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const onAudioChange = useCallback(
+    (id: string) =>
+      navigate({ search: (prev) => ({ ...prev, audio: id }), replace: true }),
+    [navigate],
+  );
+
   return (
     <ListeningScreen
       mode="all"
@@ -46,6 +58,8 @@ const Content = () => {
       onLogout={signOut}
       playlists={playlists}
       onSelectCollection={onSelectCollection}
+      activeAudioId={activeAudioId}
+      onAudioChange={onAudioChange}
       onCreate={(title) =>
         user
           ? createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })

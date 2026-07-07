@@ -37,6 +37,8 @@ const baseProps = {
   onCreate: vi.fn(),
   audios: [],
   isLoading: false,
+  activeAudioId: '',
+  onAudioChange: vi.fn(),
 };
 
 describe('ListeningScreen', () => {

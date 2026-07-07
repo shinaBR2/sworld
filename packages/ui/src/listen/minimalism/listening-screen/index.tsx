@@ -34,6 +34,11 @@ interface CommonProps {
   // Raw audios for the player (AudioList maps them to player items).
   audios: unknown[];
   isLoading: boolean;
+  // The playing track, mirrored to the URL. `activeAudioId` is the audio id
+  // from the route (empty when nothing is selected yet); `onAudioChange` pushes
+  // the current track's id back to the route as playback moves.
+  activeAudioId: string;
+  onAudioChange: (id: string) => void;
 }
 
 interface AllModeProps extends CommonProps {
@@ -66,6 +71,8 @@ const ListeningScreen = (props: ListeningScreenProps) => {
     onCreate,
     audios,
     isLoading,
+    activeAudioId,
+    onAudioChange,
   } = props;
 
   const [settingOpen, setSettingOpen] = useState(false);
@@ -136,6 +143,8 @@ const ListeningScreen = (props: ListeningScreenProps) => {
           queryRs={{ isLoading }}
           list={audios}
           activeFeelingId={mode === 'all' ? activeFeelingId : ''}
+          activeAudioId={activeAudioId}
+          onAudioChange={onAudioChange}
         />
       </MainContainer>
       <CreatePlaylistDialog

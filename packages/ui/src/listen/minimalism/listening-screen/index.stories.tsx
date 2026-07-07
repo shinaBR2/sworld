@@ -38,6 +38,8 @@ const meta: Meta<typeof ListeningScreen> = {
     onCreate: () => {},
     audios,
     isLoading: false,
+    activeAudioId: '',
+    onAudioChange: () => {},
   },
 };
 
