@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import hooks from 'core';
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import { useIsMobile } from '../../../universal/responsive';
 import MusicWidget from '../music-widget';
 import { MusicWidgetSkeleton } from '../music-widget/music-widget-skeleton';
@@ -21,9 +21,10 @@ interface AudioListProps {
   list: unknown[];
   activeFeelingId: string;
   // The playing track as an id, mirrored to the URL. `activeAudioId` seeds the
-  // player's index; `onAudioChange` reports the current track's id back up.
+  // player's index; `onAudioChange` reports the current track's id back up
+  // (`replace` = false pushes a history entry, true replaces the current one).
   activeAudioId: string;
-  onAudioChange: (id: string) => void;
+  onAudioChange: (id: string, replace: boolean) => void;
 }
 
 const toAudioItem = (item: any) => {
@@ -79,33 +80,47 @@ const Content = (props: AudioListProps) => {
   const { isPlay, currentIndex } = playerState;
   const { onPlay } = getControlsProps();
 
-  // Mirror the playing track to the URL, but only once the user has engaged
-  // (started playback) — a freshly loaded page keeps a clean URL. This covers
-  // every player-driven change (next/prev, shuffle, auto-advance) as well as an
-  // explicit selection, since all of them move `currentIndex`.
-  const [engaged, setEngaged] = useState(false);
+  // `lastSyncedId` is the track the URL and player currently agree on. Both the
+  // URL->player and player->URL directions update it, so neither treats the
+  // other's change as new work to undo.
+  const lastSyncedId = useRef(activeAudioId);
+  // Whether we're past the initial mount settle — a freshly loaded page mustn't
+  // write the default first track into the URL before the user does anything.
+  const hasSettled = useRef(false);
 
+  // An external URL change (browser back/forward, a shared link) is the source
+  // of truth: record it so the mirror below doesn't mistake it for a
+  // player-driven change and revert it.
   useEffect(() => {
-    if (isPlay) {
-      setEngaged(true);
-    }
-  }, [isPlay]);
+    lastSyncedId.current = activeAudioId;
+  }, [activeAudioId]);
 
+  // player -> URL: mirror a track change the player made itself (next/prev,
+  // shuffle, auto-advance). Depending only on `currentIndex` is deliberate — it
+  // means this never runs on the same commit an external URL change arrives
+  // (when `currentIndex` still lags a render behind), which is what stops
+  // back/forward navigation from oscillating. Uses replace so a run of
+  // auto-advances doesn't bury the back button.
   useEffect(() => {
-    if (!engaged) {
+    if (!hasSettled.current) {
+      hasSettled.current = true;
+
       return;
     }
 
     const current = list[currentIndex];
 
-    if (current && current.id !== activeAudioId) {
-      onAudioChange(current.id);
+    if (current && current.id !== lastSyncedId.current) {
+      lastSyncedId.current = current.id;
+      onAudioChange(current.id, true);
     }
-  }, [engaged, currentIndex, list, activeAudioId, onAudioChange]);
+  }, [currentIndex, list, onAudioChange]);
 
   const onItemSelect = (id: string) => {
-    setEngaged(true);
-    onAudioChange(id);
+    // An explicit pick is a real navigation, so push a history entry (the back
+    // button returns to the previous track); player-driven changes replace.
+    lastSyncedId.current = id;
+    onAudioChange(id, false);
 
     if (!isPlay) {
       onPlay();

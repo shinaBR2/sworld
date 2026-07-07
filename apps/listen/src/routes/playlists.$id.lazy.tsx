@@ -41,8 +41,8 @@ const Content = () => {
   const { audio: activeAudioId = '' } = Route.useSearch();
   const navigate = Route.useNavigate();
   const onAudioChange = useCallback(
-    (id: string) =>
-      navigate({ search: (prev) => ({ ...prev, audio: id }), replace: true }),
+    (id: string, replace: boolean) =>
+      navigate({ search: (prev) => ({ ...prev, audio: id }), replace }),
     [navigate],
   );
 

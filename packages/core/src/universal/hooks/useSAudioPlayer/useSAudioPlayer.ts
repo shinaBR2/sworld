@@ -8,6 +8,9 @@ import { playAudio, seek } from './utils/actions';
 // have to know about the shuffle permutation. `indexes[slot]` maps slot -> flat;
 // `indexes.indexOf(flat)` maps flat -> slot.
 
+// The natural play order (identity): slot N plays audioList[N].
+const buildOrder = (length: number) => Array.from({ length }).map((_v, k) => k);
+
 export interface SAudioPlayerAudioItem {
   id: string;
   src: string;
@@ -41,9 +44,6 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const ref = useRef<HTMLAudioElement>(null);
 
   const [indexes, setIndexes] = useState<number[]>();
-  // A live handle on `indexes` so the flat -> slot conversion below reads the
-  // current play order without re-running every time the order changes.
-  const indexesRef = useRef<number[] | undefined>(undefined);
   const [currentIndex, setCurrentIndex] = useState<number>(index);
 
   const [isShuffled, setIsShuffled] = useState(shuffle);
@@ -57,36 +57,30 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const loopModes = ['all', 'one', 'none'];
 
   useEffect(() => {
-    indexesRef.current = indexes;
-  }, [indexes]);
-
-  useEffect(() => {
     if (total) {
-      const next = Array.from({ length: total }).map((_v, i) => i);
-
-      setIndexes(next);
+      setIndexes(buildOrder(total));
     }
   }, [total]);
 
   // `index` is a flat position; select the slot that plays that track. Under
   // shuffle the two differ, so converting here is what makes external selection
   // (a deep link, a clicked track) land on the intended song rather than
-  // whatever sits at that slot in the shuffled order.
+  // whatever sits at that slot in the shuffled order. Re-runs when the order
+  // itself changes (e.g. the list is filtered and rebuilt) so the slot stays in
+  // range instead of pointing past the end of a now-shorter order.
   useEffect(() => {
-    const order = indexesRef.current;
-
-    if (!order) {
+    if (!indexes) {
       setCurrentIndex(index);
 
       return;
     }
 
-    const slot = order.indexOf(index);
+    const slot = indexes.indexOf(index);
 
     if (slot >= 0) {
       setCurrentIndex(slot);
     }
-  }, [index]);
+  }, [index, indexes]);
 
   useEffect(() => {
     setIsShuffled(shuffle);
@@ -101,7 +95,11 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const isFirst = currentIndex === firstIndex;
   const isLast = currentIndex === lastIndex;
 
-  const i = indexes ? indexes[currentIndex] : 0;
+  // Guard the slot: while the list is being rebuilt (filter change), a slot
+  // from the previous, longer order can momentarily exceed the new one — fall
+  // back to the first track rather than reading an undefined position.
+  const i =
+    indexes && currentIndex < indexes.length ? indexes[currentIndex] : 0;
   const audioItem = audioList && indexes ? audioList[i] : null;
   const { src } = audioItem || {};
 
@@ -215,9 +213,10 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
     // position, rebuild the order (shuffled copy, or identity when turning
     // shuffle off), then re-point currentIndex at that same track's new slot.
     const currentFlat = indexes[currentIndex];
-    const identity = Array.from({ length: total }).map((_v, k) => k);
     const sortFunc = () => (Math.random() > 0.5 ? 1 : -1);
-    const nextOrder = isShuffled ? identity : [...indexes].sort(sortFunc);
+    const nextOrder = isShuffled
+      ? buildOrder(total)
+      : [...indexes].sort(sortFunc);
     const nextSlot = nextOrder.indexOf(currentFlat);
 
     setIndexes(nextOrder);

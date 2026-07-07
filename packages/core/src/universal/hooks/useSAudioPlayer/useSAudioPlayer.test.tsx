@@ -88,6 +88,31 @@ const SelectHarness = (props: { index: number }) => {
   );
 };
 
+// A variant that can change its `audioList`, to exercise the list being
+// filtered/rebuilt underneath the player.
+const ResizeHarness = (props: {
+  list: SAudioPlayerAudioItem[];
+  index: number;
+}) => {
+  const { getControlsProps, playerState } = useSAudioPlayer({
+    audioList: props.list,
+    index: props.index,
+  });
+
+  return (
+    <div>
+      <button
+        type="button"
+        data-testid="shuffle"
+        onClick={getControlsProps().onShuffle}
+      >
+        shuffle
+      </button>
+      <span data-testid="track">{playerState.audioItem?.id ?? 'none'}</span>
+    </div>
+  );
+};
+
 describe('useSAudioPlayer track addressing', () => {
   it('selects the track at the given flat index while shuffled', () => {
     const view = render(<SelectHarness index={0} />);
@@ -109,6 +134,18 @@ describe('useSAudioPlayer track addressing', () => {
 
     fireEvent.click(view.getByTestId('shuffle')); // off
     expect(view.getByTestId('index').textContent).toBe('1');
+  });
+
+  it('stays on a valid track when the list shrinks while shuffled', () => {
+    const view = render(<ResizeHarness list={audioList} index={2} />);
+
+    fireEvent.click(view.getByTestId('shuffle'));
+    // Filter the list down to one track: the slot must be rebuilt in range,
+    // not left pointing past the end of the now-shorter order (which would
+    // null out the current track and stop playback).
+    view.rerender(<ResizeHarness list={audioList.slice(0, 1)} index={0} />);
+
+    expect(view.getByTestId('track').textContent).toBe('1');
   });
 });
 
