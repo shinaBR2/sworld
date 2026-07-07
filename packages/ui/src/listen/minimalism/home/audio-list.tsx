@@ -129,11 +129,19 @@ const Content = (props: AudioListProps) => {
     }
   }, [currentTrackId, onAudioChange]);
 
-  // Filtering rebuilds the list; reset to its first track (pre-URL behaviour).
+  // Changing the feeling filter (setting OR clearing it) rebuilds the list;
+  // reset to its first track. A ref tracks the previous value so this fires only
+  // on an actual change, never on the initial mount (which would clobber the
+  // deep-link seed above).
+  const prevFeeling = useRef(activeFeelingId);
+
   useEffect(() => {
-    if (activeFeelingId) {
-      onSelect(0);
+    if (prevFeeling.current === activeFeelingId) {
+      return;
     }
+
+    prevFeeling.current = activeFeelingId;
+    onSelect(0);
   }, [activeFeelingId, onSelect]);
 
   const onItemSelect = (id: string) => {

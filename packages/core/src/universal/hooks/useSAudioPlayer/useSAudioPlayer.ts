@@ -102,12 +102,15 @@ const useSAudioPlayer = (inputs: SAudioPlayerInputs) => {
   const isFirst = currentIndex === firstIndex;
   const isLast = currentIndex === lastIndex;
 
-  // Guard the slot: while the list is being rebuilt (filter change), a slot
-  // from the previous, longer order can momentarily exceed the new one — fall
-  // back to the first track rather than reading an undefined position.
-  const i =
-    indexes && currentIndex < indexes.length ? indexes[currentIndex] : 0;
-  const audioItem = audioList && indexes ? audioList[i] : null;
+  // Guard the slot AND the resulting flat index: while the list is being
+  // rebuilt (filter change), a slot from the previous, longer order — or the
+  // flat index it maps to — can momentarily exceed the new, shorter list. Fall
+  // back to the first track so `audioItem` never reads an undefined position
+  // (which would blank the player for a frame).
+  const slot = indexes && currentIndex < indexes.length ? currentIndex : 0;
+  const rawIndex = indexes ? indexes[slot] : 0;
+  const i = rawIndex < audioList.length ? rawIndex : 0;
+  const audioItem = audioList.length && indexes ? audioList[i] : null;
   const { src } = audioItem || {};
 
   // https://mui.com/material-ui/react-slider/#music-player
