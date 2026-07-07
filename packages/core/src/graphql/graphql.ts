@@ -13322,6 +13322,13 @@ export type ListenHomeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ListenHomeQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string }> };
 
+export type ListenManageQueryVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+}>;
+
+
+export type ListenManageQuery = { __typename?: 'query_root', audios: Array<{ __typename?: 'audios', id: any, name: string, source: string, thumbnailUrl?: string | null, artistName: string, audio_tags: Array<{ __typename?: 'audio_tags', tag_id: any }> }>, tags: Array<{ __typename?: 'tags', id: any, name: string }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string, description?: string | null, thumbnailUrl?: string | null }> };
+
 export type ListenPlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -14104,6 +14111,34 @@ export const ListenHomeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ListenHomeQuery, ListenHomeQueryVariables>;
+export const ListenManageDocument = new TypedDocumentString(`
+    query ListenManage($userId: uuid!) {
+  audios(where: {user_id: {_eq: $userId}}, order_by: {createdAt: desc}) {
+    id
+    name
+    source
+    thumbnailUrl
+    artistName
+    audio_tags {
+      tag_id
+    }
+  }
+  tags(where: {site: {_eq: "listen"}}, order_by: {display_order: asc}) {
+    id
+    name
+  }
+  playlist(
+    where: {user_id: {_eq: $userId}, site: {_eq: "listen"}}
+    order_by: {createdAt: desc}
+  ) {
+    id
+    title
+    slug
+    description
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<ListenManageQuery, ListenManageQueryVariables>;
 export const ListenPlaylistDetailDocument = new TypedDocumentString(`
     query ListenPlaylistDetail($id: uuid!) {
   playlist_by_pk(id: $id) {
