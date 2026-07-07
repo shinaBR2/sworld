@@ -21,14 +21,15 @@ const AudioEditDialog = (props: AudioEditDialogProps) => {
   const [artistName, setArtistName] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
 
-  // Seed the fields from the audio each time the dialog opens for one.
+  // Seed the fields every time the dialog opens, so a cancelled edit never
+  // leaks its unsaved values into the next open of the same audio.
   useEffect(() => {
-    if (audio) {
+    if (open && audio) {
       setName(audio.name);
       setArtistName(audio.artistName);
       setThumbnailUrl(audio.thumbnailUrl);
     }
-  }, [audio]);
+  }, [open, audio]);
 
   const handleSave = () => {
     if (!audio) return;

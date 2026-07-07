@@ -5,13 +5,7 @@ import { ManageScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { useEffect } from 'react';
 import { appConfig } from '../config';
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { createPlaylistSlug } from '../utils/slug';
 
 const Content = () => {
   const { user, signOut } = useAuthContext();
@@ -43,7 +37,7 @@ const Content = () => {
       onCreatePlaylist={({ title, description }) =>
         createPlaylist({
           title,
-          slug: slugify(title),
+          slug: createPlaylistSlug(title),
           thumbnailUrl: '',
           description,
         })

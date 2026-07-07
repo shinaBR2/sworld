@@ -39,7 +39,17 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
   const [formOpen, setFormOpen] = useState(false);
   // The playlist being edited; null while the form is in create mode.
   const [editing, setEditing] = useState<ManagePlaylist | null>(null);
-  const [deleting, setDeleting] = useState<ManagePlaylist | null>(null);
+  // Kept while the confirm dialog closes so its title doesn't flash to
+  // "undefined" during the fade-out; `confirmOpen` drives visibility.
+  const [confirmTarget, setConfirmTarget] = useState<ManagePlaylist | null>(
+    null,
+  );
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const askDelete = (playlist: ManagePlaylist) => {
+    setConfirmTarget(playlist);
+    setConfirmOpen(true);
+  };
 
   const openCreate = () => {
     setEditing(null);
@@ -116,7 +126,7 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
                   </IconButton>
                   <IconButton
                     aria-label={`Delete ${playlist.title}`}
-                    onClick={() => setDeleting(playlist)}
+                    onClick={() => askDelete(playlist)}
                   >
                     <Delete />
                   </IconButton>
@@ -134,12 +144,12 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
         onSubmit={handleSubmit}
       />
       <ConfirmDialog
-        open={Boolean(deleting)}
+        open={confirmOpen}
         title="Delete playlist"
-        message={`Delete "${deleting?.title}"? This can't be undone.`}
-        onClose={() => setDeleting(null)}
+        message={`Delete "${confirmTarget?.title}"? This can't be undone.`}
+        onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
-          if (deleting) onDeletePlaylist(deleting.id);
+          if (confirmTarget) onDeletePlaylist(confirmTarget.id);
         }}
       />
     </Box>

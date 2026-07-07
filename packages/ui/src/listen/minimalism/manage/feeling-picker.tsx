@@ -21,7 +21,13 @@ const FeelingPicker = (props: FeelingPickerProps) => {
   const { assignedTagIds, feelings, onAssign, onUnassign } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const assigned = feelings.filter((f) => assignedTagIds.includes(f.id));
+  // Derive chips from the assigned ids (not the vocabulary) so an assignment
+  // whose tag is missing from `feelings` still shows and can be removed.
+  const nameById = new Map(feelings.map((f) => [f.id, f.name]));
+  const assigned = assignedTagIds.map((id) => ({
+    id,
+    name: nameById.get(id) ?? 'Unknown',
+  }));
   const available = feelings.filter((f) => !assignedTagIds.includes(f.id));
 
   const handleAdd = (tagId: string) => {

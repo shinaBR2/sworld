@@ -40,7 +40,15 @@ const AudioSection = (props: AudioSectionProps) => {
   } = props;
 
   const [editing, setEditing] = useState<ManageAudio | null>(null);
-  const [deleting, setDeleting] = useState<ManageAudio | null>(null);
+  // The confirm target is kept even while the dialog closes, so its name
+  // doesn't flash to "undefined" during the fade-out; `confirmOpen` drives it.
+  const [confirmTarget, setConfirmTarget] = useState<ManageAudio | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const askDelete = (audio: ManageAudio) => {
+    setConfirmTarget(audio);
+    setConfirmOpen(true);
+  };
 
   return (
     <Box component="section">
@@ -104,7 +112,7 @@ const AudioSection = (props: AudioSectionProps) => {
                   </IconButton>
                   <IconButton
                     aria-label={`Delete ${audio.name}`}
-                    onClick={() => setDeleting(audio)}
+                    onClick={() => askDelete(audio)}
                   >
                     <Delete />
                   </IconButton>
@@ -122,12 +130,12 @@ const AudioSection = (props: AudioSectionProps) => {
         onSave={onUpdateAudio}
       />
       <ConfirmDialog
-        open={Boolean(deleting)}
+        open={confirmOpen}
         title="Delete audio"
-        message={`Delete "${deleting?.name}"? This can't be undone.`}
-        onClose={() => setDeleting(null)}
+        message={`Delete "${confirmTarget?.name}"? This can't be undone.`}
+        onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
-          if (deleting) onDeleteAudio(deleting.id);
+          if (confirmTarget) onDeleteAudio(confirmTarget.id);
         }}
       />
     </Box>

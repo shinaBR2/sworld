@@ -4,13 +4,7 @@ import { useAuthContext } from 'core/providers/auth';
 import { ListeningScreen } from 'ui/listen/minimalism';
 import { LoadingBackdrop } from 'ui/universal';
 import { appConfig } from '../config';
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { createPlaylistSlug } from '../utils/slug';
 
 // Selecting a collection is navigation, not state: All → `/`, a playlist → its URL.
 const useCollectionNavigate = () => {
@@ -49,7 +43,11 @@ const Content = () => {
       onCreate={
         isSignedIn
           ? (title) =>
-              createPlaylist({ title, slug: slugify(title), thumbnailUrl: '' })
+              createPlaylist({
+                title,
+                slug: createPlaylistSlug(title),
+                thumbnailUrl: '',
+              })
           : () => signIn()
       }
       isLoading={queryRs.isLoading}

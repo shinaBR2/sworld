@@ -146,7 +146,7 @@ const MANAGE_QUERY_KEY = ['listen-manage'];
 const HOME_QUERY_KEY = 'listen-home';
 
 const useCreatePlaylist = (props: MutationProps = {}) => {
-  const { getAccessToken } = useAuthContext();
+  const { getAccessToken, isSignedIn } = useAuthContext();
   const { invalidateQuery } = useQueryContext();
   const { onSuccess, onError } = props;
 
@@ -155,7 +155,12 @@ const useCreatePlaylist = (props: MutationProps = {}) => {
     getAccessToken,
     options: {
       onSuccess: (data) => {
-        invalidateQuery(['listen-playlists']);
+        // invalidateQuery matches exactly, so rebuild the full playlists-list
+        // key; also refresh the manage list, which shows the same playlists.
+        if (data.insert_playlist_one) {
+          invalidateQuery(['listen-playlists', isSignedIn]);
+          invalidateQuery(MANAGE_QUERY_KEY);
+        }
         onSuccess?.(data);
       },
       onError: (error) => {

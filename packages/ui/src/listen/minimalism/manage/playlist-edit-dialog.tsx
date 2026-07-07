@@ -26,11 +26,15 @@ const PlaylistEditDialog = (props: PlaylistEditDialogProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  // Reset the fields whenever the dialog target changes (create vs a playlist).
+  // Reset the fields every time the dialog opens. Keying only on `playlist`
+  // would leave create mode (playlist stays null) showing the previous entry's
+  // values on the next open.
   useEffect(() => {
-    setTitle(playlist?.title ?? '');
-    setDescription(playlist?.description ?? '');
-  }, [playlist]);
+    if (open) {
+      setTitle(playlist?.title ?? '');
+      setDescription(playlist?.description ?? '');
+    }
+  }, [open, playlist]);
 
   const handleSubmit = () => {
     const trimmed = title.trim();

@@ -63,6 +63,22 @@ describe('FeelingPicker', () => {
     expect(onUnassign).toHaveBeenCalledWith('t2');
   });
 
+  it('still shows and can remove an assigned tag missing from the vocabulary', () => {
+    const onUnassign = vi.fn();
+    render(
+      <FeelingPicker
+        assignedTagIds={['orphan']}
+        feelings={feelings}
+        onAssign={vi.fn()}
+        onUnassign={onUnassign}
+      />,
+    );
+
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('CancelIcon'));
+    expect(onUnassign).toHaveBeenCalledWith('orphan');
+  });
+
   it('shows an empty hint and no add menu when all feelings are assigned', () => {
     render(
       <FeelingPicker
