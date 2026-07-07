@@ -117,6 +117,13 @@ update_permissions:
           _eq: X-Hasura-User-Id
       check: null
     comment: ""
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: Users can only delete their own playlists
 event_triggers:
   - name: share_playlist
     definition:
