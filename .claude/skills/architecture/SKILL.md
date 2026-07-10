@@ -23,6 +23,8 @@ This is the most fundamental data-fetching rule in this codebase. Hasura exposes
 
 **Why:** the transformer is the single gate between server and client. One page → one query → one transformer means one place to look, one request on the wire, and one boundary to keep the frontend working regardless of what the backend does. Building a page around a query shaped for a *different* page couples them to one server shape and breaks this guarantee.
 
+**Before adding a new query or hook, read the existing query's fragments first.** Hasura nested relationships often already return what you need — e.g. a video-listing query that embeds `user_video_histories { last_watched_at, progress_seconds }` already has everything a "continue watching" derived view needs; that's a client-side filter/sort on the existing result, not a second fetch. Only add a query when the field is genuinely absent from the page's current selection.
+
 ## Transformer pattern (MUST)
 
 - ALWAYS have a transformer to convert server-side data into the format the frontend consumes.
@@ -65,6 +67,8 @@ Schema and permission changes live in the sibling **`sworld-hasura-v2`** repo (m
 - **Merging a `sworld-hasura-v2` PR auto-deploys to Hasura Cloud (prod).** This happens through Hasura Cloud's GitHub integration, **not** a GitHub Actions workflow — there is no deploy job in `.github/workflows` (only lint), so it's easy to assume merging is inert. It isn't: **merging a Hasura PR applies the migration + metadata to production.**
 - **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
 - **Sequence merges across repos.** A frontend query/mutation on a new table/column only works at runtime once the Hasura PR is merged (→ auto-deployed to prod). Land the data-layer PR (and let it deploy) before any frontend PR that reads/writes the new shape goes live.
+
+**Frontend deploy targets aren't uniform across apps.** The `main` app's real production domain (`shinabr2.com`) is served by **Cloudflare Pages**, with its own build pipeline and env vars configured in the Cloudflare dashboard (not this repo). The GitHub Actions "Deploy Live Main Frontend" workflow deploys to a separate Firebase target (`sworld-prod.web.app`) that is **not** treated as prod. The two can serve different bundles. When told the main app is broken "on prod," check `shinabr2.com`, not the Firebase URL — and compare `assets/*.js` hashes before reasoning about what's actually deployed where. Other apps (listen, watch, til, docs, game) deploy via Firebase Hosting preview channels per PR (see `parallel-workflow`'s CI loop for the known quota-429 failure mode).
 
 ## First principle: NEVER trust the frontend
 

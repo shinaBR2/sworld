@@ -24,6 +24,7 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 - "main branch" ALWAYS means `origin/main` — fetch first with `git fetch origin main`. The local `main` is often stale.
 - ALWAYS `git merge`, NEVER `git rebase`. This applies everywhere — syncing, resolving divergence, integrating changes.
+- **Sync before analyzing, not just before coding.** Before exploring or reasoning about code anywhere in this workspace (any of the three repos), check `git status` and pull/fast-forward to `origin/main` first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
 
 ## Before starting
 
@@ -41,6 +42,8 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 ## During work
 
+Once a breakdown or plan is approved, work through it without pausing to reconfirm each step: don't ask "want me to start the next one?" between already-planned sub-issues/PRs — proceed automatically when one finishes and the next is unblocked, reporting progress as you go. Only stop to ask when there's a genuine decision the plan didn't settle: a real fork, a destructive/irreversible action, or new ambiguity.
+
 9. The 3 files limit is soft — more is fine if changes are small, cohesive, and easy to review.
 10. NEVER bypass commit hooks — code MUST be formatted, linted, and type-checked.
 11. Self-review all work — this is a mandatory gate, not eyeballing the diff, and it is a **loop, not a single pass**. It gates **PR creation, NOT pushing** — commits are pushed freely and immediately (see step 14). When the work is done, BEFORE creating the PR:
@@ -50,6 +53,8 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
     4. Exit only when a full pass is clean on BOTH: **zero confirmed findings** from `/code-review` AND **verdict "Merge" with zero concerns** from `reviewing-pull-requests`. Never create a PR on hope.
 
     The local diff and the PR diff are the same thing — this loop does bugbot/CodeRabbit's job *before* the PR exists. **The bar: bugbot/CodeRabbit should find nothing.** A substantive bot finding on the PR means this gate failed. The goal: every PR that goes up is already a good PR.
+
+    In this workspace this gate is also **mechanically enforced by a settings hook** (`PreToolUse(Bash)` denies `gh pr create` unless both review skills have run and are newer than the last edit) — so skipping it isn't just against convention, the tool call will be denied with a message saying what to run. That means: run `/code-review` through the **Skill tool**, not by calling `Workflow` directly (e.g. a cached resume) — only a Skill-tool invocation stamps the gate. The `last_edit` stamp itself only fires on `Write`/`Edit` tool calls, NOT on Bash — so a file write via Bash (a build, a formatter, a stray `sed`) after the final review does **not** re-flag it as stale, meaning it can silently ship unreviewed. Do all build/runtime verification (rebuilds, Playwright probes) **before** the final review pass, not after, and treat any `Write`/`Edit` after that point as forcing a fresh review — don't rely on the hook to catch everything.
 12. Always verify `git branch --show-current` before committing.
 13. Don't dismiss automated review findings without thorough verification.
 14. Commit often and push immediately — never ask, just do it. Pushing is **backup, not publication**: a pushed branch with no PR is invisible, and it means a broken laptop loses zero work. Pushing is NEVER gated; only PR creation is (step 11).
@@ -113,6 +118,17 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 - If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If all green AND no unresolved comments → PR is ready. Report to user.
 - **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
+- **Known non-blocking checks** — confirm the specific failure mode before waving these through, then gate on `test` + CodeRabbit instead:
+  - **Argos visual-regression** (`argos/Listen E2E`) does a pixel-perfect diff against the anonymous home, which is data-driven (real Firebase preview + prod Hasura, no mocking) — it reports "changed" whenever the underlying data changes, not just on real UI regressions. Root-cause fix tracked in SWO-310 (mask the data-driven pixels). If the diff is plausibly a genuine intended UI change, say so — it needs approving in Argos, not dismissing.
+  - **`prod_deploy` / Deploy Preview 429** (`RESOURCE_EXHAUSTED: channel quota reached`) — Firebase Hosting preview channels are per-app-per-PR with a 7-day TTL; a burst of PRs exhausts a site's quota, and it can fire on an app the PR doesn't even touch. Confirm by grepping the failed job log for `429`/`RESOURCE_EXHAUSTED` — a different `prod_deploy` failure still needs investigating.
+
+### Merging — never automatic
+
+- **DEFAULT: never merge.** The user reviews every PR themselves. The loop's terminal action for an OPEN, settled PR is ALWAYS "report to the user that it's ready" — merging is a separate, explicit action taken only when the user has authorized it for that PR (e.g. "you can merge" / "merge when settled").
+- **A PR is "settled"** when the loop has run to completion and every gate is green AND stable: OPEN + mergeable (no conflicts), CI fully passed (nothing `pending`, no failures), and zero unresolved review threads. `pending` is not `pass` — never act on an unsettled gate.
+- **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
+- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/`prod_deploy`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this workspace's merge-is-deploy model means shipping broken code to production.
+- Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
 
 ### The rule that gets violated
 

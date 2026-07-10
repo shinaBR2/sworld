@@ -10,9 +10,16 @@ produce a CRITICAL that wasn't (see "The `filter: {}` false positive" below).
 
 - Metadata (sibling repo `sworld-hasura-v2`) under `metadata/databases/sworld/tables/` — one YAML
   per table, each with per-role permissions for `select`/`insert`/`update`/`delete`.
-- **Roles:** `user` (every authenticated user) and `manager` (ops). Role comes from the validated
-  JWT (`auth0-and-jwt.md`). No `anonymous`/unauthenticated role — unauthenticated callers get
-  nothing, which is correct.
+- **Roles:** `anonymous` (unauthenticated — several content tables intentionally expose read-only
+  `select` access, e.g. `public_audios.yaml`, `public_videos.yaml`; `anonymous` must never appear
+  in an `insert`/`update`/`delete` permission block — flag that as a real finding, not hardening),
+  `user` (every authenticated user), and `vip` (elevated non-admin, currently permissioned on a
+  couple of tables, e.g. `public_crawl_requests.yaml`). Role comes from the validated JWT
+  (`auth0-and-jwt.md`). `manager` is referenced as a role concept at the JWT/allowed-roles layer
+  but currently has no explicit permissions on any table in this repo's metadata — verify with a
+  fresh `grep -rl "role: manager" metadata/` before treating a `manager`-specific finding as live
+  (see also the `manager` checklist item below, which describes what to check once it does gain
+  permissions).
 - Writes to most domain tables go through the **backend with the admin secret**, not direct
   user-role mutations — so many tables are `select`-only for `user`.
 
@@ -101,8 +108,10 @@ there's **another** way in. So for each such table, confirm:
       scopes to `X-Hasura-User-Id` or a membership relationship — these are where a missing/`{}`
       filter is a *real* leak.
 - [ ] **Sensitive columns** (e.g. `hasura_role`, internal flags) are column-restricted for `user`.
-- [ ] **`manager` scope** is its actual job, not a global backdoor — watch `{}` filters on `users` /
-      financial tables as `manager` gains permissions.
+- [ ] **`manager` scope** is its actual job, not a global backdoor. As of writing `manager` has no
+      explicit table permissions (see "Roles" above) — this item is forward-looking: the moment a
+      table grants `manager` anything, re-verify with `grep -rl "role: manager" metadata/` and check
+      its filter isn't `{}` on `users`/financial tables.
 - [ ] **Production hardening** (judge against the deployed/production Hasura, *not* the local
       `docker-compose.yml`):
   - **Introspection** (`graphql_schema_introspection.yaml`): leaving it on lets an *authenticated*
@@ -119,6 +128,24 @@ there's **another** way in. So for each such table, confirm:
       `X-Hasura-Signature`. Hasura does **not** apply row permissions to action *arguments* — the
       backend must authorise (see `hono-backend.md`). An action exposed to `user` that accepts
       arbitrary IDs is only as safe as the backend's own ownership check.
+
+## Business invariant: `public` is owner-only, on every content table
+
+"Public" is an act of owning the database, not a user capability. Only the admin secret / direct DB
+access (i.e. `shinabr2`, the DB owner) may set a content row's `public` flag — **no** non-admin role
+(`user`, `vip`, or any future role) may write a publicity field, on **any** content table, on insert
+or update. `select` is unaffected — reading publicity is fine for everyone. Covered today: `audios`,
+`playlist`, `videos`. Enforced by omitting `public` from the non-admin `insert`/`update` column
+allowlists — flag it as a finding if a new content table's non-admin permission includes `public` in
+either list. Codegen introspects as **admin** (keeps `public` in generated types), so this invariant
+never shows up as a frontend type change — the only place it's visible is the metadata YAML itself.
+
+**Verification recipe (no live-Hasura test needed for this):** role-simulate with curl —
+`x-hasura-admin-secret` + `x-hasura-role: user` (or `vip`) attempting to set `public` on
+insert/update — expect a Hasura validation error (`field 'public' not found in type:
+..._insert_input` / `..._set_input`). That response *is* the guard; don't add a live-Hasura
+regression test for this static metadata fact (`sworld-hasura-v2` CI only runs lint, not the
+vitest role-suite — a live test here is a rabbit hole, not a safety net).
 
 ## Severity calibration for this layer
 
