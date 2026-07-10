@@ -2,6 +2,12 @@ type Mutation {
   createDeviceRequest(
     input: CreateDeviceRequestInput!
   ): CreateDeviceRequestResponse!
+  authorizeDevice(
+    input: AuthorizeDeviceInput!
+  ): AuthorizeDeviceResponse!
+  getDeviceToken(
+    input: GetDeviceTokenInput!
+  ): GetDeviceTokenResponse!
   createSignedUploadUrl(
     input: SignedUploadUrlInput!
   ): SignedUploadUrlResponse!
@@ -23,6 +29,26 @@ type CreateDeviceRequestOutput {
   interval: Int!
 }
 
+input AuthorizeDeviceInput {
+  userCode: String!
+  approved: Boolean!
+}
+
+type AuthorizeDeviceOutput {
+  success: Boolean!
+}
+
+input GetDeviceTokenInput {
+  deviceCode: String!
+  grantType: String!
+}
+
+type GetDeviceTokenOutput {
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+}
+
 type DeviceRequestError {
   code: String!
   message: String!
@@ -31,6 +57,18 @@ type DeviceRequestError {
 type CreateDeviceRequestResponse {
   success: Boolean!
   data: CreateDeviceRequestOutput
+  error: DeviceRequestError
+}
+
+type AuthorizeDeviceResponse {
+  success: Boolean!
+  data: AuthorizeDeviceOutput
+  error: DeviceRequestError
+}
+
+type GetDeviceTokenResponse {
+  success: Boolean!
+  data: GetDeviceTokenOutput
   error: DeviceRequestError
 }
 

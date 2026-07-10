@@ -18,6 +18,44 @@ actions:
     permissions:
       - role: anonymous
     comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
+  - name: authorizeDevice
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: authorizeDevice
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device/authorize'
+        version: 2
+    permissions:
+      - role: user
+    comment: User authorizes an extension device request after entering the user code on the /pair page.
+  - name: getDeviceToken
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: getDeviceToken
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device/token'
+        version: 2
+    permissions:
+      - role: anonymous
+    comment: Extension polls for the device authorization token. Returns the access token once the user has authorized.
   - name: createSignedUploadUrl
     definition:
       kind: synchronous
@@ -60,12 +98,18 @@ custom_types:
   enums: []
   input_objects:
     - name: CreateDeviceRequestInput
+    - name: AuthorizeDeviceInput
+    - name: GetDeviceTokenInput
     - name: SignedUploadUrlInput
     - name: SetVideoThumbnailAtTimeInput
   objects:
     - name: CreateDeviceRequestOutput
+    - name: AuthorizeDeviceOutput
+    - name: GetDeviceTokenOutput
     - name: DeviceRequestError
     - name: CreateDeviceRequestResponse
+    - name: AuthorizeDeviceResponse
+    - name: GetDeviceTokenResponse
     - name: SignedUploadUrlOutput
     - name: SignedUploadUrlResponse
     - name: SetVideoThumbnailAtTimeOutput
