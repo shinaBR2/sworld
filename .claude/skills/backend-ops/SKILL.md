@@ -40,21 +40,21 @@ Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.m
 - **stream-m3u8.ts** — fix a failed video: process an `.m3u8` (master or media) → GCS, finalize an existing `videos` row (`--url`/`--file`, `--video-id`, `--referer`, `--playlist`). Also owns the shared CLI config (`config set <key> <value>`).
 - **upload-subtitle.ts** — upload a `.vtt` (local or URL) → GCS, insert/update `subtitles` row.
 - **repair-fmp4.ts** — repackage a video's stored `.ts` → fMP4 (fixes garbled desktop-Chrome audio).
-- **No audio CLI exists** — for audios, write a one-off `tsx` script that reads `~/.sworld-cli/config.json`, uploads the mp3 to `audios/<userId>/<file>.mp3` via `@google-cloud/storage`, then `insert_audios_one` via Hasura admin (GraphQL field names: `artistName`, `user_id`, `source`, `name`, `public`). A reusable `audio.ts` CLI would be a nice follow-up. Full CLI docs: `sworld-backend/src/cli/README.md`.
+- **audio.ts** — publish a local `.mp3` to the listen library: no transcode, just upload verbatim to GCS + insert the `audios` row (`--file <path>` or `--dir <path>` for a whole folder, `--name`/`--artist` overrides, `--public`, `--dry-run`, `--skip-db`, `--user-id`). Handles dup-checking and filename metadata parsing itself — see below. Full CLI docs: `sworld-backend/src/cli/README.md`.
 
 ## Recurring task: "create audios"
 
-The owner's most common recurring ops ask: they have local `.mp3` files and ask to "create new audios." Just do it — don't explain the plumbing (GCS, CLI scripts, pipeline) unless asked; keep it simple.
+The owner's most common recurring ops ask: they have local `.mp3` files and ask to "create new audios." Just run `audio.ts` — don't explain the plumbing (GCS, CLI internals) unless asked; keep it simple.
 
-**The flow for each mp3:**
+```bash
+# One file (name + artist parsed from "Title - Artist.mp3"):
+npx tsx src/cli/audio.ts --file './Shape of You - Ed Sheeran.mp3' --user-id 6ff27fda-03e8-4dcd-949b-f1328f955065
 
-1. Owner = **shinabr2** by default.
-2. `name` + `artistName` from the filename — usually `Title - Artist.mp3`. Only ask if genuinely ambiguous; `artist_name` is NOT NULL so it must be set.
-3. `public: false` by default — publishing is an act of owning the database, not a user capability; only the admin/DB owner ever sets `public: true`.
-4. Upload the mp3 to GCS `audios/<shinabr2-id>/<slug>.mp3` and `insert_audios_one` via Hasura admin (one-off `tsx` script; no audio CLI yet).
-5. Quick dup-check by name+user first; verify the public URL returns 200 after.
+# A whole folder, dry-run first:
+npx tsx src/cli/audio.ts --dir ./album --user-id 6ff27fda-03e8-4dcd-949b-f1328f955065 --dry-run
+```
 
-Batches are common (a folder of mp3s).
+The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`artist_name` is NOT NULL — a file with no parseable artist and no `--artist` is reported and skipped, not silently defaulted), `public: false` by default (add `--public` only if explicitly asked — publishing is an act of owning the database, see the `security-reviewer` skill's publishing-is-owner-only invariant), an existing `(user_id, name)` skipped as a dup, and a `Created / Skipped / Failed` tally on a batch. Owner = **shinabr2** by default (`--user-id`, since `~/.sworld-cli/config.json`'s default points at quachtan).
 
 ## Third-party video imports (javhd/JAV, Wishlist SWO-118 "Videos" comments)
 
