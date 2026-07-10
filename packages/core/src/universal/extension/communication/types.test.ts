@@ -12,7 +12,14 @@ import type {
 
 describe('PageType', () => {
   it('should accept valid page types', () => {
-    const types: PageType[] = ['pdf', 'youtube', 'vimeo', 'video-generic', 'webpage', 'unknown'];
+    const types: PageType[] = [
+      'pdf',
+      'youtube',
+      'vimeo',
+      'video-generic',
+      'webpage',
+      'unknown',
+    ];
     expect(types).toHaveLength(6);
   });
 });
