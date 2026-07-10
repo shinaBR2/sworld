@@ -1,4 +1,8 @@
-import { getItems, removeItems, setItem } from 'core/universal/extension/storage';
+import {
+  getItems,
+  removeItems,
+  setItem,
+} from 'core/universal/extension/storage';
 import { hasuraConfig } from '../../envConfig';
 import { config } from '../../config';
 
@@ -37,7 +41,10 @@ const isAuthenticated = async (): Promise<boolean> => {
   return !isTokenExpired(token);
 };
 
-const startPairing = async (): Promise<{ userCode: string; verificationUri: string }> => {
+const startPairing = async (): Promise<{
+  userCode: string;
+  verificationUri: string;
+}> => {
   const extensionId = chrome.runtime.id;
 
   const response = await fetch(hasuraConfig.url, {
@@ -66,13 +73,17 @@ const startPairing = async (): Promise<{ userCode: string; verificationUri: stri
   const json = await response.json();
 
   if (json.errors) {
-    throw new Error(json.errors[0]?.message ?? 'Failed to create device request');
+    throw new Error(
+      json.errors[0]?.message ?? 'Failed to create device request',
+    );
   }
 
   const result = json.data?.createDeviceRequest;
 
   if (!result?.success || !result?.data) {
-    throw new Error(result?.error?.message ?? 'Failed to create device request');
+    throw new Error(
+      result?.error?.message ?? 'Failed to create device request',
+    );
   }
 
   return {
@@ -126,10 +137,4 @@ const logout = async (): Promise<void> => {
   await removeItems([AUTH_TOKEN_KEY]);
 };
 
-export {
-  getToken,
-  isAuthenticated,
-  startPairing,
-  pollForDeviceToken,
-  logout,
-};
+export { getToken, isAuthenticated, startPairing, pollForDeviceToken, logout };
