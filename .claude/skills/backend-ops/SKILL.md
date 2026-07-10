@@ -25,7 +25,7 @@ Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.m
 
 ## Credentials (already configured — reuse, don't ask)
 
-- **`~/.sworld-cli/config.json`**: `gcp-key` (service-account JSON at `/Users/tranvanvuong/Projects/sworld/cli.json`), `gcp-bucket` (`sworld-prod.appspot.com`), `hasura-endpoint` (`https://free-lamprey-59.hasura.app/v1/graphql`), `hasura-secret` (admin), `user-id` (see aliases above — override, don't trust the default).
+- **`~/.sworld-cli/config.json`**: `gcp-key` (path to the service-account JSON — read the value from the config, don't hardcode a path), `gcp-bucket` (`sworld-prod.appspot.com`), `hasura-endpoint` (`https://free-lamprey-59.hasura.app/v1/graphql`), `hasura-secret` (admin), `user-id` (see aliases above — override, don't trust the default).
 - GCS auth: `new Storage({ keyFilename })` with that `gcp-key`. `gcloud` ADC is NOT set up — always use the key file.
 - **`sworld-backend/.env`** also has: `GCP_STORAGE_BUCKET`, `HASURA_ADMIN_SECRET` + `HASURA_ENDPOINT`, `DATABASE_URL` (Neon Postgres, direct), Cloudinary, OpenAI, etc. `packages/core/.env` in the frontend repo also has `HASURA_GRAPHQL_URL` + `HASURA_ADMIN_SECRET` for quick admin queries via curl.
 
