@@ -1,4 +1,7 @@
-import type { ClipboardContent, ExtensionMessage } from 'core/universal/extension/communication/types';
+import type {
+  ClipboardContent,
+  ExtensionMessage,
+} from 'core/universal/extension/communication/types';
 
 const URL_REGEX = /https?:\/\/[^\s<>"']+/g;
 
@@ -66,4 +69,9 @@ const cleanupClipboardListener = (): void => {
   }
 };
 
-export { extractUrls, detectContentType, initClipboardListener, cleanupClipboardListener };
+export {
+  extractUrls,
+  detectContentType,
+  initClipboardListener,
+  cleanupClipboardListener,
+};

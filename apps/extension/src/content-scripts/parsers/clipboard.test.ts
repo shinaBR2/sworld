@@ -62,9 +62,9 @@ describe('extractUrls', () => {
 
 describe('detectContentType', () => {
   it('returns url when text is a single URL', () => {
-    expect(detectContentType('https://example.com', ['https://example.com'])).toBe(
-      'url',
-    );
+    expect(
+      detectContentType('https://example.com', ['https://example.com']),
+    ).toBe('url');
   });
 
   it('returns text for plain text with no URLs', () => {
