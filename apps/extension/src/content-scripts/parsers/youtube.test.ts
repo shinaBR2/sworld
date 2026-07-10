@@ -54,6 +54,14 @@ describe('getVideoId', () => {
     expect(getVideoId()).toBe('dQw4w9WgXcQ');
   });
 
+  it('should extract video id from youtu.be short URL', () => {
+    Object.defineProperty(window, 'location', {
+      value: new URL('https://youtu.be/dQw4w9WgXcQ'),
+      writable: true,
+    });
+    expect(getVideoId()).toBe('dQw4w9WgXcQ');
+  });
+
   it('should return undefined for non-video path', () => {
     Object.defineProperty(window, 'location', {
       value: new URL('https://youtube.com/feed'),

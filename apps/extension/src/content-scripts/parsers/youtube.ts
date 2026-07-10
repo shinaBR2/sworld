@@ -20,6 +20,8 @@ const getMetaContent = (property: string): string | undefined => {
   return el?.getAttribute('content') ?? undefined;
 };
 
+const YOUTU_BE_PATH_RE = /^\/([a-zA-Z0-9_-]{11})\/?/;
+
 const getVideoId = (): string | undefined => {
   if (typeof document === 'undefined') return undefined;
   const pathname = window.location.pathname;
@@ -30,6 +32,8 @@ const getVideoId = (): string | undefined => {
   if (pathname.startsWith('/embed/')) {
     return pathname.split('/')[2];
   }
+  const shortMatch = pathname.match(YOUTU_BE_PATH_RE);
+  if (shortMatch) return shortMatch[1];
   return undefined;
 };
 
