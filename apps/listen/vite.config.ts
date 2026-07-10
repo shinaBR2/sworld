@@ -37,7 +37,10 @@ export default defineConfig({
              * of this group — a group only routes code, it doesn't set load
              * timing. Eager is required to catch load-time crashes.
              */
-            { name: 'tracker-vendor', test: /node_modules\/(rollbar|@rollbar)\// },
+            {
+              name: 'tracker-vendor',
+              test: /node_modules\/(rollbar|@rollbar)\//,
+            },
             /**
              * Remaining third-party code (Auth0, TanStack, popper, …) in its
              * own chunk so it stays cacheable across app-code changes instead
