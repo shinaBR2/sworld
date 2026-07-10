@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { ExtensionMessage } from 'core/universal/extension/communication/types';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  extractUrls,
-  detectContentType,
-  initClipboardListener,
   cleanupClipboardListener,
+  detectContentType,
+  extractUrls,
+  initClipboardListener,
 } from './clipboard';
 
 const mockSendMessage = vi.fn();
