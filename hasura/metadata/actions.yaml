@@ -15,6 +15,7 @@ actions:
         template_engine: Kriti
         url: '{{$base_url}}/auth/device'
         version: 2
+      output_type: CreateDeviceRequestResponse
     permissions:
       - role: anonymous
     comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
@@ -53,6 +54,7 @@ actions:
         template_engine: Kriti
         url: '{{$base_url}}/auth/device/token'
         version: 2
+      output_type: GetDeviceTokenResponse
     permissions:
       - role: anonymous
     comment: Extension polls for the device authorization token. Returns the access token once the user has authorized.
