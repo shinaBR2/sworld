@@ -109,21 +109,23 @@ const pollForDeviceToken = async (
 
     const json = await response.json();
 
-    if (json.token) {
-      await setItem(AUTH_TOKEN_KEY, json.token);
+    if (json.data?.token) {
+      await setItem(AUTH_TOKEN_KEY, json.data.token);
       return;
     }
 
-    if (json.error === 'authorization_pending') {
+    const status = json.message ?? json.error;
+
+    if (status === 'authorization_pending') {
       await new Promise((resolve) => setTimeout(resolve, interval * 1000));
       continue;
     }
 
-    if (json.error === 'access_denied') {
+    if (status === 'access_denied') {
       throw new Error('access_denied');
     }
 
-    if (json.error === 'expired_token') {
+    if (status === 'expired_token') {
       throw new Error('expired_token');
     }
 
