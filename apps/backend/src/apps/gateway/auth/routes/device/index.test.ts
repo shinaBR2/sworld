@@ -3,10 +3,9 @@ import { createDeviceRequest } from './index';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
-import { AppResponse } from 'src/utils/schema';
+import { AppError, AppResponse } from 'src/utils/schema';
 import type { HandlerContext } from 'src/utils/requestHandler';
 
-// Mock dependencies
 vi.mock('src/utils/string', () => ({
   generateHumanCode: vi.fn(),
   generateSecureCode: vi.fn(),
@@ -23,37 +22,16 @@ vi.mock('src/utils/envConfig', () => ({
 }));
 
 describe('createDeviceRequest', () => {
-  const mockInput: HandlerContext<DeviceRequestCreateRequest> = {
-    validatedData: {
-      extensionId: 'ext-123',
-      ip: '192.168.1.1',
-      userAgent: 'Test User Agent',
-      input: {
-        input: {
-          extensionId: 'ext-123',
-        },
-      },
-      action: {
-        name: 'createDeviceRequest',
-      },
-      hasuraActionHeader: 'createDeviceRequest',
-      contentTypeHeader: 'application/json',
-    },
-  };
-
   const mockDate = new Date('2025-01-01T00:00:00Z');
   let dateNowSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    // Mock Date.now() to return a fixed timestamp
     dateNowSpy = vi
       .spyOn(Date, 'now')
       .mockImplementation(() => mockDate.getTime());
 
-    // Reset all mocks
     vi.clearAllMocks();
 
-    // Setup default mock implementations
     vi.mocked(generateSecureCode).mockReturnValue('mock-device-code');
     vi.mocked(generateHumanCode).mockReturnValue('MOCK-123');
     vi.mocked(createDeviceRequestMutation).mockResolvedValue({
@@ -64,38 +42,64 @@ describe('createDeviceRequest', () => {
   });
 
   afterEach(() => {
-    // Restore the original Date.now()
     dateNowSpy.mockRestore();
   });
 
-  it('should generate and store device request with correct parameters', async () => {
-    const result = await createDeviceRequest(mockInput);
+  const buildInput = (
+    overrides?: Partial<HandlerContext<DeviceRequestCreateRequest>>,
+  ): HandlerContext<DeviceRequestCreateRequest> => ({
+    validatedData: {
+      extensionId: 'abcdefghijklmnopabcdefghijklmnop',
+      ip: '192.168.1.1',
+      userAgent: 'Test User Agent',
+      input: {
+        input: {
+          extensionId: 'abcdefghijklmnopabcdefghijklmnop',
+        },
+      },
+      action: {
+        name: 'createDeviceRequest',
+      },
+      hasuraActionHeader: 'createDeviceRequest',
+      contentTypeHeader: 'application/json',
+    },
+    ...overrides,
+  });
 
-    // Verify codes were generated
+  it('should reject an invalid extension ID', async () => {
+    const input = buildInput();
+    input.validatedData.extensionId = 'invalid';
+    input.validatedData.input.input.extensionId = 'invalid';
+
+    const result = await createDeviceRequest(input);
+
+    expect(result).toEqual(AppError('invalid_client'));
+    expect(createDeviceRequestMutation).not.toHaveBeenCalled();
+  });
+
+  it('should generate and store device request with correct parameters', async () => {
+    const result = await createDeviceRequest(buildInput());
+
     expect(generateSecureCode).toHaveBeenCalledWith(64);
     expect(generateHumanCode).toHaveBeenCalled();
 
-    // Verify database call
-    const expectedExpiry = new Date(mockDate.getTime() + 10 * 60 * 1000);
     expect(createDeviceRequestMutation).toHaveBeenCalledWith({
       deviceCode: 'mock-device-code',
       userCode: 'MOCK-123',
-      extensionId: 'ext-123',
+      extensionId: 'abcdefghijklmnopabcdefghijklmnop',
       expiresAt: expect.any(Date),
       ipAddress: '192.168.1.1',
       userAgent: 'Test User Agent',
       status: 'pending',
     });
 
-    // Verify expiry date is approximately 10 minutes from now
     const actualExpiry = vi.mocked(createDeviceRequestMutation).mock
       .calls[0]?.[0]?.expiresAt;
     expect(actualExpiry).toBeInstanceOf(Date);
     const timeDiff = actualExpiry.getTime() - mockDate.getTime();
-    expect(timeDiff).toBeGreaterThanOrEqual(9.9 * 60 * 1000); // 9.9 minutes
-    expect(timeDiff).toBeLessThanOrEqual(10.1 * 60 * 1000); // 10.1 minutes
+    expect(timeDiff).toBeGreaterThanOrEqual(9.9 * 60 * 1000);
+    expect(timeDiff).toBeLessThanOrEqual(10.1 * 60 * 1000);
 
-    // Verify return value
     expect(result).toEqual(
       AppResponse(true, 'ok', {
         deviceCode: 'mock-device-code',
@@ -103,8 +107,8 @@ describe('createDeviceRequest', () => {
         verification_uri: 'https://watch.sworld.dev/pair',
         verification_uri_complete:
           'https://watch.sworld.dev/pair?code=MOCK-123',
-        expires_in: 600, // 10 minutes in seconds
-        interval: 5, // 5 seconds
+        expires_in: 600,
+        interval: 5,
       }),
     );
   });
@@ -112,7 +116,7 @@ describe('createDeviceRequest', () => {
   it('should use the generated user code in the verification URI', async () => {
     vi.mocked(generateHumanCode).mockReturnValue('TEST-456');
 
-    const result = await createDeviceRequest(mockInput);
+    const result = await createDeviceRequest(buildInput());
 
     expect(result.dataObject?.verification_uri_complete).toBe(
       'https://watch.sworld.dev/pair?code=TEST-456',
@@ -123,7 +127,7 @@ describe('createDeviceRequest', () => {
     const error = new Error('Database error');
     vi.mocked(createDeviceRequestMutation).mockRejectedValueOnce(error);
 
-    await expect(createDeviceRequest(mockInput)).rejects.toThrow(
+    await expect(createDeviceRequest(buildInput())).rejects.toThrow(
       'Database error',
     );
   });
@@ -133,11 +137,26 @@ describe('createDeviceRequest', () => {
       .mockReturnValueOnce('first-device-code')
       .mockReturnValueOnce('second-device-code');
 
-    await createDeviceRequest(mockInput);
-    await createDeviceRequest(mockInput);
+    await createDeviceRequest(buildInput());
+    await createDeviceRequest(buildInput());
 
     const calls = vi.mocked(createDeviceRequestMutation).mock.calls;
     expect(calls[0]?.[0]?.deviceCode).toBe('first-device-code');
     expect(calls[1]?.[0]?.deviceCode).toBe('second-device-code');
+  });
+
+  it('should return rate_limit_exceeded when rate limit is hit', async () => {
+    const input = buildInput();
+    input.validatedData.extensionId = 'pppppppppppppppppppppppppppppppp';
+    input.validatedData.ip = '10.0.0.1';
+    input.validatedData.input.input.extensionId =
+      'pppppppppppppppppppppppppppppppp';
+
+    for (let i = 0; i < 10; i++) {
+      await createDeviceRequest(input);
+    }
+
+    const result = await createDeviceRequest(input);
+    expect(result).toEqual(AppError('rate_limit_exceeded'));
   });
 });

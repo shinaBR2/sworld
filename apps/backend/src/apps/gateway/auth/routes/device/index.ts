@@ -1,8 +1,10 @@
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import { envConfig } from 'src/utils/envConfig';
+import { isValidExtensionId } from 'src/utils/extension';
+import { checkRateLimit } from 'src/utils/rateLimit';
 import type { HandlerContext } from 'src/utils/requestHandler';
-import { AppResponse } from 'src/utils/schema';
+import { AppError, AppResponse } from 'src/utils/schema';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 
 const createDeviceRequest = async (
@@ -12,13 +14,15 @@ const createDeviceRequest = async (
   const { ip, userAgent } = validatedData;
   const { extensionId } = validatedData.input.input;
 
-  // Validate extension ID
-  // if (!isValidExtensionId(extensionId)) {
-  //   return res.status(400).json({ error: 'invalid_client' });
-  // }
+  if (!isValidExtensionId(extensionId)) {
+    return AppError('invalid_client');
+  }
 
-  // // Rate limiting
-  // await checkRateLimit(req.ip, extensionId);
+  try {
+    checkRateLimit(ip, extensionId);
+  } catch {
+    return AppError('rate_limit_exceeded');
+  }
 
   // Generate codes
   const deviceCode = generateSecureCode(64); // Long, cryptographic
