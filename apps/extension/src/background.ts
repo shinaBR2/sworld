@@ -1,4 +1,9 @@
 import { removeItems, setItem } from 'core/universal/extension/storage';
+import type {
+  PageContent,
+  PdfMetadata,
+  VideoMetadata,
+} from 'core/universal/extension/communication/types';
 import { config } from '../config';
 import {
   getToken,
@@ -8,16 +13,14 @@ import {
   startPairing,
 } from './background/auth';
 import { importBook } from './background/library';
+import { importVideo } from './background/watch';
 import { createImportRecord, updateImportStatus } from './background/imports';
-import type {
-  PdfMetadata,
-  PageContent,
-} from 'core/universal/extension/communication/types';
 
 console.log('Background script starting...');
 
 let currentPageContent: PageContent | null = null;
 let currentPdfMetadata: PdfMetadata | null = null;
+let storedVideoMetadata: VideoMetadata | null = null;
 
 const importBookAsync = async (metadata: PdfMetadata): Promise<void> => {
   const record = createImportRecord('library', metadata.title);
@@ -126,8 +129,14 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       return;
     }
 
+    case 'VIDEO_METADATA_EXTRACTED': {
+      storedVideoMetadata = data;
+      sendResponse({ success: true });
+      return;
+    }
+
     case 'REQUEST_TAB_CONTENT': {
-      sendResponse({ content: currentPageContent });
+      sendResponse({ content: currentPageContent ?? storedVideoMetadata ?? null });
       return;
     }
 
@@ -136,18 +145,46 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
         contentId: string;
         targetApp: 'library' | 'watch';
       };
-      if (targetApp === 'library' && currentPdfMetadata) {
+
+      if (targetApp === 'library') {
+        if (!currentPdfMetadata) {
+          sendResponse({ started: false, error: 'No PDF metadata available' });
+          return;
+        }
         importBookAsync(currentPdfMetadata);
         sendResponse({ started: true });
-      } else {
-        sendResponse({
-          started: false,
-          error:
-            targetApp !== 'library'
-              ? 'Unsupported target app'
-              : 'No PDF metadata available',
-        });
+        return;
       }
+
+      if (targetApp === 'watch') {
+        if (!storedVideoMetadata) {
+          sendResponse({ success: false, error: 'No video metadata available' });
+          return;
+        }
+
+        const record = createImportRecord('watch', storedVideoMetadata.title);
+        updateImportStatus(record.importId, 'importing');
+
+        try {
+          const result = await importVideo(storedVideoMetadata);
+
+          if (result.success) {
+            updateImportStatus(record.importId, 'completed');
+            sendResponse({ success: true, videoId: result.videoId });
+          } else {
+            updateImportStatus(record.importId, 'failed', result.error);
+            sendResponse({ success: false, error: result.error });
+          }
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : 'Unknown error';
+          updateImportStatus(record.importId, 'failed', message);
+          sendResponse({ success: false, error: message });
+        }
+        return;
+      }
+
+      sendResponse({ started: false, error: 'Unsupported target app' });
       return;
     }
   }
