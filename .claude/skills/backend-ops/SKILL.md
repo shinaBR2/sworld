@@ -50,7 +50,7 @@ The owner's most common recurring ops ask: they have local `.mp3` files and ask 
 
 1. Owner = **shinabr2** by default.
 2. `name` + `artistName` from the filename — usually `Title - Artist.mp3`. Only ask if genuinely ambiguous; `artist_name` is NOT NULL so it must be set.
-3. `public: false` by default — see the `security-reviewer` skill's Hasura reference for why only the admin/DB owner may ever set `public: true`.
+3. `public: false` by default — publishing is an act of owning the database, not a user capability; only the admin/DB owner ever sets `public: true`.
 4. Upload the mp3 to GCS `audios/<shinabr2-id>/<slug>.mp3` and `insert_audios_one` via Hasura admin (one-off `tsx` script; no audio CLI yet).
 5. Quick dup-check by name+user first; verify the public URL returns 200 after.
 

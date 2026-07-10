@@ -23,7 +23,7 @@ Symptoms in this repo that look like framework bugs but have a known, boring cau
 pnpm exec turbo run build --filter=ui   # or --filter=listen to chain core→ui→listen
 pkill -f "vite --port 3001"
 rm -rf apps/listen/node_modules/.vite
-pnpm exec vite --port 3001 --force
+cd apps/listen && pnpm exec vite --port 3001 --force
 ```
 Tell: a new `console.log`/behavior never appears no matter how many times you restart — that's stale dist, not a caching fluke.
 
@@ -38,15 +38,13 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 - The whole workspace (`sworld`, `sworld-backend`, `sworld-hasura-v2`) runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
 - **Pinning convention:** pin the **exact** version (`24.18.0`) in `.nvmrc`, Dockerfiles (`node:24.18.0-slim`, never the moving `node:24-slim` tag), and CI `actions/setup-node`. Keep `engines.node` as a **range** (`>=24`) — it's a floor, not a pin.
 - **Package manager differs per repo:** `sworld` = pnpm workspace (`pnpm-lock.yaml`); `sworld-backend` and `sworld-hasura-v2` = **npm** (`package-lock.json`) — use `npm ci`/`npm outdated` there, not pnpm.
-- **`apps/game` is a dead/frozen app** — still on Vite 3 + Jest, deliberately excluded from the Node 24 migration, stays on Node 22. Jest survives only here; the rest of the frontend uses Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
+- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8) + Jest, deliberately excluded from the Node 24 migration, pinned to Node 22 in its CI workflows (`.github/workflows/live-game-fe.yml`). Jest survives only here; the rest of the frontend uses Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
 
 ## pnpm's dependency cooldown can freeze dep work for days
 
-`pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days, SWO-355) — pnpm refuses to *resolve* any version published more recently than that. See the `supply-chain-security` skill for why this exists. **Frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are.**
+`pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days, SWO-355). See the `supply-chain-security` skill for what this setting is, why it exists, and how to fix a cooldown block (`minimumReleaseAgeExclude`, never hand-editing the lockfile).
 
-**The trap:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) one package at a time until they age past 7 days — effectively freezing dependency work for a week after a big bump.
-
-**Fixes, in order:** wait it out; add vetted, intentionally-upgraded packages to `minimumReleaseAgeExclude:` in `pnpm-workspace.yaml` (enumerate the full set by iterating — the error names one package at a time); or a one-off `pnpm install --config.minimumReleaseAge=0` (still drags collateral re-resolve churn). **Never hand-edit `pnpm-lock.yaml`** to dodge this — let the tool own the lockfile.
+**The sworld-specific trap this skill exists to flag:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) one package at a time until they age past 7 days — effectively freezing dependency work for a week after a big bump. Frozen installs (CI, `--frozen-lockfile`) are unaffected; only local re-resolves are.
 
 ## CodeGraph index lives at the workspace root
 
