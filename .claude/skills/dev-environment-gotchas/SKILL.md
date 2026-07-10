@@ -31,7 +31,7 @@ Tell: a new `console.log`/behavior never appears no matter how many times you re
 
 Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO" / "cached") when verifying what a dependency or code change actually did to a built bundle — turbo restores `dist/` from cache when its input hash matches, which can be a dist built **before** the change under test, making a broken tree look verified.
 
-**How to apply:** for bundle verification, run the app's `vite build` directly (with any env vars that gate conditional providers, e.g. `VITE_PUBLIC_POSTHOG_KEY`) or `turbo build --force`. Confirm the log shows a real build ("✓ built in …"), then serve the dist and drive it headlessly with Playwright to read the console for runtime errors (a throwaway probe script — see the `e2e-testing` skill if one exists for the exact pattern).
+**How to apply:** for bundle verification, run the app's `vite build` directly (with any env vars that gate conditional providers, e.g. `VITE_PUBLIC_POSTHOG_KEY`) or `turbo build --force`. Confirm the log shows a real build ("✓ built in …"), then serve the dist and drive it headlessly with Playwright to read the console for runtime errors: launch a browser, register `page.on('console'/'pageerror')` handlers, navigate to the served dist, and check what got logged — a throwaway script deleted after use, not a checked-in test.
 
 ## Node version and package managers
 

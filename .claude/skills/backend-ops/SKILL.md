@@ -54,7 +54,7 @@ npx tsx src/cli/audio.ts --file './Shape of You - Ed Sheeran.mp3' --user-id 6ff2
 npx tsx src/cli/audio.ts --dir ./album --user-id 6ff27fda-03e8-4dcd-949b-f1328f955065 --dry-run
 ```
 
-The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`artist_name` is NOT NULL — a file with no parseable artist and no `--artist` is reported and skipped, not silently defaulted), `public: false` by default (add `--public` only if explicitly asked — publishing is an act of owning the database, see the `security-reviewer` skill's publishing-is-owner-only invariant), an existing `(user_id, name)` skipped as a dup, and a `Created / Skipped / Failed` tally on a batch. Owner = **shinabr2** by default (`--user-id`, since `~/.sworld-cli/config.json`'s default points at quachtan).
+The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`artist_name` is NOT NULL — a file with no parseable artist and no `--artist` is reported and skipped, not silently defaulted), `public: false` by default (add `--public` only if explicitly asked — publishing is an act of owning the database, not a user capability, so only flip it on explicit instruction), an existing `(user_id, name)` skipped as a dup, and a `Created / Skipped / Failed` tally on a batch. Owner = **shinabr2** by default (`--user-id`, since `~/.sworld-cli/config.json`'s default points at quachtan).
 
 ## Third-party video imports (javhd/JAV, Wishlist SWO-118 "Videos" comments)
 
