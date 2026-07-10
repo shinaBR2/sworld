@@ -1,4 +1,8 @@
-import type { PageContent, PageType, VideoMetadata } from 'core/universal/extension/communication/types';
+import type {
+  PageContent,
+  PageType,
+  VideoMetadata,
+} from 'core/universal/extension/communication/types';
 import { extractYouTubeMetadata } from './youtube';
 import { extractVimeoMetadata } from './vimeo';
 

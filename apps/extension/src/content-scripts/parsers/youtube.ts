@@ -46,7 +46,10 @@ const extractYouTubeMetadata = (): VideoMetadata => {
   const durationSeconds = durationIso ? parseDuration(durationIso) : undefined;
   const ogImage = getMetaContent('og:image');
   const thumbnailUrl =
-    ogImage || (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : undefined);
+    ogImage ||
+    (videoId
+      ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+      : undefined);
   const videoUrl = window.location.href;
 
   return {
