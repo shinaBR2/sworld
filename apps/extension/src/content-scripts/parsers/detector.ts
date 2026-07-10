@@ -3,8 +3,8 @@ import type {
   PageType,
   VideoMetadata,
 } from 'core/universal/extension/communication/types';
-import { extractYouTubeMetadata } from './youtube';
 import { extractVimeoMetadata } from './vimeo';
+import { extractYouTubeMetadata } from './youtube';
 
 const YOUTUBE_RE = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch|youtu\.be\/)/;
 const VIMEO_RE = /^(https?:\/\/)?(www\.)?vimeo\.com\//;
