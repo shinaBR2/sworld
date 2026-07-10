@@ -42,9 +42,11 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 
 ## pnpm's dependency cooldown can freeze dep work for days
 
-`pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days, SWO-355). See the `supply-chain-security` skill for what this setting is, why it exists, and how to fix a cooldown block (`minimumReleaseAgeExclude`, never hand-editing the lockfile).
+`pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days, SWO-355) — pnpm refuses to *resolve* any version published more recently than that. See the `supply-chain-security` skill for what this setting is and why it exists. Frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are.
 
-**The sworld-specific trap this skill exists to flag:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) one package at a time until they age past 7 days — effectively freezing dependency work for a week after a big bump. Frozen installs (CI, `--frozen-lockfile`) are unaffected; only local re-resolves are.
+**The sworld-specific trap:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) — one package at a time, since pnpm only reports the next blocked package per run — until they age past 7 days, effectively freezing dependency work for a week after a big bump.
+
+**Fixes, in order:** wait it out; add each vetted, intentionally-upgraded package to `minimumReleaseAgeExclude:` in `pnpm-workspace.yaml`, re-running and repeating until no package trips the cooldown (pnpm surfaces them one at a time — there's no single command that lists them all up front); or a one-off `pnpm install --config.minimumReleaseAge=0` for a genuinely urgent unblock (still drags collateral re-resolve churn). **Never hand-edit `pnpm-lock.yaml`** to dodge this — let the tool own the lockfile.
 
 ## CodeGraph index lives at the workspace root
 
