@@ -1,1 +1,1 @@
-console.log('SWorld Importer content script loaded');
+console.log('SWorld content script loaded');
