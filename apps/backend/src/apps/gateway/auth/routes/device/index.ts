@@ -1,27 +1,42 @@
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
+import type { CreateDeviceRequestResponse } from 'src/services/hasura/generated-graphql/graphql';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import { envConfig } from 'src/utils/envConfig';
 import { isValidExtensionId } from 'src/utils/extension';
 import { checkRateLimit } from 'src/utils/rateLimit';
 import type { HandlerContext } from 'src/utils/requestHandler';
-import { AppError, AppResponse } from 'src/utils/schema';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 
+const deviceError = (
+  code: string,
+  message: string,
+): CreateDeviceRequestResponse => ({
+  success: false,
+  error: { code, message },
+});
+
+// Mirrors the generated CreateDeviceRequestResponse ({ success, data, error })
+// exactly — the generic ServiceResponse/AppResponse envelope
+// ({ success, message, dataObject }) doesn't match this action's declared
+// GraphQL contract, so Hasura can never resolve `data`.
 const createDeviceRequest = async (
   context: HandlerContext<DeviceRequestCreateRequest>,
-) => {
+): Promise<CreateDeviceRequestResponse> => {
   const { validatedData } = context;
   const { ip, userAgent } = validatedData;
   const { extensionId } = validatedData.input.input;
 
   if (!isValidExtensionId(extensionId)) {
-    return AppError('invalid_client');
+    return deviceError('invalid_client', 'Invalid extension ID');
   }
 
   try {
     checkRateLimit(ip, extensionId);
   } catch {
-    return AppError('rate_limit_exceeded');
+    return deviceError(
+      'rate_limit_exceeded',
+      'Too many device requests. Please try again later.',
+    );
   }
 
   // Generate codes
@@ -40,14 +55,17 @@ const createDeviceRequest = async (
     status: 'pending',
   });
 
-  return AppResponse(true, 'ok', {
-    deviceCode, // Extension keeps this secret
-    userCode, // Show this to user
-    verification_uri: `${envConfig.mainSiteUrl}/pair`,
-    verification_uri_complete: `${envConfig.mainSiteUrl}/pair?code=${userCode}`,
-    expires_in: 600, // 10 minutes in seconds
-    interval: 5, // Poll every 5 seconds
-  });
+  return {
+    success: true,
+    data: {
+      deviceCode, // Extension keeps this secret
+      userCode, // Show this to user
+      verificationUri: `${envConfig.mainSiteUrl}/pair`,
+      verificationUriComplete: `${envConfig.mainSiteUrl}/pair?code=${userCode}`,
+      expiresIn: 600, // 10 minutes in seconds
+      interval: 5, // Poll every 5 seconds
+    },
+  };
 };
 
 export { createDeviceRequest };

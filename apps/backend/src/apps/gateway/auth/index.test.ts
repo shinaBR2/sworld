@@ -16,12 +16,19 @@ vi.mock('./routes/device/token', () => ({
   getDeviceToken: vi.fn(),
 }));
 
-// Mock the utilities
-vi.mock('src/utils/requestHandler', () => ({
-  honoRequestHandler: vi.fn(
-    (handler: (c: Context) => Promise<Response> | Response) => handler,
-  ),
-}));
+// Mock the utilities. honoActionHandler is spied on, not reimplemented, so
+// these tests exercise its real wrapping logic instead of a hand-copy of it.
+vi.mock('src/utils/requestHandler', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('src/utils/requestHandler')>();
+  return {
+    ...actual,
+    honoRequestHandler: vi.fn(
+      (handler: (c: Context) => Promise<Response> | Response) => handler,
+    ),
+    honoActionHandler: vi.fn(actual.honoActionHandler),
+  };
+});
 
 vi.mock('src/utils/validators/request', () => ({
   honoValidateRequest: vi.fn(
@@ -80,8 +87,8 @@ describe('authRouter', () => {
     expect(honoValidateRequest).toHaveBeenCalledWith(deviceRequestCreateSchema);
   });
 
-  it('should use honoRequestHandler with createDeviceRequest', async () => {
-    const { honoRequestHandler } = await import('src/utils/requestHandler');
+  it('should use honoActionHandler with createDeviceRequest', async () => {
+    const { honoActionHandler } = await import('src/utils/requestHandler');
     const { createDeviceRequest } = await import('./routes/device');
 
     const req = new Request('http://localhost/auth/device', {
@@ -90,11 +97,35 @@ describe('authRouter', () => {
 
     await app.fetch(req);
 
-    const mockRequestHandler = vi.mocked(honoRequestHandler);
-    expect(mockRequestHandler).toHaveBeenCalled();
+    const mockActionHandler = vi.mocked(honoActionHandler);
+    expect(mockActionHandler).toHaveBeenCalled();
 
-    const handlerArg = mockRequestHandler.mock.calls[0][0];
+    const handlerArg = mockActionHandler.mock.calls[0][0];
     expect(handlerArg).toBe(createDeviceRequest);
+  });
+
+  it("should return createDeviceRequest's result as the response JSON", async () => {
+    const { createDeviceRequest } = await import('./routes/device');
+    const mockResponse = {
+      success: true,
+      data: {
+        deviceCode: 'mock-device-code',
+        userCode: 'ABC-123',
+        verificationUri: 'https://watch.sworld.dev/pair',
+        verificationUriComplete: 'https://watch.sworld.dev/pair?code=ABC-123',
+        expiresIn: 600,
+        interval: 5,
+      },
+    };
+    vi.mocked(createDeviceRequest).mockResolvedValue(mockResponse);
+
+    const req = new Request('http://localhost/auth/device', {
+      method: 'POST',
+    });
+
+    const res = await app.fetch(req);
+
+    await expect(res.json()).resolves.toEqual(mockResponse);
   });
 
   it('should register the authorizeDevice POST route', async () => {
@@ -132,7 +163,7 @@ describe('authRouter', () => {
     await app.fetch(req);
 
     const mockRequestHandler = vi.mocked(honoRequestHandler);
-    const handlerArg = mockRequestHandler.mock.calls[1][0];
+    const handlerArg = mockRequestHandler.mock.calls[0][0];
     expect(handlerArg).toBe(authorizeDevice);
   });
 
@@ -176,7 +207,7 @@ describe('authRouter', () => {
     await app.fetch(req);
 
     const mockRequestHandler = vi.mocked(honoRequestHandler);
-    const handlerArg = mockRequestHandler.mock.calls[2][0];
+    const handlerArg = mockRequestHandler.mock.calls[1][0];
     expect(handlerArg).toBe(getDeviceToken);
   });
 });

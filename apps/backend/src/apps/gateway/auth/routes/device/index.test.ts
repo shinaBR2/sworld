@@ -3,7 +3,6 @@ import { createDeviceRequest } from './index';
 import { generateHumanCode, generateSecureCode } from 'src/utils/string';
 import { createDeviceRequest as createDeviceRequestMutation } from 'src/services/hasura/mutations/auth/device';
 import type { DeviceRequestCreateRequest } from 'src/schema/auth/device';
-import { AppError, AppResponse } from 'src/utils/schema';
 import type { HandlerContext } from 'src/utils/requestHandler';
 
 vi.mock('src/utils/string', () => ({
@@ -73,7 +72,10 @@ describe('createDeviceRequest', () => {
 
     const result = await createDeviceRequest(input);
 
-    expect(result).toEqual(AppError('invalid_client'));
+    expect(result).toEqual({
+      success: false,
+      error: { code: 'invalid_client', message: 'Invalid extension ID' },
+    });
     expect(createDeviceRequestMutation).not.toHaveBeenCalled();
   });
 
@@ -100,17 +102,17 @@ describe('createDeviceRequest', () => {
     expect(timeDiff).toBeGreaterThanOrEqual(9.9 * 60 * 1000);
     expect(timeDiff).toBeLessThanOrEqual(10.1 * 60 * 1000);
 
-    expect(result).toEqual(
-      AppResponse(true, 'ok', {
+    expect(result).toEqual({
+      success: true,
+      data: {
         deviceCode: 'mock-device-code',
         userCode: 'MOCK-123',
-        verification_uri: 'https://watch.sworld.dev/pair',
-        verification_uri_complete:
-          'https://watch.sworld.dev/pair?code=MOCK-123',
-        expires_in: 600,
+        verificationUri: 'https://watch.sworld.dev/pair',
+        verificationUriComplete: 'https://watch.sworld.dev/pair?code=MOCK-123',
+        expiresIn: 600,
         interval: 5,
-      }),
-    );
+      },
+    });
   });
 
   it('should use the generated user code in the verification URI', async () => {
@@ -118,7 +120,7 @@ describe('createDeviceRequest', () => {
 
     const result = await createDeviceRequest(buildInput());
 
-    expect(result.dataObject?.verification_uri_complete).toBe(
+    expect(result.data?.verificationUriComplete).toBe(
       'https://watch.sworld.dev/pair?code=TEST-456',
     );
   });
@@ -157,6 +159,12 @@ describe('createDeviceRequest', () => {
     }
 
     const result = await createDeviceRequest(input);
-    expect(result).toEqual(AppError('rate_limit_exceeded'));
+    expect(result).toEqual({
+      success: false,
+      error: {
+        code: 'rate_limit_exceeded',
+        message: 'Too many device requests. Please try again later.',
+      },
+    });
   });
 });
