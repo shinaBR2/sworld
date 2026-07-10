@@ -42,7 +42,7 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 ## During work
 
-- **Once a breakdown or plan is approved, work through it without pausing to reconfirm each step.** Don't ask "want me to start the next one?" between already-planned sub-issues/PRs — proceed automatically when one finishes and the next is unblocked, reporting progress as you go. Only stop to ask when there's a genuine decision the plan didn't settle: a real fork, a destructive/irreversible action, or new ambiguity.
+Once a breakdown or plan is approved, work through it without pausing to reconfirm each step: don't ask "want me to start the next one?" between already-planned sub-issues/PRs — proceed automatically when one finishes and the next is unblocked, reporting progress as you go. Only stop to ask when there's a genuine decision the plan didn't settle: a real fork, a destructive/irreversible action, or new ambiguity.
 
 9. The 3 files limit is soft — more is fine if changes are small, cohesive, and easy to review.
 10. NEVER bypass commit hooks — code MUST be formatted, linted, and type-checked.

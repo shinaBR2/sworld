@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: Enforces Playwright E2E conventions — canonical locators, semantic selectors, cross-page input→navigate→consume flow, exact assertions, dynamic mocks — and how to debug a runtime-only browser error with a headless Playwright probe. Auto-triggers when writing or editing any *.spec.ts file under e2e/ or its helpers/mocks, or when investigating a bug that only shows up as a browser console/runtime error.
+description: Enforces Playwright E2E conventions — canonical locators, semantic selectors, cross-page input→navigate→consume flow, exact assertions, dynamic mocks — and how to debug a runtime-only browser error by driving a headless Playwright probe. Auto-triggers when writing or editing any *.spec.ts file under e2e/ or its helpers/mocks, or when reaching for Playwright to read the browser console for a bug with no build/lint signal.
 user-invocable: false
 ---
 
