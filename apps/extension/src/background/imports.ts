@@ -1,11 +1,18 @@
-import { getItems, setItem, removeItems } from 'core/universal/extension/storage';
+import {
+  getItems,
+  setItem,
+  removeItems,
+} from 'core/universal/extension/storage';
 import type { ImportStatus } from 'core/universal/extension/communication/types';
 
 const STORAGE_KEY = 'importHistory';
 
 const imports = new Map<string, ImportStatus>();
 
-const createImportRecord = (targetApp: 'library' | 'watch', title?: string): ImportStatus => {
+const createImportRecord = (
+  targetApp: 'library' | 'watch',
+  title?: string,
+): ImportStatus => {
   const record: ImportStatus = {
     importId: crypto.randomUUID(),
     status: 'pending',
@@ -19,7 +26,11 @@ const createImportRecord = (targetApp: 'library' | 'watch', title?: string): Imp
   return record;
 };
 
-const updateImportStatus = (importId: string, status: ImportStatus['status'], error?: string): void => {
+const updateImportStatus = (
+  importId: string,
+  status: ImportStatus['status'],
+  error?: string,
+): void => {
   const record = imports.get(importId);
   if (!record) return;
 
@@ -58,4 +69,9 @@ const persistHistory = async (): Promise<void> => {
   await setItem(STORAGE_KEY, JSON.stringify(records));
 };
 
-export { createImportRecord, updateImportStatus, getImportHistory, clearImportHistory };
+export {
+  createImportRecord,
+  updateImportStatus,
+  getImportHistory,
+  clearImportHistory,
+};

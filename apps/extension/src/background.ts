@@ -8,10 +8,7 @@ import {
   startPairing,
 } from './background/auth';
 import { importBook } from './background/library';
-import {
-  createImportRecord,
-  updateImportStatus,
-} from './background/imports';
+import { createImportRecord, updateImportStatus } from './background/imports';
 import type {
   PdfMetadata,
   PageContent,
@@ -121,7 +118,9 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
         url: currentPdfMetadata.url,
         title: currentPdfMetadata.title || 'Untitled PDF',
         pageType: 'pdf',
-        description: currentPdfMetadata.author ? `Author: ${currentPdfMetadata.author}` : undefined,
+        description: currentPdfMetadata.author
+          ? `Author: ${currentPdfMetadata.author}`
+          : undefined,
       };
       sendResponse({ received: true });
       return;
@@ -133,12 +132,21 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     }
 
     case 'IMPORT_CONTENT': {
-      const { targetApp } = message.payload as { contentId: string; targetApp: 'library' | 'watch' };
+      const { targetApp } = message.payload as {
+        contentId: string;
+        targetApp: 'library' | 'watch';
+      };
       if (targetApp === 'library' && currentPdfMetadata) {
         importBookAsync(currentPdfMetadata);
         sendResponse({ started: true });
       } else {
-        sendResponse({ started: false, error: targetApp !== 'library' ? 'Unsupported target app' : 'No PDF metadata available' });
+        sendResponse({
+          started: false,
+          error:
+            targetApp !== 'library'
+              ? 'Unsupported target app'
+              : 'No PDF metadata available',
+        });
       }
       return;
     }
