@@ -7,13 +7,18 @@ import {
   ThemeProvider,
   Typography,
 } from '@mui/material';
-import type { ExtensionMessage } from 'core/universal/extension/communication/types';
+import type {
+  ExtensionMessage,
+  ImportStatus,
+} from 'core/universal/extension/communication/types';
 import { useState } from 'react';
 import { AuthPanel } from './components/AuthPanel';
 import { AutoDetectTab } from './components/AutoDetectTab';
 import { ClipboardTab } from './components/ClipboardTab';
 import { RecentTab } from './components/RecentTab';
+import { ToastContainer } from './components/ToastContainer';
 import { usePopupMessaging } from './hooks/usePopupMessaging';
+import { useToast } from './hooks/useToast';
 
 const darkTheme = createTheme({
   palette: {
@@ -22,9 +27,25 @@ const darkTheme = createTheme({
 });
 
 const Popup = () => {
-  const { content, isLoading, isAuthenticated, imports, sendMessage } =
-    usePopupMessaging();
+  const { toasts, addToast, removeToast } = useToast();
   const [tabIndex, setTabIndex] = useState(0);
+
+  const handleStatusChange = (status: ImportStatus) => {
+    switch (status.status) {
+      case 'importing':
+        addToast('Importing...', 'info');
+        break;
+      case 'completed':
+        addToast('Import complete!', 'success');
+        break;
+      case 'failed':
+        addToast(status.error || 'Import failed', 'error');
+        break;
+    }
+  };
+
+  const { content, isLoading, isAuthenticated, imports, sendMessage } =
+    usePopupMessaging(handleStatusChange);
 
   const handleImport = (contentId: string, targetApp: 'library' | 'watch') => {
     const message: ExtensionMessage = {
@@ -62,6 +83,7 @@ const Popup = () => {
           </Box>
           <AuthPanel />
         </Box>
+        <ToastContainer toasts={toasts} onRemove={removeToast} />
       </ThemeProvider>
     );
   }
@@ -106,6 +128,7 @@ const Popup = () => {
           )}
         </Box>
       </Box>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ThemeProvider>
   );
 };
