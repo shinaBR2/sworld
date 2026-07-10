@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
-import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 
 interface Transaction {
   id: string;

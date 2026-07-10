@@ -9,6 +9,7 @@ import SkipNextRounded from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRounded from '@mui/icons-material/SkipPreviousRounded';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
+
 enum SAudioPlayerLoopMode {
   None = 'none',
   All = 'all',
