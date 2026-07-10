@@ -134,3 +134,6 @@ dist
 .DS_Store
 
 crawler-storage/
+
+# Linear CLI local workspace config (may contain api_key)
+.linear.toml
