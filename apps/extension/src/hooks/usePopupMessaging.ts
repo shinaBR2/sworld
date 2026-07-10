@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
 import type {
-  PageContent,
-  ImportStatus,
   ExtensionMessage,
+  ImportStatus,
+  PageContent,
 } from 'core/universal/extension/communication/types';
+import { useCallback, useEffect, useState } from 'react';
 
 interface PopupMessagingState {
   content: PageContent | null;

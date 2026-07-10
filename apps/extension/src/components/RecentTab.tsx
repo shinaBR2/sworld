@@ -1,10 +1,10 @@
 import {
   Box,
-  Typography,
+  Button,
   List,
   ListItem,
   ListItemText,
-  Button,
+  Typography,
 } from '@mui/material';
 import type { ImportStatus } from 'core/universal/extension/communication/types';
 import { ImportStatusBadge } from './ImportStatusBadge';

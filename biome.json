@@ -15,7 +15,7 @@
       "!**/public/assets",
       "!**/storybook-static",
       "!**/coverage",
-      "!packages/core/src/graphql/**",
+      "!packages/core/src/graphql",
       "!packages/core/schema.graphql",
       "!**/routeTree.gen.ts"
     ],

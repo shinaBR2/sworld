@@ -1,19 +1,19 @@
-import { useState } from 'react';
 import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
   Box,
-  Tabs,
+  CssBaseline,
+  createTheme,
   Tab,
+  Tabs,
+  ThemeProvider,
   Typography,
 } from '@mui/material';
+import type { ExtensionMessage } from 'core/universal/extension/communication/types';
+import { useState } from 'react';
 import { AuthPanel } from './components/AuthPanel';
 import { AutoDetectTab } from './components/AutoDetectTab';
 import { ClipboardTab } from './components/ClipboardTab';
 import { RecentTab } from './components/RecentTab';
 import { usePopupMessaging } from './hooks/usePopupMessaging';
-import type { ExtensionMessage } from 'core/universal/extension/communication/types';
 
 const darkTheme = createTheme({
   palette: {

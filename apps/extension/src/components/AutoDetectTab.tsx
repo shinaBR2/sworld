@@ -1,4 +1,4 @@
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import type { PageContent } from 'core/universal/extension/communication/types';
 import { ActionCard } from './ActionCard';
 

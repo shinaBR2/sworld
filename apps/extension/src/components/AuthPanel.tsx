@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
 import {
+  Alert,
   Box,
-  Typography,
   Button,
   CircularProgress,
-  Alert,
+  Typography,
 } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
 
 const AuthPanel = () => {
   const [userCode, setUserCode] = useState('');

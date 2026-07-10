@@ -1,5 +1,5 @@
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
 
 interface ClipboardTabProps {
   onImportClipboard: (text: string) => void;
