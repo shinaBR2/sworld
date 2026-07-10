@@ -7,8 +7,31 @@ import {
   pollForDeviceToken,
   startPairing,
 } from './background/auth';
+import { importBook } from './background/library';
+import { createImportRecord, updateImportStatus } from './background/imports';
+import type {
+  PdfMetadata,
+  PageContent,
+} from 'core/universal/extension/communication/types';
 
 console.log('Background script starting...');
+
+let currentPageContent: PageContent | null = null;
+let currentPdfMetadata: PdfMetadata | null = null;
+
+const importBookAsync = async (metadata: PdfMetadata): Promise<void> => {
+  const record = createImportRecord('library', metadata.title);
+
+  updateImportStatus(record.importId, 'importing');
+
+  const result = await importBook(metadata);
+
+  if (result.success) {
+    updateImportStatus(record.importId, 'completed');
+  } else {
+    updateImportStatus(record.importId, 'failed', result.error);
+  }
+};
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Extension installed/updated');
@@ -86,6 +109,45 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     case 'LOGOUT': {
       await logout();
       sendResponse({ success: true });
+      return;
+    }
+
+    case 'PDF_METADATA_EXTRACTED': {
+      currentPdfMetadata = message.payload as PdfMetadata;
+      currentPageContent = {
+        url: currentPdfMetadata.url,
+        title: currentPdfMetadata.title || 'Untitled PDF',
+        pageType: 'pdf',
+        description: currentPdfMetadata.author
+          ? `Author: ${currentPdfMetadata.author}`
+          : undefined,
+      };
+      sendResponse({ received: true });
+      return;
+    }
+
+    case 'REQUEST_TAB_CONTENT': {
+      sendResponse({ content: currentPageContent });
+      return;
+    }
+
+    case 'IMPORT_CONTENT': {
+      const { targetApp } = message.payload as {
+        contentId: string;
+        targetApp: 'library' | 'watch';
+      };
+      if (targetApp === 'library' && currentPdfMetadata) {
+        importBookAsync(currentPdfMetadata);
+        sendResponse({ started: true });
+      } else {
+        sendResponse({
+          started: false,
+          error:
+            targetApp !== 'library'
+              ? 'Unsupported target app'
+              : 'No PDF metadata available',
+        });
+      }
       return;
     }
   }
