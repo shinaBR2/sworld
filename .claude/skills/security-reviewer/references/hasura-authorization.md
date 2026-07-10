@@ -120,6 +120,24 @@ there's **another** way in. So for each such table, confirm:
       backend must authorise (see `hono-backend.md`). An action exposed to `user` that accepts
       arbitrary IDs is only as safe as the backend's own ownership check.
 
+## Business invariant: `public` is owner-only, on every content table
+
+"Public" is an act of owning the database, not a user capability. Only the admin secret / direct DB
+access (i.e. `shinabr2`, the DB owner) may set a content row's `public` flag — **no** non-admin role
+(`user`, `vip`, or any future role) may write a publicity field, on **any** content table, on insert
+or update. `select` is unaffected — reading publicity is fine for everyone. Covered today: `audios`,
+`playlist`, `videos`. Enforced by omitting `public` from the non-admin `insert`/`update` column
+allowlists — flag it as a finding if a new content table's non-admin permission includes `public` in
+either list. Codegen introspects as **admin** (keeps `public` in generated types), so this invariant
+never shows up as a frontend type change — the only place it's visible is the metadata YAML itself.
+
+**Verification recipe (no live-Hasura test needed for this):** role-simulate with curl —
+`x-hasura-admin-secret` + `x-hasura-role: user` (or `vip`) attempting to set `public` on
+insert/update — expect a Hasura validation error (`field 'public' not found in type:
+..._insert_input` / `..._set_input`). That response *is* the guard; don't add a live-Hasura
+regression test for this static metadata fact (`sworld-hasura-v2` CI only runs lint, not the
+vitest role-suite — a live test here is a rabbit hole, not a safety net).
+
 ## Severity calibration for this layer
 
 - **Real leak (High/Critical):** an *exposed-root-field* table with a missing or `{}` filter holding

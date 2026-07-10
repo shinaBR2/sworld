@@ -67,3 +67,20 @@ A cross-page spec must **follow the doc's steps literally**: navigate to each in
 - Run `npx prettier --write` on every touched file before pushing — the CI quality gate fails on unformatted code.
 - **Never run multiple E2E builds/tests in parallel** — all preview servers share port 4173, so parallel runs conflict and flake. When fixing several E2E PRs, agents only *write*; build/test sequentially, one worktree at a time.
 - **Don't auto-rerun a flaky E2E failure** when it cancelled at an infra/setup step (`Install Playwright OS dependencies`, runner allocation, network) and the PR doesn't touch test code — that's noise, not a real failure.
+
+## 8. Debugging a runtime-only browser error
+
+When a bug only shows in the browser console (not in any build/lint log) and the Claude Chrome extension isn't connected, drive Playwright headlessly to read the console yourself instead of guessing — it's already a dep. Pattern (a throwaway `probe.mjs` inside the app dir so `@playwright/test` resolves; `pnpm exec playwright install chromium` first):
+
+```js
+import { chromium } from '@playwright/test';
+const b = await chromium.launch(); const p = await b.newPage();
+const errs = [];
+p.on('pageerror', e => errs.push(e.message));
+p.on('console', m => { if (m.type()==='error') errs.push(m.text()); });
+await p.goto('http://localhost:3001/', { waitUntil: 'load', timeout: 30000 });
+await p.waitForTimeout(4000); await b.close();
+console.log('MATCH=', errs.filter(e => /createTheme/i.test(e)).length, 'TOTAL=', errs.length);
+```
+
+**Always reproduce the baseline first** — run the probe against the broken state and confirm it detects the error — before trusting a "0 errors" result on a fix. Delete the probe file before committing. See the `dev-environment-gotchas` skill for the class of dist/HMR issues this technique is often used to confirm.
