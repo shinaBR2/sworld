@@ -1,8 +1,12 @@
 import { Hono } from 'hono';
 import { deviceRequestCreateSchema } from 'src/schema/auth/device';
+import { authorizeDeviceSchema } from 'src/schema/auth/device/authorize';
+import { getDeviceTokenSchema } from 'src/schema/auth/device/token';
 import { honoRequestHandler } from 'src/utils/requestHandler';
 import { honoValidateRequest } from 'src/utils/validators/request';
 import { createDeviceRequest } from './routes/device';
+import { authorizeDevice } from './routes/device/authorize';
+import { getDeviceToken } from './routes/device/token';
 
 const authRouter = new Hono();
 
@@ -34,6 +38,18 @@ authRouter.post(
   '/device',
   honoValidateRequest(deviceRequestCreateSchema),
   honoRequestHandler(createDeviceRequest),
+);
+
+authRouter.post(
+  '/device/authorize',
+  honoValidateRequest(authorizeDeviceSchema),
+  honoRequestHandler(authorizeDevice),
+);
+
+authRouter.post(
+  '/device/token',
+  honoValidateRequest(getDeviceTokenSchema),
+  honoRequestHandler(getDeviceToken),
 );
 
 export { authRouter };
