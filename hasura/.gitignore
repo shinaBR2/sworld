@@ -43,3 +43,6 @@ config.yaml.*
 # Optional: Temporary files
 tmp/
 temp/
+
+# Linear CLI local workspace config (may contain api_key)
+.linear.toml
