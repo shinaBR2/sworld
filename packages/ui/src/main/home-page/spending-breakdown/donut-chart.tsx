@@ -1,7 +1,6 @@
 import { Box, Skeleton, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import type { CategoryType } from 'core/finance';
-import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 import { formatNumber } from 'core/universal/common';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TooltipComponent } from 'echarts/components';
@@ -12,6 +11,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 // default import resolves to the module object instead of the component,
 // which crashes the finance page with React error #130 (SWO-356).
 import ReactEChartsCore from 'echarts-for-react/esm/core';
+import { getFinanceColor } from '../../../universal/minimalism/domainPalette';
 
 echarts.use([PieChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 

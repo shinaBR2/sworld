@@ -3,8 +3,8 @@ import {
   removeItems,
   setItem,
 } from 'core/universal/extension/storage';
-import { hasuraConfig } from '../../envConfig';
 import { config } from '../../config';
+import { hasuraConfig } from '../../envConfig';
 
 const AUTH_TOKEN_KEY = 'auth0Token';
 

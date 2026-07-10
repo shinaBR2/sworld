@@ -1,11 +1,11 @@
 import { removeItems, setItem } from 'core/universal/extension/storage';
 import { config } from '../config';
 import {
-  isAuthenticated,
   getToken,
-  startPairing,
-  pollForDeviceToken,
+  isAuthenticated,
   logout,
+  pollForDeviceToken,
+  startPairing,
 } from './background/auth';
 
 console.log('Background script starting...');
