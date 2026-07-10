@@ -83,4 +83,4 @@ await p.waitForTimeout(4000); await b.close();
 console.log('MATCH=', errs.filter(e => /createTheme/i.test(e)).length, 'TOTAL=', errs.length);
 ```
 
-**Always reproduce the baseline first** — run the probe against the broken state and confirm it detects the error — before trusting a "0 errors" result on a fix. Delete the probe file before committing. See the `dev-environment-gotchas` skill for the class of dist/HMR issues this technique is often used to confirm.
+**Always reproduce the baseline first** — run the probe against the broken state and confirm it detects the error — before trusting a "0 errors" result on a fix. Delete the probe file before committing. This technique is often used to confirm dist/HMR-staleness bugs, where a change silently doesn't take effect in the running dev server.
