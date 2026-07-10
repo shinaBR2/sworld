@@ -11,12 +11,15 @@ produce a CRITICAL that wasn't (see "The `filter: {}` false positive" below).
 - Metadata (sibling repo `sworld-hasura-v2`) under `metadata/databases/sworld/tables/` — one YAML
   per table, each with per-role permissions for `select`/`insert`/`update`/`delete`.
 - **Roles:** `anonymous` (unauthenticated — several content tables intentionally expose read-only
-  access, e.g. `public_audios.yaml`, `public_videos.yaml`), `user` (every authenticated user), and
-  `vip` (elevated non-admin, currently permissioned on a couple of tables, e.g.
-  `public_crawl_requests.yaml`). Role comes from the validated JWT (`auth0-and-jwt.md`). `manager`
-  is referenced as a role concept at the JWT/allowed-roles layer but currently has no explicit
-  permissions on any table in this repo's metadata — verify with a fresh
-  `grep -rl "role: manager" metadata/` before treating a `manager`-specific finding as live.
+  `select` access, e.g. `public_audios.yaml`, `public_videos.yaml`; `anonymous` must never appear
+  in an `insert`/`update`/`delete` permission block — flag that as a real finding, not hardening),
+  `user` (every authenticated user), and `vip` (elevated non-admin, currently permissioned on a
+  couple of tables, e.g. `public_crawl_requests.yaml`). Role comes from the validated JWT
+  (`auth0-and-jwt.md`). `manager` is referenced as a role concept at the JWT/allowed-roles layer
+  but currently has no explicit permissions on any table in this repo's metadata — verify with a
+  fresh `grep -rl "role: manager" metadata/` before treating a `manager`-specific finding as live
+  (see also the `manager` checklist item below, which describes what to check once it does gain
+  permissions).
 - Writes to most domain tables go through the **backend with the admin secret**, not direct
   user-role mutations — so many tables are `select`-only for `user`.
 
@@ -105,8 +108,10 @@ there's **another** way in. So for each such table, confirm:
       scopes to `X-Hasura-User-Id` or a membership relationship — these are where a missing/`{}`
       filter is a *real* leak.
 - [ ] **Sensitive columns** (e.g. `hasura_role`, internal flags) are column-restricted for `user`.
-- [ ] **`manager` scope** is its actual job, not a global backdoor — watch `{}` filters on `users` /
-      financial tables as `manager` gains permissions.
+- [ ] **`manager` scope** is its actual job, not a global backdoor. As of writing `manager` has no
+      explicit table permissions (see "Roles" above) — this item is forward-looking: the moment a
+      table grants `manager` anything, re-verify with `grep -rl "role: manager" metadata/` and check
+      its filter isn't `{}` on `users`/financial tables.
 - [ ] **Production hardening** (judge against the deployed/production Hasura, *not* the local
       `docker-compose.yml`):
   - **Introspection** (`graphql_schema_introspection.yaml`): leaving it on lets an *authenticated*
