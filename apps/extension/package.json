@@ -12,6 +12,9 @@
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^9.1.2",
     "core": "workspace:*",
     "pdfjs-dist": "^6.1.200",
     "react": "^19.2.0",
