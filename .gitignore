@@ -23,3 +23,6 @@ apps/listen/stats.html
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Linear CLI local workspace config (may contain api_key)
+.linear.toml
