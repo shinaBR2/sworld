@@ -3,7 +3,8 @@ import type {
   ImportStatus,
   PageContent,
 } from 'core/universal/extension/communication/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useImportHistory } from './useImportHistory';
 
 interface PopupMessagingState {
   content: PageContent | null;
@@ -15,11 +16,15 @@ interface PopupMessagingState {
 
 const CHROME_UNAVAILABLE = typeof chrome === 'undefined' || !chrome.runtime?.id;
 
-const usePopupMessaging = (): PopupMessagingState => {
+const usePopupMessaging = (
+  onStatusChange?: (status: ImportStatus) => void,
+): PopupMessagingState => {
   const [content, setContent] = useState<PageContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [imports, setImports] = useState<ImportStatus[]>([]);
+  const { imports, saveImports } = useImportHistory();
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
 
   const sendMessage = useCallback((message: ExtensionMessage) => {
     if (CHROME_UNAVAILABLE) return;
@@ -44,7 +49,7 @@ const usePopupMessaging = (): PopupMessagingState => {
           setIsAuthenticated(message.payload.authenticated);
           break;
         case 'IMPORT_STATUS':
-          setImports((prev) => {
+          saveImports((prev) => {
             const existing = prev.findIndex(
               (i) => i.importId === message.payload.importId,
             );
@@ -55,6 +60,7 @@ const usePopupMessaging = (): PopupMessagingState => {
             }
             return [...prev, message.payload];
           });
+          onStatusChangeRef.current?.(message.payload);
           break;
       }
     };
@@ -80,7 +86,7 @@ const usePopupMessaging = (): PopupMessagingState => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
     };
-  }, []);
+  }, [saveImports]);
 
   return { content, isLoading, isAuthenticated, imports, sendMessage };
 };
