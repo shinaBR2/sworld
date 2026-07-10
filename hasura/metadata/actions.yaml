@@ -104,12 +104,45 @@ custom_types:
     - name: SetVideoThumbnailAtTimeInput
   objects:
     - name: CreateDeviceRequestOutput
+      fields:
+        - name: deviceCode
+          type: string!
+        - name: userCode
+          type: string!
+        - name: verification_uri
+          type: string!
+        - name: verification_uri_complete
+          type: string!
+        - name: expires_in
+          type: int!
+        - name: interval
+          type: int!
     - name: AuthorizeDeviceOutput
     - name: GetDeviceTokenOutput
+      fields:
+        - name: token
+          type: string!
     - name: DeviceRequestError
+      fields:
+        - name: code
+          type: string!
+        - name: message
+          type: string!
     - name: CreateDeviceRequestResponse
+      fields:
+        - name: success
+          type: boolean!
+        - name: data
+          type: CreateDeviceRequestOutput
     - name: AuthorizeDeviceResponse
     - name: GetDeviceTokenResponse
+      fields:
+        - name: success
+          type: boolean!
+        - name: data
+          type: GetDeviceTokenOutput
+        - name: error
+          type: DeviceRequestError
     - name: SignedUploadUrlOutput
     - name: SignedUploadUrlResponse
     - name: SetVideoThumbnailAtTimeOutput
