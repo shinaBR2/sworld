@@ -10,9 +10,13 @@ produce a CRITICAL that wasn't (see "The `filter: {}` false positive" below).
 
 - Metadata (sibling repo `sworld-hasura-v2`) under `metadata/databases/sworld/tables/` — one YAML
   per table, each with per-role permissions for `select`/`insert`/`update`/`delete`.
-- **Roles:** `user` (every authenticated user) and `manager` (ops). Role comes from the validated
-  JWT (`auth0-and-jwt.md`). No `anonymous`/unauthenticated role — unauthenticated callers get
-  nothing, which is correct.
+- **Roles:** `anonymous` (unauthenticated — several content tables intentionally expose read-only
+  access, e.g. `public_audios.yaml`, `public_videos.yaml`), `user` (every authenticated user), and
+  `vip` (elevated non-admin, currently permissioned on a couple of tables, e.g.
+  `public_crawl_requests.yaml`). Role comes from the validated JWT (`auth0-and-jwt.md`). `manager`
+  is referenced as a role concept at the JWT/allowed-roles layer but currently has no explicit
+  permissions on any table in this repo's metadata — verify with a fresh
+  `grep -rl "role: manager" metadata/` before treating a `manager`-specific finding as live.
 - Writes to most domain tables go through the **backend with the admin secret**, not direct
   user-role mutations — so many tables are `select`-only for `user`.
 
