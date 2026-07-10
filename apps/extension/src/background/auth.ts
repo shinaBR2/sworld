@@ -57,7 +57,7 @@ const startPairing = async (): Promise<{
             success
             data {
               userCode
-              verification_uri
+              verificationUri
             }
           }
         }
@@ -88,7 +88,7 @@ const startPairing = async (): Promise<{
 
   return {
     userCode: result.data.userCode,
-    verificationUri: result.data.verification_uri,
+    verificationUri: result.data.verificationUri,
   };
 };
 
