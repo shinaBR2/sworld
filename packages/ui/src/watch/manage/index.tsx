@@ -1,6 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
 import { lazy, Suspense, useState } from 'react';
@@ -21,15 +28,46 @@ interface HeaderSites {
   til: string;
 }
 
+interface ManageVideo {
+  id: string;
+  title: string;
+  source?: string | null;
+  slug: string;
+  playlistName?: string;
+}
+
+interface ManagePlaylist {
+  id: string;
+  title: string;
+  slug: string;
+}
+
 interface ManageScreenProps {
   sites: HeaderSites;
   user: Auth.CustomUser | null;
   onLogout: () => void;
   onNavigateSettings?: () => void;
+  videos?: ManageVideo[];
+  playlists?: ManagePlaylist[];
+  onDeleteVideo?: (id: string) => void;
+  onDeletePlaylist?: (id: string) => void;
+  deletingVideoId?: string | null;
+  deletingPlaylistId?: string | null;
 }
 
 const ManageScreen = (props: ManageScreenProps) => {
-  const { sites, user, onLogout, onNavigateSettings } = props;
+  const {
+    sites,
+    user,
+    onLogout,
+    onNavigateSettings,
+    videos = [],
+    playlists = [],
+    onDeleteVideo,
+    onDeletePlaylist,
+    deletingVideoId,
+    deletingPlaylistId,
+  } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -58,6 +96,82 @@ const ManageScreen = (props: ManageScreenProps) => {
             Import videos and manage your content.
           </Typography>
         </Box>
+        <Stack spacing={4} sx={{ pb: 8 }}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Videos
+            </Typography>
+            {videos.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No videos yet.
+              </Typography>
+            ) : (
+              <List disablePadding>
+                {videos.map((video) => (
+                  <ListItem
+                    key={video.id}
+                    secondaryAction={
+                      onDeleteVideo ? (
+                        <IconButton
+                          edge="end"
+                          aria-label={`Delete ${video.title}`}
+                          onClick={() => onDeleteVideo(video.id)}
+                          disabled={deletingVideoId === video.id}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      ) : null
+                    }
+                  >
+                    <ListItemText
+                      primary={
+                        video.playlistName
+                          ? `${video.title} (${video.playlistName})`
+                          : video.title
+                      }
+                      secondary={video.slug}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Paper>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Playlists
+            </Typography>
+            {playlists.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No playlists yet.
+              </Typography>
+            ) : (
+              <List disablePadding>
+                {playlists.map((playlist) => (
+                  <ListItem
+                    key={playlist.id}
+                    secondaryAction={
+                      onDeletePlaylist ? (
+                        <IconButton
+                          edge="end"
+                          aria-label={`Delete ${playlist.title}`}
+                          onClick={() => onDeletePlaylist(playlist.id)}
+                          disabled={deletingPlaylistId === playlist.id}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      ) : null
+                    }
+                  >
+                    <ListItemText
+                      primary={playlist.title}
+                      secondary={playlist.slug}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Paper>
+        </Stack>
       </Box>
       <Fab
         color="secondary"
