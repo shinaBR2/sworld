@@ -160,15 +160,9 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
               onChange={handleAccordion(playlist.id)}
               disableGutters
             >
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ pr: 8 }}
-              >
+              <AccordionSummary expandIcon={<ExpandMore />} sx={{ pr: 8 }}>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Stack
-                    direction="row"
-                    sx={{ alignItems: 'center', gap: 1 }}
-                  >
+                  <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
                     <Typography variant="subtitle1" noWrap sx={{ flex: 1 }}>
                       {playlist.title}
                     </Typography>
