@@ -9,7 +9,7 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The Linear issue is the source of truth.** A Linear issue (in the **SWorld** team) is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`).
-- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean.
+- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there is `git pull --ff-only origin main` (run in each of the three repo worktrees as needed) to advance local `main` (a fast-forward, which updates the branch pointer and the tracked files in the checkout). No branch work, no manual edits. See Git fundamentals.
 
 ## Scope: all three repos
 
@@ -25,6 +25,16 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 - "main branch" ALWAYS means `origin/main` — fetch first with `git fetch origin main`. The local `main` is often stale.
 - ALWAYS `git merge`, NEVER `git rebase`. This applies everywhere — syncing, resolving divergence, integrating changes.
 - **Sync before analyzing, not just before coding.** Before exploring or reasoning about code anywhere in this workspace (any of the three repos), check `git status` and pull/fast-forward to `origin/main` first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
+
+### Keep local `main` fresh
+
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current: run **`git pull --ff-only origin main` in the relevant repo's main worktree** (each of the three repos has its own `.git` and its own `main`). Run it in *every* repo whose `main` you are about to read off or branch from. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit.
+
+Run it:
+
+1. After every merged-worktree cleanup (see loop Step 1) — for the repo whose PR just merged.
+2. Before starting new work / before any code read on `main` in that repo.
+3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent. Just run it in the relevant main worktree(s) and report the result; it is a one-command action per repo, never a question. If the user doesn't name a repo, run it for all three (`sworld`, `sworld-backend`, `sworld-hasura-v2`).
 
 ## Before starting
 
