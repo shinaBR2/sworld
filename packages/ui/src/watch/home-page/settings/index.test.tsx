@@ -65,4 +65,26 @@ describe('SettingsPanel', () => {
 
     expect(defaultProps.toggle).toHaveBeenCalledWith(false);
   });
+
+  it('renders settings button when settings action is provided', () => {
+    const settings = vi.fn();
+    render(
+      <SettingsPanel
+        {...defaultProps}
+        actions={{ logout: vi.fn(), settings }}
+      />,
+    );
+
+    const settingsButton = screen.getByText('Settings');
+    expect(settingsButton).toBeInTheDocument();
+
+    fireEvent.click(settingsButton);
+    expect(settings).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render settings button when settings action is omitted', () => {
+    render(<SettingsPanel {...defaultProps} />);
+
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument();
+  });
 });
