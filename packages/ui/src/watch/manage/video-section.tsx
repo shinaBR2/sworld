@@ -86,7 +86,9 @@ const VideoSection = (props: VideoSectionProps) => {
         </Box>
       ) : filtered.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
-          {search.trim() ? 'No videos match your search.' : 'You have no videos yet.'}
+          {search.trim()
+            ? 'No videos match your search.'
+            : 'You have no videos yet.'}
         </Typography>
       ) : (
         <Stack spacing={2}>
