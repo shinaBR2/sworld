@@ -1,20 +1,14 @@
-import { removeItems, setItem } from 'core/universal/extension/storage';
 import type {
   PageContent,
   PdfMetadata,
   VideoMetadata,
 } from 'core/universal/extension/communication/types';
+import { removeItems, setItem } from 'core/universal/extension/storage';
 import { config } from '../config';
-import {
-  getToken,
-  isAuthenticated,
-  logout,
-  pollForDeviceToken,
-  startPairing,
-} from './background/auth';
+import { getToken, isAuthenticated, logout } from './background/auth';
+import { createImportRecord, updateImportStatus } from './background/imports';
 import { importBook } from './background/library';
 import { importVideo } from './background/watch';
-import { createImportRecord, updateImportStatus } from './background/imports';
 
 console.log('Background script starting...');
 
@@ -42,6 +36,44 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onStartup.addListener(() => {
   console.log('Extension startup');
+});
+
+// Content scripts don't run inside Chrome's PDF viewer, so detect PDF tabs
+// here and feed the popup the same PageContent shape.
+const PDF_URL_RE = /\.pdf$/i;
+
+const detectPdfTab = (url: string) => {
+  const fileName = url.split('/').pop() || url;
+  const title = decodeURIComponent(fileName.replace(/\.pdf$/i, '')) || fileName;
+
+  currentPdfMetadata = {
+    url,
+    title,
+    author: null,
+    pageCount: 0,
+    fileUrl: url,
+    fileName,
+    fileSizeBytes: null,
+  };
+
+  currentPageContent = {
+    pageType: 'pdf',
+    url,
+    title,
+  };
+
+  chrome.runtime.sendMessage({
+    source: 'background',
+    target: 'popup',
+    type: 'CURRENT_TAB_CONTENT',
+    payload: currentPageContent,
+  });
+};
+
+chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete' && tab.url && PDF_URL_RE.test(tab.url)) {
+    detectPdfTab(tab.url);
+  }
 });
 
 chrome.runtime.onMessageExternal.addListener(
@@ -82,33 +114,6 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       return;
     }
 
-    case 'START_PAIRING': {
-      try {
-        const result = await startPairing();
-        sendResponse({ success: true, ...result });
-      } catch (error) {
-        sendResponse({
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      }
-      return;
-    }
-
-    case 'POLL_FOR_TOKEN': {
-      const { deviceCode, interval, expiresIn } = data;
-      try {
-        await pollForDeviceToken(deviceCode, interval, expiresIn);
-        sendResponse({ success: true });
-      } catch (error) {
-        sendResponse({
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      }
-      return;
-    }
-
     case 'LOGOUT': {
       await logout();
       sendResponse({ success: true });
@@ -136,7 +141,12 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     }
 
     case 'REQUEST_TAB_CONTENT': {
-      sendResponse({ content: currentPageContent ?? storedVideoMetadata ?? null });
+      chrome.runtime.sendMessage({
+        source: 'background',
+        target: 'popup',
+        type: 'CURRENT_TAB_CONTENT',
+        payload: currentPageContent ?? storedVideoMetadata ?? null,
+      });
       return;
     }
 
@@ -158,7 +168,10 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
 
       if (targetApp === 'watch') {
         if (!storedVideoMetadata) {
-          sendResponse({ success: false, error: 'No video metadata available' });
+          sendResponse({
+            success: false,
+            error: 'No video metadata available',
+          });
           return;
         }
 
