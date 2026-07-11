@@ -64,6 +64,7 @@ type Documents = {
     "\n  mutation CreatePlaylistManage(\n    $title: String!\n    $slug: String!\n    $thumbnailUrl: String\n    $description: String\n  ) {\n    insert_playlist_one(\n      object: {\n        title: $title\n        slug: $slug\n        thumbnailUrl: $thumbnailUrl\n        description: $description\n        site: \"watch\"\n      }\n    ) {\n      id\n    }\n  }\n": typeof types.CreatePlaylistManageDocument,
     "\n  mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {\n    update_playlist_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, description: $description }\n    ) {\n      id\n    }\n  }\n": typeof types.UpdatePlaylistManageDocument,
     "\n  mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {\n    update_playlist_videos_many(updates: $updates) {\n      returning {\n        position\n      }\n    }\n  }\n": typeof types.ReorderPlaylistVideosDocument,
+    "\n  mutation RepairFmp4($input: RepairFmp4Input!) {\n    repairFmp4(input: $input) {\n      success\n      message\n    }\n  }\n": typeof types.RepairFmp4Document,
     "\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n": typeof types.SaveSubtitleDocument,
     "\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n": typeof types.SetVideoThumbnailAtTimeDocument,
     "\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n": typeof types.SharePlaylistDocument,
@@ -131,6 +132,7 @@ const documents: Documents = {
     "\n  mutation CreatePlaylistManage(\n    $title: String!\n    $slug: String!\n    $thumbnailUrl: String\n    $description: String\n  ) {\n    insert_playlist_one(\n      object: {\n        title: $title\n        slug: $slug\n        thumbnailUrl: $thumbnailUrl\n        description: $description\n        site: \"watch\"\n      }\n    ) {\n      id\n    }\n  }\n": types.CreatePlaylistManageDocument,
     "\n  mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {\n    update_playlist_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, description: $description }\n    ) {\n      id\n    }\n  }\n": types.UpdatePlaylistManageDocument,
     "\n  mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {\n    update_playlist_videos_many(updates: $updates) {\n      returning {\n        position\n      }\n    }\n  }\n": types.ReorderPlaylistVideosDocument,
+    "\n  mutation RepairFmp4($input: RepairFmp4Input!) {\n    repairFmp4(input: $input) {\n      success\n      message\n    }\n  }\n": types.RepairFmp4Document,
     "\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n": types.SaveSubtitleDocument,
     "\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n": types.SetVideoThumbnailAtTimeDocument,
     "\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n": types.SharePlaylistDocument,
@@ -345,6 +347,10 @@ export function graphql(source: "\n  mutation UpdatePlaylistManage($id: uuid!, $
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {\n    update_playlist_videos_many(updates: $updates) {\n      returning {\n        position\n      }\n    }\n  }\n"): typeof import('./graphql').ReorderPlaylistVideosDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RepairFmp4($input: RepairFmp4Input!) {\n    repairFmp4(input: $input) {\n      success\n      message\n    }\n  }\n"): typeof import('./graphql').RepairFmp4Document;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

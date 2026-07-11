@@ -9,6 +9,7 @@ export {
   useCreatePlaylist,
   useUpdatePlaylist,
   useReorderPlaylistVideos,
+  useRepairFmp4,
 } from './manage';
 export type {
   UpdateVideoVariables,
@@ -16,6 +17,7 @@ export type {
   UpdatePlaylistVariables,
   ReorderPlaylistVideosVariables,
   ReorderItem,
+  RepairFmp4Variables,
 } from './manage';
 export {
   type UseVideoProgressProps,

@@ -111,6 +111,22 @@ export type Int_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+export type RepairFmp4Input = {
+  videoId: Scalars['String']['input'];
+};
+
+export type RepairFmp4Output = {
+  __typename?: 'RepairFmp4Output';
+  success: Scalars['Boolean']['output'];
+};
+
+export type RepairFmp4Response = {
+  __typename?: 'RepairFmp4Response';
+  dataObject?: Maybe<RepairFmp4Output>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type SetVideoThumbnailAtTimeInput = {
   atSeconds: Scalars['Float']['input'];
   videoId: Scalars['String']['input'];
@@ -3354,6 +3370,8 @@ export type Mutation_Root = {
   insert_videos?: Maybe<Videos_Mutation_Response>;
   /** insert a single row into the table: "videos" */
   insert_videos_one?: Maybe<Videos>;
+  /** Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side. */
+  repairFmp4: RepairFmp4Response;
   /** Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user. */
   setVideoThumbnailAtTime: SetVideoThumbnailAtTimeResponse;
   /** update data of the table: "audio_tags" */
@@ -4248,6 +4266,12 @@ export type Mutation_RootInsert_VideosArgs = {
 export type Mutation_RootInsert_Videos_OneArgs = {
   object: Videos_Insert_Input;
   on_conflict?: InputMaybe<Videos_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootRepairFmp4Args = {
+  input: RepairFmp4Input;
 };
 
 
@@ -6443,7 +6467,7 @@ export type Posts = {
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
-  hId?: Maybe<Scalars['String']['output']>;
+  hId: Scalars['String']['output'];
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   pinned: Scalars['Boolean']['output'];
@@ -8248,8 +8272,8 @@ export type Shared_Video_Recipients = {
   recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
-  video?: Maybe<Videos>;
-  videoId?: Maybe<Scalars['uuid']['output']>;
+  video: Videos;
+  videoId: Scalars['uuid']['output'];
   viewed: Scalars['Boolean']['output'];
 };
 
@@ -10676,7 +10700,7 @@ export type Timestamptz_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
 };
 
-/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
+/** columns and relationships of "user_settings" */
 export type User_Settings = {
   __typename?: 'user_settings';
   data: Scalars['jsonb']['output'];
@@ -10686,7 +10710,7 @@ export type User_Settings = {
 };
 
 
-/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
+/** columns and relationships of "user_settings" */
 export type User_SettingsDataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
@@ -13540,6 +13564,13 @@ export type ReorderPlaylistVideosMutationVariables = Exact<{
 
 export type ReorderPlaylistVideosMutation = { __typename?: 'mutation_root', update_playlist_videos_many?: Array<{ __typename?: 'playlist_videos_mutation_response', returning: Array<{ __typename?: 'playlist_videos', position: number }> } | null> | null };
 
+export type RepairFmp4MutationVariables = Exact<{
+  input: RepairFmp4Input;
+}>;
+
+
+export type RepairFmp4Mutation = { __typename?: 'mutation_root', repairFmp4: { __typename?: 'RepairFmp4Response', success: boolean, message: string } };
+
 export type SaveSubtitleMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   object: Subtitles_Set_Input;
@@ -14530,6 +14561,14 @@ export const ReorderPlaylistVideosDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ReorderPlaylistVideosMutation, ReorderPlaylistVideosMutationVariables>;
+export const RepairFmp4Document = new TypedDocumentString(`
+    mutation RepairFmp4($input: RepairFmp4Input!) {
+  repairFmp4(input: $input) {
+    success
+    message
+  }
+}
+    `) as unknown as TypedDocumentString<RepairFmp4Mutation, RepairFmp4MutationVariables>;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
   update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
