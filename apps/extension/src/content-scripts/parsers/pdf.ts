@@ -1,9 +1,9 @@
 import type { PdfMetadata } from 'core/universal/extension/communication/types';
-import * as pdfjs from 'pdfjs-dist';
 
 const parsePdfDocument = async (url: string): Promise<PdfMetadata> => {
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
+  const pdfjs = await import('pdfjs-dist');
   const loadingTask = pdfjs.getDocument({ data: buffer });
   const pdf = await loadingTask.promise;
 

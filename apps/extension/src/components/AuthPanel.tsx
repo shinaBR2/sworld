@@ -1,78 +1,23 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 
 const AuthPanel = () => {
-  const [userCode, setUserCode] = useState('');
-  const [verificationUri, setVerificationUri] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
-  const startPairing = useCallback(() => {
-    setIsLoading(true);
-    setError('');
-
+  const checkStatus = useCallback(() => {
     chrome.runtime.sendMessage(
-      { type: 'START_PAIRING' },
-      (
-        response:
-          | {
-              success: boolean;
-              userCode: string;
-              verificationUri: string;
-              deviceCode: string;
-              interval: number;
-              expiresIn: number;
-              error?: string;
-            }
-          | undefined,
-      ) => {
-        if (!response || !response.success) {
-          setError(response?.error || 'Failed to start pairing');
-          setIsLoading(false);
-          return;
-        }
-
-        setUserCode(response.userCode);
-        setVerificationUri(response.verificationUri);
-        setIsLoading(false);
-
-        chrome.runtime.sendMessage(
-          {
-            type: 'POLL_FOR_TOKEN',
-            data: {
-              deviceCode: response.deviceCode,
-              interval: response.interval,
-              expiresIn: response.expiresIn,
-            },
-          },
-          (pollResponse: { success: boolean; error?: string } | undefined) => {
-            if (!pollResponse || !pollResponse.success) {
-              setError(pollResponse?.error || 'Pairing failed');
-            }
-          },
-        );
+      { type: 'GET_AUTH_STATUS' },
+      (response: { authenticated: boolean } | undefined) => {
+        setAuthenticated(response?.authenticated ?? false);
       },
     );
   }, []);
 
   useEffect(() => {
-    startPairing();
-  }, [startPairing]);
+    checkStatus();
+  }, [checkStatus]);
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(userCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (isLoading) {
+  if (authenticated === null) {
     return (
       <Box display="flex" justifyContent="center" p={4}>
         <CircularProgress />
@@ -80,61 +25,23 @@ const AuthPanel = () => {
     );
   }
 
-  if (error) {
+  if (authenticated) {
     return (
       <Box p={2}>
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-        <Button variant="outlined" onClick={startPairing} fullWidth>
-          Retry Pairing
-        </Button>
+        <Alert severity="success">Extension connected to your account.</Alert>
       </Box>
     );
   }
 
   return (
     <Box p={2}>
-      <Typography variant="h6" gutterBottom>
-        Connect Your Account
+      <Alert severity="info" sx={{ mb: 2 }}>
+        Log in to shinabr2.com in this browser to connect your extension.
+      </Alert>
+      <Typography variant="body2" color="text.secondary">
+        Once you&apos;re signed in, your account token is sent to the extension
+        automatically.
       </Typography>
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        Visit the verification URL and enter the code below to connect your
-        account:
-      </Typography>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bgcolor="grey.900"
-        borderRadius={1}
-        p={2}
-        my={2}
-      >
-        <Typography
-          variant="h4"
-          fontFamily="monospace"
-          fontWeight="bold"
-          letterSpacing={4}
-        >
-          {userCode}
-        </Typography>
-      </Box>
-      <Button
-        variant="contained"
-        fullWidth
-        onClick={handleCopyCode}
-        sx={{ mb: 1 }}
-      >
-        {copied ? 'Copied!' : 'Copy Code'}
-      </Button>
-      <Button
-        variant="outlined"
-        fullWidth
-        onClick={() => window.open(verificationUri, '_blank')}
-      >
-        Open Verification Page
-      </Button>
     </Box>
   );
 };
