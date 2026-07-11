@@ -14,6 +14,9 @@ type Mutation {
   setVideoThumbnailAtTime(
     input: SetVideoThumbnailAtTimeInput!
   ): SetVideoThumbnailAtTimeResponse!
+  repairFmp4(
+    input: RepairFmp4Input!
+  ): RepairFmp4Response!
 }
 
 input CreateDeviceRequestInput {
@@ -115,5 +118,19 @@ type SetVideoThumbnailAtTimeResponse {
   success: Boolean!
   message: String!
   dataObject: SetVideoThumbnailAtTimeOutput
+}
+
+input RepairFmp4Input {
+  videoId: String!
+}
+
+type RepairFmp4Output {
+  success: Boolean!
+}
+
+type RepairFmp4Response {
+  success: Boolean!
+  message: String!
+  dataObject: RepairFmp4Output
 }
 
