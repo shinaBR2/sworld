@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
 import { setThumbnailAtTimeSchema } from 'src/schema/videos/set-thumbnail-at-time';
+import { repairFmp4Schema } from 'src/schema/videos/repair-fmp4';
 import { honoRequestHandler } from 'src/utils/requestHandler';
 import { honoValidateRequest } from 'src/utils/validators/request';
 import { setThumbnailAtTime } from '../videos/routes/set-thumbnail';
+import { repairFmp4 } from '../videos/routes/repair-fmp4';
 
 /**
  * User-facing video *Actions* (Hasura Actions, not Event triggers).
@@ -32,6 +34,12 @@ videoActionsRouter.post(
   '/set-thumbnail',
   honoValidateRequest(setThumbnailAtTimeSchema),
   honoRequestHandler(setThumbnailAtTime),
+);
+
+videoActionsRouter.post(
+  '/repair-fmp4',
+  honoValidateRequest(repairFmp4Schema),
+  honoRequestHandler(repairFmp4),
 );
 
 export { videoActionsRouter };
