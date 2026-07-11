@@ -9,7 +9,7 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The Linear issue is the source of truth.** A Linear issue (in the **SWorld** team) is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`).
-- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there is `git pull --ff-only origin main` (run in each of the three repo worktrees as needed) to advance local `main` (a fast-forward, which updates the branch pointer and the tracked files in the checkout). No branch work, no manual edits. See Git fundamentals.
+- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operations there advance the local `main` ref (`git pull --ff-only origin main` when it sits on `main`, `git fetch origin main:main` otherwise — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: all three repos
 
@@ -28,13 +28,18 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 ### Keep local `main` fresh
 
-Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current: run **`git pull --ff-only origin main` in the relevant repo's main worktree** (each of the three repos has its own `.git` and its own `main`). Run it in *every* repo whose `main` you are about to read off or branch from. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit.
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current. Each of the three repos has its own `.git` and its own `main`; refresh *every* repo whose `main` you are about to read off or branch from.
 
-Run it:
+Two equivalent ways to fast-forward local `main` to `origin/main` — pick by what the repo's **main worktree** (the first entry in `git worktree list`) is checked out on:
+
+- **Main worktree sits on `main`** → run `git pull --ff-only origin main` **in that worktree**. Advances the `main` branch pointer and updates the tracked files in its checkout. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream.
+- **Main worktree sits on a feature branch** (the common case here — e.g. `chore/…`) → run `git fetch origin main:main` from any worktree of that repo. It advances the local `main` ref to `origin/main` without a checkout and without touching any working tree; it errors loudly (refuses) if `main` *is* checked out somewhere in the repo, which is the tell to use `git pull --ff-only` in that worktree instead.
+
+Never rebase `main`; never create merge commits on it. Run it:
 
 1. After every merged-worktree cleanup (see loop Step 1) — for the repo whose PR just merged.
 2. Before starting new work / before any code read on `main` in that repo.
-3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent. Just run it in the relevant main worktree(s) and report the result; it is a one-command action per repo, never a question. If the user doesn't name a repo, run it for all three (`sworld`, `sworld-backend`, `sworld-hasura-v2`).
+3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent. Just run it in the relevant repo(s) and report the result; it is a one-command action per repo, never a question. If the user doesn't name a repo, run it for all three (`sworld`, `sworld-backend`, `sworld-hasura-v2`).
 
 ## Before starting
 

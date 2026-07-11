@@ -68,7 +68,7 @@ case "$name_with_owner" in
   ShinaBR2/sworld)          repo="<workspace>/sworld" ;;
   ShinaBR2/sworld-backend)  repo="<workspace>/sworld-backend" ;;
   ShinaBR2/sworld-hasura-v2) repo="<workspace>/sworld-hasura-v2" ;;
-  *) echo "PR <N>: unknown repo '$name_with_owner' — dropping from poll"; drop; continue ;;
+  *) echo "PR <N>: unknown repo '$name_with_owner' — dropping from poll"; continue ;;
 esac
 ```
 
@@ -79,7 +79,7 @@ Resolve the branch and its worktree **exactly** — never substring-match, and n
 Every step below must **abort this PR's cleanup on failure** and report the partial state — never fall through to a later step or claim completion.
 
 ```bash
- branch=$(gh pr view <N> --json headRefName -q .headRefName)
+branch=$(gh pr view <N> --json headRefName -q .headRefName)
 [ -n "$branch" ] || { echo "PR <N>: cannot resolve branch — aborting cleanup"; exit 1; }
 
 # Exact worktree path for this branch (porcelain, exact ref match; handles paths with spaces).
