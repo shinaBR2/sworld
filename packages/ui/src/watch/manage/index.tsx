@@ -1,10 +1,18 @@
+import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { FullWidthContainer } from '../../universal';
 import { Header } from '../../universal/header';
 import { SettingsPanel } from '../home-page/settings';
+
+const VideoUploadDialog = lazy(() =>
+  import('../dialogs/upload').then((module) => ({
+    default: module.VideoUploadDialog,
+  })),
+);
 
 interface HeaderSites {
   main: string;
@@ -23,6 +31,7 @@ const ManageScreen = (props: ManageScreenProps) => {
   const { sites, user, onLogout } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   return (
     <FullWidthContainer>
@@ -46,6 +55,24 @@ const ManageScreen = (props: ManageScreenProps) => {
           </Typography>
         </Box>
       </Box>
+      <Fab
+        color="secondary"
+        aria-label="Import video"
+        onClick={() => setUploadOpen(true)}
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          bgcolor: 'secondary.main',
+        }}
+      >
+        <AddIcon />
+      </Fab>
+      {uploadOpen && (
+        <Suspense fallback={null}>
+          <VideoUploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
+        </Suspense>
+      )}
     </FullWidthContainer>
   );
 };
