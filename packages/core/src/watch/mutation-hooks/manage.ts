@@ -79,7 +79,9 @@ const useUpdateVideo = (props: UseMutationProps) => {
               v.id === variables.id
                 ? {
                     ...v,
-                    ...(variables.title !== undefined && { title: variables.title }),
+                    ...(variables.title !== undefined && {
+                      title: variables.title,
+                    }),
                     ...(variables.thumbnailUrl !== undefined && {
                       thumbnailUrl: variables.thumbnailUrl,
                     }),
@@ -154,7 +156,9 @@ const useUpdatePlaylist = (props: UseMutationProps) => {
               p.id === variables.id
                 ? {
                     ...p,
-                    ...(variables.title !== undefined && { title: variables.title }),
+                    ...(variables.title !== undefined && {
+                      title: variables.title,
+                    }),
                     ...(variables.description !== undefined && {
                       description: variables.description,
                     }),
