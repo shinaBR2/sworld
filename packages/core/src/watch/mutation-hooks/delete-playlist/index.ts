@@ -1,4 +1,7 @@
-import type { MutationFunctionContext, UseMutationOptions } from '@tanstack/react-query';
+import type {
+  MutationFunctionContext,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import {
   DeletePlaylistDocument,
   type DeletePlaylistMutation,
