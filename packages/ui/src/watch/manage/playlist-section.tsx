@@ -186,7 +186,7 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
                       e.stopPropagation();
                       openEdit(playlist);
                     }}
-                    sx={{ mr: -1 }}
+                    sx={{ mr: 1 }}
                   >
                     <Edit fontSize="small" />
                   </IconButton>
