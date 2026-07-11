@@ -7,7 +7,7 @@ const manageQuery = graphql(/* GraphQL */ `
   query WatchManage($userId: uuid!) {
     videos(
       where: { user_id: { _eq: $userId } }
-      order_by: { created_at: desc }
+      order_by: { createdAt: desc }
     ) {
       id
       title
@@ -20,7 +20,7 @@ const manageQuery = graphql(/* GraphQL */ `
     }
     playlist(
       where: { user_id: { _eq: $userId }, site: { _eq: "watch" } }
-      order_by: { created_at: desc }
+      order_by: { createdAt: desc }
     ) {
       id
       title
