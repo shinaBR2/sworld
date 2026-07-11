@@ -29,12 +29,7 @@ interface ManageScreenProps {
 }
 
 const ManageScreen = (props: ManageScreenProps) => {
-  const {
-    sites,
-    user,
-    onLogout,
-    onNavigateSettings,
-  } = props;
+  const { sites, user, onLogout, onNavigateSettings } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
