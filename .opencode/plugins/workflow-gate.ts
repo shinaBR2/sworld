@@ -2,14 +2,16 @@ const isGatedTool = (tool: string) => tool === 'edit' || tool === 'write';
 
 const isInWorktree = (cwd: string) => cwd.includes('/.claude/worktrees/');
 
-const getBranch = async ($: any) => {
-  const result = await $`git branch --show-current`.text();
+const getBranch = async ($: any, cwd: string) => {
+  const result = await $`git branch --show-current`.cwd(cwd).text();
   return result.trim();
 };
 
-const getMergeBase = async ($: any) => {
+const getMergeBase = async ($: any, cwd: string) => {
   const result =
-    await $`git merge-base --is-ancestor origin/main HEAD && echo "ancestor" || echo "not-ancestor"`.text();
+    await $`git merge-base --is-ancestor origin/main HEAD && echo "ancestor" || echo "not-ancestor"`
+      .cwd(cwd)
+      .text();
   return result.trim() === 'ancestor';
 };
 
@@ -36,8 +38,17 @@ export default async ({ $, directory }: any) => {
 
       if (!isInWorktree(directory)) return;
 
-      const branch = await getBranch($);
-      if (!branch) return;
+      let branch: string;
+      try {
+        branch = await getBranch($, directory);
+      } catch {
+        output.status = 'deny';
+        return;
+      }
+      if (!branch) {
+        output.status = 'deny';
+        return;
+      }
 
       const ticket = getTicketFromBranch(branch);
       if (!ticket) {
@@ -50,7 +61,7 @@ export default async ({ $, directory }: any) => {
         return;
       }
 
-      if (!(await getMergeBase($))) {
+      if (!(await getMergeBase($, directory))) {
         output.status = 'deny';
       }
     },
