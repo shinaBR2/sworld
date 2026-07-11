@@ -8,11 +8,14 @@ export {
   useUpdateVideo,
   useCreatePlaylist,
   useUpdatePlaylist,
+  useReorderPlaylistVideos,
 } from './manage';
 export type {
   UpdateVideoVariables,
   CreatePlaylistVariables,
   UpdatePlaylistVariables,
+  ReorderPlaylistVideosVariables,
+  ReorderItem,
 } from './manage';
 export {
   type UseVideoProgressProps,

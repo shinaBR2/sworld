@@ -182,9 +182,100 @@ const useUpdatePlaylist = (props: UseMutationProps) => {
   });
 };
 
-export { useUpdateVideo, useCreatePlaylist, useUpdatePlaylist };
+// ─── useReorderPlaylistVideos ───
+
+interface ReorderItem {
+  videoId: string;
+  position: number;
+}
+
+interface ReorderPlaylistVideosVariables {
+  playlistId: string;
+  items: ReorderItem[];
+}
+
+const reorderPlaylistVideosMutation = graphql(/* GraphQL */ `
+  mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {
+    update_playlist_videos_many(updates: $updates) {
+      returning {
+        playlist_id
+        video_id
+        position
+      }
+    }
+  }
+`);
+
+const useReorderPlaylistVideos = (props: UseMutationProps) => {
+  const { getAccessToken } = props;
+  const queryClient = useQueryClient();
+
+  const mutation = useMutationRequest({
+    document: reorderPlaylistVideosMutation,
+    getAccessToken,
+  });
+
+  const mutate = async (variables: ReorderPlaylistVideosVariables) => {
+    await queryClient.cancelQueries({ queryKey: MANAGE_KEY });
+    const previous = queryClient.getQueryData<WatchManageQuery>(MANAGE_KEY);
+
+    if (previous) {
+      queryClient.setQueryData<WatchManageQuery>(MANAGE_KEY, {
+        ...previous,
+        playlist: previous.playlist?.map((p) =>
+          p.id === variables.playlistId
+            ? {
+                ...p,
+                playlist_videos: p.playlist_videos
+                  .map((pv) => {
+                    const updated = variables.items.find(
+                      (item) => item.videoId === pv.video_id,
+                    );
+                    return updated
+                      ? { ...pv, position: updated.position }
+                      : pv;
+                  })
+                  .sort((a, b) => a.position - b.position),
+              }
+            : p,
+        ),
+      });
+    }
+
+    return mutation
+      .mutateAsync({
+        updates: variables.items.map((item) => ({
+          where: {
+            playlist_id: { _eq: variables.playlistId },
+            video_id: { _eq: item.videoId },
+          },
+          _set: { position: item.position },
+        })),
+      } as any)
+      .catch((error: unknown) => {
+        if (previous) {
+          queryClient.setQueryData(MANAGE_KEY, previous);
+        }
+        throw error;
+      })
+      .finally(() => {
+        queryClient.invalidateQueries({ queryKey: MANAGE_KEY });
+      });
+  };
+
+  return { ...mutation, mutate };
+};
+
+export {
+  useUpdateVideo,
+  useCreatePlaylist,
+  useUpdatePlaylist,
+  useReorderPlaylistVideos,
+};
 export type {
   UpdateVideoVariables,
   CreatePlaylistVariables,
   UpdatePlaylistVariables,
+  ReorderPlaylistVideosVariables,
+  ReorderItem,
 };
