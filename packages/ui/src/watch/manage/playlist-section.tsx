@@ -53,11 +53,7 @@ const computeNewOrder = (
 };
 
 const PlaylistSection = (props: PlaylistSectionProps) => {
-  const {
-    isLoading,
-    playlists,
-    onReorderPlaylist,
-  } = props;
+  const { isLoading, playlists, onReorderPlaylist } = props;
 
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<string | false>(false);
