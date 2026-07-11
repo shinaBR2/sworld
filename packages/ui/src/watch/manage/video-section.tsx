@@ -175,10 +175,7 @@ const VideoSection = (props: VideoSectionProps) => {
           </ListItemIcon>
           Edit
         </MenuItem>
-        <MenuItem
-          onClick={handleRepair}
-          disabled={isRepairDisabled}
-        >
+        <MenuItem onClick={handleRepair} disabled={isRepairDisabled}>
           <ListItemIcon>
             <Build fontSize="small" />
           </ListItemIcon>
