@@ -15,6 +15,8 @@ enum TaskType {
   FIX_THUMBNAIL = 'fix_thumbnail',
   SHARE = 'share',
   CRAWL = 'crawl',
+  /** REMUX A STORED TS VIDEO INTO FMP4/CMAF TO FIX THE HLS.JS NOISE BUG */
+  REPAIR_FMP4 = 'repair_fmp4',
 }
 
 enum TaskEntityType {
