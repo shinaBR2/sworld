@@ -27,7 +27,7 @@ const formatDuration = (seconds: number | null): string => {
   return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-const statusLabel = (status: string): string => {
+const statusLabel = (status?: string | null): string => {
   switch (status) {
     case 'ready':
       return 'Ready';
@@ -36,7 +36,7 @@ const statusLabel = (status: string): string => {
     case 'processing':
       return 'Processing';
     default:
-      return status;
+      return status ?? 'Unknown';
   }
 };
 

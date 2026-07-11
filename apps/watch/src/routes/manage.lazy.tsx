@@ -101,7 +101,7 @@ const Content = () => {
         }}
         onNavigateSettings={() => navigate({ to: '/settings' })}
         isLoading={isLoading}
-        videos={videos}
+        videos={videos as any}
         playlists={playlists}
         onUpdateVideo={handleUpdateVideo}
         onRepairVideo={handleRepairVideo}
