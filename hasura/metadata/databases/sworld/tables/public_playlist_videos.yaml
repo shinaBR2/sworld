@@ -77,6 +77,8 @@ select_permissions:
     permission:
       columns:
         - position
+        - playlist_id
+        - video_id
       filter:
         _or:
           - playlist:
