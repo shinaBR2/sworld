@@ -153,14 +153,16 @@ const VideoSection = (props: VideoSectionProps) => {
                     </Typography>
                   </Stack>
                 </Box>
-                <Tooltip title="Actions">
-                  <IconButton
-                    aria-label={`Actions for ${video.title}`}
-                    onClick={(event) => handleMenuOpen(event, video)}
-                  >
-                    <MoreVert />
-                  </IconButton>
-                </Tooltip>
+                <Box sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}>
+                  <Tooltip title="Actions">
+                    <IconButton
+                      aria-label={`Actions for ${video.title}`}
+                      onClick={(event) => handleMenuOpen(event, video)}
+                    >
+                      <MoreVert />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </Stack>
             </Paper>
           ))}
