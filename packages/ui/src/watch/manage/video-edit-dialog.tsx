@@ -56,6 +56,8 @@ const VideoEditDialog = (props: VideoEditDialogProps) => {
             fullWidth
             value={thumbnailUrl}
             onChange={(event) => setThumbnailUrl(event.target.value)}
+            disabled
+            helperText="Thumbnail upload coming soon."
           />
         </Stack>
       </DialogContent>
