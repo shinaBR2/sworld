@@ -231,9 +231,7 @@ const useReorderPlaylistVideos = (props: UseMutationProps) => {
                     const updated = variables.items.find(
                       (item) => item.videoId === pv.video_id,
                     );
-                    return updated
-                      ? { ...pv, position: updated.position }
-                      : pv;
+                    return updated ? { ...pv, position: updated.position } : pv;
                   })
                   .sort((a, b) => a.position - b.position),
               }
