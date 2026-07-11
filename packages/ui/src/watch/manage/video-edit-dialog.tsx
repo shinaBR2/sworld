@@ -13,12 +13,10 @@ interface VideoEditDialogProps {
   video: ManageVideo | null;
   onClose: () => void;
   onSave: (input: VideoEdit) => void;
-  onRepair: (videoId: string) => void;
-  isRepairDisabled?: boolean;
 }
 
 const VideoEditDialog = (props: VideoEditDialogProps) => {
-  const { open, video, onClose, onSave, onRepair, isRepairDisabled } = props;
+  const { open, video, onClose, onSave } = props;
   const [title, setTitle] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
 
@@ -41,11 +39,6 @@ const VideoEditDialog = (props: VideoEditDialogProps) => {
     onClose();
   };
 
-  const handleRepair = () => {
-    if (!video) return;
-    onRepair(video.id);
-  };
-
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle>Edit video</DialogTitle>
@@ -64,15 +57,6 @@ const VideoEditDialog = (props: VideoEditDialogProps) => {
             value={thumbnailUrl}
             onChange={(event) => setThumbnailUrl(event.target.value)}
           />
-          <Button
-            variant="outlined"
-            color="warning"
-            fullWidth
-            disabled={isRepairDisabled}
-            onClick={handleRepair}
-          >
-            Fix video (repair fMP4)
-          </Button>
         </Stack>
       </DialogContent>
       <DialogActions>

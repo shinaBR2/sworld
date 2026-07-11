@@ -1,14 +1,19 @@
 import Build from '@mui/icons-material/Build';
 import Edit from '@mui/icons-material/Edit';
+import MoreVert from '@mui/icons-material/MoreVert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
+import { ConfirmDialog } from './confirm-dialog';
 import type { ManageVideo, VideoEdit } from './types';
 import { VideoEditDialog } from './video-edit-dialog';
 
@@ -46,6 +51,9 @@ const VideoSection = (props: VideoSectionProps) => {
 
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<ManageVideo | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [menuVideo, setMenuVideo] = useState<ManageVideo | null>(null);
+  const [repairTarget, setRepairTarget] = useState<string | null>(null);
 
   const fuse = useMemo(
     () =>
@@ -59,6 +67,36 @@ const VideoSection = (props: VideoSectionProps) => {
   const filtered = search.trim()
     ? fuse.search(search.trim()).map((r) => r.item)
     : videos;
+
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    video: ManageVideo,
+  ) => {
+    setMenuAnchor(event.currentTarget);
+    setMenuVideo(video);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setMenuVideo(null);
+  };
+
+  const handleEdit = () => {
+    if (menuVideo) setEditing(menuVideo);
+    handleMenuClose();
+  };
+
+  const handleRepair = () => {
+    if (menuVideo) setRepairTarget(menuVideo.id);
+    handleMenuClose();
+  };
+
+  const handleConfirmRepair = () => {
+    if (repairTarget) {
+      onRepairVideo(repairTarget);
+      setRepairTarget(null);
+    }
+  };
 
   return (
     <Box component="section">
@@ -114,34 +152,54 @@ const VideoSection = (props: VideoSectionProps) => {
                     </Typography>
                   </Stack>
                 </Box>
-                <Stack direction="row" spacing={1}>
-                  <IconButton
-                    aria-label={`Edit ${video.title}`}
-                    onClick={() => setEditing(video)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    aria-label={`Repair ${video.title}`}
-                    onClick={() => onRepairVideo(video.id)}
-                    disabled={isRepairDisabled}
-                  >
-                    <Build />
-                  </IconButton>
-                </Stack>
+                <IconButton
+                  aria-label={`Actions for ${video.title}`}
+                  onClick={(event) => handleMenuOpen(event, video)}
+                >
+                  <MoreVert />
+                </IconButton>
               </Stack>
             </Paper>
           ))}
         </Stack>
       )}
 
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleEdit}>
+          <ListItemIcon>
+            <Edit fontSize="small" />
+          </ListItemIcon>
+          Edit
+        </MenuItem>
+        <MenuItem
+          onClick={handleRepair}
+          disabled={isRepairDisabled}
+        >
+          <ListItemIcon>
+            <Build fontSize="small" />
+          </ListItemIcon>
+          Repair fMP4
+        </MenuItem>
+      </Menu>
+
       <VideoEditDialog
         open={Boolean(editing)}
         video={editing}
         onClose={() => setEditing(null)}
         onSave={onUpdateVideo}
-        onRepair={onRepairVideo}
-        isRepairDisabled={isRepairDisabled}
+      />
+
+      <ConfirmDialog
+        open={Boolean(repairTarget)}
+        title="Repair video"
+        message="This will remux the video from TS to fMP4 format to fix playback issues. The repair runs in the background — you will get a notification when ready."
+        confirmLabel="Start repair"
+        onClose={() => setRepairTarget(null)}
+        onConfirm={handleConfirmRepair}
       />
     </Box>
   );
