@@ -46,6 +46,7 @@ const Layout = (props: LayoutProps) => {
             signOut();
           },
           manage: user ? () => navigate({ to: '/manage' }) : undefined,
+          settings: user ? () => navigate({ to: '/settings' }) : undefined,
         }}
       />
       {children}
