@@ -1,14 +1,12 @@
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
 import { lazy, Suspense, useState } from 'react';
 import { FullWidthContainer } from '../../universal';
 import { Header } from '../../universal/header';
 import { SettingsPanel } from '../home-page/settings';
-import { SettingsSection } from './settings-section';
 
 const VideoUploadDialog = lazy(() =>
   import('../dialogs/upload').then((module) => ({
@@ -27,9 +25,7 @@ interface ManageScreenProps {
   sites: HeaderSites;
   user: Auth.CustomUser | null;
   onLogout: () => void;
-  standaloneMode: boolean;
-  onStandaloneModeChange: (value: boolean) => void;
-  saving?: boolean;
+  onNavigateSettings?: () => void;
 }
 
 const ManageScreen = (props: ManageScreenProps) => {
@@ -37,9 +33,7 @@ const ManageScreen = (props: ManageScreenProps) => {
     sites,
     user,
     onLogout,
-    standaloneMode,
-    onStandaloneModeChange,
-    saving,
+    onNavigateSettings,
   } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -55,7 +49,10 @@ const ManageScreen = (props: ManageScreenProps) => {
       <SettingsPanel
         open={settingsOpen}
         toggle={setSettingsOpen}
-        actions={{ logout: onLogout }}
+        actions={{
+          logout: onLogout,
+          settings: onNavigateSettings,
+        }}
       />
       <Box sx={{ maxWidth: 'xl', mx: 'auto', width: '100%', px: 3 }}>
         <Box sx={{ my: 4 }}>
@@ -63,16 +60,9 @@ const ManageScreen = (props: ManageScreenProps) => {
             Manage library
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Import videos and configure your app experience.
+            Import videos and manage your content.
           </Typography>
         </Box>
-        <Stack spacing={4} sx={{ pb: 8 }}>
-          <SettingsSection
-            standaloneMode={standaloneMode}
-            onChange={onStandaloneModeChange}
-            saving={saving}
-          />
-        </Stack>
       </Box>
       <Fab
         color="secondary"
