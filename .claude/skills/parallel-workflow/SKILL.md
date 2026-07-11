@@ -30,10 +30,16 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current. Each of the three repos has its own `.git` and its own `main`; refresh *every* repo whose `main` you are about to read off or branch from.
 
-Two equivalent ways to fast-forward local `main` to `origin/main` — pick by what the repo's **main worktree** (the first entry in `git worktree list`) is checked out on:
+Two equivalent ways to fast-forward local `main` to `origin/main` — pick by what the repo's **main worktree** (the first entry in `git worktree list`) is checked out on. Probe it cheaply:
 
-- **Main worktree sits on `main`** → run `git pull --ff-only origin main` **in that worktree**. Advances the `main` branch pointer and updates the tracked files in its checkout. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream.
-- **Main worktree sits on a feature branch** (the common case here — e.g. `chore/…`) → run `git fetch origin main:main` from any worktree of that repo. It advances the local `main` ref to `origin/main` without a checkout and without touching any working tree; it errors loudly (refuses) if `main` *is* checked out somewhere in the repo, which is the tell to use `git pull --ff-only` in that worktree instead.
+```bash
+# Emits "main" if that repo's main worktree sits on `main`, else the feature branch name (empty = detached).
+git -C "$repo" worktree list --porcelain | awk '
+  /^branch refs\/heads\//{sub(/^branch refs\/heads\//,""); print; found=1} /^$/{if(!found)print"detached"; exit}'
+```
+
+- **Main worktree sits on `main`** → run **`git pull --ff-only origin main`** in that worktree. Advances the `main` branch pointer and updates the tracked files in its checkout. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream.
+- **Main worktree sits on a feature branch** (the common case here — e.g. `chore/…`) → run **`git fetch origin main:main`** from any worktree of that repo. It advances the local `main` ref to `origin/main` without a checkout and without touching any working tree; it refuses loudly if `main` *is* checked out somewhere in the repo — that refusal IS the tell to use `git pull --ff-only` in that worktree instead.
 
 Never rebase `main`; never create merge commits on it. Run it:
 
