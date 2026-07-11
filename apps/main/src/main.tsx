@@ -1,3 +1,4 @@
+// Trigger redeploy
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider } from 'core/providers/auth';
 import { QueryProvider } from 'core/providers/query';
