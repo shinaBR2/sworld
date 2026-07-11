@@ -1,3 +1,5 @@
+import Add from '@mui/icons-material/Add';
+import Edit from '@mui/icons-material/Edit';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
@@ -5,6 +7,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
@@ -13,6 +16,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
+import {
+  PlaylistEditDialog,
+  type PlaylistFormValues,
+} from './playlist-edit-dialog';
 import type {
   ManagePlaylist,
   PlaylistCreate,
@@ -53,10 +60,18 @@ const computeNewOrder = (
 };
 
 const PlaylistSection = (props: PlaylistSectionProps) => {
-  const { isLoading, playlists, onReorderPlaylist } = props;
+  const {
+    isLoading,
+    playlists,
+    onCreatePlaylist,
+    onUpdatePlaylist,
+    onReorderPlaylist,
+  } = props;
 
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<string | false>(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<ManagePlaylist | null>(null);
 
   const fuse = useMemo(
     () =>
@@ -70,6 +85,24 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
   const filtered = search.trim()
     ? fuse.search(search.trim()).map((r) => r.item)
     : playlists;
+
+  const openCreate = () => {
+    setEditing(null);
+    setFormOpen(true);
+  };
+
+  const openEdit = (playlist: ManagePlaylist) => {
+    setEditing(playlist);
+    setFormOpen(true);
+  };
+
+  const handleSubmit = (values: PlaylistFormValues) => {
+    if (editing) {
+      onUpdatePlaylist({ id: editing.id, ...values });
+    } else {
+      onCreatePlaylist(values as PlaylistCreate);
+    }
+  };
 
   const handleAccordion = (panel: string) => () => {
     setExpanded(expanded === panel ? false : panel);
@@ -94,6 +127,9 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
         <Typography variant="h6" component="h2">
           Playlists ({playlists.length})
         </Typography>
+        <Button variant="contained" startIcon={<Add />} onClick={openCreate}>
+          New playlist
+        </Button>
       </Stack>
 
       <TextField
@@ -124,11 +160,23 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
               onChange={handleAccordion(playlist.id)}
               disableGutters
             >
-              <AccordionSummary expandIcon={<ExpandMore />}>
+              <AccordionSummary expandIcon={<ExpandMore />} sx={{ pr: 8 }}>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="subtitle1" noWrap>
-                    {playlist.title}
-                  </Typography>
+                  <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle1" noWrap sx={{ flex: 1 }}>
+                      {playlist.title}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      aria-label={`Edit ${playlist.title}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEdit(playlist);
+                      }}
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
+                  </Stack>
                   <Typography variant="body2" color="text.secondary">
                     {playlist.playlist_videos.length} video
                     {playlist.playlist_videos.length !== 1 ? 's' : ''}
@@ -220,6 +268,13 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
           ))}
         </Box>
       )}
+
+      <PlaylistEditDialog
+        open={formOpen}
+        playlist={editing}
+        onClose={() => setFormOpen(false)}
+        onSubmit={handleSubmit}
+      />
     </Box>
   );
 };
