@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 
 const HistoryLazyRouteImport = createFileRoute('/history')()
+const ManageLazyRouteImport = createFileRoute('/manage')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const VideoSlugIdLazyRouteImport = createFileRoute('/video/$slug/$id')()
 const PlaylistSlugPlaylistIdVideoIdLazyRouteImport = createFileRoute(
@@ -24,6 +25,11 @@ const HistoryLazyRoute = HistoryLazyRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route))
+const ManageLazyRoute = ManageLazyRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -50,12 +56,14 @@ const PlaylistSlugPlaylistIdVideoIdLazyRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -63,6 +71,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
+  '/manage': typeof ManageLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -71,18 +80,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/history'
+    | '/manage'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/history'
+    | '/manage'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   id:
     | '__root__'
     | '/'
     | '/history'
+    | '/manage'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   fileRoutesById: FileRoutesById
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   HistoryLazyRoute: typeof HistoryLazyRoute
+  ManageLazyRoute: typeof ManageLazyRoute
   VideoSlugIdLazyRoute: typeof VideoSlugIdLazyRoute
   PlaylistSlugPlaylistIdVideoIdLazyRoute: typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -101,6 +114,13 @@ declare module '@tanstack/react-router' {
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -130,6 +150,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   HistoryLazyRoute: HistoryLazyRoute,
+  ManageLazyRoute: ManageLazyRoute,
   VideoSlugIdLazyRoute: VideoSlugIdLazyRoute,
   PlaylistSlugPlaylistIdVideoIdLazyRoute:
     PlaylistSlugPlaylistIdVideoIdLazyRoute,
