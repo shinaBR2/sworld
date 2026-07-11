@@ -90,3 +90,12 @@ select_permissions:
       query_root_fields: []
       subscription_root_fields: []
     comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - position
+      filter:
+        playlist:
+          user_id:
+            _eq: X-Hasura-User-Id
