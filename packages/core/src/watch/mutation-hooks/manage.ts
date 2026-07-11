@@ -1,6 +1,9 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { graphql } from '../../graphql';
+import type { WatchManageQuery } from '../../graphql/graphql';
 import { useMutationRequest } from '../../universal/hooks/useMutation';
+
+const MANAGE_KEY = ['watch-manage'];
 
 const updateVideoMutation = graphql(/* GraphQL */ `
   mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {
@@ -53,21 +56,50 @@ interface UpdateVideoVariables {
   thumbnailUrl?: string;
 }
 
-interface UseUpdateVideoProps
-  extends Pick<
-    UseMutationOptions<unknown, unknown, UpdateVideoVariables, unknown>,
-    'onSuccess' | 'onError'
-  > {
+interface UseMutationProps {
   getAccessToken: () => Promise<string>;
 }
 
-const useUpdateVideo = (props: UseUpdateVideoProps) => {
-  const { getAccessToken, onSuccess, onError } = props;
+const useUpdateVideo = (props: UseMutationProps) => {
+  const { getAccessToken } = props;
+  const queryClient = useQueryClient();
 
   return useMutationRequest({
     document: updateVideoMutation,
     getAccessToken,
-    options: { onSuccess, onError },
+    options: {
+      onMutate: async (rawVars: unknown) => {
+        const variables = rawVars as UpdateVideoVariables;
+        await queryClient.cancelQueries({ queryKey: MANAGE_KEY });
+        const previous = queryClient.getQueryData<WatchManageQuery>(MANAGE_KEY);
+        if (previous) {
+          queryClient.setQueryData<WatchManageQuery>(MANAGE_KEY, {
+            ...previous,
+            videos: previous.videos?.map((v) =>
+              v.id === variables.id
+                ? {
+                    ...v,
+                    ...(variables.title !== undefined && { title: variables.title }),
+                    ...(variables.thumbnailUrl !== undefined && {
+                      thumbnailUrl: variables.thumbnailUrl,
+                    }),
+                  }
+                : v,
+            ),
+          });
+        }
+        return { previous };
+      },
+      onError: (_error: unknown, _variables: unknown, context: unknown) => {
+        const ctx = context as { previous?: WatchManageQuery } | undefined;
+        if (ctx?.previous) {
+          queryClient.setQueryData(MANAGE_KEY, ctx.previous);
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: MANAGE_KEY });
+      },
+    } as any,
   });
 };
 
@@ -80,21 +112,18 @@ interface CreatePlaylistVariables {
   description?: string;
 }
 
-interface UseCreatePlaylistProps
-  extends Pick<
-    UseMutationOptions<unknown, unknown, CreatePlaylistVariables, unknown>,
-    'onSuccess' | 'onError'
-  > {
-  getAccessToken: () => Promise<string>;
-}
-
-const useCreatePlaylist = (props: UseCreatePlaylistProps) => {
-  const { getAccessToken, onSuccess, onError } = props;
+const useCreatePlaylist = (props: UseMutationProps) => {
+  const { getAccessToken } = props;
+  const queryClient = useQueryClient();
 
   return useMutationRequest({
     document: createPlaylistMutation,
     getAccessToken,
-    options: { onSuccess, onError },
+    options: {
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: MANAGE_KEY });
+      },
+    } as any,
   });
 };
 
@@ -106,21 +135,46 @@ interface UpdatePlaylistVariables {
   description?: string;
 }
 
-interface UseUpdatePlaylistProps
-  extends Pick<
-    UseMutationOptions<unknown, unknown, UpdatePlaylistVariables, unknown>,
-    'onSuccess' | 'onError'
-  > {
-  getAccessToken: () => Promise<string>;
-}
-
-const useUpdatePlaylist = (props: UseUpdatePlaylistProps) => {
-  const { getAccessToken, onSuccess, onError } = props;
+const useUpdatePlaylist = (props: UseMutationProps) => {
+  const { getAccessToken } = props;
+  const queryClient = useQueryClient();
 
   return useMutationRequest({
     document: updatePlaylistMutation,
     getAccessToken,
-    options: { onSuccess, onError },
+    options: {
+      onMutate: async (rawVars: unknown) => {
+        const variables = rawVars as UpdatePlaylistVariables;
+        await queryClient.cancelQueries({ queryKey: MANAGE_KEY });
+        const previous = queryClient.getQueryData<WatchManageQuery>(MANAGE_KEY);
+        if (previous) {
+          queryClient.setQueryData<WatchManageQuery>(MANAGE_KEY, {
+            ...previous,
+            playlist: previous.playlist?.map((p) =>
+              p.id === variables.id
+                ? {
+                    ...p,
+                    ...(variables.title !== undefined && { title: variables.title }),
+                    ...(variables.description !== undefined && {
+                      description: variables.description,
+                    }),
+                  }
+                : p,
+            ),
+          });
+        }
+        return { previous };
+      },
+      onError: (_error: unknown, _variables: unknown, context: unknown) => {
+        const ctx = context as { previous?: WatchManageQuery } | undefined;
+        if (ctx?.previous) {
+          queryClient.setQueryData(MANAGE_KEY, ctx.previous);
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: MANAGE_KEY });
+      },
+    } as any,
   });
 };
 
