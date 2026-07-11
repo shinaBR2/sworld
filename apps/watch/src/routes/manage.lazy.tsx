@@ -1,99 +1,108 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+import { slugify } from 'core/universal/common';
 import { useAuthContext } from 'core/providers/auth';
-import { useDeletePlaylist } from 'core/watch/mutation-hooks';
-import { useDeleteVideo } from 'core/watch/mutation-hooks';
-import { useLoadManageVideos } from 'core/watch/query-hooks/manage-videos';
+import {
+  useCreatePlaylist,
+  useUpdatePlaylist,
+  useUpdateVideo,
+} from 'core/watch/mutation-hooks';
+import { useLoadManage } from 'core/watch/query-hooks';
 import { useEffect, useState } from 'react';
+import { Notification } from 'ui/universal';
 import { LoadingBackdrop } from 'ui/universal';
 import { ManageScreen } from 'ui/watch/manage';
 import { appConfig } from '../config';
 import { clearStandaloneCache } from '../standalone-mode';
+
+const createPlaylistSlug = (title: string) =>
+  `${slugify(title) || 'playlist'}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 const Content = () => {
   const { user, signOut, getAccessToken } = useAuthContext();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { videos, playlists, isLoading } = useLoadManageVideos({
-    getAccessToken,
-    userId: user?.id ?? '',
-  });
+  const { videos, playlists, isLoading } = useLoadManage();
 
-  const [deletingVideoId, setDeletingVideoId] = useState<string | null>(null);
-  const [deletingPlaylistId, setDeletingPlaylistId] = useState<string | null>(
-    null,
-  );
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
 
-  const deleteVideo = useDeleteVideo({
+  const updateVideo = useUpdateVideo({
     getAccessToken,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['manage-videos'] });
-      setDeletingVideoId(null);
-    },
-    onError: () => {
-      setDeletingVideoId(null);
+      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
     },
   });
 
-  const deletePlaylist = useDeletePlaylist({
+  const createPlaylist = useCreatePlaylist({
     getAccessToken,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['manage-videos'] });
-      setDeletingPlaylistId(null);
-    },
-    onError: () => {
-      setDeletingPlaylistId(null);
+      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
     },
   });
 
-  const handleDeleteVideo = (id: string) => {
-    setDeletingVideoId(id);
-    deleteVideo.mutate({ id });
-  };
-
-  const handleDeletePlaylist = (id: string) => {
-    setDeletingPlaylistId(id);
-    deletePlaylist.mutate({ id });
-  };
-
-  const derivedVideos = videos.map((v) => {
-    const playlistName = v.playlist_videos?.[0]?.playlist?.title;
-    return {
-      id: String(v.id),
-      title: v.title,
-      source: v.source,
-      slug: v.slug,
-      playlistName,
-    };
+  const updatePlaylist = useUpdatePlaylist({
+    getAccessToken,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
+    },
   });
 
-  const derivedPlaylists = playlists.map((p) => ({
-    id: String(p.id),
-    title: p.title,
-    slug: p.slug,
-  }));
+  const handleUpdateVideo = (input: { id: string; title?: string; thumbnailUrl?: string }) => {
+    updateVideo.mutate(input);
+  };
+
+  const handleRepairVideo = (_videoId: string) => {
+    setNotification({
+      message: 'Repair queued — you will get a notification when ready.',
+      severity: 'info',
+    });
+  };
+
+  const handleCreatePlaylist = (input: { title: string; slug?: string; description?: string }) => {
+    createPlaylist.mutate({
+      title: input.title,
+      slug: input.slug || createPlaylistSlug(input.title),
+      description: input.description,
+    });
+  };
+
+  const handleUpdatePlaylist = (input: { id: string; title?: string; description?: string }) => {
+    updatePlaylist.mutate(input);
+  };
 
   if (isLoading) {
     return <LoadingBackdrop message="Loading your library..." />;
   }
 
   return (
-    <ManageScreen
-      sites={appConfig.sites}
-      user={user}
-      onLogout={() => {
-        clearStandaloneCache();
-        signOut();
-      }}
-      onNavigateSettings={() => navigate({ to: '/settings' })}
-      videos={derivedVideos}
-      playlists={derivedPlaylists}
-      onDeleteVideo={handleDeleteVideo}
-      onDeletePlaylist={handleDeletePlaylist}
-      deletingVideoId={deletingVideoId}
-      deletingPlaylistId={deletingPlaylistId}
-    />
+    <>
+      <ManageScreen
+        sites={appConfig.sites}
+        user={user}
+        onLogout={() => {
+          clearStandaloneCache();
+          signOut();
+        }}
+        onNavigateSettings={() => navigate({ to: '/settings' })}
+        isLoading={isLoading}
+        videos={videos}
+        playlists={playlists}
+        onUpdateVideo={handleUpdateVideo}
+        onRepairVideo={handleRepairVideo}
+        onCreatePlaylist={handleCreatePlaylist}
+        onUpdatePlaylist={handleUpdatePlaylist}
+      />
+      {notification && (
+        <Notification
+          notification={notification}
+          onClose={() => setNotification(null)}
+        />
+      )}
+    </>
   );
 };
 
