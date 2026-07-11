@@ -125,4 +125,8 @@ const useUpdatePlaylist = (props: UseUpdatePlaylistProps) => {
 };
 
 export { useUpdateVideo, useCreatePlaylist, useUpdatePlaylist };
-export type { UpdateVideoVariables, CreatePlaylistVariables, UpdatePlaylistVariables };
+export type {
+  UpdateVideoVariables,
+  CreatePlaylistVariables,
+  UpdatePlaylistVariables,
+};
