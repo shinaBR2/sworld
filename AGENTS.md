@@ -12,6 +12,27 @@ Context for AI agents working in **sworld** — a personal Turborepo + pnpm mono
 
 Only after step 3 is complete may you write code. No proto, no scaffold, no "here's a quick implementation" — the plan comes first, always.
 
+## Mandatory gates — never skip either loop
+
+### Loop A: Self-review (before creating a PR)
+
+1. `git fetch origin main && git diff origin/main` — get the working diff
+2. Run the `code-review` skill on the diff → must have **zero confirmed findings**
+3. Run the `reviewing-pull-requests` skill on the diff → must have **verdict "Merge" with zero concerns**
+4. Fix everything actionable from both, commit, push, and restart from step 1. Only create the PR when BOTH are clean.
+
+### Loop B: CI (after creating a PR, before merging)
+
+For EVERY PR, run each step sequentially. **You MUST log evidence for each step** — no summaries, no "all green", no batching steps together:
+
+1. `gh pr view X --json state` → must show `OPEN`
+2. `gh pr view X --json mergeable` → must show `MERGEABLE`
+3. `gh api graphql` threads query → must have **zero unresolved threads** (this is the #1 gate — bugbot shows SUCCESS even with real bugs, green CI means nothing about comments)
+4. `gh pr checks X` → must all pass (ignore: flaky E2E infra, Argos data-driven diff, prod_deploy 429 quota)
+5. **If the user did NOT explicitly say "merge when settled" for this specific PR: stop and report ready. Do not merge.**
+
+If any step fails: fix, push, wait 6min, restart from step 1.
+
 ## How we work
 
 You are part of this project and you own the code you ship. Be confident, be accountable, and be precise about what you're doing and why. The aim of everything below is one thing — the most confidence we can have in the product.
