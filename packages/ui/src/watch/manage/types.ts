@@ -1,12 +1,13 @@
 interface ManageVideo {
-  id: string;
+  __typename?: 'videos';
+  id: any;
   title: string;
-  thumbnailUrl: string | null;
-  duration: number | null;
-  source: string | null;
-  status: string;
+  thumbnailUrl?: string | null;
+  duration?: number | null;
+  source?: string | null;
+  status?: string;
   slug: string;
-  createdAt: string;
+  createdAt?: any;
 }
 
 interface VideoEdit {

@@ -1,3 +1,4 @@
+export { useLoadManage } from './manage';
 export { useLoadPlaylistDetail } from './playlist-detail';
 export { useLoadPlaylists } from './playlists';
 export * from './types';

@@ -1,12 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
@@ -14,6 +8,15 @@ import { lazy, Suspense, useState } from 'react';
 import { FullWidthContainer } from '../../universal';
 import { Header } from '../../universal/header';
 import { SettingsPanel } from '../home-page/settings';
+import { PlaylistSection } from './playlist-section';
+import type {
+  ManagePlaylist,
+  ManageVideo,
+  PlaylistCreate,
+  PlaylistEdit,
+  VideoEdit,
+} from './types';
+import { VideoSection } from './video-section';
 
 const VideoUploadDialog = lazy(() =>
   import('../dialogs/upload').then((module) => ({
@@ -28,31 +31,19 @@ interface HeaderSites {
   til: string;
 }
 
-interface ManageVideo {
-  id: string;
-  title: string;
-  source?: string | null;
-  slug: string;
-  playlistName?: string;
-}
-
-interface ManagePlaylist {
-  id: string;
-  title: string;
-  slug: string;
-}
-
 interface ManageScreenProps {
   sites: HeaderSites;
   user: Auth.CustomUser | null;
   onLogout: () => void;
   onNavigateSettings?: () => void;
-  videos?: ManageVideo[];
-  playlists?: ManagePlaylist[];
-  onDeleteVideo?: (id: string) => void;
-  onDeletePlaylist?: (id: string) => void;
-  deletingVideoId?: string | null;
-  deletingPlaylistId?: string | null;
+  isLoading: boolean;
+  videos: ManageVideo[];
+  playlists: ManagePlaylist[];
+  onUpdateVideo: (input: VideoEdit) => void;
+  onRepairVideo: (videoId: string) => void;
+  onCreatePlaylist: (input: PlaylistCreate) => void;
+  onUpdatePlaylist: (input: PlaylistEdit) => void;
+  isRepairDisabled?: boolean;
 }
 
 const ManageScreen = (props: ManageScreenProps) => {
@@ -61,12 +52,14 @@ const ManageScreen = (props: ManageScreenProps) => {
     user,
     onLogout,
     onNavigateSettings,
-    videos = [],
-    playlists = [],
-    onDeleteVideo,
-    onDeletePlaylist,
-    deletingVideoId,
-    deletingPlaylistId,
+    isLoading,
+    videos,
+    playlists,
+    onUpdateVideo,
+    onRepairVideo,
+    onCreatePlaylist,
+    onUpdatePlaylist,
+    isRepairDisabled,
   } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -93,84 +86,23 @@ const ManageScreen = (props: ManageScreenProps) => {
             Manage library
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Import videos and manage your content.
+            Import videos, edit your content, and organise your playlists.
           </Typography>
         </Box>
-        <Stack spacing={4} sx={{ pb: 8 }}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Videos
-            </Typography>
-            {videos.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">
-                No videos yet.
-              </Typography>
-            ) : (
-              <List disablePadding>
-                {videos.map((video) => (
-                  <ListItem
-                    key={video.id}
-                    secondaryAction={
-                      onDeleteVideo ? (
-                        <IconButton
-                          edge="end"
-                          aria-label={`Delete ${video.title}`}
-                          onClick={() => onDeleteVideo(video.id)}
-                          disabled={deletingVideoId === video.id}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      ) : null
-                    }
-                  >
-                    <ListItemText
-                      primary={
-                        video.playlistName
-                          ? `${video.title} (${video.playlistName})`
-                          : video.title
-                      }
-                      secondary={video.slug}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Paper>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Playlists
-            </Typography>
-            {playlists.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">
-                No playlists yet.
-              </Typography>
-            ) : (
-              <List disablePadding>
-                {playlists.map((playlist) => (
-                  <ListItem
-                    key={playlist.id}
-                    secondaryAction={
-                      onDeletePlaylist ? (
-                        <IconButton
-                          edge="end"
-                          aria-label={`Delete ${playlist.title}`}
-                          onClick={() => onDeletePlaylist(playlist.id)}
-                          disabled={deletingPlaylistId === playlist.id}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      ) : null
-                    }
-                  >
-                    <ListItemText
-                      primary={playlist.title}
-                      secondary={playlist.slug}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Paper>
+        <Stack spacing={6} sx={{ pb: 8 }}>
+          <VideoSection
+            isLoading={isLoading}
+            videos={videos}
+            onUpdateVideo={onUpdateVideo}
+            onRepairVideo={onRepairVideo}
+            isRepairDisabled={isRepairDisabled}
+          />
+          <PlaylistSection
+            isLoading={isLoading}
+            playlists={playlists}
+            onCreatePlaylist={onCreatePlaylist}
+            onUpdatePlaylist={onUpdatePlaylist}
+          />
         </Stack>
       </Box>
       <Fab
@@ -181,7 +113,6 @@ const ManageScreen = (props: ManageScreenProps) => {
           position: 'fixed',
           bottom: 24,
           right: 24,
-          bgcolor: 'secondary.main',
         }}
       >
         <AddIcon />
