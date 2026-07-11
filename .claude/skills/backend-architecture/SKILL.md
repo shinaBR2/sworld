@@ -177,3 +177,18 @@ The pattern for adding a new handler to the compute service:
 | Hasura actions metadata | `sworld-hasura-v2/metadata/actions.yaml` |
 | Hasura Event triggers | `sworld-hasura-v2/metadata/databases/sworld/tables/public_videos.yaml` |
 | Notifications permissions | `sworld-hasura-v2/metadata/databases/sworld/tables/public_notifications.yaml` |
+
+## Local testing limitations
+
+**Cloud Tasks cannot run locally.** GCP Cloud Tasks are a managed service with no local emulator. The full pipeline (Hasura Event/Action → Gateway → Cloud Task → Compute/io → finishVideoProcess) requires a real GCP deployment to test end-to-end.
+
+Local testing options:
+
+| Level | How | What it validates |
+|-------|-----|-------------------|
+| **Unit tests** | `vitest` with mocked deps | Handler business logic, schema validation, error paths |
+| **Direct handler call** | `curl POST localhost:4000/videos/<handler> -H 'x-task-id: <uuid>' -d '{...}'` | Handler in isolation (bypasses Cloud Tasks) |
+| **Gateway + Compute locally** | Run gateway + compute in separate terminals, call the action manually | Action → Gateway → Cloud Task creation (but task never delivers locally) |
+| **Full integration** | Deploy to Cloud Run, trigger via Hasura | End-to-end: action → gateway → cloud task → handler → notification |
+
+When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → deploy (real integration). Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
