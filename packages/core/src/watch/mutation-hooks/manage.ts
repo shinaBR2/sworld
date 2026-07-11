@@ -13,18 +13,6 @@ const updateVideoMutation = graphql(/* GraphQL */ `
   }
 `);
 
-const repairFmp4Mutation = graphql(/* GraphQL */ `
-  mutation RepairFmp4($videoId: uuid!) {
-    repairFmp4(input: { input: { videoId: $videoId } }) {
-      success
-      message
-      dataObject {
-        taskId
-      }
-    }
-  }
-`);
-
 const createPlaylistMutation = graphql(/* GraphQL */ `
   mutation CreatePlaylistManage(
     $title: String!
@@ -36,7 +24,7 @@ const createPlaylistMutation = graphql(/* GraphQL */ `
       object: {
         title: $title
         slug: $slug
-        thumbnail_url: $thumbnailUrl
+        thumbnailUrl: $thumbnailUrl
         description: $description
         site: "watch"
       }
@@ -78,30 +66,6 @@ const useUpdateVideo = (props: UseUpdateVideoProps) => {
 
   return useMutationRequest({
     document: updateVideoMutation,
-    getAccessToken,
-    options: { onSuccess, onError },
-  });
-};
-
-// ─── useRepairFmp4 ───
-
-interface RepairFmp4Variables {
-  videoId: string;
-}
-
-interface UseRepairFmp4Props
-  extends Pick<
-    UseMutationOptions<unknown, unknown, RepairFmp4Variables, unknown>,
-    'onSuccess' | 'onError'
-  > {
-  getAccessToken: () => Promise<string>;
-}
-
-const useRepairFmp4 = (props: UseRepairFmp4Props) => {
-  const { getAccessToken, onSuccess, onError } = props;
-
-  return useMutationRequest({
-    document: repairFmp4Mutation,
     getAccessToken,
     options: { onSuccess, onError },
   });
@@ -160,15 +124,5 @@ const useUpdatePlaylist = (props: UseUpdatePlaylistProps) => {
   });
 };
 
-export {
-  useUpdateVideo,
-  useRepairFmp4,
-  useCreatePlaylist,
-  useUpdatePlaylist,
-};
-export type {
-  UpdateVideoVariables,
-  RepairFmp4Variables,
-  CreatePlaylistVariables,
-  UpdatePlaylistVariables,
-};
+export { useUpdateVideo, useCreatePlaylist, useUpdatePlaylist };
+export type { UpdateVideoVariables, CreatePlaylistVariables, UpdatePlaylistVariables };

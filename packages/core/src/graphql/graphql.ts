@@ -22,6 +22,23 @@ export type Scalars = {
   uuid: { input: any; output: any; }
 };
 
+export type AuthorizeDeviceInput = {
+  approved: Scalars['Boolean']['input'];
+  userCode: Scalars['String']['input'];
+};
+
+export type AuthorizeDeviceOutput = {
+  __typename?: 'AuthorizeDeviceOutput';
+  success: Scalars['Boolean']['output'];
+};
+
+export type AuthorizeDeviceResponse = {
+  __typename?: 'AuthorizeDeviceResponse';
+  data?: Maybe<AuthorizeDeviceOutput>;
+  error?: Maybe<DeviceRequestError>;
+  success: Scalars['Boolean']['output'];
+};
+
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Boolean']['input']>;
@@ -60,6 +77,25 @@ export type DeviceRequestError = {
   __typename?: 'DeviceRequestError';
   code: Scalars['String']['output'];
   message: Scalars['String']['output'];
+};
+
+export type GetDeviceTokenInput = {
+  deviceCode: Scalars['String']['input'];
+  grantType: Scalars['String']['input'];
+};
+
+export type GetDeviceTokenOutput = {
+  __typename?: 'GetDeviceTokenOutput';
+  accessToken: Scalars['String']['output'];
+  expiresIn: Scalars['Int']['output'];
+  tokenType: Scalars['String']['output'];
+};
+
+export type GetDeviceTokenResponse = {
+  __typename?: 'GetDeviceTokenResponse';
+  data?: Maybe<GetDeviceTokenOutput>;
+  error?: Maybe<DeviceRequestError>;
+  success: Scalars['Boolean']['output'];
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -2856,7 +2892,9 @@ export type Journals_Bool_Exp = {
 /** unique or primary key constraints on table "journals" */
 export enum Journals_Constraint {
   /** unique or primary key constraint on columns "id" */
-  JournalsPkey = 'journals_pkey'
+  JournalsPkey = 'journals_pkey',
+  /** unique or primary key constraint on columns "user_id", "date" */
+  JournalsUserIdDateKey = 'journals_user_id_date_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -3092,6 +3130,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
+  /** User authorizes an extension device request after entering the user code on the /pair page. */
+  authorizeDevice: AuthorizeDeviceResponse;
   /** Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc. */
   createDeviceRequest: CreateDeviceRequestResponse;
   /** Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic). */
@@ -3204,6 +3244,8 @@ export type Mutation_Root = {
   delete_videos?: Maybe<Videos_Mutation_Response>;
   /** delete single row from the table: "videos" */
   delete_videos_by_pk?: Maybe<Videos>;
+  /** Extension polls for the device authorization token. Returns the access token once the user has authorized. */
+  getDeviceToken: GetDeviceTokenResponse;
   /** insert data into the table: "audio_tags" */
   insert_audio_tags?: Maybe<Audio_Tags_Mutation_Response>;
   /** insert a single row into the table: "audio_tags" */
@@ -3476,6 +3518,12 @@ export type Mutation_Root = {
   update_videos_by_pk?: Maybe<Videos>;
   /** update multiples rows of table: "videos" */
   update_videos_many?: Maybe<Array<Maybe<Videos_Mutation_Response>>>;
+};
+
+
+/** mutation root */
+export type Mutation_RootAuthorizeDeviceArgs = {
+  input: AuthorizeDeviceInput;
 };
 
 
@@ -3816,6 +3864,12 @@ export type Mutation_RootDelete_VideosArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Videos_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootGetDeviceTokenArgs = {
+  input: GetDeviceTokenInput;
 };
 
 
@@ -6389,7 +6443,7 @@ export type Posts = {
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
-  hId: Scalars['String']['output'];
+  hId?: Maybe<Scalars['String']['output']>;
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   pinned: Scalars['Boolean']['output'];
@@ -8194,8 +8248,8 @@ export type Shared_Video_Recipients = {
   recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
-  video: Videos;
-  videoId: Scalars['uuid']['output'];
+  video?: Maybe<Videos>;
+  videoId?: Maybe<Scalars['uuid']['output']>;
   viewed: Scalars['Boolean']['output'];
 };
 
@@ -10622,7 +10676,7 @@ export type Timestamptz_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
 };
 
-/** columns and relationships of "user_settings" */
+/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
 export type User_Settings = {
   __typename?: 'user_settings';
   data: Scalars['jsonb']['output'];
@@ -10632,7 +10686,7 @@ export type User_Settings = {
 };
 
 
-/** columns and relationships of "user_settings" */
+/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
 export type User_SettingsDataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
@@ -13451,6 +13505,34 @@ export type CreateSignedUploadUrlMutationVariables = Exact<{
 
 export type CreateSignedUploadUrlMutation = { __typename?: 'mutation_root', createSignedUploadUrl: { __typename?: 'SignedUploadUrlResponse', success: boolean, message: string, dataObject?: { __typename?: 'SignedUploadUrlOutput', uploadUrl: string, publicUrl: string, objectPath: string, expiresAt: string } | null } };
 
+export type UpdateVideoManageMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdateVideoManageMutation = { __typename?: 'mutation_root', update_videos_by_pk?: { __typename?: 'videos', id: any } | null };
+
+export type CreatePlaylistManageMutationVariables = Exact<{
+  title: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreatePlaylistManageMutation = { __typename?: 'mutation_root', insert_playlist_one?: { __typename?: 'playlist', id: any } | null };
+
+export type UpdatePlaylistManageMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdatePlaylistManageMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
 export type SaveSubtitleMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   object: Subtitles_Set_Input;
@@ -14396,6 +14478,35 @@ export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateSignedUploadUrlMutation, CreateSignedUploadUrlMutationVariables>;
+export const UpdateVideoManageDocument = new TypedDocumentString(`
+    mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {
+  update_videos_by_pk(
+    pk_columns: {id: $id}
+    _set: {title: $title, thumbnailUrl: $thumbnailUrl}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateVideoManageMutation, UpdateVideoManageMutationVariables>;
+export const CreatePlaylistManageDocument = new TypedDocumentString(`
+    mutation CreatePlaylistManage($title: String!, $slug: String!, $thumbnailUrl: String, $description: String) {
+  insert_playlist_one(
+    object: {title: $title, slug: $slug, thumbnailUrl: $thumbnailUrl, description: $description, site: "watch"}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<CreatePlaylistManageMutation, CreatePlaylistManageMutationVariables>;
+export const UpdatePlaylistManageDocument = new TypedDocumentString(`
+    mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {
+  update_playlist_by_pk(
+    pk_columns: {id: $id}
+    _set: {title: $title, description: $description}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdatePlaylistManageMutation, UpdatePlaylistManageMutationVariables>;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
   update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
