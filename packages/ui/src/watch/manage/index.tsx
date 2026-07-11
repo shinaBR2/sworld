@@ -1,7 +1,8 @@
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
 import { lazy, Suspense, useState } from 'react';
@@ -64,6 +65,7 @@ const ManageScreen = (props: ManageScreenProps) => {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [tab, setTab] = useState(0);
 
   return (
     <FullWidthContainer>
@@ -89,7 +91,13 @@ const ManageScreen = (props: ManageScreenProps) => {
             Import videos, edit your content, and organise your playlists.
           </Typography>
         </Box>
-        <Stack spacing={6} sx={{ pb: 8 }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)}>
+            <Tab label={`Videos (${videos.length})`} />
+            <Tab label={`Playlists (${playlists.length})`} />
+          </Tabs>
+        </Box>
+        {tab === 0 && (
           <VideoSection
             isLoading={isLoading}
             videos={videos}
@@ -97,13 +105,15 @@ const ManageScreen = (props: ManageScreenProps) => {
             onRepairVideo={onRepairVideo}
             isRepairDisabled={isRepairDisabled}
           />
+        )}
+        {tab === 1 && (
           <PlaylistSection
             isLoading={isLoading}
             playlists={playlists}
             onCreatePlaylist={onCreatePlaylist}
             onUpdatePlaylist={onUpdatePlaylist}
           />
-        </Stack>
+        )}
       </Box>
       <Fab
         color="secondary"
