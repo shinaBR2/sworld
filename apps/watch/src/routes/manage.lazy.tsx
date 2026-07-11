@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { slugify } from 'core/universal/common';
 import { useAuthContext } from 'core/providers/auth';
@@ -21,7 +20,6 @@ const createPlaylistSlug = (title: string) =>
 const Content = () => {
   const { user, signOut, getAccessToken } = useAuthContext();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { videos, playlists, isLoading } = useLoadManage();
 
@@ -32,23 +30,14 @@ const Content = () => {
 
   const updateVideo = useUpdateVideo({
     getAccessToken,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
-    },
   });
 
   const createPlaylist = useCreatePlaylist({
     getAccessToken,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
-    },
   });
 
   const updatePlaylist = useUpdatePlaylist({
     getAccessToken,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['watch-manage'] });
-    },
   });
 
   const handleUpdateVideo = (input: {
