@@ -96,6 +96,26 @@ actions:
     permissions:
       - role: user
     comment: Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
+  - name: repairFmp4
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: repairFmp4
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/videos-actions/repair-fmp4'
+        version: 2
+      output_type: RepairFmp4Response
+    permissions:
+      - role: user
+    comment: Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side.
 custom_types:
   enums: []
   input_objects:
@@ -104,6 +124,7 @@ custom_types:
     - name: GetDeviceTokenInput
     - name: SignedUploadUrlInput
     - name: SetVideoThumbnailAtTimeInput
+    - name: RepairFmp4Input
   objects:
     - name: CreateDeviceRequestOutput
       fields:
@@ -149,4 +170,6 @@ custom_types:
     - name: SignedUploadUrlResponse
     - name: SetVideoThumbnailAtTimeOutput
     - name: SetVideoThumbnailAtTimeResponse
+    - name: RepairFmp4Output
+    - name: RepairFmp4Response
   scalars: []
