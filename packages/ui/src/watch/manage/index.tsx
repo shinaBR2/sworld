@@ -1,10 +1,12 @@
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { Auth } from 'core';
 import { useState } from 'react';
 import { FullWidthContainer } from '../../universal';
 import { Header } from '../../universal/header';
 import { SettingsPanel } from '../home-page/settings';
+import { SettingsSection } from './settings-section';
 
 interface HeaderSites {
   main: string;
@@ -17,10 +19,20 @@ interface ManageScreenProps {
   sites: HeaderSites;
   user: Auth.CustomUser | null;
   onLogout: () => void;
+  standaloneMode: boolean;
+  onStandaloneModeChange: (value: boolean) => void;
+  saving?: boolean;
 }
 
 const ManageScreen = (props: ManageScreenProps) => {
-  const { sites, user, onLogout } = props;
+  const {
+    sites,
+    user,
+    onLogout,
+    standaloneMode,
+    onStandaloneModeChange,
+    saving,
+  } = props;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -45,6 +57,13 @@ const ManageScreen = (props: ManageScreenProps) => {
             Import videos and configure your app experience.
           </Typography>
         </Box>
+        <Stack spacing={4} sx={{ pb: 8 }}>
+          <SettingsSection
+            standaloneMode={standaloneMode}
+            onChange={onStandaloneModeChange}
+            saving={saving}
+          />
+        </Stack>
       </Box>
     </FullWidthContainer>
   );
