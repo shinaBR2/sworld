@@ -1,4 +1,5 @@
 import Logout from '@mui/icons-material/Logout';
+import Settings from '@mui/icons-material/Settings';
 import VideoLibrary from '@mui/icons-material/VideoLibrary';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -14,17 +15,19 @@ interface SettingsPanelProps {
   actions: {
     logout: () => void;
     manage?: () => void;
+    settings?: () => void;
   };
 }
 
 const texts = {
   logout: 'Logout',
   manage: 'Manage library',
+  settings: 'Settings',
 };
 
 const SettingsPanel = (props: SettingsPanelProps) => {
   const { open, toggle, actions } = props;
-  const { logout, manage } = actions;
+  const { logout, manage, settings } = actions;
 
   return (
     <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
@@ -48,6 +51,17 @@ const SettingsPanel = (props: SettingsPanelProps) => {
         </List>
         <Divider />
         <List>
+          {settings ? (
+            <>
+              <ListItemButton onClick={settings}>
+                <ListItemIcon>
+                  <Settings />
+                </ListItemIcon>
+                <ListItemText primary={texts.settings} />
+              </ListItemButton>
+              <Divider />
+            </>
+          ) : null}
           <ListItemButton onClick={logout}>
             <ListItemIcon>
               <Logout />
