@@ -3,6 +3,7 @@ import { slugify } from 'core/universal/common';
 import { useAuthContext } from 'core/providers/auth';
 import {
   useCreatePlaylist,
+  useRepairFmp4,
   useReorderPlaylistVideos,
   useUpdatePlaylist,
   useUpdateVideo,
@@ -45,6 +46,10 @@ const Content = () => {
     getAccessToken,
   });
 
+  const repairFmp4 = useRepairFmp4({
+    getAccessToken,
+  });
+
   const handleUpdateVideo = (input: {
     id: string;
     title?: string;
@@ -53,11 +58,29 @@ const Content = () => {
     updateVideo.mutate(input);
   };
 
-  const handleRepairVideo = (_videoId: string) => {
-    setNotification({
-      message: 'Repair queued — you will get a notification when ready.',
-      severity: 'info',
-    });
+  const handleRepairVideo = (videoId: string) => {
+    repairFmp4.mutate(
+      { input: { videoId } },
+      {
+        onSuccess: (data: any) => {
+          setNotification({
+            message:
+              data?.repairFmp4?.message ||
+              'Repair queued — you will get a notification when ready.',
+            severity: 'success',
+          });
+        },
+        onError: (error: unknown) => {
+          setNotification({
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Repair failed. Please try again.',
+            severity: 'error',
+          });
+        },
+      },
+    );
   };
 
   const handleCreatePlaylist = (input: {

@@ -262,11 +262,36 @@ const useReorderPlaylistVideos = (props: UseMutationProps) => {
   return { ...mutation, mutate };
 };
 
+// ─── useRepairFmp4 ───
+
+const repairFmp4Mutation = graphql(/* GraphQL */ `
+  mutation RepairFmp4($input: RepairFmp4Input!) {
+    repairFmp4(input: $input) {
+      success
+      message
+    }
+  }
+`);
+
+interface RepairFmp4Variables {
+  videoId: string;
+}
+
+const useRepairFmp4 = (props: UseMutationProps) => {
+  const { getAccessToken } = props;
+
+  return useMutationRequest({
+    document: repairFmp4Mutation,
+    getAccessToken,
+  });
+};
+
 export {
   useUpdateVideo,
   useCreatePlaylist,
   useUpdatePlaylist,
   useReorderPlaylistVideos,
+  useRepairFmp4,
 };
 export type {
   UpdateVideoVariables,
@@ -274,4 +299,5 @@ export type {
   UpdatePlaylistVariables,
   ReorderPlaylistVideosVariables,
   ReorderItem,
+  RepairFmp4Variables,
 };
