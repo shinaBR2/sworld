@@ -198,8 +198,6 @@ const reorderPlaylistVideosMutation = graphql(/* GraphQL */ `
   mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {
     update_playlist_videos_many(updates: $updates) {
       returning {
-        playlist_id
-        video_id
         position
       }
     }
@@ -229,7 +227,7 @@ const useReorderPlaylistVideos = (props: UseMutationProps) => {
                 playlist_videos: p.playlist_videos
                   .map((pv) => {
                     const updated = variables.items.find(
-                      (item) => item.videoId === pv.video_id,
+                      (item) => item.videoId === pv.video.id,
                     );
                     return updated ? { ...pv, position: updated.position } : pv;
                   })

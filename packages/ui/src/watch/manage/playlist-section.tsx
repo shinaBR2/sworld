@@ -41,7 +41,7 @@ const computeNewOrder = (
   direction: 'up' | 'down',
 ): Array<{ videoId: string; position: number }> => {
   const items = videos.map((v) => ({
-    videoId: v.video_id as string,
+    videoId: v.video.id as string,
     position: v.position,
   }));
   const targetIndex = direction === 'up' ? index - 1 : index + 1;
@@ -149,7 +149,7 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
 
                       return (
                         <Stack
-                          key={pv.video_id}
+                          key={pv.video.id}
                           direction="row"
                           sx={{
                             alignItems: 'center',
