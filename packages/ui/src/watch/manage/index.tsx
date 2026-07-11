@@ -15,6 +15,7 @@ import type {
   ManageVideo,
   PlaylistCreate,
   PlaylistEdit,
+  ReorderPlaylistVariables,
   VideoEdit,
 } from './types';
 import { VideoSection } from './video-section';
@@ -44,6 +45,7 @@ interface ManageScreenProps {
   onRepairVideo: (videoId: string) => void;
   onCreatePlaylist: (input: PlaylistCreate) => void;
   onUpdatePlaylist: (input: PlaylistEdit) => void;
+  onReorderPlaylist: (input: ReorderPlaylistVariables) => void;
   isRepairDisabled?: boolean;
 }
 
@@ -60,6 +62,7 @@ const ManageScreen = (props: ManageScreenProps) => {
     onRepairVideo,
     onCreatePlaylist,
     onUpdatePlaylist,
+    onReorderPlaylist,
     isRepairDisabled,
   } = props;
 
@@ -112,6 +115,7 @@ const ManageScreen = (props: ManageScreenProps) => {
             playlists={playlists}
             onCreatePlaylist={onCreatePlaylist}
             onUpdatePlaylist={onUpdatePlaylist}
+            onReorderPlaylist={onReorderPlaylist}
           />
         )}
       </Box>
