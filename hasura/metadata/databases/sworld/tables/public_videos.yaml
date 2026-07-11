@@ -160,19 +160,6 @@ update_permissions:
         user_id:
           _eq: X-Hasura-User-Id
     comment: ""
-delete_permissions:
-  - role: user
-    permission:
-      filter:
-        user_id:
-          _eq: X-Hasura-User-Id
-    comment: ""
-  - role: vip
-    permission:
-      filter:
-        user_id:
-          _eq: X-Hasura-User-Id
-    comment: ""
 event_triggers:
   - name: share_video
     definition:
