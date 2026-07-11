@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 
 const HistoryLazyRouteImport = createFileRoute('/history')()
 const ManageLazyRouteImport = createFileRoute('/manage')()
+const SettingsLazyRouteImport = createFileRoute('/settings')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const VideoSlugIdLazyRouteImport = createFileRoute('/video/$slug/$id')()
 const PlaylistSlugPlaylistIdVideoIdLazyRouteImport = createFileRoute(
@@ -30,6 +31,13 @@ const ManageLazyRoute = ManageLazyRouteImport.update({
   path: '/manage',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
+const SettingsLazyRoute = SettingsLazyRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/settings.lazy').then((d) => d.Route),
+)
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -57,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
   '/manage': typeof ManageLazyRoute
+  '/settings': typeof SettingsLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -64,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
   '/manage': typeof ManageLazyRoute
+  '/settings': typeof SettingsLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -72,6 +82,7 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/history': typeof HistoryLazyRoute
   '/manage': typeof ManageLazyRoute
+  '/settings': typeof SettingsLazyRoute
   '/video/$slug/$id': typeof VideoSlugIdLazyRoute
   '/playlist/$slug/$playlistId/$videoId': typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -81,6 +92,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/manage'
+    | '/settings'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   fileRoutesByTo: FileRoutesByTo
@@ -88,6 +100,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/manage'
+    | '/settings'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   id:
@@ -95,6 +108,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/manage'
+    | '/settings'
     | '/video/$slug/$id'
     | '/playlist/$slug/$playlistId/$videoId'
   fileRoutesById: FileRoutesById
@@ -103,6 +117,7 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   HistoryLazyRoute: typeof HistoryLazyRoute
   ManageLazyRoute: typeof ManageLazyRoute
+  SettingsLazyRoute: typeof SettingsLazyRoute
   VideoSlugIdLazyRoute: typeof VideoSlugIdLazyRoute
   PlaylistSlugPlaylistIdVideoIdLazyRoute: typeof PlaylistSlugPlaylistIdVideoIdLazyRoute
 }
@@ -121,6 +136,13 @@ declare module '@tanstack/react-router' {
       path: '/manage'
       fullPath: '/manage'
       preLoaderRoute: typeof ManageLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -151,6 +173,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   HistoryLazyRoute: HistoryLazyRoute,
   ManageLazyRoute: ManageLazyRoute,
+  SettingsLazyRoute: SettingsLazyRoute,
   VideoSlugIdLazyRoute: VideoSlugIdLazyRoute,
   PlaylistSlugPlaylistIdVideoIdLazyRoute:
     PlaylistSlugPlaylistIdVideoIdLazyRoute,
