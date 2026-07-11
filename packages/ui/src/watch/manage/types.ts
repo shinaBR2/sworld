@@ -16,12 +16,26 @@ interface VideoEdit {
   thumbnailUrl?: string;
 }
 
+interface PlaylistVideo {
+  __typename?: 'playlist_videos';
+  position: number;
+  playlist_id: any;
+  video_id: any;
+  video: {
+    __typename?: 'videos';
+    id: any;
+    title: string;
+    duration?: number | null;
+  };
+}
+
 interface ManagePlaylist {
   id: string;
   title: string;
   slug: string;
   description?: string | null;
   thumbnailUrl?: string | null;
+  playlist_videos: PlaylistVideo[];
 }
 
 interface PlaylistCreate {
@@ -37,10 +51,17 @@ interface PlaylistEdit {
   description?: string;
 }
 
+interface ReorderPlaylistVariables {
+  playlistId: string;
+  items: Array<{ videoId: string; position: number }>;
+}
+
 export type {
   ManageVideo,
   VideoEdit,
   ManagePlaylist,
+  PlaylistVideo,
   PlaylistCreate,
   PlaylistEdit,
+  ReorderPlaylistVariables,
 };

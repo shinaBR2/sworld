@@ -3,6 +3,7 @@ import { slugify } from 'core/universal/common';
 import { useAuthContext } from 'core/providers/auth';
 import {
   useCreatePlaylist,
+  useReorderPlaylistVideos,
   useUpdatePlaylist,
   useUpdateVideo,
 } from 'core/watch/mutation-hooks';
@@ -37,6 +38,10 @@ const Content = () => {
   });
 
   const updatePlaylist = useUpdatePlaylist({
+    getAccessToken,
+  });
+
+  const reorderPlaylist = useReorderPlaylistVideos({
     getAccessToken,
   });
 
@@ -75,6 +80,13 @@ const Content = () => {
     updatePlaylist.mutate(input);
   };
 
+  const handleReorderPlaylist = (input: {
+    playlistId: string;
+    items: Array<{ videoId: string; position: number }>;
+  }) => {
+    reorderPlaylist.mutate(input);
+  };
+
   if (isLoading) {
     return <LoadingBackdrop message="Loading your library..." />;
   }
@@ -96,6 +108,7 @@ const Content = () => {
         onRepairVideo={handleRepairVideo}
         onCreatePlaylist={handleCreatePlaylist}
         onUpdatePlaylist={handleUpdatePlaylist}
+        onReorderPlaylist={handleReorderPlaylist}
       />
       {notification && (
         <Notification
