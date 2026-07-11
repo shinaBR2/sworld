@@ -59,3 +59,18 @@ select_permissions:
         - select
         - select_by_pk
     comment: ""
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - author
+        - source
+        - status
+        - title
+        - total_pages
+    comment: ""
