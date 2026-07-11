@@ -1,3 +1,20 @@
+interface ManageVideo {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  duration: number | null;
+  source: string | null;
+  status: string;
+  slug: string;
+  createdAt: string;
+}
+
+interface VideoEdit {
+  id: string;
+  title?: string;
+  thumbnailUrl?: string;
+}
+
 interface ManagePlaylist {
   id: string;
   title: string;
@@ -19,4 +36,4 @@ interface PlaylistEdit {
   description?: string;
 }
 
-export type { ManagePlaylist, PlaylistCreate, PlaylistEdit };
+export type { ManageVideo, VideoEdit, ManagePlaylist, PlaylistCreate, PlaylistEdit };
