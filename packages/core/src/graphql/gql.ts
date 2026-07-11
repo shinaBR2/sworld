@@ -60,6 +60,9 @@ type Documents = {
     "\n  query GetUserSettings {\n    user_settings {\n      data\n    }\n  }\n": typeof types.GetUserSettingsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": typeof types.InsertVideosDocument,
     "\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n": typeof types.CreateSignedUploadUrlDocument,
+    "\n  mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n  }\n": typeof types.UpdateVideoManageDocument,
+    "\n  mutation CreatePlaylistManage(\n    $title: String!\n    $slug: String!\n    $thumbnailUrl: String\n    $description: String\n  ) {\n    insert_playlist_one(\n      object: {\n        title: $title\n        slug: $slug\n        thumbnailUrl: $thumbnailUrl\n        description: $description\n        site: \"watch\"\n      }\n    ) {\n      id\n    }\n  }\n": typeof types.CreatePlaylistManageDocument,
+    "\n  mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {\n    update_playlist_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, description: $description }\n    ) {\n      id\n    }\n  }\n": typeof types.UpdatePlaylistManageDocument,
     "\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n": typeof types.SaveSubtitleDocument,
     "\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n": typeof types.SetVideoThumbnailAtTimeDocument,
     "\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n": typeof types.SharePlaylistDocument,
@@ -123,6 +126,9 @@ const documents: Documents = {
     "\n  query GetUserSettings {\n    user_settings {\n      data\n    }\n  }\n": types.GetUserSettingsDocument,
     "\n  mutation InsertVideos($objects: [videos_insert_input!]!) {\n    insert_videos(objects: $objects) {\n      returning {\n        id\n        title\n        description\n      }\n    }\n  }\n": types.InsertVideosDocument,
     "\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n": types.CreateSignedUploadUrlDocument,
+    "\n  mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n  }\n": types.UpdateVideoManageDocument,
+    "\n  mutation CreatePlaylistManage(\n    $title: String!\n    $slug: String!\n    $thumbnailUrl: String\n    $description: String\n  ) {\n    insert_playlist_one(\n      object: {\n        title: $title\n        slug: $slug\n        thumbnailUrl: $thumbnailUrl\n        description: $description\n        site: \"watch\"\n      }\n    ) {\n      id\n    }\n  }\n": types.CreatePlaylistManageDocument,
+    "\n  mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {\n    update_playlist_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, description: $description }\n    ) {\n      id\n    }\n  }\n": types.UpdatePlaylistManageDocument,
     "\n  mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {\n    update_subtitles_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n    }\n  }\n": types.SaveSubtitleDocument,
     "\n  mutation SetVideoThumbnailAtTime($input: SetVideoThumbnailAtTimeInput!) {\n    setVideoThumbnailAtTime(input: $input) {\n      success\n      message\n      dataObject {\n        thumbnailUrl\n      }\n    }\n  }\n": types.SetVideoThumbnailAtTimeDocument,
     "\n  mutation sharePlaylist($id: uuid!, $emails: jsonb) {\n    update_playlist_by_pk(pk_columns: { id: $id }, _set: { sharedRecipientsInput: $emails }) {\n      id\n    }\n  }\n": types.SharePlaylistDocument,
@@ -321,6 +327,18 @@ export function graphql(source: "\n  mutation InsertVideos($objects: [videos_ins
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateSignedUploadUrl($input: SignedUploadUrlInput!) {\n    createSignedUploadUrl(input: $input) {\n      success\n      message\n      dataObject {\n        uploadUrl\n        publicUrl\n        objectPath\n        expiresAt\n      }\n    }\n  }\n"): typeof import('./graphql').CreateSignedUploadUrlDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {\n    update_videos_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, thumbnailUrl: $thumbnailUrl }\n    ) {\n      id\n    }\n  }\n"): typeof import('./graphql').UpdateVideoManageDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreatePlaylistManage(\n    $title: String!\n    $slug: String!\n    $thumbnailUrl: String\n    $description: String\n  ) {\n    insert_playlist_one(\n      object: {\n        title: $title\n        slug: $slug\n        thumbnailUrl: $thumbnailUrl\n        description: $description\n        site: \"watch\"\n      }\n    ) {\n      id\n    }\n  }\n"): typeof import('./graphql').CreatePlaylistManageDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {\n    update_playlist_by_pk(\n      pk_columns: { id: $id }\n      _set: { title: $title, description: $description }\n    ) {\n      id\n    }\n  }\n"): typeof import('./graphql').UpdatePlaylistManageDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

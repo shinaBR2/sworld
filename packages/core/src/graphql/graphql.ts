@@ -13505,6 +13505,34 @@ export type CreateSignedUploadUrlMutationVariables = Exact<{
 
 export type CreateSignedUploadUrlMutation = { __typename?: 'mutation_root', createSignedUploadUrl: { __typename?: 'SignedUploadUrlResponse', success: boolean, message: string, dataObject?: { __typename?: 'SignedUploadUrlOutput', uploadUrl: string, publicUrl: string, objectPath: string, expiresAt: string } | null } };
 
+export type UpdateVideoManageMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdateVideoManageMutation = { __typename?: 'mutation_root', update_videos_by_pk?: { __typename?: 'videos', id: any } | null };
+
+export type CreatePlaylistManageMutationVariables = Exact<{
+  title: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreatePlaylistManageMutation = { __typename?: 'mutation_root', insert_playlist_one?: { __typename?: 'playlist', id: any } | null };
+
+export type UpdatePlaylistManageMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdatePlaylistManageMutation = { __typename?: 'mutation_root', update_playlist_by_pk?: { __typename?: 'playlist', id: any } | null };
+
 export type SaveSubtitleMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
   object: Subtitles_Set_Input;
@@ -14457,6 +14485,35 @@ export const CreateSignedUploadUrlDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CreateSignedUploadUrlMutation, CreateSignedUploadUrlMutationVariables>;
+export const UpdateVideoManageDocument = new TypedDocumentString(`
+    mutation UpdateVideoManage($id: uuid!, $title: String, $thumbnailUrl: String) {
+  update_videos_by_pk(
+    pk_columns: {id: $id}
+    _set: {title: $title, thumbnailUrl: $thumbnailUrl}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateVideoManageMutation, UpdateVideoManageMutationVariables>;
+export const CreatePlaylistManageDocument = new TypedDocumentString(`
+    mutation CreatePlaylistManage($title: String!, $slug: String!, $thumbnailUrl: String, $description: String) {
+  insert_playlist_one(
+    object: {title: $title, slug: $slug, thumbnailUrl: $thumbnailUrl, description: $description, site: "watch"}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<CreatePlaylistManageMutation, CreatePlaylistManageMutationVariables>;
+export const UpdatePlaylistManageDocument = new TypedDocumentString(`
+    mutation UpdatePlaylistManage($id: uuid!, $title: String, $description: String) {
+  update_playlist_by_pk(
+    pk_columns: {id: $id}
+    _set: {title: $title, description: $description}
+  ) {
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<UpdatePlaylistManageMutation, UpdatePlaylistManageMutationVariables>;
 export const SaveSubtitleDocument = new TypedDocumentString(`
     mutation SaveSubtitle($id: uuid!, $object: subtitles_set_input!) {
   update_subtitles_by_pk(pk_columns: {id: $id}, _set: $object) {
