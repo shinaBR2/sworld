@@ -160,28 +160,37 @@ const PlaylistSection = (props: PlaylistSectionProps) => {
               onChange={handleAccordion(playlist.id)}
               disableGutters
             >
-              <AccordionSummary expandIcon={<ExpandMore />} sx={{ pr: 8 }}>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{
+                  pr: 7,
+                  '& .MuiAccordionSummary-content': {
+                    alignItems: 'center',
+                  },
+                }}
+              >
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
-                    <Typography variant="subtitle1" noWrap sx={{ flex: 1 }}>
-                      {playlist.title}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      aria-label={`Edit ${playlist.title}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEdit(playlist);
-                      }}
-                    >
-                      <Edit fontSize="small" />
-                    </IconButton>
-                  </Stack>
+                  <Typography variant="subtitle1" noWrap>
+                    {playlist.title}
+                  </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {playlist.playlist_videos.length} video
                     {playlist.playlist_videos.length !== 1 ? 's' : ''}
                   </Typography>
                 </Box>
+                <Tooltip title="Edit playlist">
+                  <IconButton
+                    size="small"
+                    aria-label={`Edit ${playlist.title}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEdit(playlist);
+                    }}
+                    sx={{ mr: -1 }}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
                 {playlist.playlist_videos.length === 0 ? (
