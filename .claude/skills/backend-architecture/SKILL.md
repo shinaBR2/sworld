@@ -192,3 +192,7 @@ Local testing options:
 | **Full integration** | Deploy to Cloud Run, trigger via Hasura | End-to-end: action → gateway → cloud task → handler → notification |
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → deploy (real integration). Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
+
+## Business constraints
+
+**No delete for user role.** The `user` role cannot delete anything — not videos, not audios, not playlists. Only the admin (database access via Hasura admin secret) can delete. This is enforced by Hasura permissions: `delete_permissions` is absent for the `user` role on all content tables. Never implement delete buttons or delete features in the frontend unless the user explicitly approves a Hasura permission change first.
