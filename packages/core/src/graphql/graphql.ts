@@ -22,6 +22,23 @@ export type Scalars = {
   uuid: { input: any; output: any; }
 };
 
+export type AuthorizeDeviceInput = {
+  approved: Scalars['Boolean']['input'];
+  userCode: Scalars['String']['input'];
+};
+
+export type AuthorizeDeviceOutput = {
+  __typename?: 'AuthorizeDeviceOutput';
+  success: Scalars['Boolean']['output'];
+};
+
+export type AuthorizeDeviceResponse = {
+  __typename?: 'AuthorizeDeviceResponse';
+  data?: Maybe<AuthorizeDeviceOutput>;
+  error?: Maybe<DeviceRequestError>;
+  success: Scalars['Boolean']['output'];
+};
+
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Boolean']['input']>;
@@ -60,6 +77,25 @@ export type DeviceRequestError = {
   __typename?: 'DeviceRequestError';
   code: Scalars['String']['output'];
   message: Scalars['String']['output'];
+};
+
+export type GetDeviceTokenInput = {
+  deviceCode: Scalars['String']['input'];
+  grantType: Scalars['String']['input'];
+};
+
+export type GetDeviceTokenOutput = {
+  __typename?: 'GetDeviceTokenOutput';
+  accessToken: Scalars['String']['output'];
+  expiresIn: Scalars['Int']['output'];
+  tokenType: Scalars['String']['output'];
+};
+
+export type GetDeviceTokenResponse = {
+  __typename?: 'GetDeviceTokenResponse';
+  data?: Maybe<GetDeviceTokenOutput>;
+  error?: Maybe<DeviceRequestError>;
+  success: Scalars['Boolean']['output'];
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -2856,7 +2892,9 @@ export type Journals_Bool_Exp = {
 /** unique or primary key constraints on table "journals" */
 export enum Journals_Constraint {
   /** unique or primary key constraint on columns "id" */
-  JournalsPkey = 'journals_pkey'
+  JournalsPkey = 'journals_pkey',
+  /** unique or primary key constraint on columns "user_id", "date" */
+  JournalsUserIdDateKey = 'journals_user_id_date_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -3092,6 +3130,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
+  /** User authorizes an extension device request after entering the user code on the /pair page. */
+  authorizeDevice: AuthorizeDeviceResponse;
   /** Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc. */
   createDeviceRequest: CreateDeviceRequestResponse;
   /** Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic). */
@@ -3204,6 +3244,8 @@ export type Mutation_Root = {
   delete_videos?: Maybe<Videos_Mutation_Response>;
   /** delete single row from the table: "videos" */
   delete_videos_by_pk?: Maybe<Videos>;
+  /** Extension polls for the device authorization token. Returns the access token once the user has authorized. */
+  getDeviceToken: GetDeviceTokenResponse;
   /** insert data into the table: "audio_tags" */
   insert_audio_tags?: Maybe<Audio_Tags_Mutation_Response>;
   /** insert a single row into the table: "audio_tags" */
@@ -3476,6 +3518,12 @@ export type Mutation_Root = {
   update_videos_by_pk?: Maybe<Videos>;
   /** update multiples rows of table: "videos" */
   update_videos_many?: Maybe<Array<Maybe<Videos_Mutation_Response>>>;
+};
+
+
+/** mutation root */
+export type Mutation_RootAuthorizeDeviceArgs = {
+  input: AuthorizeDeviceInput;
 };
 
 
@@ -3816,6 +3864,12 @@ export type Mutation_RootDelete_VideosArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Videos_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootGetDeviceTokenArgs = {
+  input: GetDeviceTokenInput;
 };
 
 
@@ -6389,7 +6443,7 @@ export type Posts = {
   brief: Scalars['String']['output'];
   created_at: Scalars['timestamptz']['output'];
   /** Hashnode public id */
-  hId: Scalars['String']['output'];
+  hId?: Maybe<Scalars['String']['output']>;
   id: Scalars['uuid']['output'];
   markdownContent: Scalars['String']['output'];
   pinned: Scalars['Boolean']['output'];
@@ -8194,8 +8248,8 @@ export type Shared_Video_Recipients = {
   recipientId?: Maybe<Scalars['uuid']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
-  video: Videos;
-  videoId: Scalars['uuid']['output'];
+  video?: Maybe<Videos>;
+  videoId?: Maybe<Scalars['uuid']['output']>;
   viewed: Scalars['Boolean']['output'];
 };
 
@@ -10622,7 +10676,7 @@ export type Timestamptz_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
 };
 
-/** columns and relationships of "user_settings" */
+/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
 export type User_Settings = {
   __typename?: 'user_settings';
   data: Scalars['jsonb']['output'];
@@ -10632,7 +10686,7 @@ export type User_Settings = {
 };
 
 
-/** columns and relationships of "user_settings" */
+/** Per-user, per-app UI preferences. The `data` blob is site-scoped ({ watch: { standaloneMode }, ... }); its structure and defaults live in the frontend core package, not the DB. */
 export type User_SettingsDataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
@@ -13527,6 +13581,13 @@ export type UserVideoHistoryQuery = { __typename?: 'query_root', user_video_hist
         & { ' $fragmentRefs'?: { 'UserFieldsFragment': UserFieldsFragment } }
       ), playlist_videos: Array<{ __typename?: 'playlist_videos', playlist: { __typename?: 'playlist', id: any, slug: string, title: string, thumbnailUrl?: string | null } }> } }> };
 
+export type WatchManageQueryVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+}>;
+
+
+export type WatchManageQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, thumbnailUrl?: string | null, duration?: number | null, source?: string | null, status?: string | null, slug: string, createdAt?: any | null }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string, description?: string | null, thumbnailUrl?: string | null }> };
+
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -14488,6 +14549,30 @@ export const UserVideoHistoryDocument = new TypedDocumentString(`
     fragment UserFields on users {
   username
 }`) as unknown as TypedDocumentString<UserVideoHistoryQuery, UserVideoHistoryQueryVariables>;
+export const WatchManageDocument = new TypedDocumentString(`
+    query WatchManage($userId: uuid!) {
+  videos(where: {user_id: {_eq: $userId}}, order_by: {createdAt: desc}) {
+    id
+    title
+    thumbnailUrl
+    duration
+    source
+    status
+    slug
+    createdAt
+  }
+  playlist(
+    where: {user_id: {_eq: $userId}, site: {_eq: "watch"}}
+    order_by: {createdAt: desc}
+  ) {
+    id
+    title
+    slug
+    description
+    thumbnailUrl
+  }
+}
+    `) as unknown as TypedDocumentString<WatchManageQuery, WatchManageQueryVariables>;
 export const PlaylistDetailDocument = new TypedDocumentString(`
     query PlaylistDetail($id: uuid!) {
   playlist_by_pk(id: $id) {
