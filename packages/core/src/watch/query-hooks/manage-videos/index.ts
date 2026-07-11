@@ -56,7 +56,10 @@ const manageVideosQuery = new TypedDocumentString(`
       slug
     }
   }
-`) as unknown as TypedDocumentString<ManageVideosQueryData, ManageVideosVariables>;
+`) as unknown as TypedDocumentString<
+  ManageVideosQueryData,
+  ManageVideosVariables
+>;
 
 interface ManageVideosProps extends BaseQueryProps {
   userId: string;
@@ -65,7 +68,10 @@ interface ManageVideosProps extends BaseQueryProps {
 const useLoadManageVideos = (props: ManageVideosProps) => {
   const { getAccessToken, userId } = props;
 
-  const { data, isLoading, error } = useRequest<ManageVideosQueryData, ManageVideosVariables>({
+  const { data, isLoading, error } = useRequest<
+    ManageVideosQueryData,
+    ManageVideosVariables
+  >({
     queryKey: ['manage-videos', userId],
     getAccessToken,
     document: manageVideosQuery,
