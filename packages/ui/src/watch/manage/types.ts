@@ -19,8 +19,6 @@ interface VideoEdit {
 interface PlaylistVideo {
   __typename?: 'playlist_videos';
   position: number;
-  playlist_id: any;
-  video_id: any;
   video: {
     __typename?: 'videos';
     id: any;

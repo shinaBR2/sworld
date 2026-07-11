@@ -13538,7 +13538,7 @@ export type ReorderPlaylistVideosMutationVariables = Exact<{
 }>;
 
 
-export type ReorderPlaylistVideosMutation = { __typename?: 'mutation_root', update_playlist_videos_many?: Array<{ __typename?: 'playlist_videos_mutation_response', returning: Array<{ __typename?: 'playlist_videos', playlist_id: any, video_id: any, position: number }> } | null> | null };
+export type ReorderPlaylistVideosMutation = { __typename?: 'mutation_root', update_playlist_videos_many?: Array<{ __typename?: 'playlist_videos_mutation_response', returning: Array<{ __typename?: 'playlist_videos', position: number }> } | null> | null };
 
 export type SaveSubtitleMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -13621,7 +13621,7 @@ export type WatchManageQueryVariables = Exact<{
 }>;
 
 
-export type WatchManageQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, thumbnailUrl?: string | null, duration?: number | null, source?: string | null, status?: string | null, slug: string, createdAt?: any | null }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string, description?: string | null, thumbnailUrl?: string | null, playlist_videos: Array<{ __typename?: 'playlist_videos', position: number, playlist_id: any, video_id: any, video: { __typename?: 'videos', id: any, title: string, duration?: number | null } }> }> };
+export type WatchManageQuery = { __typename?: 'query_root', videos: Array<{ __typename?: 'videos', id: any, title: string, thumbnailUrl?: string | null, duration?: number | null, source?: string | null, status?: string | null, slug: string, createdAt?: any | null }>, playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string, description?: string | null, thumbnailUrl?: string | null, playlist_videos: Array<{ __typename?: 'playlist_videos', position: number, video: { __typename?: 'videos', id: any, title: string, duration?: number | null } }> }> };
 
 export type PlaylistDetailQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -14525,8 +14525,6 @@ export const ReorderPlaylistVideosDocument = new TypedDocumentString(`
     mutation ReorderPlaylistVideos($updates: [playlist_videos_updates!]!) {
   update_playlist_videos_many(updates: $updates) {
     returning {
-      playlist_id
-      video_id
       position
     }
   }
@@ -14647,8 +14645,6 @@ export const WatchManageDocument = new TypedDocumentString(`
     thumbnailUrl
     playlist_videos(order_by: {position: asc}) {
       position
-      playlist_id
-      video_id
       video {
         id
         title

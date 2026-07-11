@@ -29,8 +29,6 @@ const manageQuery = graphql(/* GraphQL */ `
       thumbnailUrl
       playlist_videos(order_by: { position: asc }) {
         position
-        playlist_id
-        video_id
         video {
           id
           title
