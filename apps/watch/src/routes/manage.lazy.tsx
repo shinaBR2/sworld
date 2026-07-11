@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { LoadingBackdrop, Notification } from 'ui/universal';
 import { ManageScreen } from 'ui/watch/manage';
 import { appConfig } from '../config';
-import { writeStandaloneCache } from '../standalone-mode';
+import { clearStandaloneCache, writeStandaloneCache } from '../standalone-mode';
 
 const Content = () => {
   const { user, signOut, getAccessToken } = useAuthContext();
@@ -37,7 +37,10 @@ const Content = () => {
       <ManageScreen
         sites={appConfig.sites}
         user={user}
-        onLogout={signOut}
+        onLogout={() => {
+          clearStandaloneCache();
+          signOut();
+        }}
         standaloneMode={settings?.watch.standaloneMode ?? false}
         onStandaloneModeChange={handleStandaloneModeChange}
         saving={saving}
