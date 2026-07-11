@@ -51,7 +51,11 @@ const Content = () => {
     },
   });
 
-  const handleUpdateVideo = (input: { id: string; title?: string; thumbnailUrl?: string }) => {
+  const handleUpdateVideo = (input: {
+    id: string;
+    title?: string;
+    thumbnailUrl?: string;
+  }) => {
     updateVideo.mutate(input);
   };
 
@@ -62,7 +66,11 @@ const Content = () => {
     });
   };
 
-  const handleCreatePlaylist = (input: { title: string; slug?: string; description?: string }) => {
+  const handleCreatePlaylist = (input: {
+    title: string;
+    slug?: string;
+    description?: string;
+  }) => {
     createPlaylist.mutate({
       title: input.title,
       slug: input.slug || createPlaylistSlug(input.title),
@@ -70,7 +78,11 @@ const Content = () => {
     });
   };
 
-  const handleUpdatePlaylist = (input: { id: string; title?: string; description?: string }) => {
+  const handleUpdatePlaylist = (input: {
+    id: string;
+    title?: string;
+    description?: string;
+  }) => {
     updatePlaylist.mutate(input);
   };
 
