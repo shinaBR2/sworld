@@ -36,4 +36,10 @@ interface PlaylistEdit {
   description?: string;
 }
 
-export type { ManageVideo, VideoEdit, ManagePlaylist, PlaylistCreate, PlaylistEdit };
+export type {
+  ManageVideo,
+  VideoEdit,
+  ManagePlaylist,
+  PlaylistCreate,
+  PlaylistEdit,
+};
