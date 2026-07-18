@@ -138,6 +138,10 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 Created with `linear issue create --team SWO --project "Main" -l bug -s "Todo" --estimate 1 -t "Library reading progress bar loses its label on long books" --description-file <spec.md> --no-interactive` (library is a feature area of the main app), where the description file holds:
 
 ```markdown
+**In plain words**
+
+In the Main app's library, reading a long book loses the progress bar partway through — once you scroll past the first few chapters, the bar that shows your current chapter and how far through the book you are just disappears. You can keep reading, but you lose track of where you are.
+
 **Problem**
 
 When a book in the library app has many chapters, scrolling down to the chapters at the bottom of the reader loses the sticky progress bar that shows current chapter and percentage. The reader can't tell how far through the book they are, making it hard to resume.
@@ -199,6 +203,10 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 `linear issue create --team SWO --project "Listen" -s "Todo" --estimate 4 -t "Add bulk import for listen playlist tracks" --description-file <spec.md> --no-interactive`, description:
 
 ```markdown
+**In plain words**
+
+Building a playlist in the Listen app means adding tracks one at a time, even if you already have a list of 15+ songs written down somewhere. This adds a way to paste that whole list in at once instead of typing each track by hand.
+
 **Problem**
 
 Users building a playlist in the listen app have to add each track individually, which is slow when working from a tracklist they already have written down (15+ tracks).
@@ -389,7 +397,15 @@ For features involving data models or complex logic, include sections like:
 | Sequential total | Xh |
 | Parallel total (critical path) | Xh |
 
-**Waves & sub-tasks (N total)**
+**Sub-tasks (N total)**
+
+Flat by default — one table, no waves, when nothing has a real dependency (the common case, see "Sequencing examples" below):
+
+| Sub-task | Work | Est |
+|----------|------|-----|
+| <title> | <description> | Xh |
+
+Only when a real dependency exists, group into waves instead and add a **Dependency graph** section (a text diagram of what blocks what — see "Sequencing examples" below):
 
 **Wave 0 — [Wave name]**
 
@@ -400,10 +416,6 @@ For features involving data models or complex logic, include sections like:
 **Wave 1 — [Wave name]**
 
 [... same table format, blocked-by references earlier sub-tasks]
-
-**Dependency graph**
-
-[Text-based diagram showing what blocks what]
 
 **Verification**
 
@@ -504,7 +516,7 @@ Do not prefix with `[domain]` or other tags — the parent issue already scopes 
 
 Most breakdowns are a flat list — nothing here has a real dependency, so nothing gets a `blockedBy`:
 
-```
+```text
 No waves — all startable now:
   types-only             — new interfaces in packages/core, no implementation
   ui-shell               — empty dialog + button in apps/til, no wiring yet
@@ -514,7 +526,7 @@ No waves — all startable now:
 
 A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — only imposed because `preview-table` genuinely cannot exist without `parser-helper`'s output shape):
 
-```
+```text
 Wave 0 — Foundations (no blockers):
   parser-helper          — pure text→notes parser in packages/core
   import-dialog-shell    — empty dialog + button in apps/til
