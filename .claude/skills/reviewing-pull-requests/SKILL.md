@@ -77,6 +77,18 @@ Match the depth of review to the risk and surface area of the change. Three roug
 
 The user may tell you what depth they want. If they don't, decide based on the diff.
 
+### Review depth → `/code-review` effort tier
+
+The self-review gate (`parallel-workflow` step 11) runs the `code-review` skill (`/code-review`) on the same diff. This is the canonical mapping from the depth band above to that skill's effort tier — pick the tier from the band you just chose, don't decide it fresh each run:
+
+| Depth band | `/code-review` effort | What runs |
+| --- | --- | --- |
+| Light | `low` | One inline pass. The judgment read here + CodeRabbit on the PR already cover breadth — a background fleet adds cost, not signal. |
+| Standard | `medium` | One inline pass, slightly wider net. Still no background fleet. |
+| Deep | `high` (`xhigh` only when genuinely warranted) | Spawns the multi-agent finder + verifier fleet — worth its cost only when a hidden bug's blast radius is many apps or a trust boundary. |
+
+`max` is not on this ladder — reserve it for a specific, exceptional call, never a default. The band is set by blast radius (what the diff touches), not line count: shared `packages/core`/`packages/ui`, auth, Hasura permissions, or DB migrations → Deep; one app's components, copy, styling, renames → Light. A typical micro-PR is Light or Standard, so it defaults to `low`/`medium` — it should never trigger `high`.
+
 ## Step 3 — What to look for
 
 The hierarchy below is in order of importance. A correctness issue is always more important than a style nit. Do not lead with nits.
