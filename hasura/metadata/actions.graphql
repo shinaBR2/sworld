@@ -17,6 +17,12 @@ type Mutation {
   repairFmp4(
     input: RepairFmp4Input!
   ): RepairFmp4Response!
+  listTelegramChannelVideos(
+    input: ListTelegramChannelVideosInput!
+  ): ListTelegramChannelVideosResponse!
+  importTelegramArchive(
+    input: ImportTelegramArchiveInput!
+  ): ImportTelegramArchiveResponse!
 }
 
 input CreateDeviceRequestInput {
@@ -132,5 +138,64 @@ type RepairFmp4Response {
   success: Boolean!
   message: String!
   dataObject: RepairFmp4Output
+}
+
+input ListTelegramChannelVideosInput {
+  # Telegram channel id, resolved from the open web.telegram.org tab
+  channelId: String!
+  # opaque pagination cursor from a previous page's nextCursor; omitted for the first page
+  cursor: String
+}
+
+type TelegramVideoMessage {
+  # Telegram message id for this video message
+  id: String!
+  filename: String
+  # message text/caption; often the only human-readable label when filename is absent (raw video attachments aren't "documents")
+  caption: String
+  # message date, ISO 8601
+  date: String!
+  sizeBytes: Float
+  durationSeconds: Float
+  # ready-to-use "data:image/jpeg;base64,..." string of Telegram's small embedded thumbnail (a few KB, low-res).
+  # Intentionally inline rather than a GCS URL: fetched fresh per list call via MTProto and never persisted to
+  # storage — most browsed items are never imported, so uploading every listed thumbnail would waste storage/
+  # bandwidth on content nobody keeps. The actual video file still goes straight to GCS on import (SWO-495),
+  # never through Hasura.
+  thumbnailDataUri: String
+}
+
+type ListTelegramChannelVideosOutput {
+  videos: [TelegramVideoMessage!]!
+  # pass back as cursor to fetch the next page; null when there are no more results
+  nextCursor: String
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type ListTelegramChannelVideosResponse {
+  success: Boolean!
+  message: String!
+  dataObject: ListTelegramChannelVideosOutput
+}
+
+input ImportTelegramArchiveInput {
+  # Telegram channel id, resolved from the open web.telegram.org tab
+  channelId: String!
+  # ids of the video messages to archive, from a prior listTelegramChannelVideos call
+  messageIds: [String!]!
+}
+
+type ImportTelegramArchiveOutput {
+  # Cloud Task id; the archival itself runs asynchronously
+  taskId: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type ImportTelegramArchiveResponse {
+  success: Boolean!
+  message: String!
+  dataObject: ImportTelegramArchiveOutput
 }
 

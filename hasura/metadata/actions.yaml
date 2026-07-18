@@ -116,6 +116,44 @@ actions:
     permissions:
       - role: user
     comment: Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side.
+  - name: listTelegramChannelVideos
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: listTelegramChannelVideos
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/list'
+        version: 2
+    permissions:
+      - role: user
+    comment: Paginated fetch of video messages from a Telegram channel, scoped to the calling session user's own MTProto session.
+  - name: importTelegramArchive
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: importTelegramArchive
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/import'
+        version: 2
+    permissions:
+      - role: user
+    comment: Trigger archival of selected Telegram channel video messages to GCS; work happens asynchronously via Cloud Task, returns a taskId.
 custom_types:
   enums: []
   input_objects:
@@ -125,6 +163,8 @@ custom_types:
     - name: SignedUploadUrlInput
     - name: SetVideoThumbnailAtTimeInput
     - name: RepairFmp4Input
+    - name: ListTelegramChannelVideosInput
+    - name: ImportTelegramArchiveInput
   objects:
     - name: CreateDeviceRequestOutput
       fields:
@@ -172,4 +212,9 @@ custom_types:
     - name: SetVideoThumbnailAtTimeResponse
     - name: RepairFmp4Output
     - name: RepairFmp4Response
+    - name: TelegramVideoMessage
+    - name: ListTelegramChannelVideosOutput
+    - name: ListTelegramChannelVideosResponse
+    - name: ImportTelegramArchiveOutput
+    - name: ImportTelegramArchiveResponse
   scalars: []
