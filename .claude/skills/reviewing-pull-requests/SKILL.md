@@ -41,7 +41,7 @@ Before reviewing the code itself, make a fast judgment about whether this diff i
 
 Look at:
 
-- **Scope.** Does this change do one thing, or is it touching too many unrelated concerns?
+- **Scope.** Same test as `micro-prs`' one-purpose rule, applied after the fact: does this change do one thing, in one app/package/repo, or is it touching too many unrelated concerns?
 - **Surface area.** How many files? How many distinct changes?
 - **Risk profile.** Auth, data access, database migrations, shared logic in `packages/core` or `packages/ui` that many apps depend on? Or buttons, copy, styling, internal renames?
 - **Coherence.** Is it easy to hold the change in your head, or does it sprawl across the codebase in ways that are hard to reason about?

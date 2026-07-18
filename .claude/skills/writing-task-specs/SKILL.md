@@ -32,8 +32,25 @@ The fields that an in-repo tracker would keep in frontmatter are native Linear f
 - Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
 - For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
+- **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test. If a sub-task's `What` needs an "and", it's two sub-tasks.
+- **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
 - Always create in the **SWorld** team; attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, set its `state` to `In Progress` (see the `parallel-workflow` skill)
+- **Every ticket opens in plain words** — see below. No exceptions.
+
+## Every ticket opens in plain words
+
+Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's five-second answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming Linear on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
+
+The jargon-free law itself (what counts as plain, the ten-second test, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill only owns *where* the block sits and its header per shape:
+
+```markdown
+**In plain words**  _(no code, no jargon — anyone can read this)_
+
+[2–4 sentences. What a user actually experiences going wrong, or wants — and why it matters. If a number is wrong, show it with round numbers. A non-technical reader gets the gist in ten seconds.]
+```
+
+This block is mandatory on the Bug, Small feature, and Large-feature-parent shapes. The **User story** already opens this way — its `**The user's problem**` section *is* the plain-words block, no separate header needed. A **sub-issue** (the small child of a large feature) opens with a one-line `**Why this matters**` instead — same law, just one sentence: what part of the user-facing feature this piece contributes to, so whoever picks it up knows the point without decoding the title or re-reading the parent.
 
 ## The four spec shapes
 
@@ -93,6 +110,10 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 ### Description structure
 
 ```markdown
+**In plain words**  _(no code, no jargon — anyone can read this)_
+
+[2–4 sentences. What a user sees going wrong and why it matters. Round numbers if a figure is off. No file paths, no symbol names, no bare acronyms.]
+
 **Problem**
 
 [1–3 sentences. What is broken, where, who reported it. Be specific enough that the reader can picture the bug without seeing it.]
@@ -155,6 +176,10 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 ### Description structure
 
 ```markdown
+**In plain words**  _(no code, no jargon — anyone can read this)_
+
+[2–4 sentences. What the user can't do easily today and what they'll be able to do after. Why it's worth building. No file paths, no symbol names, no bare acronyms.]
+
 **Problem**
 
 [What user need or friction this addresses. 1–2 sentences.]
@@ -326,16 +351,22 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 1. **Start from the user story.** Read the user story issue. Understand the problem, the ideas explored, and the open questions.
 2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow?
 3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
-4. **Identify dependencies.** What blocks what? Where can work happen in parallel?
-5. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
-6. **Group into waves.** A wave is a set of sub-tasks that can be done in parallel — encode it with **blocking relations** (each wave's sub-issues are `blockedBy` the previous wave's). Subsequent waves depend on previous waves landing.
-7. **Confirm with the user** before creating the parent issue and sub-issues. Show the proposed wave structure and dependency graph. Adjust until it's right.
+4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
+5. **Break into sub-tasks by one-purpose, one-app/repo scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — if its `What` needs an "and", or its `Files / scope` spans two apps or two repos, split it now, at scoping time, not after the branch is built.
+6. **Identify real dependencies only.** The default is a flat list of sub-tasks, all startable now — independent work is parallel by default. Only add a `blockedBy` where one sub-task genuinely cannot exist or compile without another's output (a schema/migration change the query layer needs, a shared helper its consumers import, wiring that assembles already-finished pieces). Do not invent an ordering to make the breakdown feel more structured — two sub-tasks that just happen to touch related code are not blocked on each other.
+7. **Group into waves only where step 6 found a real blocker.** A wave is a barrier: everything in wave N must land before wave N+1 starts, which is a real cost — impose it only where earned. If everything is parallel, say so and skip waves and the dependency graph entirely.
+8. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
+9. **Confirm with the user** before creating the parent issue and sub-issues. Show the proposed breakdown (flat list, or waves if any are real). Adjust until it's right.
 
 ### Parent issue description structure
 
 The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a Linear **document** attached to the app's project — see `product-planning`).
 
 ```markdown
+**In plain words**  _(no code, no jargon — anyone can read this)_
+
+[2–4 sentences. What this feature lets a user do that they can't today, and why it matters. The whole thing in plain language before any architecture appears. No file paths, no symbol names, no bare acronyms.]
+
 **Context**
 
 [Link to the user story issue (SWO-NNN). 1–2 sentences summarising the user need this delivers on. Do not repeat the full user story — link to it.]
@@ -397,13 +428,17 @@ For features involving data models or complex logic, include sections like:
 Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create with `linear issue create --team SWO --project "<app>" --parent SWO-NNN -s "Todo" --estimate N …`, then `linear issue relation add SWO-<new> blocked-by SWO-<dep>` for each dependency.
 
 ```markdown
+**Why this matters**  _(one plain-language line — see `plain-english`)_
+
+[One sentence, no jargon: what part of the user-facing feature this piece contributes to.]
+
 **What**
 
 [1–2 sentences describing the specific change.]
 
 **Files / scope**
 
-[Files or modules touched. Be specific.]
+[Files or modules touched, in this ONE repo/app only — see `micro-prs`. If the list spans two apps or two repos, split the sub-task before creating it.]
 
 **Acceptance criteria**
 
@@ -411,6 +446,48 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 * [Tests pass]
 * [No regression on dependent code]
 ```
+
+**Before creating it, run the one-purpose test** (`micro-prs`): can `What` be said without an "and"? Does `Files / scope` stay inside one app (or one repo, for `sworld-backend`/`sworld-hasura-v2` work)? If either fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
+
+### The goal & verification sub-issue — every large feature's first sub-issue
+
+Before any code sub-issue is created, write one sub-issue whose entire job is answering: **"how does anyone — with zero context — know the whole feature works when every sub-issue is done?"** Each sub-issue's own acceptance criteria only proves its own slice; nobody's acceptance criteria proves the assembled feature actually delivers the user story. This sub-issue is that missing check, written before the breakdown so it also doubles as a sanity check on the breakdown itself — if you can't write a concrete verification step, the shape probably isn't settled yet either.
+
+Create it with `linear issue create --team SWO --project "<app>" --parent SWO-NNN -s "Todo" -t "Goal & verification — <feature>" --no-interactive`, first among the sub-issues (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it):
+
+```markdown
+**Why this matters**
+
+This is the checklist for the whole feature, not one slice of it — read it before touching any of the other sub-issues, and use it to confirm the parent is actually done once they've all landed.
+
+**Goal — what "done" looks like**
+
+[Plain-English walkthrough of the feature end-to-end, written as if explaining to someone who has never seen this app. What can a user now do that they couldn't before? No jargon, no file paths — see `plain-english`.]
+
+**User stories**
+
+* As a <who>, I can <what>, so that <why>.
+* [one per distinct user-facing capability the feature delivers]
+
+**Full walkthrough — a fresh dev or non-technical tester can follow this with no other context**
+
+1. [Concrete, click-by-click step]
+2. [Concrete, click-by-click step]
+3. ...
+N. [The observable result that proves it worked]
+
+**How to know the whole feature is done**
+
+* [Observable outcome — something you can see, click, or check, not an implementation detail]
+* [Observable outcome]
+* ...
+
+**Explicitly out of scope**
+
+[What this feature deliberately does NOT do, so review doesn't drift into scope creep]
+```
+
+Mark it `Done` once the user confirms the walkthrough matches their intent — its own deliverable is the spec being right, not code. It then sits as the reference every other sub-issue links back to, and is the actual acceptance test for the parent issue once every sub-issue merges.
 
 ### Sub-task titles
 
@@ -423,9 +500,19 @@ The parent issue gives the context, so the sub-task title can be short:
 
 Do not prefix with `[domain]` or other tags — the parent issue already scopes the work.
 
-### Wave and dependency example
+### Sequencing examples — flat by default, waves only when earned
 
-A worked dependency graph for an `Import notes` parent issue (waves are encoded by `blockedBy` relations between sub-issues):
+Most breakdowns are a flat list — nothing here has a real dependency, so nothing gets a `blockedBy`:
+
+```
+No waves — all startable now:
+  types-only             — new interfaces in packages/core, no implementation
+  ui-shell               — empty dialog + button in apps/til, no wiring yet
+  parser-helper          — pure text→notes parser in packages/core, unit-tested alone
+  hasura-permissions     — read permission for the new table (sworld-hasura-v2, separate repo/PR)
+```
+
+A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — only imposed because `preview-table` genuinely cannot exist without `parser-helper`'s output shape):
 
 ```
 Wave 0 — Foundations (no blockers):
@@ -439,7 +526,7 @@ Wave 2 — Save:
   save-wiring            — blockedBy: [preview-table]
 ```
 
-Each issue's `blockedBy` lists the issues above it. A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`.
+Each issue's `blockedBy` lists the issues above it. A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`. Before writing any `blockedBy`, ask: does this genuinely need the other to exist first, or do they just touch related code? The latter is a file-ownership note to resolve at review, not a blocker.
 
 ## Process
 
@@ -447,9 +534,9 @@ When Claude has been working with the developer and a spec is needed:
 
 1. **Identify the shape** — bug, small feature, user story, or large feature. Ask if unsure.
 2. **For user stories** — focus on capturing the user's problem and ideas in plain language, as an issue in `Backlog`. Do not jump to technical scoping.
-3. **For large features** — run the scoping conversation before creating anything. Confirm the breakdown with the user. If there's an existing user story, start from it.
-4. **Draft the spec** matching the shape's structure. Use the developer's existing context, do not re-investigate things already discussed.
-5. **Create in Linear** — `linear issue create` for a bug / small feature / user story; for a large feature: `linear issue create` for the parent (attached to the app `--project`), then `linear issue create` per sub-task with `--parent`, `--project`, and `--estimate` set, plus `linear issue relation add … blocked-by …` for dependencies. For a heavy domain concept, add a `linear document create --project "<app>" -t "…" -f <doc.md>`.
+3. **For large features** — run the scoping conversation before creating anything, including the goal & verification sub-issue's content. Confirm the breakdown with the user. If there's an existing user story, start from it.
+4. **Draft the spec** matching the shape's structure, applying `plain-english` to its opening block. Use the developer's existing context, do not re-investigate things already discussed.
+5. **Create in Linear** — `linear issue create` for a bug / small feature / user story; for a large feature: `linear issue create` for the parent (attached to the app `--project`), then the goal & verification sub-issue first, then `linear issue create` per code sub-task with `--parent`, `--project`, and `--estimate` set, plus `linear issue relation add … blocked-by …` only where step 6 of the scoping conversation found a real dependency. For a heavy domain concept, add a `linear document create --project "<app>" -t "…" -f <doc.md>`.
 6. **Confirm to the user** what was created, with the issue identifiers and URLs.
 
 ## Validation checklist
@@ -460,11 +547,12 @@ Before creating a spec:
 - Created in the **SWorld** team and attached to the right app **project**
 - Shape matches the work (bug / small feature / user story / large feature)
 - Detail level matches the shape — not over-documented, not under-documented
+- Opens with the `plain-english` block (`**In plain words**`, `**Why this matters**`, or the user story's own opening section) — no exceptions
 - Linear fields set: `--state`, plus `--estimate` / `--label` / `--parent` / blocked-by relations where relevant
 - For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
 - For small features: problem, proposed solution, acceptance criteria
 - For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly
-- For large features: scoping conversation done, parent issue description has architecture + wave breakdown, sub-issues are small and revertible, `blockedBy` wiring matches the dependency graph and encodes the waves, links back to the user story issue if one exists
+- For large features: scoping conversation done, goal & verification sub-issue created first, every code sub-task passes the one-purpose test (`micro-prs`) and stays inside one app/repo, `blockedBy` wiring reflects only real dependencies (flat list is the default, not a gap), links back to the user story issue if one exists
 - UK English throughout
 - No AI attribution
 

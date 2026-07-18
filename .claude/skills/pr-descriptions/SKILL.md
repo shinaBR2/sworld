@@ -44,7 +44,7 @@ Bad titles:
 
 ## Who reads this PR
 
-Default assumption: **the description and test plan are read by a non-technical end user.** Write what *they see and do* in the product — plain English, real numbers, click-by-click. No file names, no function names, no jargon.
+Default assumption: **the description and test plan are read by a non-technical end user.** Write what *they see and do* in the product — plain English, real numbers, click-by-click. Apply the `plain-english` skill's law (no file names, no function names, no jargon) to both the Summary and the Test plan below.
 
 There is exactly one exception: a PR with **no user-facing change at all** (pure refactor, tech-debt, internal cleanup, build/CI). For those:
 

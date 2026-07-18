@@ -113,7 +113,7 @@ Now think hard about *how*, and be self-critical about it:
 ## Step 3 — Shape a high-level parent
 
 Once the thinking holds, capture it as a **high-level parent issue** with `writing-task-specs` — a
-Linear issue (in the app's project) whose description carries the concept, the options, and the trade-offs that
+Linear issue (in the app's project) whose description opens with the `plain-english` block and then carries the concept, the options, and the trade-offs that
 *prove* the problem is understood. Keep it high-level; do **not** scope the children (sub-issues)
 yet. The concept lives in its Linear document; the parent issue supports it.
 
@@ -125,11 +125,14 @@ decide a change doesn't need team sign-off, and that's their call. Don't hold th
 
 ## Step 4 — Detailed scoping (a separate, later pass)
 
-Only once the user (and, where they chose to, the team) is aligned: break the parent into children —
-the sub-issues, their order (waves encoded by `blockedBy` relations), and the dependency chain
-that delivers the feature most efficiently. Use `writing-task-specs` (large-feature shape) and `micro-prs`,
-respecting the deployment model (small, independently mergeable, revertible). This is deliberately *separate* from Steps 1–3 —
-don't race ahead into it before the shape is agreed.
+Only once the user (and, where they chose to, the team) is aligned: break the parent into children.
+Write the **goal & verification sub-issue first** (`writing-task-specs`) — the plain-English walkthrough and
+"how to know it's done" checklist. If that can't be written concretely yet, the shape isn't agreed
+enough for this step; go back to Steps 1–3 rather than inventing sub-issues around a fuzzy goal.
+Then break the rest into sub-issues, applying `micro-prs`' one-purpose test and one-app/repo scope to each,
+sequencing them (flat by default, waves only where a real dependency exists — see `writing-task-specs`),
+and respecting the deployment model (small, independently mergeable, revertible). This is deliberately
+*separate* from Steps 1–3 — don't race ahead into it before the shape is agreed.
 
 ## You are the conductor
 
