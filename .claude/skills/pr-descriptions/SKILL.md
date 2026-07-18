@@ -44,7 +44,7 @@ Bad titles:
 
 ## Who reads this PR
 
-Default assumption: **the description and test plan are read by a non-technical end user.** Write what *they see and do* in the product — plain English, real numbers, click-by-click. No file names, no function names, no jargon.
+Default assumption: **the description and test plan are read by a non-technical end user.** Apply the `plain-english` skill's law to both the Summary and the Test plan below.
 
 There is exactly one exception: a PR with **no user-facing change at all** (pure refactor, tech-debt, internal cleanup, build/CI). For those:
 
@@ -103,7 +103,7 @@ Doesn't flag that there's no user impact, and leans on insider shorthand a new d
 
 ### Test plan
 
-**User-facing PR — steps a non-technical person can actually follow.** Each step names the exact page (click by click to get there), the exact thing to look at, and what pass vs. fail looks like in plain terms. No file names, no function names, no jargon. Before publishing a step, make sure the thing is genuinely visible on that page and that it actually changes in the example given.
+**User-facing PR — steps a non-technical person can actually follow.** Each step names the exact page (click by click to get there), the exact thing to look at, and what pass vs. fail looks like in plain terms — apply the `plain-english` law. Before publishing a step, make sure the thing is genuinely visible on that page and that it actually changes in the example given.
 
 Good:
 
