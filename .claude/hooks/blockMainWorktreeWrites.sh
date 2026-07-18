@@ -25,21 +25,21 @@ file_path=$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.n
 target=$file_path
 hops=0
 while [ -L "$target" ] && [ "$hops" -lt 40 ]; do
-  link=$(readlink "$target")
+  link=$(readlink -- "$target")
   case "$link" in
     /*) target=$link ;;
-    *) target=$(dirname "$target")/$link ;;
+    *) target=$(dirname -- "$target")/$link ;;
   esac
   hops=$((hops + 1))
 done
 
 # The file may not exist yet, so resolve from its nearest existing ancestor,
 # and resolve that physically so a symlinked directory can't disguise it either.
-dir=$(dirname "$target")
+dir=$(dirname -- "$target")
 while [ ! -d "$dir" ] && [ "$dir" != "/" ] && [ "$dir" != "." ]; do
-  dir=$(dirname "$dir")
+  dir=$(dirname -- "$dir")
 done
-dir=$(cd "$dir" 2>/dev/null && pwd -P) || exit 0
+dir=$(cd -- "$dir" 2>/dev/null && pwd -P) || exit 0
 
 # Outside a git repo (scratchpad, ~/.claude, /tmp) — allow.
 git_dir=$(git -C "$dir" rev-parse --absolute-git-dir 2>/dev/null) || exit 0
