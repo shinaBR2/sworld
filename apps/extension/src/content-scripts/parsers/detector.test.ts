@@ -14,6 +14,16 @@ describe('detectPageType', () => {
     expect(detectPageType('https://vimeo.com/12345')).toBe('vimeo');
   });
 
+  it('should detect web.telegram.org URL', () => {
+    expect(detectPageType('https://web.telegram.org/k/#@somechannel')).toBe(
+      'telegram',
+    );
+  });
+
+  it('should detect t.me URL', () => {
+    expect(detectPageType('https://t.me/somechannel')).toBe('telegram');
+  });
+
   it('should detect PDF URL', () => {
     expect(detectPageType('https://example.com/doc.pdf')).toBe('pdf');
   });
@@ -64,6 +74,15 @@ describe('detect', () => {
     expect(result.content).not.toBeNull();
     if (result.content && 'platform' in result.content) {
       expect(result.content.platform).toBe('vimeo');
+    }
+  });
+
+  it('should return telegram type with metadata for web.telegram.org URL', () => {
+    const result = detect('https://web.telegram.org/k/#@somechannel');
+    expect(result.pageType).toBe('telegram');
+    expect(result.content).not.toBeNull();
+    if (result.content && 'url' in result.content) {
+      expect('channelId' in result.content).toBe(true);
     }
   });
 
