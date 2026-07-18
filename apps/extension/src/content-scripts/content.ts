@@ -1,11 +1,9 @@
 import type { ExtensionMessage } from 'core/universal/extension/communication/types';
-
+import { detectPageType } from './parsers/detector';
 import { isPdfPage, parsePdfDocument } from './parsers/pdf';
-import {
-  detectPageType,
-  extractYouTubeMetadata,
-  extractVimeoMetadata,
-} from './parsers/detector';
+import { extractTelegramMetadata } from './parsers/telegram';
+import { extractVimeoMetadata } from './parsers/vimeo';
+import { extractYouTubeMetadata } from './parsers/youtube';
 
 const main = async () => {
   const url = window.location.href;
@@ -49,6 +47,19 @@ const main = async () => {
       source: 'content-script',
       target: 'background',
       type: 'VIDEO_METADATA_EXTRACTED',
+      payload: metadata,
+    };
+    chrome.runtime.sendMessage(message);
+    return;
+  }
+
+  if (pageType === 'telegram') {
+    const metadata = extractTelegramMetadata();
+    if (!metadata.channelId) return;
+    const message: ExtensionMessage = {
+      source: 'content-script',
+      target: 'background',
+      type: 'TELEGRAM_CHANNEL_DETECTED',
       payload: metadata,
     };
     chrome.runtime.sendMessage(message);
