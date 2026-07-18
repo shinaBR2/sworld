@@ -94,7 +94,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
 - _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
-- _Architecture:_ `hasura-architecture`, `backend-architecture`
+- _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`
 
 **Tasks & requirements** — the source of truth for work is **Linear** (team **SWorld**, key `SWO`). A **project is an app** (Til, Watch, Listen, Game, Docs, Main — Main covers the main app's finance, journal, and library areas) — every issue belongs to one. Bugs and small features are single issues; a large feature is a **parent issue** (with sub-issues) inside the app's project, its description + a Linear document holding the spec, with blocking relations encoding the dependency waves. Status lives in the issue state (`Backlog → Todo → In Progress → In Review → Done`). See the `writing-task-specs` skill for how to author them and `parallel-workflow` for how state moves as work ships.
@@ -126,9 +126,9 @@ cd packages/ui   && pnpm storybook # Component development
 - **Before any work touching sworld-backend or sworld-hasura-v2** — load the `backend-architecture` skill. It documents the full service architecture, Cloud Task pipeline, task lifecycle, notification flow, and event vs action patterns. Do not reason about the backend without it.
 - **Before designing a new mutation/Action, or reasoning about concurrent writes or data validation** — load the `hasura-architecture` skill. It covers the single-gateway rule, when a write needs a concurrency-safe database pattern, and the three validation layers.
 - **Code exploration — always use CodeGraph first, not grep.** The CodeGraph index at the workspace root covers all three repos. Use `codegraph query` for structural questions (definitions, callers, impact). Use grep **only** for literal string/text searches, never for finding where a symbol is defined or used.
-- **Adding a feature** — identify which app(s) change; decide whether shared logic belongs in `core` or `ui`; run the relevant `dev:*` command; make changes; run `pnpm lint` and `pnpm test` before committing.
+- **Adding a feature** — identify which app(s) change; decide where the code lives (`frontend-ui-architecture`); run the relevant `dev:*` command; make changes; run `pnpm lint` and `pnpm test` before committing.
 - **Working with GraphQL** — update operations in `packages/core`, run `pnpm codegen`, use the generated types in apps.
-- **Adding UI components** — create in `packages/ui`, export from `packages/ui/src/index.tsx`, build, then import in apps.
+- **Adding UI components** — all UI lives in `packages/ui` (placement per `frontend-ui-architecture`): create it there, export from `packages/ui/src/index.tsx`, build, then import in apps.
 
 ## Code style (authoritative — these win on any conflict)
 

@@ -357,7 +357,7 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 ### Scoping conversation steps
 
 1. **Start from the user story.** Read the user story issue. Understand the problem, the ideas explored, and the open questions.
-2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow?
+2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
 3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
 4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
 5. **Break into sub-tasks by one-purpose, one-app/repo scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — if its `What` needs an "and", or its `Files / scope` spans two apps or two repos, split it now, at scoping time, not after the branch is built.

@@ -6,9 +6,11 @@ user-invocable: false
 
 # MUI Rules
 
-## 1. Use MUI components directly
+These rules are about **how** to build and style a component *inside* `packages/ui`. For **where** UI lives — source of truth, which package and folder — see `frontend-ui-architecture`.
 
-- Import from `@mui/material` — no custom wrappers unless strictly required.
+## 1. Use MUI components directly (inside `packages/ui`)
+
+- Import from `@mui/material` — no custom wrappers unless strictly required. This applies **inside `packages/ui`**; how apps consume UI is `frontend-ui-architecture`'s rule.
 
 ```tsx
 // Good

@@ -6,6 +6,8 @@ user-invocable: false
 
 # Architecture Rules
 
+This skill covers the **data path** — how server data is fetched, transformed, and consumed. For **where** frontend code lives — which package and folder new code belongs in — see `frontend-ui-architecture`. Placement is that skill's job; data flow is this one's.
+
 ## Server state management
 
 - Server state MUST always be managed by **react-query** (TanStack Query).
