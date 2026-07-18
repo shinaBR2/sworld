@@ -110,9 +110,9 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 ### Description structure
 
 ```markdown
-**In plain words**  _(no code, no jargon — anyone can read this)_
+**In plain words**  _(see `plain-english`)_
 
-[2–4 sentences. What a user sees going wrong and why it matters. Round numbers if a figure is off. No file paths, no symbol names, no bare acronyms.]
+[2–4 sentences: what a user sees going wrong and why it matters.]
 
 **Problem**
 
@@ -180,9 +180,9 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 ### Description structure
 
 ```markdown
-**In plain words**  _(no code, no jargon — anyone can read this)_
+**In plain words**  _(see `plain-english`)_
 
-[2–4 sentences. What the user can't do easily today and what they'll be able to do after. Why it's worth building. No file paths, no symbol names, no bare acronyms.]
+[2–4 sentences: what the user can't do easily today, what they'll be able to do after, and why it's worth building.]
 
 **Problem**
 
@@ -371,9 +371,9 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a Linear **document** attached to the app's project — see `product-planning`).
 
 ```markdown
-**In plain words**  _(no code, no jargon — anyone can read this)_
+**In plain words**  _(see `plain-english`)_
 
-[2–4 sentences. What this feature lets a user do that they can't today, and why it matters. The whole thing in plain language before any architecture appears. No file paths, no symbol names, no bare acronyms.]
+[2–4 sentences: what this feature lets a user do that they can't today, and why it matters — before any architecture appears.]
 
 **Context**
 
