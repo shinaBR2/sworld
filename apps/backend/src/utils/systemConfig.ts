@@ -9,11 +9,13 @@ const uuidNamespaces = {
 enum QueueName {
   StreamVideo = 'stream-video',
   ConvertVideo = 'convert-video',
+  TelegramArchive = 'telegram-archive',
 }
 
 const queues = {
   streamVideoQueue: QueueName.StreamVideo,
   convertVideoQueue: QueueName.ConvertVideo,
+  telegramArchiveQueue: QueueName.TelegramArchive,
 };
 type Queues = typeof queues;
 

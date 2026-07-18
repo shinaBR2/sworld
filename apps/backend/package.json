@@ -71,6 +71,7 @@
     "pino-http": "^11.0.0",
     "playwright": "^1.52.0",
     "posthog-node": "^5.9.1",
+    "teleproto": "1.227.5",
     "uuid": "^14.0.1",
     "zod": "^4.4.3"
   },

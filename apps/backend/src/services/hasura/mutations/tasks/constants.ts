@@ -17,11 +17,13 @@ enum TaskType {
   CRAWL = 'crawl',
   /** REMUX A STORED TS VIDEO INTO FMP4/CMAF TO FIX THE HLS.JS NOISE BUG */
   REPAIR_FMP4 = 'repair_fmp4',
+  IMPORT_TELEGRAM = 'import_telegram',
 }
 
 enum TaskEntityType {
   VIDEO = 'video',
   CRAWL_VIDEO = 'crawl_video',
+  TELEGRAM_ARCHIVE = 'telegram_archive',
 }
 
 export { TaskEntityType, TaskStatus, TaskType };
