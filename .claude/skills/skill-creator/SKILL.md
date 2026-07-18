@@ -92,6 +92,12 @@ cloud-deploy/
     └── azure.md
 ```
 
+#### One canonical owner (don't duplicate across skills)
+
+A rule, law, or convention lives in exactly ONE skill — its canonical owner. Every other skill that needs it *references it by name* ("see `plain-english`", "placement per `frontend-ui-architecture`") rather than restating the content. Reference it like calling a shared function; never copy the body.
+
+Duplicated rule text drifts — two copies edited independently silently disagree, and the reader can't tell which is authoritative. When you find yourself about to restate another skill's rule, stop and point to it instead. When a rule has no home yet but several skills need it, create the canonical skill first, then wire the references (as `plain-english` did for the jargon-free law, and `frontend-ui-architecture` for UI placement).
+
 #### Principle of lack of surprise
 
 Skills must not contain malware, exploit code, or anything that could compromise security. A skill's contents shouldn't surprise the user given its stated intent. Don't create misleading skills, or skills designed to facilitate unauthorized access, data exfiltration, or other malicious activity. (Harmless things like "roleplay as an X" are fine.)
