@@ -124,9 +124,7 @@ describe('extractTelegramMetadata', () => {
     const metadata = extractTelegramMetadata();
     expect(metadata.source).toBe('web-app');
     expect(metadata.channelId).toBe('@somechannel');
-    if (metadata.source === 'web-app') {
-      expect(metadata.variant).toBe('k');
-    }
+    expect(metadata.variant).toBe('k');
   });
 
   it('should extract numeric channel and variant for /a/ hash URL', () => {
@@ -137,9 +135,7 @@ describe('extractTelegramMetadata', () => {
     const metadata = extractTelegramMetadata();
     expect(metadata.source).toBe('web-app');
     expect(metadata.channelId).toBe('-582839764');
-    if (metadata.source === 'web-app') {
-      expect(metadata.variant).toBe('a');
-    }
+    expect(metadata.variant).toBe('a');
   });
 
   it('should not detect a channel for a personal chat on /a/', () => {
@@ -168,9 +164,7 @@ describe('extractTelegramMetadata', () => {
     const metadata = extractTelegramMetadata();
     expect(metadata.source).toBe('share-link');
     expect(metadata.channelId).toBe('ngocmaicutiiii');
-    if (metadata.source === 'share-link') {
-      expect(metadata.messageId).toBeUndefined();
-    }
+    expect(metadata.messageId).toBeUndefined();
   });
 
   it('should extract channel and message id for a t.me single-post link', () => {
@@ -180,8 +174,6 @@ describe('extractTelegramMetadata', () => {
     });
     const metadata = extractTelegramMetadata();
     expect(metadata.channelId).toBe('ngocmaicutiiii');
-    if (metadata.source === 'share-link') {
-      expect(metadata.messageId).toBe('3');
-    }
+    expect(metadata.messageId).toBe('3');
   });
 });
