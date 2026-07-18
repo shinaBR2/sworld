@@ -154,6 +154,44 @@ actions:
     permissions:
       - role: user
     comment: Trigger archival of selected Telegram channel video messages to GCS; work happens asynchronously via Cloud Task, returns a taskId.
+  - name: requestTelegramLoginCode
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: requestTelegramLoginCode
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/request-login-code'
+        version: 2
+    permissions:
+      - role: user
+    comment: Start Telegram MTProto login for the calling user; loads their stored phone/api credentials, calls sendCode, and Telegram delivers a code to their own device.
+  - name: submitTelegramLoginCode
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: submitTelegramLoginCode
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/submit-login-code'
+        version: 2
+    permissions:
+      - role: user
+    comment: Complete Telegram MTProto login for the calling user; calls signIn with the code and persists the resulting session string to their own credentials row.
 custom_types:
   enums: []
   input_objects:
@@ -165,6 +203,7 @@ custom_types:
     - name: RepairFmp4Input
     - name: ListTelegramChannelVideosInput
     - name: ImportTelegramArchiveInput
+    - name: SubmitTelegramLoginCodeInput
   objects:
     - name: CreateDeviceRequestOutput
       fields:
@@ -217,4 +256,6 @@ custom_types:
     - name: ListTelegramChannelVideosResponse
     - name: ImportTelegramArchiveOutput
     - name: ImportTelegramArchiveResponse
+    - name: RequestTelegramLoginCodeResponse
+    - name: SubmitTelegramLoginCodeResponse
   scalars: []

@@ -23,6 +23,10 @@ type Mutation {
   importTelegramArchive(
     input: ImportTelegramArchiveInput!
   ): ImportTelegramArchiveResponse!
+  requestTelegramLoginCode: RequestTelegramLoginCodeResponse!
+  submitTelegramLoginCode(
+    input: SubmitTelegramLoginCodeInput!
+  ): SubmitTelegramLoginCodeResponse!
 }
 
 input CreateDeviceRequestInput {
@@ -197,5 +201,27 @@ type ImportTelegramArchiveResponse {
   success: Boolean!
   message: String!
   dataObject: ImportTelegramArchiveOutput
+}
+
+# No input: the backend loads the calling session user's own phone/api_id/api_hash
+# from their telegram_credentials row, calls MTProto sendCode, and persists the
+# returned phone_code_hash server-side. Telegram then delivers the code to the
+# user's own device. No data is returned - success just means "code requested".
+type RequestTelegramLoginCodeResponse {
+  success: Boolean!
+  message: String!
+}
+
+input SubmitTelegramLoginCodeInput {
+  # the login code Telegram just sent to the user's own device
+  code: String!
+}
+
+# The backend loads the pending phone_code_hash + credentials from the user's row,
+# calls MTProto signIn, and persists the resulting session_string. No data is
+# returned - success means the session is now stored and list/import will work.
+type SubmitTelegramLoginCodeResponse {
+  success: Boolean!
+  message: String!
 }
 

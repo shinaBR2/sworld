@@ -18,6 +18,7 @@
 - "!include public_subtitles.yaml"
 - "!include public_tags.yaml"
 - "!include public_tasks.yaml"
+- "!include public_telegram_credentials.yaml"
 - "!include public_test.yaml"
 - "!include public_user_settings.yaml"
 - "!include public_user_video_history.yaml"
