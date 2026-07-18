@@ -7,6 +7,7 @@ import type {
   PageContent,
   PageType,
   PdfMetadata,
+  TelegramChannelMetadata,
   VideoMetadata,
 } from './types';
 
@@ -16,11 +17,12 @@ describe('PageType', () => {
       'pdf',
       'youtube',
       'vimeo',
+      'telegram',
       'video-generic',
       'webpage',
       'unknown',
     ];
-    expect(types).toHaveLength(6);
+    expect(types).toHaveLength(7);
   });
 });
 
@@ -87,6 +89,38 @@ describe('VideoMetadata', () => {
       thumbnailUrl: 'https://example.com/thumb.jpg',
     };
     expect(metadata.duration).toBe(120);
+  });
+});
+
+describe('TelegramChannelMetadata', () => {
+  it('should create a valid web-app source object', () => {
+    const metadata: TelegramChannelMetadata = {
+      url: 'https://web.telegram.org/k/#@somechannel',
+      source: 'web-app',
+      channelId: '@somechannel',
+      variant: 'k',
+    };
+    expect(metadata.source).toBe('web-app');
+    expect(metadata.channelId).toBe('@somechannel');
+  });
+
+  it('should create a valid share-link source object', () => {
+    const metadata: TelegramChannelMetadata = {
+      url: 'https://t.me/somechannel/s/3',
+      source: 'share-link',
+      channelId: 'somechannel',
+      messageId: '3',
+    };
+    expect(metadata.source).toBe('share-link');
+    expect(metadata.messageId).toBe('3');
+  });
+
+  it('should allow an undetected channel', () => {
+    const metadata: TelegramChannelMetadata = {
+      url: 'https://web.telegram.org/k/',
+      source: 'web-app',
+    };
+    expect(metadata.channelId).toBeUndefined();
   });
 });
 
@@ -231,6 +265,20 @@ describe('ExtensionMessage discriminated union', () => {
       },
     };
     expect(message.type).toBe('VIDEO_METADATA_EXTRACTED');
+  });
+
+  it('should create a TELEGRAM_CHANNEL_DETECTED message', () => {
+    const message: ExtensionMessage = {
+      source: 'content-script',
+      target: 'background',
+      type: 'TELEGRAM_CHANNEL_DETECTED',
+      payload: {
+        url: 'https://t.me/somechannel',
+        source: 'share-link',
+        channelId: 'somechannel',
+      },
+    };
+    expect(message.type).toBe('TELEGRAM_CHANNEL_DETECTED');
   });
 
   it('should create a CONTENT_IMPORT_REQUEST message', () => {

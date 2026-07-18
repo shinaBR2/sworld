@@ -42,10 +42,15 @@ describe('getChannelIdFromHash', () => {
     expect(getChannelIdFromHash('#8115119658')).toBeUndefined();
   });
 
-  it('should extract negative numeric peer id with message-id suffix', () => {
-    expect(getChannelIdFromHash('#-1001234567890_98765')).toBe(
-      '-1001234567890',
-    );
+  it('should reject a username starting with a digit', () => {
+    expect(getChannelIdFromHash('#@12345')).toBeUndefined();
+  });
+
+  it('should reject a hash with an unconfirmed message-id suffix rather than guess', () => {
+    // We don't know whether web.telegram.org appends a suffix like this for jump-to-message
+    // links, and an underscore-based suffix would be ambiguous with legitimate username
+    // characters, so this intentionally does NOT extract '-1001234567890'.
+    expect(getChannelIdFromHash('#-1001234567890_98765')).toBeUndefined();
   });
 
   it('should return undefined for empty hash (chat list)', () => {
@@ -86,8 +91,14 @@ describe('getChannelFromTmePath', () => {
     });
   });
 
-  it('should return empty object for unsupported path shapes', () => {
+  it('should return empty object for a joinchat path', () => {
     expect(getChannelFromTmePath('/joinchat/AbCdEfGh')).toEqual({});
+  });
+
+  it('should return empty object for reserved single-segment routes', () => {
+    expect(getChannelFromTmePath('/confirmphone')).toEqual({});
+    expect(getChannelFromTmePath('/giftcode')).toEqual({});
+    expect(getChannelFromTmePath('/share')).toEqual({});
   });
 
   it('should return empty object for root path', () => {
@@ -111,8 +122,11 @@ describe('extractTelegramMetadata', () => {
       writable: true,
     });
     const metadata = extractTelegramMetadata();
+    expect(metadata.source).toBe('web-app');
     expect(metadata.channelId).toBe('@somechannel');
-    expect(metadata.variant).toBe('k');
+    if (metadata.source === 'web-app') {
+      expect(metadata.variant).toBe('k');
+    }
   });
 
   it('should extract numeric channel and variant for /a/ hash URL', () => {
@@ -121,8 +135,11 @@ describe('extractTelegramMetadata', () => {
       writable: true,
     });
     const metadata = extractTelegramMetadata();
+    expect(metadata.source).toBe('web-app');
     expect(metadata.channelId).toBe('-582839764');
-    expect(metadata.variant).toBe('a');
+    if (metadata.source === 'web-app') {
+      expect(metadata.variant).toBe('a');
+    }
   });
 
   it('should not detect a channel for a personal chat on /a/', () => {
@@ -149,9 +166,11 @@ describe('extractTelegramMetadata', () => {
       writable: true,
     });
     const metadata = extractTelegramMetadata();
+    expect(metadata.source).toBe('share-link');
     expect(metadata.channelId).toBe('ngocmaicutiiii');
-    expect(metadata.messageId).toBeUndefined();
-    expect(metadata.variant).toBeUndefined();
+    if (metadata.source === 'share-link') {
+      expect(metadata.messageId).toBeUndefined();
+    }
   });
 
   it('should extract channel and message id for a t.me single-post link', () => {
@@ -161,6 +180,8 @@ describe('extractTelegramMetadata', () => {
     });
     const metadata = extractTelegramMetadata();
     expect(metadata.channelId).toBe('ngocmaicutiiii');
-    expect(metadata.messageId).toBe('3');
+    if (metadata.source === 'share-link') {
+      expect(metadata.messageId).toBe('3');
+    }
   });
 });
