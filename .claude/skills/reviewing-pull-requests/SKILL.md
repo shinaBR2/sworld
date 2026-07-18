@@ -108,6 +108,7 @@ If the code looks AI-generated (which most of this code is), specifically check 
 
 - **Scope creep.** Did the change touch only what was asked? Files modified outside the stated scope are a red flag.
 - **Duplicated logic.** Did the AI write a new utility that already exists somewhere in `packages/core`, `packages/ui`, or one of the apps? Search for the function name and similar patterns. Reusing existing utilities is almost always better than creating a parallel one.
+- **Wrong-place code.** Did frontend code land in the right package and folder per `frontend-ui-architecture`? Shared UI hand-rolled in an app rather than `packages/ui` is a finding, not a shortcut.
 - **Weakened tests.** Were tests deleted or skipped instead of fixed? That is never the right move without explicit justification.
 - **Hallucinated APIs.** Calls to functions or properties that don't actually exist, or that exist but with different signatures.
 - **Plausible-but-wrong patterns.** Code that follows a pattern in the codebase but applies it where it doesn't fit.
