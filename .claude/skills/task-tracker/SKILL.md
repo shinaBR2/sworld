@@ -64,6 +64,22 @@ Only *issues* move through this lifecycle; a *project* (an app) never does. `par
 owns *when* each transition happens as work ships — this skill owns the vocabulary and the command
 that performs a transition (`linear issue update SWO-NNN -s "<state>"`).
 
+### What the GitHub↔Linear integration automates — and the one gap you must cover by hand
+
+Two transitions happen **automatically** via the integration, so you never set them yourself:
+
+- **Merged PR → the linked issue goes `Done`.** Triggered by the `SWO-NNN` reference in the branch
+  name / PR body (see *The GitHub link* below). The manual `-s "Done"` that `parallel-workflow`'s CI
+  loop and `wait-for-pr-merge` still run is a deliberate safety net over this — harmless if the
+  automation already fired, and it catches the case where a PR body carried no `SWO-NNN`.
+- **Last child sub-issue `Done` → the parent issue closes** too, so you don't hand-close a parent
+  once its final sub-issue lands.
+
+The **gap**: nothing automates **`Todo → In Progress`**. No event moves an issue into `In Progress`
+when you pick it up — so you **must set it yourself, by hand, as the first action before touching any
+code** (`linear issue update SWO-NNN -s "In Progress"`). `parallel-workflow` makes this its
+start-of-work step; this automation gap is *why* that step can't be skipped — nothing else will do it.
+
 ## Command mechanics
 
 The CLI resolves `--state`, `--project`, and `--label` **by name** (e.g. `-s "In Progress"`,
