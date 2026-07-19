@@ -2,8 +2,14 @@
 #
 # This workflow does NOT deploy. Cloudflare Pages builds and deploys watch from
 # its own pipeline on merge to main (see the `architecture` skill for the deploy
-# model). All this job does is record the released commit in Rollbar and audit
-# the live site against its Lighthouse budget.
+# model). All this job does is audit the live site against its Lighthouse budget.
+#
+# Rollbar deploy tracking is configured on the Cloudflare side, not here — only
+# Cloudflare knows when a build actually shipped.
+#
+# Note: nothing here knows when Cloudflare has finished publishing this commit,
+# so the audit may measure the previous release. Fixing that properly needs the
+# site to expose its built SHA — see SWO-558.
 
 name: Live Watch
 'on':
@@ -26,17 +32,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      # Tells Rollbar which commit is now live, so errors are attributed to the
-      # right release. Merge is deploy, so the merged SHA is the released one.
-      - name: Notify deploy to Rollbar
-        uses: rollbar/github-deploy-action@2.1.2
-        with:
-          environment: 'production'
-          version: ${{ github.sha }}
-          status: 'succeeded'
-        env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_TOKEN }}
-          ROLLBAR_USERNAME: ${{ github.actor }}
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:

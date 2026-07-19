@@ -38,9 +38,30 @@ Question 3 is the one that gets missed. Code can compile cleanly, break nothing,
 
 **When the answer is yes, trace it.** Don't stop at "feels risky" — find the exact call site, the exact type, the exact rendered component that causes the break. If you cannot name it, you have not found a dependency yet.
 
-### A flag can turn a "yes" into isolated
+## Two tools turn a "yes" back into isolated
 
-Question 3 has an escape the other two don't: put it behind a feature flag and the user sees nothing, so it ships safely on its own. That is what the flag system is for — see `micro-prs` for how to use it. Questions 1 and 2 have no such escape; a broken build is broken.
+A "yes" is not a verdict. Before recording an edge, check whether one of these dissolves it — most cascades collapse here.
+
+### 1. A feature flag — for question 3
+
+Put the change behind a flag and the user sees nothing, so it ships safely on its own. That is what the flag system is for; see `micro-prs` for how to use it.
+
+### 2. A behaviour-preserving default — for questions 1 and 2
+
+**The single most useful move for a cascading change**, and the one that most often turns a multi-wave chain into a flat list. It applies whenever a change ripples through consumers: a new required prop on a React component used at many levels, a new parameter on a method with many callers, a changed return shape.
+
+Answer two questions, in order:
+
+1. **What is the *correct* API at the final state?** Design it properly. If the new prop/param should be **required**, make it required — don't deform the design to make sequencing easier.
+2. **What default value makes every current consumer behave exactly as it does today?** ***Knowing this value is the key.***
+
+**If you can name that value:** land the new prop/param carrying it. Every existing caller keeps compiling and behaving identically, so nothing is blocked — consumers then migrate **in parallel, independently**, and a follow-up task removes the default once they all pass it explicitly (that removal is `micro-prs`' "remove old code, its own PR, after the replacement is live").
+
+**If you cannot name it:** you have now *proven* a real dependency instead of guessing at one — and the investigation tells you exactly which consumers form the edge.
+
+**If the new prop/param is optional by design**, question 2 barely arises: consumers work untouched without passing anything. That case is isolated almost by construction.
+
+The trap this avoids: seeing "12 files must change" and inventing 12 sequenced sub-tasks, when one safe default would have made all 12 independent.
 
 ### Not blockers
 

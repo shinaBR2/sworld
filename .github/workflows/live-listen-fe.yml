@@ -34,6 +34,9 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      # Note: nothing here knows when Cloudflare has finished publishing this
+      # commit, so these steps may measure the previous release. Fixing that
+      # properly needs the site to expose its built SHA — see SWO-558.
       # Playwright drives the deployed site directly — playwright.config.ts uses
       # VITE_LISTEN_SITE_URL as its baseURL — so there is nothing to build here.
       - name: Run Playwright Tests
