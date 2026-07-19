@@ -120,8 +120,8 @@ const AddExpenseButton = ({
   );
 
   // Pure prefill — fills the form and clears stale errors, never submits. The
-  // user still presses "Add Expense". `amount` is a Hasura `numeric`, which can
-  // arrive as a string, so coerce it.
+  // user still presses "Add Expense". `amount` comes off a Hasura `numeric`
+  // scalar typed `any`, so coerce it to keep state matching its declared type.
   const handleSelectTemplate = (template: SelectableTemplate) => {
     setFormData({
       name: template.name,

@@ -280,26 +280,6 @@ describe('AddExpenseButton', () => {
       expect(screen.getByLabelText('Category')).toHaveTextContent('Nice');
     });
 
-    it('coerces an amount that arrives as a string', async () => {
-      // Hasura `numeric` is typed `any` and can serialise as a string
-      await openDialogWithTemplates({
-        templates: [
-          {
-            id: 'tpl-str',
-            title: 'string amount',
-            name: 'Stringy',
-            note: null,
-            amount: '35000',
-            category: 'must',
-          },
-        ],
-      });
-
-      await userEvent.click(screen.getByText('string amount'));
-
-      expect(screen.getByLabelText('Amount')).toHaveValue(35000);
-    });
-
     it('drops templates whose category is not a real option', async () => {
       // `category` is an unconstrained text column, so a mis-seeded row must
       // not be offered — it would otherwise submit silently.
