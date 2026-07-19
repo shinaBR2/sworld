@@ -185,6 +185,10 @@ Presumptive blockers at this band, unless clearly justified — a plausible code
 
 Say it plainly: *"this pushes the file past 1k lines — can we decompose first?"*, *"this refactor moves complexity around but doesn't delete it"*, *"I think there's a code-judo move here that makes this much simpler"*. Direct and serious, never rude, and never softened into a mild suggestion.
 
+**Prefer these remedies**, in roughly this order — delete a whole layer of indirection rather than polishing it; reframe the state model so conditionals disappear instead of getting centralised; move the ownership boundary so the feature becomes a natural extension of something that already exists; turn special-case logic into a simpler default flow with fewer exceptions; replace condition chains with a typed model or an explicit dispatcher; separate orchestration from business logic; make type boundaries explicit so control flow simplifies with them; parallelise independent work where that also simplifies orchestration; restructure related updates to be more atomic where partial state would be hard to reason about. Only then the ordinary moves: extract a helper, split a file, reuse the canonical utility.
+
+**Ordering the output at this band** overrides the default "correctness first" ordering — correctness is assumed. Lead with structural regressions, then missed code-judo simplifications, then spaghetti/branching growth, then boundary/abstraction/type-contract problems, then file size, then modularity, then legibility. Never flood the review with low-value nits while a structural issue is on the table.
+
 ### Style and nits (least important)
 
 - Formatting, naming conventions, minor preferences

@@ -79,7 +79,7 @@ This skill owns the deploy model — other skills point here rather than restati
 - **Data layer** — merging a `sworld-hasura-v2` PR applies its migrations + metadata to Hasura Cloud production, via Hasura Cloud's GitHub integration rather than a GitHub Actions workflow. That repo has no deploy job (only lint), so merging *looks* inert. It isn't.
 - **Backend** — merging `sworld-backend` deploys to Cloud Run.
 
-**What CI does after a merge is verify, not deploy.** The `Live Listen` and `Live Watch` workflows run Playwright + Argos, Lighthouse budgets, and the Rollbar release marker against the already-deployed site. A red check there means production is bad — not that a deploy failed.
+**What CI does after a merge is verify, not deploy.** `Live Listen` runs Playwright + Argos and a Lighthouse budget against the live site; `Live Watch` runs a Lighthouse budget. A red check there means production is bad — not that a deploy failed. Neither waits for Cloudflare to finish publishing, so both can measure the previous release (SWO-558).
 
 **Before reasoning about what is actually live, compare `assets/*.js` hashes.** A dashboard, a green workflow, and the running site can all disagree.
 
