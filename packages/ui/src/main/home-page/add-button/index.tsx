@@ -2,6 +2,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,12 +14,13 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   TextField,
   useMediaQuery,
   useTheme,
   Zoom,
 } from '@mui/material';
-import type { CategoryType } from 'core/finance';
+import type { CategoryType, Template } from 'core/finance';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -32,11 +34,13 @@ type ExpenseFormData = {
 interface AddExpenseButtonProps {
   onAddExpense: (expense: ExpenseFormData) => Promise<void>;
   position?: 'bottom-right' | 'bottom-center';
+  templates?: Template[];
 }
 
 const AddExpenseButton = ({
   onAddExpense,
   position = 'bottom-right',
+  templates = [],
 }: AddExpenseButtonProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -83,6 +87,20 @@ const AddExpenseButton = ({
         setErrors((prev) => ({ ...prev, [name]: undefined }));
       }
     }
+  };
+
+  // Pure prefill — fills the form and clears stale errors, never submits. The
+  // user still presses "Add Expense". `amount` is a Hasura `numeric`, which can
+  // arrive as a string, so coerce it; `category` is a plain column the owner
+  // seeds with must/nice/waste.
+  const handleSelectTemplate = (template: Template) => {
+    setFormData({
+      name: template.name,
+      note: template.note ?? '',
+      amount: Number(template.amount),
+      category: template.category as Exclude<CategoryType, 'total'>,
+    });
+    setErrors({});
   };
 
   const validateForm = (): boolean => {
@@ -186,6 +204,24 @@ const AddExpenseButton = ({
         <DialogTitle>Add New Expense</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+            {templates.length > 0 && (
+              <Stack
+                direction="row"
+                spacing={1}
+                useFlexGap
+                sx={{ flexWrap: 'wrap' }}
+              >
+                {templates.map((template) => (
+                  <Chip
+                    key={template.id}
+                    label={template.title}
+                    variant="outlined"
+                    disabled={loading}
+                    onClick={() => handleSelectTemplate(template)}
+                  />
+                ))}
+              </Stack>
+            )}
             <TextField
               name="name"
               label="Expense Name"
