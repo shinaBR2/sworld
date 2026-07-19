@@ -1,6 +1,6 @@
 ---
 name: thermo-nuclear-code-quality-review
-description: Run an extremely strict maintainability review of the current branch focused on abstraction quality, file-size growth, and spaghetti-condition creep. Use when the user asks for a "thermo-nuclear review", "thermonuclear code review", "deep code quality audit", or an especially harsh / strict maintainability review. This is a deliberately demanding review, not a routine PR check — reach for `reviewing-pull-requests` for the normal flow.
+description: Run an extremely strict maintainability review of the current branch focused on abstraction quality, file-size growth, and spaghetti-condition creep. Use when the user asks for a "thermo-nuclear review", "thermonuclear code review", "deep code quality audit", or an especially harsh / strict maintainability review. This is a deliberately demanding review, not a routine PR check — reach for `self-review` for the normal flow.
 ---
 
 # Thermo-Nuclear Code Quality Review

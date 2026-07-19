@@ -51,6 +51,17 @@ Based on the interview, fill in:
 
 ### Skill writing guide
 
+#### Skills are modules — treat them exactly like code
+
+**This rule outranks every style preference below.** Manage skills the way this repo manages reusable code: isolated units, a clear API, no leaked internals. Duplication across skills drifts exactly like copy-pasted code drifts, and nothing type-checks it.
+
+- **One owner per concern.** Exactly one skill defines a given thing. If a topic is already owned, extend that skill — do not write a second one that covers part of it. A skill being long is fine; length is never a reason to split. Splitting is justified by a *different concern*, not by size.
+- **Consumers call by name and nothing more.** A skill that invokes another names it and states what it's for — the way a caller invokes a method. It must NOT restate the callee's steps, commands, thresholds, tool mechanics, vocabulary, or history. If the callee changes, no consumer should need editing.
+- **No private helper promoted to public API.** If a skill exists only to be run by one other skill, it isn't a skill — it's a section of that skill. Fold it in.
+- **A cross-reference is one clause.** "Run the `X` skill" or "see `X` for Y". The moment a reference starts explaining *how* X works, the boundary has leaked.
+
+When editing a skill, grep the other skills for its name and check every hit is still a name-only mention. Stale restatements are the failure mode this rule exists to prevent.
+
 #### Anatomy of a skill
 
 ```

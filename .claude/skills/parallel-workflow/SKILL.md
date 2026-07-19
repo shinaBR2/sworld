@@ -17,7 +17,7 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 - **Substitute the repo name in `gh` commands.** Every `gh` / GraphQL call is repo-scoped — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing. (The `ci-loop` gate queries carry the same rule.)
 - **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
-- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
+- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill.
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
 
 ## Git fundamentals
@@ -52,15 +52,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 9. The 3 files limit is soft — more is fine if changes are small, cohesive, and easy to review.
 10. NEVER bypass commit hooks — code MUST be formatted, linted, and type-checked.
-11. Self-review all work — this is a mandatory gate, not eyeballing the diff, and it is a **loop, not a single pass**. It gates **PR creation, NOT pushing** — commits are pushed freely and immediately (see step 14). When the work is done, BEFORE creating the PR:
-    1. Run the `code-review` skill (`/code-review`) on the working diff (`git diff origin/main`) — the mechanical finder: verified correctness/quality findings. **Pick the effort tier from the change's risk band, don't default to `high`:** `reviewing-pull-requests` Step 2 owns the mapping — Light→`low`, Standard→`medium`, Deep→`high` (`xhigh` only when genuinely warranted, `max` never by default). A typical micro-PR is Light or Standard, so it runs `low`/`medium`; reserve `high`/`xhigh` for deep-risk diffs — shared `packages/core`/`packages/ui`, auth, Hasura permissions, DB migrations. **Anchor it to the worktree:** at `high` and above the review spawns background agents that run in the session's root cwd, NOT your worktree, so an unanchored run silently diffs the wrong tree and reviews the wrong commit. Either run the review inline in the worktree, or pass the explicit command `git -C <absolute-worktree-path> diff origin/main`. **Then verify scope before trusting the result:** the changed files the review reports MUST match `git diff origin/main --name-only` in the worktree. A mismatch — or a "no changes found" result — means it mis-scoped; that is the gate FAILING, not a clean pass. Fix the anchoring and re-run.
-    2. Run the `reviewing-pull-requests` skill in self-review mode on the same diff — the judgment pass: sworld conventions, AI failure modes, reviewability, risk-scaled depth.
-    3. Fix EVERYTHING actionable from both (dedupe overlapping findings — one fix), re-run lint/type-check, commit, push, and **restart this loop from sub-step 1**. Fixes are new code — they have NOT been reviewed and can introduce new defects. Never trust a fixing pass without re-reviewing it.
-    4. Exit only when a full pass is clean on BOTH: **zero confirmed findings** from `/code-review` AND **verdict "Merge" with zero concerns** from `reviewing-pull-requests`. Never create a PR on hope.
-
-    The local diff and the PR diff are the same thing — this loop does bugbot/CodeRabbit's job *before* the PR exists. **The bar: bugbot/CodeRabbit should find nothing.** A substantive bot finding on the PR means this gate failed. The goal: every PR that goes up is already a good PR.
-
-    In this workspace this gate is also **mechanically enforced by a settings hook** (`PreToolUse(Bash)` denies `gh pr create` unless both review skills have run and are newer than the last edit) — so skipping it isn't just against convention, the tool call will be denied with a message saying what to run. That means: run `/code-review` through the **Skill tool**, not by calling `Workflow` directly (e.g. a cached resume) — only a Skill-tool invocation stamps the gate. The `last_edit` stamp itself only fires on `Write`/`Edit` tool calls, NOT on Bash — so a file write via Bash (a build, a formatter, a stray `sed`) after the final review does **not** re-flag it as stale, meaning it can silently ship unreviewed. Do all build/runtime verification (rebuilds, Playwright probes) **before** the final review pass, not after, and treat any `Write`/`Edit` after that point as forcing a fresh review — don't rely on the hook to catch everything.
+11. **Self-review before creating the PR** — run the `self-review` skill and follow it to a clean exit. It gates PR creation, not pushing (see step 14).
 12. Always verify `git branch --show-current` before committing.
 13. Don't dismiss automated review findings without thorough verification.
 14. Commit often and push immediately — never ask, just do it. Pushing is **backup, not publication**: a pushed branch with no PR is invisible, and it means a broken laptop loses zero work. Pushing is NEVER gated; only PR creation is (step 11).
@@ -79,7 +71,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 ## PR submission
 
-- A PR may ONLY be created after the self-review loop (step 11) has exited clean on BOTH review skills. Pushing commits needs no gate; creating the PR does.
+- A PR may ONLY be created after the self-review loop (step 11) has exited clean. Pushing commits needs no gate; creating the PR does.
 - Create PR with `[WIP]` prefix (not draft).
 - Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).

@@ -11,7 +11,7 @@ Two rules decide **WHERE** frontend code lives. They are the most load-bearing s
 - `mui` — HOW a component is styled once it's in the right place (global=theme vs situational=`sx`).
 - `architecture` — the data path (one page = one query = one transformer).
 - `writing-task-specs` — a sub-task is one app/package; placement follows the rules below.
-- `reviewing-pull-requests` — review checks code landed in the right package/folder.
+- `self-review` — review checks code landed in the right package/folder.
 
 This skill is only about **where**. For **how** to style, see `mui`.
 
