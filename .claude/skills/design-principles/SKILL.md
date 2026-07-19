@@ -37,4 +37,4 @@ Decided 2026-07-04:
 
 Applies to any `apps/listen` UI work. See the `architecture` skill's "one page = one query" rule before adding a data fetch for a listen feature — most "like page X" needs are already in the current page's query.
 
-See also the `mui` skill's two-case styling model (global=theme, situational=sx) for how these principles get implemented in code.
+See also the `mui` skill's styling model for how these principles get implemented in code.

@@ -20,7 +20,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 - Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
 - For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
-- **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test. If a sub-task's `What` needs an "and", it's two sub-tasks.
+- **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test.
 - **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
 - Attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main; see `task-tracker`) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, start it in the tracker (see `task-tracker`)
@@ -28,14 +28,14 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 
 ## Every ticket opens in plain words
 
-Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's five-second answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
+Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
 
-The jargon-free law itself (what counts as plain, the ten-second test, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill only owns *where* the block sits and its header per shape:
+The jargon-free law itself (what counts as plain, the comprehension test it must pass, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill only owns *where* the block sits and its header per shape:
 
 ```markdown
 **In plain words**  _(no code, no jargon — anyone can read this)_
 
-[2–4 sentences. What a user actually experiences going wrong, or wants — and why it matters. If a number is wrong, show it with round numbers. A non-technical reader gets the gist in ten seconds.]
+[2–4 sentences. What a user actually experiences going wrong, or wants — and why it matters. If a number is wrong, show it with round numbers. Must pass `plain-english`'s comprehension test.]
 ```
 
 This block is mandatory on the Bug, Small feature, and Large-feature-parent shapes. The **User story** already opens this way — its `**The user's problem**` section *is* the plain-words block, no separate header needed. A **sub-issue** (the small child of a large feature) opens with a one-line `**Why this matters**` instead — same law, just one sentence: what part of the user-facing feature this piece contributes to, so whoever picks it up knows the point without decoding the title or re-reading the parent.
@@ -348,9 +348,9 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
 3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
 4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
-5. **Break into sub-tasks by one-purpose, one-app/repo scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — if its `What` needs an "and", or its `Files / scope` spans two apps or two repos, split it now, at scoping time, not after the branch is built.
-6. **Identify real dependencies only.** The default is a flat list of sub-tasks, all startable now — independent work is parallel by default. Only add a `blockedBy` where one sub-task genuinely cannot exist or compile without another's output (a schema/migration change the query layer needs, a shared helper its consumers import, wiring that assembles already-finished pieces). Do not invent an ordering to make the breakdown feel more structured — two sub-tasks that just happen to touch related code are not blocked on each other.
-7. **Group into waves only where step 6 found a real blocker.** A wave is a barrier: everything in wave N must land before wave N+1 starts, which is a real cost — impose it only where earned. If everything is parallel, say so and skip waves and the dependency graph entirely.
+5. **Break into sub-tasks by one-purpose, one-app/repo scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
+6. **Derive the dependency graph from the code** — run `dependency-analysis` over the candidates. It decides which are isolated and which carry a real `blockedBy`; this skill only records what it returns.
+7. **Group into waves only where step 6 found a real blocker**, and render them per the templates below. If everything is parallel, skip waves and the dependency graph section entirely.
 8. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
 9. **Confirm with the user** before creating the parent issue and sub-issues. Show the proposed breakdown (flat list, or waves if any are real). Adjust until it's right.
 
@@ -447,7 +447,7 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 * [No regression on dependent code]
 ```
 
-**Before creating it, run the one-purpose test** (`micro-prs`): can `What` be said without an "and"? Does `Files / scope` stay inside one app (or one repo, for `sworld-backend`/`sworld-hasura-v2` work)? If either fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
+**Before creating it, run `micro-prs`' one-purpose test** against this sub-task's `What` and `Files / scope`. If it fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
 
 ### The goal & verification sub-issue — every large feature's first sub-issue
 

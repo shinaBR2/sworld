@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow (step 11) — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR. Owns both halves of a review — the mechanical bug hunt and the judgment pass — scaled to risk across four depth bands, ending in a clear merge recommendation. The harshest band covers a "thermo-nuclear review", "deep code quality audit", or any request for an especially strict maintainability/abstraction-quality pass.
+description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR. Owns both halves of a review — the mechanical bug hunt and the judgment pass — scaled to risk across four depth bands, ending in a clear merge recommendation. The harshest band covers a "thermo-nuclear review", "deep code quality audit", or any request for an especially strict maintainability/abstraction-quality pass.
 ---
 
 # Self-review
@@ -22,13 +22,13 @@ This skill is the **only** place code review is defined. Other skills call it by
 
 Two patterns — the target is the local working diff in both:
 
-**Pattern A — Self-review gate (pre-PR, the parallel-workflow default).** Invoked as step 11 of the parallel workflow, inside the worktree, before the PR is created. Commits may already be pushed — pushing is backup, not publication; the PR is what this gate unlocks. Target: the local working diff (`git fetch origin main && git diff origin/main`). See "Self-review mode" below for how the output semantics change.
+**Pattern A — Self-review gate (pre-PR, the parallel-workflow default).** Invoked as `parallel-workflow`'s pre-PR gate, inside the worktree, before the PR is created. Commits may already be pushed — pushing is backup, not publication; the PR is what this gate unlocks. Target: the local working diff (`git fetch origin main && git diff origin/main`). See "Self-review mode" below for how the output semantics change.
 
 **Pattern B — User asks for a review.** They'll say "review this", "look at this branch", or "what do you think of this" with the branch checked out and context loaded. Same target: the local diff vs `origin/main`. Use what's in context.
 
 ## Self-review mode (Pattern A — the pre-PR gate)
 
-When this skill runs as the parallel-workflow step-11 gate, the review itself is identical — same hierarchy, same depth-scaling, same format — but the output semantics change, because the reviewer and the developer are the same party and the point is to fix, not to inform:
+When this skill runs as `parallel-workflow`'s pre-PR gate, the review itself is identical — same hierarchy, same depth-scaling, same format — but the output semantics change, because the reviewer and the developer are the same party and the point is to fix, not to inform:
 
 - **Concerns are work items, not feedback.** Every concern MUST be fixed before the gate passes. There is no "merge with changes" exit — the changes get made.
 - **Suggestions must be resolved, not parked.** Apply each one, or explicitly reject it with reasoning. Never silently drop a suggestion.
@@ -55,7 +55,7 @@ Before reviewing the code itself, make a fast judgment about whether this diff i
 
 Look at:
 
-- **Scope.** Same test as `micro-prs`' one-purpose rule, applied after the fact: does this change do one thing, in one app/package/repo, or is it touching too many unrelated concerns?
+- **Scope.** Apply `micro-prs`' one-purpose test to the finished diff, after the fact.
 - **Surface area.** How many files? How many distinct changes?
 - **Risk profile.** Auth, data access, database migrations, shared logic in `packages/core` or `packages/ui` that many apps depend on? Or buttons, copy, styling, internal renames?
 - **Coherence.** Is it easy to hold the change in your head, or does it sprawl across the codebase in ways that are hard to reason about?

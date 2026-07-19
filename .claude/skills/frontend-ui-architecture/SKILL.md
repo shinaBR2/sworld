@@ -8,7 +8,7 @@ user-invocable: false
 
 Two rules decide **WHERE** frontend code lives. They are the most load-bearing structural convention in this codebase: get placement right and everything else — re-skinning, reuse, review — follows. This skill is the canonical home for the convention; other skills reference it rather than restating it:
 
-- `mui` — HOW a component is styled once it's in the right place (global=theme vs situational=`sx`).
+- `mui` — HOW a component is styled once it's in the right place.
 - `architecture` — the data path (one page = one query = one transformer).
 - `writing-task-specs` — a sub-task is one app/package; placement follows the rules below.
 - `self-review` — review checks code landed in the right package/folder.

@@ -5,7 +5,7 @@ description: >-
   merge status → conflicts → unresolved review threads → CI checks, fixing/pushing/waiting/restarting
   until every gate is green, then reporting ready (never auto-merging). Use whenever the user says
   "do the loop", "run the loop", "the CI loop", "check the PR", or invokes /ci-loop. On merge it runs
-  `cleanup` for teardown. It does NOT do the pre-PR self-review (that's `parallel-workflow` step 11)
+  `cleanup` for teardown. It does NOT do the pre-PR self-review (that's `parallel-workflow`'s gate)
   and never touches issue status (that's the tracker's — see `task-tracker`).
 user-invocable: true
 ---
@@ -22,7 +22,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 
 This loop runs **after** a PR exists, to get it to merged. Do NOT arm a monitor or idle-poll while waiting — a hook denies the Monitor tool outright; drive the gates and stop. It is not the pre-PR self-review — that
 loop (the `self-review` skill, before the PR is created) is `parallel-workflow`'s
-step 11. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
+pre-PR gate. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
 the tracker's concern; see `task-tracker`.
 
 **Repo-qualify every `gh` command.** Each PR lives in exactly one repo (`sworld`, `sworld-backend`, or
