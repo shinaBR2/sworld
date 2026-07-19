@@ -14,24 +14,10 @@ Only after step 3 is complete may you write code. No proto, no scaffold, no "her
 
 ## Mandatory gates — never skip either loop
 
-### Loop A: Self-review (before creating a PR)
+Two loops gate every change; neither is optional. Each is a skill that owns its own steps — this is the always-on reminder that they exist and are mandatory, not a restatement of them.
 
-1. `git fetch origin main && git diff origin/main` — get the working diff
-2. Run the `code-review` skill on the diff → must have **zero confirmed findings**
-3. Run the `reviewing-pull-requests` skill on the diff → must have **verdict "Merge" with zero concerns**
-4. Fix everything actionable from both, commit, push, and restart from step 1. Only create the PR when BOTH are clean.
-
-### Loop B: CI (after creating a PR, before merging)
-
-For EVERY PR, run each step sequentially. **You MUST log evidence for each step** — no summaries, no "all green", no batching steps together:
-
-1. `gh pr view X --json state` → must show `OPEN`
-2. `gh pr view X --json mergeable` → must show `MERGEABLE`
-3. `gh api graphql` threads query → must have **zero unresolved threads** (this is the #1 gate — bugbot shows SUCCESS even with real bugs, green CI means nothing about comments)
-4. `gh pr checks X` → must all pass (ignore: flaky E2E infra, Argos data-driven diff, prod_deploy 429 quota)
-5. **If the user did NOT explicitly say "merge when settled" for this specific PR: stop and report ready. Do not merge.**
-
-If any step fails: fix, push, wait 6min, restart from step 1.
+- **Loop A — Self-review, before creating a PR.** Run `code-review` + `reviewing-pull-requests` on the working diff, fix everything actionable, re-run, and open the PR only when both are clean. Owned by `parallel-workflow` (step 11).
+- **Loop B — CI, after creating a PR and before merging.** Run the `ci-loop` skill and drive the PR to settled; never merge unless the user explicitly authorized it for that PR. Owned by `ci-loop`.
 
 ## How we work
 
@@ -92,7 +78,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 **Skills** (`.claude/skills/`) — task-triggered conventions. They fire automatically, but reach for them deliberately too:
 
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
-- _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
+- _Workflow:_ `parallel-workflow`, `ci-loop`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 - _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`

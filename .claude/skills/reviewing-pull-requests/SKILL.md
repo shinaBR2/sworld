@@ -10,7 +10,7 @@ Act as a thoughtful colleague reviewing a teammate's work — not a checklist ro
 ## Critical rules
 
 - **The review target is the LOCAL working diff, never a remote PR.** Get it with `git fetch origin main`, then `git diff origin/main`. No PR exists at review time — the local diff and the eventual PR diff are the same thing.
-- Never touch `gh pr` in this skill. Post-PR concerns (review threads, CI, bots) belong to the CI loop in `parallel-workflow`.
+- Never touch `gh pr` in this skill. Post-PR concerns (review threads, CI, bots) belong to the `ci-loop` skill.
 - For follow-up questions, work from what's already in context. Re-run the diff only when the code has changed (e.g. the next iteration of the self-review loop).
 - If the diff is too large or sprawling to confidently review, push back before doing the review. Do not power through a review you don't trust.
 - Be direct and conversational, like a colleague leaving a comment on the PR. No padded preamble, no exhaustive bullet lists, no review-theatre.

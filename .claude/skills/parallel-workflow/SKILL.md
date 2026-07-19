@@ -9,13 +9,13 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
-- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operations there advance the local `main` ref (`git pull --ff-only origin main` when it sits on `main`, `git fetch origin main:main` otherwise — see "Keep local `main` fresh" below). No branch work, no manual edits.
+- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there advances the local `main` ref (the fast-forward refresh the `cleanup` skill owns — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: all three repos
 
 This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
 
-- **Substitute the repo name in `gh` commands.** The CI-loop Step 3 GraphQL query below takes a `name:"<repo>"` placeholder — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing.
+- **Substitute the repo name in `gh` commands.** Every `gh` / GraphQL call is repo-scoped — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing. (The `ci-loop` gate queries carry the same rule.)
 - **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
@@ -28,24 +28,9 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 ### Keep local `main` fresh
 
-Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current. Each of the three repos has its own `.git` and its own `main`; refresh *every* repo whose `main` you are about to read off or branch from.
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind — keep the pointer current in **every** repo whose `main` you are about to read off or branch from.
 
-Two equivalent ways to fast-forward local `main` to `origin/main` — pick by what the repo's **main worktree** (the first entry in `git worktree list`) is checked out on. Probe it cheaply:
-
-```bash
-# Emits "main" if that repo's main worktree sits on `main`, else the feature branch name (empty = detached).
-git -C "$repo" worktree list --porcelain | awk '
-  /^branch refs\/heads\//{sub(/^branch refs\/heads\//,""); print; found=1} /^$/{if(!found)print"detached"; exit}'
-```
-
-- **Main worktree sits on `main`** → run **`git pull --ff-only origin main`** in that worktree. Advances the `main` branch pointer and updates the tracked files in its checkout. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream.
-- **Main worktree sits on a feature branch** (the common case here — e.g. `chore/…`) → run **`git fetch origin main:main`** from any worktree of that repo. It advances the local `main` ref to `origin/main` without a checkout and without touching any working tree; it refuses loudly if `main` *is* checked out somewhere in the repo — that refusal IS the tell to use `git pull --ff-only` in that worktree instead.
-
-Never rebase `main`; never create merge commits on it. Run it:
-
-1. After every merged-worktree cleanup (see loop Step 1) — for the repo whose PR just merged.
-2. Before starting new work / before any code read on `main` in that repo.
-3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent. Just run it in the relevant repo(s) and report the result; it is a one-command action per repo, never a question. If the user doesn't name a repo, run it for all three (`sworld`, `sworld-backend`, `sworld-hasura-v2`).
+The refresh mechanic and every trigger for it are owned by the `cleanup` skill — see `cleanup`. Refresh a repo's `main` before you start new work in it or read off it.
 
 ## Before starting
 
@@ -99,64 +84,11 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 - Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).
 - Ensure PR is independent and mergeable without other PRs.
-- Run the CI loop after pushing.
+- Run the `ci-loop` skill after pushing.
 
 ## CI loop ("do the loop")
 
-A strict sequential state machine. Each step is a **gate**. If any gate triggers a code change, push the fix, wait 6 minutes for CI, then **restart from Step 1**. NEVER proceed to the next step after fixing something. NEVER batch multiple steps in parallel.
-
-Before entering the gates, push any unpushed local commits so the remote PR reflects the latest work.
-
-### Step 1: Check merge status
-
-- Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → clean up worktree + delete local branch. (This is the "done" moment — issue status is the tracker's, see `task-tracker`.) Loop is done.
-- If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
-- If `OPEN` → proceed to Step 2.
-
-### Step 2: Check merge conflicts
-
-- Run `gh pr view <number> --json mergeable`.
-- If conflicting → `git fetch origin main && git merge origin/main`, resolve conflicts, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If clean → proceed to Step 3.
-
-### Step 3: Check unresolved review comments
-
-- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Substitute `<repo>` with the repo the PR actually lives in — `sworld`, `sworld-backend`, or `sworld-hasura-v2` — and `NUMBER` with the PR number. Querying the wrong repo silently returns nothing:
-  ```bash
-  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"<repo>") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
-  ```
-- Filter to `isResolved: false` threads only.
-- If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If no unresolved threads → proceed to Step 4.
-- **NEVER manually resolve bugbot threads** — fix code, let bugbot re-resolve on next push.
-- Bugbot CI check **ALWAYS shows SUCCESS** even when it finds real bugs. CI green means NOTHING about comments — you must read threads regardless.
-
-### Step 4: Check CI
-
-- Run `gh pr checks <number>` (NEVER use `--watch`).
-- If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If all green AND no unresolved comments → PR is ready. Report to user.
-- **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
-- **Known non-blocking checks** — confirm the specific failure mode before waving these through, then gate on `test` + CodeRabbit instead:
-  - **Argos visual-regression** (`argos/Listen E2E`) does a pixel-perfect diff against the anonymous home, which is data-driven (real Firebase preview + prod Hasura, no mocking) — it reports "changed" whenever the underlying data changes, not just on real UI regressions. Root-cause fix tracked separately (mask the data-driven pixels). If the diff is plausibly a genuine intended UI change, say so — it needs approving in Argos, not dismissing.
-  - **`prod_deploy` / Deploy Preview 429** (`RESOURCE_EXHAUSTED: channel quota reached`) — Firebase Hosting preview channels are per-app-per-PR with a 7-day TTL; a burst of PRs exhausts a site's quota, and it can fire on an app the PR doesn't even touch. Confirm by grepping the failed job log for `429`/`RESOURCE_EXHAUSTED` — a different `prod_deploy` failure still needs investigating.
-
-### Merging — never automatic
-
-- **DEFAULT: never merge.** The user reviews every PR themselves. The loop's terminal action for an OPEN, settled PR is ALWAYS "report to the user that it's ready" — merging is a separate, explicit action taken only when the user has authorized it for that PR (e.g. "you can merge" / "merge when settled").
-- **A PR is "settled"** when the loop has run to completion and every gate is green AND stable: OPEN + mergeable (no conflicts), CI fully passed (nothing `pending`, no failures), and zero unresolved review threads. `pending` is not `pass` — never act on an unsettled gate.
-- **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
-- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/`prod_deploy`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this workspace's merge-is-deploy model means shipping broken code to production.
-- Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
-
-### The rule that gets violated
-
-The #1 failure mode: batching multiple checks in parallel, fixing multiple things at once, or skipping Step 3 because CI is green. The steps are gates in strict order because each push triggers new CI + bugbot runs. Checking later steps before earlier ones settle is meaningless — the state changes after every push.
-
-### Reporting
-
-After each iteration, report what you found and fixed. Lead with unresolved comments if they exist — that's the #1 thing the user cares about.
+Once the PR is up, hand off to the **`ci-loop`** skill to drive it to settled. See `ci-loop`.
 
 ## Issue state management
 
