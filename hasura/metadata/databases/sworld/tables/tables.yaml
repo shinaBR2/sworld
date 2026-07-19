@@ -5,6 +5,7 @@
 - "!include public_crawl_requests.yaml"
 - "!include public_device_requests.yaml"
 - "!include public_feature_flag.yaml"
+- "!include public_finance_transaction_templates.yaml"
 - "!include public_finance_transactions.yaml"
 - "!include public_journals.yaml"
 - "!include public_notifications.yaml"
