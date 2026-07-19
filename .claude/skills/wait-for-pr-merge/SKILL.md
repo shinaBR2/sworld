@@ -1,6 +1,6 @@
 ---
 name: wait-for-pr-merge
-description: Poll one or more PRs until each merges (or closes), cleaning up each PR the moment it merges — remove its worktree, delete its local branch, refresh local main, mark its tracker issue Done. Use whenever the user says "wait for PR X to merge", "wait for PRs X and Y to merge", "watch these PRs until they merge", "let me know when PR X lands", "poll PR X", or invokes /wait-for-pr-merge. This is post-READY watching only — it does NOT fix CI, conflicts, or review comments (that is "the loop"; see parallel-workflow).
+description: Poll one or more PRs until each merges (or closes), cleaning up each PR the moment it merges — remove its worktree, delete its local branch, refresh local main (issue status is the tracker's — see `task-tracker`). Use whenever the user says "wait for PR X to merge", "wait for PRs X and Y to merge", "watch these PRs until they merge", "let me know when PR X lands", "poll PR X", or invokes /wait-for-pr-merge. This is post-READY watching only — it does NOT fix CI, conflicts, or review comments (that is "the loop"; see parallel-workflow).
 user-invocable: true
 ---
 
@@ -78,7 +78,7 @@ case "$repo" in
 esac
 ```
 
-### MERGED → clean up + mark tracker issue Done
+### MERGED → clean up
 
 Resolve the branch and its worktree **exactly** — never substring-match, and never act on an empty branch (an empty value matches every worktree):
 
@@ -99,12 +99,7 @@ wt=$(git -C "$repo_path" worktree list --porcelain | awk -v b="refs/heads/$branc
 git -C "$repo_path" branch -D "$branch" || { echo "PR <N>: branch delete failed — aborting"; exit 1; }
 ```
 
-Then mark the linked tracker issue `Done` (the parallel-workflow CI loop's Step 1 does this when *it* observes the merge; mirror it here so the manual-merge path stays consistent) — see `task-tracker` for the command. Extract `SWO-NNN` from the PR body — the branch name is **not** authoritative:
-
-```bash
-swo=$(gh pr view <N> --repo "ShinaBR2/$repo" --json body -q .body | grep -oE 'SWO-[0-9]+' | head -n1)
-[ -n "$swo" ] && linear issue update "$swo" -s "Done" || echo "PR <N>: no SWO-NNN found in body — skipping tracker update"
-```
+Issue status is the tracker's to manage — see `task-tracker`. This path only cleans up.
 
 ### CLOSED without merge → stop watching it
 
@@ -131,5 +126,5 @@ Report that the PR could not be polled and drop it from the pending set so the u
     *)    git -C "$repo_path" fetch origin main:main || { echo "$repo: main refresh failed — stop"; exit 1; } ;;
   esac
   ```
-- Report per PR: cleaned-up+moved-to-Done (merged), closed-without-merge, or unreachable.
+- Report per PR: cleaned-up (merged), closed-without-merge, or unreachable.
 - If PRs remain pending, re-launch the poll (step 1) for just those. When the pending set is empty, report the final tally and stop.

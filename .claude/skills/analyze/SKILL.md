@@ -5,7 +5,7 @@ description: >-
   Use it as the first move whenever picking up, starting, resuming, or "analysing" a non-trivial
   tracker issue — especially a large-feature parent with sub-issues — to catch missing requirements
   and a breakdown that has drifted out of sync before you build against it. Reach for it the moment
-  you're about to set an issue In Progress, when a plan "looks done" but nobody has re-checked it,
+  you're about to start an issue, when a plan "looks done" but nobody has re-checked it,
   or when the user says "analyse this issue / take a look at this breakdown / is this plan right".
   This is the backward/audit direction on a *spec* — distinct from `product-planning`/`grill-me`
   (forward, idea → breakdown) and `reviewing-pull-requests` (analysing *code*). Not needed for a
@@ -33,13 +33,13 @@ a breakdown is still internally consistent with itself.
 
 ## When to run it
 
-The first move on picking up any non-trivial issue — before setting it `In Progress`, before a line of
+The first move on picking up any non-trivial issue — before you start it, before a line of
 code. Highest value on a large-feature **parent with sub-issues**, on any issue that was scoped a while
 ago, and on anything reopened or reworked (where the plan and the sub-issues drift apart most). Skip it
 for a trivial single-issue bug with no breakdown to audit — there's nothing to reconcile.
 
-Pull the issue and its relations first (`linear issue view SWO-NNN`, `linear issue relation list SWO-NNN`,
-and the sub-issues) so you're auditing what's actually there, not memory.
+Pull the issue, its relations, and the sub-issues first (see `task-tracker`) so you're auditing what's
+actually there, not memory.
 
 ## The three passes
 

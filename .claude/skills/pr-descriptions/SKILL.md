@@ -15,7 +15,7 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 - Do not include "Generated with Claude Code" or any AI attribution
 - Do not mention Claude, AI, or assistants anywhere in the PR
 - Do not pad the description by restating the diff
-- Do not put the tracker issue ID in the title — keep the title clean and reference the issue (e.g. `SWO-123`) in the body instead
+- Do not put the tracker issue ID in the title — keep the title clean and reference the issue in the body instead (see `task-tracker`)
 
 ## Title format
 
@@ -73,7 +73,7 @@ No "Changelog" section in the PR body. The changelog is driven by changesets (se
 
 ### Summary
 
-1–3 sentences, plain English. State the change directly. Link related PRs as `#NNNN`. Reference the tracker issue it came from (e.g. `SWO-123`) so the integration links the PR back to it.
+1–3 sentences, plain English. State the change directly. Link related PRs as `#NNNN`. Reference the tracker issue it came from (see `task-tracker`).
 
 **User-facing PR — describe what the user sees, before → after.**
 

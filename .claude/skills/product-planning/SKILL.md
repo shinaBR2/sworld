@@ -41,7 +41,7 @@ and offer**, you don't enforce.
 Don't assume where the user is. They may have planned this deeply with an agent already, or may be
 starting cold and have skipped straight to "let's build it." Find out before you start:
 
-- If they reference a tracker issue or project, pull it (`linear issue view SWO-NNN` / `linear project view` — see `task-tracker`) and work from it.
+- If they reference a tracker issue or project, pull it (see `task-tracker`) and work from it.
 - Check whether a tracker **document** already exists for the concept in play — if it does, that's
   a strong signal they've already worked the concept through. If it doesn't and the work needs one,
   that's a signal it's missing.
