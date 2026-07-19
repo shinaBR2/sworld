@@ -512,7 +512,7 @@ No waves — all startable now:
   hasura-permissions     — read permission for the new table (sworld-hasura-v2, separate repo/PR)
 ```
 
-A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — only imposed because `preview-table` genuinely cannot exist without `parser-helper`'s output shape):
+A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — imposed here only because `dependency-analysis` returned those edges as real):
 
 ```text
 Wave 0 — Foundations (no blockers):
@@ -526,7 +526,7 @@ Wave 2 — Save:
   save-wiring            — blockedBy: [preview-table]
 ```
 
-Each issue's `blockedBy` lists the issues above it. A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`. Before writing any `blockedBy`, ask: does this genuinely need the other to exist first, or do they just touch related code? The latter is a file-ownership note to resolve at review, not a blocker.
+Each issue's `blockedBy` lists the issues above it. A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`. Never write a `blockedBy` this skill worked out for itself: every edge comes from `dependency-analysis` (step 6 above), which owns the real-vs-fake test. This skill only records what it returns.
 
 ## Process
 

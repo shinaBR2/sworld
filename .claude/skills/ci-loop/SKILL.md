@@ -16,6 +16,17 @@ A strict sequential state machine. Each step is a **gate**. If any gate triggers
 the fix, wait 6 minutes for CI, then **restart from Step 1**. NEVER proceed to the next step after
 fixing something. NEVER batch multiple steps in parallel.
 
+**It is a LOOP, not a single pass.** There are exactly two ways out: the PR is `MERGED`/`CLOSED`
+(Step 1), or every gate is green and stable — *settled*, as defined under "Merging" below. Anything
+else means go round again.
+
+**`pending` is a third state, and it is NOT an exit.** A gate that hasn't decided yet is neither a
+pass nor a failure — it is *unsettled*, and the loop's job is to wait it out, not to hand back. When
+any gate is pending: `sleep 360` in the **background** (never a foreground wait, never the Monitor
+tool — a hook denies it), and on wake **restart from Step 1**. Do not report, do not ask the user
+whether to continue, do not treat "I have nothing to fix right now" as done. Handing an unsettled PR
+back to the user is the single most common way this loop gets broken.
+
 Before entering the gates, push any unpushed local commits so the remote PR reflects the latest work.
 
 ## Scope boundary
@@ -58,6 +69,7 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
 
 - Run `gh pr checks <number> --repo "ShinaBR2/<repo>"` (NEVER use `--watch`).
 - If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
+- If **any check is `pending`** → nothing to fix, and nothing to report. Background-`sleep 360`, then **restart from Step 1**. A review bot still marked "Review in progress" counts as pending: it has not yet had its say, and Step 3 is the gate it feeds.
 - If all green AND no unresolved comments → PR is ready. Report to user.
 - **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
 - **Known non-blocking checks** — confirm the specific failure mode before waving these through, then gate on `test` + CodeRabbit instead:
