@@ -236,6 +236,7 @@ const Content = () => {
       <AddExpenseButton
         onAddExpense={handleAddExpense}
         position="bottom-right"
+        templates={data?.templates}
       />
 
       {enabledTransactionsDialog && (
