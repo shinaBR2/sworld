@@ -29,7 +29,7 @@ When this skill runs as the parallel-workflow step-11 gate, the review itself is
 
 - **Concerns are work items, not feedback.** Every concern MUST be fixed before the gate passes. There is no "merge with changes" exit — the changes get made.
 - **Suggestions must be resolved, not parked.** Apply each one, or explicitly reject it with reasoning. Never silently drop a suggestion.
-- **It loops.** This skill runs alongside `/code-review`, and after any fix the loop restarts — fixes are new code and have not been reviewed. The gate exits only when a full pass is clean on BOTH: verdict "Merge" with zero concerns here, zero confirmed findings from `/code-review`.
+- **It loops.** This skill runs alongside `bug-hunt` (the model-invocable finder — `/code-review` can no longer be self-invoked as of Claude Code 2.1.215), and after any fix the loop restarts — fixes are new code and have not been reviewed. The gate exits only when a full pass is clean on BOTH: verdict "Merge" with zero concerns here, zero confirmed findings from the finder.
 - **A clean pass is the successful exit, not a failure to find something.** Never manufacture a concern to keep the loop going — the anti-pattern rules apply doubly here.
 - **The reviewability judgment still applies.** If the local diff is too sprawling or mixes concerns, that IS the finding: stop and split the work (`micro-prs`) before shipping anything.
 
@@ -79,7 +79,7 @@ The user may tell you what depth they want. If they don't, decide based on the d
 
 ### Review depth → `/code-review` effort tier
 
-The self-review gate (`parallel-workflow` step 11) runs the `code-review` skill (`/code-review`) on the same diff. This is the canonical mapping from the depth band above to that skill's effort tier — pick the tier from the band you just chose, don't decide it fresh each run:
+`/code-review` is **user-invoked only** (Claude Code 2.1.215 removed model self-invocation) — the gate's model-run finder is `bug-hunt`, which scales by finder count rather than an effort tier (Light 2, Standard 3, Deep 5). This mapping therefore applies when the **user** chooses to add a `/code-review` pass on the same diff; use the depth band you just chose rather than deciding the tier fresh:
 
 | Depth band | `/code-review` effort | What runs |
 | --- | --- | --- |

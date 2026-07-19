@@ -16,7 +16,7 @@ Only after step 3 is complete may you write code. No proto, no scaffold, no "her
 
 Two loops gate every change; neither is optional. Each is a skill that owns its own steps — this is the always-on reminder that they exist and are mandatory, not a restatement of them.
 
-- **Loop A — Self-review, before creating a PR.** Run `code-review` + `reviewing-pull-requests` on the working diff, fix everything actionable, re-run, and open the PR only when both are clean. Owned by `parallel-workflow` (step 11).
+- **Loop A — Self-review, before creating a PR.** Run `bug-hunt` + `reviewing-pull-requests` on the working diff, fix everything actionable, re-run, and open the PR only when both are clean. Owned by `parallel-workflow` (step 11). (`/code-review` is user-invoked only since Claude Code 2.1.215 — `bug-hunt` is the model-invocable finder.)
 - **Loop B — CI, after creating a PR and before merging.** Run the `ci-loop` skill and drive the PR to settled; never merge unless the user explicitly authorized it for that PR. Owned by `ci-loop`.
 
 ## How we work
@@ -79,7 +79,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
 - _Workflow:_ `parallel-workflow`, `ci-loop`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
-- _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
+- _Meta / quality:_ `bug-hunt`, `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 - _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`
 
