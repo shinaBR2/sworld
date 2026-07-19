@@ -39,44 +39,59 @@ for the tracker coupling — here on the git-cleanup axis.
 Every branch/worktree belongs to exactly one repo (`sworld`, `sworld-backend`, `sworld-hasura-v2`, all
 under `ShinaBR2`). **All cleanup runs in the repo the branch belongs to — never cross-repo**, and always
 via `git -C "$repo_path"` (never rely on the current directory, which may still be a worktree being torn
-down). The repo maps to its local clone path:
+down). `<workspace>` below is the directory that holds the three repo clones side by side — the session's
+workspace root; substitute the real absolute path (set `workspace=` once). Map the repo NAME to its clone
+path under it, and confirm the clone actually exists before any `git -C`:
 
 ```bash
-# Map the resolved repo NAME to its local clone path — every git command below uses $repo_path.
+workspace="<workspace>"   # absolute path to the dir holding the three clones — substitute the real one
 case "$repo" in
-  sworld)           repo_path="<workspace>/sworld" ;;
-  sworld-backend)   repo_path="<workspace>/sworld-backend" ;;
-  sworld-hasura-v2) repo_path="<workspace>/sworld-hasura-v2" ;;
+  sworld)           repo_path="$workspace/sworld" ;;
+  sworld-backend)   repo_path="$workspace/sworld-backend" ;;
+  sworld-hasura-v2) repo_path="$workspace/sworld-hasura-v2" ;;
   *) echo "cleanup: unknown repo '$repo' — stop"; exit 1 ;;
 esac
+git -C "$repo_path" rev-parse --git-dir >/dev/null 2>&1 || { echo "cleanup: $repo_path is not a git clone — stop"; exit 1; }
 ```
 
 If a repo can't be resolved or isn't one of the three, report it and stop — don't guess.
 
 ## A. Tear down a merged branch
 
-Inputs: the **repo** and the **branch** (a caller like `wait-for-pr-merge` already has both resolved). If
-you're invoked with just a PR number, resolve them first — probe the three repos for the one that owns the
-number, then read its branch and **confirm it is `MERGED`** before touching anything:
+Inputs: the PR's **repo** and its **PR number** `<N>`. Teardown keys off the PR — that's what makes the
+`MERGED` gate below unambiguous — and derives the branch from it; a caller with the branch already resolved
+(`wait-for-pr-merge`) still passes the number so the gate can run. **The `MERGED` gate is mandatory on every
+path.** The two automated callers (`wait-for-pr-merge`, `parallel-workflow`'s loop) invoke teardown only
+after they've observed the merge, so they satisfy it; a direct `/cleanup` invocation must confirm it here.
+
+Resolve the repo (skip if the caller passed it), then read state + branch:
 
 ```bash
-# Resolve repo (probe) — skip if the caller already knows it.
-for r in sworld sworld-backend sworld-hasura-v2; do
-  gh pr view <N> --repo "ShinaBR2/$r" --json state >/dev/null 2>&1 && { repo="$r"; break; }
-done
-[ -n "$repo" ] || { echo "PR <N>: repo not found in the three repos — stop"; exit 1; }
+# Prefer an explicit repo from the caller. Only when invoked with a bare PR number, probe — and because a
+# PR number is unique only WITHIN a repo, count ALL matches and abort unless exactly one owns it. Count with
+# a plain counter, never word-splitting (zsh doesn't split unquoted vars, so `set -- $matches` would misbehave).
+if [ -z "$repo" ]; then
+  n=0; matches=""
+  for r in sworld sworld-backend sworld-hasura-v2; do
+    if gh pr view <N> --repo "ShinaBR2/$r" --json state >/dev/null 2>&1; then
+      n=$((n + 1)); repo="$r"; matches="$matches $r"
+    fi
+  done
+  [ "$n" -eq 1 ] || { echo "PR <N>: expected exactly one owning repo, matched$matches — pass the repo explicitly; stop"; exit 1; }
+fi
 
 state=$(gh pr view <N> --repo "ShinaBR2/$repo" --json state -q .state)
 ```
 
 **Only ever tear down a `MERGED` PR.** If `CLOSED`, do nothing — the branch and worktree may still be
-wanted. If `OPEN`, it isn't ready; that's the loop's job, not this skill's.
-
-With `repo` (mapped to `repo_path`) and the branch known, run the teardown. **Abort on the first failure**
-and report the partial state — never fall through or claim completion:
+wanted. If `OPEN`, it isn't ready; that's the loop's job, not this skill's. Enforce it, then run the
+teardown — **abort on the first failure** and report the partial state, never fall through or claim
+completion:
 
 ```bash
-branch=$(gh pr view <N> --repo "ShinaBR2/$repo" --json headRefName -q .headRefName)   # or the caller's known branch
+[ "$state" = "MERGED" ] || { echo "PR <N>: state is '$state', not MERGED — cleanup only tears down merged PRs; stop"; exit 1; }
+
+branch=$(gh pr view <N> --repo "ShinaBR2/$repo" --json headRefName -q .headRefName)
 [ -n "$branch" ] || { echo "PR <N>: cannot resolve branch — aborting cleanup"; exit 1; }
 
 # Exact worktree path for this branch (porcelain, exact ref match — never substring; handles paths with spaces).

@@ -79,6 +79,6 @@ Report that the PR could not be polled and drop it from the pending set so the u
 
 ## 3. After the round
 
-- Local `main` is already refreshed — `cleanup`'s teardown fast-forwards the merged PR's repo as its final step, so there's nothing extra to run here. A refresh that failed *inside* `cleanup` aborted that PR's cleanup and was reported; treat it as a failure — don't relaunch the poll for that repo as if it succeeded.
+- Local `main` is already refreshed — `cleanup`'s teardown fast-forwards the merged PR's repo as its final step, so there's nothing extra to run here. If `cleanup` aborted for a PR (worktree, branch, or refresh), mark **that PR** failed and surface it — but keep polling the other pending PRs; only stop watching a repo entirely if the repo itself is unreachable.
 - Report per PR: cleaned-up (merged), closed-without-merge, or unreachable.
 - If PRs remain pending, re-launch the poll (step 1) for just those. When the pending set is empty, report the final tally and stop.
