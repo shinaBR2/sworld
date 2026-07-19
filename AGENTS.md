@@ -92,12 +92,12 @@ When work spans the backend or schema, the change lands in those repos, not here
 **Skills** (`.claude/skills/`) — task-triggered conventions. They fire automatically, but reach for them deliberately too:
 
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
-- _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`
+- _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 - _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`
 
-**Tasks & requirements** — the source of truth for work is **Linear** (team **SWorld**, key `SWO`). A **project is an app** (Til, Watch, Listen, Game, Docs, Main — Main covers the main app's finance, journal, and library areas) — every issue belongs to one. Bugs and small features are single issues; a large feature is a **parent issue** (with sub-issues) inside the app's project, its description + a Linear document holding the spec, with blocking relations encoding the dependency waves. Status lives in the issue state (`Backlog → Todo → In Progress → In Review → Done`). See the `writing-task-specs` skill for how to author them and `parallel-workflow` for how state moves as work ships.
+**Tasks & requirements** — the source of truth for work is the **task tracker**, and a **project is an app** (Til, Watch, Listen, Game, Docs, Main — Main covers the main app's finance, journal, and library areas): every issue belongs to one. Bugs and small features are single issues; a large feature is a **parent issue** (with sub-issues) inside the app's project, its description + a concept document holding the spec, with blocking relations encoding the dependency waves. The `task-tracker` skill owns *which* tracker this is and every command; `writing-task-specs` owns how to author the specs; `parallel-workflow` owns how an issue's state moves as work ships.
 
 ## Development Commands
 
