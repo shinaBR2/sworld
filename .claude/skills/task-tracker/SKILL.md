@@ -50,7 +50,7 @@ to exactly one project — its app. For a brand-new app surface, create the proj
 
 Every issue moves through the **SWorld team lifecycle**, in order:
 
-```
+```text
 Backlog → Todo → In Progress → In Review → Done
 ```
 
