@@ -54,9 +54,14 @@ echo "stamped — must ALLOW:"
 mkdir -p "$D"; touch "$D/self_review"
 check "allowed once reviewed"   "$P --title x"                      allow
 
+# No sleep anywhere here, deliberately. An earlier version compared mtimes and
+# a `sleep 1` in this very test is what hid the bug that /bin/bash 3.2 resolves
+# `-nt` to whole seconds — an edit in the same second as the review read as
+# fresh. `edit` now deletes the stamp, so a same-second edit must still block.
 echo "staleness:"
-sleep 1; touch "$D/last_edit"
+printf '' | emit command | bash "$H" edit
 check "blocked when edited after review" "$P --title x"             deny
+ok "edit invalidates the review stamp" no "$([ -f "$D/self_review" ] && echo yes || echo no)"
 
 # The name the guard waits on and the name the stamper writes must stay in
 # sync — a rename on one side alone would deadlock the gate with no error.
@@ -70,6 +75,49 @@ check_stamp() { # name, skill, expect(yes|no)
 check_stamp "self-review stamps"             "self-review"            yes
 check_stamp "plugin-qualified stamps"        "someplugin:self-review" yes
 check_stamp "substring name does NOT stamp"  "not-really-self-review" no
+
+# Every way the gate can degrade must still block PR creation — and must NOT
+# block anything else. A silently-absent gate is the failure this guards.
+echo "degraded paths — fail closed on PR creation only:"
+
+degraded() { # name, payload-producer, command, expect(deny|allow), [env prefix]
+  local out got
+  out="$($2 "$3" | eval "${5:-} bash \"\$H\" guard")"
+  if [ -n "$out" ]; then got=deny; else got=allow; fi
+  ok "$1" "$4" "$got"
+}
+
+no_sid() { printf '{"tool_input":{"command":"%s"}}' "$1"; }
+degraded "no session_id blocks PR creation" no_sid "$P" deny
+degraded "no session_id allows other commands" no_sid "echo hi" allow
+
+# jq absent: PATH is stripped to the system dirs, where jq does not live.
+NOJQ='PATH=/usr/bin:/bin'
+with_sid() { printf '{"session_id":"%s","tool_input":{"command":"%s"}}' "$SID" "$1"; }
+degraded "no jq blocks PR creation"     with_sid "$P"      deny "$NOJQ"
+degraded "no jq allows other commands"  with_sid "echo hi" allow "$NOJQ"
+
+# The two above would pass even with the sed fallback deleted (no session_id
+# also denies). This one would not: it needs session_id AND the skill name
+# extracted without jq, so it pins field()'s fallback branch.
+rm -f "$D/self_review" "$D/last_edit"
+printf '%s' "self-review" | emit skill | eval "$NOJQ bash \"\$H\" skill"
+ok "no jq still stamps from the skill name" yes "$([ -f "$D/self_review" ] && echo yes || echo no)"
+degraded "no jq honours the stamp" with_sid "$P" allow "$NOJQ"
+
+# An unwritable stamp dir must not brick the session: it blocks PR creation
+# only. An earlier version denied EVERY Bash command here, including the ones
+# you would use to recover.
+echo "unwritable stamp dir:"
+RO="${TMPDIR:-/tmp}/claude-review-gate-ro-$$"
+rm -rf "$RO"; mkdir -p "$RO"; chmod 500 "$RO"
+trap 'chmod 700 "$RO" 2>/dev/null; rm -rf "$D" "$RO"' EXIT
+degraded "blocks PR creation"    with_sid "$P"      deny  "TMPDIR=$RO"
+degraded "allows other commands" with_sid "echo hi" allow "TMPDIR=$RO"
+# A degraded non-guard mode must stay silent — deny JSON from PostToolUse would
+# be meaningless noise at best.
+out="$(with_sid x | eval "TMPDIR=$RO bash \"\$H\" edit")"
+ok "edit mode stays silent when degraded" "" "$out"
 
 echo "edit stamping:"
 rm -f "$D/last_edit"
