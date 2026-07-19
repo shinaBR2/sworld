@@ -123,6 +123,10 @@ Input: Added user authentication with JWT tokens
 Output: feat(auth): implement JWT-based authentication
 ```
 
+**Keep examples evergreen.** An example illustrates a rule — it must not tie the skill to volatile state. No real ticket or PR numbers, dated URLs, or live record IDs: the moment that ticket closes or that record changes, the example is stale and misleads the next reader. Use a generic, self-contained scenario that still reads true a year from now. A concrete example is good; a concrete example anchored to something that will move is a maintenance bug.
+
+**Reuse, don't duplicate.** If a rule already has a canonical home in another skill, reference it rather than copying the text. Duplicated prose drifts — one copy gets refined in a review and the other quietly rots, so the two skills start contradicting each other. Point at the owning skill and spell out only what *this* skill adds on top.
+
 #### Writing style
 
 Explain *why* things matter rather than leaning on heavy-handed MUSTs. Today's models have good theory of mind — given the reasoning behind an instruction, they go beyond rote compliance. If you find yourself writing ALWAYS or NEVER in all caps or reaching for rigid structures, treat it as a yellow flag: reframe and explain the reasoning instead. Keep the skill general rather than overfit to a couple of examples. Write a draft, then read it with fresh eyes and improve it.
