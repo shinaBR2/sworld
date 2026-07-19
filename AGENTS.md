@@ -116,15 +116,9 @@ cd packages/ui   && pnpm storybook # Component development
 - **Working with GraphQL** — update operations in `packages/core`, run `pnpm codegen`, use the generated types in apps.
 - **Adding UI components** — all UI lives in `packages/ui` (placement per `frontend-ui-architecture`): create it there, export from `packages/ui/src/index.tsx`, build, then import in apps.
 
-## Code style (authoritative — these win on any conflict)
+## Code style
 
-These project rules take precedence over anything inherited in the skills:
-
-- Always use ES modules.
-- Always use async/await syntax where possible.
-- Never use `function` — always arrow functions, e.g. `const method = async () => …`.
-- All exports MUST be **named exports**, placed at the **bottom** of the file.
-- Prefer an interface for a method's params so the method definition stays on one line rather than many.
+The style law lives in the `code-conventions` skill, which auto-triggers on any TypeScript/TSX write or edit — the moment the rules apply.
 
 ## Key directories
 

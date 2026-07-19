@@ -6,7 +6,17 @@ user-invocable: false
 
 # Code Conventions
 
-> **sworld's `CLAUDE.md` conventions take precedence where they differ:** ES modules only; arrow functions only (never `function` declarations); all exports named and placed at the **bottom** of the file. Anything below that conflicts defers to those rules.
+## The style law
+
+These five rules are absolute, and this skill is where they live. Nothing else in the repo restates them — a second copy is how one of them quietly becomes wrong.
+
+- **ES modules only** — no CommonJS `require` / `module.exports`.
+- **`async`/`await` wherever possible** — not raw promise chains.
+- **Arrow functions only** — never a `function` declaration. `const method = async () => …`
+- **Named exports, at the bottom of the file** — no default exports, no inline `export const`; the export statement is the last thing in the file.
+- **Params go in an interface**, so a method's signature stays on one line instead of many.
+
+Biome enforces what it can. The rest you check by eye — these are exactly the rules an AI-generated diff slips past.
 
 ## Barrel files
 
