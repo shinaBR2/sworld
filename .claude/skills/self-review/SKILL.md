@@ -1,11 +1,13 @@
 ---
-name: reviewing-pull-requests
-description: This skill should be used as the mandatory pre-PR self-review gate in the parallel workflow (step 11) — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where the current work is being evaluated. The review target is ALWAYS the local diff, never a remote PR. Enforces a judgment-driven review approach — scaled to risk and size, with colleague-tone feedback ending in a clear merge recommendation.
+name: self-review
+description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow (step 11) — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR. Owns both halves of a review — the mechanical bug hunt and the judgment pass — scaled to risk, ending in a clear merge recommendation.
 ---
 
-# Reviewing Pull Requests
+# Self-review
 
 Act as a thoughtful colleague reviewing a teammate's work — not a checklist robot, not an over-cautious junior. The goal is to catch what matters before it hits production and to give the developer feedback they can act on quickly.
+
+This skill is the **only** place code review is defined. Other skills call it by name and know nothing about how it works.
 
 ## Critical rules
 
@@ -29,11 +31,19 @@ When this skill runs as the parallel-workflow step-11 gate, the review itself is
 
 - **Concerns are work items, not feedback.** Every concern MUST be fixed before the gate passes. There is no "merge with changes" exit — the changes get made.
 - **Suggestions must be resolved, not parked.** Apply each one, or explicitly reject it with reasoning. Never silently drop a suggestion.
-- **It loops.** This skill runs alongside `bug-hunt` (the model-invocable finder — `/code-review` can no longer be self-invoked as of Claude Code 2.1.215), and after any fix the loop restarts — fixes are new code and have not been reviewed. The gate exits only when a full pass is clean on BOTH: verdict "Merge" with zero concerns here, zero confirmed findings from the finder.
+- **It loops.** After any fix the loop restarts from Step 1 — fixes are new code and have not been reviewed. The gate exits only when a full pass is clean: zero confirmed findings from the sweep (Step 3) and verdict "Merge" with zero concerns from the judgment pass, with **no edits afterward**.
 - **A clean pass is the successful exit, not a failure to find something.** Never manufacture a concern to keep the loop going — the anti-pattern rules apply doubly here.
 - **The reviewability judgment still applies.** If the local diff is too sprawling or mixes concerns, that IS the finding: stop and split the work (`micro-prs`) before shipping anything.
 
-The goal of this mode: the PR that eventually goes up is already a good PR — bugbot/CodeRabbit and the human reviewer should find nothing substantive.
+The goal of this mode: the PR that eventually goes up is already a good PR. **The bar: CodeRabbit finds nothing.** A substantive bot finding on the PR means this gate failed.
+
+### How the gate is enforced
+
+`.claude/hooks/review-gate.sh` (wired in `.claude/settings.local.json`) denies `gh pr create` until this skill has run **and** is newer than the last edit. Consequences worth knowing:
+
+- **Invoke this skill through the Skill tool.** Only a Skill-tool invocation stamps the gate — doing the review's steps by hand does not.
+- **The `last_edit` stamp fires on `Write`/`Edit` only, not Bash.** A file written by a build, a formatter or a stray `sed` after the final pass will NOT re-flag it as stale, so it can silently ship unreviewed. Do all rebuilds and Playwright probes **before** the final pass, and treat any `Write`/`Edit` after it as forcing a fresh one. Don't rely on the hook to catch everything.
+- The gate blocks PR creation only. **Pushing is never gated** — push freely as backup.
 
 ## Step 1 — Reviewability judgment
 
@@ -77,19 +87,26 @@ Match the depth of review to the risk and surface area of the change. Three roug
 
 The user may tell you what depth they want. If they don't, decide based on the diff.
 
-### Review depth → `/code-review` effort tier
+## Step 3 — Finder sweep
 
-`/code-review` is **user-invoked only** (Claude Code 2.1.215 removed model self-invocation) — the gate's model-run finder is `bug-hunt`, which scales by finder count rather than an effort tier (Light 2, Standard 3, Deep 5). This mapping therefore applies when the **user** chooses to add a `/code-review` pass on the same diff; use the depth band you just chose rather than deciding the tier fresh:
+Before the judgment read, run a mechanical hunt for correctness bugs. Spawn subagents over the diff — **Light 2, Standard 3, Deep 5**, using the band from Step 2 — one lens each:
 
-| Depth band | `/code-review` effort | What runs |
-| --- | --- | --- |
-| Light | `low` | One inline pass. The judgment read here + CodeRabbit on the PR already cover breadth — a background fleet adds cost, not signal. |
-| Standard | `medium` | One inline pass, slightly wider net. Still no background fleet. |
-| Deep | `high` (`xhigh` only when genuinely warranted) | Spawns the multi-agent finder + verifier fleet — worth its cost only when a hidden bug's blast radius is many apps or a trust boundary. |
+- **logic** — wrong operator, inverted condition, off-by-one, wrong variable, bad ordering, state mutated at the wrong time
+- **edges** — null/undefined, empty collections, zero, negatives, huge inputs, duplicates, timezone/DST boundaries, concurrent updates
+- **failures** — unhandled rejections, missing try/catch around I/O, swallowed errors, a failed call leaving state half-applied
+- **contract** — a caller this change breaks, a changed signature or return shape not updated everywhere, a hallucinated API, a type assertion hiding a real mismatch
+- **conventions** (Deep only) — violations that cause real defects or that this repo explicitly forbids; ignore cosmetic preference
 
-`max` is not on this ladder — reserve it for a specific, exceptional call, never a default. The band is set by blast radius (what the diff touches), not line count: shared `packages/core`/`packages/ui`, auth, Hasura permissions, or DB migrations → Deep; one app's components, copy, styling, renames → Light. A typical micro-PR is Light or Standard, so it defaults to `low`/`medium` — it should never trigger `high`.
+Each returns findings with `file:line` and the concrete inputs that trigger them. Then, for each finding, spawn one skeptic told to disprove it — look for guards, defaults, callers or types that already prevent it, and walk the claimed inputs through the code path. **Drop anything refuted or not reproducible.** Report survivors, plus a one-line dropped count so the sweep is auditable.
 
-## Step 3 — What to look for
+Rules:
+
+- **Anchor to the worktree.** Subagents run in the session's root cwd, not your worktree — always pass an absolute `git -C <worktree> diff origin/main`.
+- **Verify scope.** The files reported MUST match `git diff origin/main --name-only` in the worktree. A mismatch, or "no changes found", is a FAILED run, not a clean pass — fix the anchoring and re-run.
+- **Empty is a valid result.** For a small or declarative diff it's the expected one. Never manufacture a finding to look thorough; a confident-but-wrong finding burns trust in the whole gate. When in doubt, drop it.
+- **Trust boundaries get more.** If the diff touches Hasura permissions/metadata, Hono Action/Event/webhook handlers, or auth, also run `security-reviewer`.
+
+## Step 4 — What to look for
 
 The hierarchy below is in order of importance. A correctness issue is always more important than a style nit. Do not lead with nits.
 
@@ -153,7 +170,7 @@ Remember the backend lives in the separate `sworld-backend` repo and the data la
 - Formatting, naming conventions, minor preferences
 - Never block on these alone. Mention them as "nit:" if mentioning at all.
 
-## Step 4 — The output
+## Step 5 — The output
 
 End the review with a single, structured response that includes:
 
@@ -211,7 +228,7 @@ Avoid:
 - Mentioning style nits before correctness issues.
 - Manufacturing a closing concern when the PR is genuinely clean. If you're confident, "Good to go — merging." is the right answer — don't invent something to ask for.
 
-## Step 5 — After delivering the review
+## Step 6 — After delivering the review
 
 If the user asks follow-up questions, work from context. Do not re-fetch anything. If you genuinely need information that isn't in context (e.g. "what does this function do in the rest of the codebase"), say so and ask the user whether to dig in.
 

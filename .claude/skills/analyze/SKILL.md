@@ -8,7 +8,7 @@ description: >-
   you're about to start an issue, when a plan "looks done" but nobody has re-checked it,
   or when the user says "analyse this issue / take a look at this breakdown / is this plan right".
   This is the backward/audit direction on a *spec* — distinct from `product-planning`/`grill-me`
-  (forward, idea → breakdown) and `reviewing-pull-requests` (analysing *code*). Not needed for a
+  (forward, idea → breakdown) and `self-review` (analysing *code*). Not needed for a
   trivial, single-issue bug or a one-line change with no breakdown to audit.
 ---
 
@@ -25,7 +25,7 @@ It is the **audit** direction, and it's why it's its own skill:
 |---|---|---|
 | `product-planning` / `grill-me` | forward — rough idea → breakdown | a concept being shaped |
 | **`analyze`** | **backward — existing breakdown → findings** | **a scoped ticket + its sub-issues** |
-| `reviewing-pull-requests` | backward | a code diff |
+| `self-review` | backward | a code diff |
 
 Analyze reuses the thinking tools rather than restating them — it points at `grill-me` for the
 requirement pass and `micro-prs` for the scope pass, and adds the one thing neither has: checking that

@@ -48,13 +48,38 @@ check "prose mention is not a command" "linear issue create -d 'hook denies $P u
 check "prose inside echo"             "echo 'see docs about $P here'"                             allow
 check "unrelated command"             "echo hello"                                                allow
 
-echo "both stamps present:"
-mkdir -p "$D"; touch "$D/code_review" "$D/rpr"
+echo "stamp present:"
+mkdir -p "$D"; touch "$D/self_review"
 check "allowed once reviewed"         "$P --title x"                                              allow
 
 echo "stamp staleness:"
 sleep 1; touch "$D/last_edit"
 check "blocked when edited after review" "$P --title x"                                           deny
+
+# The skill name the guard waits on and the name the stamper writes must stay in
+# sync — a rename on one side alone would deadlock the gate with no error.
+echo "skill stamping:"
+stamp() {
+  printf '' | python3 -c '
+import json,sys
+print(json.dumps({"session_id":sys.argv[1],"tool_input":{"skill":sys.argv[2]}}))
+' "$SID" "$1" | bash "$H" skill
+}
+
+check_stamp() { # name, skill, expect(yes|no)
+  rm -f "$D/self_review"
+  stamp "$2"
+  local got=no; [ -f "$D/self_review" ] && got=yes
+  if [ "$got" = "$3" ]; then
+    echo "  PASS  $1"
+  else
+    echo "  FAIL  $1 — expected $3, got $got"
+    fails=$((fails + 1))
+  fi
+}
+
+check_stamp "self-review stamps the gate"     "self-review"          yes
+check_stamp "unrelated skill does not stamp"  "ci-loop"              no
 
 echo
 if [ "$fails" -eq 0 ]; then

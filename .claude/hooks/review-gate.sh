@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Review-loop gate for the parallel-workflow self-review gate (step 11).
 #
-# Enforces that `gh pr create` cannot run until BOTH review skills have
+# Enforces that `gh pr create` cannot run until the `self-review` skill has
 # completed AFTER the last file edit in this session — i.e. the loop actually
 # converged (no edits left unreviewed), not just "a review ran once".
 #
 # Wired as three hooks (see .claude/settings.local.json), all keyed by
 # session_id so parallel worktree agents never clobber each other:
 #   edit  -> PostToolUse(Write|Edit): stamp last_edit
-#   skill -> PostToolUse(Skill):      stamp code_review / rpr on completion
-#   guard -> PreToolUse(Bash):        deny gh pr create if a stamp is missing/stale
+#   skill -> PostToolUse(Skill):      stamp self_review on completion
+#   guard -> PreToolUse(Bash):        deny gh pr create if the stamp is missing/stale
 set -u
 
 mode="${1:-}"
@@ -26,13 +26,7 @@ case "$mode" in
   skill)
     sk="$(printf '%s' "$input" | jq -r '.tool_input.skill // ""' 2>/dev/null)"
     case "$sk" in
-      # Claude Code 2.1.215 (2026-07-19) removed the model's ability to
-      # self-invoke /code-review ("Claude no longer runs the /verify and
-      # /code-review skills on its own"), making this stamp unobtainable
-      # without manual user input on every PR. `bug-hunt` is the model-invocable
-      # replacement finder; a user-typed /code-review still counts.
-      bug-hunt|*code-review)    touch "$dir/code_review" ;;
-      *reviewing-pull-requests) touch "$dir/rpr" ;;
+      *self-review) touch "$dir/self_review" ;;
     esac
     ;;
 
@@ -51,19 +45,17 @@ case "$mode" in
     # gate), which blocked unrelated work.
     printf '%s' "$cmd" | grep -Eq '(^|[;&|(]|&&|\|\||[[:space:]]-c)[^[:alnum:]_-]*gh[[:space:]]+pr[[:space:]]+create' || exit 0
 
-    le="$dir/last_edit"; cr="$dir/code_review"; rp="$dir/rpr"
-    problems=""
-    add() { problems="${problems:+$problems; }$1"; }
+    le="$dir/last_edit"; sr="$dir/self_review"
+    problem=""
 
-    [ -f "$cr" ] || add "the bug-hunt skill has not run in this session"
-    [ -f "$rp" ] || add "the reviewing-pull-requests skill has not run in this session"
-    if [ -f "$le" ]; then
-      [ -f "$cr" ] && [ "$le" -nt "$cr" ] && add "bug-hunt is stale — files were edited after it last ran"
-      [ -f "$rp" ] && [ "$le" -nt "$rp" ] && add "reviewing-pull-requests is stale — files were edited after it last ran"
+    if [ ! -f "$sr" ]; then
+      problem="the self-review skill has not run in this session"
+    elif [ -f "$le" ] && [ "$le" -nt "$sr" ]; then
+      problem="self-review is stale — files were edited after it last ran"
     fi
 
-    if [ -n "$problems" ]; then
-      reason="Review-loop gate (parallel-workflow step 11) blocked PR creation: ${problems}. Invoke the bug-hunt AND reviewing-pull-requests skills (via the Skill tool) on the worktree diff, fix all findings, and re-run BOTH until clean with NO edits afterward — then retry. Note: /code-review cannot be self-invoked since Claude Code 2.1.215; use bug-hunt. A user-typed /code-review also satisfies this stamp."
+    if [ -n "$problem" ]; then
+      reason="Review-loop gate (parallel-workflow step 11) blocked PR creation: ${problem}. Invoke the self-review skill (via the Skill tool) on the worktree diff, fix all findings, and re-run until clean with NO edits afterward — then retry."
       jq -cn --arg r "$reason" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
     fi
