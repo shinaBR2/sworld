@@ -5,7 +5,7 @@ const port = 4000;
 const baseURL = `http://localhost:${port}`;
 
 // Runs against a locally-built, locally-served bundle (see the `build:e2e` /
-// `preview:e2e` scripts) — no Firebase deploy and no real backend. The build
+// `preview:e2e` scripts) — no deployed environment and no real backend. The build
 // bakes in fixed VITE_* values that the auth/API mocks in e2e/support match.
 export default defineConfig({
   testDir: './e2e',
