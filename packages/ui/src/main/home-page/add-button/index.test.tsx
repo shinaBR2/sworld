@@ -257,6 +257,19 @@ describe('AddExpenseButton', () => {
       expect(screen.getByText('bánh canh cho bố mẹ')).toBeInTheDocument();
     });
 
+    it('renders the chips below the form fields', async () => {
+      await openDialogWithTemplates();
+
+      const categoryField = screen.getByLabelText('Category');
+      const chip = screen.getByText('ăn sáng cơm');
+
+      // Chips are a shortcut, so they sit after every field in document order
+      expect(
+        categoryField.compareDocumentPosition(chip) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
     it('prefills the form when a chip is clicked, without submitting', async () => {
       await openDialogWithTemplates();
 

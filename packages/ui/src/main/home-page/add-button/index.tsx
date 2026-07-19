@@ -233,24 +233,6 @@ const AddExpenseButton = ({
         <DialogTitle>Add New Expense</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            {selectableTemplates.length > 0 && (
-              <Stack
-                direction="row"
-                spacing={1}
-                useFlexGap
-                sx={{ flexWrap: 'wrap' }}
-              >
-                {selectableTemplates.map((template) => (
-                  <Chip
-                    key={template.id}
-                    label={template.title}
-                    variant="outlined"
-                    disabled={loading}
-                    onClick={() => handleSelectTemplate(template)}
-                  />
-                ))}
-              </Stack>
-            )}
             <TextField
               name="name"
               label="Expense Name"
@@ -317,6 +299,29 @@ const AddExpenseButton = ({
                 )}
               </FormControl>
             </Box>
+
+            {/* Below the fields on purpose: the chips are a shortcut, not the
+                primary input, and templates arrive asynchronously — sitting
+                last means a late arrival can't shove the fields down while
+                the user is already typing. */}
+            {selectableTemplates.length > 0 && (
+              <Stack
+                direction="row"
+                spacing={1}
+                useFlexGap
+                sx={{ flexWrap: 'wrap' }}
+              >
+                {selectableTemplates.map((template) => (
+                  <Chip
+                    key={template.id}
+                    label={template.title}
+                    variant="outlined"
+                    disabled={loading}
+                    onClick={() => handleSelectTemplate(template)}
+                  />
+                ))}
+              </Stack>
+            )}
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
