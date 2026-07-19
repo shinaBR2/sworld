@@ -8,6 +8,9 @@ dist-ssr
 *.local
 .env
 .env.*
+# …but keep committable templates (no secret values — see scripts/README.md)
+!.env.example
+!**/.env.example
 .cache
 server/dist
 public/dist
