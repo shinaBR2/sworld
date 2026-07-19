@@ -20,7 +20,7 @@ Across ALL apps (listen, watch, til, game, docs, main), the design language is *
 Decided 2026-07-04:
 
 - **Input-heavy apps** — main's finance + journal, and til — surface their primary create action as a **floating action button** (FAB), because users input a lot.
-- **View-first apps** — watch and listen — must **NOT** get a create FAB. Their surfaces stay purely about consumption. All content management (upload, edit, delete, playlists) belongs in a dedicated per-app **management dashboard** (watch and listen), never in the primary browsing UI.
+- **View-first apps** — watch and listen — must **NOT** get a create FAB. Their surfaces stay purely about consumption. All content management (upload, edit, delete, playlists) belongs in a dedicated per-app **management dashboard**, never in the primary browsing UI.
 - Create actions never belong in the avatar drawer either — that drawer is for **settings + logout only**, in any app.
 
 **Why:** the distinction is how much the end user inputs; a FAB overweights a rare/admin action in a consumption app.
