@@ -52,7 +52,7 @@ Never rebase `main`; never create merge commits on it. Run it:
 1. Read the current Linear issue (`linear issue view SWO-NNN`) and confirm its `state`. All Linear operations go through the `linear` CLI via Bash — NEVER through Linear MCP tools (they authenticate as the wrong account).
 2. Verify an issue exists for this work — a sub-issue under a feature's parent issue, or a standalone issue. If none exists, create it first (`writing-task-specs`).
 3. Check the issue's blocking relations (`linear issue relation list SWO-NNN`); resolve those blockers first.
-4. Set the issue's `state` to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`) before starting.
+4. **Analyse before you build, then start.** For any non-trivial issue — especially a large-feature parent or a reworked/reopened one — run the `analyze` skill on the ticket + its breakdown first: it re-derives requirements (via `grill-me`'s completeness sweep) and checks the breakdown is still internally consistent (stale blockers, parent drift, deploy-order encoded as real relations) before a line of code. Reconcile what it flags as fixable; raise the rest with the owner. Skip only for a trivial single-issue change with nothing to audit. Then set the issue's `state` to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`) before touching code.
 
 ## Creating a worktree
 
