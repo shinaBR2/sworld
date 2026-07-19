@@ -152,6 +152,16 @@ describe('AddExpenseButton', () => {
     });
   });
 
+  it('offers every expense category in the select', async () => {
+    renderComponent();
+
+    await userEvent.click(screen.getByLabelText('add expense'));
+    await userEvent.click(screen.getByLabelText('Category'));
+
+    expect(screen.getAllByRole('option').map((option) => option.textContent)) //
+      .toEqual(['Must', 'Nice', 'Waste']);
+  });
+
   it('displays loading state during form submission', async () => {
     // Mock a delayed response
     const delayedMock = vi.fn().mockImplementation(() => {
@@ -268,6 +278,26 @@ describe('AddExpenseButton', () => {
 
       expect(screen.getByLabelText('Note')).toHaveValue('');
       expect(screen.getByLabelText('Category')).toHaveTextContent('Nice');
+    });
+
+    it('coerces an amount that arrives as a string', async () => {
+      // Hasura `numeric` is typed `any` and can serialise as a string
+      await openDialogWithTemplates({
+        templates: [
+          {
+            id: 'tpl-str',
+            title: 'string amount',
+            name: 'Stringy',
+            note: null,
+            amount: '35000',
+            category: 'must',
+          },
+        ],
+      });
+
+      await userEvent.click(screen.getByText('string amount'));
+
+      expect(screen.getByLabelText('Amount')).toHaveValue(35000);
     });
 
     it('drops templates whose category is not a real option', async () => {
