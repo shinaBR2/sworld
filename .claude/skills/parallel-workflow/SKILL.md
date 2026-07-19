@@ -9,7 +9,7 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
-- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operations there advance the local `main` ref (`git pull --ff-only origin main` when it sits on `main`, `git fetch origin main:main` otherwise — see "Keep local `main` fresh" below). No branch work, no manual edits.
+- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there advances the local `main` ref (the fast-forward refresh the `cleanup` skill owns — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: all three repos
 
@@ -28,24 +28,13 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 ### Keep local `main` fresh
 
-Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind. So also keep the local pointer current. Each of the three repos has its own `.git` and its own `main`; refresh *every* repo whose `main` you are about to read off or branch from.
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind — keep the pointer current in **every** repo whose `main` you are about to read off or branch from.
 
-Two equivalent ways to fast-forward local `main` to `origin/main` — pick by what the repo's **main worktree** (the first entry in `git worktree list`) is checked out on. Probe it cheaply:
+The refresh itself — the fast-forward-only, never-rebase mechanic and its per-repo command — is owned by the `cleanup` skill. Run it:
 
-```bash
-# Emits "main" if that repo's main worktree sits on `main`, else the feature branch name (empty = detached).
-git -C "$repo" worktree list --porcelain | awk '
-  /^branch refs\/heads\//{sub(/^branch refs\/heads\//,""); print; found=1} /^$/{if(!found)print"detached"; exit}'
-```
-
-- **Main worktree sits on `main`** → run **`git pull --ff-only origin main`** in that worktree. Advances the `main` branch pointer and updates the tracked files in its checkout. `--ff-only` so a diverged `main` errors loudly instead of silently creating a merge commit. Name the `origin main` target explicitly so the pull can't depend on — or advance — the wrong upstream.
-- **Main worktree sits on a feature branch** (the common case here — e.g. `chore/…`) → run **`git fetch origin main:main`** from any worktree of that repo. It advances the local `main` ref to `origin/main` without a checkout and without touching any working tree; it refuses loudly if `main` *is* checked out somewhere in the repo — that refusal IS the tell to use `git pull --ff-only` in that worktree instead.
-
-Never rebase `main`; never create merge commits on it. Run it:
-
-1. After every merged-worktree cleanup (see loop Step 1) — for the repo whose PR just merged.
+1. After every merged-branch teardown — loop Step 1 runs `cleanup`, which refreshes `main` as its tail, for the repo whose PR just merged.
 2. Before starting new work / before any code read on `main` in that repo.
-3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent. Just run it in the relevant repo(s) and report the result; it is a one-command action per repo, never a question. If the user doesn't name a repo, run it for all three (`sworld`, `sworld-backend`, `sworld-hasura-v2`).
+3. **Standalone, on demand** — whenever the user says "refresh main", "update main", "pull main", or any equivalent: `cleanup` does it (all three repos if none is named). It is a one-command action per repo, never a question.
 
 ## Before starting
 
@@ -110,7 +99,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 ### Step 1: Check merge status
 
 - Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → clean up worktree + delete local branch. (This is the "done" moment — issue status is the tracker's, see `task-tracker`.) Loop is done.
+- If `MERGED` → run `cleanup` for this PR's branch + repo (removes the worktree, deletes the local branch, refreshes local `main`). Issue status is the tracker's — merging auto-moves it to `Done` (see `task-tracker`). Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 

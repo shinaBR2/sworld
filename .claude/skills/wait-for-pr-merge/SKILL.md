@@ -12,13 +12,7 @@ The human merges a READY PR by hand on GitHub. This skill watches for that merge
 
 ## Workspace: three repos
 
-Each PR belongs to exactly one of the three repos (`sworld`, `sworld-backend`, `sworld-hasura-v2`, all under `ShinaBR2`). All cleanup (worktree removal, branch deletion, local `main` refresh) runs **in the repo the PR belongs to** — never cross-repo. The repo is resolved once up front (see §1's resolve step) and maps to the local clone path:
-
-- `sworld` → `<workspace>/sworld`
-- `sworld-backend` → `<workspace>/sworld-backend`
-- `sworld-hasura-v2` → `<workspace>/sworld-hasura-v2`
-
-All `git -C` commands below take that local path. If a PR's repo can't be resolved or isn't one of the three, report and drop the PR from the poll — don't guess.
+Each PR belongs to exactly one of the three repos (`sworld`, `sworld-backend`, `sworld-hasura-v2`, all under `ShinaBR2`). The repo is resolved once up front (see §1's resolve step) and every `gh pr view` is qualified with `--repo ShinaBR2/<repo>`. Per-PR cleanup runs **in the repo the PR belongs to** — never cross-repo — and is delegated to the `cleanup` skill, which owns the repo→local-path map and every `git` command. If a PR's repo can't be resolved or isn't one of the three, report and drop the PR from the poll — don't guess.
 
 ## 1. Resolve each PR's repo, then poll
 
@@ -67,39 +61,13 @@ Run it with the background flag. When it exits, read the `FINAL:<n>:<repo>:<stat
 
 ## 2. Handle each event
 
-Each `FINAL` line already carries the resolved repo (`FINAL:<n>:<repo>:<state>`). Map it to the repo's local clone path (and remember it — every `gh pr view <N>` below MUST keep `--repo "ShinaBR2/$repo"`, and every git command below uses `git -C "$repo_path"`):
-
-```bash
-case "$repo" in
-  sworld)           repo_path="<workspace>/sworld" ;;
-  sworld-backend)   repo_path="<workspace>/sworld-backend" ;;
-  sworld-hasura-v2) repo_path="<workspace>/sworld-hasura-v2" ;;
-  *) echo "PR <N>: unknown repo '$repo' — dropping from poll"; continue ;;
-esac
-```
+Each `FINAL` line already carries the resolved repo (`FINAL:<n>:<repo>:<state>`). Every `gh pr view <N>` below MUST keep `--repo "ShinaBR2/$repo"`; the repo→local-path mapping and all `git` commands belong to `cleanup`.
 
 ### MERGED → clean up
 
-Resolve the branch and its worktree **exactly** — never substring-match, and never act on an empty branch (an empty value matches every worktree):
+Hand the resolved `repo` and PR number to the `cleanup` skill's **teardown** (its section A): it removes the branch's worktree (exact ref match, only if one exists), deletes the local branch (`-D`), then refreshes that repo's local `main` — aborting on the first failure and reporting the partial state. The PR is already known `MERGED` here, so cleanup's own MERGED gate passes straight through.
 
-Every step below must **abort this PR's cleanup on failure** and report the partial state — never fall through to a later step or claim completion.
-
-```bash
-branch=$(gh pr view <N> --repo "ShinaBR2/$repo" --json headRefName -q .headRefName)
-[ -n "$branch" ] || { echo "PR <N>: cannot resolve branch — aborting cleanup"; exit 1; }
-
-# Exact worktree path for this branch (porcelain, exact ref match; handles paths with spaces).
-wt=$(git -C "$repo_path" worktree list --porcelain | awk -v b="refs/heads/$branch" '
-  /^worktree /{p=substr($0,10)} $0=="branch "b{print p}')
-
-# Only ever remove a MERGED worktree; skip if none. Abort if removal fails.
-[ -n "$wt" ] && { git -C "$repo_path" worktree remove "$wt" || { echo "PR <N>: worktree remove failed — aborting"; exit 1; }; }
-
-# squash-merge leaves the branch not-fully-merged, so -D. Abort if deletion fails.
-git -C "$repo_path" branch -D "$branch" || { echo "PR <N>: branch delete failed — aborting"; exit 1; }
-```
-
-Issue status is the tracker's to manage — see `task-tracker`. This path only cleans up.
+Issue status is the tracker's to manage — merging auto-moves it to `Done` (see `task-tracker`). This path only cleans up.
 
 ### CLOSED without merge → stop watching it
 
@@ -111,20 +79,6 @@ Report that the PR could not be polled and drop it from the pending set so the u
 
 ## 3. After the round
 
-- For **each** repo that had a merge this round, refresh its local `main` **once** — fast-forward only, never rebase. Pick the command the same way as `parallel-workflow`'s "Keep local `main` fresh":
-  ```bash
-  # Is that repo's main worktree sitting on `main`? (empty/detached => feature-branch case)
-  onmain=$(git -C "$repo_path" worktree list --porcelain | awk '
-    /^branch refs\/heads\//{sub(/^branch refs\/heads\//,""); print; found=1} /^$/{if(!found)print"detached"; exit}')
-  ```
-  - **`main`** → run **`git pull --ff-only origin main`** in that main worktree.
-  - **feature branch / detached** → run **`git -C "$repo_path" fetch origin main:main`** (advances the local `main` ref to `origin/main` without a checkout; refuses loudly if `main` *is* checked out somewhere — that refusal is the tell to use `pull --ff-only` in that worktree instead).
-  Resolve the repo path explicitly via `git -C` — never rely on the current directory, which may still be a PR worktree. Propagate a failed refresh: it must stop success reporting and prevent relaunching the poll for that repo.
-  ```bash
-  case "$onmain" in
-    main) (cd "$repo_path" && git pull --ff-only origin main) || { echo "$repo: main refresh failed — stop"; exit 1; } ;;
-    *)    git -C "$repo_path" fetch origin main:main || { echo "$repo: main refresh failed — stop"; exit 1; } ;;
-  esac
-  ```
+- Local `main` is already refreshed — `cleanup`'s teardown fast-forwards the merged PR's repo as its final step, so there's nothing extra to run here. A refresh that failed *inside* `cleanup` aborted that PR's cleanup and was reported; treat it as a failure — don't relaunch the poll for that repo as if it succeeded.
 - Report per PR: cleaned-up (merged), closed-without-merge, or unreachable.
 - If PRs remain pending, re-launch the poll (step 1) for just those. When the pending set is empty, report the final tally and stop.

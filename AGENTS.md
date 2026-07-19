@@ -92,7 +92,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 **Skills** (`.claude/skills/`) — task-triggered conventions. They fire automatically, but reach for them deliberately too:
 
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
-- _Workflow:_ `parallel-workflow`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
+- _Workflow:_ `parallel-workflow`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `reviewing-pull-requests`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 - _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`
