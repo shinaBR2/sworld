@@ -24,11 +24,30 @@ import type { CategoryType, Template } from 'core/finance';
 import type React from 'react';
 import { useState } from 'react';
 
+type ExpenseCategory = Exclude<CategoryType, 'total'>;
+
+// The single source of truth for the category options — the Select renders from
+// this, and template rows are validated against it.
+const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
+  { value: 'must', label: 'Must' },
+  { value: 'nice', label: 'Nice' },
+  { value: 'waste', label: 'Waste' },
+];
+
+const isExpenseCategory = (value: string): value is ExpenseCategory =>
+  EXPENSE_CATEGORIES.some((category) => category.value === value);
+
 type ExpenseFormData = {
   name: string;
   note?: string;
   amount: number;
-  category: Exclude<CategoryType, 'total'>;
+  category: ExpenseCategory;
+};
+
+// A template whose category passed validation, so it can prefill the form
+// without an unchecked cast.
+type SelectableTemplate = Omit<Template, 'category'> & {
+  category: ExpenseCategory;
 };
 
 interface AddExpenseButtonProps {
@@ -89,16 +108,26 @@ const AddExpenseButton = ({
     }
   };
 
+  // `category` is an unconstrained text column (the migration only checks
+  // `amount > 0`), so a hand-seeded row can carry a value the Select has no
+  // option for. validateForm only checks the field is non-empty, so such a row
+  // would submit silently — drop it instead of offering a broken chip.
+  const selectableTemplates = templates.flatMap<SelectableTemplate>(
+    (template) => {
+      const { category } = template;
+      return isExpenseCategory(category) ? [{ ...template, category }] : [];
+    },
+  );
+
   // Pure prefill — fills the form and clears stale errors, never submits. The
   // user still presses "Add Expense". `amount` is a Hasura `numeric`, which can
-  // arrive as a string, so coerce it; `category` is a plain column the owner
-  // seeds with must/nice/waste.
-  const handleSelectTemplate = (template: Template) => {
+  // arrive as a string, so coerce it.
+  const handleSelectTemplate = (template: SelectableTemplate) => {
     setFormData({
       name: template.name,
       note: template.note ?? '',
       amount: Number(template.amount),
-      category: template.category as Exclude<CategoryType, 'total'>,
+      category: template.category,
     });
     setErrors({});
   };
@@ -204,14 +233,14 @@ const AddExpenseButton = ({
         <DialogTitle>Add New Expense</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            {templates.length > 0 && (
+            {selectableTemplates.length > 0 && (
               <Stack
                 direction="row"
                 spacing={1}
                 useFlexGap
                 sx={{ flexWrap: 'wrap' }}
               >
-                {templates.map((template) => (
+                {selectableTemplates.map((template) => (
                   <Chip
                     key={template.id}
                     label={template.title}
@@ -277,9 +306,11 @@ const AddExpenseButton = ({
                   label="Category"
                   onChange={(e) => handleChange(e as any)}
                 >
-                  <MenuItem value="must">Must</MenuItem>
-                  <MenuItem value="nice">Nice</MenuItem>
-                  <MenuItem value="waste">Waste</MenuItem>
+                  {EXPENSE_CATEGORIES.map(({ value, label }) => (
+                    <MenuItem key={value} value={value}>
+                      {label}
+                    </MenuItem>
+                  ))}
                 </Select>
                 {errors.category && (
                   <FormHelperText>{errors.category}</FormHelperText>

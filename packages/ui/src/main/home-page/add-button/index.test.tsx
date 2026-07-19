@@ -270,6 +270,44 @@ describe('AddExpenseButton', () => {
       expect(screen.getByLabelText('Category')).toHaveTextContent('Nice');
     });
 
+    it('drops templates whose category is not a real option', async () => {
+      // `category` is an unconstrained text column, so a mis-seeded row must
+      // not be offered — it would otherwise submit silently.
+      await openDialogWithTemplates({
+        templates: [
+          ...templates,
+          {
+            id: 'tpl-3',
+            title: 'typo row',
+            name: 'Typo',
+            note: null,
+            amount: 1000,
+            category: 'Must',
+          },
+        ],
+      });
+
+      expect(screen.queryByText('typo row')).not.toBeInTheDocument();
+      expect(screen.getByText('ăn sáng cơm')).toBeInTheDocument();
+    });
+
+    it('renders no chip row when every template is malformed', async () => {
+      await openDialogWithTemplates({
+        templates: [
+          {
+            id: 'tpl-bad',
+            title: 'bad row',
+            name: 'Bad',
+            note: null,
+            amount: 1000,
+            category: 'groceries',
+          },
+        ],
+      });
+
+      expect(screen.queryByText('bad row')).not.toBeInTheDocument();
+    });
+
     it('clears existing validation errors on prefill', async () => {
       await openDialogWithTemplates();
 
