@@ -5,10 +5,9 @@ description: >-
   delete its local branch, and fast-forward local `main` — plus the standalone "keep local `main`
   fresh" refresh. Use whenever a PR has merged and its worktree/branch need tearing down, or the user
   says "cleanup", "clean up the worktree", "refresh main", "update main", "pull main", or invokes
-  /cleanup. Other skills (`parallel-workflow`'s CI loop, `wait-for-pr-merge`) point here for these
-  steps and carry none of the commands. Tracker-free: it never touches issue status (merge→Done is
-  the integration's — see `task-tracker`) and never fixes CI, conflicts, or review comments (that's
-  the loop; see `parallel-workflow`).
+  /cleanup. Other skills (`ci-loop`, `wait-for-pr-merge`) point here for these steps and carry none of
+  the commands. It never touches issue status (that's the tracker's — see `task-tracker`) and never
+  fixes CI, conflicts, or review comments (that's the loop — see `ci-loop`).
 user-invocable: true
 ---
 
@@ -24,12 +23,11 @@ for the tracker coupling — here on the git-cleanup axis.
 
 ## What it does NOT do
 
-- **No tracker writes.** Merging auto-moves the issue to `Done` via the GitHub↔Linear integration, and a
-  parent auto-closes once its last child is `Done` — nothing to do here. Issue status is entirely the
-  tracker's concern; see `task-tracker`. This skill never runs a `linear …` command.
+- **No tracker writes.** Issue status is entirely the tracker's concern — see `task-tracker`. This skill
+  never touches it.
 - **No CI / conflict / comment fixing.** Getting a PR *to* merged — CI, merge conflicts, review threads —
-  is the loop ("do the loop"; see `parallel-workflow`). This skill runs only *after* a merge (teardown)
-  or on its own (refresh).
+  is the loop ("do the loop"; see `ci-loop`). This skill runs only *after* a merge (teardown) or on its
+  own (refresh).
 - **Complements the `blockMainWorktreeWrites` hook**, never fights it. That hook blocks *edits* to a main
   worktree but explicitly permits advancing it with `git pull --ff-only origin main` — which is exactly
   the refresh below. Cleanup never writes files into a main worktree; it only advances the `main` ref.
@@ -61,8 +59,8 @@ If a repo can't be resolved or isn't one of the three, report it and stop — do
 Inputs: the PR's **repo** and its **PR number** `<N>`. Teardown keys off the PR — that's what makes the
 `MERGED` gate below unambiguous — and derives the branch from it; a caller with the branch already resolved
 (`wait-for-pr-merge`) still passes the number so the gate can run. **The `MERGED` gate is mandatory on every
-path.** The two automated callers (`wait-for-pr-merge`, `parallel-workflow`'s loop) invoke teardown only
-after they've observed the merge, so they satisfy it; a direct `/cleanup` invocation must confirm it here.
+path.** The two automated callers (`wait-for-pr-merge`, `ci-loop`) invoke teardown only after they've
+observed the merge, so they satisfy it; a direct `/cleanup` invocation must confirm it here.
 
 Resolve the repo (skip if the caller passed it), then read state + branch:
 
@@ -84,7 +82,7 @@ state=$(gh pr view <N> --repo "ShinaBR2/$repo" --json state -q .state)
 ```
 
 **Only ever tear down a `MERGED` PR.** If `CLOSED`, do nothing — the branch and worktree may still be
-wanted. If `OPEN`, it isn't ready; that's the loop's job, not this skill's. Enforce it, then run the
+wanted. If `OPEN`, it isn't ready; that's `ci-loop`'s job, not this skill's. Enforce it, then run the
 teardown — **abort on the first failure** and report the partial state, never fall through or claim
 completion:
 

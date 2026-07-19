@@ -1,6 +1,6 @@
 ---
 name: wait-for-pr-merge
-description: Poll one or more PRs until each merges (or closes), cleaning up each PR the moment it merges — remove its worktree, delete its local branch, refresh local main (issue status is the tracker's — see `task-tracker`). Use whenever the user says "wait for PR X to merge", "wait for PRs X and Y to merge", "watch these PRs until they merge", "let me know when PR X lands", "poll PR X", or invokes /wait-for-pr-merge. This is post-READY watching only — it does NOT fix CI, conflicts, or review comments (that is "the loop"; see parallel-workflow).
+description: Poll one or more PRs until each merges (or closes), running the `cleanup` skill on each PR the moment it merges (issue status is the tracker's — see `task-tracker`). Use whenever the user says "wait for PR X to merge", "wait for PRs X and Y to merge", "watch these PRs until they merge", "let me know when PR X lands", "poll PR X", or invokes /wait-for-pr-merge. This is post-READY watching only — it does NOT fix CI, conflicts, or review comments (that is "the loop"; see `ci-loop`).
 user-invocable: true
 ---
 
@@ -8,11 +8,11 @@ user-invocable: true
 
 The human merges a READY PR by hand on GitHub. This skill watches for that merge and does the cleanup, so the user can say "wait for PR X to merge" and walk away instead of manually re-checking GitHub. It accepts **one or more** PRs and handles each independently — each PR is cleaned up the moment *it* merges, without waiting for the others.
 
-**Scope boundary:** this skill assumes each PR is already READY and the user is merging manually. It does **NOT** touch CI, conflicts, or review comments — that is the loop ("do the loop"; see [`parallel-workflow`](../parallel-workflow/SKILL.md)). If a PR simply isn't merged yet, keep waiting; never start fixing things under this skill.
+**Scope boundary:** this skill assumes each PR is already READY and the user is merging manually. It does **NOT** touch CI, conflicts, or review comments — that is the loop ("do the loop"; see [`ci-loop`](../ci-loop/SKILL.md)). If a PR simply isn't merged yet, keep waiting; never start fixing things under this skill.
 
 ## Workspace: three repos
 
-Each PR belongs to exactly one of the three repos (`sworld`, `sworld-backend`, `sworld-hasura-v2`, all under `ShinaBR2`). The repo is resolved once up front (see §1's resolve step) and every `gh pr view` is qualified with `--repo ShinaBR2/<repo>`. Per-PR cleanup runs **in the repo the PR belongs to** — never cross-repo — and is delegated to the `cleanup` skill, which owns the repo→local-path map and every `git` command. If a PR's repo can't be resolved or isn't one of the three, report and drop the PR from the poll — don't guess.
+Each PR belongs to exactly one of the three repos (`sworld`, `sworld-backend`, `sworld-hasura-v2`, all under `ShinaBR2`). The repo is resolved once up front (see §1's resolve step) and every `gh pr view` is qualified with `--repo ShinaBR2/<repo>`. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR and its repo. If a PR's repo can't be resolved or isn't one of the three, report and drop the PR from the poll — don't guess.
 
 ## 1. Resolve each PR's repo, then poll
 
@@ -61,13 +61,13 @@ Run it with the background flag. When it exits, read the `FINAL:<n>:<repo>:<stat
 
 ## 2. Handle each event
 
-Each `FINAL` line already carries the resolved repo (`FINAL:<n>:<repo>:<state>`). Every `gh pr view <N>` below MUST keep `--repo "ShinaBR2/$repo"`; the repo→local-path mapping and all `git` commands belong to `cleanup`.
+Each `FINAL` line already carries the resolved repo (`FINAL:<n>:<repo>:<state>`). Every `gh pr view <N>` below MUST keep `--repo "ShinaBR2/$repo"`.
 
 ### MERGED → clean up
 
-Hand the resolved `repo` and PR number to the `cleanup` skill's **teardown** (its section A): it removes the branch's worktree (exact ref match, only if one exists), deletes the local branch (`-D`), then refreshes that repo's local `main` — aborting on the first failure and reporting the partial state. The PR is already known `MERGED` here, so cleanup's own MERGED gate passes straight through.
+Run the `cleanup` skill for this PR, passing its repo and number. Whatever tearing down a merged PR involves is cleanup's concern, not this skill's.
 
-Issue status is the tracker's to manage — merging auto-moves it to `Done` (see `task-tracker`). This path only cleans up.
+Issue status is the tracker's to manage — see `task-tracker`. This path only cleans up.
 
 ### CLOSED without merge → stop watching it
 
@@ -79,6 +79,6 @@ Report that the PR could not be polled and drop it from the pending set so the u
 
 ## 3. After the round
 
-- Local `main` is already refreshed — `cleanup`'s teardown fast-forwards the merged PR's repo as its final step, so there's nothing extra to run here. If `cleanup` aborted for a PR (worktree, branch, or refresh), mark **that PR** failed and surface it — but keep polling the other pending PRs; only stop watching a repo entirely if the repo itself is unreachable.
+- If `cleanup` reported failure for a PR, mark **that PR** failed and surface it — but keep polling the other pending PRs; only stop watching a repo entirely if the repo itself is unreachable.
 - Report per PR: cleaned-up (merged), closed-without-merge, or unreachable.
 - If PRs remain pending, re-launch the poll (step 1) for just those. When the pending set is empty, report the final tally and stop.
