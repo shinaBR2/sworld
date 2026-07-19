@@ -3,7 +3,7 @@ name: analyze
 description: >-
   The audit pass on an already-scoped ticket and its sub-issue breakdown, run BEFORE any code.
   Use it as the first move whenever picking up, starting, resuming, or "analysing" a non-trivial
-  Linear issue — especially a large-feature parent with sub-issues — to catch missing requirements
+  tracker issue — especially a large-feature parent with sub-issues — to catch missing requirements
   and a breakdown that has drifted out of sync before you build against it. Reach for it the moment
   you're about to set an issue In Progress, when a plan "looks done" but nobody has re-checked it,
   or when the user says "analyse this issue / take a look at this breakdown / is this plan right".
