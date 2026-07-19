@@ -31,14 +31,14 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
 
 ## Step 1: Check merge status
 
-- Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
+- Run `gh pr view <number> --repo "ShinaBR2/<repo>" --json state` as the **ONLY** command. Do NOT batch it with anything else.
 - If `MERGED` → run `cleanup` for this PR (pass its number + repo). Issue status is the tracker's — see `task-tracker`. Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 
 ## Step 2: Check merge conflicts
 
-- Run `gh pr view <number> --json mergeable`.
+- Run `gh pr view <number> --repo "ShinaBR2/<repo>" --json mergeable`.
 - If conflicting → `git fetch origin main && git merge origin/main`, resolve conflicts, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If clean → proceed to Step 3.
 
@@ -56,7 +56,7 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
 
 ## Step 4: Check CI
 
-- Run `gh pr checks <number>` (NEVER use `--watch`).
+- Run `gh pr checks <number> --repo "ShinaBR2/<repo>"` (NEVER use `--watch`).
 - If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If all green AND no unresolved comments → PR is ready. Report to user.
 - **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
@@ -69,7 +69,7 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
 - **DEFAULT: never merge.** The user reviews every PR themselves. The loop's terminal action for an OPEN, settled PR is ALWAYS "report to the user that it's ready" — merging is a separate, explicit action taken only when the user has authorized it for that PR (e.g. "you can merge" / "merge when settled").
 - **A PR is "settled"** when the loop has run to completion and every gate is green AND stable: OPEN + mergeable (no conflicts), CI fully passed (nothing `pending`, no failures), and zero unresolved review threads. `pending` is not `pass` — never act on an unsettled gate.
 - **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
-- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/`prod_deploy`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this workspace's merge-is-deploy model means shipping broken code to production.
+- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/`prod_deploy`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge <number> --repo "ShinaBR2/<repo>" --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this workspace's merge-is-deploy model means shipping broken code to production.
 - Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
 
 ## The rule that gets violated
