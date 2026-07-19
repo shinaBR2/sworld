@@ -49,15 +49,15 @@ Never rebase `main`; never create merge commits on it. Run it:
 
 ## Before starting
 
-1. Read the current tracker issue (`linear issue view SWO-NNN`) and confirm its `state`. All tracker operations go through the CLI, never the tracker's MCP — see `task-tracker`.
+1. Read the current tracker issue and confirm its `state` (see `task-tracker`).
 2. Verify an issue exists for this work — a sub-issue under a feature's parent issue, or a standalone issue. If none exists, create it first (`writing-task-specs`).
-3. Check the issue's blocking relations (`linear issue relation list SWO-NNN`); resolve those blockers first.
-4. **Analyse before you build, then start.** For any non-trivial issue — especially a large-feature parent or a reworked/reopened one — run the `analyze` skill on the ticket + its breakdown first: it re-derives requirements (via `grill-me`'s completeness sweep) and checks the breakdown is still internally consistent (stale blockers, parent drift, deploy-order encoded as real relations) before a line of code. Reconcile what it flags as fixable; raise anything that changes scope with the owner. **Let its verdict gate the advance:** if analyze concludes the breakdown needs the owner to resolve blocking findings first, stop at raising them — don't move to `In Progress` and start building against a breakdown they haven't signed off (non-gating still holds — you surface and offer, you just don't unilaterally build past an unresolved blocker). Once analyze's verdict is safe-to-build — as-is or after the reconciling edits — or the owner says go, set the issue's `state` to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`) before touching code. Skip the whole pass only for a trivial single-issue change with nothing to audit.
+3. Check the issue's blocking relations (see `task-tracker`); resolve those blockers first.
+4. **Analyse before you build, then start.** For any non-trivial issue — especially a large-feature parent or a reworked/reopened one — run the `analyze` skill on the ticket + its breakdown first: it re-derives requirements (via `grill-me`'s completeness sweep) and checks the breakdown is still internally consistent (stale blockers, parent drift, deploy-order encoded as real relations) before a line of code. Reconcile what it flags as fixable; raise anything that changes scope with the owner. **Let its verdict gate the advance:** if analyze concludes the breakdown needs the owner to resolve blocking findings first, stop at raising them — don't start building against a breakdown they haven't signed off (non-gating still holds — you surface and offer, you just don't unilaterally build past an unresolved blocker). Once analyze's verdict is safe-to-build — as-is or after the reconciling edits — or the owner says go, start the issue in the tracker (see `task-tracker`) before touching code. Skip the whole pass only for a trivial single-issue change with nothing to audit.
 
 ## Creating a worktree
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
-6. Name worktrees after the issue's slug — the kebab-case short form of its title, optionally prefixed with the identifier (e.g. `.claude/worktrees/swo-123-sticky-progress-bar`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default. Including the `SWO-NNN` identifier in the branch name lets the GitHub↔tracker integration auto-link the PR to the issue (see `task-tracker`).
+6. Create the worktree under `.claude/worktrees/` — self-contained, gitignored, and aligned with Claude Code's official default — named for the issue per `task-tracker`'s branch convention.
 7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`.
 8. Run `pnpm install` in each worktree.
 
@@ -96,9 +96,8 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 - A PR may ONLY be created after the self-review loop (step 11) has exited clean on BOTH review skills. Pushing commits needs no gate; creating the PR does.
 - Create PR with `[WIP]` prefix (not draft).
-- Reference the tracker issue in the PR description (e.g. `SWO-123`) so the integration links them.
+- Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).
-- Set the issue's `state` to `In Review` (`linear issue update SWO-NNN -s "In Review"`) after the PR is created.
 - Ensure PR is independent and mergeable without other PRs.
 - Run the CI loop after pushing.
 
@@ -111,7 +110,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 ### Step 1: Check merge status
 
 - Run `gh pr view <number> --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → set the issue's `state` to `Done` (`linear issue update SWO-NNN -s "Done"`), clean up worktree + delete local branch. Loop is done.
+- If `MERGED` → clean up worktree + delete local branch. (This is the "done" moment — issue status is the tracker's, see `task-tracker`.) Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 
@@ -140,7 +139,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 - If all green AND no unresolved comments → PR is ready. Report to user.
 - **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
 - **Known non-blocking checks** — confirm the specific failure mode before waving these through, then gate on `test` + CodeRabbit instead:
-  - **Argos visual-regression** (`argos/Listen E2E`) does a pixel-perfect diff against the anonymous home, which is data-driven (real Firebase preview + prod Hasura, no mocking) — it reports "changed" whenever the underlying data changes, not just on real UI regressions. Root-cause fix tracked in SWO-310 (mask the data-driven pixels). If the diff is plausibly a genuine intended UI change, say so — it needs approving in Argos, not dismissing.
+  - **Argos visual-regression** (`argos/Listen E2E`) does a pixel-perfect diff against the anonymous home, which is data-driven (real Firebase preview + prod Hasura, no mocking) — it reports "changed" whenever the underlying data changes, not just on real UI regressions. Root-cause fix tracked separately (mask the data-driven pixels). If the diff is plausibly a genuine intended UI change, say so — it needs approving in Argos, not dismissing.
   - **`prod_deploy` / Deploy Preview 429** (`RESOURCE_EXHAUSTED: channel quota reached`) — Firebase Hosting preview channels are per-app-per-PR with a 7-day TTL; a burst of PRs exhausts a site's quota, and it can fire on an app the PR doesn't even touch. Confirm by grepping the failed job log for `429`/`RESOURCE_EXHAUSTED` — a different `prod_deploy` failure still needs investigating.
 
 ### Merging — never automatic
@@ -161,11 +160,7 @@ After each iteration, report what you found and fixed. Lead with unresolved comm
 
 ## Issue state management
 
-- States follow the tracker lifecycle — `task-tracker` owns the vocabulary.
-- A **project** is an app (Til, Watch, Listen, Game, Docs, Main) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
-- Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`).
-- Each sub-task **sub-issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.
-- Last sub-issue of a parent done → set the **parent issue** to `Done`.
+An issue's status changes at exactly three moments — you **start** it, it's **ready for review**, it's **done**. Those moments are the workflow's; what each one requires — a manual step or nothing at all — is the tracker's. At every moment, do what `task-tracker` says. Starting a large-feature parent (even just to plan it) is a "start" moment too.
 
 ## Good PR criteria
 

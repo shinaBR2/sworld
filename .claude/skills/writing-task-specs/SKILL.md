@@ -7,7 +7,7 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 Produce clear, consistent task specs in the task tracker that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-This skill owns the **shapes** of a good spec; the `task-tracker` skill owns the tracker itself — which tool it is, the team, the project-is-an-app model, the state lifecycle, and every `linear …` command form. Read `task-tracker` for how to create and wire what this skill describes; the short version of the model:
+This skill owns the **shapes** of a good spec; the `task-tracker` skill owns the tracker itself — which tool it is, the team, the project-is-an-app model, the state lifecycle, and every command form. Read `task-tracker` for how to create and wire what this skill describes; the short version of the model:
 
 Every issue belongs to an **app's project** (see `task-tracker` for the project-is-an-app model). A large feature is a **parent issue** *inside* its app's project — not a project of its own.
 
@@ -23,7 +23,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 - **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test. If a sub-task's `What` needs an "and", it's two sub-tasks.
 - **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
 - Attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main; see `task-tracker`) — a large feature is a parent issue *inside* its app's project, not a project of its own
-- Before starting work on an issue, set its `state` to `In Progress` (see the `parallel-workflow` skill)
+- Before starting work on an issue, start it in the tracker (see `task-tracker`)
 - **Every ticket opens in plain words** — see below. No exceptions.
 
 ## Every ticket opens in plain words
@@ -69,7 +69,7 @@ Not every user story becomes a large feature — sometimes scoping reveals it's 
 
 ## Title and slug conventions
 
-The issue/project **title** should be specific enough that a developer knows what they're looking at before opening it. The tracker assigns the identifier (e.g. `SWO-123`); you don't pick one (see `task-tracker`).
+The issue/project **title** should be specific enough that a developer knows what they're looking at before opening it. The tracker assigns the identifier; you don't pick one (see `task-tracker`).
 
 - Active voice or noun phrase, no gerunds in active titles ("Fix" not "Fixing")
 - Reference the app or domain when relevant (library, listen, watch, til, finance, journal)
@@ -93,7 +93,7 @@ Bad:
 
 ## Shape 1 — Bug
 
-For a specific, reproducible issue. Direct, short, focused on getting the fix right. Create a single issue with the `bug` label, `state: Todo`, and an `estimate`. The body below is the issue **description** (tracker descriptions are Markdown).
+For a specific, reproducible issue. Direct, short, focused on getting the fix right. Create a single issue with the `bug` label, ready to pick up, and an `estimate`. The body below is the issue **description** (tracker descriptions are Markdown).
 
 ### Description structure
 
@@ -123,7 +123,7 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 
 ### Example — the library progress bug
 
-Created as a `bug`-labelled issue in the **Main** app's project, `state: Todo`, estimate 1 (library is a feature area of the main app; see `task-tracker` for the create command), where the description file holds:
+Created as a `bug`-labelled issue in the **Main** app's project, ready to pick up, estimate 1 (library is a feature area of the main app; see `task-tracker` for the create command), where the description file holds:
 
 ```markdown
 **In plain words**
@@ -163,7 +163,7 @@ Key files:
 
 ## Shape 2 — Small feature / improvement
 
-For a single focused change that maps to one PR. Short spec, no sub-tasks. A single issue (`state: Todo`, an `estimate`, attached to the relevant `project`).
+For a single focused change that maps to one PR. Short spec, no sub-tasks. A single issue (ready to pick up, an `estimate`, attached to the relevant `project`).
 
 ### Description structure
 
@@ -188,7 +188,7 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 
 ### Example
 
-A **Listen**-project issue, `state: Todo`, estimate 4 (see `task-tracker` for the create command), description:
+A **Listen**-project issue, ready to pick up, estimate 4 (see `task-tracker` for the create command), description:
 
 ```markdown
 **In plain words**
@@ -365,7 +365,7 @@ The parent issue holds the technical scope. It is not worked on directly — its
 
 **Context**
 
-[Link to the user story issue (SWO-NNN). 1–2 sentences summarising the user need this delivers on. Do not repeat the full user story — link to it.]
+[Link to the user story issue. 1–2 sentences summarising the user need this delivers on. Do not repeat the full user story — link to it.]
 
 **Technical approach**
 
@@ -419,13 +419,13 @@ Only when a real dependency exists, group into waves instead and add a **Depende
 
 **Related**
 
-* SWO-NNN — user story
+* [link to the user story issue] — user story
 * [Tracker document or external doc] — relevant patterns
 ```
 
 ### Sub-task issue structure
 
-Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create each as a sub-issue under the parent, `state: Todo`, with an estimate, then add a `blocked-by` relation for each dependency (see `task-tracker` for the commands).
+Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create each as a sub-issue under the parent, ready to pick up, with an estimate, then add a `blocked-by` relation for each dependency (see `task-tracker` for the commands).
 
 ```markdown
 **Why this matters**  _(one plain-language line — see `plain-english`)_
@@ -453,7 +453,7 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 
 Before any code sub-issue is created, write one sub-issue whose entire job is answering: **"how does anyone — with zero context — know the whole feature works when every sub-issue is done?"** Each sub-issue's own acceptance criteria only proves its own slice; nobody's acceptance criteria proves the assembled feature actually delivers the user story. This sub-issue is that missing check, written before the breakdown so it also doubles as a sanity check on the breakdown itself — if you can't write a concrete verification step, the shape probably isn't settled yet either.
 
-Create it as the **first** sub-issue under the parent, `state: Todo`, titled `Goal & verification — <feature>` (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it). See `task-tracker` for the command:
+Create it as the **first** sub-issue under the parent, ready to pick up, titled `Goal & verification — <feature>` (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it). See `task-tracker` for the command:
 
 ```markdown
 **Why this matters**

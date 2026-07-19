@@ -64,21 +64,21 @@ Only *issues* move through this lifecycle; a *project* (an app) never does. `par
 owns *when* each transition happens as work ships — this skill owns the vocabulary and the command
 that performs a transition (`linear issue update SWO-NNN -s "<state>"`).
 
-### What the GitHub↔Linear integration automates — and the one gap you must cover by hand
+### Status changes: three moments, and what each needs today
 
-Two transitions happen **automatically** via the integration, so you never set them yourself:
+An issue's status only ever changes at **three moments** in the work — *start working on it*,
+*it's ready for review*, *it's done*. That's fixed no matter the tooling; consumers just recognise
+the moment and defer here. What each moment does in our current GitHub↔Linear setup:
 
-- **Merged PR → the linked issue goes `Done`.** Triggered by the `SWO-NNN` reference in the branch
-  name / PR body (see *The GitHub link* below). The manual `-s "Done"` that `parallel-workflow`'s CI
-  loop and `wait-for-pr-merge` still run is a deliberate safety net over this — harmless if the
-  automation already fired, and it catches the case where a PR body carried no `SWO-NNN`.
-- **Last child sub-issue `Done` → the parent issue closes** too, so you don't hand-close a parent
-  once its final sub-issue lands.
+1. **You start working on something** → set the issue to `In Progress`, **by hand** — the integration
+   doesn't cover this one: `linear issue update SWO-NNN -s "In Progress"`. This is the **only** status
+   change you ever make yourself.
+2. **It's ready for review** → opening the PR auto-moves the issue to `In Review` (the integration,
+   keyed off the `SWO-NNN` in the branch / PR body — see *The GitHub link* below). Nothing to do.
+3. **It's done** → merging auto-moves the issue to `Done`, and a parent auto-closes once its last
+   child is `Done`. Nothing to do.
 
-The **gap**: nothing automates **`Todo → In Progress`**. No event moves an issue into `In Progress`
-when you pick it up — so you **must set it yourself, by hand, as the first action before touching any
-code** (`linear issue update SWO-NNN -s "In Progress"`). `parallel-workflow` makes this its
-start-of-work step; this automation gap is *why* that step can't be skipped — nothing else will do it.
+So in practice you touch status exactly once — at the start; moments 2 and 3 happen on their own.
 
 ## Command mechanics
 
@@ -125,6 +125,9 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 
 ## The GitHub link
 
-Putting the `SWO-NNN` identifier in a PR's branch name lets the GitHub↔Linear integration auto-link
-the PR to the issue — so name branches with the issue slug (see `parallel-workflow`). Referencing
-`SWO-NNN` in the PR description links it too.
+The issue identifier (`SWO-NNN`) is what ties an issue to its code, so it drives the branch/worktree
+name: a kebab-case slug **prefixed with the identifier**, e.g. `swo-123-sticky-progress-bar`. That
+prefix is what lets the GitHub↔Linear integration auto-link the PR to the issue — and, once linked,
+fire the automatic status transitions above (PR opened → `In Review`, merged → `Done`). Referencing
+`SWO-NNN` in the PR description links it too. Consumers (`parallel-workflow`, `pr-descriptions`, …)
+just follow this convention and point here; they carry none of these specifics.
