@@ -1,6 +1,6 @@
 ---
 name: parallel-workflow
-description: Enforces the parallel subtask workflow using Linear issues, git worktrees, and PRs. Auto-triggers when working with git, branches, worktrees, PRs, Linear issues/tasks, codegen, or CI.
+description: Enforces the parallel subtask workflow using tracker issues, git worktrees, and PRs. Auto-triggers when working with git, branches, worktrees, PRs, tracker issues/tasks, codegen, or CI.
 user-invocable: false
 ---
 
@@ -8,17 +8,17 @@ user-invocable: false
 
 ## Non-negotiable prerequisites
 
-- **The Linear issue is the source of truth.** A Linear issue (in the **SWorld** team) is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`).
+- **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
 - **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operations there advance the local `main` ref (`git pull --ff-only origin main` when it sits on `main`, `git fetch origin main:main` otherwise — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: all three repos
 
-This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: Linear issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
+This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
 
 - **Substitute the repo name in `gh` commands.** The CI-loop Step 3 GraphQL query below takes a `name:"<repo>"` placeholder — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing.
 - **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
-- **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in Linear with a blocking relation from the Hasura issue.
+- **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
 
 ## Git fundamentals
 
@@ -49,7 +49,7 @@ Never rebase `main`; never create merge commits on it. Run it:
 
 ## Before starting
 
-1. Read the current Linear issue (`linear issue view SWO-NNN`) and confirm its `state`. All Linear operations go through the `linear` CLI via Bash — NEVER through Linear MCP tools (they authenticate as the wrong account).
+1. Read the current tracker issue (`linear issue view SWO-NNN`) and confirm its `state`. All tracker operations go through the CLI, never the tracker's MCP — see `task-tracker`.
 2. Verify an issue exists for this work — a sub-issue under a feature's parent issue, or a standalone issue. If none exists, create it first (`writing-task-specs`).
 3. Check the issue's blocking relations (`linear issue relation list SWO-NNN`); resolve those blockers first.
 4. **Analyse before you build, then start.** For any non-trivial issue — especially a large-feature parent or a reworked/reopened one — run the `analyze` skill on the ticket + its breakdown first: it re-derives requirements (via `grill-me`'s completeness sweep) and checks the breakdown is still internally consistent (stale blockers, parent drift, deploy-order encoded as real relations) before a line of code. Reconcile what it flags as fixable; raise anything that changes scope with the owner. **Let its verdict gate the advance:** if analyze concludes the breakdown needs the owner to resolve blocking findings first, stop at raising them — don't move to `In Progress` and start building against a breakdown they haven't signed off (non-gating still holds — you surface and offer, you just don't unilaterally build past an unresolved blocker). Once analyze's verdict is safe-to-build — as-is or after the reconciling edits — or the owner says go, set the issue's `state` to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`) before touching code. Skip the whole pass only for a trivial single-issue change with nothing to audit.
@@ -57,7 +57,7 @@ Never rebase `main`; never create merge commits on it. Run it:
 ## Creating a worktree
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
-6. Name worktrees after the issue's slug — the kebab-case short form of its title, optionally prefixed with the identifier (e.g. `.claude/worktrees/swo-123-sticky-progress-bar`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default. Including the `SWO-NNN` identifier in the branch name lets the GitHub↔Linear integration auto-link the PR to the issue.
+6. Name worktrees after the issue's slug — the kebab-case short form of its title, optionally prefixed with the identifier (e.g. `.claude/worktrees/swo-123-sticky-progress-bar`). This keeps worktrees self-contained, gitignored, and aligned with Claude Code's official default. Including the `SWO-NNN` identifier in the branch name lets the GitHub↔tracker integration auto-link the PR to the issue (see `task-tracker`).
 7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`.
 8. Run `pnpm install` in each worktree.
 
@@ -96,7 +96,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 - A PR may ONLY be created after the self-review loop (step 11) has exited clean on BOTH review skills. Pushing commits needs no gate; creating the PR does.
 - Create PR with `[WIP]` prefix (not draft).
-- Reference the Linear issue in the PR description (e.g. `SWO-123`) so the integration links them.
+- Reference the tracker issue in the PR description (e.g. `SWO-123`) so the integration links them.
 - ALWAYS assign PR to the user (`--assignee "@me"`).
 - Set the issue's `state` to `In Review` (`linear issue update SWO-NNN -s "In Review"`) after the PR is created.
 - Ensure PR is independent and mergeable without other PRs.
@@ -161,7 +161,7 @@ After each iteration, report what you found and fixed. Lead with unresolved comm
 
 ## Issue state management
 
-- States follow the SWorld team lifecycle: `Backlog → Todo → In Progress → In Review → Done`.
+- States follow the tracker lifecycle — `task-tracker` owns the vocabulary.
 - A **project** is an app (Til, Watch, Listen, Game, Docs, Main) — a long-lived container, never marked `Done`. Only issues move through the lifecycle.
 - Starting work on a large feature (even planning) → set the **parent issue** to `In Progress` (`linear issue update SWO-NNN -s "In Progress"`).
 - Each sub-task **sub-issue** carries its own `state` (`Todo → In Progress → In Review → Done`), driven by the steps above.

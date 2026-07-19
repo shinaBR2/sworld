@@ -41,8 +41,8 @@ and offer**, you don't enforce.
 Don't assume where the user is. They may have planned this deeply with an agent already, or may be
 starting cold and have skipped straight to "let's build it." Find out before you start:
 
-- If they reference a Linear issue or project, pull it (`linear issue view SWO-NNN` / `linear project view` — always the `linear` CLI, never Linear MCP tools) and work from it.
-- Check whether a Linear **document** already exists for the concept in play — if it does, that's
+- If they reference a tracker issue or project, pull it (`linear issue view SWO-NNN` / `linear project view` — see `task-tracker`) and work from it.
+- Check whether a tracker **document** already exists for the concept in play — if it does, that's
   a strong signal they've already worked the concept through. If it doesn't and the work needs one,
   that's a signal it's missing.
 - If it's still unclear, just ask: *"has this been through a planning round before?"*
@@ -89,11 +89,12 @@ You can do the messy research yourself (how the concept actually works, the comp
 bring it back to pressure-test their model — exactly as you'd research anything else. The user picks
 the path.
 
-**Capture the domain/feature concept as a short Linear document if it's non-obvious** — pure concept
-truth ("what is it", "how it works", "the rules"). Use `linear document create -t "…" -f <doc.md>`: attach it (`--project`) to the app's
-**project** for a feature concept, or to the **SWorld team** for a cross-cutting domain concept. Write it
-**before** the code, not retrofitted after — defining it first is the point. Keep the feature's
-architecture and trade-offs out of it — those live in the parent issue (Step 3).
+**Capture the domain/feature concept as a short tracker document if it's non-obvious** — pure concept
+truth ("what is it", "how it works", "the rules"). Create it as a tracker document (see `task-tracker`
+for the command), attached to the app's **project** for a feature concept, or to the team for a
+cross-cutting domain concept. Write it **before** the code, not retrofitted after — defining it first
+is the point. Keep the feature's architecture and trade-offs out of it — those live in the parent
+issue (Step 3).
 
 ## Step 2 — Shape the solution
 
@@ -113,9 +114,9 @@ Now think hard about *how*, and be self-critical about it:
 ## Step 3 — Shape a high-level parent
 
 Once the thinking holds, capture it as a **high-level parent issue** with `writing-task-specs` — a
-Linear issue (in the app's project) whose description opens with the `plain-english` block and then carries the concept, the options, and the trade-offs that
+tracker issue (in the app's project) whose description opens with the `plain-english` block and then carries the concept, the options, and the trade-offs that
 *prove* the problem is understood. Keep it high-level; do **not** scope the children (sub-issues)
-yet. The concept lives in its Linear document; the parent issue supports it.
+yet. The concept lives in its tracker document; the parent issue supports it.
 
 ## The team-review decision is the user's
 
@@ -144,7 +145,7 @@ rock-solid?) and **the non-gating posture**.
 | Phase | Leans on |
 |-------|----------|
 | Interrogating the thinking | `grill-me` |
-| Nailing the concept | a short Linear document |
+| Nailing the concept | a short tracker document |
 | Parent issue + sub-issues | `writing-task-specs` |
 | Decomposition & sequencing | `micro-prs` |
 
