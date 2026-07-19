@@ -20,7 +20,7 @@ Before entering the gates, push any unpushed local commits so the remote PR refl
 
 ## Scope boundary
 
-This loop runs **after** a PR exists, to get it to merged. It is not the pre-PR self-review — that
+This loop runs **after** a PR exists, to get it to merged. Do NOT arm a monitor or idle-poll while waiting — a hook denies the Monitor tool outright; drive the gates and stop. It is not the pre-PR self-review — that
 loop (the `self-review` skill, before the PR is created) is `parallel-workflow`'s
 step 11. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
 the tracker's concern; see `task-tracker`.

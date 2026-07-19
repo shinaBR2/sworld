@@ -39,11 +39,12 @@ The goal of this mode: the PR that eventually goes up is already a good PR. **Th
 
 ### How the gate is enforced
 
-`.claude/hooks/review-gate.sh` (wired in `.claude/settings.local.json`) denies `gh pr create` until this skill has run **and** is newer than the last edit. Consequences worth knowing:
+`.claude/hooks/review-gate.sh` (wired in the tracked `.claude/settings.json`) denies PR creation until this skill has run **and** is newer than the last edit. Consequences worth knowing:
 
 - **Invoke this skill through the Skill tool.** Only a Skill-tool invocation stamps the gate — doing the review's steps by hand does not.
 - **The `last_edit` stamp fires on `Write`/`Edit` only, not Bash.** A file written by a build, a formatter or a stray `sed` after the final pass will NOT re-flag it as stale, so it can silently ship unreviewed. Do all rebuilds and Playwright probes **before** the final pass, and treat any `Write`/`Edit` after it as forcing a fresh one. Don't rely on the hook to catch everything.
 - The gate blocks PR creation only. **Pushing is never gated** — push freely as backup.
+- It matches the phrase anywhere in a Bash command, so a command that merely *mentions* it in quotes is blocked too. That is deliberate — matching only in command position needs quote-aware parsing, and a regex that fakes it lets real invocations slip through. Assemble the string in pieces to work around it.
 
 ## Step 1 — Reviewability judgment
 

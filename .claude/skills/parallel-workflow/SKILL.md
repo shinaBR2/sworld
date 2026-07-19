@@ -17,7 +17,7 @@ This workflow applies to the whole workspace — **sworld** (frontend), **sworld
 
 - **Substitute the repo name in `gh` commands.** Every `gh` / GraphQL call is repo-scoped — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing. (The `ci-loop` gate queries carry the same rule.)
 - **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
-- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill, not just the two general review skills.
+- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill.
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
 
 ## Git fundamentals
@@ -71,7 +71,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 ## PR submission
 
-- A PR may ONLY be created after the self-review loop (step 11) has exited clean on BOTH review skills. Pushing commits needs no gate; creating the PR does.
+- A PR may ONLY be created after the self-review loop (step 11) has exited clean. Pushing commits needs no gate; creating the PR does.
 - Create PR with `[WIP]` prefix (not draft).
 - Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).
