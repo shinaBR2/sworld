@@ -95,7 +95,7 @@ The hierarchy below is in order of importance. A correctness issue is always mor
 
 ### Correctness (most important)
 
-- Does it actually do what the Linear issue (or the stated intent) says it should?
+- Does it actually do what the tracker issue (or the stated intent) says it should?
 - Are there obvious logic errors?
 - Edge cases — what about empty arrays, null values, very large inputs, negative numbers, zero, dates that span timezones?
 - Round-tripping, what happens at boundaries
