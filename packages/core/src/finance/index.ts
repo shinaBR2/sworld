@@ -1,1 +1,1 @@
-export type { CategoryType } from './types';
+export type { CategoryType, Template } from './types';

@@ -76,10 +76,22 @@ describe('Finance Query Hooks', () => {
       },
     ];
 
+    const mockTemplates = [
+      {
+        id: 't1',
+        title: 'ăn sáng cơm',
+        name: 'Breakfast',
+        note: 'ăn sáng cơm',
+        amount: 30,
+        category: 'must',
+      },
+    ];
+
     // Mock the useRequest return value with data
     vi.mocked(useRequest).mockReturnValue({
       data: {
         finance_transactions: mockTransactions,
+        finance_transaction_templates: mockTemplates,
         must_aggregate: {
           aggregate: {
             count: 1,
@@ -135,6 +147,7 @@ describe('Finance Query Hooks', () => {
           month: 1,
           year: 2023,
         },
+        templates: mockTemplates,
       },
       isLoading: false,
       error: null,

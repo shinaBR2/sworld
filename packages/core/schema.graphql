@@ -83,6 +83,21 @@ type GetDeviceTokenResponse {
   success: Boolean!
 }
 
+input ImportTelegramArchiveInput {
+  channelId: String!
+  messageIds: [String!]!
+}
+
+type ImportTelegramArchiveOutput {
+  taskId: String!
+}
+
+type ImportTelegramArchiveResponse {
+  dataObject: ImportTelegramArchiveOutput
+  message: String!
+  success: Boolean!
+}
+
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -98,6 +113,22 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
+input ListTelegramChannelVideosInput {
+  channelId: String!
+  cursor: String
+}
+
+type ListTelegramChannelVideosOutput {
+  nextCursor: String
+  videos: [TelegramVideoMessage!]!
+}
+
+type ListTelegramChannelVideosResponse {
+  dataObject: ListTelegramChannelVideosOutput
+  message: String!
+  success: Boolean!
+}
+
 input RepairFmp4Input {
   videoId: String!
 }
@@ -108,6 +139,11 @@ type RepairFmp4Output {
 
 type RepairFmp4Response {
   dataObject: RepairFmp4Output
+  message: String!
+  success: Boolean!
+}
+
+type RequestTelegramLoginCodeResponse {
   message: String!
   success: Boolean!
 }
@@ -188,6 +224,25 @@ input String_comparison_exp {
   _regex: String
   """does the column match the given SQL regular expression"""
   _similar: String
+}
+
+input SubmitTelegramLoginCodeInput {
+  code: String!
+}
+
+type SubmitTelegramLoginCodeResponse {
+  message: String!
+  success: Boolean!
+}
+
+type TelegramVideoMessage {
+  caption: String
+  date: String!
+  durationSeconds: Float
+  filename: String
+  id: String!
+  sizeBytes: Float
+  thumbnailDataUri: String
 }
 
 """Junction table between audios and tags, many to many relationship"""
@@ -2565,6 +2620,305 @@ input feature_flag_updates {
   where: feature_flag_bool_exp!
 }
 
+"""Reusable quick-fill templates for personal finance transactions"""
+type finance_transaction_templates {
+  amount: numeric!
+  """Should be either must, nice or waste"""
+  category: String!
+  createdAt: timestamptz!
+  id: uuid!
+  name: String!
+  note: String
+  title: String!
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "finance_transaction_templates"
+"""
+type finance_transaction_templates_aggregate {
+  aggregate: finance_transaction_templates_aggregate_fields
+  nodes: [finance_transaction_templates!]!
+}
+
+"""
+aggregate fields of "finance_transaction_templates"
+"""
+type finance_transaction_templates_aggregate_fields {
+  avg: finance_transaction_templates_avg_fields
+  count(columns: [finance_transaction_templates_select_column!], distinct: Boolean): Int!
+  max: finance_transaction_templates_max_fields
+  min: finance_transaction_templates_min_fields
+  stddev: finance_transaction_templates_stddev_fields
+  stddev_pop: finance_transaction_templates_stddev_pop_fields
+  stddev_samp: finance_transaction_templates_stddev_samp_fields
+  sum: finance_transaction_templates_sum_fields
+  var_pop: finance_transaction_templates_var_pop_fields
+  var_samp: finance_transaction_templates_var_samp_fields
+  variance: finance_transaction_templates_variance_fields
+}
+
+"""aggregate avg on columns"""
+type finance_transaction_templates_avg_fields {
+  amount: Float
+}
+
+"""
+Boolean expression to filter rows from the table "finance_transaction_templates". All fields are combined with a logical 'AND'.
+"""
+input finance_transaction_templates_bool_exp {
+  _and: [finance_transaction_templates_bool_exp!]
+  _not: finance_transaction_templates_bool_exp
+  _or: [finance_transaction_templates_bool_exp!]
+  amount: numeric_comparison_exp
+  category: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  note: String_comparison_exp
+  title: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "finance_transaction_templates"
+"""
+enum finance_transaction_templates_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  finance_transaction_templates_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "finance_transaction_templates"
+"""
+input finance_transaction_templates_inc_input {
+  amount: numeric
+}
+
+"""
+input type for inserting data into table "finance_transaction_templates"
+"""
+input finance_transaction_templates_insert_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  note: String
+  title: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type finance_transaction_templates_max_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  note: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate min on columns"""
+type finance_transaction_templates_min_fields {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  note: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+response of any mutation on the table "finance_transaction_templates"
+"""
+type finance_transaction_templates_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [finance_transaction_templates!]!
+}
+
+"""
+on_conflict condition type for table "finance_transaction_templates"
+"""
+input finance_transaction_templates_on_conflict {
+  constraint: finance_transaction_templates_constraint!
+  update_columns: [finance_transaction_templates_update_column!]! = []
+  where: finance_transaction_templates_bool_exp
+}
+
+"""
+Ordering options when selecting data from "finance_transaction_templates".
+"""
+input finance_transaction_templates_order_by {
+  amount: order_by
+  category: order_by
+  createdAt: order_by
+  id: order_by
+  name: order_by
+  note: order_by
+  title: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: finance_transaction_templates"""
+input finance_transaction_templates_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "finance_transaction_templates"
+"""
+enum finance_transaction_templates_select_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "finance_transaction_templates"
+"""
+input finance_transaction_templates_set_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  note: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate stddev on columns"""
+type finance_transaction_templates_stddev_fields {
+  amount: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type finance_transaction_templates_stddev_pop_fields {
+  amount: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type finance_transaction_templates_stddev_samp_fields {
+  amount: Float
+}
+
+"""
+Streaming cursor of the table "finance_transaction_templates"
+"""
+input finance_transaction_templates_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: finance_transaction_templates_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input finance_transaction_templates_stream_cursor_value_input {
+  amount: numeric
+  """Should be either must, nice or waste"""
+  category: String
+  createdAt: timestamptz
+  id: uuid
+  name: String
+  note: String
+  title: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate sum on columns"""
+type finance_transaction_templates_sum_fields {
+  amount: numeric
+}
+
+"""
+update columns of table "finance_transaction_templates"
+"""
+enum finance_transaction_templates_update_column {
+  """column name"""
+  amount
+  """column name"""
+  category
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  name
+  """column name"""
+  note
+  """column name"""
+  title
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input finance_transaction_templates_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: finance_transaction_templates_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: finance_transaction_templates_set_input
+  """filter the rows which have to be updated"""
+  where: finance_transaction_templates_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type finance_transaction_templates_var_pop_fields {
+  amount: Float
+}
+
+"""aggregate var_samp on columns"""
+type finance_transaction_templates_var_samp_fields {
+  amount: Float
+}
+
+"""aggregate variance on columns"""
+type finance_transaction_templates_variance_fields {
+  amount: Float
+}
+
 """Transactions for personal finance management"""
 type finance_transactions {
   amount: numeric!
@@ -3505,6 +3859,17 @@ type mutation_root {
   """
   delete_feature_flag_by_pk(id: uuid!): feature_flag
   """
+  delete data from the table: "finance_transaction_templates"
+  """
+  delete_finance_transaction_templates(
+    """filter the rows which have to be deleted"""
+    where: finance_transaction_templates_bool_exp!
+  ): finance_transaction_templates_mutation_response
+  """
+  delete single row from the table: "finance_transaction_templates"
+  """
+  delete_finance_transaction_templates_by_pk(id: uuid!): finance_transaction_templates
+  """
   delete data from the table: "finance_transactions"
   """
   delete_finance_transactions(
@@ -3648,6 +4013,17 @@ type mutation_root {
   """
   delete_tasks_by_pk(id: uuid!): tasks
   """
+  delete data from the table: "telegram_credentials"
+  """
+  delete_telegram_credentials(
+    """filter the rows which have to be deleted"""
+    where: telegram_credentials_bool_exp!
+  ): telegram_credentials_mutation_response
+  """
+  delete single row from the table: "telegram_credentials"
+  """
+  delete_telegram_credentials_by_pk(id: uuid!): telegram_credentials
+  """
   delete data from the table: "test"
   """
   delete_test(
@@ -3728,6 +4104,10 @@ type mutation_root {
   Extension polls for the device authorization token. Returns the access token once the user has authorized.
   """
   getDeviceToken(input: GetDeviceTokenInput!): GetDeviceTokenResponse!
+  """
+  Trigger archival of selected Telegram channel video messages to GCS; work happens asynchronously via Cloud Task, returns a taskId.
+  """
+  importTelegramArchive(input: ImportTelegramArchiveInput!): ImportTelegramArchiveResponse!
   """
   insert data into the table: "audio_tags"
   """
@@ -3854,6 +4234,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: feature_flag_on_conflict
   ): feature_flag
+  """
+  insert data into the table: "finance_transaction_templates"
+  """
+  insert_finance_transaction_templates(
+    """the rows to be inserted"""
+    objects: [finance_transaction_templates_insert_input!]!
+    """upsert condition"""
+    on_conflict: finance_transaction_templates_on_conflict
+  ): finance_transaction_templates_mutation_response
+  """
+  insert a single row into the table: "finance_transaction_templates"
+  """
+  insert_finance_transaction_templates_one(
+    """the row to be inserted"""
+    object: finance_transaction_templates_insert_input!
+    """upsert condition"""
+    on_conflict: finance_transaction_templates_on_conflict
+  ): finance_transaction_templates
   """
   insert data into the table: "finance_transactions"
   """
@@ -4089,6 +4487,24 @@ type mutation_root {
     on_conflict: tasks_on_conflict
   ): tasks
   """
+  insert data into the table: "telegram_credentials"
+  """
+  insert_telegram_credentials(
+    """the rows to be inserted"""
+    objects: [telegram_credentials_insert_input!]!
+    """upsert condition"""
+    on_conflict: telegram_credentials_on_conflict
+  ): telegram_credentials_mutation_response
+  """
+  insert a single row into the table: "telegram_credentials"
+  """
+  insert_telegram_credentials_one(
+    """the row to be inserted"""
+    object: telegram_credentials_insert_input!
+    """upsert condition"""
+    on_conflict: telegram_credentials_on_conflict
+  ): telegram_credentials
+  """
   insert data into the table: "test"
   """
   insert_test(
@@ -4215,13 +4631,25 @@ type mutation_root {
     on_conflict: videos_on_conflict
   ): videos
   """
+  Paginated fetch of video messages from a Telegram channel, scoped to the calling session user's own MTProto session.
+  """
+  listTelegramChannelVideos(input: ListTelegramChannelVideosInput!): ListTelegramChannelVideosResponse!
+  """
   Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side.
   """
   repairFmp4(input: RepairFmp4Input!): RepairFmp4Response!
   """
+  Start Telegram MTProto login for the calling user; loads their stored phone/api credentials, calls sendCode, and Telegram delivers a code to their own device.
+  """
+  requestTelegramLoginCode: RequestTelegramLoginCodeResponse!
+  """
   Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
   """
   setVideoThumbnailAtTime(input: SetVideoThumbnailAtTimeInput!): SetVideoThumbnailAtTimeResponse!
+  """
+  Complete Telegram MTProto login for the calling user; calls signIn with the code and persists the resulting session string to their own credentials row.
+  """
+  submitTelegramLoginCode(input: SubmitTelegramLoginCodeInput!): SubmitTelegramLoginCodeResponse!
   """
   update data of the table: "audio_tags"
   """
@@ -4426,6 +4854,34 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [feature_flag_updates!]!
   ): [feature_flag_mutation_response]
+  """
+  update data of the table: "finance_transaction_templates"
+  """
+  update_finance_transaction_templates(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transaction_templates_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transaction_templates_set_input
+    """filter the rows which have to be updated"""
+    where: finance_transaction_templates_bool_exp!
+  ): finance_transaction_templates_mutation_response
+  """
+  update single row of the table: "finance_transaction_templates"
+  """
+  update_finance_transaction_templates_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: finance_transaction_templates_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: finance_transaction_templates_set_input
+    pk_columns: finance_transaction_templates_pk_columns_input!
+  ): finance_transaction_templates
+  """
+  update multiples rows of table: "finance_transaction_templates"
+  """
+  update_finance_transaction_templates_many(
+    """updates to execute, in order"""
+    updates: [finance_transaction_templates_updates!]!
+  ): [finance_transaction_templates_mutation_response]
   """
   update data of the table: "finance_transactions"
   """
@@ -4890,6 +5346,30 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [tasks_updates!]!
   ): [tasks_mutation_response]
+  """
+  update data of the table: "telegram_credentials"
+  """
+  update_telegram_credentials(
+    """sets the columns of the filtered rows to the given values"""
+    _set: telegram_credentials_set_input
+    """filter the rows which have to be updated"""
+    where: telegram_credentials_bool_exp!
+  ): telegram_credentials_mutation_response
+  """
+  update single row of the table: "telegram_credentials"
+  """
+  update_telegram_credentials_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: telegram_credentials_set_input
+    pk_columns: telegram_credentials_pk_columns_input!
+  ): telegram_credentials
+  """
+  update multiples rows of table: "telegram_credentials"
+  """
+  update_telegram_credentials_many(
+    """updates to execute, in order"""
+    updates: [telegram_credentials_updates!]!
+  ): [telegram_credentials_mutation_response]
   """
   update data of the table: "test"
   """
@@ -7398,6 +7878,40 @@ type query_root {
   ): feature_flag_aggregate!
   """fetch data from the table: "feature_flag" using primary key columns"""
   feature_flag_by_pk(id: uuid!): feature_flag
+  """
+  fetch data from the table: "finance_transaction_templates"
+  """
+  finance_transaction_templates(
+    """distinct select on columns"""
+    distinct_on: [finance_transaction_templates_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transaction_templates_order_by!]
+    """filter the rows returned"""
+    where: finance_transaction_templates_bool_exp
+  ): [finance_transaction_templates!]!
+  """
+  fetch aggregated fields from the table: "finance_transaction_templates"
+  """
+  finance_transaction_templates_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transaction_templates_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transaction_templates_order_by!]
+    """filter the rows returned"""
+    where: finance_transaction_templates_bool_exp
+  ): finance_transaction_templates_aggregate!
+  """
+  fetch data from the table: "finance_transaction_templates" using primary key columns
+  """
+  finance_transaction_templates_by_pk(id: uuid!): finance_transaction_templates
   """An array relationship"""
   finance_transactions(
     """distinct select on columns"""
@@ -7786,6 +8300,40 @@ type query_root {
   ): tasks_aggregate!
   """fetch data from the table: "tasks" using primary key columns"""
   tasks_by_pk(id: uuid!): tasks
+  """
+  fetch data from the table: "telegram_credentials"
+  """
+  telegram_credentials(
+    """distinct select on columns"""
+    distinct_on: [telegram_credentials_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [telegram_credentials_order_by!]
+    """filter the rows returned"""
+    where: telegram_credentials_bool_exp
+  ): [telegram_credentials!]!
+  """
+  fetch aggregated fields from the table: "telegram_credentials"
+  """
+  telegram_credentials_aggregate(
+    """distinct select on columns"""
+    distinct_on: [telegram_credentials_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [telegram_credentials_order_by!]
+    """filter the rows returned"""
+    where: telegram_credentials_bool_exp
+  ): telegram_credentials_aggregate!
+  """
+  fetch data from the table: "telegram_credentials" using primary key columns
+  """
+  telegram_credentials_by_pk(id: uuid!): telegram_credentials
   """
   fetch data from the table: "test"
   """
@@ -9309,6 +9857,51 @@ type subscription_root {
     """filter the rows returned"""
     where: feature_flag_bool_exp
   ): [feature_flag!]!
+  """
+  fetch data from the table: "finance_transaction_templates"
+  """
+  finance_transaction_templates(
+    """distinct select on columns"""
+    distinct_on: [finance_transaction_templates_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transaction_templates_order_by!]
+    """filter the rows returned"""
+    where: finance_transaction_templates_bool_exp
+  ): [finance_transaction_templates!]!
+  """
+  fetch aggregated fields from the table: "finance_transaction_templates"
+  """
+  finance_transaction_templates_aggregate(
+    """distinct select on columns"""
+    distinct_on: [finance_transaction_templates_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [finance_transaction_templates_order_by!]
+    """filter the rows returned"""
+    where: finance_transaction_templates_bool_exp
+  ): finance_transaction_templates_aggregate!
+  """
+  fetch data from the table: "finance_transaction_templates" using primary key columns
+  """
+  finance_transaction_templates_by_pk(id: uuid!): finance_transaction_templates
+  """
+  fetch data from the table in a streaming manner: "finance_transaction_templates"
+  """
+  finance_transaction_templates_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [finance_transaction_templates_stream_cursor_input]!
+    """filter the rows returned"""
+    where: finance_transaction_templates_bool_exp
+  ): [finance_transaction_templates!]!
   """An array relationship"""
   finance_transactions(
     """distinct select on columns"""
@@ -9840,6 +10433,51 @@ type subscription_root {
     """filter the rows returned"""
     where: tasks_bool_exp
   ): [tasks!]!
+  """
+  fetch data from the table: "telegram_credentials"
+  """
+  telegram_credentials(
+    """distinct select on columns"""
+    distinct_on: [telegram_credentials_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [telegram_credentials_order_by!]
+    """filter the rows returned"""
+    where: telegram_credentials_bool_exp
+  ): [telegram_credentials!]!
+  """
+  fetch aggregated fields from the table: "telegram_credentials"
+  """
+  telegram_credentials_aggregate(
+    """distinct select on columns"""
+    distinct_on: [telegram_credentials_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [telegram_credentials_order_by!]
+    """filter the rows returned"""
+    where: telegram_credentials_bool_exp
+  ): telegram_credentials_aggregate!
+  """
+  fetch data from the table: "telegram_credentials" using primary key columns
+  """
+  telegram_credentials_by_pk(id: uuid!): telegram_credentials
+  """
+  fetch data from the table in a streaming manner: "telegram_credentials"
+  """
+  telegram_credentials_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [telegram_credentials_stream_cursor_input]!
+    """filter the rows returned"""
+    where: telegram_credentials_bool_exp
+  ): [telegram_credentials!]!
   """
   fetch data from the table: "test"
   """
@@ -11117,6 +11755,258 @@ input tasks_updates {
   _set: tasks_set_input
   """filter the rows which have to be updated"""
   where: tasks_bool_exp!
+}
+
+"""
+Per-user Telegram MTProto credentials and session. Admin-secret mediated only (no role:user permissions) - the extension never reads this directly, only through the telegram-actions Hono handlers. session_string, pending_session_string and pending_phone_code_hash are credential-equivalent secrets. session_string only ever holds an AUTHORIZED session; an in-progress login is held in pending_session_string so a re-login never overwrites a working session.
+"""
+type telegram_credentials {
+  apiHash: String!
+  apiId: String!
+  createdAt: timestamptz!
+  id: uuid!
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String!
+  sessionString: String
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "telegram_credentials"
+"""
+type telegram_credentials_aggregate {
+  aggregate: telegram_credentials_aggregate_fields
+  nodes: [telegram_credentials!]!
+}
+
+"""
+aggregate fields of "telegram_credentials"
+"""
+type telegram_credentials_aggregate_fields {
+  count(columns: [telegram_credentials_select_column!], distinct: Boolean): Int!
+  max: telegram_credentials_max_fields
+  min: telegram_credentials_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "telegram_credentials". All fields are combined with a logical 'AND'.
+"""
+input telegram_credentials_bool_exp {
+  _and: [telegram_credentials_bool_exp!]
+  _not: telegram_credentials_bool_exp
+  _or: [telegram_credentials_bool_exp!]
+  apiHash: String_comparison_exp
+  apiId: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  pendingPhoneCodeHash: String_comparison_exp
+  pending_session_string: String_comparison_exp
+  phoneNumber: String_comparison_exp
+  sessionString: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "telegram_credentials"
+"""
+enum telegram_credentials_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  telegram_credentials_pkey
+  """
+  unique or primary key constraint on columns "user_id"
+  """
+  telegram_credentials_user_id_key
+}
+
+"""
+input type for inserting data into table "telegram_credentials"
+"""
+input telegram_credentials_insert_input {
+  apiHash: String
+  apiId: String
+  createdAt: timestamptz
+  id: uuid
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String
+  sessionString: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type telegram_credentials_max_fields {
+  apiHash: String
+  apiId: String
+  createdAt: timestamptz
+  id: uuid
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String
+  sessionString: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""aggregate min on columns"""
+type telegram_credentials_min_fields {
+  apiHash: String
+  apiId: String
+  createdAt: timestamptz
+  id: uuid
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String
+  sessionString: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+response of any mutation on the table "telegram_credentials"
+"""
+type telegram_credentials_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [telegram_credentials!]!
+}
+
+"""
+on_conflict condition type for table "telegram_credentials"
+"""
+input telegram_credentials_on_conflict {
+  constraint: telegram_credentials_constraint!
+  update_columns: [telegram_credentials_update_column!]! = []
+  where: telegram_credentials_bool_exp
+}
+
+"""Ordering options when selecting data from "telegram_credentials"."""
+input telegram_credentials_order_by {
+  apiHash: order_by
+  apiId: order_by
+  createdAt: order_by
+  id: order_by
+  pendingPhoneCodeHash: order_by
+  pending_session_string: order_by
+  phoneNumber: order_by
+  sessionString: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: telegram_credentials"""
+input telegram_credentials_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "telegram_credentials"
+"""
+enum telegram_credentials_select_column {
+  """column name"""
+  apiHash
+  """column name"""
+  apiId
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  pendingPhoneCodeHash
+  """column name"""
+  pending_session_string
+  """column name"""
+  phoneNumber
+  """column name"""
+  sessionString
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "telegram_credentials"
+"""
+input telegram_credentials_set_input {
+  apiHash: String
+  apiId: String
+  createdAt: timestamptz
+  id: uuid
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String
+  sessionString: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+Streaming cursor of the table "telegram_credentials"
+"""
+input telegram_credentials_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: telegram_credentials_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input telegram_credentials_stream_cursor_value_input {
+  apiHash: String
+  apiId: String
+  createdAt: timestamptz
+  id: uuid
+  pendingPhoneCodeHash: String
+  pending_session_string: String
+  phoneNumber: String
+  sessionString: String
+  updatedAt: timestamptz
+  user_id: uuid
+}
+
+"""
+update columns of table "telegram_credentials"
+"""
+enum telegram_credentials_update_column {
+  """column name"""
+  apiHash
+  """column name"""
+  apiId
+  """column name"""
+  createdAt
+  """column name"""
+  id
+  """column name"""
+  pendingPhoneCodeHash
+  """column name"""
+  pending_session_string
+  """column name"""
+  phoneNumber
+  """column name"""
+  sessionString
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+}
+
+input telegram_credentials_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: telegram_credentials_set_input
+  """filter the rows which have to be updated"""
+  where: telegram_credentials_bool_exp!
 }
 
 """

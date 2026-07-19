@@ -98,6 +98,23 @@ export type GetDeviceTokenResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type ImportTelegramArchiveInput = {
+  channelId: Scalars['String']['input'];
+  messageIds: Array<Scalars['String']['input']>;
+};
+
+export type ImportTelegramArchiveOutput = {
+  __typename?: 'ImportTelegramArchiveOutput';
+  taskId: Scalars['String']['output'];
+};
+
+export type ImportTelegramArchiveResponse = {
+  __typename?: 'ImportTelegramArchiveResponse';
+  dataObject?: Maybe<ImportTelegramArchiveOutput>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Int']['input']>;
@@ -109,6 +126,24 @@ export type Int_Comparison_Exp = {
   _lte?: InputMaybe<Scalars['Int']['input']>;
   _neq?: InputMaybe<Scalars['Int']['input']>;
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
+};
+
+export type ListTelegramChannelVideosInput = {
+  channelId: Scalars['String']['input'];
+  cursor?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ListTelegramChannelVideosOutput = {
+  __typename?: 'ListTelegramChannelVideosOutput';
+  nextCursor?: Maybe<Scalars['String']['output']>;
+  videos: Array<TelegramVideoMessage>;
+};
+
+export type ListTelegramChannelVideosResponse = {
+  __typename?: 'ListTelegramChannelVideosResponse';
+  dataObject?: Maybe<ListTelegramChannelVideosOutput>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type RepairFmp4Input = {
@@ -123,6 +158,12 @@ export type RepairFmp4Output = {
 export type RepairFmp4Response = {
   __typename?: 'RepairFmp4Response';
   dataObject?: Maybe<RepairFmp4Output>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type RequestTelegramLoginCodeResponse = {
+  __typename?: 'RequestTelegramLoginCodeResponse';
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
@@ -197,6 +238,27 @@ export type String_Comparison_Exp = {
   _regex?: InputMaybe<Scalars['String']['input']>;
   /** does the column match the given SQL regular expression */
   _similar?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SubmitTelegramLoginCodeInput = {
+  code: Scalars['String']['input'];
+};
+
+export type SubmitTelegramLoginCodeResponse = {
+  __typename?: 'SubmitTelegramLoginCodeResponse';
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type TelegramVideoMessage = {
+  __typename?: 'TelegramVideoMessage';
+  caption?: Maybe<Scalars['String']['output']>;
+  date: Scalars['String']['output'];
+  durationSeconds?: Maybe<Scalars['Float']['output']>;
+  filename?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  sizeBytes?: Maybe<Scalars['Float']['output']>;
+  thumbnailDataUri?: Maybe<Scalars['String']['output']>;
 };
 
 /** Junction table between audios and tags, many to many relationship */
@@ -2362,6 +2424,298 @@ export type Feature_Flag_Updates = {
   where: Feature_Flag_Bool_Exp;
 };
 
+/** Reusable quick-fill templates for personal finance transactions */
+export type Finance_Transaction_Templates = {
+  __typename?: 'finance_transaction_templates';
+  amount: Scalars['numeric']['output'];
+  /** Should be either must, nice or waste */
+  category: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  name: Scalars['String']['output'];
+  note?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Aggregate = {
+  __typename?: 'finance_transaction_templates_aggregate';
+  aggregate?: Maybe<Finance_Transaction_Templates_Aggregate_Fields>;
+  nodes: Array<Finance_Transaction_Templates>;
+};
+
+/** aggregate fields of "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Aggregate_Fields = {
+  __typename?: 'finance_transaction_templates_aggregate_fields';
+  avg?: Maybe<Finance_Transaction_Templates_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Finance_Transaction_Templates_Max_Fields>;
+  min?: Maybe<Finance_Transaction_Templates_Min_Fields>;
+  stddev?: Maybe<Finance_Transaction_Templates_Stddev_Fields>;
+  stddev_pop?: Maybe<Finance_Transaction_Templates_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Finance_Transaction_Templates_Stddev_Samp_Fields>;
+  sum?: Maybe<Finance_Transaction_Templates_Sum_Fields>;
+  var_pop?: Maybe<Finance_Transaction_Templates_Var_Pop_Fields>;
+  var_samp?: Maybe<Finance_Transaction_Templates_Var_Samp_Fields>;
+  variance?: Maybe<Finance_Transaction_Templates_Variance_Fields>;
+};
+
+
+/** aggregate fields of "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Finance_Transaction_Templates_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Finance_Transaction_Templates_Avg_Fields = {
+  __typename?: 'finance_transaction_templates_avg_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "finance_transaction_templates". All fields are combined with a logical 'AND'. */
+export type Finance_Transaction_Templates_Bool_Exp = {
+  _and?: InputMaybe<Array<Finance_Transaction_Templates_Bool_Exp>>;
+  _not?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+  _or?: InputMaybe<Array<Finance_Transaction_Templates_Bool_Exp>>;
+  amount?: InputMaybe<Numeric_Comparison_Exp>;
+  category?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  note?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "finance_transaction_templates" */
+export enum Finance_Transaction_Templates_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  FinanceTransactionTemplatesPkey = 'finance_transaction_templates_pkey'
+}
+
+/** input type for incrementing numeric columns in table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Inc_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** input type for inserting data into table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Insert_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Finance_Transaction_Templates_Max_Fields = {
+  __typename?: 'finance_transaction_templates_max_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  /** Should be either must, nice or waste */
+  category?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  note?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type Finance_Transaction_Templates_Min_Fields = {
+  __typename?: 'finance_transaction_templates_min_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  /** Should be either must, nice or waste */
+  category?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  note?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** response of any mutation on the table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Mutation_Response = {
+  __typename?: 'finance_transaction_templates_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Finance_Transaction_Templates>;
+};
+
+/** on_conflict condition type for table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_On_Conflict = {
+  constraint: Finance_Transaction_Templates_Constraint;
+  update_columns?: Array<Finance_Transaction_Templates_Update_Column>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "finance_transaction_templates". */
+export type Finance_Transaction_Templates_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  category?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: finance_transaction_templates */
+export type Finance_Transaction_Templates_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "finance_transaction_templates" */
+export enum Finance_Transaction_Templates_Select_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  Category = 'category',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** input type for updating data in table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Set_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Finance_Transaction_Templates_Stddev_Fields = {
+  __typename?: 'finance_transaction_templates_stddev_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Finance_Transaction_Templates_Stddev_Pop_Fields = {
+  __typename?: 'finance_transaction_templates_stddev_pop_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Finance_Transaction_Templates_Stddev_Samp_Fields = {
+  __typename?: 'finance_transaction_templates_stddev_samp_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "finance_transaction_templates" */
+export type Finance_Transaction_Templates_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Finance_Transaction_Templates_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Finance_Transaction_Templates_Stream_Cursor_Value_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  /** Should be either must, nice or waste */
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Finance_Transaction_Templates_Sum_Fields = {
+  __typename?: 'finance_transaction_templates_sum_fields';
+  amount?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** update columns of table "finance_transaction_templates" */
+export enum Finance_Transaction_Templates_Update_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  Category = 'category',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+export type Finance_Transaction_Templates_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Finance_Transaction_Templates_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Finance_Transaction_Templates_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Finance_Transaction_Templates_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Finance_Transaction_Templates_Var_Pop_Fields = {
+  __typename?: 'finance_transaction_templates_var_pop_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Finance_Transaction_Templates_Var_Samp_Fields = {
+  __typename?: 'finance_transaction_templates_var_samp_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Finance_Transaction_Templates_Variance_Fields = {
+  __typename?: 'finance_transaction_templates_variance_fields';
+  amount?: Maybe<Scalars['Float']['output']>;
+};
+
 /** Transactions for personal finance management */
 export type Finance_Transactions = {
   __typename?: 'finance_transactions';
@@ -3180,6 +3534,10 @@ export type Mutation_Root = {
   delete_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** delete single row from the table: "feature_flag" */
   delete_feature_flag_by_pk?: Maybe<Feature_Flag>;
+  /** delete data from the table: "finance_transaction_templates" */
+  delete_finance_transaction_templates?: Maybe<Finance_Transaction_Templates_Mutation_Response>;
+  /** delete single row from the table: "finance_transaction_templates" */
+  delete_finance_transaction_templates_by_pk?: Maybe<Finance_Transaction_Templates>;
   /** delete data from the table: "finance_transactions" */
   delete_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
   /** delete single row from the table: "finance_transactions" */
@@ -3232,6 +3590,10 @@ export type Mutation_Root = {
   delete_tasks?: Maybe<Tasks_Mutation_Response>;
   /** delete single row from the table: "tasks" */
   delete_tasks_by_pk?: Maybe<Tasks>;
+  /** delete data from the table: "telegram_credentials" */
+  delete_telegram_credentials?: Maybe<Telegram_Credentials_Mutation_Response>;
+  /** delete single row from the table: "telegram_credentials" */
+  delete_telegram_credentials_by_pk?: Maybe<Telegram_Credentials>;
   /** delete data from the table: "test" */
   delete_test?: Maybe<Test_Mutation_Response>;
   /** delete single row from the table: "test" */
@@ -3262,6 +3624,8 @@ export type Mutation_Root = {
   delete_videos_by_pk?: Maybe<Videos>;
   /** Extension polls for the device authorization token. Returns the access token once the user has authorized. */
   getDeviceToken: GetDeviceTokenResponse;
+  /** Trigger archival of selected Telegram channel video messages to GCS; work happens asynchronously via Cloud Task, returns a taskId. */
+  importTelegramArchive: ImportTelegramArchiveResponse;
   /** insert data into the table: "audio_tags" */
   insert_audio_tags?: Maybe<Audio_Tags_Mutation_Response>;
   /** insert a single row into the table: "audio_tags" */
@@ -3290,6 +3654,10 @@ export type Mutation_Root = {
   insert_feature_flag?: Maybe<Feature_Flag_Mutation_Response>;
   /** insert a single row into the table: "feature_flag" */
   insert_feature_flag_one?: Maybe<Feature_Flag>;
+  /** insert data into the table: "finance_transaction_templates" */
+  insert_finance_transaction_templates?: Maybe<Finance_Transaction_Templates_Mutation_Response>;
+  /** insert a single row into the table: "finance_transaction_templates" */
+  insert_finance_transaction_templates_one?: Maybe<Finance_Transaction_Templates>;
   /** insert data into the table: "finance_transactions" */
   insert_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
   /** insert a single row into the table: "finance_transactions" */
@@ -3342,6 +3710,10 @@ export type Mutation_Root = {
   insert_tasks?: Maybe<Tasks_Mutation_Response>;
   /** insert a single row into the table: "tasks" */
   insert_tasks_one?: Maybe<Tasks>;
+  /** insert data into the table: "telegram_credentials" */
+  insert_telegram_credentials?: Maybe<Telegram_Credentials_Mutation_Response>;
+  /** insert a single row into the table: "telegram_credentials" */
+  insert_telegram_credentials_one?: Maybe<Telegram_Credentials>;
   /** insert data into the table: "test" */
   insert_test?: Maybe<Test_Mutation_Response>;
   /** insert a single row into the table: "test" */
@@ -3370,10 +3742,16 @@ export type Mutation_Root = {
   insert_videos?: Maybe<Videos_Mutation_Response>;
   /** insert a single row into the table: "videos" */
   insert_videos_one?: Maybe<Videos>;
+  /** Paginated fetch of video messages from a Telegram channel, scoped to the calling session user's own MTProto session. */
+  listTelegramChannelVideos: ListTelegramChannelVideosResponse;
   /** Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side. */
   repairFmp4: RepairFmp4Response;
+  /** Start Telegram MTProto login for the calling user; loads their stored phone/api credentials, calls sendCode, and Telegram delivers a code to their own device. */
+  requestTelegramLoginCode: RequestTelegramLoginCodeResponse;
   /** Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user. */
   setVideoThumbnailAtTime: SetVideoThumbnailAtTimeResponse;
+  /** Complete Telegram MTProto login for the calling user; calls signIn with the code and persists the resulting session string to their own credentials row. */
+  submitTelegramLoginCode: SubmitTelegramLoginCodeResponse;
   /** update data of the table: "audio_tags" */
   update_audio_tags?: Maybe<Audio_Tags_Mutation_Response>;
   /** update single row of the table: "audio_tags" */
@@ -3416,6 +3794,12 @@ export type Mutation_Root = {
   update_feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** update multiples rows of table: "feature_flag" */
   update_feature_flag_many?: Maybe<Array<Maybe<Feature_Flag_Mutation_Response>>>;
+  /** update data of the table: "finance_transaction_templates" */
+  update_finance_transaction_templates?: Maybe<Finance_Transaction_Templates_Mutation_Response>;
+  /** update single row of the table: "finance_transaction_templates" */
+  update_finance_transaction_templates_by_pk?: Maybe<Finance_Transaction_Templates>;
+  /** update multiples rows of table: "finance_transaction_templates" */
+  update_finance_transaction_templates_many?: Maybe<Array<Maybe<Finance_Transaction_Templates_Mutation_Response>>>;
   /** update data of the table: "finance_transactions" */
   update_finance_transactions?: Maybe<Finance_Transactions_Mutation_Response>;
   /** update single row of the table: "finance_transactions" */
@@ -3494,6 +3878,12 @@ export type Mutation_Root = {
   update_tasks_by_pk?: Maybe<Tasks>;
   /** update multiples rows of table: "tasks" */
   update_tasks_many?: Maybe<Array<Maybe<Tasks_Mutation_Response>>>;
+  /** update data of the table: "telegram_credentials" */
+  update_telegram_credentials?: Maybe<Telegram_Credentials_Mutation_Response>;
+  /** update single row of the table: "telegram_credentials" */
+  update_telegram_credentials_by_pk?: Maybe<Telegram_Credentials>;
+  /** update multiples rows of table: "telegram_credentials" */
+  update_telegram_credentials_many?: Maybe<Array<Maybe<Telegram_Credentials_Mutation_Response>>>;
   /** update data of the table: "test" */
   update_test?: Maybe<Test_Mutation_Response>;
   /** update single row of the table: "test" */
@@ -3638,6 +4028,18 @@ export type Mutation_RootDelete_Feature_FlagArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Feature_Flag_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Finance_Transaction_TemplatesArgs = {
+  where: Finance_Transaction_Templates_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Finance_Transaction_Templates_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -3801,6 +4203,18 @@ export type Mutation_RootDelete_Tasks_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Telegram_CredentialsArgs = {
+  where: Telegram_Credentials_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Telegram_Credentials_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_TestArgs = {
   where: Test_Bool_Exp;
 };
@@ -3888,6 +4302,12 @@ export type Mutation_RootDelete_Videos_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootGetDeviceTokenArgs = {
   input: GetDeviceTokenInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootImportTelegramArchiveArgs = {
+  input: ImportTelegramArchiveInput;
 };
 
 
@@ -3986,6 +4406,20 @@ export type Mutation_RootInsert_Feature_FlagArgs = {
 export type Mutation_RootInsert_Feature_Flag_OneArgs = {
   object: Feature_Flag_Insert_Input;
   on_conflict?: InputMaybe<Feature_Flag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Finance_Transaction_TemplatesArgs = {
+  objects: Array<Finance_Transaction_Templates_Insert_Input>;
+  on_conflict?: InputMaybe<Finance_Transaction_Templates_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Finance_Transaction_Templates_OneArgs = {
+  object: Finance_Transaction_Templates_Insert_Input;
+  on_conflict?: InputMaybe<Finance_Transaction_Templates_On_Conflict>;
 };
 
 
@@ -4172,6 +4606,20 @@ export type Mutation_RootInsert_Tasks_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Telegram_CredentialsArgs = {
+  objects: Array<Telegram_Credentials_Insert_Input>;
+  on_conflict?: InputMaybe<Telegram_Credentials_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Telegram_Credentials_OneArgs = {
+  object: Telegram_Credentials_Insert_Input;
+  on_conflict?: InputMaybe<Telegram_Credentials_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_TestArgs = {
   objects: Array<Test_Insert_Input>;
   on_conflict?: InputMaybe<Test_On_Conflict>;
@@ -4270,6 +4718,12 @@ export type Mutation_RootInsert_Videos_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootListTelegramChannelVideosArgs = {
+  input: ListTelegramChannelVideosInput;
+};
+
+
+/** mutation root */
 export type Mutation_RootRepairFmp4Args = {
   input: RepairFmp4Input;
 };
@@ -4278,6 +4732,12 @@ export type Mutation_RootRepairFmp4Args = {
 /** mutation root */
 export type Mutation_RootSetVideoThumbnailAtTimeArgs = {
   input: SetVideoThumbnailAtTimeInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootSubmitTelegramLoginCodeArgs = {
+  input: SubmitTelegramLoginCodeInput;
 };
 
 
@@ -4430,6 +4890,28 @@ export type Mutation_RootUpdate_Feature_Flag_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Feature_Flag_ManyArgs = {
   updates: Array<Feature_Flag_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Finance_Transaction_TemplatesArgs = {
+  _inc?: InputMaybe<Finance_Transaction_Templates_Inc_Input>;
+  _set?: InputMaybe<Finance_Transaction_Templates_Set_Input>;
+  where: Finance_Transaction_Templates_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Finance_Transaction_Templates_By_PkArgs = {
+  _inc?: InputMaybe<Finance_Transaction_Templates_Inc_Input>;
+  _set?: InputMaybe<Finance_Transaction_Templates_Set_Input>;
+  pk_columns: Finance_Transaction_Templates_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Finance_Transaction_Templates_ManyArgs = {
+  updates: Array<Finance_Transaction_Templates_Updates>;
 };
 
 
@@ -4742,6 +5224,26 @@ export type Mutation_RootUpdate_Tasks_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Tasks_ManyArgs = {
   updates: Array<Tasks_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Telegram_CredentialsArgs = {
+  _set?: InputMaybe<Telegram_Credentials_Set_Input>;
+  where: Telegram_Credentials_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Telegram_Credentials_By_PkArgs = {
+  _set?: InputMaybe<Telegram_Credentials_Set_Input>;
+  pk_columns: Telegram_Credentials_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Telegram_Credentials_ManyArgs = {
+  updates: Array<Telegram_Credentials_Updates>;
 };
 
 
@@ -6839,6 +7341,12 @@ export type Query_Root = {
   feature_flag_aggregate: Feature_Flag_Aggregate;
   /** fetch data from the table: "feature_flag" using primary key columns */
   feature_flag_by_pk?: Maybe<Feature_Flag>;
+  /** fetch data from the table: "finance_transaction_templates" */
+  finance_transaction_templates: Array<Finance_Transaction_Templates>;
+  /** fetch aggregated fields from the table: "finance_transaction_templates" */
+  finance_transaction_templates_aggregate: Finance_Transaction_Templates_Aggregate;
+  /** fetch data from the table: "finance_transaction_templates" using primary key columns */
+  finance_transaction_templates_by_pk?: Maybe<Finance_Transaction_Templates>;
   /** An array relationship */
   finance_transactions: Array<Finance_Transactions>;
   /** An aggregate relationship */
@@ -6917,6 +7425,12 @@ export type Query_Root = {
   tasks_aggregate: Tasks_Aggregate;
   /** fetch data from the table: "tasks" using primary key columns */
   tasks_by_pk?: Maybe<Tasks>;
+  /** fetch data from the table: "telegram_credentials" */
+  telegram_credentials: Array<Telegram_Credentials>;
+  /** fetch aggregated fields from the table: "telegram_credentials" */
+  telegram_credentials_aggregate: Telegram_Credentials_Aggregate;
+  /** fetch data from the table: "telegram_credentials" using primary key columns */
+  telegram_credentials_by_pk?: Maybe<Telegram_Credentials>;
   /** fetch data from the table: "test" */
   test: Array<Test>;
   /** fetch aggregated fields from the table: "test" */
@@ -7120,6 +7634,29 @@ export type Query_RootFeature_Flag_AggregateArgs = {
 
 
 export type Query_RootFeature_Flag_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootFinance_Transaction_TemplatesArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transaction_Templates_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transaction_Templates_Order_By>>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+};
+
+
+export type Query_RootFinance_Transaction_Templates_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transaction_Templates_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transaction_Templates_Order_By>>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+};
+
+
+export type Query_RootFinance_Transaction_Templates_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -7421,6 +7958,29 @@ export type Query_RootTasks_AggregateArgs = {
 
 
 export type Query_RootTasks_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootTelegram_CredentialsArgs = {
+  distinct_on?: InputMaybe<Array<Telegram_Credentials_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Telegram_Credentials_Order_By>>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+};
+
+
+export type Query_RootTelegram_Credentials_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Telegram_Credentials_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Telegram_Credentials_Order_By>>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+};
+
+
+export type Query_RootTelegram_Credentials_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -8590,6 +9150,14 @@ export type Subscription_Root = {
   feature_flag_by_pk?: Maybe<Feature_Flag>;
   /** fetch data from the table in a streaming manner: "feature_flag" */
   feature_flag_stream: Array<Feature_Flag>;
+  /** fetch data from the table: "finance_transaction_templates" */
+  finance_transaction_templates: Array<Finance_Transaction_Templates>;
+  /** fetch aggregated fields from the table: "finance_transaction_templates" */
+  finance_transaction_templates_aggregate: Finance_Transaction_Templates_Aggregate;
+  /** fetch data from the table: "finance_transaction_templates" using primary key columns */
+  finance_transaction_templates_by_pk?: Maybe<Finance_Transaction_Templates>;
+  /** fetch data from the table in a streaming manner: "finance_transaction_templates" */
+  finance_transaction_templates_stream: Array<Finance_Transaction_Templates>;
   /** An array relationship */
   finance_transactions: Array<Finance_Transactions>;
   /** An aggregate relationship */
@@ -8694,6 +9262,14 @@ export type Subscription_Root = {
   tasks_by_pk?: Maybe<Tasks>;
   /** fetch data from the table in a streaming manner: "tasks" */
   tasks_stream: Array<Tasks>;
+  /** fetch data from the table: "telegram_credentials" */
+  telegram_credentials: Array<Telegram_Credentials>;
+  /** fetch aggregated fields from the table: "telegram_credentials" */
+  telegram_credentials_aggregate: Telegram_Credentials_Aggregate;
+  /** fetch data from the table: "telegram_credentials" using primary key columns */
+  telegram_credentials_by_pk?: Maybe<Telegram_Credentials>;
+  /** fetch data from the table in a streaming manner: "telegram_credentials" */
+  telegram_credentials_stream: Array<Telegram_Credentials>;
   /** fetch data from the table: "test" */
   test: Array<Test>;
   /** fetch aggregated fields from the table: "test" */
@@ -8961,6 +9537,36 @@ export type Subscription_RootFeature_Flag_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Feature_Flag_Stream_Cursor_Input>>;
   where?: InputMaybe<Feature_Flag_Bool_Exp>;
+};
+
+
+export type Subscription_RootFinance_Transaction_TemplatesArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transaction_Templates_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transaction_Templates_Order_By>>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+};
+
+
+export type Subscription_RootFinance_Transaction_Templates_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Finance_Transaction_Templates_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Finance_Transaction_Templates_Order_By>>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
+};
+
+
+export type Subscription_RootFinance_Transaction_Templates_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootFinance_Transaction_Templates_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Finance_Transaction_Templates_Stream_Cursor_Input>>;
+  where?: InputMaybe<Finance_Transaction_Templates_Bool_Exp>;
 };
 
 
@@ -9353,6 +9959,36 @@ export type Subscription_RootTasks_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Tasks_Stream_Cursor_Input>>;
   where?: InputMaybe<Tasks_Bool_Exp>;
+};
+
+
+export type Subscription_RootTelegram_CredentialsArgs = {
+  distinct_on?: InputMaybe<Array<Telegram_Credentials_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Telegram_Credentials_Order_By>>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+};
+
+
+export type Subscription_RootTelegram_Credentials_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Telegram_Credentials_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Telegram_Credentials_Order_By>>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+};
+
+
+export type Subscription_RootTelegram_Credentials_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootTelegram_Credentials_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Telegram_Credentials_Stream_Cursor_Input>>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
 };
 
 
@@ -10488,6 +11124,243 @@ export type Tasks_Updates = {
   _set?: InputMaybe<Tasks_Set_Input>;
   /** filter the rows which have to be updated */
   where: Tasks_Bool_Exp;
+};
+
+/** Per-user Telegram MTProto credentials and session. Admin-secret mediated only (no role:user permissions) - the extension never reads this directly, only through the telegram-actions Hono handlers. session_string, pending_session_string and pending_phone_code_hash are credential-equivalent secrets. session_string only ever holds an AUTHORIZED session; an in-progress login is held in pending_session_string so a re-login never overwrites a working session. */
+export type Telegram_Credentials = {
+  __typename?: 'telegram_credentials';
+  apiHash: Scalars['String']['output'];
+  apiId: Scalars['String']['output'];
+  createdAt: Scalars['timestamptz']['output'];
+  id: Scalars['uuid']['output'];
+  pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
+  pending_session_string?: Maybe<Scalars['String']['output']>;
+  phoneNumber: Scalars['String']['output'];
+  sessionString?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "telegram_credentials" */
+export type Telegram_Credentials_Aggregate = {
+  __typename?: 'telegram_credentials_aggregate';
+  aggregate?: Maybe<Telegram_Credentials_Aggregate_Fields>;
+  nodes: Array<Telegram_Credentials>;
+};
+
+/** aggregate fields of "telegram_credentials" */
+export type Telegram_Credentials_Aggregate_Fields = {
+  __typename?: 'telegram_credentials_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Telegram_Credentials_Max_Fields>;
+  min?: Maybe<Telegram_Credentials_Min_Fields>;
+};
+
+
+/** aggregate fields of "telegram_credentials" */
+export type Telegram_Credentials_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Telegram_Credentials_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "telegram_credentials". All fields are combined with a logical 'AND'. */
+export type Telegram_Credentials_Bool_Exp = {
+  _and?: InputMaybe<Array<Telegram_Credentials_Bool_Exp>>;
+  _not?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+  _or?: InputMaybe<Array<Telegram_Credentials_Bool_Exp>>;
+  apiHash?: InputMaybe<String_Comparison_Exp>;
+  apiId?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  pendingPhoneCodeHash?: InputMaybe<String_Comparison_Exp>;
+  pending_session_string?: InputMaybe<String_Comparison_Exp>;
+  phoneNumber?: InputMaybe<String_Comparison_Exp>;
+  sessionString?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "telegram_credentials" */
+export enum Telegram_Credentials_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  TelegramCredentialsPkey = 'telegram_credentials_pkey',
+  /** unique or primary key constraint on columns "user_id" */
+  TelegramCredentialsUserIdKey = 'telegram_credentials_user_id_key'
+}
+
+/** input type for inserting data into table "telegram_credentials" */
+export type Telegram_Credentials_Insert_Input = {
+  apiHash?: InputMaybe<Scalars['String']['input']>;
+  apiId?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
+  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  sessionString?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Telegram_Credentials_Max_Fields = {
+  __typename?: 'telegram_credentials_max_fields';
+  apiHash?: Maybe<Scalars['String']['output']>;
+  apiId?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
+  pending_session_string?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  sessionString?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** aggregate min on columns */
+export type Telegram_Credentials_Min_Fields = {
+  __typename?: 'telegram_credentials_min_fields';
+  apiHash?: Maybe<Scalars['String']['output']>;
+  apiId?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
+  pending_session_string?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  sessionString?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** response of any mutation on the table "telegram_credentials" */
+export type Telegram_Credentials_Mutation_Response = {
+  __typename?: 'telegram_credentials_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Telegram_Credentials>;
+};
+
+/** on_conflict condition type for table "telegram_credentials" */
+export type Telegram_Credentials_On_Conflict = {
+  constraint: Telegram_Credentials_Constraint;
+  update_columns?: Array<Telegram_Credentials_Update_Column>;
+  where?: InputMaybe<Telegram_Credentials_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "telegram_credentials". */
+export type Telegram_Credentials_Order_By = {
+  apiHash?: InputMaybe<Order_By>;
+  apiId?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  pendingPhoneCodeHash?: InputMaybe<Order_By>;
+  pending_session_string?: InputMaybe<Order_By>;
+  phoneNumber?: InputMaybe<Order_By>;
+  sessionString?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: telegram_credentials */
+export type Telegram_Credentials_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "telegram_credentials" */
+export enum Telegram_Credentials_Select_Column {
+  /** column name */
+  ApiHash = 'apiHash',
+  /** column name */
+  ApiId = 'apiId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PendingPhoneCodeHash = 'pendingPhoneCodeHash',
+  /** column name */
+  PendingSessionString = 'pending_session_string',
+  /** column name */
+  PhoneNumber = 'phoneNumber',
+  /** column name */
+  SessionString = 'sessionString',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** input type for updating data in table "telegram_credentials" */
+export type Telegram_Credentials_Set_Input = {
+  apiHash?: InputMaybe<Scalars['String']['input']>;
+  apiId?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
+  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  sessionString?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "telegram_credentials" */
+export type Telegram_Credentials_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Telegram_Credentials_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Telegram_Credentials_Stream_Cursor_Value_Input = {
+  apiHash?: InputMaybe<Scalars['String']['input']>;
+  apiId?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
+  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  sessionString?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "telegram_credentials" */
+export enum Telegram_Credentials_Update_Column {
+  /** column name */
+  ApiHash = 'apiHash',
+  /** column name */
+  ApiId = 'apiId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PendingPhoneCodeHash = 'pendingPhoneCodeHash',
+  /** column name */
+  PendingSessionString = 'pending_session_string',
+  /** column name */
+  PhoneNumber = 'phoneNumber',
+  /** column name */
+  SessionString = 'sessionString',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id'
+}
+
+export type Telegram_Credentials_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Telegram_Credentials_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Telegram_Credentials_Bool_Exp;
 };
 
 /** This is a workaround when running CLI to dump from Hasura Cloud does not work, so I tried to use CLI run console to connect to db, create this table to make changes to generata migration files */
@@ -13254,7 +14127,7 @@ export type GetFinanceRecordsQueryVariables = Exact<{
 }>;
 
 
-export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, note?: string | null, month: number, year: number, category: string, createdAt: any, updatedAt: any }>, must_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, oldest_aggregate: Array<{ __typename?: 'finance_transactions', year: number, month: number }> };
+export type GetFinanceRecordsQuery = { __typename?: 'query_root', finance_transactions: Array<{ __typename?: 'finance_transactions', id: any, name: string, amount: any, note?: string | null, month: number, year: number, category: string, createdAt: any, updatedAt: any }>, must_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, nice_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, waste_aggregate: { __typename?: 'finance_transactions_aggregate', aggregate?: { __typename?: 'finance_transactions_aggregate_fields', count: number, sum?: { __typename?: 'finance_transactions_sum_fields', amount?: any | null } | null } | null }, oldest_aggregate: Array<{ __typename?: 'finance_transactions', year: number, month: number }>, finance_transaction_templates: Array<{ __typename?: 'finance_transaction_templates', id: any, title: string, name: string, note?: string | null, amount: any, category: string }> };
 
 export type GetMonthlyComparisonQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -13962,6 +14835,14 @@ export const GetFinanceRecordsDocument = new TypedDocumentString(`
   ) {
     year
     month
+  }
+  finance_transaction_templates(order_by: {createdAt: desc}) {
+    id
+    title
+    name
+    note
+    amount
+    category
   }
 }
     `) as unknown as TypedDocumentString<GetFinanceRecordsQuery, GetFinanceRecordsQueryVariables>;

@@ -53,6 +53,14 @@ const transactionsByPeriodQuery = graphql(/* GraphQL */ `
       year
       month
     }
+    finance_transaction_templates(order_by: { createdAt: desc }) {
+      id
+      title
+      name
+      note
+      amount
+      category
+    }
   }
 `);
 
@@ -69,6 +77,7 @@ const transform = (data: GetFinanceRecordsQuery) => {
     nice_aggregate,
     waste_aggregate,
     oldest_aggregate,
+    finance_transaction_templates,
   } = data;
   const mustAmount = (must_aggregate.aggregate?.sum?.amount ?? 0) as number;
   const niceAmount = (nice_aggregate.aggregate?.sum?.amount ?? 0) as number;
@@ -108,6 +117,7 @@ const transform = (data: GetFinanceRecordsQuery) => {
       month: oldest_aggregate[0]?.month || 0,
       year: oldest_aggregate[0]?.year || 0,
     },
+    templates: finance_transaction_templates,
   };
 };
 
