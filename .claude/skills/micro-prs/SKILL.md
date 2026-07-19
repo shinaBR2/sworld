@@ -35,9 +35,9 @@ sworld spans three physically separate repos (frontend `sworld`, `sworld-backend
 - **Constants.** Their own independent PR, first, when a later PR needs them.
 - **Foundation/scaffolding.** A foundation-only PR containing nothing but the scaffolding, cut from `main` — never `blockedBy` the feature that surfaced the need. Foundation comes first; the feature builds on it.
 
-## Sequencing — parallel by default, waves only when earned
+## Sequencing — break by layer, not by feature
 
-**Independent pieces of work are parallel by default.** Don't invent a dependency graph between two sub-tasks just because they belong to the same feature. Within one app or package, break by **layer, not by feature** — each layer below is an independent top-blocker that can be built in parallel; only wiring waits:
+Which pieces genuinely block which is `dependency-analysis`' call — take its graph as given. What this skill owns is the shape of the split: within one app or package, break by **layer, not by feature** — each layer below is an independent top-blocker that can be built in parallel; only wiring waits:
 
 1. Types/interfaces (no implementation) — independent, top blocker.
 2. Core logic (behind a flag if it's user-visible) — independent, pure, unit-tested.
@@ -45,8 +45,6 @@ sworld spans three physically separate repos (frontend `sworld`, `sworld-backend
 4. GraphQL query + codegen — independent, unless a schema change blocks it (see above).
 5. Wiring — **always last.** This assembles the pieces: endpoint → core logic, hook → query → UI.
 6. Remove old code — its own PR, after the replacement is live.
-
-Before writing any "blocked by", ask: does this genuinely need the other to exist first (it won't compile, or it consumes the other's output), or do they just touch related code? The second case is a file-ownership note to resolve at review, not a blocker.
 
 Common shapes:
 
@@ -63,7 +61,7 @@ Common shapes:
 - **151–300 lines** — needs justification: why can't this be smaller?
 - **300+ lines** — almost certainly more than one job. Re-check the scope.
 
-See `parallel-workflow` for the file-count view ("the 3-files limit is soft") and the good-PR criteria — same idea from the other axis.
+See `parallel-workflow` for the file-count view and the good-PR criteria — same idea from the other axis.
 
 ## Ship incomplete work safely with flags
 

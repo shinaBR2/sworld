@@ -154,7 +154,8 @@ EOF
 )"
 ```
 
-For drafts: add `--draft`.
+Never `--draft`. Work-in-progress is signalled by the `[WIP]` title prefix, so a
+GitHub draft PR would be a second, competing signal for the same thing.
 
 ## Updating an existing PR
 

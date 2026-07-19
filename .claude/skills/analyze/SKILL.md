@@ -68,14 +68,13 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 - **Deploy-order encoded as a real relation** — a "must ship before X" that lives only in prose is a trap
   under this workspace's merge-is-deploy model (a schema migration a consumer's query needs must be a
   `blocks` relation, not a sentence someone has to remember). See `parallel-workflow` and `writing-task-specs`.
-- **Waves earned** — each `blocked-by` is a genuine dependency, not invented ordering to make the plan feel
-  structured (`writing-task-specs`: flat by default, waves only when real).
+- **Waves earned** — re-run `dependency-analysis`' test over each `blocked-by`: it survives only if it is a
+  genuine dependency, not ordering invented to make the plan feel structured.
 
 ### 3. One-purpose / scope
 
-Apply `micro-prs`' one-purpose test to each sub-issue as it stands: can its `What` be said without an "and",
-and does its scope stay inside one repo/app? A sub-issue that has quietly grown a second purpose, or now
-spans two repos, is a split — flag it before it's built, not at review. `micro-prs` owns the test.
+Apply `micro-prs`' one-purpose test to each sub-issue as it stands. A sub-issue that has quietly grown a
+second purpose, or now spans two repos, is a split — flag it before it's built, not at review.
 
 ## Output
 

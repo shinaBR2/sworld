@@ -1,9 +1,9 @@
 name: Main E2E on PR
 
 # Runs the main-app journal smoke test against a locally-built, locally-served
-# bundle (fake Auth0 session + mocked Hasura — see apps/main/e2e/support). It is
-# independent of the Firebase preview deploy on purpose, so it runs on every PR
-# that touches the main app or its shared packages.
+# bundle (fake Auth0 session + mocked Hasura — see apps/main/e2e/support). It
+# depends on no deployed environment on purpose, so it runs on every PR that
+# touches the main app or its shared packages.
 on:
   pull_request:
     branches: [main]

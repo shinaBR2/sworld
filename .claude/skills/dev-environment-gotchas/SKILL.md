@@ -38,11 +38,11 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 - The whole workspace (`sworld`, `sworld-backend`, `sworld-hasura-v2`) runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
 - **Pinning convention:** pin the **exact** version (`24.18.0`) in `.nvmrc`, Dockerfiles (`node:24.18.0-slim`, never the moving `node:24-slim` tag), and CI `actions/setup-node`. Keep `engines.node` as a **range** (`>=24`) — it's a floor, not a pin.
 - **Package manager differs per repo:** `sworld` = pnpm workspace (`pnpm-lock.yaml`); `sworld-backend` and `sworld-hasura-v2` = **npm** (`package-lock.json`) — use `npm ci`/`npm outdated` there, not pnpm.
-- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8) + Jest, deliberately excluded from the Node 24 migration, pinned to Node 22 in its CI workflows (`.github/workflows/live-game-fe.yml`). Jest survives only here; the rest of the frontend uses Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
+- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8) + Jest, deliberately excluded from the Node 24 migration, and no longer deployed anywhere. Jest survives only here; the rest of the frontend uses Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
 
 ## pnpm's dependency cooldown can freeze dep work for days
 
-`pnpm-workspace.yaml` sets `minimumReleaseAge: 10080` (7 days) — pnpm refuses to *resolve* any version published more recently than that. See the `supply-chain-security` skill for what this setting is and why it exists. Frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are.
+`pnpm-workspace.yaml` sets a release cooldown (`minimumReleaseAge`) — pnpm refuses to *resolve* any version published more recently than the window. `supply-chain-security` owns the setting, its value, and why it exists. The gotcha here: frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are.
 
 **The sworld-specific trap:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) — one package at a time, since pnpm only reports the next blocked package per run — until they age past 7 days, effectively freezing dependency work for a week after a big bump.
 

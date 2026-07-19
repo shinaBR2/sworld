@@ -16,7 +16,7 @@ Human/ops access follows the same rule: **use the Hasura Console, never a direct
 
 **Why:** one gateway means one place that enforces permissions, one place that validates input, one schema that's ever out of sync with reality. A direct connection anywhere — even "just for this one ops task" — creates a second path that Hasura's rules don't cover.
 
-**Deployment:** we run Hasura Cloud. Metadata and migrations deploy automatically when they merge into `main` — there is no separate manual "apply" step. Treat a merge as a live schema change.
+**Deployment:** we run Hasura Cloud, and merging is deploying — see `architecture`. The consequence for this skill: treat a merge as a live schema change.
 
 ## Writes: default is fine, until two things can race
 

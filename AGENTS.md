@@ -16,7 +16,7 @@ Only after step 3 is complete may you write code. No proto, no scaffold, no "her
 
 Two loops gate every change; neither is optional. Each is a skill that owns its own steps — this is the always-on reminder that they exist and are mandatory, not a restatement of them.
 
-- **Loop A — Self-review, before creating a PR.** Never skip it. Owned by `parallel-workflow` (step 11).
+- **Loop A — Self-review, before creating a PR.** Never skip it. Owned by `parallel-workflow`.
 - **Loop B — CI, after creating a PR and before merging.** Run the `ci-loop` skill and drive the PR to settled; never merge unless the user explicitly authorized it for that PR. Owned by `ci-loop`.
 
 ## How we work
@@ -78,7 +78,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 **Skills** (`.claude/skills/`) — task-triggered conventions. They fire automatically, but reach for them deliberately too:
 
 - _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
-- _Workflow:_ `parallel-workflow`, `ci-loop`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `self-review`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
+- _Workflow:_ `parallel-workflow`, `ci-loop`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `dependency-analysis`, `self-review`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
 - _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
 - _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
 - _Ops:_ `backend-ops`, `dev-environment-gotchas`
@@ -98,7 +98,7 @@ pnpm lint           # Lint (Biome)
 pnpm format         # Format (Biome)
 ```
 
-App-specific `dev:*` commands use `turbo watch`, so changes in `packages/core` or `packages/ui` auto-rebuild and hot-reload the app — no manual restart needed.
+App-specific `dev:*` commands use `turbo watch`. How a `packages/core` / `packages/ui` edit reaches a running app varies per app, and getting it wrong looks like a Vite bug — see `dev-environment-gotchas`.
 
 Per-package:
 
@@ -111,20 +111,14 @@ cd packages/ui   && pnpm storybook # Component development
 
 - **Before any work touching sworld-backend or sworld-hasura-v2** — load the `backend-architecture` skill. It documents the full service architecture, Cloud Task pipeline, task lifecycle, notification flow, and event vs action patterns. Do not reason about the backend without it.
 - **Before designing a new mutation/Action, or reasoning about concurrent writes or data validation** — load the `hasura-architecture` skill. It covers the single-gateway rule, when a write needs a concurrency-safe database pattern, and the three validation layers.
-- **Code exploration — always use CodeGraph first, not grep.** The CodeGraph index at the workspace root covers all three repos. Use `codegraph query` for structural questions (definitions, callers, impact). Use grep **only** for literal string/text searches, never for finding where a symbol is defined or used.
+- **Code exploration — always use CodeGraph first, not grep.** Setup and the exact rule live in `dev-environment-gotchas`.
 - **Adding a feature** — identify which app(s) change; decide where the code lives (`frontend-ui-architecture`); run the relevant `dev:*` command; make changes; run `pnpm lint` and `pnpm test` before committing.
 - **Working with GraphQL** — update operations in `packages/core`, run `pnpm codegen`, use the generated types in apps.
 - **Adding UI components** — all UI lives in `packages/ui` (placement per `frontend-ui-architecture`): create it there, export from `packages/ui/src/index.tsx`, build, then import in apps.
 
-## Code style (authoritative — these win on any conflict)
+## Code style
 
-These project rules take precedence over anything inherited in the skills:
-
-- Always use ES modules.
-- Always use async/await syntax where possible.
-- Never use `function` — always arrow functions, e.g. `const method = async () => …`.
-- All exports MUST be **named exports**, placed at the **bottom** of the file.
-- Prefer an interface for a method's params so the method definition stays on one line rather than many.
+The style law lives in the `code-conventions` skill, which auto-triggers on any TypeScript/TSX write or edit — the moment the rules apply.
 
 ## Key directories
 

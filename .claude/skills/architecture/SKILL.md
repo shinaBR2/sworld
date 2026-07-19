@@ -62,15 +62,26 @@ export function useProjectQuery(id: string) {
 - NEVER manually edit generated files (`generated/graphql.ts`, `generated/gql.ts`, `schema.graphql`) — always run `pnpm codegen` (in `packages/core`).
 - All database operations go through Hasura. The backend (the separate `sworld-backend` repo) only handles Hasura Actions/Events.
 
-## Data layer: schema changes, codegen, and deploy
+## Data layer: schema changes and codegen
 
 Schema and permission changes live in the sibling **`sworld-hasura-v2`** repo (migrations + metadata), never here.
 
-- **Merging a `sworld-hasura-v2` PR auto-deploys to Hasura Cloud (prod).** This happens through Hasura Cloud's GitHub integration, **not** a GitHub Actions workflow — there is no deploy job in `.github/workflows` (only lint), so it's easy to assume merging is inert. It isn't: **merging a Hasura PR applies the migration + metadata to production.**
 - **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
-- **Sequence merges across repos.** A frontend query/mutation on a new table/column only works at runtime once the Hasura PR is merged (→ auto-deployed to prod). Land the data-layer PR (and let it deploy) before any frontend PR that reads/writes the new shape goes live.
+- **Sequence merges across repos.** A frontend query/mutation on a new table/column only works at runtime once the Hasura PR is merged and live. Land the data-layer PR before any frontend PR that reads/writes the new shape goes live.
 
-**Frontend deploy targets aren't uniform across apps.** The `main` app's real production domain (`shinabr2.com`) is served by **Cloudflare Pages**, with its own build pipeline and env vars configured in the Cloudflare dashboard (not this repo). The GitHub Actions "Deploy Live Main Frontend" workflow deploys to a separate Firebase target (`sworld-prod.web.app`) that is **not** treated as prod. The two can serve different bundles. When told the main app is broken "on prod," check `shinabr2.com`, not the Firebase URL — and compare `assets/*.js` hashes before reasoning about what's actually deployed where. Other apps (listen, watch, til, docs, game) deploy via Firebase Hosting preview channels per PR (see `ci-loop` for the known quota-429 failure mode).
+## Deployment: merging is deploying
+
+This skill owns the deploy model — other skills point here rather than restating it.
+
+**Merging into `main` ships to production**, in all three repos. There is no promote step, no staging, and no manual deploy: the only two environments are **local** and **production**. Treat every merge as a release.
+
+- **Frontend** — **Cloudflare Pages** hosts `main` (`shinabr2.com`), `listen`, `watch` and `til`. Each site has its own build pipeline and env vars, configured in the Cloudflare dashboard and **not in this repo**. Nothing in `.github/workflows` deploys a frontend app. `docs` and `game` are not deployed anywhere.
+- **Data layer** — merging a `sworld-hasura-v2` PR applies its migrations + metadata to Hasura Cloud production, via Hasura Cloud's GitHub integration rather than a GitHub Actions workflow. That repo has no deploy job (only lint), so merging *looks* inert. It isn't.
+- **Backend** — merging `sworld-backend` deploys to Cloud Run.
+
+**What CI does after a merge is verify, not deploy.** `Live Listen` runs Playwright + Argos and a Lighthouse budget against the live site; `Live Watch` runs a Lighthouse budget. A red check there means production is bad — not that a deploy failed. Neither waits for Cloudflare to finish publishing, so both can measure the previous release (SWO-558).
+
+**Before reasoning about what is actually live, compare `assets/*.js` hashes.** A dashboard, a green workflow, and the running site can all disagree.
 
 ## First principle: NEVER trust the frontend
 

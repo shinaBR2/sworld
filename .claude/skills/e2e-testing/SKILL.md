@@ -38,7 +38,7 @@ The canonical locator source is the app's **`e2e/locators/`** directory. Import 
 ## 3. Exact assertions, always
 
 - Pass `{ exact: true }` to `getByText` / `getByLabel` name & presence checks **from the first draft**. Bare `getByText('Chapter One')` substring-matches and collides with accessible-name text like an svg `titleAccess="Chapter One bookmark"` → strict-mode violation. Treat bare `getByText('Name')` as a smell.
-- Assert **exact values** (`toBe`, `toEqual`, `toHaveValue`, `toHaveAttribute`). Never range/fuzzy matchers (`toBeGreaterThan`, `toBeCloseTo`, `toContain`) when the value is known.
+- Assert **exact values** — `code-conventions` owns the exact-vs-fuzzy matcher rule; it applies here unchanged, with Playwright's own exact matchers (`toHaveValue`, `toHaveAttribute`).
 - In metric cards, assert **both the label and the value** — don't use the label only as a container anchor.
 - Reuse the app's real formatters (`formatDate`, `formatNumber`, etc.) and named seed constants for expected values — no magic strings.
 

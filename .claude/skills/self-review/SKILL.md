@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow (step 11) — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR. Owns both halves of a review — the mechanical bug hunt and the judgment pass — scaled to risk, ending in a clear merge recommendation.
+description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow — reviewing the LOCAL working diff vs origin/main before the PR is created (commits are pushed freely as backup; the PR is what's gated) — and whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR. Owns both halves of a review — the mechanical bug hunt and the judgment pass — scaled to risk across four depth bands, ending in a clear merge recommendation. The harshest band covers a "thermo-nuclear review", "deep code quality audit", or any request for an especially strict maintainability/abstraction-quality pass.
 ---
 
 # Self-review
@@ -22,13 +22,13 @@ This skill is the **only** place code review is defined. Other skills call it by
 
 Two patterns — the target is the local working diff in both:
 
-**Pattern A — Self-review gate (pre-PR, the parallel-workflow default).** Invoked as step 11 of the parallel workflow, inside the worktree, before the PR is created. Commits may already be pushed — pushing is backup, not publication; the PR is what this gate unlocks. Target: the local working diff (`git fetch origin main && git diff origin/main`). See "Self-review mode" below for how the output semantics change.
+**Pattern A — Self-review gate (pre-PR, the parallel-workflow default).** Invoked as `parallel-workflow`'s pre-PR gate, inside the worktree, before the PR is created. Commits may already be pushed — pushing is backup, not publication; the PR is what this gate unlocks. Target: the local working diff (`git fetch origin main && git diff origin/main`). See "Self-review mode" below for how the output semantics change.
 
 **Pattern B — User asks for a review.** They'll say "review this", "look at this branch", or "what do you think of this" with the branch checked out and context loaded. Same target: the local diff vs `origin/main`. Use what's in context.
 
 ## Self-review mode (Pattern A — the pre-PR gate)
 
-When this skill runs as the parallel-workflow step-11 gate, the review itself is identical — same hierarchy, same depth-scaling, same format — but the output semantics change, because the reviewer and the developer are the same party and the point is to fix, not to inform:
+When this skill runs as `parallel-workflow`'s pre-PR gate, the review itself is identical — same hierarchy, same depth-scaling, same format — but the output semantics change, because the reviewer and the developer are the same party and the point is to fix, not to inform:
 
 - **Concerns are work items, not feedback.** Every concern MUST be fixed before the gate passes. There is no "merge with changes" exit — the changes get made.
 - **Suggestions must be resolved, not parked.** Apply each one, or explicitly reject it with reasoning. Never silently drop a suggestion.
@@ -55,7 +55,7 @@ Before reviewing the code itself, make a fast judgment about whether this diff i
 
 Look at:
 
-- **Scope.** Same test as `micro-prs`' one-purpose rule, applied after the fact: does this change do one thing, in one app/package/repo, or is it touching too many unrelated concerns?
+- **Scope.** Apply `micro-prs`' one-purpose test to the finished diff, after the fact.
 - **Surface area.** How many files? How many distinct changes?
 - **Risk profile.** Auth, data access, database migrations, shared logic in `packages/core` or `packages/ui` that many apps depend on? Or buttons, copy, styling, internal renames?
 - **Coherence.** Is it easy to hold the change in your head, or does it sprawl across the codebase in ways that are hard to reason about?
@@ -70,7 +70,7 @@ Better to slow down for ten minutes here than to rubber-stamp something that bre
 
 ## Step 2 — Determine review depth
 
-Match the depth of review to the risk and surface area of the change. Three rough bands:
+Match the depth of review to the risk and surface area of the change. Four bands:
 
 **Light review (5–10 minutes):**
 - Copy changes, button styling, internal refactors with no behaviour change, dependency bumps, type fixes, test additions
@@ -89,7 +89,12 @@ Match the depth of review to the risk and surface area of the change. Three roug
 - New patterns or architectural decisions that will be copied later
 - Think deeply: walk through edge cases, consider how it could break, look for missed scenarios, check it against the intended behaviour
 
-The user may tell you what depth they want. If they don't, decide based on the diff.
+**Thermo-nuclear review (the harshest band):**
+- Never chosen automatically — the user asks for it: "thermo-nuclear review", "deep code quality audit", "be really strict about this". `/thermo-nuclear-code-quality-review` requests this band.
+- Everything in Deep, plus the maintainability bar in *Step 4 — Maintainability* applied at full strength, with its presumptive blockers treated as blockers.
+- Correctness is table stakes here. Working code is not a pass — the question is whether the codebase is better afterwards.
+
+The user may tell you what depth they want. If they don't, decide based on the diff — but never self-select thermo-nuclear.
 
 ## Step 3 — Finder sweep
 
@@ -137,13 +142,7 @@ If the code looks AI-generated (which most of this code is), specifically check 
 
 ### Code style (always top priority here)
 
-Our style rules are non-negotiable and easy to slip past in an AI-generated diff. Flag any violation:
-
-- **ES modules** — no CommonJS `require`/`module.exports`.
-- **Arrow functions only** — no `function` declarations.
-- **Named exports at the bottom of the file** — no inline `export const`, no default exports; the export statement lives at the end.
-
-These are enforced by Biome where possible, but check them by eye too.
+Our style rules are non-negotiable and easy to slip past in an AI-generated diff. Check the diff against the style law in `code-conventions` and flag any violation.
 
 ### Security and data handling
 
@@ -164,10 +163,31 @@ Remember the backend lives in the separate `sworld-backend` repo and the data la
 
 ### Maintainability
 
+The everyday questions:
+
 - Will a future developer (or AI) understand this?
 - Naming clear and consistent with the codebase?
 - Functions doing one thing each?
 - Reasonable abstractions, not over-engineered?
+
+**At the thermo-nuclear band, this dimension becomes the review.** Be ambitious about structure: don't stop at "this could be a bit cleaner". Look for the *code judo* move — a reframing that uses the existing architecture better and makes whole branches, helpers, modes or layers disappear. Prefer deleting complexity to rearranging it; a refactor that moves the same mess around is not a win. Prefer a few high-conviction structural findings over a long list of nits.
+
+What to push on:
+
+- **Spaghetti growth.** New ad-hoc conditionals, scattered special cases, one-off branches bolted onto unrelated flows. "Weird if statements in random places" is a design problem, not a stylistic nit — push the logic behind a dedicated abstraction instead of tangling an existing path.
+- **File size.** A file crossing 1000 lines because of this diff is a strong smell. Ask whether it should be decomposed first; waive only when the result is still clearly organised.
+- **Magic and thin abstractions.** Brittle or "clever" behaviour, generic mechanisms hiding simple data-shape assumptions, identity wrappers and pass-through helpers that add indirection without buying clarity. Boring and direct wins.
+- **Type and boundary cleanliness.** Unnecessary optionality, `any`, `unknown`, cast-heavy code, or a silent fallback papering over an unclear invariant — make the boundary explicit and the control flow usually simplifies with it.
+- **Canonical layer.** Feature logic leaking into shared paths, bespoke helpers where a canonical one exists, logic sitting in the wrong package. Push it to the module that already owns the concept rather than normalising the drift.
+- **Orchestration.** Independent work serialised for no reason, or related updates that can leave state half-applied.
+
+Presumptive blockers at this band, unless clearly justified — a plausible code-judo move left on the table, a file pushed past 1000 lines, ad-hoc branching that tangles an existing flow, feature checks scattered across shared code, an unnecessary wrapper or cast-heavy contract, or a duplicated helper that has a canonical home.
+
+Say it plainly: *"this pushes the file past 1k lines — can we decompose first?"*, *"this refactor moves complexity around but doesn't delete it"*, *"I think there's a code-judo move here that makes this much simpler"*. Direct and serious, never rude, and never softened into a mild suggestion.
+
+**Prefer these remedies**, in roughly this order — delete a whole layer of indirection rather than polishing it; reframe the state model so conditionals disappear instead of getting centralised; move the ownership boundary so the feature becomes a natural extension of something that already exists; turn special-case logic into a simpler default flow with fewer exceptions; replace condition chains with a typed model or an explicit dispatcher; separate orchestration from business logic; make type boundaries explicit so control flow simplifies with them; parallelise independent work where that also simplifies orchestration; restructure related updates to be more atomic where partial state would be hard to reason about. Only then the ordinary moves: extract a helper, split a file, reuse the canonical utility.
+
+**Ordering the output at this band** overrides the default "correctness first" ordering — correctness is assumed. Lead with structural regressions, then missed code-judo simplifications, then spaghetti/branching growth, then boundary/abstraction/type-contract problems, then file size, then modularity, then legibility. Never flood the review with low-value nits while a structural issue is on the table.
 
 ### Style and nits (least important)
 

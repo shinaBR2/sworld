@@ -6,7 +6,17 @@ user-invocable: false
 
 # Code Conventions
 
-> **sworld's `CLAUDE.md` conventions take precedence where they differ:** ES modules only; arrow functions only (never `function` declarations); all exports named and placed at the **bottom** of the file. Anything below that conflicts defers to those rules.
+## The style law
+
+These five rules are absolute, and this skill is where they live. Nothing else in the repo restates them — a second copy is how one of them quietly becomes wrong.
+
+- **ES modules only** — no CommonJS `require` / `module.exports`.
+- **`async`/`await` wherever possible** — not raw promise chains.
+- **Arrow functions only** — never a `function` declaration. `const method = async () => …`
+- **Named exports, at the bottom of the file** — no default exports, no inline `export const`; the export statement is the last thing in the file.
+- **Params go in an interface**, so a method's signature stays on one line instead of many.
+
+Biome enforces what it can. The rest you check by eye — these are exactly the rules an AI-generated diff slips past.
 
 ## Barrel files
 
@@ -42,6 +52,6 @@ user-invocable: false
 ## Testing
 
 - Pure logic MUST have unit tests in the same PR.
-- ALWAYS use exact assertions (`toBe`, `toEqual`, `toStrictEqual`).
-- NEVER use fuzzy matchers (`toBeCloseTo`, `toContain`) when the exact value is known.
-- Only use fuzzy matchers for genuinely non-deterministic values (timestamps, random IDs).
+- ALWAYS use exact assertions (`toBe`, `toEqual`, `toStrictEqual`, and framework equivalents like Playwright's `toHaveValue` / `toHaveAttribute`).
+- NEVER use a fuzzy, range, or substring matcher when the exact value is known — approximation (`toBeCloseTo`), comparison (`toBeGreaterThan`, `toBeLessThan`), and containment (`toContain`) all hide the value you meant to assert. `expect(items).toHaveLength(3)` — not `toBeGreaterThan(0)`.
+- Only use them for genuinely non-deterministic values (timestamps, random IDs) — never as a way to avoid pinning down a value you could know.
