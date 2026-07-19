@@ -41,9 +41,15 @@ under `ShinaBR2`). **All cleanup runs in the repo the branch belongs to — neve
 via `git -C "$repo_path"` (never rely on the current directory, which may still be a worktree being torn
 down). The repo maps to its local clone path:
 
-- `sworld` → `<workspace>/sworld`
-- `sworld-backend` → `<workspace>/sworld-backend`
-- `sworld-hasura-v2` → `<workspace>/sworld-hasura-v2`
+```bash
+# Map the resolved repo NAME to its local clone path — every git command below uses $repo_path.
+case "$repo" in
+  sworld)           repo_path="<workspace>/sworld" ;;
+  sworld-backend)   repo_path="<workspace>/sworld-backend" ;;
+  sworld-hasura-v2) repo_path="<workspace>/sworld-hasura-v2" ;;
+  *) echo "cleanup: unknown repo '$repo' — stop"; exit 1 ;;
+esac
+```
 
 If a repo can't be resolved or isn't one of the three, report it and stop — don't guess.
 
