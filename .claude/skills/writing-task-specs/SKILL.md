@@ -1,31 +1,19 @@
 ---
 name: writing-task-specs
-description: This skill should be used whenever the user asks to "create a ticket", "write a task", "scope this out", "break this down", "raise a bug", "create a parent", "plan this feature", or any variant where work is being captured. Also use when the user describes a problem, bug, or feature idea and the natural next step is a written spec. Enforces the task-spec shapes (bug, small feature, large feature scoping, product/user story) and the conventions around parent/sub-task breakdown as Linear issues and projects.
+description: This skill should be used whenever the user asks to "create a ticket", "write a task", "scope this out", "break this down", "raise a bug", "create a parent", "plan this feature", or any variant where work is being captured. Also use when the user describes a problem, bug, or feature idea and the natural next step is a written spec. Enforces the task-spec shapes (bug, small feature, large feature scoping, product/user story) and the conventions around parent/sub-task breakdown as tracker issues and projects (see `task-tracker` for the tracker itself and its commands).
 ---
 
 # Writing Task Specs
 
-Produce clear, consistent task specs in **Linear** that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
+Produce clear, consistent task specs in the task tracker that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
 
-Tasks live in Linear — there is no in-repo task tracker. Everything goes in the **SWorld** team (`SWO`). Create and edit through the **`linear` CLI** ([schpet/linear-cli](https://github.com/schpet/linear-cli), installed via `brew install schpet/tap/linear`, authenticated with `linear auth login`) run with Bash — **never through any Linear MCP tools** (a connected Linear MCP server authenticates as the wrong account; if the CLI is missing or broken, stop and tell the user instead of falling back to MCP). The CLI takes `--state`, `--project`, and `--label` **by name** (e.g. `-s "In Progress"`, `--project "Main"`) and resolves them to the workspace's IDs for you — you never pass raw UUIDs. Pass markdown bodies with `--description-file` (issues) / `--content-file` (documents) rather than inline strings, and add `--no-interactive` when creating issues so it never prompts. If the matching project for an app doesn't exist yet, create it with `linear project create` first. For anything the CLI doesn't expose (e.g. querying parent/sub-issue relationships), use `linear auth token` + a direct Linear GraphQL API call with curl. The short version of the model:
+This skill owns the **shapes** of a good spec; the `task-tracker` skill owns the tracker itself — which tool it is, the team, the project-is-an-app model, the state lifecycle, and every `linear …` command form. Read `task-tracker` for how to create and wire what this skill describes; the short version of the model:
 
-**A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`, `Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library areas). For a brand-new app surface, create the project with `linear project create` first. A project is *never* a single feature, and is never marked `Done`. Every issue belongs to exactly one project — its app.
+Every issue belongs to an **app's project** (see `task-tracker` for the project-is-an-app model). A large feature is a **parent issue** *inside* its app's project — not a project of its own.
 
-- **Bug / small feature** → a single **issue** (`linear issue create`) in the app's project. Bugs carry the `bug` label.
-- **User story** → an **issue in `Backlog`** in the app's project, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
-- **Large feature (scoped)** → a **parent issue** in the app's project, with one **sub-issue** per sub-task (`--parent SWO-NNN` = the parent issue). The parent issue's description + (for a heavy concept) a **Linear document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (`linear issue relation add`, optionally a `wave-N` label); **blocked-by** is a **blocking relation**; **estimate** is the issue **estimate** field (`--estimate`).
-
-The fields that an in-repo tracker would keep in frontmatter are native Linear fields:
-
-| Was frontmatter | Linear field (via `linear issue create` / `update`) |
-|-----------------|------------------------------------------------------|
-| `status:` | `-s/--state` — `Backlog` / `Todo` / `In Progress` / `In Review` / `Done` |
-| `estimate:` | `--estimate` |
-| which app | `--project` |
-| `parent:` (which feature) | `--parent SWO-NNN` (the feature's parent issue) |
-| `blocked-by:` | `linear issue relation add SWO-child blocked-by SWO-dep` |
-| wave grouping | blocked-by relations (optionally a `wave-N` label) |
-| bug / user-story tagging | `-l/--label` (repeatable) |
+- **Bug / small feature** → a single **issue** in the app's project. Bugs carry the `bug` label.
+- **User story** → an **issue in `Backlog`**, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
+- **Large feature (scoped)** → a **parent issue** with one **sub-issue** per sub-task. The parent issue's description + (for a heavy concept) a tracker **document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (a `blocked-by` edge, optionally a `wave-N` label); **estimate** is the issue estimate field. See `task-tracker` for the relation and document commands.
 
 ## Critical rules
 
@@ -34,13 +22,13 @@ The fields that an in-repo tracker would keep in frontmatter are native Linear f
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
 - **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test. If a sub-task's `What` needs an "and", it's two sub-tasks.
 - **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
-- Always create in the **SWorld** team; attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main) — a large feature is a parent issue *inside* its app's project, not a project of its own
+- Attach every issue to the matching app **project** (Til, Watch, Listen, Game, Docs, Main; see `task-tracker`) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, set its `state` to `In Progress` (see the `parallel-workflow` skill)
 - **Every ticket opens in plain words** — see below. No exceptions.
 
 ## Every ticket opens in plain words
 
-Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's five-second answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming Linear on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
+Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's five-second answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
 
 The jargon-free law itself (what counts as plain, the ten-second test, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill only owns *where* the block sits and its header per shape:
 
@@ -81,7 +69,7 @@ Not every user story becomes a large feature — sometimes scoping reveals it's 
 
 ## Title and slug conventions
 
-The issue/project **title** should be specific enough that a developer knows what they're looking at before opening it. Linear assigns the identifier (`SWO-123`); you don't pick one.
+The issue/project **title** should be specific enough that a developer knows what they're looking at before opening it. The tracker assigns the identifier (e.g. `SWO-123`); you don't pick one (see `task-tracker`).
 
 - Active voice or noun phrase, no gerunds in active titles ("Fix" not "Fixing")
 - Reference the app or domain when relevant (library, listen, watch, til, finance, journal)
@@ -105,7 +93,7 @@ Bad:
 
 ## Shape 1 — Bug
 
-For a specific, reproducible issue. Direct, short, focused on getting the fix right. Create a single issue with the `bug` label, `state: Todo`, and an `estimate`. The body below is the issue **description** (Linear descriptions are Markdown).
+For a specific, reproducible issue. Direct, short, focused on getting the fix right. Create a single issue with the `bug` label, `state: Todo`, and an `estimate`. The body below is the issue **description** (tracker descriptions are Markdown).
 
 ### Description structure
 
@@ -135,7 +123,7 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 
 ### Example — the library progress bug
 
-Created with `linear issue create --team SWO --project "Main" -l bug -s "Todo" --estimate 1 -t "Library reading progress bar loses its label on long books" --description-file <spec.md> --no-interactive` (library is a feature area of the main app), where the description file holds:
+Created as a `bug`-labelled issue in the **Main** app's project, `state: Todo`, estimate 1 (library is a feature area of the main app; see `task-tracker` for the create command), where the description file holds:
 
 ```markdown
 **In plain words**
@@ -200,7 +188,7 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 
 ### Example
 
-`linear issue create --team SWO --project "Listen" -s "Todo" --estimate 4 -t "Add bulk import for listen playlist tracks" --description-file <spec.md> --no-interactive`, description:
+A **Listen**-project issue, `state: Todo`, estimate 4 (see `task-tracker` for the create command), description:
 
 ```markdown
 **In plain words**
@@ -228,7 +216,7 @@ Behind feature flag `bulk_import_tracks`.
 
 ## Shape 3 — User story
 
-A user story captures a user need or product direction in plain language. It does **not** try to solve the problem technically — that happens later when a developer scopes it into a large feature. Create it as an issue in **`Backlog`** (`state: "Backlog"`). When it's scoped, link it from the resulting parent issue.
+A user story captures a user need or product direction in plain language. It does **not** try to solve the problem technically — that happens later when a developer scopes it into a large feature. Create it as an issue in **`Backlog`** (`state: "Backlog"`; see `task-tracker`). When it's scoped, link it from the resulting parent issue.
 
 ### What a user story is for
 
@@ -281,7 +269,7 @@ A user story captures a user need or product direction in plain language. It doe
 
 ### Example — document ingestion for the til app
 
-`linear issue create --team SWO --project "Til" -s "Backlog" -t "Import notes from existing documents into til" --description-file <spec.md> --no-interactive`, description:
+A **Til**-project issue in **`Backlog`** (see `task-tracker` for the create command), description:
 
 ```markdown
 **The user's problem**
@@ -346,7 +334,7 @@ Out of scope: file upload, AI extraction, auto-tagging, duplicate detection. The
 
 ## Shape 4 — Large feature (scoped)
 
-A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** (`linear issue create --team SWO --project "<app>" …`) whose **description** carries the technical scope, with one **sub-issue per sub-task** (`--parent SWO-NNN` = the parent issue), and **blocking relations** (`linear issue relation add`) for the dependency graph (which also encode the waves).
+A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** in the app's project whose **description** carries the technical scope, with one **sub-issue per sub-task** (each with the parent set), and **blocking relations** for the dependency graph (which also encode the waves). See `task-tracker` for the create and relation commands.
 
 ### When this shape is created
 
@@ -368,7 +356,7 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 
 ### Parent issue description structure
 
-The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a Linear **document** attached to the app's project — see `product-planning`).
+The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a tracker **document** attached to the app's project — see `product-planning` and `task-tracker`).
 
 ```markdown
 **In plain words**  _(see `plain-english`)_
@@ -432,12 +420,12 @@ Only when a real dependency exists, group into waves instead and add a **Depende
 **Related**
 
 * SWO-NNN — user story
-* [Linear document or external doc] — relevant patterns
+* [Tracker document or external doc] — relevant patterns
 ```
 
 ### Sub-task issue structure
 
-Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create with `linear issue create --team SWO --project "<app>" --parent SWO-NNN -s "Todo" --estimate N …`, then `linear issue relation add SWO-<new> blocked-by SWO-<dep>` for each dependency.
+Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create each as a sub-issue under the parent, `state: Todo`, with an estimate, then add a `blocked-by` relation for each dependency (see `task-tracker` for the commands).
 
 ```markdown
 **Why this matters**  _(one plain-language line — see `plain-english`)_
@@ -465,7 +453,7 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 
 Before any code sub-issue is created, write one sub-issue whose entire job is answering: **"how does anyone — with zero context — know the whole feature works when every sub-issue is done?"** Each sub-issue's own acceptance criteria only proves its own slice; nobody's acceptance criteria proves the assembled feature actually delivers the user story. This sub-issue is that missing check, written before the breakdown so it also doubles as a sanity check on the breakdown itself — if you can't write a concrete verification step, the shape probably isn't settled yet either.
 
-Create it with `linear issue create --team SWO --project "<app>" --parent SWO-NNN -s "Todo" -t "Goal & verification — <feature>" --no-interactive`, first among the sub-issues (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it):
+Create it as the **first** sub-issue under the parent, `state: Todo`, titled `Goal & verification — <feature>` (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it). See `task-tracker` for the command:
 
 ```markdown
 **Why this matters**
@@ -548,7 +536,7 @@ When Claude has been working with the developer and a spec is needed:
 2. **For user stories** — focus on capturing the user's problem and ideas in plain language, as an issue in `Backlog`. Do not jump to technical scoping.
 3. **For large features** — run the scoping conversation before creating anything, including the goal & verification sub-issue's content. Confirm the breakdown with the user. If there's an existing user story, start from it.
 4. **Draft the spec** matching the shape's structure, applying `plain-english` to its opening block. Use the developer's existing context, do not re-investigate things already discussed.
-5. **Create in Linear** — `linear issue create` for a bug / small feature / user story; for a large feature: `linear issue create` for the parent (attached to the app `--project`), then the goal & verification sub-issue first, then `linear issue create` per code sub-task with `--parent`, `--project`, and `--estimate` set, plus `linear issue relation add … blocked-by …` only where step 6 of the scoping conversation found a real dependency. For a heavy domain concept, add a `linear document create --project "<app>" -t "…" -f <doc.md>`.
+5. **Create in the tracker** (see `task-tracker` for every command) — one issue for a bug / small feature / user story; for a large feature: the parent (attached to the app's project), then the goal & verification sub-issue first, then one sub-issue per code sub-task with parent, project, and estimate set, plus a `blocked-by` relation only where step 6 of the scoping conversation found a real dependency. For a heavy domain concept, add a tracker document attached to the app's project.
 6. **Confirm to the user** what was created, with the issue identifiers and URLs.
 
 ## Validation checklist
@@ -556,11 +544,11 @@ When Claude has been working with the developer and a spec is needed:
 Before creating a spec:
 
 - Title is specific; no square-bracket prefixes
-- Created in the **SWorld** team and attached to the right app **project**
+- Attached to the right app **project** (see `task-tracker`)
 - Shape matches the work (bug / small feature / user story / large feature)
 - Detail level matches the shape — not over-documented, not under-documented
 - Opens with the `plain-english` block (`**In plain words**`, `**Why this matters**`, or the user story's own opening section) — no exceptions
-- Linear fields set: `--state`, plus `--estimate` / `--label` / `--parent` / blocked-by relations where relevant
+- Tracker fields set: state, plus estimate / label / parent / blocked-by relations where relevant (see `task-tracker`)
 - For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
 - For small features: problem, proposed solution, acceptance criteria
 - For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly
