@@ -11,7 +11,7 @@
     "dev": "pnpm run pre-dev && vite",
     "e2e": "pnpm exec playwright test",
     "e2e-codegen": "pnpm exec playwright codegen",
-    "lint": "biome lint --quit-on-problem .",
+    "lint": "biome lint .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },

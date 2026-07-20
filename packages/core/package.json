@@ -31,7 +31,7 @@
     "build-watch": "tsup --watch --no-dts",
     "clean": "rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
-    "lint": "biome lint --quit-on-problem .",
+    "lint": "biome lint .",
     "format": "biome format --write .",
     "test": "vitest --coverage",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"

@@ -7,7 +7,7 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "test": "vitest",
-    "lint": "biome lint --quit-on-problem .",
+    "lint": "biome lint .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts"
