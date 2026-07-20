@@ -3,8 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "es2017"],
-    "types": ["chrome"],
+    "lib": ["dom", "es2020"],
+    "types": ["chrome", "node"],
     "plugins": [
       {
         "name": "@0no-co/graphqlsp",

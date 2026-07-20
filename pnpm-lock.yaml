@@ -513,6 +513,9 @@ importers:
       '@types/chrome':
         specifier: ^0.0.268
         version: 0.0.268
+      '@types/node':
+        specifier: ^24
+        version: 24.13.2
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.17
@@ -600,6 +603,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
+      '@types/node':
+        specifier: ^24
+        version: 24.13.2
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.17
@@ -5235,9 +5241,6 @@ packages:
 
   '@types/node@17.0.45':
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
-
-  '@types/node@18.19.130':
-    resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
 
   '@types/node@18.19.80':
     resolution: {integrity: sha512-kEWeMwMeIvxYkeg1gTc01awpwLbfMRZXdIhwRcakd/KlK53jmRC26LqcbIt7fnAQTu5GzlnWmzA3H6+l1u6xxQ==}
@@ -15470,7 +15473,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 18.19.130
+      '@types/node': 24.13.2
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -17323,10 +17326,6 @@ snapshots:
   '@types/node@12.20.55': {}
 
   '@types/node@17.0.45': {}
-
-  '@types/node@18.19.130':
-    dependencies:
-      undici-types: 5.26.5
 
   '@types/node@18.19.80':
     dependencies:
@@ -20455,7 +20454,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 18.19.130
+      '@types/node': 24.13.2
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
