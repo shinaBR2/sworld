@@ -160,7 +160,7 @@ const GameDialog = (props: GameDialogProps) => {
     const currentPageText = state.textPages[state.currentPageIndex];
 
     let index = 0;
-    let timeoutId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     const typeNextChar = () => {
       if (index < currentPageText.length) {
@@ -169,7 +169,6 @@ const GameDialog = (props: GameDialogProps) => {
           payload: { char: currentPageText[index] },
         });
         index++;
-        // @ts-expect-error
         timeoutId = setTimeout(typeNextChar, typewriterSpeed);
       } else {
         dispatch({ type: 'COMPLETE_TYPING' });

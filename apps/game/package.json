@@ -6,9 +6,6 @@
     "dev": "pnpm run pre-dev && vite",
     "pre-dev": "cp ../../.env.development.local .env",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -f .env*",
-    "test": "jest --ci",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "lint": "biome lint --quit-on-problem .",
     "format": "biome format --write ."
   },
@@ -29,9 +26,7 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
-    "@sworld/jest-dom-preset": "workspace:*",
     "@tanstack/router-devtools": "^1.167.0",
     "@tanstack/router-plugin": "^1.168.18",
     "@types/node": "^18.11.9",
