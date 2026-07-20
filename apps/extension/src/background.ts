@@ -49,11 +49,7 @@ const detectPdfTab = (url: string) => {
   currentPdfMetadata = {
     url,
     title,
-    author: null,
     pageCount: 0,
-    fileUrl: url,
-    fileName,
-    fileSizeBytes: null,
   };
 
   currentPageContent = {
