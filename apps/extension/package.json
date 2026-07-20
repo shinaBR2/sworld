@@ -9,6 +9,7 @@
     "test": "vitest",
     "lint": "biome lint --quit-on-problem .",
     "format": "biome format --write .",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts"
   },
   "dependencies": {
