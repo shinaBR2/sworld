@@ -38,7 +38,7 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 - The whole workspace (`sworld`, `sworld-backend`, `sworld-hasura-v2`) runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
 - **Pinning convention:** pin the **exact** version (`24.18.0`) in `.nvmrc`, Dockerfiles (`node:24.18.0-slim`, never the moving `node:24-slim` tag), and CI `actions/setup-node`. Keep `engines.node` as a **range** (`>=24`) — it's a floor, not a pin.
 - **Package manager differs per repo:** `sworld` = pnpm workspace (`pnpm-lock.yaml`); `sworld-backend` and `sworld-hasura-v2` = **npm** (`package-lock.json`) — use `npm ci`/`npm outdated` there, not pnpm.
-- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8), deliberately excluded from the Node 24 migration, and no longer deployed anywhere. It has no tests at all — the whole workspace tests with Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
+- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8), deliberately excluded from the Node 24 migration, and no longer deployed anywhere. It has no tests at all — unit tests everywhere else in the workspace run on Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
 
 ## pnpm's dependency cooldown can freeze dep work for days
 
