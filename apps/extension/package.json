@@ -9,7 +9,6 @@
     "test": "vitest",
     "lint": "biome lint --quit-on-problem .",
     "format": "biome format --write .",
-    "test": "vitest",
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts"
   },
   "dependencies": {
@@ -27,8 +26,11 @@
     "@dotenvx/dotenvx": "^1.75.1",
     "@graphql-codegen/cli": "^5.0.3",
     "@types/chrome": "^0.0.268",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.3",
     "jsdom": "^25.0.1",
+    "tsconfig": "workspace:*",
     "typescript": "^5.6.2",
     "vite": "^8.1.2",
     "vitest": "^4.1.9"

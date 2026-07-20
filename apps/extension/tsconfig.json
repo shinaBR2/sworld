@@ -2,9 +2,10 @@
   "exclude": ["node_modules"],
   "extends": "tsconfig/vite.json",
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
     "types": ["chrome", "vite/client"],
-    "lib": ["dom", "es2017"],
+    "lib": ["dom", "es2020"],
     "outDir": "dist",
     "esModuleInterop": true,
     "paths": {
