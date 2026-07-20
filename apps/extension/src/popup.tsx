@@ -75,9 +75,9 @@ const Popup = () => {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Box width={400} minHeight={400}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }} p={2}>
-            <Typography variant="h6" fontWeight="bold">
+        <Box sx={{ width: 400, minHeight: 400 }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', p: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               SWorld
             </Typography>
           </Box>
@@ -92,14 +92,16 @@ const Popup = () => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box
-        width={400}
-        minHeight={400}
-        maxHeight={600}
-        display="flex"
-        flexDirection="column"
+        sx={{
+          width: 400,
+          minHeight: 400,
+          maxHeight: 600,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }} p={2}>
-          <Typography variant="h6" fontWeight="bold">
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', p: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             SWorld
           </Typography>
         </Box>
@@ -112,7 +114,7 @@ const Popup = () => {
           <Tab label="Clipboard" />
           <Tab label="Recent" />
         </Tabs>
-        <Box flex={1} overflow="auto">
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
           {tabIndex === 0 && (
             <AutoDetectTab
               content={content}

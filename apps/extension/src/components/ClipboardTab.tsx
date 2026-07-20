@@ -15,8 +15,8 @@ const ClipboardTab = ({ onImportClipboard }: ClipboardTabProps) => {
   };
 
   return (
-    <Box p={2}>
-      <Typography color="text.secondary" gutterBottom>
+    <Box sx={{ p: 2 }}>
+      <Typography gutterBottom sx={{ color: 'text.secondary' }}>
         Paste content below to detect and import.
       </Typography>
       <TextField
