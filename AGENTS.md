@@ -52,7 +52,6 @@ Every change should answer four questions:
 - **core** — Core business logic: GraphQL operations (`graphql()` + `useRequest`/`useMutationRequest`), Auth0, React Query, and error handling. Data hooks live under `packages/core/src/<domain>/{query-hooks,mutation-hooks}`.
 - **ui** — UI component library using Material-UI and Emotion (+ Storybook)
 - **tsconfig** — Shared TypeScript configurations
-- **jest-dom-preset** — Jest testing presets
 
 ### Backend & data layer (sibling repos)
 
@@ -68,7 +67,7 @@ When work spans the backend or schema, the change lands in those repos, not here
 - **Frontend:** React 18, TypeScript, Material-UI, Emotion, Vite, TanStack Router
 - **Data:** GraphQL via Hasura, Auth0 for auth, React Query for server state
 - **Backend:** Hono (Hasura Actions/Events) on the sibling `sworld-backend` repo
-- **Testing:** Vitest, Playwright, Jest, Storybook
+- **Testing:** Vitest, Playwright, Storybook
 - **Build:** Turborepo, pnpm, tsup
 - **Gaming:** Phaser.js, Matter.js physics
 - **Package Manager:** pnpm (>=10.34.3) · **Node:** >=24

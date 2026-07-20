@@ -1,5 +1,5 @@
 {
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts", "test"],
+  "exclude": ["node_modules"],
   "extends": "tsconfig/vite.json",
   "compilerOptions": {
     "target": "ES6",
@@ -8,5 +8,5 @@
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types", "./src/types/*.d.ts"]
   },
-  "include": ["src", "src/**/*.d.ts", "test"]
+  "include": ["src", "src/**/*.d.ts"]
 }
