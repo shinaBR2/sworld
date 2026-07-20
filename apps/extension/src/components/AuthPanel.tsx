@@ -19,7 +19,7 @@ const AuthPanel = () => {
 
   if (authenticated === null) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -27,18 +27,18 @@ const AuthPanel = () => {
 
   if (authenticated) {
     return (
-      <Box p={2}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="success">Extension connected to your account.</Alert>
       </Box>
     );
   }
 
   return (
-    <Box p={2}>
+    <Box sx={{ p: 2 }}>
       <Alert severity="info" sx={{ mb: 2 }}>
         Log in to shinabr2.com in this browser to connect your extension.
       </Alert>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         Once you&apos;re signed in, your account token is sent to the extension
         automatically.
       </Typography>

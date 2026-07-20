@@ -17,8 +17,8 @@ interface RecentTabProps {
 const RecentTab = ({ imports, onRetry }: RecentTabProps) => {
   if (imports.length === 0) {
     return (
-      <Box p={2}>
-        <Typography color="text.secondary" align="center">
+      <Box sx={{ p: 2 }}>
+        <Typography align="center" sx={{ color: 'text.secondary' }}>
           No recent imports.
         </Typography>
       </Box>
@@ -26,7 +26,7 @@ const RecentTab = ({ imports, onRetry }: RecentTabProps) => {
   }
 
   return (
-    <Box p={2}>
+    <Box sx={{ p: 2 }}>
       <Typography variant="subtitle2" gutterBottom>
         Recent Imports
       </Typography>
@@ -50,7 +50,14 @@ const RecentTab = ({ imports, onRetry }: RecentTabProps) => {
             <ListItemText
               primary={imp.title || imp.importId}
               secondary={
-                <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    mt: 0.5,
+                  }}
+                >
                   <ImportStatusBadge status={imp.status} />
                   <Typography variant="caption">{imp.targetApp}</Typography>
                 </Box>

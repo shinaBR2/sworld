@@ -15,7 +15,7 @@ const AutoDetectTab = ({
 }: AutoDetectTabProps) => {
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -23,8 +23,8 @@ const AutoDetectTab = ({
 
   if (!content) {
     return (
-      <Box p={2}>
-        <Typography color="text.secondary" align="center">
+      <Box sx={{ p: 2 }}>
+        <Typography align="center" sx={{ color: 'text.secondary' }}>
           No content detected on this page.
         </Typography>
       </Box>
@@ -39,7 +39,7 @@ const AutoDetectTab = ({
   const typeLabel = isPdf ? 'PDF Document' : isVideo ? 'Video' : 'Web Page';
 
   return (
-    <Box p={2}>
+    <Box sx={{ p: 2 }}>
       <ActionCard
         title={content.title}
         description={content.description}
