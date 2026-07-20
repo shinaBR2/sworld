@@ -35,6 +35,7 @@ live in Linear.
 - **Never the Linear MCP.** A connected Linear MCP server authenticates as the *wrong account* —
   never use `mcp__*Linear*` tools for any tracker operation. If the CLI is missing or broken, stop
   and tell the user; do not fall back to MCP.
+- **The CLI resolves its workspace from `.linear.toml` at the checkout root.** That file is gitignored, so a fresh git worktree has none and the CLI silently falls back to the account's default workspace — which is not `sworld`. Reads then return another workspace's data and writes fail with `Team not found: SWO`. `parallel-workflow`'s worktree setup copies the file in; if a tracker command behaves oddly, check the file is there before anything else.
 - **For anything the CLI doesn't expose** (e.g. querying parent/sub-issue relationships), use
   `linear auth token` + a direct Linear GraphQL API call with curl.
 

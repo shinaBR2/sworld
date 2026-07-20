@@ -16,7 +16,7 @@ user-invocable: false
 This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
 
 - **Substitute the repo name in `gh` commands.** Every `gh` / GraphQL call is repo-scoped — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing. (The `ci-loop` gate queries carry the same rule.)
-- **Worktree setup steps 7–8 are frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, follow that repo's own setup instead.
+- **Worktree setup step 7 (`.linear.toml`) applies everywhere; step 8 is frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, copy `.linear.toml` the same way, then follow that repo's own setup instead of step 8.
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill.
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
 
@@ -43,8 +43,8 @@ The refresh mechanic and every trigger for it are owned by the `cleanup` skill �
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
 6. Create the worktree under `.claude/worktrees/` — self-contained, gitignored, and aligned with Claude Code's official default — named for the issue per `task-tracker`'s branch convention.
-7. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`.
-8. Run `pnpm install` in each worktree.
+7. **Copy `.linear.toml` from the repo root into the worktree root.** It is gitignored (it can hold a plaintext API key), so a fresh worktree starts without it — and the `linear` CLI's config lookup stops at the checkout root, never walking up to the main worktree. Without it every tracker command silently resolves to the account's *default* workspace, which is not `sworld`: reads return the wrong workspace's data, and writes fail with `Team not found: SWO`. Applies to all three repos.
+8. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`. Then run `pnpm install` in the worktree.
 
 ## During work
 
@@ -60,7 +60,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 ## Codegen
 
 - ALWAYS `git fetch origin main && git merge origin/main` before running codegen.
-- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types. Needs `packages/core/.env` in the worktree (see step 7) — codegen introspects the live Hasura schema using the URL/secret from it.
+- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types. Needs `packages/core/.env` in the worktree (see step 8) — codegen introspects the live Hasura schema using the URL/secret from it.
 - See `architecture` skill for GraphQL conventions (generated files, `graphql()` usage).
 
 ## Resolving conflicts
