@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo of several web apps and shared packages. The how-to-code conventions live in `.claude/skills/` and trigger automatically by task; this file is the always-on context around them.
+Context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo holding the whole product: the web apps, the shared packages, the backend, and the data layer. The how-to-code conventions live in `.claude/skills/` and trigger automatically by task; this file is the always-on context around them.
 
 ## Hard gate: plan before code — always
 
@@ -38,14 +38,27 @@ Every change should answer four questions:
 
 ## The apps & packages
 
-### Applications (`apps/`)
+Everything below is a member of the one pnpm workspace, resolved by the single root `pnpm-lock.yaml`. Frontend, backend, and data layer all land in this repo — there is no sibling repo to switch to.
+
+### Frontend applications (`apps/`)
 
 - **docs** — Docusaurus documentation site with technical guides and blog posts
+- **extension** — Browser extension
 - **game** — Phaser.js gaming platform with multiple games (Bobble Dungeon, Evil Minds)
 - **listen** — Audio/music streaming application
 - **main** — Main application with finance, journal, and library features
 - **til** — "Today I Learned" blog/notes application
 - **watch** — Video streaming/watching application
+
+### Backend & data layer (`apps/`)
+
+- **backend** (`apps/backend`) — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura). Three services — gateway, io, compute — in one package; it consumes `core` as a workspace dependency (`workspace:*`).
+- **hasura** (`apps/hasura`) — Hasura GraphQL + Postgres: migrations, metadata, and permissions — the data layer the frontend queries. Hasura Cloud's GitHub integration watches this directory and applies metadata and migrations when a change merges to `main`.
+
+Two ways these differ from the frontend apps:
+
+- Hasura is excluded from Biome (`biome.json`) and keeps its own eslint toolchain — reformatting it with a different formatter would rewrite the history the move preserved. Its PR gate is `hasura-pr.yml`, which lints only its JS/TS files, not the SQL migrations or YAML metadata.
+- The backend's build and deploy path is mid-migration: the old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
 
 ### Shared packages (`packages/`)
 
@@ -53,20 +66,11 @@ Every change should answer four questions:
 - **ui** — UI component library using Material-UI and Emotion (+ Storybook)
 - **tsconfig** — Shared TypeScript configurations
 
-### Backend & data layer (sibling repos)
-
-These live **outside** this pnpm workspace, as separate repos next to `sworld/`:
-
-- **sworld-backend** — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura).
-- **sworld-hasura-v2** — Hasura GraphQL + Postgres: migrations, metadata, and permissions — the data layer the frontend queries.
-
-When work spans the backend or schema, the change lands in those repos, not here.
-
 ## Tech Stack
 
 - **Frontend:** React 18, TypeScript, Material-UI, Emotion, Vite, TanStack Router
 - **Data:** GraphQL via Hasura, Auth0 for auth, React Query for server state
-- **Backend:** Hono (Hasura Actions/Events) on the sibling `sworld-backend` repo
+- **Backend:** Hono (Hasura Actions/Events) in `apps/backend`, on Cloud Run
 - **Testing:** Vitest, Playwright, Storybook
 - **Build:** Turborepo, pnpm, tsup
 - **Gaming:** Phaser.js, Matter.js physics
@@ -102,13 +106,15 @@ App-specific `dev:*` commands use `turbo watch`. How a `packages/core` / `packag
 Per-package:
 
 ```bash
-cd packages/core && pnpm codegen   # Regenerate GraphQL types (also: pnpm watch-codegen)
-cd packages/ui   && pnpm storybook # Component development
+cd packages/core && pnpm codegen        # Regenerate GraphQL types (also: pnpm watch-codegen)
+cd packages/ui   && pnpm storybook      # Component development
+cd apps/backend  && pnpm dev-gateway    # Run a backend service (also: dev-io, dev-compute)
+cd apps/hasura   && pnpm lint           # Hasura keeps its own eslint, not Biome
 ```
 
 ## Common Workflows
 
-- **Before any work touching sworld-backend or sworld-hasura-v2** — load the `backend-architecture` skill. It documents the full service architecture, Cloud Task pipeline, task lifecycle, notification flow, and event vs action patterns. Do not reason about the backend without it.
+- **Before any work touching `apps/backend` or `apps/hasura`** — load the `backend-architecture` skill. It documents the full service architecture, Cloud Task pipeline, task lifecycle, notification flow, and event vs action patterns. Do not reason about the backend without it.
 - **Before designing a new mutation/Action, or reasoning about concurrent writes or data validation** — load the `hasura-architecture` skill. It covers the single-gateway rule, when a write needs a concurrency-safe database pattern, and the three validation layers.
 - **Code exploration — always use CodeGraph first, not grep.** Setup and the exact rule live in `dev-environment-gotchas`.
 - **Adding a feature** — identify which app(s) change; decide where the code lives (`frontend-ui-architecture`); run the relevant `dev:*` command; make changes; run `pnpm lint` and `pnpm test` before committing.
@@ -122,7 +128,9 @@ The style law lives in the `code-conventions` skill, which auto-triggers on any 
 ## Key directories
 
 ```text
-apps/<app>/src/         # per-app source (routes/, components/, config)
+apps/<app>/src/         # per-app frontend source (routes/, components/, config)
+apps/backend/src/       # Hono services (gateway, io, compute) + their handlers
+apps/hasura/            # migrations/, metadata/ — the data layer
 packages/core/src/      # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
 packages/ui/src/        # shared MUI + Emotion components (+ Storybook)
 ```
