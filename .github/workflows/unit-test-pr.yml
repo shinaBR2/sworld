@@ -1,11 +1,11 @@
 name: Unit Test on PR
 
+# No path filter on purpose — see the note in typecheck-pr.yml. A workflow that
+# never triggers never reports a check run, so a required check would sit
+# pending forever and block the merge.
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - 'apps/docs/**'
-      - '**/*.md'
 
 jobs:
   test:

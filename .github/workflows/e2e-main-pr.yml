@@ -4,20 +4,42 @@ name: Main E2E on PR
 # bundle (fake Auth0 session + mocked Hasura — see apps/main/e2e/support). It
 # depends on no deployed environment on purpose, so it runs on every PR that
 # touches the main app or its shared packages.
+#
+# The path filter lives in the `changes` job below, NOT in `on:`. An `on: paths`
+# filter stops the workflow from triggering at all, so no check run is ever
+# created and a required check sits pending forever, blocking the merge. Filtering
+# in a job instead means the workflow always triggers: `changes` always reports,
+# and `e2e` is skipped when nothing relevant changed — and GitHub counts a skipped
+# job as a passing required check. This is the pattern the incoming backend/ and
+# hasura/ gates reuse (SWO-540).
 on:
   pull_request:
     branches: [main]
-    paths:
-      - 'apps/main/**'
-      - 'packages/core/**'
-      - 'packages/ui/**'
-      - '.github/workflows/e2e-main-pr.yml'
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  # Cheap always-run gate: no checkout, reads the PR's changed files from the API.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      main: ${{ steps.filter.outputs.main }}
+    steps:
+      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+        id: filter
+        with:
+          filters: |
+            main:
+              - 'apps/main/**'
+              - 'packages/core/**'
+              - 'packages/ui/**'
+              - '.github/workflows/e2e-main-pr.yml'
+
   e2e:
+    needs: changes
+    if: needs.changes.outputs.main == 'true'
     runs-on: ubuntu-latest
 
     steps:

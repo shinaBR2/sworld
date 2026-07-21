@@ -1,11 +1,13 @@
 name: Typecheck on PR
 
+# No path filter on purpose. A workflow that never triggers never reports a
+# check run, so a required check would sit pending forever and block the merge.
+# Typecheck is cheap and the repo is public (free runners), so it always runs
+# and always reports. Gates expensive enough to be worth skipping use the
+# filter-job pattern instead — see e2e-main-pr.yml.
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - 'apps/docs/**'
-      - '**/*.md'
 
 jobs:
   typecheck:
