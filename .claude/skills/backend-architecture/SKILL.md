@@ -1,12 +1,23 @@
 ---
 name: backend-architecture
-description: The sworld backend architecture — four services (gateway, io, compute, hasura), the Hasura Event → Cloud Task → handler pipeline, task lifecycle, notification flow, and when to use Cloud Tasks vs direct actions. Auto-triggers when working in sworld-backend, planning backend features, touching Hasura Actions/Events, creating Cloud Task handlers, or designing any server-side video/audio processing flow.
+description: The sworld backend architecture — four services (gateway, io, compute, hasura), the Hasura Event → Cloud Task → handler pipeline, task lifecycle, notification flow, and when to use Cloud Tasks vs direct actions. Auto-triggers when working in apps/backend, planning backend features, touching Hasura Actions/Events, creating Cloud Task handlers, or designing any server-side video/audio processing flow.
 user-invocable: false
 ---
 
 # Backend Architecture
 
-The backend is a single TypeScript codebase (`sworld-backend`) deployed as **four services** that share source but run different entry points. Three are custom Hono servers; the fourth is Hasura GraphQL Engine.
+The backend is a single TypeScript codebase — the `backend` workspace package at **`apps/backend`** — deployed as **four services** that share source but run different entry points. Three are custom Hono servers; the fourth is Hasura GraphQL Engine.
+
+## Where it lives
+
+The backend and the data layer are workspace packages in the sworld monorepo, not separate repos:
+
+| Package | Directory | Notes |
+|---------|-----------|-------|
+| `backend` | `apps/backend` | Hono services. Depends on `core` via `workspace:*`; the whole `backend` → `core` chain is ESM (`"type": "module"` on both). |
+| `sworld-hasura-v2` | `apps/hasura` | The one workspace package whose name doesn't match its directory. Keeps its own eslint toolchain; excluded from biome. |
+
+One `pnpm-lock.yaml` at the repo root covers everything — there is no per-app lockfile and no `npm ci` anywhere. Every `src/…` path below is relative to `apps/backend`.
 
 ## The four services
 
@@ -15,9 +26,15 @@ The backend is a single TypeScript codebase (`sworld-backend`) deployed as **fou
 | **gateway** | `src/gateway.ts` | `Dockerfile.gateway` | Receives Hasura Events/Actions, validates webhook signatures, routes to Cloud Tasks. Also handles direct synchronous Actions (set-thumbnail, auth, storage upload URLs). |
 | **io** | `src/io.ts` | `Dockerfile.io` | Light I/O operations: byte-copy HLS streaming, platform imports, Playwright crawling. Includes Playwright + Chromium for crawlers. |
 | **compute** | `src/compute.ts` | `Dockerfile.compute` | CPU-heavy ffmpeg work: video conversion (re-encode to fMP4 HLS). Same Docker image as gateway but different entry. |
-| **hasura** | — | `sworld-hasura-v2/` | Hasura GraphQL Engine + Postgres. Owns the schema, permissions, event triggers, and action definitions. |
+| **hasura** | — | `apps/hasura` | Hasura GraphQL Engine + Postgres. Owns the schema, permissions, event triggers, and action definitions. |
 
-Gateway, io, and compute are deployed as separate Cloud Run services. They share a single codebase (`sworld-backend`) but each has its own entry point (different `CMD` in Dockerfile).
+Gateway, io, and compute run as separate Cloud Run services off one codebase, each with its own entry point (different `CMD` in its Dockerfile).
+
+### Container build and deploy are mid-rebuild — don't rely on them
+
+The three Dockerfiles still install with `npm ci` against a `package-lock.json` that no longer exists, so **none of them currently build**, and the workflows that deployed the backend were removed in the monorepo move with nothing yet in their place. Nothing here deploys the backend today.
+
+Both are being rebuilt: SWO-545 owns making the images build (shipping the workspace slice with pnpm from a monorepo-root build context — not bundling), SWO-546 owns restoring the deploy pipeline. Until those land, treat a backend change as unshippable, and check those tickets rather than this skill for how a build or deploy will work.
 
 ## The full pipeline: Hasura Event → video processing
 
@@ -92,7 +109,7 @@ The deterministic `task_id` (uuidv5) ensures the same logical task is never enqu
    - Inserts a `notifications` row: `{ type: 'video-ready', entityId, entityType: 'video', user_id }`
    - Updates the `videos` row: `{ source, status: 'ready', thumbnailUrl, duration, sId }`
 
-2. The `notifications` table has **subscription permissions** for the `user` role (`select` on subscription root, filtered `user_id = X-Hasura-User-Id`). See `sworld-hasura-v2/metadata/.../public_notifications.yaml:53`.
+2. The `notifications` table has **subscription permissions** for the `user` role (`select` on subscription root, filtered `user_id = X-Hasura-User-Id`). See `apps/hasura/metadata/.../public_notifications.yaml:53`.
 
 3. The frontend creates a Hasura **GraphQL subscription** on `notifications(where: { read_at: { _is_null: true } })`. When a new notification arrives, the UI shows it to the user (e.g. "Your video is ready").
 
@@ -146,7 +163,7 @@ The pattern for adding a new handler to the compute service:
 2. **Handler** (`src/apps/compute/videos/routes/<feature>/`): business logic using existing core engines
 3. **Router** (`src/apps/compute/videos/index.ts`): register `POST /<feature>-handler` with `withVideoFailureReport`
 4. **Gateway route** (if user-initiated Action): schema + handler on `videoActionsRouter` that creates a Cloud Task → compute
-5. **Hasura metadata** (`sworld-hasura-v2/metadata/actions.yaml`): define the Action + custom types
+5. **Hasura metadata** (`apps/hasura/metadata/actions.yaml`): define the Action + custom types
 
 ## Key files reference
 
@@ -174,9 +191,9 @@ The pattern for adding a new handler to the compute service:
 | convertToHLS (ffmpeg encode) | `src/services/videos/helpers/ffmpeg/index.ts` |
 | convert handler (compute) | `src/services/videos/convert/handler.ts` |
 | CLI scripts | `src/cli/stream-m3u8.ts`, `src/cli/convert.ts`, `src/cli/repair-fmp4.ts` |
-| Hasura actions metadata | `sworld-hasura-v2/metadata/actions.yaml` |
-| Hasura Event triggers | `sworld-hasura-v2/metadata/databases/sworld/tables/public_videos.yaml` |
-| Notifications permissions | `sworld-hasura-v2/metadata/databases/sworld/tables/public_notifications.yaml` |
+| Hasura actions metadata | `apps/hasura/metadata/actions.yaml` |
+| Hasura Event triggers | `apps/hasura/metadata/databases/sworld/tables/public_videos.yaml` |
+| Notifications permissions | `apps/hasura/metadata/databases/sworld/tables/public_notifications.yaml` |
 
 ## Local testing limitations
 
@@ -188,10 +205,12 @@ Local testing options:
 |-------|-----|-------------------|
 | **Unit tests** | `vitest` with mocked deps | Handler business logic, schema validation, error paths |
 | **Direct handler call** | `curl POST localhost:4000/videos/<handler> -H 'x-task-id: <uuid>' -d '{...}'` | Handler in isolation (bypasses Cloud Tasks) |
-| **Gateway + Compute locally** | Run gateway + compute in separate terminals, call the action manually | Action → Gateway → Cloud Task creation (but task never delivers locally) |
-| **Full integration** | Deploy to Cloud Run, trigger via Hasura | End-to-end: action → gateway → cloud task → handler → notification |
+| **Gateway + Compute locally** | From `apps/backend`, `pnpm dev-gateway` and `pnpm dev-compute` in separate terminals, then call the action manually | Action → Gateway → Cloud Task creation (but task never delivers locally) |
+| **Full integration** | Run against real Cloud Run, trigger via Hasura — **blocked today, see below** | End-to-end: action → gateway → cloud task → handler → notification |
 
-When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → deploy (real integration). Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
+When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
+
+The last rung has no route today: with the images unbuildable and the deploy workflows gone (see above), there is no way to ship a backend change to Cloud Run and close the loop. Plan a backend change knowing its integration test is blocked until SWO-545 and SWO-546 land.
 
 ## Business constraints
 

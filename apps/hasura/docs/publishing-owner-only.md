@@ -47,7 +47,7 @@ exercise it against a running Hasura by simulating a role with the admin secret
 ```bash
 EP=http://localhost:8030/v1/graphql   # local; use the deployed endpoint for prod
 SEC=<admin-secret>
-UID=6ff27fda-03e8-4dcd-949b-f1328f955065   # any user id
+UID=<any-user-id>
 
 # user INSERT playlist with public -> rejected: field 'public' not found in type: 'playlist_insert_input'
 curl -s "$EP" -H "x-hasura-admin-secret: $SEC" -H "x-hasura-role: user" -H "x-hasura-user-id: $UID" \

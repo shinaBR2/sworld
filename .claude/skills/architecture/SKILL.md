@@ -60,24 +60,24 @@ export function useProjectQuery(id: string) {
 
 - ALWAYS use the generated `graphql()` helper for GraphQL queries and mutations — never raw template literal strings. Operations are fed through `useRequest` / `useMutationRequest`.
 - NEVER manually edit generated files (`generated/graphql.ts`, `generated/gql.ts`, `schema.graphql`) — always run `pnpm codegen` (in `packages/core`).
-- All database operations go through Hasura. The backend (the separate `sworld-backend` repo) only handles Hasura Actions/Events.
+- All database operations go through Hasura. The backend (`apps/backend`) only handles Hasura Actions/Events.
 
 ## Data layer: schema changes and codegen
 
-Schema and permission changes live in the sibling **`sworld-hasura-v2`** repo (migrations + metadata), never here.
+Schema and permission changes live in **`apps/hasura`** (migrations + metadata), never in a frontend app or `packages/core`.
 
-- **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
-- **Sequence merges across repos.** A frontend query/mutation on a new table/column only works at runtime once the Hasura PR is merged and live. Land the data-layer PR before any frontend PR that reads/writes the new shape goes live.
+- **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply` from `apps/hasura`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
+- **Sequence the merges.** A frontend query/mutation on a new table/column only works at runtime once the schema change is merged and live. Land the data-layer PR before any frontend PR that reads/writes the new shape goes live. Now that both live in one repo, nothing *stops* you committing them together — the runtime ordering is the reason not to; splitting them is `micro-prs`' rule.
 
 ## Deployment: merging is deploying
 
 This skill owns the deploy model — other skills point here rather than restating it.
 
-**Merging into `main` ships to production**, in all three repos. There is no promote step, no staging, and no manual deploy: the only two environments are **local** and **production**. Treat every merge as a release.
+**Merging into `main` ships to production.** There is no promote step, no staging, and no manual deploy: the only two environments are **local** and **production**. Treat every merge as a release.
 
 - **Frontend** — **Cloudflare Pages** hosts `main` (`shinabr2.com`), `listen`, `watch` and `til`. Each site has its own build pipeline and env vars, configured in the Cloudflare dashboard and **not in this repo**. Nothing in `.github/workflows` deploys a frontend app. `docs` and `game` are not deployed anywhere.
-- **Data layer** — merging a `sworld-hasura-v2` PR applies its migrations + metadata to Hasura Cloud production, via Hasura Cloud's GitHub integration rather than a GitHub Actions workflow. That repo has no deploy job (only lint), so merging *looks* inert. It isn't.
-- **Backend** — merging `sworld-backend` deploys to Cloud Run.
+- **Data layer** — merging a change under `apps/hasura` applies its migrations + metadata to Hasura Cloud production, via Hasura Cloud's GitHub integration rather than a GitHub Actions workflow. `hasura-pr.yml` only lints, so merging *looks* inert. It isn't.
+- **Backend** — nothing deploys `apps/backend` right now. The workflows that pushed it to Cloud Run were removed in the monorepo move and the container images don't build; both are being rebuilt (see `backend-architecture`). Merging a backend change is currently a no-op in production — the running Cloud Run services keep serving the last image built before the move.
 
 **What CI does after a merge is verify, not deploy.** `Live Listen` runs Playwright + Argos and a Lighthouse budget against the live site; `Live Watch` runs a Lighthouse budget. A red check there means production is bad — not that a deploy failed. Neither waits for Cloudflare to finish publishing, so both can measure the previous release (SWO-558).
 
