@@ -1,0 +1,133 @@
+table:
+  name: users
+  schema: public
+array_relationships:
+  - name: audios
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: audios
+          schema: public
+  - name: book_comments
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: book_comments
+          schema: public
+  - name: books
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: books
+          schema: public
+  - name: crawl_requests
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: crawl_requests
+          schema: public
+  - name: device_requests
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: device_requests
+          schema: public
+  - name: finance_transactions
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: finance_transactions
+          schema: public
+  - name: journals
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: journals
+          schema: public
+  - name: notifications
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: notifications
+          schema: public
+  - name: playlists
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: playlist
+          schema: public
+  - name: reading_progresses
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: reading_progresses
+          schema: public
+  - name: shared_playlist_recipients
+    using:
+      foreign_key_constraint_on:
+        column: recipient_id
+        table:
+          name: shared_playlist_recipients
+          schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: recipient_id
+        table:
+          name: shared_video_recipients
+          schema: public
+  - name: subtitles
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: subtitles
+          schema: public
+  - name: user_video_histories
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: user_video_history
+          schema: public
+  - name: video_views
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: video_views
+          schema: public
+  - name: videos
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: videos
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - username
+      filter:
+        _or:
+          - id:
+              _eq: X-Hasura-User-Id
+          - playlists:
+              shared_playlist_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+          - shared_video_recipients:
+              recipient_id:
+                _eq: X-Hasura-User-Id
+    comment: Hasura doesn't support differentiating among multiple users with the same role. For now, leave the username available for the owner and those who are shared.

@@ -27,6 +27,10 @@ permissions:
 jobs:
   # Cheap always-run gate: no checkout, reads the PR's changed files from the API.
   changes:
+    # Explicit check name — see the note in hasura-pr.yml. Two workflows with a
+    # job called `changes` would report two identically-named check runs, which
+    # branch protection cannot distinguish.
+    name: main e2e path filter
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read

@@ -1,0 +1,261 @@
+actions:
+  - name: createDeviceRequest
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: createDeviceRequest
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device'
+        version: 2
+      output_type: CreateDeviceRequestResponse
+    permissions:
+      - role: anonymous
+    comment: Request to generate code for next step authentication, called from other sources like smart tivi apps, extensions, etc.
+  - name: authorizeDevice
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: authorizeDevice
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device/authorize'
+        version: 2
+    permissions:
+      - role: user
+    comment: User authorizes an extension device request after entering the user code on the /pair page.
+  - name: getDeviceToken
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: getDeviceToken
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/auth/device/token'
+        version: 2
+      output_type: GetDeviceTokenResponse
+    permissions:
+      - role: anonymous
+    comment: Extension polls for the device authorization token. Returns the access token once the user has authorized.
+  - name: createSignedUploadUrl
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: createSignedUploadUrl
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/storage/signed-upload-url'
+        version: 2
+    permissions:
+      - role: user
+    comment: Generate a V4 signed PUT URL for a direct browser-to-GCS upload (app-agnostic).
+  - name: setVideoThumbnailAtTime
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: setVideoThumbnailAtTime
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/videos-actions/set-thumbnail'
+        version: 2
+    permissions:
+      - role: user
+    comment: Capture the frame at a given timestamp and persist it as the video's thumbnail; ownership enforced server-side against the session user.
+  - name: repairFmp4
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: repairFmp4
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/videos-actions/repair-fmp4'
+        version: 2
+      output_type: RepairFmp4Response
+    permissions:
+      - role: user
+    comment: Remux a stored TS video into fMP4/CMAF to fix the hls.js MPEG-TS AAC-demux noise bug. Ownership enforced server-side.
+  - name: listTelegramChannelVideos
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: listTelegramChannelVideos
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/list'
+        version: 2
+    permissions:
+      - role: user
+    comment: Paginated fetch of video messages from a Telegram channel, scoped to the calling session user's own MTProto session.
+  - name: importTelegramArchive
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: importTelegramArchive
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/import'
+        version: 2
+    permissions:
+      - role: user
+    comment: Trigger archival of selected Telegram channel video messages to GCS; work happens asynchronously via Cloud Task, returns a taskId.
+  - name: requestTelegramLoginCode
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: requestTelegramLoginCode
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/request-login-code'
+        version: 2
+    permissions:
+      - role: user
+    comment: Start Telegram MTProto login for the calling user; loads their stored phone/api credentials, calls sendCode, and Telegram delivers a code to their own device.
+  - name: submitTelegramLoginCode
+    definition:
+      kind: synchronous
+      handler: '{{MAIN_WEBHOOK_DOMAIN}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Action
+          value: submitTelegramLoginCode
+        - name: Content-Type
+          value: application/json
+      request_transform:
+        method: POST
+        query_params: {}
+        template_engine: Kriti
+        url: '{{$base_url}}/telegram-actions/submit-login-code'
+        version: 2
+    permissions:
+      - role: user
+    comment: Complete Telegram MTProto login for the calling user; calls signIn with the code and persists the resulting session string to their own credentials row.
+custom_types:
+  enums: []
+  input_objects:
+    - name: CreateDeviceRequestInput
+    - name: AuthorizeDeviceInput
+    - name: GetDeviceTokenInput
+    - name: SignedUploadUrlInput
+    - name: SetVideoThumbnailAtTimeInput
+    - name: RepairFmp4Input
+    - name: ListTelegramChannelVideosInput
+    - name: ImportTelegramArchiveInput
+    - name: SubmitTelegramLoginCodeInput
+  objects:
+    - name: CreateDeviceRequestOutput
+      fields:
+        - name: deviceCode
+          type: string!
+        - name: userCode
+          type: string!
+        - name: verification_uri
+          type: string!
+        - name: verification_uri_complete
+          type: string!
+        - name: expires_in
+          type: int!
+        - name: interval
+          type: int!
+    - name: AuthorizeDeviceOutput
+    - name: GetDeviceTokenOutput
+      fields:
+        - name: token
+          type: string!
+    - name: DeviceRequestError
+      fields:
+        - name: code
+          type: string!
+        - name: message
+          type: string!
+    - name: CreateDeviceRequestResponse
+      fields:
+        - name: success
+          type: boolean!
+        - name: data
+          type: CreateDeviceRequestOutput
+    - name: AuthorizeDeviceResponse
+    - name: GetDeviceTokenResponse
+      fields:
+        - name: success
+          type: boolean!
+        - name: data
+          type: GetDeviceTokenOutput
+        - name: error
+          type: DeviceRequestError
+    - name: SignedUploadUrlOutput
+    - name: SignedUploadUrlResponse
+    - name: SetVideoThumbnailAtTimeOutput
+    - name: SetVideoThumbnailAtTimeResponse
+    - name: RepairFmp4Output
+    - name: RepairFmp4Response
+    - name: TelegramVideoMessage
+    - name: ListTelegramChannelVideosOutput
+    - name: ListTelegramChannelVideosResponse
+    - name: ImportTelegramArchiveOutput
+    - name: ImportTelegramArchiveResponse
+    - name: RequestTelegramLoginCodeResponse
+    - name: SubmitTelegramLoginCodeResponse
+  scalars: []

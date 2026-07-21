@@ -1,0 +1,35 @@
+table:
+  name: feature_flag
+  schema: public
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - conditions
+        - id
+        - name
+        - site
+      filter:
+        _and:
+          - require_auth:
+              _eq: false
+          - site:
+              _in:
+                - listen
+                - watch
+      limit: 1
+    comment: Can not see all rows, only can see detail
+  - role: user
+    permission:
+      columns:
+        - conditions
+        - id
+        - name
+        - site
+      filter:
+        site:
+          _in:
+            - listen
+            - watch
+      limit: 2
+    comment: User role can see details and feature flags that require authorization but can not be listed and can only be seen per site. The description is for admin only.

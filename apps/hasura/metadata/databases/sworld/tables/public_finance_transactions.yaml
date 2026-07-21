@@ -1,0 +1,84 @@
+table:
+  name: finance_transactions
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - amount
+        - category
+        - month
+        - name
+        - note
+        - year
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - amount
+        - category
+        - created_at
+        - id
+        - month
+        - name
+        - note
+        - updated_at
+        - user_id
+        - year
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+      query_root_fields:
+        - select
+        - select_aggregate
+        - select_by_pk
+      subscription_root_fields:
+        - select
+        - select_aggregate
+        - select_by_pk
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - amount
+        - category
+        - month
+        - name
+        - note
+        - year
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""

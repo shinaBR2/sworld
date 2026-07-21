@@ -1,0 +1,23 @@
+CREATE OR REPLACE FUNCTION reading_progresses_percentage(reading_progresses_row reading_progresses)
+RETURNS DECIMAL(5,2) AS $$
+BEGIN
+    -- If total_pages is null or 0, return 0
+    IF reading_progresses_row.total_pages IS NULL OR reading_progresses_row.total_pages <= 0 THEN
+        RETURN 0.00;
+    END IF;
+    
+    -- If current_page is null or negative, return 0
+    IF reading_progresses_row.current_page IS NULL OR reading_progresses_row.current_page <= 0 THEN
+        RETURN 0.00;
+    END IF;
+    
+    -- Calculate percentage, cap at 100%
+    RETURN LEAST(
+        100.00, 
+        ROUND(
+            (reading_progresses_row.current_page::DECIMAL / reading_progresses_row.total_pages::DECIMAL) * 100, 
+            2
+        )
+    );
+END;
+$$ LANGUAGE plpgsql STABLE;

@@ -1,0 +1,109 @@
+name: Hasura PR Check
+
+# Lints the data layer that moved in from sworld-hasura-v2 under apps/hasura.
+# Hasura keeps its own eslint toolchain — biome excludes apps/hasura
+# (biome.json), because reformatting it with a different formatter would rewrite
+# the history this import went to trouble to preserve.
+#
+# Scope, precisely: eslint matches **/*.{js,mjs,cjs,ts}, which here is 20 files
+# — 16 under tests/, plus 4 config files. It does NOT check migrations/ (SQL)
+# or metadata/ (YAML) — a broken migration or malformed metadata file still
+# reports this check green. That gap is inherited from the upstream repo, not
+# introduced here, and is tracked separately; don't read this check as
+# validating the schema.
+#
+# The path filter lives in the `changes` job, NOT in `on:` — an `on: paths`
+# filter stops the workflow triggering at all, so no check run is created and a
+# required check sits pending forever. See e2e-main-pr.yml for the full note,
+# including the picomatch glob-dialect trap when porting a filter.
+#
+# The job is `hasura-lint`, not the upstream repo's bare `test` — that rendered
+# as a check named `test`, identical to unit-test-pr.yml's, and two same-named
+# contexts make branch-protection selection ambiguous (SWO-542).
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Cheap always-run gate: no checkout, reads the PR's changed files from the API.
+  changes:
+    # Explicit check name. Every path-filtered workflow has a job called
+    # `changes`, and a check run is named after the job — so without this, two
+    # workflows put two indistinguishable `changes` rows on the same PR and
+    # branch protection can't tell them apart (it matches on name alone).
+    name: hasura path filter
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      hasura: ${{ steps.filter.outputs.hasura }}
+    steps:
+      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+        id: filter
+        with:
+          # apps/hasura/** plus anything its install resolves against — eslint and its
+          # plugins come from the single root lockfile now, so a lockfile or
+          # workspace-config change can break this lint on its own.
+          filters: |
+            hasura:
+              - 'apps/hasura/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'package.json'
+              - '.npmrc'
+              - '.github/workflows/hasura-pr.yml'
+
+  hasura-lint:
+    needs: changes
+    # Skip only on an explicit 'false' — i.e. the filter ran and said no. An `==
+    # 'true'` test would also skip when `changes` itself errored, and a skipped
+    # job scores as a pass, so an API blip would silently green the gate.
+    if: ${{ !cancelled() && needs.changes.outputs.hasura != 'false' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.0.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # Lint only. The upstream repo's test step was already commented out — the
+      # suite needs a live Hasura endpoint and Auth0 credentials, so it is not
+      # wired up here either. That's why the package exposes `test:local` rather
+      # than `test`: turbo picks up any package with a `test` script, so naming
+      # it `test` would pull a suite that can't run in CI into the `test` gate.
+      #
+      # Run from the directory rather than `pnpm --filter <package-name>`: a
+      # filter that matches nothing exits 0 with "No projects matched", so the
+      # day someone renames the package (it is still `sworld-hasura-v2`, the one
+      # workspace package whose name doesn't match its directory) the step would
+      # lint nothing and report green. A wrong directory fails loudly instead.
+      - name: Run linter
+        working-directory: apps/hasura
+        run: pnpm run lint

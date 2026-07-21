@@ -1,0 +1,227 @@
+type Mutation {
+  createDeviceRequest(
+    input: CreateDeviceRequestInput!
+  ): CreateDeviceRequestResponse!
+  authorizeDevice(
+    input: AuthorizeDeviceInput!
+  ): AuthorizeDeviceResponse!
+  getDeviceToken(
+    input: GetDeviceTokenInput!
+  ): GetDeviceTokenResponse!
+  createSignedUploadUrl(
+    input: SignedUploadUrlInput!
+  ): SignedUploadUrlResponse!
+  setVideoThumbnailAtTime(
+    input: SetVideoThumbnailAtTimeInput!
+  ): SetVideoThumbnailAtTimeResponse!
+  repairFmp4(
+    input: RepairFmp4Input!
+  ): RepairFmp4Response!
+  listTelegramChannelVideos(
+    input: ListTelegramChannelVideosInput!
+  ): ListTelegramChannelVideosResponse!
+  importTelegramArchive(
+    input: ImportTelegramArchiveInput!
+  ): ImportTelegramArchiveResponse!
+  requestTelegramLoginCode: RequestTelegramLoginCodeResponse!
+  submitTelegramLoginCode(
+    input: SubmitTelegramLoginCodeInput!
+  ): SubmitTelegramLoginCodeResponse!
+}
+
+input CreateDeviceRequestInput {
+  extensionId: String!
+}
+
+type CreateDeviceRequestOutput {
+  deviceCode: String!
+  userCode: String!
+  verificationUri: String!
+  verificationUriComplete: String!
+  expiresIn: Int!
+  interval: Int!
+}
+
+input AuthorizeDeviceInput {
+  userCode: String!
+  approved: Boolean!
+}
+
+type AuthorizeDeviceOutput {
+  success: Boolean!
+}
+
+input GetDeviceTokenInput {
+  deviceCode: String!
+  grantType: String!
+}
+
+type GetDeviceTokenOutput {
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+}
+
+type DeviceRequestError {
+  code: String!
+  message: String!
+}
+
+type CreateDeviceRequestResponse {
+  success: Boolean!
+  data: CreateDeviceRequestOutput
+  error: DeviceRequestError
+}
+
+type AuthorizeDeviceResponse {
+  success: Boolean!
+  data: AuthorizeDeviceOutput
+  error: DeviceRequestError
+}
+
+type GetDeviceTokenResponse {
+  success: Boolean!
+  data: GetDeviceTokenOutput
+  error: DeviceRequestError
+}
+
+input SignedUploadUrlInput {
+  # site: watch | listen | main | … (validated server-side)
+  site: String!
+  # action enum, e.g. VIDEO_UPLOAD, VIDEO_THUMBNAIL_UPLOAD, AUDIO_UPLOAD, BOOK_UPLOAD
+  action: String!
+  # optional entity id to nest the object under; a uuid is generated when omitted
+  id: String
+  # MIME type the browser will PUT; pinned into the signed URL
+  contentType: String!
+}
+
+type SignedUploadUrlOutput {
+  uploadUrl: String!
+  publicUrl: String!
+  objectPath: String!
+  expiresAt: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type SignedUploadUrlResponse {
+  success: Boolean!
+  message: String!
+  dataObject: SignedUploadUrlOutput
+}
+
+input SetVideoThumbnailAtTimeInput {
+  # id of the video whose thumbnail to set; ownership enforced server-side
+  videoId: String!
+  # timestamp (seconds) of the frame to capture as the thumbnail
+  atSeconds: Float!
+}
+
+type SetVideoThumbnailAtTimeOutput {
+  thumbnailUrl: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type SetVideoThumbnailAtTimeResponse {
+  success: Boolean!
+  message: String!
+  dataObject: SetVideoThumbnailAtTimeOutput
+}
+
+input RepairFmp4Input {
+  videoId: String!
+}
+
+type RepairFmp4Output {
+  success: Boolean!
+}
+
+type RepairFmp4Response {
+  success: Boolean!
+  message: String!
+  dataObject: RepairFmp4Output
+}
+
+input ListTelegramChannelVideosInput {
+  # Telegram channel id, resolved from the open web.telegram.org tab
+  channelId: String!
+  # opaque pagination cursor from a previous page's nextCursor; omitted for the first page
+  cursor: String
+}
+
+type TelegramVideoMessage {
+  # Telegram message id for this video message
+  id: String!
+  filename: String
+  # message text/caption; often the only human-readable label when filename is absent (raw video attachments aren't "documents")
+  caption: String
+  # message date, ISO 8601
+  date: String!
+  sizeBytes: Float
+  durationSeconds: Float
+  # ready-to-use "data:image/jpeg;base64,..." string of Telegram's small embedded thumbnail (a few KB, low-res).
+  # Intentionally inline rather than a GCS URL: fetched fresh per list call via MTProto and never persisted to
+  # storage — most browsed items are never imported, so uploading every listed thumbnail would waste storage/
+  # bandwidth on content nobody keeps. The actual video file still goes straight to GCS on import (SWO-495),
+  # never through Hasura.
+  thumbnailDataUri: String
+}
+
+type ListTelegramChannelVideosOutput {
+  videos: [TelegramVideoMessage!]!
+  # pass back as cursor to fetch the next page; null when there are no more results
+  nextCursor: String
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type ListTelegramChannelVideosResponse {
+  success: Boolean!
+  message: String!
+  dataObject: ListTelegramChannelVideosOutput
+}
+
+input ImportTelegramArchiveInput {
+  # Telegram channel id, resolved from the open web.telegram.org tab
+  channelId: String!
+  # ids of the video messages to archive, from a prior listTelegramChannelVideos call
+  messageIds: [String!]!
+}
+
+type ImportTelegramArchiveOutput {
+  # Cloud Task id; the archival itself runs asynchronously
+  taskId: String!
+}
+
+# Mirrors the handler's ServiceResponse: { success, message, dataObject }.
+# dataObject is null on failure (message carries the reason).
+type ImportTelegramArchiveResponse {
+  success: Boolean!
+  message: String!
+  dataObject: ImportTelegramArchiveOutput
+}
+
+# No input: the backend loads the calling session user's own phone/api_id/api_hash
+# from their telegram_credentials row, calls MTProto sendCode, and persists the
+# returned phone_code_hash server-side. Telegram then delivers the code to the
+# user's own device. No data is returned - success just means "code requested".
+type RequestTelegramLoginCodeResponse {
+  success: Boolean!
+  message: String!
+}
+
+input SubmitTelegramLoginCodeInput {
+  # the login code Telegram just sent to the user's own device
+  code: String!
+}
+
+# The backend loads the pending phone_code_hash + credentials from the user's row,
+# calls MTProto signIn, and persists the resulting session_string. No data is
+# returned - success means the session is now stored and list/import will work.
+type SubmitTelegramLoginCodeResponse {
+  success: Boolean!
+  message: String!
+}
+

@@ -1,0 +1,1 @@
+alter table "public"."videos" drop column "retry_count", drop column "metadata";

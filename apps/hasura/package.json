@@ -1,0 +1,47 @@
+{
+  "name": "sworld-hasura-v2",
+  "version": "1.0.0",
+  "description": "hasura v2 for sworld",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test:local": "dotenvx run -- vitest",
+    "test:ci": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shinaBR2/sworld-hasura-v2.git"
+  },
+  "keywords": [
+    "hasura"
+  ],
+  "author": "ShinaBR2",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shinaBR2/sworld-hasura-v2/issues"
+  },
+  "homepage": "https://github.com/shinaBR2/sworld-hasura-v2#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^24",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "graphql-request": "^7.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
+    "vitest": "^4"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -1,0 +1,96 @@
+table:
+  name: reading_progresses
+  schema: public
+configuration:
+  column_config:
+    book_id:
+      custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    current_page:
+      custom_name: currentPage
+    last_read_at:
+      custom_name: lastReadAt
+    reading_time_minutes:
+      custom_name: readingTimeMinutes
+    total_pages:
+      custom_name: totalPages
+    updated_at:
+      custom_name: updatedAt
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    book_id: bookId
+    created_at: createdAt
+    current_page: currentPage
+    last_read_at: lastReadAt
+    reading_time_minutes: readingTimeMinutes
+    total_pages: totalPages
+    updated_at: updatedAt
+    user_id: userId
+  custom_root_fields: {}
+object_relationships:
+  - name: book
+    using:
+      foreign_key_constraint_on: book_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+computed_fields:
+  - name: percentage
+    definition:
+      function:
+        name: reading_progresses_percentage
+        schema: public
+    comment: Calculate percentage based on other column values
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - book_id
+        - current_page
+        - last_read_at
+        - reading_time_minutes
+        - total_pages
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - book_id
+        - created_at
+        - current_page
+        - id
+        - last_read_at
+        - reading_time_minutes
+        - total_pages
+      computed_fields:
+        - percentage
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+      query_root_fields:
+        - select
+        - select_aggregate
+      subscription_root_fields: []
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - current_page
+        - last_read_at
+        - reading_time_minutes
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""

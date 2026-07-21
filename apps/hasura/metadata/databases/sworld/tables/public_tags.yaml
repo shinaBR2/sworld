@@ -1,0 +1,41 @@
+table:
+  name: tags
+  schema: public
+array_relationships:
+  - name: audio_tags
+    using:
+      foreign_key_constraint_on:
+        column: tag_id
+        table:
+          name: audio_tags
+          schema: public
+  - name: video_tags
+    using:
+      foreign_key_constraint_on:
+        column: tag_id
+        table:
+          name: video_tags
+          schema: public
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - display_order
+        - id
+        - name
+        - site
+        - slug
+      filter:
+        site:
+          _eq: listen
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - display_order
+        - id
+        - name
+        - site
+        - slug
+      filter: {}
+    comment: ""

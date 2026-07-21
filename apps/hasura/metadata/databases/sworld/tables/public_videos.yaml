@@ -1,0 +1,315 @@
+table:
+  name: videos
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    keep_original_source:
+      custom_name: keepOriginalSource
+    s_id:
+      custom_name: sId
+    shared_recipients:
+      custom_name: sharedRecipients
+    shared_recipients_input:
+      custom_name: sharedRecipientsInput
+    thumbnail_url:
+      custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    keep_original_source: keepOriginalSource
+    s_id: sId
+    shared_recipients: sharedRecipients
+    shared_recipients_input: sharedRecipientsInput
+    thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+array_relationships:
+  - name: playlist_videos
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: playlist_videos
+          schema: public
+  - name: shared_video_recipients
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: shared_video_recipients
+          schema: public
+  - name: subtitles
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: subtitles
+          schema: public
+  - name: user_video_histories
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: user_video_history
+          schema: public
+  - name: video_tags
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: video_tags
+          schema: public
+  - name: video_views
+    using:
+      foreign_key_constraint_on:
+        column: video_id
+        table:
+          name: video_views
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - slug
+        - title
+        - video_url
+    comment: ""
+  - role: vip
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - keep_original_source
+        - slug
+        - title
+        - video_url
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - created_at
+        - description
+        - id
+        - s_id
+        - slug
+        - source
+        - status
+        - thumbnail_url
+        - title
+      filter:
+        public:
+          _eq: true
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - created_at
+        - description
+        - duration
+        - id
+        - s_id
+        - slug
+        - source
+        - status
+        - thumbnail_url
+        - title
+        - user_id
+      filter:
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - shared_video_recipients:
+              recipient_id:
+                _eq: X-Hasura-User-Id
+          - playlist_videos:
+              playlist:
+                shared_playlist_recipients:
+                  recipient_id:
+                    _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - description
+        - shared_recipients_input
+        - thumbnail_url
+        - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+event_triggers:
+  - name: share_video
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - shared_recipients_input
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share-video'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+  - name: video_on_created
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 300
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/convert'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+    cleanup_config:
+      batch_size: 10000
+      clean_invocation_logs: false
+      clear_older_than: 168
+      paused: false
+      schedule: 0 0 * * *
+      timeout: 600
+  - name: video_on_retry
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - retry_count
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 300
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/convert'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+    cleanup_config:
+      batch_size: 10000
+      clean_invocation_logs: false
+      clear_older_than: 168
+      paused: false
+      schedule: 0 0 * * *
+      timeout: 600
+  - name: video_on_failed
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - status
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 60
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/notify-failure'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
+    cleanup_config:
+      batch_size: 10000
+      clean_invocation_logs: false
+      clear_older_than: 168
+      paused: false
+      schedule: 0 0 * * *
+      timeout: 600

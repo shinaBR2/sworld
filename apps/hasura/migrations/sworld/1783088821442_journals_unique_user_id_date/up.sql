@@ -1,0 +1,1 @@
+ALTER TABLE "public"."journals" ADD CONSTRAINT "journals_user_id_date_key" UNIQUE ("user_id", "date");

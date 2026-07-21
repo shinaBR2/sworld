@@ -1,0 +1,8 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- -- 1. Copy UNIQUE playlist shares to new table
+-- INSERT INTO shared_playlist_recipients (playlist_id, recipient_id, created_at)
+-- SELECT DISTINCT playlist_id, receiver_id, MIN(created_at) as created_at
+-- FROM shared_video_recipients
+-- WHERE playlist_id IS NOT NULL
+-- GROUP BY playlist_id, receiver_id;

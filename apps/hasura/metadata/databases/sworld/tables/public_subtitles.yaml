@@ -1,0 +1,169 @@
+table:
+  name: subtitles
+  schema: public
+configuration:
+  column_config:
+    is_default:
+      custom_name: isDefault
+    url_input:
+      custom_name: urlInput
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    is_default: isDefault
+    url_input: urlInput
+    user_id: userId
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+  - name: video
+    using:
+      foreign_key_constraint_on: video_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+          - video:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - video:
+              shared_video_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+          - video:
+              playlist_videos:
+                playlist:
+                  shared_playlist_recipients:
+                    recipient_id:
+                      _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - is_default
+        - lang
+        - url_input
+        - video_id
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - is_default
+        - id
+        - lang
+        - url
+        - video_id
+      filter:
+        video:
+          public:
+            _eq: true
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - id
+        - is_default
+        - lang
+        - url
+      filter:
+        _or:
+          - video:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - video:
+              shared_video_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+          - video:
+              playlist_videos:
+                playlist:
+                  shared_playlist_recipients:
+                    recipient_id:
+                      _eq: X-Hasura-User-Id
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - lang
+        - url_input
+      filter:
+        _or:
+          - video:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - video:
+              shared_video_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+          - video:
+              playlist_videos:
+                playlist:
+                  shared_playlist_recipients:
+                    recipient_id:
+                      _eq: X-Hasura-User-Id
+      check:
+        _or:
+          - video:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - video:
+              shared_video_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+          - video:
+              playlist_videos:
+                playlist:
+                  shared_playlist_recipients:
+                    recipient_id:
+                      _eq: X-Hasura-User-Id
+    comment: ""
+event_triggers:
+  - name: subtitle_on_created
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/subtitle-created'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {
+                "id": {{$body.event.data.new.id}},
+                "isDefault": {{$body.event.data.new.is_default}},
+                "lang": {{$body.event.data.new.lang}},
+                "url": {{$body.event.data.new.url_input}},
+                "videoId": {{$body.event.data.new.video_id}},
+                "userId": {{$body.event.data.new.user_id}},
+                "updatedAt": {{$body.event.data.new.updated_at}},
+                "createdAt": {{$body.event.data.new.created_at}}
+              },
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2
