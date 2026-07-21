@@ -146,14 +146,14 @@ Our style rules are non-negotiable and easy to slip past in an AI-generated diff
 
 ### Security and data handling
 
-If the PR touches a **trust boundary** — authentication / Auth0, Hasura permissions or metadata, the `sworld-backend` (Hono) Action/Event or webhook handlers, the admin secret, or `VITE_`-prefixed env vars — do a careful stack-aware pass. For changes that don't touch a boundary, the quick checks are enough:
+If the PR touches a **trust boundary** — authentication / Auth0, Hasura permissions or metadata, the Hono Action/Event or webhook handlers in `apps/backend`, the admin secret, or `VITE_`-prefixed env vars — do a careful stack-aware pass. For changes that don't touch a boundary, the quick checks are enough:
 
 - Inputs validated where they enter the system?
 - Output sanitised where it crosses a trust boundary?
 - Secrets, tokens, API keys — handled correctly, not logged or committed?
 - User data — appropriate access controls?
 
-Remember the backend lives in the separate `sworld-backend` repo and the data layer is Hasura (`sworld-hasura-v2`) over Postgres — a frontend PR can't be trusted to enforce anything on its own; validation and access control belong server-side.
+Remember the backend (`apps/backend`) and the Hasura data layer (`apps/hasura`) over Postgres now sit in the same repo as the frontend — being one diff away does not make a frontend PR able to enforce anything on its own; validation and access control still belong server-side.
 
 ### Performance
 
