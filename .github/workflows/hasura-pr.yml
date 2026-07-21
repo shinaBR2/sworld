@@ -5,8 +5,8 @@ name: Hasura PR Check
 # (biome.json), because reformatting it with a different formatter would rewrite
 # the history this import went to trouble to preserve.
 #
-# Scope, precisely: eslint matches **/*.{js,mjs,cjs,ts}, which here is the ~20
-# files under tests/ plus the config files. It does NOT check migrations/ (SQL)
+# Scope, precisely: eslint matches **/*.{js,mjs,cjs,ts}, which here is 20 files
+# — 16 under tests/, plus 4 config files. It does NOT check migrations/ (SQL)
 # or metadata/ (YAML) — a broken migration or malformed metadata file still
 # reports this check green. That gap is inherited from the upstream repo, not
 # introduced here, and is tracked separately; don't read this check as
