@@ -2,8 +2,9 @@
 name: security-reviewer
 description: >-
   Stack-aware security & vulnerability reviewer for this codebase — tuned to our actual
-  stack: Auth0 (authentication), Hasura (authorisation), Hono backend (separate sworld-backend repo),
-  Vite/React SPA (frontend), and Postgres. Use whenever asked to review security, audit for
+  stack: Auth0 (authentication), Hasura (authorisation, in-repo at `apps/hasura`), the Hono backend
+  (in-repo at `apps/backend`), Vite/React SPA (frontend), and Postgres — all one monorepo, so a
+  review can read every layer. Use whenever asked to review security, audit for
   vulnerabilities, check for security weaknesses or misconfigurations, threat-model a change, or
   assess the security posture of the app — and reach for it proactively when touching anything on a
   trust boundary: authentication, Auth0/JWT claims, Hasura permissions or metadata, role
@@ -44,17 +45,21 @@ honest about whether it reaches anywhere at all.
 
 ## The stack and its five trust boundaries
 
+Everything below lives in **one repo** — the frontends, the Hono backend (`apps/backend`) and the
+Hasura metadata/migrations (`apps/hasura`) are all workspace packages of the same monorepo, on one
+root `pnpm-lock.yaml`. A review can read every layer without leaving the checkout.
+
 ```
 Browser SPA ──Auth0 JWT (Bearer)──▶ Hasura ──admin secret (bypasses RLS)──▶ Postgres
-  (apps/<app>)                  (sworld-hasura-v2)     │
-                                                        └──X-Hasura-Signature──▶ Hono
-External webhooks ──auth header──────────────────────────────────────────────▶ (sworld-backend)
+  (apps/<app>)                   (apps/hasura)   │
+                                                 └──x-webhook-signature──▶ Hono
+External webhooks ──signature header─────────────────────────────────────▶ (apps/backend)
 ```
 
 | # | Boundary | Mechanism | The core question |
 |---|----------|-----------|-------------------|
 | 1 | Browser ↔ Hasura | Auth0 JWT, validated by Hasura via JWKS; `x-hasura-role` / `x-hasura-user-id` come from JWT claims | Is every row scoped to the caller's identity, and does role come only from the verified token? |
-| 2 | Hasura ↔ Hono | Shared secret in `X-Hasura-Signature` header | Does every Hono route verify it, **constant-time**, before doing anything? |
+| 2 | Hasura ↔ Hono | Shared secret in the `x-webhook-signature` header | Does every Hono route that needs it verify it, **constant-time**, before doing anything? |
 | 3 | Hono ↔ Hasura | `x-hasura-admin-secret` — **bypasses all row-level permissions** | Does Hono authorise the caller *before* using admin access to read/mutate? |
 | 4 | SPA bundle | Vite build — everything shipped is public | Is anything secret sitting behind a `VITE_` prefix or in client code? |
 | 5 | Backend host ingress / IAM | Host networking + IAM (Hono is internet-reachable **by design** — Hasura Cloud is off-host) | The gate is the signature (boundary 2), not IAM — so: is it robust, and are any secrets committed? |
@@ -64,9 +69,14 @@ client-supplied header as if it were a Hasura-set session variable).
 
 ## Scope: review live code only
 
-Review the live stack: the frontend apps under `apps/<app>`, the shared `packages/core` /
-`packages/ui`, the Hono backend (separate `sworld-backend` repo), and the Hasura metadata (separate
-`sworld-hasura-v2` repo).
+Review the live stack, all of it inside this repo: the frontend apps under `apps/<app>`, the shared
+`packages/core` / `packages/ui`, the Hono backend under `apps/backend`, and the Hasura metadata and
+migrations under `apps/hasura`. The old `sworld-backend` / `sworld-hasura-v2` repos are the
+pre-consolidation copies — never review or cite them; they are not what deploys.
+
+Dependencies are **out of scope here**: one root `pnpm-lock.yaml` covers every app and package,
+including the backend, and the `supply-chain-security` skill owns that whole layer (pinning,
+lockfile hygiene, cooldown, lifecycle scripts). Point at it rather than re-deriving it.
 
 **Ignore — and never report findings against — dead or unmaintained code.** If a path predates the
 current architecture, isn't maintained, and isn't deployed, its patterns are *not* how the live
@@ -116,7 +126,8 @@ specific traps. Don't just pattern-match — understand the boundary.
 - [ ] Action permissions don't hand a role more than it should reach; Hono re-authorises action inputs.
 
 ### Hono backend → `references/hono-backend.md`
-- [ ] Every Action/Event route verifies `X-Hasura-Signature` **constant-time** (`crypto.timingSafeEqual`), like `verifyBasicAuth.ts` does — not `===`/`!==`.
+- [ ] Every route that a shared secret is meant to gate verifies it **constant-time** (`crypto.timingSafeEqual`) — not `===`/`!==`. The Hashnode webhook validator is the in-repo reference pattern; the Hasura one is not.
+- [ ] Each router is mounted behind the gate it needs. Action routers deliberately skip the webhook signature — establish what *does* authenticate them before concluding either way.
 - [ ] User identity is read from Hasura-set `session_variables`, never from a client-controllable header.
 - [ ] Admin-secret calls to Hasura are preceded by an explicit authorisation/ownership check.
 - [ ] Inputs are validated (Zod) before use; no raw SQL, dynamic query strings, or shelling out.
@@ -148,6 +159,7 @@ and the false-positives list before writing it up.
 - `dangerouslySetInnerHTML`, `.innerHTML =`, `eval(`, `new Function(` with non-constant input.
 - `x-hasura-admin-secret` used in a Hono handler with no preceding ownership/authorisation check (boundary 3).
 - A route reading `x-hasura-role` / `x-hasura-user-id` from request **headers** rather than the Hasura-provided `session_variables` body (boundary 1↔2 confusion → privilege escalation).
+- A router mounted with no signature middleware that still trusts `session_variables` from the body — the body is only Hasura-attested if *something* proved the request came from Hasura (boundary 2).
 - Hasura metadata hardening (judge against **production**, not local): introspection on, empty `api_limits.yaml`, `HASURA_GRAPHQL_DEV_MODE: "true"`.
 
 ## Known false positives in this stack
@@ -159,9 +171,9 @@ this list is the distilled memory of corrections from engineers who know the sta
   pattern — gated by its filtered parent. *Real* only if root fields are exposed, or an inbound
   relationship comes from an unfiltered parent. See `references/hasura-authorization.md`.
 - **Hono / a webhook being publicly invokable on the backend host.** By design — Hasura Cloud is
-  off-host and can't present the host's identity, so the `X-Hasura-Signature` / auth header is the
+  off-host and can't present the host's identity, so the signature / auth header is the
   intended gate. Review the gate's robustness, not the public reachability.
-- **Local `docker-compose.yml` settings** (`postgrespassword`, `DEV_MODE: "true"`, permissive CORS).
+- **Local `apps/hasura/docker-compose.yaml` settings** (`postgrespassword`, `DEV_MODE: "true"`, permissive CORS).
   That's the dev stack. Only a finding if the same holds in production Hasura Cloud / the backend host.
 - **Dead code.** Unmaintained, undeployed paths are not how the live system behaves. Anything read
   from them (e.g. code hard-coding a role) does not reflect production.
