@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CustomError, ERROR_SEVERITY } from './index';
 
-// Mock the @shinabr2/core package
-vi.mock('@shinabr2/core/universal/errors/errorCodes', () => ({
+// Mock the core package
+vi.mock('core/universal/errors/errorCodes', () => ({
   ERROR_CODES: {
     UNEXPECTED_ERROR: 'unexpected-error',
     USER_ERROR: 'user-error',

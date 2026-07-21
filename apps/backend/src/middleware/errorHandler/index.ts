@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@shinabr2/core/universal/errors/errorCodes';
+import { ERROR_CODES } from 'core/universal/errors/errorCodes';
 import { getContext } from 'hono/context-storage';
 import { PostHog } from 'posthog-node';
 import { CustomError } from '../../utils/custom-error';

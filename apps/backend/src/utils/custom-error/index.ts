@@ -1,7 +1,7 @@
 import {
   ERROR_CODES,
   ERROR_CONFIG,
-} from '@shinabr2/core/universal/errors/errorCodes';
+} from 'core/universal/errors/errorCodes';
 
 const ERROR_SEVERITY = {
   LOW: 'low',

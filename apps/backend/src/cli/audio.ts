@@ -23,7 +23,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { type Bucket, Storage } from '@google-cloud/storage';
-import { slugify } from '@shinabr2/core/universal/common';
+import { slugify } from 'core/universal/common';
 import { GraphQLClient } from 'graphql-request';
 import { flushThenExit } from './cli-exit';
 

@@ -37,7 +37,7 @@ import path from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 import { type Bucket, Storage } from '@google-cloud/storage';
-import { slugify } from '@shinabr2/core/universal/common';
+import { slugify } from 'core/universal/common';
 import ffmpeg from 'fluent-ffmpeg';
 import { GraphQLClient } from 'graphql-request';
 import { nanoid } from 'nanoid';

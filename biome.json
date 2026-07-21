@@ -16,6 +16,7 @@
       "!**/storybook-static",
       "!**/coverage",
       "!apps/hasura",
+      "!apps/backend",
       "!packages/core/src/graphql",
       "!packages/core/schema.graphql",
       "!**/routeTree.gen.ts"

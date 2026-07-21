@@ -5,7 +5,12 @@
     "baseUrl": ".",
     "paths": {
       "src/*": ["./src/*"],
-      "@shinabr2/core/*": ["./node_modules/@shinabr2/core/dist/*"]
+      // Types come from core's SOURCE, not its dist — same as every other core
+      // consumer (apps/*, packages/ui). core's `build` sets dts:false, so its
+      // dist ships zero .d.ts; pointing here at dist would silently lose all
+      // core types the moment it stopped being an npm dependency.
+      "core": ["../../packages/core/src"],
+      "core/*": ["../../packages/core/src/*"]
     },
     "moduleResolution": "Node",
     "resolveJsonModule": true,

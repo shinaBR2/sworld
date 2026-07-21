@@ -34,7 +34,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { Storage } from '@google-cloud/storage';
-import { slugify } from '@shinabr2/core/universal/common';
+import { slugify } from 'core/universal/common';
 import { randomUUID } from 'crypto';
 import { GraphQLClient } from 'graphql-request';
 import { nanoid } from 'nanoid';

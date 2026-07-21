@@ -36,33 +36,7 @@ vi.mock('posthog-node', () => ({
   ),
 }));
 
-// Mock both import paths for @shinabr2/core
-vi.mock('@shinabr2/core/universal/errors/errorCodes', () => ({
-  ERROR_CODES: {
-    UNEXPECTED_ERROR: 'unexpected-error',
-    USER_ERROR: 'user-error',
-    DB_OPERATION_FAILED: 'db-operation-failed',
-  },
-  ERROR_CONFIG: {
-    'unexpected-error': {
-      userMessage: 'An unexpected error occurred',
-      shouldRetry: false,
-      shouldAlert: true,
-    },
-    'user-error': {
-      userMessage: 'User error occurred',
-      shouldRetry: false,
-      shouldAlert: false,
-    },
-    'db-operation-failed': {
-      userMessage: 'Database operation failed',
-      shouldRetry: true,
-      shouldAlert: true,
-    },
-  },
-}));
-
-vi.mock('@shinabr2/core/dist/universal/errors/errorCodes', () => ({
+vi.mock('core/universal/errors/errorCodes', () => ({
   ERROR_CODES: {
     UNEXPECTED_ERROR: 'unexpected-error',
     USER_ERROR: 'user-error',

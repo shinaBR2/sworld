@@ -1,5 +1,5 @@
 {
-  "name": "sworld-backend",
+  "name": "backend",
   "private": true,
   "version": "0.0.1",
   "description": "sworld backend",
@@ -22,7 +22,7 @@
     "watch-codegen-hashnode": "dotenvx run -- graphql-codegen --config src/services/hashnode/codegen.ts --watch",
     "test": "vitest",
     "test:ci": "vitest run --coverage",
-    "prepare": "husky install",
+    "typecheck": "tsc --noEmit",
     "format": "biome format --write",
     "lint": "biome lint --write ."
   },
@@ -54,14 +54,14 @@
     "@hono/sentry": "^1.2.2",
     "@hono/zod-validator": "^0.7.3",
     "@sentry/cli": "^2.39.1",
-    "@shinabr2/core": "^1.1.1",
     "@simplewebauthn/server": "^13.0.0",
     "cloudinary": "^2.5.1",
+    "core": "workspace:*",
     "cors": "^2.8.5",
     "crawlee": "^3.13.0",
     "dotenv": "^16.4.7",
     "fluent-ffmpeg": "^2.1.3",
-    "graphql-request": "^7.1.2",
+    "graphql-request": "^7.4.0",
     "helmet": "^8.0.0",
     "hono": "^4.9.8",
     "hono-rate-limiter": "^0.4.2",
@@ -74,8 +74,5 @@
     "teleproto": "1.227.5",
     "uuid": "^14.0.1",
     "zod": "^4.4.3"
-  },
-  "overrides": {
-    "lodash": "^4.18.1"
   }
 }
