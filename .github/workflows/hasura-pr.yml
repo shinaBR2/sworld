@@ -23,6 +23,11 @@ permissions:
 jobs:
   # Cheap always-run gate: no checkout, reads the PR's changed files from the API.
   changes:
+    # Explicit check name. Every path-filtered workflow has a job called
+    # `changes`, and a check run is named after the job — so without this, two
+    # workflows put two indistinguishable `changes` rows on the same PR and
+    # branch protection can't tell them apart (it matches on name alone).
+    name: hasura path filter
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -83,6 +88,8 @@ jobs:
 
       # Lint only. The upstream repo's test step was already commented out — the
       # suite needs a live Hasura endpoint and Auth0 credentials, so it is not
-      # wired up here either (root `pnpm test` filters this package out).
+      # wired up here either. That's why the package exposes `test:local` rather
+      # than `test`: turbo picks up any package with a `test` script, so naming
+      # it `test` would pull a suite that can't run in CI into the `test` gate.
       - name: Run linter
         run: pnpm --filter sworld-hasura-v2 run lint

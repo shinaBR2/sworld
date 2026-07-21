@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "dotenvx run -- vitest",
+    "test:local": "dotenvx run -- vitest",
     "test:ci": "vitest run"
   },
   "repository": {
