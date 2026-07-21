@@ -38,7 +38,7 @@ Every change should answer four questions:
 
 ## The apps & packages
 
-Everything below is a member of the one pnpm workspace, resolved by the single root `pnpm-lock.yaml`. Frontend, backend, and data layer all land in this repo — there is no sibling repo to switch to.
+Everything below is a member of the one pnpm workspace, resolved by the single root `pnpm-lock.yaml`. Frontend, backend, and data layer all land here; no change moves to another repo.
 
 ### Frontend applications (`apps/`)
 
@@ -57,8 +57,8 @@ Everything below is a member of the one pnpm workspace, resolved by the single r
 
 Two ways these differ from the frontend apps:
 
-- Hasura is excluded from Biome (`biome.json`) and keeps its own eslint toolchain — reformatting it with a different formatter would rewrite the history the move preserved. Its PR gate is `hasura-pr.yml`, which lints only its JS/TS files, not the SQL migrations or YAML metadata.
-- The backend's build and deploy path is mid-migration: the old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
+- **Both are excluded from the root Biome config**, so the root `pnpm lint` does not cover them — each brought its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory: `apps/backend` has its own Biome config, `apps/hasura` uses eslint. Hasura's PR gate (`hasura-pr.yml`) covers only its JS/TS files, not the SQL migrations or the YAML metadata.
+- **The backend's build and deploy path is mid-migration**: the old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
 
 ### Shared packages (`packages/`)
 
@@ -109,7 +109,8 @@ Per-package:
 cd packages/core && pnpm codegen        # Regenerate GraphQL types (also: pnpm watch-codegen)
 cd packages/ui   && pnpm storybook      # Component development
 cd apps/backend  && pnpm dev-gateway    # Run a backend service (also: dev-io, dev-compute)
-cd apps/hasura   && pnpm lint           # Hasura keeps its own eslint, not Biome
+cd apps/backend  && pnpm lint           # Root `pnpm lint` skips backend and hasura —
+cd apps/hasura   && pnpm lint           # lint each from its own directory
 ```
 
 ## Common Workflows
