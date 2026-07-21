@@ -1,9 +1,16 @@
 name: Hasura PR Check
 
-# Lints the data layer (migrations + metadata + tests) that moved in from
-# sworld-hasura-v2 under apps/hasura. Hasura keeps its own eslint toolchain — biome
-# excludes apps/hasura (biome.json), because reformatting 24 files with a different
-# formatter would rewrite the history this import went to trouble to preserve.
+# Lints the data layer that moved in from sworld-hasura-v2 under apps/hasura.
+# Hasura keeps its own eslint toolchain — biome excludes apps/hasura
+# (biome.json), because reformatting it with a different formatter would rewrite
+# the history this import went to trouble to preserve.
+#
+# Scope, precisely: eslint matches **/*.{js,mjs,cjs,ts}, which here is the ~20
+# files under tests/ plus the config files. It does NOT check migrations/ (SQL)
+# or metadata/ (YAML) — a broken migration or malformed metadata file still
+# reports this check green. That gap is inherited from the upstream repo, not
+# introduced here, and is tracked separately; don't read this check as
+# validating the schema.
 #
 # The path filter lives in the `changes` job, NOT in `on:` — an `on: paths`
 # filter stops the workflow triggering at all, so no check run is created and a
@@ -91,5 +98,12 @@ jobs:
       # wired up here either. That's why the package exposes `test:local` rather
       # than `test`: turbo picks up any package with a `test` script, so naming
       # it `test` would pull a suite that can't run in CI into the `test` gate.
+      #
+      # Run from the directory rather than `pnpm --filter <package-name>`: a
+      # filter that matches nothing exits 0 with "No projects matched", so the
+      # day someone renames the package (it is still `sworld-hasura-v2`, the one
+      # workspace package whose name doesn't match its directory) the step would
+      # lint nothing and report green. A wrong directory fails loudly instead.
       - name: Run linter
-        run: pnpm --filter sworld-hasura-v2 run lint
+        working-directory: apps/hasura
+        run: pnpm run lint
