@@ -7,17 +7,23 @@ can't see; say what to confirm in the console.
 
 ## How it's wired (live, from the repo)
 
-- **Topology:** Frontend (CDN/edge host; some apps deploy to Vercel) → Hasura (sibling repo
-  `sworld-hasura-v2`) → Hono backend (sibling repo `sworld-backend`, its own deploy) → back to
-  Hasura via admin secret. Postgres sits behind Hasura; the backend never talks to it directly.
-- **Deploy:** the backend has its own CI deploy pipeline that builds its `Dockerfile`, pushes the
-  image, and ships it to the backend host. Frontend apps deploy separately (e.g. Vercel / an edge
-  host).
-- **Secrets:** backend / Hasura runtime env (set in their consoles) + CI secrets (federated CI
-  credentials and/or any deploy tokens). The backend's `envConfig.ts` fail-fast validates at boot.
-  Only `.example` templates committed.
-- **Container:** `node:22-slim`, multi-stage, `pnpm install --frozen-lockfile`, `dist/` only in the
-  runtime image.
+- **Topology:** Frontends (Cloudflare Pages, each app its own project) → Hasura Cloud → the Hono backend
+  → back to Hasura via the admin secret. Postgres sits behind Hasura; the backend never talks to it
+  directly. All three layers are **one repo** now — frontends under `apps/<app>`, the backend under
+  `apps/backend`, Hasura metadata and migrations under `apps/hasura` — but they still deploy to
+  three separate places, so "same repo" does **not** mean "same trust zone".
+- **Deploy:** Cloudflare Pages builds and deploys each frontend from its own pipeline on merge to
+  main; Hasura Cloud applies metadata from its GitHub integration. **The backend's container build
+  and deploy pipeline is mid-rework** — the old per-repo deploy workflows are gone and the
+  replacement isn't in place yet. Don't describe backend deploy mechanics as though they exist, and
+  don't infer them from leftover files.
+- **Secrets:** backend / Hasura runtime env (set in their consoles) + CI secrets. Only `.example`
+  templates are committed. Note the backend's `envConfig.ts` does **not** validate at boot (see
+  `hono-backend.md`), so a missing secret shows up at request time, not startup.
+- **Container:** the `apps/backend/Dockerfile.*` files are **stale** — they still `COPY
+  package-lock.json` and `npm ci`, from before the repos merged onto a single root `pnpm-lock.yaml`,
+  so they can't build as written. Treat them as pending work, not as evidence of how the runtime
+  image is built; a finding about their contents is about a file nobody deploys.
 
 ## The invocation model — get this right
 
@@ -29,7 +35,7 @@ Here's the part a naive review gets wrong: **Hasura runs on a different host, so
 the backend host's identity token.** For Hasura to call the backend at all, the backend must accept
 unauthenticated (IAM-wise) requests — i.e. it is *intentionally* publicly invokable. That's not a
 misconfiguration; it's the consequence of the architecture. The real authentication happens at the
-**application layer**: the `X-Hasura-Signature` header (boundary 2, `hono-backend.md`).
+**application layer**: the `x-webhook-signature` header (boundary 2, `hono-backend.md`).
 
 So the review question is **not** "why is this publicly invokable?" — it's:
 
@@ -45,6 +51,12 @@ So the review question is **not** "why is this publicly invokable?" — it's:
       `.example`), `*.json` service-account keys, `BEGIN PRIVATE KEY`, connection strings with
       embedded passwords. Today only templates are committed. A committed secret is genuinely
       **Critical** — rotate immediately (don't just delete; git history retains it).
+- [ ] **One repo = one blast radius.** Frontends, backend and data layer now share a checkout, a CI
+      runner and a root `pnpm-lock.yaml`. A compromised dependency or a workflow with too-broad
+      permissions reaches all three at once, where it used to reach one. Check that workflow
+      `permissions:` blocks are least-privilege and that any deploy credential is scoped to its own
+      target. The dependency half of this belongs to the `supply-chain-security` skill — send it there
+      rather than re-deriving lockfile rules here.
 - [ ] **CI auth to the host — long-lived deploy key vs federated CI credentials.** A long-lived
       static key/JSON credential is a standing credential that can leak; **federated CI credentials**
       (OIDC, e.g. GitHub Actions → cloud provider) issue short-lived, run-scoped tokens with no key
@@ -55,15 +67,15 @@ So the review question is **not** "why is this publicly invokable?" — it's:
       rotation schedule.
 - [ ] **Non-root container.** No `USER` directive → runs as root. Worth fixing, but calibrate
       against the container runtime: if instances run in a sandbox, the marginal risk of in-container
-      root is lower than on shared/raw infra. **Low** hardening, not a scary finding.
+      root is lower than on shared/raw infra. **Low** hardening — and while the Dockerfiles are being
+      reworked, raise it as an input to that work rather than as a live finding.
 - [ ] **Secret hygiene & transport.** Secrets from the host's console / secret manager, not the repo;
-      rotation for `HASURA_BACKEND_SIGNATURE`/`HASURA_ADMIN_SECRET`/`CRON_SECRET`/vendor keys
+      rotation for `WEBHOOK_SIGNATURE`/`HASURA_ADMIN_SECRET`/`HASHNODE_WEBHOOK_SECRET`/vendor keys
       documented; all hops HTTPS (the host and Hasura terminate TLS).
-- [ ] **Public surfaces.** `/health` and any payment/webhook endpoint are intentionally public —
-      confirm `/health` leaks nothing useful and the webhook verifies its secret/Basic auth
-      constant-time.
-- [ ] **Local-only credentials aren't production.** A local `docker-compose.yml`'s `postgrespassword`
-      is the dev stack — never a production finding.
+- [ ] **Public surfaces.** `/hz` (health) and any external webhook endpoint are intentionally public —
+      confirm `/hz` leaks nothing useful and the webhook verifies its signature constant-time.
+- [ ] **Local-only credentials aren't production.** The `postgrespassword` in
+      `apps/hasura/docker-compose.yaml` is the dev stack — never a production finding.
 
 ## Traps specific to us
 

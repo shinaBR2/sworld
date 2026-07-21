@@ -3,6 +3,33 @@
 Read this when configuring cooldowns, frozen installs, or script controls on a specific package
 manager, or when checking what a given pnpm version gives you by default.
 
+**This repo is pnpm-only** — one root `pnpm-lock.yaml` for every app and package. The npm and yarn
+sections below are reference material for *other* projects; nothing here uses them, and a
+`package-lock.json` or `yarn.lock` appearing in this repo is a mistake to remove, not a config to
+tune.
+
+## What this repo already has
+
+Verified against the checked-in config — check these files before changing anything, and update this
+list if they move:
+
+| Setting | Value | Where |
+|---|---|---|
+| Package manager | `pnpm@10.34.3`, `engines.pnpm >= 10.34.3` | root `package.json` |
+| Workspace members | `apps/*`, `packages/*` — the backend and data layer included | `pnpm-workspace.yaml` |
+| Cooldown | `minimumReleaseAge: 10080` (7 days) | `pnpm-workspace.yaml` |
+| Cooldown exclusions | the vite/rolldown build toolchain + `postcss`, each with a written reason | `pnpm-workspace.yaml` |
+| Lifecycle scripts | `onlyBuiltDependencies: []` — **nothing** may run install scripts | `pnpm-workspace.yaml` |
+| Security overrides | pinned-forward transitive versions | `pnpm.overrides` in root `package.json` |
+
+Two notes that bite in practice:
+
+- The 7-day cooldown blocks *any* local re-resolve while a recently-bumped package is still young.
+  Add a targeted `minimumReleaseAgeExclude` entry with a comment explaining why — never lower the
+  global window and never hand-edit the lockfile.
+- `onlyBuiltDependencies: []` is an empty allowlist, not a missing one. Adding a dependency that
+  demands a build script is a decision to make deliberately, with a reason recorded next to it.
+
 ## pnpm
 
 ### Frozen installs

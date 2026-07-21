@@ -8,16 +8,18 @@ produce a CRITICAL that wasn't (see "The `filter: {}` false positive" below).
 
 ## How it's wired (live)
 
-- Metadata (sibling repo `sworld-hasura-v2`) under `metadata/databases/sworld/tables/` — one YAML
-  per table, each with per-role permissions for `select`/`insert`/`update`/`delete`.
+- Metadata lives **in this repo** at `apps/hasura/metadata/databases/sworld/tables/` — one YAML per
+  table, each with per-role permissions for `select`/`insert`/`update`/`delete`. Migrations sit
+  alongside under `apps/hasura/migrations/`. (The old `sworld-hasura-v2` repo is the
+  pre-consolidation copy — don't read permissions from it.)
 - **Roles:** `anonymous` (unauthenticated — several content tables intentionally expose read-only
   `select` access, e.g. `public_audios.yaml`, `public_videos.yaml`; `anonymous` must never appear
   in an `insert`/`update`/`delete` permission block — flag that as a real finding, not hardening),
   `user` (every authenticated user), and `vip` (elevated non-admin, currently permissioned on a
   couple of tables, e.g. `public_crawl_requests.yaml`). Role comes from the validated JWT
   (`auth0-and-jwt.md`). `manager` is referenced as a role concept at the JWT/allowed-roles layer
-  but currently has no explicit permissions on any table in this repo's metadata — verify with a
-  fresh `grep -rl "role: manager" metadata/` before treating a `manager`-specific finding as live
+  but currently has no explicit permissions on any table in the metadata — verify with a
+  fresh `grep -rl "role: manager" apps/hasura/metadata/` before treating a `manager`-specific finding as live
   (see also the `manager` checklist item below, which describes what to check once it does gain
   permissions).
 - Writes to most domain tables go through the **backend with the admin secret**, not direct
@@ -110,10 +112,10 @@ there's **another** way in. So for each such table, confirm:
 - [ ] **Sensitive columns** (e.g. `hasura_role`, internal flags) are column-restricted for `user`.
 - [ ] **`manager` scope** is its actual job, not a global backdoor. As of writing `manager` has no
       explicit table permissions (see "Roles" above) — this item is forward-looking: the moment a
-      table grants `manager` anything, re-verify with `grep -rl "role: manager" metadata/` and check
+      table grants `manager` anything, re-verify with `grep -rl "role: manager" apps/hasura/metadata/` and check
       its filter isn't `{}` on `users`/financial tables.
-- [ ] **Production hardening** (judge against the deployed/production Hasura, *not* the local
-      `docker-compose.yml`):
+- [ ] **Production hardening** (judge against the deployed/production Hasura, *not*
+      `apps/hasura/docker-compose.yaml`):
   - **Introspection** (`graphql_schema_introspection.yaml`): leaving it on lets an *authenticated*
     user enumerate the schema. The data is still behind permissions, so this is **information
     disclosure / hardening, not a data breach** — it speeds up an attacker mapping the API, and only
@@ -124,10 +126,18 @@ there's **another** way in. So for each such table, confirm:
   - **`HASURA_GRAPHQL_DEV_MODE`** must be `false` in prod (leaks error internals). `"true"` in the
     local compose file is fine — only a finding if prod has it on.
   - Console off in prod; admin secret strong and never shipped to the SPA.
-- [ ] **Actions** (`actions.yaml`): each is permissioned to the right role and forwards
-      `X-Hasura-Signature`. Hasura does **not** apply row permissions to action *arguments* — the
-      backend must authorise (see `hono-backend.md`). An action exposed to `user` that accepts
-      arbitrary IDs is only as safe as the backend's own ownership check.
+- [ ] **Actions** (`apps/hasura/metadata/actions.yaml`): each is permissioned to the right role.
+      Hasura does **not** apply row permissions to action *arguments* — the backend must authorise
+      (see `hono-backend.md`). An action exposed to `user` that accepts arbitrary IDs is only as safe
+      as the backend's own ownership check.
+- [ ] **Action headers.** Actions set `X-Hasura-Action` and `Content-Type`, and no shared-secret
+      header — so nothing in the Action path proves to the backend that the call came from Hasura.
+      Pair this with the "what authenticates the Action routers?" check in `hono-backend.md`; the two
+      halves only make sense read together.
+- [ ] **`forward_client_headers: true`** is set on every Action. That relays the *caller's* headers
+      to the backend, so any header the browser can set arrives at the handler. Harmless while the
+      backend reads identity only from `session_variables` — a privilege-escalation path the moment a
+      handler trusts an inbound header. Check both ends before judging.
 
 ## Business invariant: `public` is owner-only, on every content table
 
@@ -144,8 +154,11 @@ never shows up as a frontend type change — the only place it's visible is the 
 `x-hasura-admin-secret` + `x-hasura-role: user` (or `vip`) attempting to set `public` on
 insert/update — expect a Hasura validation error (`field 'public' not found in type:
 ..._insert_input` / `..._set_input`). That response *is* the guard; don't add a live-Hasura
-regression test for this static metadata fact (`sworld-hasura-v2` CI only runs lint, not the
-vitest role-suite — a live test here is a rabbit hole, not a safety net).
+regression test for this static metadata fact — the data layer's PR check (`hasura-pr.yml`) runs
+eslint only, over the TypeScript tests and configs, and never reads `metadata/` or `migrations/`. So
+nothing in CI validates permission YAML, and the role-suite needs a live Hasura endpoint it doesn't
+have. A live test here is a rabbit hole, not a safety net; the flip side is that **a permission
+regression will not be caught by CI** — metadata changes need a human read.
 
 ## Severity calibration for this layer
 
