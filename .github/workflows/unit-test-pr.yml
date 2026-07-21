@@ -34,12 +34,15 @@ jobs:
       - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         id: filter
         with:
-          # One negated pattern: matches any changed file outside apps/hasura,
-          # so the output is false only when *every* changed file is inside it.
-          # Deliberately not a positive allow-list — see typecheck-pr.yml.
+          # Negated pattern: matches any changed file outside apps/hasura, so
+          # the output is false only when *every* changed file is inside it.
+          # Deliberately not a positive allow-list, and the manifest is re-armed
+          # so the PR that gives apps/hasura a `test` script can't be the one
+          # that skips — full reasoning in typecheck-pr.yml.
           filters: |
             test:
               - '!apps/hasura/**'
+              - 'apps/hasura/package.json'
 
   test:
     needs: changes

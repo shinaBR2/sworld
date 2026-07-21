@@ -46,16 +46,24 @@ jobs:
       - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         id: filter
         with:
-          # A single negated pattern, on purpose: it matches any changed file
-          # outside apps/hasura, so the output is false only when *every*
-          # changed file is inside it. Written this way rather than as a
-          # positive allow-list because an allow-list has to be extended for
-          # every new app and every new root config file, and forgetting
-          # silently reports green. This fails in the safe direction — anything
-          # new, anywhere, still runs the gate.
+          # A negated pattern, on purpose: it matches any changed file outside
+          # apps/hasura, so the output is false only when *every* changed file
+          # is inside it. Written this way rather than as a positive allow-list
+          # because an allow-list has to be extended for every new app and every
+          # new root config file, and forgetting silently reports green. This
+          # fails in the safe direction — anything new, anywhere, runs the gate.
+          #
+          # The second pattern re-arms the gate for the one hasura-internal file
+          # that can invalidate the assumption above. Skipping is only sound
+          # while apps/hasura exposes no `typecheck` script for turbo to find;
+          # the PR that adds one would otherwise be exactly the PR that skips,
+          # and the post-merge run ignores apps/hasura too, so nothing would
+          # catch it until an unrelated PR went red. Its manifest is also where
+          # a dependency edit would desync the root lockfile.
           filters: |
             typecheck:
               - '!apps/hasura/**'
+              - 'apps/hasura/package.json'
 
   typecheck:
     needs: changes
