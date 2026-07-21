@@ -16,7 +16,7 @@ Everything lives in the one repo, `ShinaBR2/sworld` — a PR number identifies a
 
 A failed `gh` call (auth, network, bad PR number) must NOT be mistaken for `OPEN` — otherwise the loop spins silently forever. Treat only a successful, non-empty state as truth; retry a few times before declaring a PR unreachable. **NEVER** use `gh pr view --watch` / `gh pr checks --watch`.
 
-Keep the poll script **portable across sh / bash / zsh** — the background shell is not guaranteed to be any one of them: NO bash-only constructs (`declare -A`, associative arrays); put the PR numbers in **positional parameters** (`set -- …`) and loop with `for n in "$@"`. Do NOT write `for n in $LIST` — zsh does not word-split an unquoted variable, so it would iterate once over the whole string and poll a bogus number.
+Keep the poll script **portable across sh / bash / zsh** — the background shell is not guaranteed to be any one of them: NO bash-only constructs (`declare -A`, associative arrays); put the PR numbers in **positional parameters** (`set -- …`) and loop with `for n in "$@"`. Do NOT write `for n in $LIST` — zsh does not word-split an unquoted variable, so it would iterate once over the whole string and poll a bogus number. **Brace any expansion followed by `:`** (`"ERROR:${n}:…"`, never `"ERROR:$n:…"`) — zsh reads `$n:g` as a history modifier and silently swallows the number, so the emitted line stops matching the format below.
 
 ```sh
 # Replace the numbers below with the PRs being watched (445 446 are only an example).
@@ -32,7 +32,7 @@ while true; do
       i=$((i + 1)); sleep 5
     done
     if [ -z "$s" ]; then
-      echo "ERROR:$n:gh-unreachable"; hit=1
+      echo "ERROR:${n}:gh-unreachable"; hit=1
     elif [ "$s" = "MERGED" ] || [ "$s" = "CLOSED" ]; then
       echo "FINAL:$n:$s"; hit=1
     fi

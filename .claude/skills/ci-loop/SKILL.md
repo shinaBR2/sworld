@@ -36,9 +36,10 @@ loop (the `self-review` skill, before the PR is created) is `parallel-workflow`'
 pre-PR gate. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
 the tracker's concern; see `task-tracker`.
 
-**Every PR lives in `ShinaBR2/sworld`** — frontend, backend, and Hasura all ship from the one repo, under
-one CI pipeline, so a single PR's checks cover whatever layers it touched. The `gh` calls below name that
-repo explicitly rather than relying on the current directory's remote.
+**Every PR lives in `ShinaBR2/sworld`** — frontend, backend, and Hasura all ship from the one repo, so
+every PR runs through this same loop. The `gh` calls below name that repo explicitly rather than relying
+on the current directory's remote. Which checks actually run on a given PR is whatever the repo's
+workflows decide; read `gh pr checks` rather than assuming a layer is covered.
 
 ## Step 1: Check merge status
 

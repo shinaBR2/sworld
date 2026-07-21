@@ -13,7 +13,7 @@ user-invocable: false
 
 ## Scope: one repo, the whole product
 
-Everything ships from a single repo — the frontend apps, the shared packages, the Hono backend (`apps/backend`), and the Hasura data layer (`apps/hasura`). One lockfile, one CI pipeline, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
+Everything ships from a single repo — the frontend apps, the shared packages, the Hono backend (`apps/backend`), and the Hasura data layer (`apps/hasura`). One lockfile, one branch, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
 
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — a change touching them MUST also run `security-reviewer` inside the self-review loop (step 11).
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up PR — linked in the tracker with a blocking relation from the Hasura issue. One repo doesn't collapse that ripple: the schema still has to be live before the generated types mean anything, so the migration lands and deploys first.
