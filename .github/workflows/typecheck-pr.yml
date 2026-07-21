@@ -19,10 +19,10 @@ name: Typecheck on PR
 # This gate and unit-test-pr.yml are between them the backend's entire CI —
 # biome.json excludes apps/backend from `pnpm lint` and no workflow lints it —
 # so skipping backend here would gut half of it. apps/hasura is the opposite
-# case: the package
-# (`sworld-hasura-v2`) exposes only `lint` / `test:local` / `test:ci` and no
-# `typecheck`, so turbo never visits it and this gate can only ever report an
-# uninformative green for a hasura-only PR. That asymmetry is the whole filter.
+# case: the package (`sworld-hasura-v2`) exposes only `lint` / `test:local` /
+# `test:ci` and no `typecheck`, so turbo never visits it and this gate can only
+# ever report an uninformative green for a hasura-only PR. That asymmetry is
+# the whole filter.
 on:
   pull_request:
     branches: [main]
