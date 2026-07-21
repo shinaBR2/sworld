@@ -55,10 +55,11 @@ Everything below is a member of the one pnpm workspace, resolved by the single r
 - **`apps/backend`** (package `backend`) — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura). Three services — gateway, io, compute — in one package; it consumes `core` as a workspace dependency (`workspace:*`).
 - **`apps/hasura`** (package `sworld-hasura-v2` — the one package whose name doesn't match its directory, so `cd` rather than `--filter` it) — Hasura GraphQL + Postgres: migrations, metadata, and permissions, the data layer the frontend queries. Hasura Cloud's GitHub integration watches this directory and applies metadata and migrations when a change merges to `main`.
 
-Two ways these differ from the frontend apps:
+How this pair differs from the frontend apps:
 
-- **Neither is linted by the root command.** `biome.json` excludes both, so `pnpm lint` skips them — each kept its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory (`apps/backend` has its own Biome config, `apps/hasura` uses eslint). Root `pnpm typecheck` and `pnpm test` still cover the backend; Hasura has neither script. On PRs, `hasura-pr.yml` gates Hasura's JS/TS files — not its SQL migrations or YAML metadata — and nothing gates the backend's lint at all.
-- **The backend's build and deploy path is mid-migration**: the old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
+- **Neither is linted by the root command.** `biome.json` excludes both, so `pnpm lint` skips them — each kept its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory (`apps/backend` has its own Biome config, `apps/hasura` uses eslint). On PRs, `hasura-pr.yml` gates Hasura's JS/TS files — not its SQL migrations or YAML metadata — and nothing gates the backend's lint at all.
+- **Root `typecheck` and `test` reach the backend but not Hasura.** Hasura's suite is named `test:local` / `test:ci` on purpose: it needs a live Hasura endpoint and Auth0 credentials, and naming it `test` would drag it into the root gate. Run it yourself from `apps/hasura`; don't "fix" the missing script.
+- **Only the backend's deploy path is mid-migration** (Hasura's is not — see above): its old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
 
 ### Shared packages (`packages/`)
 
