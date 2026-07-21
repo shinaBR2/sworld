@@ -1,0 +1,12 @@
+# The backend Dockerfiles build from the monorepo root, so this file guards
+# every backend image build. Keep it minimal: the Dockerfiles COPY only the
+# paths they need, this just stops host-only artefacts riding along.
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+.git
+.github
+.claude
+**/.env
+**/.env.*
