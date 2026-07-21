@@ -206,7 +206,7 @@ Local testing options:
 | **Unit tests** | `vitest` with mocked deps | Handler business logic, schema validation, error paths |
 | **Direct handler call** | `curl POST localhost:4000/videos/<handler> -H 'x-task-id: <uuid>' -d '{...}'` | Handler in isolation (bypasses Cloud Tasks) |
 | **Gateway + Compute locally** | From `apps/backend`, `pnpm dev-gateway` and `pnpm dev-compute` in separate terminals, then call the action manually | Action → Gateway → Cloud Task creation (but task never delivers locally) |
-| **Full integration** | Run against real Cloud Run, trigger via Hasura | End-to-end: action → gateway → cloud task → handler → notification |
+| **Full integration** | Run against real Cloud Run, trigger via Hasura — **blocked today, see below** | End-to-end: action → gateway → cloud task → handler → notification |
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
 

@@ -12,9 +12,9 @@ These CLIs are operator tools run straight from source with `tsx` — they don't
 
 ## Which account an op runs as
 
-Every CLI takes the acting account from `user-id` in `~/.sworld-cli/config.json`, and `--user-id <user-id>` overrides it for a single run. Pass `--user-id` whenever the op should be owned by an account other than the configured one.
+The CLIs that create rows (`audio.ts`, `convert.ts`, `stream-m3u8.ts`, `upload-subtitle.ts`) take the acting account from `user-id` in `~/.sworld-cli/config.json`, and `--user-id <user-id>` overrides it for a single run. Pass `--user-id` whenever the op should be owned by an account other than the configured one. `repair-fmp4.ts` is the exception — it reworks an existing video and takes the owner from the row, so it has no `--user-id`.
 
-Account names and their ids are local machine config, not skill content — this repo is public, so no real user id belongs in it. Read them from the local config or ask the user; never hardcode one here or in a committed script.
+Account names and their ids are identity data: they belong in local machine config, not in a skill. This repo is public, so read them from the local config or ask the user — never hardcode one here or in a committed script. (Infrastructure identifiers like the bucket and Hasura endpoint below are already public and are fine to keep.)
 
 ## Assets live in GCP Cloud Storage
 
