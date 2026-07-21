@@ -10,7 +10,6 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc",
     "start-gateway": "tsx src/gateway.ts",
     "dev-gateway": "tsx watch --clear-screen=false src/gateway.ts | pino-pretty",
     "start-compute": "tsx src/compute.ts",
@@ -38,7 +37,6 @@
     "@types/m3u8-parser": "^7.2.0",
     "@types/node": "^24",
     "@vitest/coverage-v8": "^4",
-    "husky": "^8.0.0",
     "pino-pretty": "^13.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",

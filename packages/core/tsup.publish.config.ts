@@ -14,7 +14,7 @@ export default defineConfig({
   format: ['esm'],
   // See tsup.config.ts — "type": "module" flips tsup's ESM extension to .js,
   // but the exports map points at .mjs. Keep them in agreement.
-  outExtension: () => ({ js: '.mjs' }),
+  outExtension: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.mjs' }),
   outDir: 'dist/',
   treeshake: true,
   splitting: true,
