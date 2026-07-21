@@ -1,0 +1,61 @@
+import { Hono } from 'hono';
+import { deviceRequestCreateSchema } from 'src/schema/auth/device';
+import { authorizeDeviceSchema } from 'src/schema/auth/device/authorize';
+import { getDeviceTokenSchema } from 'src/schema/auth/device/token';
+import {
+  honoActionHandler,
+  honoRequestHandler,
+} from 'src/utils/requestHandler';
+import { honoValidateRequest } from 'src/utils/validators/request';
+import { createDeviceRequest } from './routes/device';
+import { authorizeDevice } from './routes/device/authorize';
+import { getDeviceToken } from './routes/device/token';
+
+const authRouter = new Hono();
+
+/**
+ * curl command for local test
+ * curl -X POST 'http://localhost:4000/auth/device' \
+  -H 'Content-Type: application/json' \
+  -H 'x-hasura-action: createDeviceRequest' \
+  -d '{
+    "body": {
+      "action": {
+        "name": "createDeviceRequest"
+      },
+      "input": {
+        "input": {
+          "extensionId": "your-extension-id-here"
+        }
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "x-hasura-action": "createDeviceRequest"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  }'
+ */
+authRouter.post(
+  '/device',
+  honoValidateRequest(deviceRequestCreateSchema),
+  // honoActionHandler, not honoRequestHandler: this action's response
+  // contract is { success, data, error }, not the generic ServiceResponse
+  // envelope ({ success, message, dataObject }) other handlers return.
+  honoActionHandler(createDeviceRequest),
+);
+
+authRouter.post(
+  '/device/authorize',
+  honoValidateRequest(authorizeDeviceSchema),
+  honoRequestHandler(authorizeDevice),
+);
+
+authRouter.post(
+  '/device/token',
+  honoValidateRequest(getDeviceTokenSchema),
+  honoRequestHandler(getDeviceToken),
+);
+
+export { authRouter };

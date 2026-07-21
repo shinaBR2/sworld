@@ -1,0 +1,156 @@
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  type MockedFunction,
+} from 'vitest';
+import { subtitleCreatedHandler } from './index';
+import { streamSubtitleFile } from 'src/services/videos/helpers/subtitle';
+import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
+import { saveSubtitle } from 'src/services/hasura/mutations/videos/save-subtitle';
+import { getVideoById } from 'src/services/hasura/queries/videos';
+import type { SubtitleCreatedRequest } from 'src/schema/videos/subtitle-created';
+import type { HandlerContext } from 'src/utils/requestHandler';
+
+// Mock dependencies with proper typing
+vi.mock('src/services/videos/helpers/subtitle', () => ({
+  streamSubtitleFile: vi.fn(),
+}));
+
+vi.mock('src/services/videos/helpers/gcp-cloud-storage', () => ({
+  getDownloadUrl: vi
+    .fn()
+    .mockImplementation(
+      (path: string) => `https://storage.googleapis.com/test-bucket/${path}`,
+    ),
+}));
+
+vi.mock('src/services/hasura/mutations/videos/save-subtitle', () => ({
+  saveSubtitle: vi.fn(),
+}));
+
+vi.mock('src/services/hasura/queries/videos', () => ({
+  getVideoById: vi.fn(),
+}));
+
+// Type the mocks for better type safety
+const mockStreamSubtitleFile = streamSubtitleFile as MockedFunction<
+  typeof streamSubtitleFile
+>;
+const mockGetDownloadUrl = getDownloadUrl as MockedFunction<
+  typeof getDownloadUrl
+>;
+const mockSaveSubtitle = saveSubtitle as MockedFunction<typeof saveSubtitle>;
+const mockGetVideoById = getVideoById as MockedFunction<typeof getVideoById>;
+
+describe('subtitleCreatedHandler', () => {
+  const mockData: HandlerContext<SubtitleCreatedRequest> = {
+    validatedData: {
+      event: {
+        data: {
+          id: 'subtitle-123',
+          videoId: 'video-123',
+          userId: 'user-123',
+          lang: 'en',
+          url: 'https://example.com/subtitle.vtt',
+          isDefault: false,
+          createdAt: '2023-01-01T00:00:00Z',
+          updatedAt: '2023-01-01T00:00:00Z',
+        },
+        metadata: {
+          id: 'event-123',
+          span_id: 'span-123',
+          trace_id: 'trace-123',
+        },
+      },
+      contentTypeHeader: 'application/json',
+      signatureHeader: 'test-signature',
+    },
+  };
+
+  const mockSubtitle = {
+    id: 'subtitle-123',
+    url: 'https://storage.example.com/videos/user-123/video-123/en.vtt',
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockStreamSubtitleFile.mockResolvedValue(undefined);
+    mockGetDownloadUrl.mockImplementation(
+      (path: string) => `https://storage.googleapis.com/test-bucket/${path}`,
+    );
+    mockSaveSubtitle.mockResolvedValue(mockSubtitle);
+    // Parent video carries customRequestHeaders in its metadata by default
+    mockGetVideoById.mockResolvedValue({
+      metadata: { customRequestHeaders: { Referer: 'https://example.com/' } },
+    } as Awaited<ReturnType<typeof getVideoById>>);
+  });
+
+  it('should process subtitle created event successfully', async () => {
+    const expectedStoragePath = 'videos/user-123/video-123/en.vtt';
+    const expectedDownloadUrl = `https://storage.googleapis.com/test-bucket/${expectedStoragePath}`;
+
+    const result = await subtitleCreatedHandler(mockData);
+
+    // Looks up the parent video for its customRequestHeaders
+    expect(mockGetVideoById).toHaveBeenCalledWith('video-123');
+
+    // Verify streamSubtitleFile was called with correct parameters, including
+    // the parent video's customRequestHeaders
+    expect(mockStreamSubtitleFile).toHaveBeenCalledWith({
+      url: mockData.validatedData.event.data.url,
+      storagePath: expectedStoragePath,
+      contentType: 'text/vtt',
+      customRequestHeaders: { Referer: 'https://example.com/' },
+    });
+
+    // Verify getDownloadUrl was called with the correct storage path
+    expect(mockGetDownloadUrl).toHaveBeenCalledWith(expectedStoragePath);
+
+    // Verify saveSubtitle was called with the correct parameters
+    expect(mockSaveSubtitle).toHaveBeenCalledWith(
+      mockData.validatedData.event.data.id,
+      {
+        url: expectedDownloadUrl,
+      },
+    );
+
+    // Verify the response
+    expect(result).toEqual({
+      success: true,
+      message: 'ok',
+      dataObject: mockSubtitle,
+    });
+  });
+
+  it('should pass undefined headers when the parent video has no metadata', async () => {
+    mockGetVideoById.mockResolvedValueOnce(null);
+
+    await subtitleCreatedHandler(mockData);
+
+    expect(mockStreamSubtitleFile).toHaveBeenCalledWith({
+      url: mockData.validatedData.event.data.url,
+      storagePath: 'videos/user-123/video-123/en.vtt',
+      contentType: 'text/vtt',
+      customRequestHeaders: undefined,
+    });
+  });
+
+  it('should throw an error if streamSubtitleFile fails', async () => {
+    const error = new Error('Stream failed');
+    mockStreamSubtitleFile.mockRejectedValueOnce(error);
+
+    await expect(subtitleCreatedHandler(mockData)).rejects.toThrow(error);
+    expect(mockSaveSubtitle).not.toHaveBeenCalled();
+  });
+
+  it('should throw an error if saveSubtitle fails', async () => {
+    const error = new Error('Save failed');
+    mockSaveSubtitle.mockRejectedValueOnce(error);
+
+    await expect(subtitleCreatedHandler(mockData)).rejects.toThrow(error);
+    expect(mockStreamSubtitleFile).toHaveBeenCalled();
+  });
+});

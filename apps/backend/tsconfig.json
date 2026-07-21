@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ES2022",
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"],
+      // Types come from core's SOURCE, not its dist — same as every other core
+      // consumer (apps/*, packages/ui). core's `build` sets dts:false, so its
+      // dist ships zero .d.ts; pointing here at dist would silently lose all
+      // core types the moment it stopped being an npm dependency.
+      "core": ["../../packages/core/src"],
+      "core/*": ["../../packages/core/src/*"]
+    },
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "importsNotUsedAsValues": "remove",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals"],
+    "sourceMap": true,
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**/*",
+    "**/test/**/*",
+    "**/tests/**/*"
+  ]
+}

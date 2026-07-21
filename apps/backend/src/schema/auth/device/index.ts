@@ -1,0 +1,36 @@
+import { z } from 'zod';
+
+const deviceRequestCreateSchema = z
+  .object({
+    body: z.object({
+      action: z.object({
+        name: z.string(),
+      }),
+      input: z.object({
+        input: z.object({
+          extensionId: z.string(),
+        }),
+      }),
+    }),
+    headers: z.looseObject({
+      'content-type': z.string(),
+      'x-hasura-action': z.string(),
+    }),
+    // Add ip and userAgent to the schema
+    ip: z.string(),
+    userAgent: z.string().optional(),
+  })
+  .transform((req) => ({
+    action: req.body.action,
+    input: req.body.input,
+    extensionId: req.body.input.input.extensionId,
+    hasuraActionHeader: req.headers['x-hasura-action'],
+    contentTypeHeader: req.headers['content-type'],
+    ip: req.ip,
+    userAgent: req.userAgent,
+  }));
+
+export type DeviceRequestCreateRequest = z.infer<
+  typeof deviceRequestCreateSchema
+>;
+export { deviceRequestCreateSchema };

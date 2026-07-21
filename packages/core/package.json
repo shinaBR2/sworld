@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "main": "./dist/index.js",
+  "type": "module",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
