@@ -38,7 +38,8 @@ jobs:
           # the output is false only when *every* changed file is inside it.
           # Deliberately not a positive allow-list, and the manifest is re-armed
           # so the PR that gives apps/hasura a `test` script can't be the one
-          # that skips — full reasoning in typecheck-pr.yml.
+          # that skips. The re-arm is one-shot — if apps/hasura ever does gain a
+          # `test` script, delete this filter. Full reasoning in typecheck-pr.yml.
           filters: |
             test:
               - '!apps/hasura/**'

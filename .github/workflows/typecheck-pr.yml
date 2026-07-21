@@ -15,10 +15,11 @@ name: Typecheck on PR
 # `pnpm typecheck` is `turbo run typecheck --filter=!docs`, so it runs every
 # workspace package exposing a `typecheck` script. Post-consolidation
 # apps/backend is such a package (`tsc --noEmit`) and consumes `core` as a
-# workspace dependency, so a backend-only change really can break this gate —
-# and this is the *only* CI gate the backend has, since biome.json excludes it
-# from `pnpm lint` and no workflow lints it. Skipping backend here would leave
-# backend PRs with no CI at all. apps/hasura is the opposite case: the package
+# workspace dependency, so a backend-only change really can break this gate.
+# This gate and unit-test-pr.yml are between them the backend's entire CI —
+# biome.json excludes apps/backend from `pnpm lint` and no workflow lints it —
+# so skipping backend here would gut half of it. apps/hasura is the opposite
+# case: the package
 # (`sworld-hasura-v2`) exposes only `lint` / `test:local` / `test:ci` and no
 # `typecheck`, so turbo never visits it and this gate can only ever report an
 # uninformative green for a hasura-only PR. That asymmetry is the whole filter.
@@ -50,16 +51,19 @@ jobs:
           # apps/hasura, so the output is false only when *every* changed file
           # is inside it. Written this way rather than as a positive allow-list
           # because an allow-list has to be extended for every new app and every
-          # new root config file, and forgetting silently reports green. This
-          # fails in the safe direction — anything new, anywhere, runs the gate.
+          # new root config file, and forgetting silently reports green. A new
+          # path anywhere outside apps/hasura runs the gate by default.
           #
           # The second pattern re-arms the gate for the one hasura-internal file
-          # that can invalidate the assumption above. Skipping is only sound
-          # while apps/hasura exposes no `typecheck` script for turbo to find;
-          # the PR that adds one would otherwise be exactly the PR that skips,
-          # and the post-merge run ignores apps/hasura too, so nothing would
-          # catch it until an unrelated PR went red. Its manifest is also where
-          # a dependency edit would desync the root lockfile.
+          # that can invalidate the assumption above: skipping is sound ONLY
+          # while apps/hasura exposes no `typecheck` script for turbo to find.
+          # Without it, the PR adding such a script would itself be the PR that
+          # skips, and the post-merge run ignores apps/hasura too — nothing
+          # would catch it until an unrelated PR went red.
+          #
+          # Note the re-arm is one-shot: it catches the manifest change, not the
+          # hasura-only PRs that follow it. So if apps/hasura ever does gain a
+          # `typecheck` script, delete this filter rather than trusting it.
           filters: |
             typecheck:
               - '!apps/hasura/**'
