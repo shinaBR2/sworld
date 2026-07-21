@@ -1,10 +1,22 @@
 name: Unit Test Main
 
+# Post-merge run of `turbo run test`. Unlike the PR gates, this filters in `on:`
+# rather than in a `changes` job: a push workflow reports no check run to a
+# pull request, so the "required check sits pending forever" trap that forces
+# the filter-job pattern in typecheck-pr.yml / unit-test-pr.yml simply does not
+# apply here. Not triggering at all is the desired outcome.
+#
+# apps/hasura is ignored because turbo never visits it — the package
+# (`sworld-hasura-v2`) names its suite `test:local` / `test:ci` on purpose, so
+# it has no `test` script for `turbo run test` to pick up (SWO-549).
+# apps/backend is deliberately NOT ignored: it does expose `test`, so this run
+# genuinely covers it.
 on:
   push:
     branches: [main]
     paths-ignore:
       - 'apps/docs/**'
+      - 'apps/hasura/**'
       - '**/*.md'
 
 jobs:
