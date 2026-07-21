@@ -1,11 +1,32 @@
+# Build context is the MONOREPO ROOT, not apps/backend:
+#   docker build -f apps/backend/Dockerfile.gateway .
 FROM --platform=linux/amd64 node:24.18.0-slim
+
+# corepack resolves pnpm from the root package.json `packageManager` field.
+RUN corepack enable
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
+# Manifests first so the install layer is only rebuilt when a dependency changes.
+# One manifest per workspace package in the `backend...` closure — add to this
+# list if backend or core ever gains another `workspace:*` dependency.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/backend/package.json apps/backend/
+COPY packages/core/package.json packages/core/
+COPY packages/tsconfig/package.json packages/tsconfig/
 
-COPY . .
+# --ignore-scripts: the workspace already blocks dependency lifecycle scripts
+# (`onlyBuiltDependencies: []`), and the root `prepare` runs husky, which has no
+# .git to work with in here.
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter backend...
+
+# There is no build step: the service runs `tsx` over TypeScript SOURCE, and the
+# backend tsconfig maps `core`/`core/*` to ../../packages/core/src — so core's
+# source must sit at its workspace-relative path inside the image.
+COPY apps/backend apps/backend
+COPY packages/core packages/core
+
+WORKDIR /app/apps/backend
 
 EXPOSE 4000
 CMD ["npm", "run", "start-gateway", "--", "--listen", "0.0.0.0"]
