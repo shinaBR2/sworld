@@ -36,28 +36,28 @@ loop (the `self-review` skill, before the PR is created) is `parallel-workflow`'
 pre-PR gate. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
 the tracker's concern; see `task-tracker`.
 
-**Repo-qualify every `gh` command.** Each PR lives in exactly one repo (`sworld`, `sworld-backend`, or
-`sworld-hasura-v2`, all under `ShinaBR2`). The Step 3 GraphQL query takes a `name:"<repo>"` placeholder —
-fill in the repo the PR actually lives in; querying the wrong repo silently returns nothing.
+**Every PR lives in `ShinaBR2/sworld`** — frontend, backend, and Hasura all ship from the one repo, under
+one CI pipeline, so a single PR's checks cover whatever layers it touched. The `gh` calls below name that
+repo explicitly rather than relying on the current directory's remote.
 
 ## Step 1: Check merge status
 
-- Run `gh pr view <number> --repo "ShinaBR2/<repo>" --json state` as the **ONLY** command. Do NOT batch it with anything else.
-- If `MERGED` → run `cleanup` for this PR (pass its number + repo). Issue status is the tracker's — see `task-tracker`. Loop is done.
+- Run `gh pr view <number> --repo ShinaBR2/sworld --json state` as the **ONLY** command. Do NOT batch it with anything else.
+- If `MERGED` → run `cleanup` for this PR (pass its number). Issue status is the tracker's — see `task-tracker`. Loop is done.
 - If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
 - If `OPEN` → proceed to Step 2.
 
 ## Step 2: Check merge conflicts
 
-- Run `gh pr view <number> --repo "ShinaBR2/<repo>" --json mergeable`.
+- Run `gh pr view <number> --repo ShinaBR2/sworld --json mergeable`.
 - If conflicting → `git fetch origin main && git merge origin/main`, resolve conflicts, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If clean → proceed to Step 3.
 
 ## Step 3: Check unresolved review comments
 
-- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Substitute `<repo>` with the repo the PR actually lives in — `sworld`, `sworld-backend`, or `sworld-hasura-v2` — and `NUMBER` with the PR number. Querying the wrong repo silently returns nothing:
+- Query via GitHub **GraphQL API** (REST doesn't expose resolved status). Substitute `NUMBER` with the PR number:
   ```bash
-  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"<repo>") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
+  gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"sworld") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
   ```
 - Filter to `isResolved: false` threads only.
 - If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
@@ -67,7 +67,7 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
 
 ## Step 4: Check CI
 
-- Run `gh pr checks <number> --repo "ShinaBR2/<repo>"` (NEVER use `--watch`).
+- Run `gh pr checks <number> --repo ShinaBR2/sworld` (NEVER use `--watch`).
 - If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If **any check is `pending`** → nothing to fix, and nothing to report. Background-`sleep 360`, then **restart from Step 1**. A review bot still marked "Review in progress" counts as pending: it has not yet had its say, and Step 3 is the gate it feeds.
 - **A `skipped` check counts as green, not as pending.** Gates that filter by path run a cheap always-on filter job and skip the expensive one when nothing relevant changed (see `e2e-main-pr.yml`); `gh pr checks` prints these as `skipped`. That is the designed pass state — never wait on it. Its *filter* job going red is a real failure and blocks like any other.
@@ -85,7 +85,7 @@ fill in the repo the PR actually lives in; querying the wrong repo silently retu
   3. **All CI green** — every check passed or was `skipped`, nothing `pending`, nothing failed.
 - **A review bot's CI check going green does NOT mean the bot has finished reviewing.** CodeRabbit and Cursor bugbot report `SUCCESS` on their status check while the review itself is still running — and they report `SUCCESS` again after finding real bugs. So a fully green `gh pr checks` can sit alongside a bot that has not yet said anything, and moments later it posts blocking comments. Treat a bot as finished only when its check is green **and** it has actually left its review (its check description no longer reads "Review in progress", and Step 3's thread query reflects its verdict). Until then it is `pending`, whatever colour the check is — background-`sleep 360` and restart from Step 1. **Never call a PR settled on green CI alone.**
 - **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
-- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge <number> --repo "ShinaBR2/<repo>" --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this workspace's merge-is-deploy model means shipping broken code to production.
+- **Never delegate the merge condition to `gh pr merge --auto`.** In this repo it merges the instant the PR is mergeable — GitHub auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/E2E to go green. Run the full CI loop yourself — Steps 1–4 above, including Step 4's `gh pr checks` — then run `gh pr merge <number> --repo ShinaBR2/sworld --squash` manually once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this repo's merge-is-deploy model means shipping broken code to production.
 - Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
 
 ## The rule that gets violated
