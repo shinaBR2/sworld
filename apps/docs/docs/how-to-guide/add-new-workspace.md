@@ -24,7 +24,6 @@ Steps:
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
@@ -49,11 +48,10 @@ Steps:
   ```
   import react from "@vitejs/plugin-react";
   import { defineConfig } from "vite";
-  import { viteCommonjs } from "@originjs/vite-plugin-commonjs";
 
   // https://github.com/vitejs/vite/issues/5308#issuecomment-1010652389
   export default defineConfig({
-    plugins: [viteCommonjs(), react()],
+    plugins: [react()],
   });
   ```
 

@@ -22,7 +22,7 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@codecov/vite-plugin": "^1.9.1",
+    "@codecov/vite-plugin": "^2.0.1",
     "@tanstack/router-plugin": "^1.168.18",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

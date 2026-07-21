@@ -26,7 +26,6 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@tanstack/router-devtools": "^1.167.0",
     "@tanstack/router-plugin": "^1.168.18",
     "@types/node": "^18.11.9",

@@ -53,7 +53,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    // viteCommonjs(),
     TanStackRouterVite(),
     react(),
     // Local bundle analyzer
