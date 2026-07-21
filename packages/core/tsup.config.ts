@@ -11,6 +11,11 @@ export default defineConfig({
     '!./src/**/*.stories.ts?(x)',
   ],
   format: ['esm'],
+  // Pin the ESM extension. Now that package.json declares "type": "module",
+  // tsup would otherwise emit plain .js — and the exports map points at .mjs,
+  // so every consumer resolving core through node_modules would fail to find
+  // an entry. Keeping .mjs makes dist byte-identical to what it has always been.
+  outExtension: () => ({ js: '.mjs' }),
   outDir: 'dist/',
   treeshake: true,
   splitting: true,
