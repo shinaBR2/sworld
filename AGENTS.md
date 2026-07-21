@@ -50,14 +50,14 @@ Everything below is a member of the one pnpm workspace, resolved by the single r
 - **til** — "Today I Learned" blog/notes application
 - **watch** — Video streaming/watching application
 
-### Backend & data layer (`apps/`)
+### Backend & data layer
 
-- **backend** (`apps/backend`) — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura). Three services — gateway, io, compute — in one package; it consumes `core` as a workspace dependency (`workspace:*`).
-- **hasura** (`apps/hasura`) — Hasura GraphQL + Postgres: migrations, metadata, and permissions — the data layer the frontend queries. Hasura Cloud's GitHub integration watches this directory and applies metadata and migrations when a change merges to `main`.
+- **`apps/backend`** (package `backend`) — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura). Three services — gateway, io, compute — in one package; it consumes `core` as a workspace dependency (`workspace:*`).
+- **`apps/hasura`** (package `sworld-hasura-v2` — the one package whose name doesn't match its directory, so `cd` rather than `--filter` it) — Hasura GraphQL + Postgres: migrations, metadata, and permissions, the data layer the frontend queries. Hasura Cloud's GitHub integration watches this directory and applies metadata and migrations when a change merges to `main`.
 
 Two ways these differ from the frontend apps:
 
-- **Both are excluded from the root Biome config**, so the root `pnpm lint` does not cover them — each brought its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory: `apps/backend` has its own Biome config, `apps/hasura` uses eslint. Hasura's PR gate (`hasura-pr.yml`) covers only its JS/TS files, not the SQL migrations or the YAML metadata.
+- **Neither is linted by the root command.** `biome.json` excludes both, so `pnpm lint` skips them — each kept its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory (`apps/backend` has its own Biome config, `apps/hasura` uses eslint). Root `pnpm typecheck` and `pnpm test` still cover the backend; Hasura has neither script. On PRs, `hasura-pr.yml` gates Hasura's JS/TS files — not its SQL migrations or YAML metadata — and nothing gates the backend's lint at all.
 - **The backend's build and deploy path is mid-migration**: the old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
 
 ### Shared packages (`packages/`)
@@ -70,7 +70,7 @@ Two ways these differ from the frontend apps:
 
 - **Frontend:** React 18, TypeScript, Material-UI, Emotion, Vite, TanStack Router
 - **Data:** GraphQL via Hasura, Auth0 for auth, React Query for server state
-- **Backend:** Hono (Hasura Actions/Events) in `apps/backend`, on Cloud Run
+- **Backend:** Hono (Hasura Actions/Events) in `apps/backend`
 - **Testing:** Vitest, Playwright, Storybook
 - **Build:** Turborepo, pnpm, tsup
 - **Gaming:** Phaser.js, Matter.js physics
@@ -109,9 +109,11 @@ Per-package:
 cd packages/core && pnpm codegen        # Regenerate GraphQL types (also: pnpm watch-codegen)
 cd packages/ui   && pnpm storybook      # Component development
 cd apps/backend  && pnpm dev-gateway    # Run a backend service (also: dev-io, dev-compute)
-cd apps/backend  && pnpm lint           # Root `pnpm lint` skips backend and hasura —
-cd apps/hasura   && pnpm lint           # lint each from its own directory
+cd apps/backend  && pnpm lint           # Biome, and it auto-fixes (`--write`)
+cd apps/hasura   && pnpm lint           # eslint
 ```
+
+Root `pnpm lint` skips `apps/backend` and `apps/hasura` — lint those two from their own directory.
 
 ## Common Workflows
 
@@ -129,9 +131,9 @@ The style law lives in the `code-conventions` skill, which auto-triggers on any 
 ## Key directories
 
 ```text
-apps/<app>/src/         # per-app frontend source (routes/, components/, config)
-apps/backend/src/       # Hono services (gateway, io, compute) + their handlers
-apps/hasura/            # migrations/, metadata/ — the data layer
-packages/core/src/      # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
-packages/ui/src/        # shared MUI + Emotion components (+ Storybook)
+apps/<frontend app>/src/  # per-app frontend source (routes/, components/, config)
+apps/backend/src/         # Hono services (gateway, io, compute) + their handlers
+apps/hasura/              # migrations/ (SQL), metadata/ (YAML), tests/ — the data layer
+packages/core/src/        # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
+packages/ui/src/          # shared MUI + Emotion components (+ Storybook)
 ```
