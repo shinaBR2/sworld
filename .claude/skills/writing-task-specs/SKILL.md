@@ -345,10 +345,10 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 ### Scoping conversation steps
 
 1. **Start from the user story.** Read the user story issue. Understand the problem, the ideas explored, and the open questions.
-2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer, the `sworld-backend` Hono service? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
+2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer in `apps/hasura`, the Hono backend in `apps/backend`? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
 3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
 4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
-5. **Break into sub-tasks by one-purpose, one-app/repo scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
+5. **Break into sub-tasks by one-purpose, one-app-or-package scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
 6. **Derive the dependency graph from the code** — run `dependency-analysis` over the candidates. It decides which are isolated and which carry a real `blockedBy`; this skill only records what it returns.
 7. **Group into waves only where step 6 found a real blocker**, and render them per the templates below. If everything is parallel, skip waves and the dependency graph section entirely.
 8. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
@@ -509,7 +509,7 @@ No waves — all startable now:
   types-only             — new interfaces in packages/core, no implementation
   ui-shell               — empty dialog + button in apps/til, no wiring yet
   parser-helper          — pure text→notes parser in packages/core, unit-tested alone
-  hasura-permissions     — read permission for the new table (sworld-hasura-v2, separate repo/PR)
+  hasura-permissions     — read permission for the new table (apps/hasura, its own PR)
 ```
 
 A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — imposed here only because `dependency-analysis` returned those edges as real):

@@ -84,12 +84,12 @@ Every piece of work lands in exactly one:
 
 A wave is a barrier: everything in wave N lands before wave N+1 starts. That is a real cost in wall-clock time and coordination, so impose it **only where the test above found a genuine edge**. Never add ordering to make a plan look structured. If everything is parallel, say so plainly and skip waves and the dependency graph entirely.
 
-## Cross-repo edges are the ones that bite
+## Cross-layer edges are the ones that bite
 
-The sharpest real dependencies in this workspace run **between repos**, where nothing type-checks the seam:
+The sharpest real dependencies run **between layers**, where nothing type-checks the seam. One repo does not remove them — the compiler still never sees the frontend's call meet the schema or handler behind it:
 
-- A frontend query on a new table or column is blocked by the `sworld-hasura-v2` PR that adds it.
-- A frontend call to a new Action is blocked by the `sworld-backend` handler behind it.
+- A frontend query on a new table or column is blocked by the `apps/hasura` migration that adds it.
+- A frontend call to a new Action is blocked by the `apps/backend` handler behind it.
 
 Merging is deploying (see `architecture`), so these edges are also a **live ordering constraint in production**, not just a build-order preference. Land the data layer first and let it deploy.
 

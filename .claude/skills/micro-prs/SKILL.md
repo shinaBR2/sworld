@@ -18,19 +18,19 @@ Apply these mechanically, before anything else — when breaking a ticket into s
 
 Not "mostly one". One. If describing the PR needs an "and", it's two PRs.
 
-### 2. ONE repo, and within it ONE app or ONE shared package — never combine
+### 2. ONE app or ONE shared package — never combine
 
-sworld spans three physically separate repos (frontend `sworld`, `sworld-backend`, `sworld-hasura-v2`), so a PR can never span repos by construction — but the same discipline has to be applied deliberately *within* the frontend repo, where nothing stops you combining things that shouldn't be combined:
+Everything now lives in one repo, so nothing stops you combining pieces that shouldn't be combined. This rule has to be applied deliberately:
 
-- A single frontend PR touches **at most one** of: one `apps/<app>` directory, or `packages/core`, or `packages/ui`.
+- A single PR touches **at most one** of: one `apps/<app>` directory — including `apps/backend` and `apps/hasura` — or `packages/core`, or `packages/ui`.
 - Touching two apps in one PR is wrong. An app plus `packages/core` in one PR is wrong. `packages/core` plus `packages/ui` in one PR is wrong.
 - Each layer carries different review and verification concerns — an app PR is checked by running that app; a `packages/core` PR is checked by its unit tests and `pnpm codegen`; a `packages/ui` PR is checked in Storybook. A PR mixing them can't be reviewed properly or reverted cleanly.
-- Across repos, the same rule shows up as sequencing instead of a single-PR constraint: a Hasura migration is its own PR in `sworld-hasura-v2`, and the frontend's regenerated types are a separate follow-up PR in `sworld` (see `parallel-workflow`) — never squashed into one change just because they're related.
+- **One repo is not permission to merge layers.** A Hasura migration in `apps/hasura` and the frontend's regenerated types in `packages/core` are still two PRs, in that order (see `parallel-workflow`) — the schema has to be live before the generated types mean anything. Sharing a repo removes the friction, not the dependency.
 
 ## Blockers land first, as their own PRs
 
-- **Database/schema.** Anything Hasura migration + metadata (permissions, relationships) is ONE dedicated PR in `sworld-hasura-v2`. It lands first; the frontend codegen follow-up is blocked-by it.
-- **Codegen never lands bundled with app logic.** It rides with the schema-change PR above when the schema changed, or — for a read-only phase with no migration — is its own tiny PR, blocked by nothing.
+- **Database/schema.** Anything Hasura migration + metadata (permissions, relationships) is ONE dedicated PR in `apps/hasura`. It lands first; the frontend codegen follow-up is blocked-by it.
+- **Codegen never lands bundled with app logic.** When a schema change drove it, it's the follow-up PR blocked by the schema PR above. For a read-only phase with no migration, it's its own tiny PR, blocked by nothing.
 - **`packages/core`.** Its own PR, even for a one-line change. Never bundled into an app PR that consumes it.
 - **Constants.** Their own independent PR, first, when a later PR needs them.
 - **Foundation/scaffolding.** A foundation-only PR containing nothing but the scaffolding, cut from `main` — never `blockedBy` the feature that surfaced the need. Foundation comes first; the feature builds on it.
@@ -48,7 +48,7 @@ Which pieces genuinely block which is `dependency-analysis`' call — take its g
 
 Common shapes:
 
-- **Database change:** table schema → migration → GraphQL schema update (all one PR, per "Blockers land first" above) → frontend codegen follow-up (separate PR, separate repo).
+- **Database change:** table schema → migration → GraphQL schema update (all one PR in `apps/hasura`, per "Blockers land first" above) → frontend codegen follow-up (separate PR in `packages/core`).
 - **New API:** endpoint stub (returns empty) → core logic → validation & error handling.
 - **Frontend feature:** component skeleton → basic functionality → styling/interactions → wire to backend.
 
@@ -81,10 +81,10 @@ This is what makes the core-logic layer above land safely ahead of the UI — be
 - Reviewable in a few minutes.
 - Safely revertible on its own.
 - Delivers value, or a foundation for the next step.
-- Single responsibility — does one thing, in one app/package/repo.
+- Single responsibility — does one thing, in one app or package.
 - Independently deployable (behind a flag if needed).
 
-Before opening any PR, ask: **what ONE problem, in ONE app/package/repo, does this solve?** If the answer names two, split it — database/schema and constants land first as blockers, app logic on top.
+Before opening any PR, ask: **what ONE problem, in ONE app or package, does this solve?** If the answer names two, split it — database/schema and constants land first as blockers, app logic on top.
 
 Once a slice is scoped, see `pr-descriptions` for writing the title and body.
 
