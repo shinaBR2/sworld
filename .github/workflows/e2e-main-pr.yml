@@ -12,34 +12,52 @@ name: Main E2E on PR
 # and `e2e` is skipped when nothing relevant changed — and GitHub counts a skipped
 # job as a passing required check. This is the pattern the incoming backend/ and
 # hasura/ gates reuse (SWO-540).
+#
+# Porting a filter here is NOT a copy-paste of an `on: paths` list — the two use
+# different glob dialects. `on: paths` reads `**.ts` as "any .ts at any depth";
+# paths-filter uses picomatch, where `**` is only a globstar as a whole segment,
+# so `**.ts` silently degrades to root-level files only. Write `'**/*.ts'`.
 on:
   pull_request:
     branches: [main]
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
   # Cheap always-run gate: no checkout, reads the PR's changed files from the API.
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
       main: ${{ steps.filter.outputs.main }}
     steps:
       - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         id: filter
         with:
+          # Anything the main-app e2e build resolves against, not just its own
+          # source: a lockfile or root-config change can break the build on its
+          # own, and skipping here reports an affirmative green.
           filters: |
             main:
               - 'apps/main/**'
               - 'packages/core/**'
               - 'packages/ui/**'
+              - 'packages/tsconfig/**'
+              - 'pnpm-lock.yaml'
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - 'turbo.json'
               - '.github/workflows/e2e-main-pr.yml'
 
   e2e:
     needs: changes
-    if: needs.changes.outputs.main == 'true'
+    # Skip only on an explicit 'false' — i.e. the filter ran and said no. An `==
+    # 'true'` test would also skip when `changes` itself errored, and a skipped
+    # job scores as a pass, so an API blip would silently green the gate. Failing
+    # towards running the suite is the safe direction.
+    if: ${{ !cancelled() && needs.changes.outputs.main != 'false' }}
     runs-on: ubuntu-latest
 
     steps:
