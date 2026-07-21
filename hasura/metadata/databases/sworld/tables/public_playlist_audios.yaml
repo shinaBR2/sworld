@@ -1,0 +1,100 @@
+table:
+  name: playlist_audios
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: playlist
+    using:
+      foreign_key_constraint_on: playlist_id
+  - name: audio
+    using:
+      foreign_key_constraint_on: audio_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+          - _and:
+              - playlist:
+                  public:
+                    _eq: true
+              - audio:
+                  public:
+                    _eq: true
+          - _and:
+              - playlist:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+              - audio:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+          - _and:
+              - playlist:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+              - audio:
+                  public:
+                    _eq: true
+          - _and:
+              - playlist:
+                  public:
+                    _eq: true
+              - audio:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+      columns:
+        - playlist_id
+        - position
+        - audio_id
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - position
+      filter:
+        _and:
+          - playlist:
+              public:
+                _eq: true
+          - audio:
+              public:
+                _eq: true
+      allow_aggregations: true
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - position
+      filter:
+        _or:
+          - playlist:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - playlist:
+              shared_playlist_recipients:
+                recipient_id:
+                  _eq: X-Hasura-User-Id
+      allow_aggregations: true
+      query_root_fields: []
+      subscription_root_fields: []
+    comment: ""
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        playlist:
+          user_id:
+            _eq: X-Hasura-User-Id
+    comment: ""

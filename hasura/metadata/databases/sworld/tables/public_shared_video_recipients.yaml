@@ -1,0 +1,32 @@
+table:
+  name: shared_video_recipients
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    recipient_id:
+      custom_name: recipientId
+    updated_at:
+      custom_name: updatedAt
+    video_id:
+      custom_name: videoId
+  custom_column_names:
+    created_at: createdAt
+    recipient_id: recipientId
+    updated_at: updatedAt
+    video_id: videoId
+  custom_root_fields: {}
+object_relationships:
+  - name: recipient
+    using:
+      manual_configuration:
+        column_mapping:
+          recipient_id: id
+        insertion_order: null
+        remote_table:
+          name: users
+          schema: public
+  - name: video
+    using:
+      foreign_key_constraint_on: video_id

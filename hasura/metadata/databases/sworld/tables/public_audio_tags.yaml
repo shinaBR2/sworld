@@ -1,0 +1,61 @@
+table:
+  name: audio_tags
+  schema: public
+object_relationships:
+  - name: audio
+    using:
+      foreign_key_constraint_on: audio_id
+  - name: tag
+    using:
+      foreign_key_constraint_on: tag_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+          - audio:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - tag:
+              site:
+                _eq: listen
+      columns:
+        - audio_id
+        - tag_id
+    comment: Users can only tag audios they own, with listen tags
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - audio_id
+        - tag_id
+      filter:
+        audio:
+          public:
+            _eq: true
+    comment: Only see tags belong to public audios
+  - role: user
+    permission:
+      columns:
+        - audio_id
+        - tag_id
+      filter:
+        audio:
+          _or:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - public:
+                _eq: true
+    comment: Only see tags on audios the user can see (own or public)
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        audio:
+          user_id:
+            _eq: X-Hasura-User-Id
+    comment: >-
+      Ownership-only by design (no tag.site guard, unlike insert): a user may
+      remove any tag from their own audio, including a stray non-listen tag,
+      so nothing gets stuck. Insert is restricted to listen tags to prevent
+      polluting the taxonomy; removal is always allowed on your own audio.

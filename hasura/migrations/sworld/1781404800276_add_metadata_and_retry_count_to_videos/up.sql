@@ -1,0 +1,3 @@
+alter table "public"."videos" add column "metadata" jsonb null, add column "retry_count" integer not null default 0;
+comment on column "public"."videos"."metadata" is E'Processing hints (input: customRequestHeaders) and failure record (output: lastError) for the reliability flow';
+comment on column "public"."videos"."retry_count" is E'Bump to request a reprocess; an update-event on this column re-enqueues processing';

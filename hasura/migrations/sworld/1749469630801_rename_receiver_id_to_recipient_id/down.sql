@@ -1,0 +1,5 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- UPDATE shared_video_recipients
+-- SET recipient_id = receiver_id
+-- WHERE receiver_id IS NOT NULL;

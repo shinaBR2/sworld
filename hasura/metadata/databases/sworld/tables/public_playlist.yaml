@@ -1,0 +1,153 @@
+table:
+  name: playlist
+  schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    s_id:
+      custom_name: sId
+    shared_recipients:
+      custom_name: sharedRecipients
+    shared_recipients_input:
+      custom_name: sharedRecipientsInput
+    thumbnail_url:
+      custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    s_id: sId
+    shared_recipients: sharedRecipients
+    shared_recipients_input: sharedRecipientsInput
+    thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+array_relationships:
+  - name: playlist_audios
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: playlist_audios
+          schema: public
+  - name: playlist_videos
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: playlist_videos
+          schema: public
+  - name: shared_playlist_recipients
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: shared_playlist_recipients
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - description
+        - shared_recipients_input
+        - site
+        - slug
+        - thumbnail_url
+        - title
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - created_at
+        - description
+        - id
+        - public
+        - s_id
+        - site
+        - slug
+        - thumbnail_url
+        - title
+      filter:
+        public:
+          _eq: true
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - created_at
+        - description
+        - id
+        - public
+        - s_id
+        - shared_recipients
+        - shared_recipients_input
+        - site
+        - slug
+        - thumbnail_url
+        - title
+        - user_id
+      filter:
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - shared_playlist_recipients:
+              recipient_id:
+                _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - description
+        - shared_recipients_input
+        - title
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
+event_triggers:
+  - name: share_playlist
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - shared_recipients_input
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{MAIN_WEBHOOK_DOMAIN}}/videos/share-playlist'
+    headers:
+      - name: x-webhook-signature
+        value_from_env: MAIN_WEBHOOK_SIGNATURE
+      - name: Content-Type
+        value: application/json
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "event": {
+              "data": {{$body.event.data.new}},
+              "metadata": {
+                "id": {{$body.id}},
+                "trace_id": {{$body.event.trace_context.trace_id}},
+                "span_id": {{$body.event.trace_context.span_id}}
+              }
+            },
+            "created_at": {{$body.created_at}}
+          }
+      template_engine: Kriti
+      version: 2

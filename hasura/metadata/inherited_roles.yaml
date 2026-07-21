@@ -1,0 +1,3 @@
+- role_name: vip
+  role_set:
+    - user

@@ -1,0 +1,100 @@
+table:
+  name: posts
+  schema: public
+configuration:
+  column_config:
+    h_id:
+      custom_name: hId
+    markdown_content:
+      custom_name: markdownContent
+  custom_column_names:
+    h_id: hId
+    markdown_content: markdownContent
+  custom_root_fields: {}
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        author_id:
+          _eq: X-Hasura-User-Id
+      set:
+        author_id: x-hasura-User-Id
+        visibility: private
+      columns:
+        - author_id
+        - brief
+        - h_id
+        - markdown_content
+        - readTimeInMinutes
+        - slug
+        - status
+        - title
+        - visibility
+    comment: ""
+select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - author_id
+        - brief
+        - created_at
+        - h_id
+        - id
+        - markdown_content
+        - pinned
+        - readTimeInMinutes
+        - slug
+        - status
+        - title
+        - updated_at
+        - visibility
+      filter:
+        _and:
+          - status:
+              _eq: published
+          - visibility:
+              _eq: public
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - author_id
+        - brief
+        - created_at
+        - h_id
+        - id
+        - markdown_content
+        - pinned
+        - readTimeInMinutes
+        - slug
+        - status
+        - title
+        - updated_at
+        - visibility
+      filter:
+        _or:
+          - author_id:
+              _eq: X-Hasura-User-Id
+          - visibility:
+              _eq: public
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - brief
+        - h_id
+        - markdown_content
+        - pinned
+        - readTimeInMinutes
+        - slug
+        - status
+        - title
+        - visibility
+      filter:
+        author_id:
+          _eq: X-Hasura-User-Id
+      check:
+        author_id:
+          _eq: X-Hasura-User-Id
+    comment: ""

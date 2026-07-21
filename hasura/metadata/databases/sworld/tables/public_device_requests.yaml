@@ -1,0 +1,38 @@
+table:
+  name: device_requests
+  schema: public
+configuration:
+  column_config:
+    authorized_at:
+      custom_name: authorizedAt
+    created_at:
+      custom_name: createdAt
+    device_code:
+      custom_name: deviceCode
+    expires_at:
+      custom_name: expiresAt
+    extension_id:
+      custom_name: extensionId
+    ip_address:
+      custom_name: ipAddress
+    updated_at:
+      custom_name: updatedAt
+    user_agent:
+      custom_name: userAgent
+    user_code:
+      custom_name: userCode
+  custom_column_names:
+    authorized_at: authorizedAt
+    created_at: createdAt
+    device_code: deviceCode
+    expires_at: expiresAt
+    extension_id: extensionId
+    ip_address: ipAddress
+    updated_at: updatedAt
+    user_agent: userAgent
+    user_code: userCode
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
