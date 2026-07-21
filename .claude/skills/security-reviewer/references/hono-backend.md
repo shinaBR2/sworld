@@ -22,11 +22,15 @@ root `pnpm-lock.yaml`, and it consumes `packages/core` as `core: workspace:*` �
   router, e.g. `videosRouter.use('*', validateHasuraSignature())` in
   `src/apps/gateway/videos/index.ts`. The external Hashnode webhook has its own, stronger validator
   (below).
-- **Action routers are *not* behind that signature.** `src/apps/gateway/videos-actions` and
-  `src/apps/gateway/storage` mount only Zod validation, and take the caller's identity from the
-  request body's `session_variables['x-hasura-user-id']`. The routers document this as deliberate —
+- **Most routers are *not* behind that signature.** Repo-wide, `validateHasuraSignature` is mounted
+  in exactly one place (`apps/gateway/videos`), and `apps/gateway/hashnode` has its own validator —
+  those two are the only gated routers in the whole backend. Everything else mounts only Zod:
+  `apps/gateway/{auth,storage,videos-actions}`, and **every** router on the io and compute services.
+  The Action routers take the caller's identity from the request body's
+  `session_variables['x-hasura-user-id']`; `videos-actions/index.ts` documents this as deliberate —
   Actions are "authenticated by the caller's session" rather than by the webhook secret. Read that
-  claim critically (see Traps).
+  claim critically (see Traps), and don't assume the io/compute services are private just because
+  they sit behind Cloud Tasks — establish what enforces that.
 - **Boundary 3 — admin client.** `src/services/hasura/client.ts` sends `x-hasura-admin-secret`
   (`envConfig.hasuraAdminSecret`) on every call. Persistence goes through typed `graphql()` codegen —
   variables are parameters, never string-interpolated.

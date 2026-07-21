@@ -112,7 +112,7 @@ there's **another** way in. So for each such table, confirm:
 - [ ] **Sensitive columns** (e.g. `hasura_role`, internal flags) are column-restricted for `user`.
 - [ ] **`manager` scope** is its actual job, not a global backdoor. As of writing `manager` has no
       explicit table permissions (see "Roles" above) — this item is forward-looking: the moment a
-      table grants `manager` anything, re-verify with `grep -rl "role: manager" metadata/` and check
+      table grants `manager` anything, re-verify with `grep -rl "role: manager" apps/hasura/metadata/` and check
       its filter isn't `{}` on `users`/financial tables.
 - [ ] **Production hardening** (judge against the deployed/production Hasura, *not*
       `apps/hasura/docker-compose.yaml`):

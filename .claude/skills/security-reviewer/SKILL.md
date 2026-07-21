@@ -51,9 +51,10 @@ root `pnpm-lock.yaml`. A review can read every layer without leaving the checkou
 
 ```
 Browser SPA ──Auth0 JWT (Bearer)──▶ Hasura ──admin secret (bypasses RLS)──▶ Postgres
-  (apps/<app>)                   (apps/hasura)   │
-                                                 └──x-webhook-signature──▶ Hono
-External webhooks ──signature header─────────────────────────────────────▶ (apps/backend)
+ (apps/<app>)                    (apps/hasura)
+                                      │
+                                      └──x-webhook-signature──▶ Hono
+External webhooks ──signature header────────────────────────▶ (apps/backend)
 ```
 
 | # | Boundary | Mechanism | The core question |
@@ -127,7 +128,7 @@ specific traps. Don't just pattern-match — understand the boundary.
 
 ### Hono backend → `references/hono-backend.md`
 - [ ] Every route that a shared secret is meant to gate verifies it **constant-time** (`crypto.timingSafeEqual`) — not `===`/`!==`. The Hashnode webhook validator is the in-repo reference pattern; the Hasura one is not.
-- [ ] Each router is mounted behind the gate it needs. Action routers deliberately skip the webhook signature — establish what *does* authenticate them before concluding either way.
+- [ ] Each router is mounted behind the gate it needs. Only two routers in the backend carry a signature check at all — for every other one, establish what *does* authenticate it before concluding either way.
 - [ ] User identity is read from Hasura-set `session_variables`, never from a client-controllable header.
 - [ ] Admin-secret calls to Hasura are preceded by an explicit authorisation/ownership check.
 - [ ] Inputs are validated (Zod) before use; no raw SQL, dynamic query strings, or shelling out.
@@ -141,7 +142,7 @@ specific traps. Don't just pattern-match — understand the boundary.
 - [ ] Tokens/PII aren't hand-written to `localStorage`/logs outside the Auth0 SDK's managed cache.
 
 ### Infra / backend host → `references/infra-cloud-run.md`
-- [ ] Hono being internet-reachable is **by design** (Hasura Cloud is off-host, can't present the host's identity) — so the real check is that the `X-Hasura-Signature` gate is robust (boundary 2), not "why no IAM". Tightening ingress is hardening, not a vuln.
+- [ ] Hono being internet-reachable is **by design** (Hasura Cloud is off-host, can't present the host's identity) — so the real check is that the signature gate is robust (boundary 2), not "why no IAM". Tightening ingress is hardening, not a vuln.
 - [ ] **No committed secrets** — the one genuinely high-severity infra check. Scan `.env*` (real values), service-account JSON, private keys, connection strings. Only `.example` templates in git.
 - [ ] CI auth uses short-lived/federated credentials rather than long-lived static deploy keys: a real hardening item — severity tracks the key's blast radius (prod deploy). Not launch-blocking; not over-engineering.
 - [ ] Container non-root (`USER`): good practice; marginal in a sandboxed runtime — Low hardening.

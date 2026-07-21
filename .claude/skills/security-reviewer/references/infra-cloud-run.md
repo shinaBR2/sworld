@@ -7,7 +7,7 @@ can't see; say what to confirm in the console.
 
 ## How it's wired (live, from the repo)
 
-- **Topology:** Frontends (Cloudflare Pages, one project per app) → Hasura Cloud → the Hono backend
+- **Topology:** Frontends (Cloudflare Pages, each app its own project) → Hasura Cloud → the Hono backend
   → back to Hasura via the admin secret. Postgres sits behind Hasura; the backend never talks to it
   directly. All three layers are **one repo** now — frontends under `apps/<app>`, the backend under
   `apps/backend`, Hasura metadata and migrations under `apps/hasura` — but they still deploy to
