@@ -8,21 +8,17 @@ The first hook is the headless ui component for audio player, will be updated in
 
 ## Installation
 
-Install the npm module through your preferred package management
+This package is workspace-only — it is not published to npm. Depend on it from
+another package in this monorepo:
 
 ```
-npm install @shinabr2/life-core
-yarn add @shinabr2/life-core
-pnpm add @shinabr2/life-core
+"core": "workspace:*"
 ```
 
 ## Using
 
 ```
-import hooks from "@shinabr2/life-core";
-
-
-const { useSAudioPlayer } = hooks;
+import useSAudioPlayer from 'core/universal/hooks/useSAudioPlayer';
 ```
 
 # Example using useSAudioPlayer

@@ -1,6 +1,6 @@
 ---
 name: backend-ops
-description: How to perform sworld operational tasks from apps/backend in the sworld monorepo — GCS asset layout, operator CLIs, direct prod DB access, and the recurring "create audios" ingestion task. Auto-triggers when uploading media, ingesting mp3/video files, touching prod data directly, or working in apps/backend/src/cli.
+description: How to perform sworld operational tasks from apps/backend in the sworld monorepo — GCS asset layout, operator CLIs, prod data access, and the recurring "create audios" ingestion task. Auto-triggers when uploading media, ingesting mp3/video files, touching prod data, or working in apps/backend/src/cli.
 user-invocable: false
 ---
 
@@ -26,12 +26,14 @@ Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.m
 
 - **`~/.sworld-cli/config.json`**: `gcp-key` (path to the service-account JSON — read the value from the config, don't hardcode a path), `gcp-bucket` (`sworld-prod.appspot.com`), `hasura-endpoint` (`https://free-lamprey-59.hasura.app/v1/graphql`), `hasura-secret` (admin), `user-id` (the account ops run as — see above).
 - GCS auth: `new Storage({ keyFilename })` with that `gcp-key`. `gcloud` ADC is NOT set up — always use the key file.
-- **`apps/backend/.env`** also has: `GCP_STORAGE_BUCKET`, `HASURA_ADMIN_SECRET` + `HASURA_ENDPOINT`, `DATABASE_URL` (direct Postgres), Cloudinary, OpenAI, etc. It is gitignored, so a fresh clone or worktree has only `.env.example` — copy the real file in. `packages/core/.env` also has `HASURA_GRAPHQL_URL` + `HASURA_ADMIN_SECRET` for quick admin queries via curl.
+- **`apps/backend/.env`** also has: `GCP_STORAGE_BUCKET`, `HASURA_ADMIN_SECRET` + `HASURA_ENDPOINT`, Cloudinary, OpenAI, etc. It is gitignored, so a fresh clone or worktree has only `.env.example` — copy the real file in. `packages/core/.env` also has `HASURA_GRAPHQL_URL` + `HASURA_ADMIN_SECRET` for quick admin queries via curl.
 
-## Talking to the production DB directly
+## Reaching production data
 
-- Via **Hasura admin** (endpoint + admin secret above) with GraphQL — admin bypasses all row permissions. Use for reads (dup checks) and writes (insert audios rows, link playlist_audios, etc.).
-- Or Postgres directly via `DATABASE_URL`.
+Ops tasks reach prod data through Hasura, same as everything else — `hasura-architecture` owns that rule; follow it there rather than reasoning about it here.
+
+- **Scripted reads/writes** — **Hasura admin** (endpoint + admin secret above) with GraphQL. Admin bypasses all row permissions, so use it for reads (dup checks) and writes (insert audios rows, link playlist_audios, etc.).
+- **Anything interactive** — the **Hasura Console**.
 
 ## Operator CLIs in `apps/backend/src/cli/`
 
