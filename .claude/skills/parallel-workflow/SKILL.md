@@ -11,26 +11,24 @@ user-invocable: false
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
 - **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there advances the local `main` ref (the fast-forward refresh the `cleanup` skill owns — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
-## Scope: all three repos
+## Scope: one repo, the whole product
 
-This workflow applies to the whole workspace — **sworld** (frontend), **sworld-backend** (Hono), and **sworld-hasura-v2** (Hasura) — not just the frontend. Same rules everywhere: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Repo-specific adjustments:
+Everything ships from a single repo — the frontend apps, the shared packages, the Hono backend (`apps/backend`), and the Hasura data layer (`apps/hasura`). One lockfile, one CI pipeline, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
 
-- **Substitute the repo name in `gh` commands.** Every `gh` / GraphQL call is repo-scoped — fill in `sworld`, `sworld-backend`, or `sworld-hasura-v2`. Querying the wrong repo silently returns nothing. (The `ci-loop` gate queries carry the same rule.)
-- **Worktree setup step 7 (`.linear.toml`) applies everywhere; step 8 is frontend-specific** (.env copies into `apps/<app>/`, `packages/core/.env`, `pnpm install`). In a sibling repo, copy `.linear.toml` the same way, then follow that repo's own setup instead of step 8.
-- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — in those repos the self-review loop (step 11) MUST also include the `security-reviewer` skill.
-- **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up frontend PR — linked in the tracker with a blocking relation from the Hasura issue.
+- **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — a change touching them MUST also run `security-reviewer` inside the self-review loop (step 11).
+- **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: apply the migration locally, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura), and land the regenerated types as a follow-up PR — linked in the tracker with a blocking relation from the Hasura issue. One repo doesn't collapse that ripple: the schema still has to be live before the generated types mean anything, so the migration lands and deploys first.
 
 ## Git fundamentals
 
 - "main branch" ALWAYS means `origin/main` — fetch first with `git fetch origin main`. The local `main` is often stale.
 - ALWAYS `git merge`, NEVER `git rebase`. This applies everywhere — syncing, resolving divergence, integrating changes.
-- **Sync before analyzing, not just before coding.** Before exploring or reasoning about code anywhere in this workspace (any of the three repos), check `git status` and pull/fast-forward to `origin/main` first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
+- **Sync before analyzing, not just before coding.** Before exploring or reasoning about code anywhere in the repo, check `git status` and pull/fast-forward to `origin/main` first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
 
 ### Keep local `main` fresh
 
-Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind — keep the pointer current in **every** repo whose `main` you are about to read off or branch from.
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind — keep the pointer current.
 
-The refresh mechanic and every trigger for it are owned by the `cleanup` skill — see `cleanup`. Refresh a repo's `main` before you start new work in it or read off it.
+The refresh mechanic and every trigger for it are owned by the `cleanup` skill — see `cleanup`. Refresh `main` before you start new work or read off it.
 
 ## Before starting
 
@@ -43,7 +41,7 @@ The refresh mechanic and every trigger for it are owned by the `cleanup` skill �
 
 5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
 6. Create the worktree under `.claude/worktrees/` — self-contained, gitignored, and aligned with Claude Code's official default — named for the issue per `task-tracker`'s branch convention.
-7. **Copy `.linear.toml` from the repo root into the worktree root.** It is gitignored (it can hold a plaintext API key), so a fresh worktree starts without it — and the `linear` CLI's config lookup stops at the checkout root, never walking up to the main worktree. Without it every tracker command silently resolves to the account's *default* workspace, which is not `sworld`: reads return the wrong workspace's data, and writes fail with `Team not found: SWO`. Applies to all three repos.
+7. **Copy `.linear.toml` from the repo root into the worktree root.** It is gitignored (it can hold a plaintext API key), so a fresh worktree starts without it — and the `linear` CLI's config lookup stops at the checkout root, never walking up to the main worktree. Without it every tracker command silently resolves to the account's *default* workspace, which is not `sworld`: reads return the wrong workspace's data, and writes fail with `Team not found: SWO`.
 8. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`. Then run `pnpm install` in the worktree.
 
 ## During work
