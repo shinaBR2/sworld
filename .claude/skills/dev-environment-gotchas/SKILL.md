@@ -35,9 +35,11 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 
 ## Node version and package managers
 
-- The whole workspace (`sworld`, `sworld-backend`, `sworld-hasura-v2`) runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
+- The whole monorepo — frontend apps, `apps/backend`, `apps/hasura`, and every package — runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
 - **Pinning convention:** pin the **exact** version (`24.18.0`) in `.nvmrc`, Dockerfiles (`node:24.18.0-slim`, never the moving `node:24-slim` tag), and CI `actions/setup-node`. Keep `engines.node` as a **range** (`>=24`) — it's a floor, not a pin.
-- **Package manager differs per repo:** `sworld` = pnpm workspace (`pnpm-lock.yaml`); `sworld-backend` and `sworld-hasura-v2` = **npm** (`package-lock.json`) — use `npm ci`/`npm outdated` there, not pnpm.
+- **One package manager, one lockfile.** Everything is a single pnpm workspace with one root `pnpm-lock.yaml`. There is no `package-lock.json` and no `npm ci` — reach for `pnpm`, `pnpm --filter <pkg> …`, `pnpm outdated -r` everywhere, including in `apps/backend` and `apps/hasura`. The backend gets `core` as `workspace:*` off the local source, not from npm.
+- **`apps/hasura` is the one package whose name doesn't match its directory** — it's still `sworld-hasura-v2`. `pnpm --filter` on a name that matches nothing exits 0 with "No projects matched", so a filter built from the directory name silently does nothing. Run its scripts from the directory (`cd apps/hasura && pnpm run lint`).
+- **Lint tooling is split, and the root config skips the two backend directories.** `biome.json` at the root excludes `apps/backend` and `apps/hasura`, so a root `pnpm lint` says nothing about either. `apps/backend` has its own `biome.json` and `lint` script; `apps/hasura` uses eslint. Lint those from their own directories.
 - **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8), deliberately excluded from the Node 24 migration, and no longer deployed anywhere. It has no tests at all — unit tests everywhere else in the workspace run on Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
 
 ## pnpm's dependency cooldown can freeze dep work for days
@@ -50,7 +52,9 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 
 ## CodeGraph index lives at the workspace root
 
-The CodeGraph index (`.codegraph/`) is initialized at the **workspace root** (`/Users/tranvanvuong/Projects/sworld`, not inside any single repo), so one graph covers all three repos — `sworld`, `sworld-backend`, `sworld-hasura-v2` — and cross-repo structural queries work. The workspace root isn't a git repo, so the index is machine-local; if `codegraph_*` tools ever report "not initialized," re-run `codegraph init -i` at the workspace root. Reach for `codegraph_*` first for structural questions (definitions, callers, impact) across any of the three repos — grep only for literal text.
+The CodeGraph index (`.codegraph/`) is initialized at the **workspace root** — the directory *containing* the `sworld` checkout, not inside it — so one graph covers everything under it. The workspace root isn't a git repo, so the index is machine-local; if `codegraph_*` tools ever report "not initialized," re-run `codegraph init -i` there. Reach for `codegraph_*` first for structural questions (definitions, callers, impact) — grep only for literal text.
+
+**Read the path on every hit before trusting it.** The index spans sibling checkouts and every `.claude/worktrees/` worktree, so one symbol commonly returns many identical-looking results. Since the backend and data layer moved into the monorepo, the pre-move `sworld-backend` / `sworld-hasura-v2` checkouts still exist on disk and are still indexed — so a backend symbol returns hits under both `sworld/apps/backend/…` and the old `sworld-backend/…`, and only the first is live code. Take the `sworld/apps/…` hit (or the one inside the worktree you're working in); an edit made against an old path silently changes nothing.
 
 ## Don't defer error tracking for bundle size
 
