@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "lint": "npx eslint .",
+    "lint": "eslint .",
     "test": "dotenvx run -- vitest",
     "test:ci": "vitest run"
   },

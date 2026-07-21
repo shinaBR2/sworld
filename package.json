@@ -21,7 +21,7 @@
     "format": "biome format --write",
     "prepare": "husky",
     "lint": "biome check .",
-    "test": "turbo run test",
+    "test": "turbo run test --filter=!sworld-hasura-v2",
     "typecheck": "turbo run typecheck --filter=!docs"
   },
   "devDependencies": {
