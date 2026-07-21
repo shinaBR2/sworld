@@ -12,30 +12,32 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 
-const SettingsLazyRouteImport = createFileRoute('/settings')()
-const ManageLazyRouteImport = createFileRoute('/manage')()
 const HistoryLazyRouteImport = createFileRoute('/history')()
+const ManageLazyRouteImport = createFileRoute('/manage')()
+const SettingsLazyRouteImport = createFileRoute('/settings')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const VideoSlugIdLazyRouteImport = createFileRoute('/video/$slug/$id')()
 const PlaylistSlugPlaylistIdVideoIdLazyRouteImport = createFileRoute(
   '/playlist/$slug/$playlistId/$videoId',
 )()
 
-const SettingsLazyRoute = SettingsLazyRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
-const ManageLazyRoute = ManageLazyRouteImport.update({
-  id: '/manage',
-  path: '/manage',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
 const HistoryLazyRoute = HistoryLazyRouteImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route))
+const ManageLazyRoute = ManageLazyRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/manage.lazy').then((d) => d.Route))
+const SettingsLazyRoute = SettingsLazyRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/settings.lazy').then((d) => d.Route),
+)
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -122,11 +124,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsLazyRouteImport
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manage': {
@@ -136,11 +138,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManageLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryLazyRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
