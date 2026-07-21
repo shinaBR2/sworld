@@ -1,14 +1,10 @@
 {
   "name": "core",
   "version": "1.1.1",
-  "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -20,14 +16,10 @@
       "types": "./dist/*/index.d.ts"
     }
   },
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
     "codegen": "dotenvx run -- graphql-codegen --config codegen.ts",
     "watch-codegen": "dotenvx run -- graphql-codegen --config codegen.ts --watch",
     "build": "rm -rf dist && tsup",
-    "build:publish": "rm -rf dist && tsup --config tsup.publish.config.ts",
     "build-watch": "tsup --watch --no-dts",
     "clean": "rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
