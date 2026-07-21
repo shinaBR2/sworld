@@ -8,20 +8,23 @@ RUN apt-get update && \
     apt-get install -y procps && \
     rm -rf /var/lib/apt/lists/*
 
-# pnpm at the exact version pinned in the root package.json `packageManager`.
-ENV PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH"
+# corepack resolves pnpm from the root package.json `packageManager` field.
 RUN corepack enable
 
 WORKDIR /app
 
 # Manifests first so the install layer is only rebuilt when a dependency changes.
+# One manifest per workspace package in the `backend...` closure — add to this
+# list if backend or core ever gains another `workspace:*` dependency.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/core/package.json packages/core/
 COPY packages/tsconfig/package.json packages/tsconfig/
 
-RUN pnpm install --frozen-lockfile --filter backend...
+# --ignore-scripts: the workspace already blocks dependency lifecycle scripts
+# (`onlyBuiltDependencies: []`), and the root `prepare` runs husky, which has no
+# .git to work with in here. Playwright's browsers are installed explicitly below.
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter backend...
 
 # Install the chromium build Playwright expects, plus its system libraries.
 RUN pnpm --filter backend exec playwright install --with-deps chromium

@@ -2,20 +2,28 @@
 #   docker build -f apps/backend/Dockerfile.compute .
 FROM --platform=linux/amd64 node:24.18.0-slim
 
-# pnpm at the exact version pinned in the root package.json `packageManager`.
-ENV PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH"
+# corepack resolves pnpm from the root package.json `packageManager` field.
 RUN corepack enable
 
 WORKDIR /app
 
 # Manifests first so the install layer is only rebuilt when a dependency changes.
+# One manifest per workspace package in the `backend...` closure — add to this
+# list if backend or core ever gains another `workspace:*` dependency.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/core/package.json packages/core/
 COPY packages/tsconfig/package.json packages/tsconfig/
 
-RUN pnpm install --frozen-lockfile --filter backend...
+# --ignore-scripts: the workspace already blocks dependency lifecycle scripts
+# (`onlyBuiltDependencies: []`), and the root `prepare` runs husky, which has no
+# .git to work with in here.
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter backend...
+
+# @ffprobe-installer ships its binary non-executable and relies on a postinstall
+# `chmod` that the workspace's blocked lifecycle scripts never run. Without this,
+# ffprobe fails with EACCES and getDuration() silently falls back to 1 second.
+RUN cd apps/backend && chmod +x "$(node -p "require('@ffprobe-installer/ffprobe').path")"
 
 # There is no build step: the service runs `tsx` over TypeScript SOURCE, and the
 # backend tsconfig maps `core`/`core/*` to ../../packages/core/src — so core's
