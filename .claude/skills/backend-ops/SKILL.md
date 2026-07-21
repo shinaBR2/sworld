@@ -30,7 +30,7 @@ Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.m
 
 ## Reaching production data
 
-Hasura is the route, in both directions — `hasura-architecture` owns that rule; follow it there rather than reasoning about it here.
+Ops tasks reach prod data through Hasura, same as everything else — `hasura-architecture` owns that rule; follow it there rather than reasoning about it here.
 
 - **Scripted reads/writes** — **Hasura admin** (endpoint + admin secret above) with GraphQL. Admin bypasses all row permissions, so use it for reads (dup checks) and writes (insert audios rows, link playlist_audios, etc.).
 - **Anything interactive** — the **Hasura Console**.
