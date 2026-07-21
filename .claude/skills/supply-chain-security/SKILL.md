@@ -15,7 +15,29 @@ description: >-
 
 This skill captures a standing posture for npm-ecosystem projects so that a compromised package
 release becomes a non-event rather than a credential leak. It is pnpm-first (the primary tooling
-here), with npm/yarn equivalents in `references/package-manager-config.md`.
+here), with npm/yarn equivalents in `references/package-manager-config.md` for other projects.
+
+## In this repo
+
+**One lockfile, one package manager.** Everything — every frontend app, the Hono backend
+(`apps/backend`), the data layer (`apps/hasura`) and the shared packages — resolves through a single
+`pnpm-lock.yaml` at the repo root. pnpm is the only package manager: there is no
+`package-lock.json` and no `yarn.lock` anywhere, and the backend consumes `packages/core` as
+`core: workspace:*` rather than from the registry.
+
+Three consequences worth holding on to:
+
+- **A second lockfile is a bug, not a state to maintain.** If one appears under an app, it means a
+  bare `npm install`/`yarn` ran somewhere it shouldn't have. Delete it and re-resolve through pnpm at
+  the root — don't try to keep two in sync.
+- **`npm ci` in a script, Dockerfile or workflow is stale.** It cannot work without a
+  `package-lock.json`. Treat any such step as left over from before the repos merged.
+- **One lockfile means one blast radius.** A compromised transitive dependency now reaches the
+  frontends *and* the backend in the same install, so the vetting checklist below matters more than
+  it did when they were separate projects.
+
+The live settings (cooldown, exclusions, lifecycle scripts, pinned pnpm version) are recorded in
+`references/package-manager-config.md` — read them there rather than restating them.
 
 ## The threat model (why this matters)
 
@@ -146,7 +168,9 @@ Walk the standing-posture list above. Concretely:
 - Review the dependency list for anything not critically needed — every package removed is attack
   surface removed. Flag candidates for replacement with built-ins or removal.
 - Check `package.json` for `^`/`~` and offer to convert to exact pins.
-- Confirm a lockfile exists and is committed (`git ls-files | grep lock`).
+- Confirm a lockfile exists and is committed (`git ls-files | grep lock`). Here the right answer is
+  **exactly one**, `pnpm-lock.yaml` at the root — more than one means something re-resolved outside
+  pnpm.
 - Confirm `onlyBuiltDependencies` is present and minimal (in pnpm 11 this is `allowBuilds`).
 - Check pnpm version (`pnpm -v`) and whether a cooldown is configured.
 
