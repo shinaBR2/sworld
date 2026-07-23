@@ -59,7 +59,7 @@ How this pair differs from the frontend apps:
 
 - **Neither is linted by the root command.** `biome.json` excludes both, so `pnpm lint` skips them — each kept its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory (`apps/backend` has its own Biome config, `apps/hasura` uses eslint). On PRs, `hasura-pr.yml` gates Hasura's JS/TS files — not its SQL migrations or YAML metadata — and nothing gates the backend's lint at all.
 - **Root `typecheck` and `test` reach the backend but not Hasura.** Hasura's suite is named `test:local` / `test:ci` on purpose: it needs a live Hasura endpoint and Auth0 credentials, and naming it `test` would drag it into the root gate. Run it yourself from `apps/hasura`; don't "fix" the missing script.
-- **Only the backend's deploy path is mid-migration** (Hasura's is not — see above): its old per-repo deploy workflows are gone and its Dockerfiles don't build yet. Don't assume a backend deploy path exists until that work lands.
+- **Only the backend's deploy path is mid-migration** (Hasura's is not — see above): its service images build and boot from the monorepo root, but its old per-repo deploy workflows are gone and nothing here yet builds or pushes them. Don't assume a backend deploy path exists until that work lands.
 
 ### Shared packages (`packages/`)
 

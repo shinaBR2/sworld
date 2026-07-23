@@ -30,11 +30,11 @@ One `pnpm-lock.yaml` at the repo root covers everything — there is no per-app 
 
 Gateway, io, and compute run as separate Cloud Run services off one codebase, each with its own entry point (different `CMD` in its Dockerfile).
 
-### Container build and deploy are mid-rebuild — don't rely on them
+### Container deploy is mid-rebuild — the images build, nothing ships them yet
 
-The three Dockerfiles still install with `npm ci` against a `package-lock.json` that no longer exists, so **none of them currently build**, and the workflows that deployed the backend were removed in the monorepo move with nothing yet in their place. Nothing here deploys the backend today.
+The three Dockerfiles now **build and boot** from a monorepo-root build context (`docker build -f apps/backend/Dockerfile.gateway .`), installing the `backend...` workspace slice with pnpm against the single root `pnpm-lock.yaml`, on `linux/amd64` to match Cloud Run (SWO-545). But the workflows that deployed the backend were removed in the monorepo move with nothing yet in their place — nothing here builds, pushes, or deploys those images today, so nothing ships the backend.
 
-Both are being rebuilt: SWO-545 owns making the images build (shipping the workspace slice with pnpm from a monorepo-root build context — not bundling), SWO-546 owns restoring the deploy pipeline. Until those land, treat a backend change as unshippable, and check those tickets rather than this skill for how a build or deploy will work.
+The deploy half is still being rebuilt: SWO-546 owns restoring the pipeline. Until it lands, treat a backend change as unshippable, and check that ticket rather than this skill for how a deploy will work.
 
 ## The full pipeline: Hasura Event → video processing
 
@@ -210,7 +210,7 @@ Local testing options:
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
 
-The last rung has no route today: with the images unbuildable and the deploy workflows gone (see above), there is no way to ship a backend change to Cloud Run and close the loop. Plan a backend change knowing its integration test is blocked until SWO-545 and SWO-546 land.
+The last rung has no route today: the images build and boot, but with the deploy workflows gone (see above) there is no way to ship a backend change to Cloud Run and close the loop. Plan a backend change knowing its integration test is blocked until the deploy pipeline is restored (SWO-546).
 
 ## Business constraints
 
