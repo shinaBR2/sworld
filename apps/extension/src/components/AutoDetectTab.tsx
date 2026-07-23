@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
 import type { PageContent } from 'core/universal/extension/communication/types';
 import { ActionCard } from './ActionCard';
+import { TelegramPanel } from './TelegramPanel';
 
 interface AutoDetectTabProps {
   content: PageContent | null;
@@ -29,6 +30,12 @@ const AutoDetectTab = ({
         </Typography>
       </Box>
     );
+  }
+
+  // Telegram gets its own multi-video picker (with a login step) rather than the
+  // single-item ActionCard the other page types use.
+  if (content.pageType === 'telegram') {
+    return <TelegramPanel />;
   }
 
   const isVideo = ['youtube', 'vimeo', 'video-generic'].includes(
