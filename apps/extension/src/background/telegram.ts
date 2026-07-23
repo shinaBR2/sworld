@@ -30,12 +30,20 @@ interface ActionEnvelope<T> {
   dataObject?: T | null;
 }
 
+// A stalled request must never hang the popup forever: without a deadline a
+// dead connection leaves the `await` in the background handler unresolved, so
+// `sendResponse` never fires and the spinner spins indefinitely. The ceiling
+// sits above Hasura's own 30s Action timeout so a genuinely slow-but-alive
+// backend still returns its real error rather than being cut off here.
+const REQUEST_TIMEOUT_MS = 35_000;
+
 /**
  * Call a Telegram Hasura Action from the background with the bridged Auth0 token,
  * exactly like `watch.ts`/`library.ts` — raw fetch to the GraphQL endpoint, the
  * action invoked as a mutation field. Normalizes every failure (no token,
- * transport/GraphQL error) into the same `{ success:false, message }` envelope so
- * callers branch on one shape. `actionField` is the mutation field name to unwrap.
+ * transport/GraphQL error, timeout) into the same `{ success:false, message }`
+ * envelope so callers branch on one shape. `actionField` is the mutation field
+ * name to unwrap.
  */
 const callTelegramAction = async <T>(
   actionField: string,
@@ -55,6 +63,7 @@ const callTelegramAction = async <T>(
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ query, variables }),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     const json = await response.json();
@@ -72,9 +81,15 @@ const callTelegramAction = async <T>(
     }
     return result;
   } catch (error) {
+    const timedOut =
+      error instanceof DOMException && error.name === 'TimeoutError';
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Network error',
+      message: timedOut
+        ? 'The request timed out. Try again.'
+        : error instanceof Error
+          ? error.message
+          : 'Network error',
       dataObject: null,
     };
   }

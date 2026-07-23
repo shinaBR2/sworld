@@ -117,6 +117,17 @@ describe('background/telegram actions', () => {
       expect(result.success).toBe(false);
       expect(result.message).toBe('offline');
     });
+
+    it('sends an abort signal and reports a timeout instead of hanging', async () => {
+      mockFetch.mockRejectedValue(
+        new DOMException('signal timed out', 'TimeoutError'),
+      );
+      const result = await listTelegramChannelVideos('-123');
+      expect(result.success).toBe(false);
+      expect(result.message).toBe('The request timed out. Try again.');
+      // The fetch carries an abort signal so a stalled request can't hang forever.
+      expect(mockFetch.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+    });
   });
 
   describe('importTelegramArchive', () => {
