@@ -61,8 +61,10 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          # Kept false until the backend coverage config lands (SWO-599): a
-          # Codecov upload hiccup must not block a prod deploy.
+          # Kept false: a Codecov upload hiccup must not block a prod deploy.
+          # The coverage GATE (SWO-599) is a Codecov commit status on the PR,
+          # not this action's exit code, so keeping this false does not weaken
+          # it.
           fail_ci_if_error: false
 
   deploy:

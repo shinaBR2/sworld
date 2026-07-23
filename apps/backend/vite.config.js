@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 // only resolved in the standalone repo because that install happened to hoist it
 // into the root node_modules; under the monorepo's layout it isn't visible and
 // the config fails to load.
-import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -18,5 +18,21 @@ export default defineConfig({
   },
   test: {
     setupFiles: ['./__mocks__/sequelize.ts'],
+    coverage: {
+      provider: 'v8',
+      // `json` writes coverage-final.json, which the Codecov uploader picks up.
+      reporter: ['text', 'json'],
+      // Keep Vitest's built-in exclusions (tests, config, node_modules, dist)
+      // and add the backend-specific ones. These mirror the `ignore` list in
+      // the root codecov.yml so the local report reflects service code only.
+      exclude: [
+        ...coverageConfigDefaults.exclude,
+        'src/services/hasura/generated-graphql/**',
+        'src/services/hashnode/generated-graphql/**',
+        'src/services/hasura/codegen.ts',
+        'src/services/hashnode/codegen.ts',
+        'src/cli/**', // standalone operator tooling, run via tsx (not part of the services)
+      ],
+    },
   },
 });

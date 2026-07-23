@@ -19,7 +19,7 @@
     "codegen": "dotenvx run -- graphql-codegen --config src/services/hasura/codegen.ts",
     "watch-codegen-hasura": "dotenvx run -- graphql-codegen --config src/services/hasura/codegen.ts --watch",
     "watch-codegen-hashnode": "dotenvx run -- graphql-codegen --config src/services/hashnode/codegen.ts --watch",
-    "test": "vitest",
+    "test": "vitest --coverage",
     "test:ci": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "format": "biome format --write",

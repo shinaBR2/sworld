@@ -1,0 +1,47 @@
+# Codecov config for the sworld monorepo.
+#
+# Restores the backend coverage gate lost in the SWO-544 monorepo import
+# (SWO-599). The backend must keep very high coverage; the frontend does not.
+#
+# Every status here is scoped to `apps/backend/src` via `paths`, so the 90% /
+# 100% bars apply to the backend ONLY. Frontend coverage still uploads (from
+# unit-test-main.yml, with no config) but is never measured against these
+# targets — it has no status of its own here, which is deliberately the looser
+# treatment. Paths are repo-root-relative: the standalone backend repo's config
+# used bare `src`, which would silently match nothing now that the backend
+# lives under apps/backend/.
+coverage:
+  status:
+    project:
+      backend:
+        target: 90%
+        threshold: 2%
+        paths:
+          - 'apps/backend/src'
+    patch:
+      backend:
+        target: 100%
+        threshold: 2%
+        paths:
+          - 'apps/backend/src'
+
+# Excluded from coverage so the number reflects service code only. Mirrors the
+# Vitest `coverage.exclude` in apps/backend/vite.config.js.
+ignore:
+  - 'apps/backend/src/**/*.test.ts'
+  - 'apps/backend/src/**/*.spec.ts'
+  - 'apps/backend/src/services/hasura/generated-graphql/**'
+  - 'apps/backend/src/services/hasura/codegen.ts'
+  - 'apps/backend/src/services/hashnode/generated-graphql/**'
+  - 'apps/backend/src/services/hashnode/codegen.ts'
+  - 'apps/backend/src/cli/**' # standalone operator tooling, run via tsx (not part of the services)
+
+comment:
+  layout: 'reach, diff, files'
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+github_checks:
+  annotations: true
