@@ -1,6 +1,7 @@
 import type {
   PageContent,
   PdfMetadata,
+  TelegramChannelMetadata,
   VideoMetadata,
 } from 'core/universal/extension/communication/types';
 import { removeItems, setItem } from 'core/universal/extension/storage';
@@ -8,6 +9,12 @@ import { config } from '../config';
 import { getToken, isAuthenticated, logout } from './background/auth';
 import { createImportRecord, updateImportStatus } from './background/imports';
 import { importBook } from './background/library';
+import {
+  importTelegramArchive,
+  listTelegramChannelVideos,
+  requestTelegramLoginCode,
+  submitTelegramLoginCode,
+} from './background/telegram';
 import { importVideo } from './background/watch';
 
 console.log('Background script starting...');
@@ -15,6 +22,7 @@ console.log('Background script starting...');
 let currentPageContent: PageContent | null = null;
 let currentPdfMetadata: PdfMetadata | null = null;
 let storedVideoMetadata: VideoMetadata | null = null;
+let storedTelegramMetadata: TelegramChannelMetadata | null = null;
 
 const importBookAsync = async (metadata: PdfMetadata): Promise<void> => {
   const record = createImportRecord('library', metadata.title);
@@ -136,6 +144,19 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       return;
     }
 
+    case 'TELEGRAM_CHANNEL_DETECTED': {
+      storedTelegramMetadata = message.payload as TelegramChannelMetadata;
+      // Surface a telegram PageContent so the popup routes to the Telegram
+      // section (the content script sends ONLY this message for a telegram tab).
+      currentPageContent = {
+        url: storedTelegramMetadata.url,
+        title: 'Telegram channel',
+        pageType: 'telegram',
+      };
+      sendResponse({ received: true });
+      return;
+    }
+
     case 'REQUEST_TAB_CONTENT': {
       chrome.runtime.sendMessage({
         source: 'background',
@@ -194,6 +215,48 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       }
 
       sendResponse({ started: false, error: 'Unsupported target app' });
+      return;
+    }
+
+    // Telegram picker actions — the popup calls these; the background owns the
+    // channelId (from the detected tab) so the popup never handles it.
+    case 'TELEGRAM_LIST_VIDEOS': {
+      const channelId = storedTelegramMetadata?.channelId;
+      if (!channelId) {
+        sendResponse({
+          success: false,
+          message: 'No Telegram channel detected',
+          videos: [],
+        });
+        return;
+      }
+      const cursor = message.payload?.cursor as string | undefined;
+      sendResponse(await listTelegramChannelVideos(channelId, cursor));
+      return;
+    }
+
+    case 'TELEGRAM_IMPORT': {
+      const channelId = storedTelegramMetadata?.channelId;
+      if (!channelId) {
+        sendResponse({
+          success: false,
+          message: 'No Telegram channel detected',
+        });
+        return;
+      }
+      const messageIds = (message.payload?.messageIds as string[]) ?? [];
+      sendResponse(await importTelegramArchive(channelId, messageIds));
+      return;
+    }
+
+    case 'TELEGRAM_REQUEST_LOGIN_CODE': {
+      sendResponse(await requestTelegramLoginCode());
+      return;
+    }
+
+    case 'TELEGRAM_SUBMIT_LOGIN_CODE': {
+      const code = (message.payload?.code as string) ?? '';
+      sendResponse(await submitTelegramLoginCode(code));
       return;
     }
   }
