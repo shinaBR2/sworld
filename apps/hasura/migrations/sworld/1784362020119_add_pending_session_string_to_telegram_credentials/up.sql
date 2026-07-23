@@ -1,0 +1,3 @@
+ALTER TABLE "public"."telegram_credentials" ADD COLUMN "pending_session_string" text NULL;
+
+COMMENT ON TABLE "public"."telegram_credentials" IS E'Per-user Telegram MTProto credentials and session. Admin-secret mediated only (no role:user permissions) - the extension never reads this directly, only through the telegram-actions Hono handlers. session_string, pending_session_string and pending_phone_code_hash are credential-equivalent secrets. session_string only ever holds an AUTHORIZED session; an in-progress login is held in pending_session_string so a re-login never overwrites a working session.';
