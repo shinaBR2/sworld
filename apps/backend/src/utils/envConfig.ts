@@ -19,9 +19,6 @@ const envConfig = {
   hashnodePersonalToken: process.env.HASHNODE_PERSONAL_TOKEN,
   mainSiteUrl: process.env.MAIN_SITE_URL,
   slackWebhookUrl: process.env.SLACK_WEBHOOK_URL,
-  telegramApiId: process.env.TG_API_ID,
-  telegramApiHash: process.env.TG_API_HASH,
-  telegramSession: process.env.TELEGRAM_SESSION,
   server: {
     maxBodyLimitInKBNumber: Number(process.env.MAX_BODY_LIMIT ?? 50),
   },

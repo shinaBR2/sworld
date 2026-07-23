@@ -35,6 +35,9 @@ type Documents = {
   '\n  query GetVideoById($id: uuid!) {\n    videos_by_pk(id: $id) {\n      id\n      source\n      status\n      user_id\n      duration\n      thumbnailUrl\n      metadata\n    }\n  }\n': typeof types.GetVideoByIdDocument;
   '\n  query GetVideosMissingDuration {\n    videos(\n      where: { _or: [{ duration: { _is_null: true } }, { duration: { _eq: 0 } }] }\n    ) {\n      id\n    }\n  }\n': typeof types.GetVideosMissingDurationDocument;
   '\n  query GetVideosMissingThumbnail {\n    videos(\n      where: {\n        status: { _eq: "ready" }\n        _or: [\n          { thumbnailUrl: { _is_null: true } }\n          { thumbnailUrl: { _eq: "" } }\n        ]\n      }\n    ) {\n      id\n    }\n  }\n': typeof types.GetVideosMissingThumbnailDocument;
+  '\n  mutation SaveTelegramPendingLogin(\n    $userId: uuid!\n    $pendingSessionString: String!\n    $phoneCodeHash: String!\n  ) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        pendingSessionString: $pendingSessionString\n        pendingPhoneCodeHash: $phoneCodeHash\n      }\n    ) {\n      affected_rows\n    }\n  }\n': typeof types.SaveTelegramPendingLoginDocument;
+  '\n  mutation SaveTelegramSession($userId: uuid!, $sessionString: String!) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        sessionString: $sessionString\n        pendingSessionString: null\n        pendingPhoneCodeHash: null\n      }\n    ) {\n      affected_rows\n    }\n  }\n': typeof types.SaveTelegramSessionDocument;
+  '\n  query GetTelegramCredentialsByUserId($userId: uuid!) {\n    telegram_credentials(where: { user_id: { _eq: $userId } }, limit: 1) {\n      phoneNumber\n      apiId\n      apiHash\n      sessionString\n      pendingSessionString\n      pendingPhoneCodeHash\n    }\n  }\n': typeof types.GetTelegramCredentialsByUserIdDocument;
 };
 const documents: Documents = {
   '\n  mutation createDeviceRequest($object: device_requests_insert_input!) {\n    insert_device_requests_one(object: $object) {\n      id\n      deviceCode\n      userCode\n    }\n  }\n':
@@ -81,6 +84,12 @@ const documents: Documents = {
     types.GetVideosMissingDurationDocument,
   '\n  query GetVideosMissingThumbnail {\n    videos(\n      where: {\n        status: { _eq: "ready" }\n        _or: [\n          { thumbnailUrl: { _is_null: true } }\n          { thumbnailUrl: { _eq: "" } }\n        ]\n      }\n    ) {\n      id\n    }\n  }\n':
     types.GetVideosMissingThumbnailDocument,
+  '\n  mutation SaveTelegramPendingLogin(\n    $userId: uuid!\n    $pendingSessionString: String!\n    $phoneCodeHash: String!\n  ) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        pendingSessionString: $pendingSessionString\n        pendingPhoneCodeHash: $phoneCodeHash\n      }\n    ) {\n      affected_rows\n    }\n  }\n':
+    types.SaveTelegramPendingLoginDocument,
+  '\n  mutation SaveTelegramSession($userId: uuid!, $sessionString: String!) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        sessionString: $sessionString\n        pendingSessionString: null\n        pendingPhoneCodeHash: null\n      }\n    ) {\n      affected_rows\n    }\n  }\n':
+    types.SaveTelegramSessionDocument,
+  '\n  query GetTelegramCredentialsByUserId($userId: uuid!) {\n    telegram_credentials(where: { user_id: { _eq: $userId } }, limit: 1) {\n      phoneNumber\n      apiId\n      apiHash\n      sessionString\n      pendingSessionString\n      pendingPhoneCodeHash\n    }\n  }\n':
+    types.GetTelegramCredentialsByUserIdDocument,
 };
 
 /**
@@ -216,6 +225,24 @@ export function graphql(
   source: '\n  query GetVideosMissingThumbnail {\n    videos(\n      where: {\n        status: { _eq: "ready" }\n        _or: [\n          { thumbnailUrl: { _is_null: true } }\n          { thumbnailUrl: { _eq: "" } }\n        ]\n      }\n    ) {\n      id\n    }\n  }\n',
 ): typeof import('./graphql').GetVideosMissingThumbnailDocument;
 
+export function graphql(
+  source: '\n  mutation SaveTelegramPendingLogin(\n    $userId: uuid!\n    $pendingSessionString: String!\n    $phoneCodeHash: String!\n  ) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        pendingSessionString: $pendingSessionString\n        pendingPhoneCodeHash: $phoneCodeHash\n      }\n    ) {\n      affected_rows\n    }\n  }\n',
+): typeof import('./graphql').SaveTelegramPendingLoginDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation SaveTelegramSession($userId: uuid!, $sessionString: String!) {\n    update_telegram_credentials(\n      where: { user_id: { _eq: $userId } }\n      _set: {\n        sessionString: $sessionString\n        pendingSessionString: null\n        pendingPhoneCodeHash: null\n      }\n    ) {\n      affected_rows\n    }\n  }\n',
+): typeof import('./graphql').SaveTelegramSessionDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetTelegramCredentialsByUserId($userId: uuid!) {\n    telegram_credentials(where: { user_id: { _eq: $userId } }, limit: 1) {\n      phoneNumber\n      apiId\n      apiHash\n      sessionString\n      pendingSessionString\n      pendingPhoneCodeHash\n    }\n  }\n',
+): typeof import('./graphql').GetTelegramCredentialsByUserIdDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
 }

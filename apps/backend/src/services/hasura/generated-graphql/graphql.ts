@@ -12459,3 +12459,87 @@ export const GetVideosMissingThumbnailDocument = new TypedDocumentString(`
   GetVideosMissingThumbnailQuery,
   GetVideosMissingThumbnailQueryVariables
 >;
+export type SaveTelegramPendingLoginMutationVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+  pendingSessionString: Scalars['String']['input'];
+  phoneCodeHash: Scalars['String']['input'];
+}>;
+
+export type SaveTelegramPendingLoginMutation = {
+  __typename?: 'mutation_root';
+  update_telegram_credentials?: {
+    __typename?: 'telegram_credentials_mutation_response';
+    affected_rows: number;
+  } | null;
+};
+
+export type SaveTelegramSessionMutationVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+  sessionString: Scalars['String']['input'];
+}>;
+
+export type SaveTelegramSessionMutation = {
+  __typename?: 'mutation_root';
+  update_telegram_credentials?: {
+    __typename?: 'telegram_credentials_mutation_response';
+    affected_rows: number;
+  } | null;
+};
+
+export type GetTelegramCredentialsByUserIdQueryVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+}>;
+
+export type GetTelegramCredentialsByUserIdQuery = {
+  __typename?: 'query_root';
+  telegram_credentials: Array<{
+    __typename?: 'telegram_credentials';
+    phoneNumber: string;
+    apiId: string;
+    apiHash: string;
+    sessionString?: string | null;
+    pendingSessionString?: string | null;
+    pendingPhoneCodeHash?: string | null;
+  }>;
+};
+export const SaveTelegramPendingLoginDocument = new TypedDocumentString(`
+    mutation SaveTelegramPendingLogin($userId: uuid!, $pendingSessionString: String!, $phoneCodeHash: String!) {
+  update_telegram_credentials(
+    where: {user_id: {_eq: $userId}}
+    _set: {pendingSessionString: $pendingSessionString, pendingPhoneCodeHash: $phoneCodeHash}
+  ) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  SaveTelegramPendingLoginMutation,
+  SaveTelegramPendingLoginMutationVariables
+>;
+export const SaveTelegramSessionDocument = new TypedDocumentString(`
+    mutation SaveTelegramSession($userId: uuid!, $sessionString: String!) {
+  update_telegram_credentials(
+    where: {user_id: {_eq: $userId}}
+    _set: {sessionString: $sessionString, pendingSessionString: null, pendingPhoneCodeHash: null}
+  ) {
+    affected_rows
+  }
+}
+    `) as unknown as TypedDocumentString<
+  SaveTelegramSessionMutation,
+  SaveTelegramSessionMutationVariables
+>;
+export const GetTelegramCredentialsByUserIdDocument = new TypedDocumentString(`
+    query GetTelegramCredentialsByUserId($userId: uuid!) {
+  telegram_credentials(where: {user_id: {_eq: $userId}}, limit: 1) {
+    phoneNumber
+    apiId
+    apiHash
+    sessionString
+    pendingSessionString
+    pendingPhoneCodeHash
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetTelegramCredentialsByUserIdQuery,
+  GetTelegramCredentialsByUserIdQueryVariables
+>;
