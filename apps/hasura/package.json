@@ -13,7 +13,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shinaBR2/sworld-hasura-v2.git"
+    "url": "git+https://github.com/shinaBR2/sworld.git",
+    "directory": "apps/hasura"
   },
   "keywords": [
     "hasura"
@@ -21,9 +22,9 @@
   "author": "ShinaBR2",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/shinaBR2/sworld-hasura-v2/issues"
+    "url": "https://github.com/shinaBR2/sworld/issues"
   },
-  "homepage": "https://github.com/shinaBR2/sworld-hasura-v2#readme",
+  "homepage": "https://github.com/shinaBR2/sworld/tree/main/apps/hasura#readme",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/node": "^24",
