@@ -179,4 +179,28 @@ describe('importTelegramArchiveHandler', () => {
       `telegram-archive/${USER_ID}/582839764/10-video.mp4`,
     );
   });
+
+  it('sanitizes an attacker-influenced filename so it stays inside the user prefix', async () => {
+    mockClient.getMessages.mockResolvedValue([
+      {
+        id: 10,
+        video: {
+          mimeType: 'video/mp4',
+          attributes: [
+            new Api.DocumentAttributeFilename({
+              fileName: '../../etc/passwd\n.mp4',
+            }),
+          ],
+        },
+      },
+    ]);
+
+    await call(buildContext({ messageIds: ['10'] }));
+
+    // Path components dropped (basename), unsafe chars replaced, leading dots
+    // stripped — the key still begins with the user's prefix.
+    const path = vi.mocked(streamFile).mock.calls[0][0].storagePath;
+    expect(path).toBe(`telegram-archive/${USER_ID}/582839764/10-passwd_.mp4`);
+    expect(path.startsWith(`telegram-archive/${USER_ID}/`)).toBe(true);
+  });
 });

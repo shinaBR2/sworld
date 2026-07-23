@@ -5,7 +5,10 @@ import { z } from 'zod';
 // import handler validates — keeps both sides of the hop in lockstep.
 const telegramImportTaskDataSchema = z.object({
   channelId: z.string().min(1),
-  messageIds: z.array(z.string().min(1)).min(1),
+  // Positive integer strings — the io handler does `Number(id)` before
+  // getMessages, so a non-numeric id would become NaN. Kept in lockstep with the
+  // gateway `import` action input schema.
+  messageIds: z.array(z.string().regex(/^[1-9]\d*$/)).min(1),
   userId: z.guid(),
 });
 

@@ -9,7 +9,10 @@ const importTelegramArchiveSchema = z
       input: z.object({
         input: z.object({
           channelId: z.string().min(1),
-          messageIds: z.array(z.string().min(1)).min(1),
+          // Telegram message IDs — positive integer strings. The io import
+          // handler does `Number(id)`, so reject non-numeric values here rather
+          // than let them become NaN downstream.
+          messageIds: z.array(z.string().regex(/^[1-9]\d*$/)).min(1),
         }),
       }),
       session_variables: z.looseObject({ 'x-hasura-user-id': z.guid() }),

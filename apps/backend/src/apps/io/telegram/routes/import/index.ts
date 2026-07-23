@@ -29,12 +29,29 @@ const toChannelSlug = (channelId: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'channel';
 
+/**
+ * Sanitize the message's filename before it goes into the GCS object key. The
+ * value comes from Telegram's `DocumentAttributeFilename` — attacker-influenced
+ * (the channel owner sets it) — so drop any path components and restrict to a
+ * safe charset. It can't escape the `telegram-archive/<userId>/<slug>/<id>-`
+ * prefix even raw (GCS is a flat namespace, the id-prefix precedes it), but a
+ * `..` or control char would otherwise leak into `getDownloadUrl`, which a
+ * CDN/browser WOULD normalize — pointing a would-be public URL at a different
+ * object than the bytes written.
+ */
+const SAFE_FILENAME = /[^a-zA-Z0-9._-]/g;
+const safeFilename = (raw: string): string => {
+  const base = raw.split(/[\\/]/).pop() ?? '';
+  const cleaned = base.replace(SAFE_FILENAME, '_').replace(/^\.+/, '');
+  return cleaned || FALLBACK_FILENAME;
+};
+
 const filenameOf = (video: Api.Document): string => {
   const filenameAttr = video.attributes.find(
     (attr): attr is Api.DocumentAttributeFilename =>
       attr instanceof Api.DocumentAttributeFilename,
   );
-  return filenameAttr?.fileName ?? FALLBACK_FILENAME;
+  return safeFilename(filenameAttr?.fileName ?? FALLBACK_FILENAME);
 };
 
 /**
