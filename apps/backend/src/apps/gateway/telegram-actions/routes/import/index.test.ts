@@ -59,6 +59,8 @@ describe('importTelegramArchive', () => {
     expect(taskConfig).toMatchObject({
       audience: 'https://io.example.test',
       url: 'https://io.example.test/telegram/import-handler',
+      // Runs on the io service → shares the existing io queue.
+      queue: 'stream-video',
       entityType: TaskEntityType.TELEGRAM_ARCHIVE,
       type: TaskType.IMPORT_TELEGRAM,
       payload: {
