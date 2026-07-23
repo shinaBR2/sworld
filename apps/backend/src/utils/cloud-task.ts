@@ -53,6 +53,22 @@ interface CreateCloudTasksParams {
 
 type CloudTask = protos.google.cloud.tasks.v2.ITask;
 
+type ComputeTaskIdParams = Pick<
+  CreateCloudTasksParams,
+  'entityType' | 'entityId' | 'type'
+>;
+
+/**
+ * Derives the same deterministic task id `createCloudTasks` uses internally —
+ * lets a caller learn the id up front (e.g. to return it from an Action's
+ * response) without duplicating the hashing formula.
+ */
+const computeTaskId = ({ entityType, entityId, type }: ComputeTaskIdParams) =>
+  uuidv5(
+    JSON.stringify({ entityType, entityId, type }),
+    uuidNamespaces.cloudTask,
+  );
+
 /**
  * Creates a new Cloud Task with the specified parameters
  * @param {CreateCloudTasksParams} params - Parameters for creating the task
@@ -87,10 +103,7 @@ const createCloudTasks = async (
 
   const client = getCloudTasksClient();
   const parent = client.queuePath(projectId, location, queue);
-  const taskId = uuidv5(
-    JSON.stringify({ entityType, entityId, type }),
-    uuidNamespaces.cloudTask,
-  );
+  const taskId = computeTaskId({ entityType, entityId, type });
 
   try {
     const dbTask = await createTask({
@@ -171,4 +184,4 @@ const createCloudTasks = async (
   }
 };
 
-export { type CreateCloudTasksParams, createCloudTasks };
+export { type CreateCloudTasksParams, createCloudTasks, computeTaskId };

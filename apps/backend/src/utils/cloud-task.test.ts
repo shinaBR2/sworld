@@ -421,3 +421,30 @@ describe('createCloudTasks', () => {
     );
   });
 });
+
+describe('computeTaskId', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('hashes (entityType, entityId, type) under the cloudTask namespace', async () => {
+    const { v5 } = await import('uuid');
+    const { computeTaskId } = await import('./cloud-task');
+
+    const taskId = computeTaskId({
+      entityType: TaskEntityType.TELEGRAM_ARCHIVE,
+      entityId: 'entity-1',
+      type: TaskType.IMPORT_TELEGRAM,
+    });
+
+    expect(taskId).toBe('mock-uuid');
+    expect(v5).toHaveBeenCalledWith(
+      JSON.stringify({
+        entityType: TaskEntityType.TELEGRAM_ARCHIVE,
+        entityId: 'entity-1',
+        type: TaskType.IMPORT_TELEGRAM,
+      }),
+      'test-namespace',
+    );
+  });
+});
