@@ -83,14 +83,26 @@ const formatZodError = (error: ZodError): string => {
 // untouched. Matched case-insensitively so `code`, `sessionString`, `api_hash`
 // etc. are all covered.
 const SENSITIVE_KEYS = new Set([
+  'authorization',
+  'cookie',
+  'set-cookie',
   'code',
+  'phonecodehash',
+  'phone_code_hash',
   'sessionstring',
   'session_string',
   'pendingsessionstring',
   'pending_session_string',
   'apihash',
   'api_hash',
+  'apikey',
+  'api_key',
   'password',
+  'token',
+  'accesstoken',
+  'access_token',
+  'refreshtoken',
+  'refresh_token',
 ]);
 
 // Deep-clone `value`, replacing any secret-keyed field with a redaction marker.

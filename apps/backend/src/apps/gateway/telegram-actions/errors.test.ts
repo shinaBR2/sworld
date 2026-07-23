@@ -1,5 +1,6 @@
 import {
   TelegramCodeExpiredError,
+  TelegramError,
   TelegramInvalidCodeError,
   TelegramLoginNotStartedError,
   TelegramMisconfiguredError,
@@ -33,5 +34,18 @@ describe('toTelegramActionErrorCode', () => {
     expect(toTelegramActionErrorCode(new Error('random'))).toBeUndefined();
     expect(toTelegramActionErrorCode('a string')).toBeUndefined();
     expect(toTelegramActionErrorCode(null)).toBeUndefined();
+  });
+
+  it('returns undefined for an unmapped TelegramError subclass — never leaks its class name', () => {
+    class TelegramSomethingNewError extends TelegramError {
+      constructor(userId: string) {
+        super('brand new failure', userId);
+        this.name = 'TelegramSomethingNewError';
+      }
+    }
+    // No entry in CODE_BY_ERROR → generic + logged, not the class name as a code.
+    expect(
+      toTelegramActionErrorCode(new TelegramSomethingNewError(USER)),
+    ).toBeUndefined();
   });
 });

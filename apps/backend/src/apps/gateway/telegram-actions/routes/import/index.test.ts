@@ -64,7 +64,8 @@ describe('importTelegramArchive', () => {
       payload: {
         data: {
           channelId: '-582839764',
-          messageIds: ['3', '1', '2'],
+          // Normalized (deduped + sorted) before enqueue.
+          messageIds: ['1', '2', '3'],
           userId: USER_ID,
         },
       },
@@ -73,12 +74,21 @@ describe('importTelegramArchive', () => {
     expect(result.dataObject?.taskId).toBe('task-id-123');
   });
 
-  it('derives the idempotency entityId from a SORTED messageId set (order-independent)', async () => {
+  it('normalizes duplicate messageIds so the payload and idempotency key are canonical', async () => {
+    await callImport(buildContext({ messageIds: ['1', '2', '1'] }));
+
+    const taskConfig = vi.mocked(createCloudTasks).mock.calls[0][0];
+    expect(taskConfig).toMatchObject({
+      payload: { data: { messageIds: ['1', '2'] } },
+    });
+  });
+
+  it('derives the idempotency entityId from a deduped, SORTED messageId set (order- and duplicate-independent)', async () => {
     await callImport(buildContext({ messageIds: ['3', '1', '2'] }));
     const firstEntityId = vi.mocked(computeTaskId).mock.calls[0][0].entityId;
 
     vi.mocked(computeTaskId).mockClear();
-    await callImport(buildContext({ messageIds: ['1', '2', '3'] }));
+    await callImport(buildContext({ messageIds: ['1', '2', '3', '1'] }));
     const secondEntityId = vi.mocked(computeTaskId).mock.calls[0][0].entityId;
 
     expect(firstEntityId).toBe(secondEntityId);

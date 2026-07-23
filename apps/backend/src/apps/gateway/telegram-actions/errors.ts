@@ -62,22 +62,24 @@ const CODE_BY_ERROR = new Map<new (...args: never[]) => TelegramError, string>([
 ]);
 
 /**
- * Map a thrown error to its stable action-error code, or `undefined` when it is
- * NOT a recognised TelegramError — the caller then falls back to a generic
- * failure message and error-logs the unexpected error. TelegramErrors are
- * expected control-flow (bad code, no session yet), so callers do not error-log
- * them; they carry only `userId`, never a secret.
+ * Map a thrown error to its stable action-error code, or `undefined` when it has
+ * no mapped code — either because it is NOT a TelegramError, or because it is an
+ * unmapped TelegramError subclass. In both cases the caller falls back to a
+ * generic failure message and error-logs the unexpected error, rather than
+ * leaking an ad-hoc class name the client can't branch on. Every current
+ * subclass is in `CODE_BY_ERROR`, so a `undefined` here means a new error type
+ * was added without a code — a bug that should surface as generic + logged.
+ * Mapped TelegramErrors are expected control-flow (bad code, no session yet), so
+ * callers do not error-log them; they carry only `userId`, never a secret.
  */
 const toTelegramActionErrorCode = (error: unknown): string | undefined => {
   if (!(error instanceof TelegramError)) {
     return undefined;
   }
-  return (
-    CODE_BY_ERROR.get(
-      error.constructor as new (
-        ...args: never[]
-      ) => TelegramError,
-    ) ?? error.name
+  return CODE_BY_ERROR.get(
+    error.constructor as new (
+      ...args: never[]
+    ) => TelegramError,
   );
 };
 

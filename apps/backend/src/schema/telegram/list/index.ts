@@ -10,7 +10,13 @@ const listTelegramChannelVideosSchema = z
       input: z.object({
         input: z.object({
           channelId: z.string().min(1),
-          cursor: z.string().optional(),
+          // A Telegram message ID, forwarded as `offsetId` to getMessages. Must
+          // be a positive integer string — `Number('abc')` would otherwise hand
+          // NaN to the MTProto call.
+          cursor: z
+            .string()
+            .regex(/^[1-9]\d*$/)
+            .optional(),
         }),
       }),
       session_variables: z.looseObject({ 'x-hasura-user-id': z.guid() }),

@@ -33,6 +33,10 @@ const importTelegramArchive = async (
   }
 
   try {
+    // Canonicalize once: dedupe + sort so the same logical selection always maps
+    // to one idempotency key (['1','2','1'] and ['1','2'] must not diverge), and
+    // so we never forward duplicate IDs into the task payload.
+    const normalizedMessageIds = [...new Set(messageIds)].sort();
     // Idempotency key covers the exact message selection, not just the
     // channel — re-importing the same channel with a different set of
     // messageIds must NOT be deduped against a prior, unrelated import.
@@ -40,7 +44,7 @@ const importTelegramArchive = async (
       JSON.stringify({
         channelId,
         userId,
-        messageIds: [...messageIds].sort(),
+        messageIds: normalizedMessageIds,
       }),
       uuidNamespaces.cloudTask,
     );
@@ -60,7 +64,7 @@ const importTelegramArchive = async (
       audience: ioServiceUrl,
       queue: queues.telegramArchiveQueue,
       payload: {
-        data: { channelId, messageIds, userId },
+        data: { channelId, messageIds: normalizedMessageIds, userId },
         metadata,
       },
       url: `${ioServiceUrl}${IO_HANDLER_PATH}`,

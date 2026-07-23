@@ -236,4 +236,45 @@ describe('honoValidateRequest', () => {
     expect(logged.result.data.code).toBe('[REDACTED]');
     expect(logged.result.data.userId).toBe('user-123');
   });
+
+  it('redacts standard credential fields even when nested, leaving other fields intact', async () => {
+    mockLogger.info.mockClear();
+    // Passthrough schema so the deep-nested secrets survive into result.data.
+    const passthroughSchema = z.object({
+      headers: z.looseObject({}),
+      body: z.looseObject({}),
+      params: z.record(z.string(), z.string()),
+      query: z.record(z.string(), z.any()),
+    });
+
+    const mockContext = {
+      req: {
+        json: vi.fn().mockResolvedValue({
+          user: { name: 'ok', accessToken: 'at-secret' },
+          nested: { deep: { refresh_token: 'rt-secret' } },
+        }),
+        url: 'http://example.com',
+        raw: {
+          headers: new Headers({
+            authorization: 'Bearer super-secret',
+            cookie: 'session=abc',
+            'x-request-id': 'keep-me',
+          }),
+        },
+        param: () => ({}),
+      },
+      json: vi.fn(),
+      set: vi.fn(),
+    } as unknown as Context;
+
+    await honoValidateRequest(passthroughSchema)(mockContext, vi.fn() as Next);
+
+    const logged = mockLogger.info.mock.calls[0][0].result.data;
+    expect(logged.headers.authorization).toBe('[REDACTED]');
+    expect(logged.headers.cookie).toBe('[REDACTED]');
+    expect(logged.headers['x-request-id']).toBe('keep-me');
+    expect(logged.body.user.accessToken).toBe('[REDACTED]');
+    expect(logged.body.user.name).toBe('ok');
+    expect(logged.body.nested.deep.refresh_token).toBe('[REDACTED]');
+  });
 });
