@@ -10,13 +10,13 @@ Read this top-to-bottom once and you can pick up the whole area.
 
 ## 1. The big picture
 
-sworld is split across three repos:
+sworld is one monorepo. Three areas matter here:
 
-| Repo                | Role                                                        |
-| ------------------- | ---------------------------------------------------------- |
-| `sworld`            | Frontend (React).                                          |
-| `sworld-hasura-v2`  | Hasura metadata + Postgres migrations (the data layer).    |
-| `sworld-backend`    | Hono services that run Hasura **Actions** and **Events**.  |
+| Path            | Role                                                        |
+| --------------- | ---------------------------------------------------------- |
+| `apps/*`        | Frontend apps (React) — `main`, `watch`, `listen`, `til`, `docs`, `extension`, `game`. |
+| `apps/hasura`   | Hasura metadata + Postgres migrations (the data layer).    |
+| `apps/backend`  | Hono services that run Hasura **Actions** and **Events** (this CLI lives at `apps/backend/src/cli`). |
 
 A video is just a row in the `videos` table. When that row is inserted, Hasura
 fires an **event trigger** that calls the backend, which downloads/copies the
