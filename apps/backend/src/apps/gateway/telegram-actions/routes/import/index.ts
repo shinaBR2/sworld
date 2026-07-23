@@ -62,7 +62,10 @@ const importTelegramArchive = async (
 
     const taskConfig: CreateCloudTasksParams = {
       audience: ioServiceUrl,
-      queue: queues.telegramArchiveQueue,
+      // The import runs on the io service (download from Telegram → stream to
+      // GCS: light I/O, not ffmpeg), so it shares the existing io queue rather
+      // than a dedicated one — same queue the other io handlers use.
+      queue: queues.streamVideoQueue,
       payload: {
         data: { channelId, messageIds: normalizedMessageIds, userId },
         metadata,
