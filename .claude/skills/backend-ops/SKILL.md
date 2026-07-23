@@ -8,7 +8,7 @@ user-invocable: false
 
 How to perform sworld operational tasks (create audios/videos, upload assets, touch prod data) from **`apps/backend`** in the sworld monorepo. This is separate from the `parallel-workflow` PR process — these are direct, already-authorized ops tasks, not feature work. Don't re-ask the user for credentials or access; they're already configured.
 
-These CLIs are operator tools run straight from source with `tsx` — they don't go through the container images, so the unbuildable Dockerfiles and missing deploy pipeline (see `backend-architecture`) don't block them.
+These CLIs are operator tools run straight from source with `tsx` — they don't go through the container images, so the missing deploy pipeline (see `backend-architecture`) doesn't block them.
 
 ## Which account an op runs as
 

@@ -13,17 +13,19 @@ can't see; say what to confirm in the console.
   `apps/backend`, Hasura metadata and migrations under `apps/hasura` — but they still deploy to
   three separate places, so "same repo" does **not** mean "same trust zone".
 - **Deploy:** Cloudflare Pages builds and deploys each frontend from its own pipeline on merge to
-  main; Hasura Cloud applies metadata from its GitHub integration. **The backend's container build
-  and deploy pipeline is mid-rework** — the old per-repo deploy workflows are gone and the
-  replacement isn't in place yet. Don't describe backend deploy mechanics as though they exist, and
-  don't infer them from leftover files.
+  main; Hasura Cloud applies metadata from its GitHub integration. **The backend's container images
+  build again, but its deploy pipeline is mid-rework** — the old per-repo deploy workflows are gone
+  and the replacement isn't in place yet. Don't describe backend deploy mechanics as though they
+  exist, and don't infer them from leftover files.
 - **Secrets:** backend / Hasura runtime env (set in their consoles) + CI secrets. Only `.example`
   templates are committed. Note the backend's `envConfig.ts` does **not** validate at boot (see
   `hono-backend.md`), so a missing secret shows up at request time, not startup.
-- **Container:** the `apps/backend/Dockerfile.*` files are **stale** — they still `COPY
-  package-lock.json` and `npm ci`, from before the repos merged onto a single root `pnpm-lock.yaml`,
-  so they can't build as written. Treat them as pending work, not as evidence of how the runtime
-  image is built; a finding about their contents is about a file nobody deploys.
+- **Container:** the `apps/backend/Dockerfile.*` files **build and boot** — they install the
+  `backend...` workspace slice with pnpm against the single root `pnpm-lock.yaml` from a
+  monorepo-root build context, on `linux/amd64` to match Cloud Run (SWO-545). Review their contents
+  as real, live infrastructure — a finding in them is a finding in an image that runs. What's still
+  missing is the pipeline that builds and pushes them (see Deploy above); that gap doesn't make a
+  Dockerfile finding moot.
 
 ## The invocation model — get this right
 
@@ -67,8 +69,8 @@ So the review question is **not** "why is this publicly invokable?" — it's:
       rotation schedule.
 - [ ] **Non-root container.** No `USER` directive → runs as root. Worth fixing, but calibrate
       against the container runtime: if instances run in a sandbox, the marginal risk of in-container
-      root is lower than on shared/raw infra. **Low** hardening — and while the Dockerfiles are being
-      reworked, raise it as an input to that work rather than as a live finding.
+      root is lower than on shared/raw infra. **Low** hardening — and since the Dockerfiles build and
+      boot, this is a live finding in a real image; raise it as such, calibrated to Low.
 - [ ] **Secret hygiene & transport.** Secrets from the host's console / secret manager, not the repo;
       rotation for `WEBHOOK_SIGNATURE`/`HASURA_ADMIN_SECRET`/`HASHNODE_WEBHOOK_SECRET`/vendor keys
       documented; all hops HTTPS (the host and Hasura terminate TLS).
