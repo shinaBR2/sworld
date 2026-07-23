@@ -6,6 +6,7 @@ import { contextStorage } from 'hono/context-storage';
 import { requestId } from 'hono/request-id';
 import { rateLimiter } from 'hono-rate-limiter';
 import { crawlerRouter } from './apps/io/crawler';
+import { telegramRouter } from './apps/io/telegram';
 import { videosRouter } from './apps/io/videos';
 import { envConfig } from './utils/envConfig';
 import { createHonoLoggingMiddleware, getCurrentLogger } from './utils/logger';
@@ -62,6 +63,7 @@ app.get('/hz', (c) => {
 
 app.route('videos', videosRouter);
 app.route('crawlers', crawlerRouter);
+app.route('telegram', telegramRouter);
 
 app.onError((e, c) => {
   const logger = getCurrentLogger();

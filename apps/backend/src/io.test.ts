@@ -69,6 +69,10 @@ vi.mock('./apps/io/crawler', () => ({
   crawlerRouter: 'mockCrawlerRouter',
 }));
 
+vi.mock('./apps/io/telegram', () => ({
+  telegramRouter: 'mockTelegramRouter',
+}));
+
 // Mock sentry
 vi.mock('@hono/sentry', () => ({
   sentry: () => vi.fn(),
@@ -144,6 +148,7 @@ describe('IO Application', () => {
   it('should register all routers', () => {
     expect(mockRoute).toHaveBeenCalledWith('videos', 'mockVideosRouter');
     expect(mockRoute).toHaveBeenCalledWith('crawlers', 'mockCrawlerRouter');
+    expect(mockRoute).toHaveBeenCalledWith('telegram', 'mockTelegramRouter');
   });
 
   it('should set up error handling', () => {
