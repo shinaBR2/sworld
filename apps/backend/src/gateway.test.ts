@@ -63,6 +63,10 @@ vi.mock('./apps/gateway/videos-actions', () => ({
   videoActionsRouter: 'mockVideoActionsRouter',
 }));
 
+vi.mock('./apps/gateway/telegram-actions', () => ({
+  telegramActionsRouter: 'mockTelegramActionsRouter',
+}));
+
 vi.mock('./apps/gateway/hashnode', () => ({
   hashnodeRouter: 'mockHashnodeRouter',
 }));
@@ -151,6 +155,10 @@ describe('Gateway Application', () => {
 
   it('should register all routers', () => {
     expect(mockRoute).toHaveBeenCalledWith('/videos', 'mockVideosRouter');
+    expect(mockRoute).toHaveBeenCalledWith(
+      '/telegram-actions',
+      'mockTelegramActionsRouter',
+    );
     expect(mockRoute).toHaveBeenCalledWith(
       '/videos-actions',
       'mockVideoActionsRouter',

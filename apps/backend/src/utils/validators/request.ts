@@ -76,6 +76,53 @@ const formatZodError = (error: ZodError): string => {
     .join(', ');
 };
 
+// Keys whose values are secrets and must never reach the logs. The validated
+// payload is logged for debugging (see below); a login `code` is a live Telegram
+// OTP and `sessionString`/`apiHash` are password-equivalent, so they are masked
+// in the logged copy only — the real `validatedData` handed to the handler is
+// untouched. Matched case-insensitively so `code`, `sessionString`, `api_hash`
+// etc. are all covered.
+const SENSITIVE_KEYS = new Set([
+  'authorization',
+  'cookie',
+  'set-cookie',
+  'code',
+  'phonecodehash',
+  'phone_code_hash',
+  'sessionstring',
+  'session_string',
+  'pendingsessionstring',
+  'pending_session_string',
+  'apihash',
+  'api_hash',
+  'apikey',
+  'api_key',
+  'password',
+  'token',
+  'accesstoken',
+  'access_token',
+  'refreshtoken',
+  'refresh_token',
+]);
+
+// Deep-clone `value`, replacing any secret-keyed field with a redaction marker.
+// Used only to build the copy that gets logged — never mutates the input.
+const redactSensitive = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map(redactSensitive);
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, val]) =>
+        SENSITIVE_KEYS.has(key.toLowerCase())
+          ? [key, '[REDACTED]']
+          : [key, redactSensitive(val)],
+      ),
+    );
+  }
+  return value;
+};
+
 // Hono wrapper
 const honoValidateRequest = <T>(schema: z.ZodType<T>) => {
   return async (c: Context, next: Next) => {
@@ -99,7 +146,7 @@ const honoValidateRequest = <T>(schema: z.ZodType<T>) => {
 
       logger.info({
         message: 'Validation result',
-        result,
+        result: redactSensitive(result),
       });
 
       if (result.success) {
