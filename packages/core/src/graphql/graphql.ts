@@ -11134,7 +11134,7 @@ export type Telegram_Credentials = {
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['uuid']['output'];
   pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
-  pending_session_string?: Maybe<Scalars['String']['output']>;
+  pendingSessionString?: Maybe<Scalars['String']['output']>;
   phoneNumber: Scalars['String']['output'];
   sessionString?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
@@ -11175,7 +11175,7 @@ export type Telegram_Credentials_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   pendingPhoneCodeHash?: InputMaybe<String_Comparison_Exp>;
-  pending_session_string?: InputMaybe<String_Comparison_Exp>;
+  pendingSessionString?: InputMaybe<String_Comparison_Exp>;
   phoneNumber?: InputMaybe<String_Comparison_Exp>;
   sessionString?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -11198,7 +11198,7 @@ export type Telegram_Credentials_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
-  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  pendingSessionString?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   sessionString?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -11214,7 +11214,7 @@ export type Telegram_Credentials_Max_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
-  pending_session_string?: Maybe<Scalars['String']['output']>;
+  pendingSessionString?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   sessionString?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -11229,7 +11229,7 @@ export type Telegram_Credentials_Min_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   pendingPhoneCodeHash?: Maybe<Scalars['String']['output']>;
-  pending_session_string?: Maybe<Scalars['String']['output']>;
+  pendingSessionString?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   sessionString?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
@@ -11259,7 +11259,7 @@ export type Telegram_Credentials_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   pendingPhoneCodeHash?: InputMaybe<Order_By>;
-  pending_session_string?: InputMaybe<Order_By>;
+  pendingSessionString?: InputMaybe<Order_By>;
   phoneNumber?: InputMaybe<Order_By>;
   sessionString?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
@@ -11285,7 +11285,7 @@ export enum Telegram_Credentials_Select_Column {
   /** column name */
   PendingPhoneCodeHash = 'pendingPhoneCodeHash',
   /** column name */
-  PendingSessionString = 'pending_session_string',
+  PendingSessionString = 'pendingSessionString',
   /** column name */
   PhoneNumber = 'phoneNumber',
   /** column name */
@@ -11303,7 +11303,7 @@ export type Telegram_Credentials_Set_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
-  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  pendingSessionString?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   sessionString?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -11325,7 +11325,7 @@ export type Telegram_Credentials_Stream_Cursor_Value_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   pendingPhoneCodeHash?: InputMaybe<Scalars['String']['input']>;
-  pending_session_string?: InputMaybe<Scalars['String']['input']>;
+  pendingSessionString?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   sessionString?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -11345,7 +11345,7 @@ export enum Telegram_Credentials_Update_Column {
   /** column name */
   PendingPhoneCodeHash = 'pendingPhoneCodeHash',
   /** column name */
-  PendingSessionString = 'pending_session_string',
+  PendingSessionString = 'pendingSessionString',
   /** column name */
   PhoneNumber = 'phoneNumber',
   /** column name */

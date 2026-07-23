@@ -11766,7 +11766,7 @@ type telegram_credentials {
   createdAt: timestamptz!
   id: uuid!
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String!
   sessionString: String
   updatedAt: timestamptz!
@@ -11804,7 +11804,7 @@ input telegram_credentials_bool_exp {
   createdAt: timestamptz_comparison_exp
   id: uuid_comparison_exp
   pendingPhoneCodeHash: String_comparison_exp
-  pending_session_string: String_comparison_exp
+  pendingSessionString: String_comparison_exp
   phoneNumber: String_comparison_exp
   sessionString: String_comparison_exp
   updatedAt: timestamptz_comparison_exp
@@ -11835,7 +11835,7 @@ input telegram_credentials_insert_input {
   createdAt: timestamptz
   id: uuid
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String
   sessionString: String
   updatedAt: timestamptz
@@ -11850,7 +11850,7 @@ type telegram_credentials_max_fields {
   createdAt: timestamptz
   id: uuid
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String
   sessionString: String
   updatedAt: timestamptz
@@ -11864,7 +11864,7 @@ type telegram_credentials_min_fields {
   createdAt: timestamptz
   id: uuid
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String
   sessionString: String
   updatedAt: timestamptz
@@ -11897,7 +11897,7 @@ input telegram_credentials_order_by {
   createdAt: order_by
   id: order_by
   pendingPhoneCodeHash: order_by
-  pending_session_string: order_by
+  pendingSessionString: order_by
   phoneNumber: order_by
   sessionString: order_by
   updatedAt: order_by
@@ -11925,7 +11925,7 @@ enum telegram_credentials_select_column {
   """column name"""
   pendingPhoneCodeHash
   """column name"""
-  pending_session_string
+  pendingSessionString
   """column name"""
   phoneNumber
   """column name"""
@@ -11945,7 +11945,7 @@ input telegram_credentials_set_input {
   createdAt: timestamptz
   id: uuid
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String
   sessionString: String
   updatedAt: timestamptz
@@ -11969,7 +11969,7 @@ input telegram_credentials_stream_cursor_value_input {
   createdAt: timestamptz
   id: uuid
   pendingPhoneCodeHash: String
-  pending_session_string: String
+  pendingSessionString: String
   phoneNumber: String
   sessionString: String
   updatedAt: timestamptz
@@ -11991,7 +11991,7 @@ enum telegram_credentials_update_column {
   """column name"""
   pendingPhoneCodeHash
   """column name"""
-  pending_session_string
+  pendingSessionString
   """column name"""
   phoneNumber
   """column name"""
