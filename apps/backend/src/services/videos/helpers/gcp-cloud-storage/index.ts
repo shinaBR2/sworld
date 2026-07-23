@@ -200,6 +200,17 @@ const streamFile = async (params: StreamFileParams) => {
   });
 };
 
+/**
+ * Whether an object already exists in the default bucket. Lets a re-run skip
+ * work it already did (idempotent imports) instead of re-uploading.
+ * @param storagePath Relative object path (e.g. 'telegram-archive/<user>/<chan>/<id>-file.mp4').
+ */
+const fileExists = async (storagePath: string): Promise<boolean> => {
+  const bucket = getDefaultBucket();
+  const [exists] = await bucket.file(storagePath).exists();
+  return exists;
+};
+
 /** Default lifetime of a generated V4 signed upload URL. */
 const SIGNED_UPLOAD_URL_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
@@ -262,6 +273,7 @@ const getSignedUploadUrl = async ({
 export {
   DEFAULT_UPLOAD_OPTIONS,
   SIGNED_UPLOAD_URL_TTL_MS,
+  fileExists,
   getDownloadUrl,
   getSignedUploadUrl,
   uploadFile,

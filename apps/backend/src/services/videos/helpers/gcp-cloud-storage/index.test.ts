@@ -5,6 +5,7 @@ import {
   getSignedUploadUrl,
   uploadFile,
   DEFAULT_UPLOAD_OPTIONS,
+  fileExists,
   streamFile,
   uploadFolderParallel,
 } from '.';
@@ -102,6 +103,7 @@ const mockTransferManager = {
 };
 const mockFile = {
   delete: vi.fn(),
+  exists: vi.fn().mockResolvedValue([false]),
   getSignedUrl: vi.fn().mockResolvedValue(['https://signed.example/put']),
   createWriteStream: vi.fn(() => {
     const writeStream = new PassThrough();
@@ -156,6 +158,18 @@ describe('gcp-cloud-storage-helpers', () => {
 
       expect(getDownloadUrl(outputPath)).toBe(expected);
       expect(storageMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('fileExists', () => {
+    it('returns true when the object exists', async () => {
+      mockFile.exists.mockResolvedValueOnce([true]);
+      expect(await fileExists('telegram-archive/u/c/1-a.mp4')).toBe(true);
+    });
+
+    it('returns false when the object does not exist', async () => {
+      mockFile.exists.mockResolvedValueOnce([false]);
+      expect(await fileExists('telegram-archive/u/c/2-b.mp4')).toBe(false);
     });
   });
 
