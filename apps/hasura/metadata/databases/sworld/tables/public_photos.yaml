@@ -1,0 +1,58 @@
+table:
+  name: photos
+  schema: public
+configuration:
+  column_config:
+    blur_hash:
+      custom_name: blurHash
+    created_at:
+      custom_name: createdAt
+    medium_url:
+      custom_name: mediumUrl
+    taken_at:
+      custom_name: takenAt
+    thumbnail_url:
+      custom_name: thumbnailUrl
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    blur_hash: blurHash
+    created_at: createdAt
+    medium_url: mediumUrl
+    taken_at: takenAt
+    thumbnail_url: thumbnailUrl
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+array_relationships:
+  - name: playlist_photos
+    using:
+      foreign_key_constraint_on:
+        column: photo_id
+        table:
+          name: playlist_photos
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - blur_hash
+        - created_at
+        - height
+        - id
+        - medium_url
+        - public
+        - slug
+        - source
+        - taken_at
+        - thumbnail_url
+        - updated_at
+        - user_id
+        - width
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+    comment: A user can only see their own photos (private in v1)

@@ -35,6 +35,13 @@ array_relationships:
         table:
           name: playlist_audios
           schema: public
+  - name: playlist_photos
+    using:
+      foreign_key_constraint_on:
+        column: playlist_id
+        table:
+          name: playlist_photos
+          schema: public
   - name: playlist_videos
     using:
       foreign_key_constraint_on:
