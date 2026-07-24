@@ -16,8 +16,6 @@ describe('Look fragment transformations', () => {
       height: 1080,
       takenAt: '2023-01-01T00:00:00Z',
       slug: 'test-photo',
-      createdAt: '2023-01-02T00:00:00Z',
-      user_id: 'user-123',
     };
 
     it('should transform photo fragment correctly', () => {
@@ -69,8 +67,6 @@ describe('Look fragment transformations', () => {
             height: 1080,
             takenAt: '2023-01-01T00:00:00Z',
             slug: 'test-photo',
-            createdAt: '2023-01-02T00:00:00Z',
-            user_id: 'user-123',
           },
         },
       ],
@@ -102,6 +98,19 @@ describe('Look fragment transformations', () => {
           },
         ],
       });
+    });
+
+    it('should return an empty photos array for an album with no photos', () => {
+      const emptyAlbumData = {
+        ...mockAlbumData,
+        playlist_photos: [],
+      };
+
+      const result = transformAlbumFragment(
+        emptyAlbumData as unknown as FragmentType<typeof AlbumFragment>,
+      );
+
+      expect(result.photos).toEqual([]);
     });
   });
 });

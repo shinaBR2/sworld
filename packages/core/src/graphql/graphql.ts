@@ -15343,7 +15343,7 @@ export type LookAlbumDetailQuery = { __typename?: 'query_root', playlist_by_pk?:
     & { ' $fragmentRefs'?: { 'AlbumFieldsFragment': AlbumFieldsFragment } }
   ) | null };
 
-export type PhotoFieldsFragment = { __typename?: 'photos', id: any, source: string, mediumUrl?: string | null, thumbnailUrl?: string | null, blurHash?: string | null, width?: number | null, height?: number | null, takenAt?: any | null, slug?: string | null, createdAt: any, user_id: any } & { ' $fragmentName'?: 'PhotoFieldsFragment' };
+export type PhotoFieldsFragment = { __typename?: 'photos', id: any, source: string, mediumUrl?: string | null, thumbnailUrl?: string | null, blurHash?: string | null, width?: number | null, height?: number | null, takenAt?: any | null, slug?: string | null } & { ' $fragmentName'?: 'PhotoFieldsFragment' };
 
 export type AlbumFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl?: string | null, slug: string, createdAt: any, description?: string | null, playlist_photos: Array<{ __typename?: 'playlist_photos', position: number, photo: (
       { __typename?: 'photos' }
@@ -15686,8 +15686,6 @@ export const PhotoFieldsFragmentDoc = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }
     `, {"fragmentName":"PhotoFields"}) as unknown as TypedDocumentString<PhotoFieldsFragment, unknown>;
 export const AlbumFieldsFragmentDoc = new TypedDocumentString(`
@@ -15715,8 +15713,6 @@ export const AlbumFieldsFragmentDoc = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }`, {"fragmentName":"AlbumFields"}) as unknown as TypedDocumentString<AlbumFieldsFragment, unknown>;
 export const UserFieldsFragmentDoc = new TypedDocumentString(`
     fragment UserFields on users {
@@ -16351,8 +16347,6 @@ export const LookAlbumsDocument = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }
 fragment AlbumFields on playlist {
   id
@@ -16384,8 +16378,6 @@ export const LookAlbumDetailDocument = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }
 fragment AlbumFields on playlist {
   id
@@ -16417,8 +16409,6 @@ export const LookPhotoDetailDocument = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }`) as unknown as TypedDocumentString<LookPhotoDetailQuery, LookPhotoDetailQueryVariables>;
 export const LookPhotosDocument = new TypedDocumentString(`
     query LookPhotos @cached {
@@ -16436,8 +16426,6 @@ export const LookPhotosDocument = new TypedDocumentString(`
   height
   takenAt
   slug
-  createdAt
-  user_id
 }`) as unknown as TypedDocumentString<LookPhotosQuery, LookPhotosQueryVariables>;
 export const InsertPostDocument = new TypedDocumentString(`
     mutation InsertPost($object: posts_insert_input!) {

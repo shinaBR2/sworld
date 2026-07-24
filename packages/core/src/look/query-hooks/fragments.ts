@@ -11,8 +11,6 @@ const PhotoFragment = graphql(/* GraphQL */ `
     height
     takenAt
     slug
-    createdAt
-    user_id
   }
 `);
 
