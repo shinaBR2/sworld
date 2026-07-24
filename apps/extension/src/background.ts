@@ -91,8 +91,20 @@ chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
 // stored video metadata only when it belongs to this exact tab — never a
 // different one. Anything else has nothing importable, so returns null.
 const resolveActiveTabContent = async (): Promise<PageContent | null> => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = tab?.url;
+  // A rejected query must never leave the popup spinning: this is the message
+  // that clears its loading state, so on any failure we fall through to a null
+  // payload ("nothing detected") rather than never replying.
+  let url: string | undefined;
+  try {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    url = tab?.url;
+  } catch (error) {
+    console.error('Failed to query the active tab', error);
+    return null;
+  }
   if (!url) {
     return null;
   }
