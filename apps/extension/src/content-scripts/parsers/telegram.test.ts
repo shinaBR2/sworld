@@ -5,6 +5,7 @@ import {
   getChannelIdFromHash,
   getVariant,
   isTmeHostname,
+  telegramMetadataFromUrl,
 } from './telegram';
 
 describe('getVariant', () => {
@@ -103,6 +104,57 @@ describe('getChannelFromTmePath', () => {
 
   it('should return empty object for root path', () => {
     expect(getChannelFromTmePath('/')).toEqual({});
+  });
+});
+
+describe('telegramMetadataFromUrl', () => {
+  it('extracts username channel and variant from a /k/ hash URL', () => {
+    const metadata = telegramMetadataFromUrl(
+      'https://web.telegram.org/k/#@somechannel',
+    );
+    expect(metadata.source).toBe('web-app');
+    expect(metadata.channelId).toBe('@somechannel');
+    expect(metadata.variant).toBe('k');
+  });
+
+  it('extracts a negative numeric channel from a /a/ hash URL', () => {
+    const metadata = telegramMetadataFromUrl(
+      'https://web.telegram.org/a/#-582839764',
+    );
+    expect(metadata.channelId).toBe('-582839764');
+    expect(metadata.variant).toBe('a');
+  });
+
+  it('does not detect a channel for a personal chat', () => {
+    expect(
+      telegramMetadataFromUrl('https://web.telegram.org/a/#8115119658')
+        .channelId,
+    ).toBeUndefined();
+  });
+
+  it('does not detect a channel for the chat list (no hash)', () => {
+    expect(
+      telegramMetadataFromUrl('https://web.telegram.org/k/').channelId,
+    ).toBeUndefined();
+  });
+
+  it('extracts a bare username channel from a t.me link', () => {
+    const metadata = telegramMetadataFromUrl('https://t.me/ngocmaicutiiii');
+    expect(metadata.source).toBe('share-link');
+    expect(metadata.channelId).toBe('ngocmaicutiiii');
+    expect(metadata.messageId).toBeUndefined();
+  });
+
+  it('extracts channel and message id from a t.me single-post link', () => {
+    const metadata = telegramMetadataFromUrl('https://t.me/ngocmaicutiiii/s/3');
+    expect(metadata.channelId).toBe('ngocmaicutiiii');
+    expect(metadata.messageId).toBe('3');
+  });
+
+  it('returns an empty web-app payload for an unparseable URL', () => {
+    const metadata = telegramMetadataFromUrl('not a url');
+    expect(metadata.source).toBe('web-app');
+    expect(metadata.channelId).toBeUndefined();
   });
 });
 

@@ -108,12 +108,21 @@ const getChannelFromTmePath = (pathname: string): TmeChannel => {
 const isTmeHostname = (hostname: string): boolean =>
   hostname === 't.me' || hostname === 'www.t.me';
 
-const extractTelegramMetadata = (): TelegramChannelMetadata => {
-  if (typeof window === 'undefined') {
-    return { url: '', source: 'web-app' };
+// Derive the channel metadata from a URL string alone — no DOM. Everything the
+// content-script path reads (hostname/pathname/hash) lives in the URL, so the
+// background can reconcile the popup against the ACTIVE tab's URL without a
+// content script (SWO-605), which is also what tracks in-app hash navigation
+// between channels on web.telegram.org. An unparseable URL yields an empty
+// web-app payload (no channelId), matching a page that identifies no channel.
+const telegramMetadataFromUrl = (url: string): TelegramChannelMetadata => {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { url, source: 'web-app' };
   }
 
-  const { hostname, pathname, hash, href } = window.location;
+  const { hostname, pathname, hash, href } = parsed;
 
   if (isTmeHostname(hostname)) {
     const { channelId, messageId } = getChannelFromTmePath(pathname);
@@ -126,8 +135,17 @@ const extractTelegramMetadata = (): TelegramChannelMetadata => {
   return { url: href, source: 'web-app', channelId, variant };
 };
 
+const extractTelegramMetadata = (): TelegramChannelMetadata => {
+  if (typeof window === 'undefined') {
+    return { url: '', source: 'web-app' };
+  }
+
+  return telegramMetadataFromUrl(window.location.href);
+};
+
 export {
   extractTelegramMetadata,
+  telegramMetadataFromUrl,
   getChannelFromTmePath,
   getChannelIdFromHash,
   getVariant,
