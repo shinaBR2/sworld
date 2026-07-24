@@ -22,6 +22,15 @@ beforeEach(() => {
   sendMessage.mockClear();
   global.chrome = {
     runtime: { id: 'test-ext', sendMessage },
+    // The nested TelegramLogin restores its step from chrome.storage on mount
+    // (SWO-604); an empty store just means "no code sent yet".
+    storage: {
+      local: {
+        get: vi.fn(async () => ({})),
+        set: vi.fn(async () => {}),
+        remove: vi.fn(async () => {}),
+      },
+    },
   } as unknown as typeof chrome;
 });
 
