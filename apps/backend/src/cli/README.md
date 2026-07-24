@@ -390,6 +390,64 @@ enhancement (see SWO-372).
 Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
 it once via `stream-m3u8.ts config set <key> <value>`.
 
+### `image.ts` — ingest a local image into the Look library
+
+The image counterpart to `audio.ts`. Point it at a local image (or a folder);
+per file it derives the date-taken, generates resized renditions + a blur-hash,
+uploads three renditions to GCS, and inserts one `photos` row — optionally
+linking each into a Look **album** (`playlist` with `site = 'look'`).
+
+Like audio, there is no automated pipeline, so this CLI is the primary way
+images get into Look.
+
+```bash
+# One file:
+npx tsx src/cli/image.ts --file ./photo.jpg
+
+# A whole folder into an album, dry-run first:
+npx tsx src/cli/image.ts --dir ./album --album '5 Centimeters Per Second' --dry-run
+```
+
+What it does, per file:
+
+1. **Date taken** — EXIF `DateTimeOriginal` → `taken_at`; when the image carries
+   no EXIF (downloaded stills usually don't), it falls back to the file's mtime.
+2. **Dimensions + renditions** — `sharp` reads `width`/`height` and resizes a
+   **thumb** (~300px longest edge) and a **medium** (~1200px longest edge),
+   aspect ratio preserved, never upscaling. The original is uploaded as-is; all
+   three keep the source format.
+3. **Blur-hash** — `blurhash` encodes a compact placeholder from a 32px RGBA
+   downscale (4×4 components).
+4. **Dup-check** — an existing `(user_id, slug)` (slug = `slugify(basename)`) is
+   skipped.
+5. **Upload** — original + medium + thumb →
+   `photos/{userId}/{photoId}/{original,medium,thumb}.<ext>`.
+6. **Insert** the `photos` row → `{ source, mediumUrl, thumbnailUrl, blurHash,
+   width, height, takenAt, slug, user_id, public }` (`source` = original URL).
+7. **Album** (if `--album`) — `slugify(name)` → find-or-create the `site='look'`
+   playlist (cover = first photo's thumb) → link each created photo into
+   `playlist_photos` with `position` in filename-ascending order (appends after
+   whatever is already there on a re-run).
+
+A batch reports a `Created / Skipped / Planned / Failed` tally; one bad file
+doesn't abort the rest, and any failure makes the process exit non-zero.
+
+Supported formats: **.jpg / .jpeg / .png / .webp**. `--dry-run` reports each
+file's `taken_at` and planned writes with no creds/uploads/DB.
+
+| Flag | Meaning |
+| ---- | ------- |
+| `--file <path>` | Local image to ingest. Use this **or** `--dir`. |
+| `--dir <path>` | Ingest every image in the folder (filename order). |
+| `--album <name>` | Find-or-create a `look` album (by slug) and link each photo. |
+| `--public` | Mark the photo(s) public (default: private). |
+| `--dry-run` | Show the plan; no uploads/DB writes, no creds needed. |
+| `--skip-db` | Upload to GCS but skip the Hasura insert (and album link). |
+| `--user-id <uuid>` | Owner (from `--user-id` > env > config `user-id`). |
+
+Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
+it once via `stream-m3u8.ts config set <key> <value>`.
+
 ### `upload-subtitle.ts` — add a missing subtitle
 
 Takes a `.vtt` **from a local file or a remote URL**, uploads it to GCS, and
