@@ -82,6 +82,15 @@ const ListeningScreen = (props: ListeningScreenProps) => {
   const [createOpen, setCreateOpen] = useState(false);
   const [activeFeelingId, setActiveFeelingId] = useState('');
 
+  // The browser-tab title follows the URL's active track (`?audio=`), which the
+  // player keeps in sync with what's playing. Song-first so it stays readable
+  // when the tab strip truncates from the right; the static title when nothing
+  // is selected yet.
+  const activeAudio = (audios as { id: string; name: string }[]).find(
+    (audio) => audio.id === activeAudioId,
+  );
+  const tabTitle = activeAudio ? `${activeAudio.name} · Flow` : 'Flow - Listen';
+
   const onProfileClick = () => {
     if (user) {
       setSettingOpen(true);
@@ -97,6 +106,8 @@ const ListeningScreen = (props: ListeningScreenProps) => {
 
   return (
     <FullWidthContainer>
+      {/* React 19 hoists this into <head>. */}
+      <title>{tabTitle}</title>
       <Header
         user={user}
         onAvatarClick={onProfileClick}
