@@ -16,6 +16,8 @@ import {
   submitTelegramLoginCode,
 } from './background/telegram';
 import { importVideo } from './background/watch';
+import { detectPageType } from './content-scripts/parsers/detector';
+import { telegramMetadataFromUrl } from './content-scripts/parsers/telegram';
 
 console.log('Background script starting...');
 
@@ -79,6 +81,68 @@ chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
     detectPdfTab(tab.url);
   }
 });
+
+// Derive the popup's content from the tab the user is ON RIGHT NOW, rather than a
+// module-global left behind by whichever tab last fired a content-script
+// detection (SWO-605). The page type is derived from the active tab's URL;
+// telegram and pdf are fully URL-derivable so we rebuild them fresh (this also
+// tracks web.telegram.org's in-app hash navigation, which the load-time content
+// script can't see). youtube/vimeo titles need the page DOM, so we trust the
+// stored video metadata only when it belongs to this exact tab — never a
+// different one. Anything else has nothing importable, so returns null.
+const resolveActiveTabContent = async (): Promise<PageContent | null> => {
+  // A rejected query must never leave the popup spinning: this is the message
+  // that clears its loading state, so on any failure we fall through to a null
+  // payload ("nothing detected") rather than never replying.
+  let url: string | undefined;
+  try {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    url = tab?.url;
+  } catch (error) {
+    console.error('Failed to query the active tab', error);
+    return null;
+  }
+  if (!url) {
+    return null;
+  }
+
+  const pageType = detectPageType(url);
+
+  if (pageType === 'telegram') {
+    storedTelegramMetadata = telegramMetadataFromUrl(url);
+    currentPageContent = {
+      url,
+      title: 'Telegram channel',
+      pageType: 'telegram',
+    };
+    return currentPageContent;
+  }
+
+  if (pageType === 'pdf') {
+    const fileName = url.split('/').pop() || url;
+    const title =
+      decodeURIComponent(fileName.replace(/\.pdf$/i, '')) || fileName;
+    currentPdfMetadata = { url, title, pageCount: 0 };
+    currentPageContent = { url, title, pageType: 'pdf' };
+    return currentPageContent;
+  }
+
+  if (pageType === 'youtube' || pageType === 'vimeo') {
+    if (storedVideoMetadata?.url === url) {
+      return {
+        url,
+        title: storedVideoMetadata.title ?? 'Video',
+        pageType,
+      };
+    }
+    return null;
+  }
+
+  return null;
+};
 
 chrome.runtime.onMessageExternal.addListener(
   async (message, sender, sendResponse) => {
@@ -158,11 +222,12 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     }
 
     case 'REQUEST_TAB_CONTENT': {
+      const payload = await resolveActiveTabContent();
       chrome.runtime.sendMessage({
         source: 'background',
         target: 'popup',
         type: 'CURRENT_TAB_CONTENT',
-        payload: currentPageContent ?? storedVideoMetadata ?? null,
+        payload,
       });
       return;
     }
