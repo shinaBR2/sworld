@@ -106,6 +106,25 @@ describe('TelegramLogin', () => {
     expect(store.telegramLoginCodeSent).toBeUndefined();
   });
 
+  it('still notifies the parent when the post-login cleanup write fails', async () => {
+    // The login already succeeded server-side, so a rejected storage cleanup
+    // must not swallow that success and strand the user on the code step.
+    (chrome.storage.local.remove as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error('storage unavailable'),
+    );
+    const onAuthenticated = vi.fn();
+    render(<TelegramLogin onAuthenticated={onAuthenticated} />);
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Send login code' }),
+    );
+    const codeInput = await screen.findByLabelText('Login code');
+    fireEvent.change(codeInput, { target: { value: '12345' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => expect(onAuthenticated).toHaveBeenCalledTimes(1));
+  });
+
   it('returns to the send step and clears the flag when asked for a new code', async () => {
     store.telegramLoginCodeSent = 'true';
     render(<TelegramLogin onAuthenticated={vi.fn()} />);

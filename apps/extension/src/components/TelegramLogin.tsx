@@ -65,23 +65,30 @@ const TelegramLogin = ({ onAuthenticated }: TelegramLoginProps) => {
     setBusy(true);
     setError(null);
     const res = await requestLoginCode();
-    setBusy(false);
     if (res?.success) {
-      setCodeSent(true);
+      // Persist first, then reveal the code step: the popup is destroyed the
+      // instant the user leaves to fetch the code, so the visible step must
+      // never get ahead of the write that lets a reopen restore it.
       await setItem(CODE_SENT_KEY, 'true');
+      setCodeSent(true);
     } else {
       setError(res?.message ?? 'Could not send the login code.');
     }
+    setBusy(false);
   };
 
   // Escape hatch back to step 1. The persisted step can outlive the pending login
   // (e.g. the code expired), which would otherwise trap the user on a code field
   // that only rejects — this lets them request a fresh code.
   const handleResend = async () => {
+    setBusy(true);
     setError(null);
+    // Clear the persisted step before dropping back to send-code, so a reopen
+    // mid-flight can't rehydrate the stale code step.
+    await removeItems([CODE_SENT_KEY]);
     setCode('');
     setCodeSent(false);
-    await removeItems([CODE_SENT_KEY]);
+    setBusy(false);
   };
 
   const handleSubmit = async () => {
@@ -89,13 +96,15 @@ const TelegramLogin = ({ onAuthenticated }: TelegramLoginProps) => {
     setBusy(true);
     setError(null);
     const res = await submitLoginCode(code.trim());
-    setBusy(false);
     if (res?.success) {
-      await removeItems([CODE_SENT_KEY]);
+      // Login already succeeded server-side; a failed cleanup must not swallow
+      // that success and trap the user on the code step.
+      await removeItems([CODE_SENT_KEY]).catch(() => {});
       onAuthenticated();
-    } else {
-      setError(res?.message ?? 'That code was not accepted.');
+      return;
     }
+    setError(res?.message ?? 'That code was not accepted.');
+    setBusy(false);
   };
 
   if (!hydrated) {
