@@ -31,7 +31,10 @@ select_permissions:
           - photo:
               user_id:
                 _eq: X-Hasura-User-Id
+          - playlist:
+              site:
+                _eq: look
       allow_aggregations: true
       query_root_fields: []
       subscription_root_fields: []
-    comment: Relationship-only; a user sees join rows only for playlists and photos they own
+    comment: Relationship-only; a user sees join rows only for their own look-album playlists and photos
