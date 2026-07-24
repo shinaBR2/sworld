@@ -235,8 +235,9 @@ const collectFiles = (args: ImageArgs): string[] => {
         statSync(path.join(dir, name)).isFile(),
     )
     .map((name) => path.join(dir, name))
-    // Filename-ascending: this is the album ordering too (position follows it).
-    .sort();
+    // Filename order (natural/numeric): this is the album ordering too (position
+    // follows it), so `img2` sorts before `img10`, not after.
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   if (files.length === 0) {
     throw new Error(
       `No image files (${[...IMAGE_EXTENSIONS].join(', ')}) found in ${dir}`,
@@ -277,6 +278,9 @@ interface Renditions {
 /** Resize longest edge to `maxEdge`, preserving aspect ratio, never upscaling. */
 const resizeLongestEdge = (input: Buffer, maxEdge: number): Promise<Buffer> =>
   sharp(input)
+    // Bake EXIF orientation into the pixels — sharp strips EXIF on re-encode, so
+    // without this a rotated phone photo would render sideways in the rendition.
+    .rotate()
     .resize(maxEdge, maxEdge, { fit: 'inside', withoutEnlargement: true })
     // No format method: sharp keeps the input format, so output ext === input ext.
     .toBuffer();
@@ -284,6 +288,8 @@ const resizeLongestEdge = (input: Buffer, maxEdge: number): Promise<Buffer> =>
 /** Encode a blur-hash from a tiny downscaled RGBA version of the image. */
 const encodeBlurHash = async (input: Buffer): Promise<string> => {
   const { data, info } = await sharp(input)
+    // Match the rendered orientation so the placeholder isn't rotated vs the image.
+    .rotate()
     .raw()
     .ensureAlpha()
     .resize(BLURHASH_MAX_EDGE, BLURHASH_MAX_EDGE, { fit: 'inside' })
@@ -303,12 +309,18 @@ const buildRenditions = async (input: Buffer): Promise<Renditions> => {
   if (!meta.width || !meta.height) {
     throw new Error('Could not read image dimensions.');
   }
+  // `metadata()` reports the pre-orientation sensor size. Since the renditions
+  // are auto-rotated (see resizeLongestEdge), store the DISPLAY dimensions:
+  // EXIF orientations 5–8 rotate 90°, so width/height swap.
+  const swapDims = (meta.orientation ?? 1) >= 5;
+  const width = swapDims ? meta.height : meta.width;
+  const height = swapDims ? meta.width : meta.height;
   const [medium, thumb, blurHash] = await Promise.all([
     resizeLongestEdge(input, MEDIUM_MAX_EDGE),
     resizeLongestEdge(input, THUMB_MAX_EDGE),
     encodeBlurHash(input),
   ]);
-  return { width: meta.width, height: meta.height, blurHash, medium, thumb };
+  return { width, height, blurHash, medium, thumb };
 };
 
 // ─── GCS helpers ─────────────────────────────────────────────────────────────
@@ -514,6 +526,7 @@ const ingestOne = async (
   args: ImageArgs,
   bucket: Bucket | undefined,
   localFile: string,
+  seenSlugs: Set<string>,
 ): Promise<IngestResult> => {
   let meta: ImageMeta;
   try {
@@ -532,6 +545,18 @@ const ingestOne = async (
     );
     return { outcome: 'failed' };
   }
+
+  // Two different files can slugify to the same key (e.g. `10639.jpg` and
+  // `10639.png`). Since slug is the dup-check key, the second would otherwise be
+  // silently swallowed as a "duplicate" and its pixels lost — surface it loudly
+  // as a failure so the operator renames one instead.
+  if (seenSlugs.has(meta.slug)) {
+    console.error(
+      `  ✗ ${path.basename(localFile)}: slug "${meta.slug}" collides with another file in this batch — rename to ingest both.`,
+    );
+    return { outcome: 'failed' };
+  }
+  seenSlugs.add(meta.slug);
 
   const takenAt = await resolveTakenAt(localFile);
 
@@ -644,6 +669,12 @@ const handleImage = async (rawArgs: string[]): Promise<void> => {
   // The album is resolved once, off the FIRST created photo (whose thumb becomes
   // the album cover), then reused with a running position for the rest of the
   // batch. Linking is off under --dry-run and --skip-db (no photo row to link).
+  if (args.album && args.skipDb) {
+    console.warn(
+      'Note: --album is ignored with --skip-db (no photos row is created to link).',
+    );
+  }
+
   let albumState: { id: string; nextPosition: number } | undefined;
 
   const tally: Record<IngestOutcome, number> = {
@@ -652,12 +683,13 @@ const handleImage = async (rawArgs: string[]): Promise<void> => {
     'dry-run': 0,
     failed: 0,
   };
+  // Guards against two different files in one batch slugifying to the same key.
+  const seenSlugs = new Set<string>();
 
   for (const localFile of files) {
     // One bad file in a batch shouldn't abort the rest — record it and move on.
     try {
-      const result = await ingestOne(args, bucket, localFile);
-      tally[result.outcome] += 1;
+      const result = await ingestOne(args, bucket, localFile, seenSlugs);
 
       if (args.album && result.photo) {
         if (!albumState) {
@@ -675,6 +707,10 @@ const handleImage = async (rawArgs: string[]): Promise<void> => {
         );
         albumState.nextPosition += 1;
       }
+
+      // Count only after linking, so a link failure falls to the catch below
+      // instead of double-counting the file as both created and failed.
+      tally[result.outcome] += 1;
     } catch (error) {
       console.error(
         `  ✗ ${path.basename(localFile)}: ${(error as Error).message}`,
