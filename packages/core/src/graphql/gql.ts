@@ -48,6 +48,12 @@ type Documents = {
     "\n  query ListenManage($userId: uuid!) {\n    audios(\n      where: { user_id: { _eq: $userId } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { display_order: asc }\n    ) {\n      id\n      name\n    }\n    playlist(\n      where: { user_id: { _eq: $userId }, site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n      description\n      thumbnailUrl\n    }\n  }\n": typeof types.ListenManageDocument,
     "\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n": typeof types.ListenPlaylistDetailDocument,
     "\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": typeof types.ListenPlaylistsDocument,
+    "\n  query LookAlbums @cached {\n    playlist(\n      where: { site: { _eq: \"look\" } }\n      order_by: { createdAt: desc }\n    ) {\n      ...AlbumFields\n    }\n  }\n": typeof types.LookAlbumsDocument,
+    "\n  query LookAlbumDetail($id: uuid!) @cached {\n    playlist_by_pk(id: $id) {\n      ...AlbumFields\n    }\n  }\n": typeof types.LookAlbumDetailDocument,
+    "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n": typeof types.PhotoFieldsFragmentDoc,
+    "\n  fragment AlbumFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_photos(order_by: { position: asc }) {\n      position\n      photo {\n        ...PhotoFields\n      }\n    }\n  }\n": typeof types.AlbumFieldsFragmentDoc,
+    "\n  query LookPhotoDetail($id: uuid!) @cached {\n    photos_by_pk(id: $id) {\n      ...PhotoFields\n    }\n  }\n": typeof types.LookPhotoDetailDocument,
+    "\n  query LookPhotos @cached {\n    photos(order_by: { takenAt: desc }) {\n      ...PhotoFields\n    }\n  }\n": typeof types.LookPhotosDocument,
     "\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n": typeof types.InsertPostDocument,
     "\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n": typeof types.UpdatePostDocument,
     "\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n      visibility\n      pinned\n    }\n  }\n": typeof types.PostDocument,
@@ -116,6 +122,12 @@ const documents: Documents = {
     "\n  query ListenManage($userId: uuid!) {\n    audios(\n      where: { user_id: { _eq: $userId } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      name\n      source\n      thumbnailUrl\n      artistName\n      audio_tags {\n        tag_id\n      }\n    }\n    tags(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { display_order: asc }\n    ) {\n      id\n      name\n    }\n    playlist(\n      where: { user_id: { _eq: $userId }, site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n      description\n      thumbnailUrl\n    }\n  }\n": types.ListenManageDocument,
     "\n  query ListenPlaylistDetail($id: uuid!) {\n    playlist_by_pk(id: $id) {\n      ...ListenPlaylistFields\n    }\n  }\n": types.ListenPlaylistDetailDocument,
     "\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": types.ListenPlaylistsDocument,
+    "\n  query LookAlbums @cached {\n    playlist(\n      where: { site: { _eq: \"look\" } }\n      order_by: { createdAt: desc }\n    ) {\n      ...AlbumFields\n    }\n  }\n": types.LookAlbumsDocument,
+    "\n  query LookAlbumDetail($id: uuid!) @cached {\n    playlist_by_pk(id: $id) {\n      ...AlbumFields\n    }\n  }\n": types.LookAlbumDetailDocument,
+    "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n": types.PhotoFieldsFragmentDoc,
+    "\n  fragment AlbumFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_photos(order_by: { position: asc }) {\n      position\n      photo {\n        ...PhotoFields\n      }\n    }\n  }\n": types.AlbumFieldsFragmentDoc,
+    "\n  query LookPhotoDetail($id: uuid!) @cached {\n    photos_by_pk(id: $id) {\n      ...PhotoFields\n    }\n  }\n": types.LookPhotoDetailDocument,
+    "\n  query LookPhotos @cached {\n    photos(order_by: { takenAt: desc }) {\n      ...PhotoFields\n    }\n  }\n": types.LookPhotosDocument,
     "\n  mutation InsertPost($object: posts_insert_input!) {\n    insert_posts_one(object: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n    }\n  }\n": types.InsertPostDocument,
     "\n  mutation UpdatePost($id: uuid!, $object: posts_set_input!) {\n    update_posts_by_pk(pk_columns: { id: $id }, _set: $object) {\n      id\n      title\n      slug\n      brief\n      markdownContent\n      readTimeInMinutes\n      created_at\n      updated_at\n      status\n    }\n  }\n": types.UpdatePostDocument,
     "\n  query Post($id: uuid!) {\n    posts_by_pk(id: $id) {\n      title\n      readTimeInMinutes\n      markdownContent\n      id\n      brief\n      slug\n      created_at\n      status\n      visibility\n      pinned\n    }\n  }\n": types.PostDocument,
@@ -283,6 +295,30 @@ export function graphql(source: "\n  query ListenPlaylistDetail($id: uuid!) {\n 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n"): typeof import('./graphql').ListenPlaylistsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query LookAlbums @cached {\n    playlist(\n      where: { site: { _eq: \"look\" } }\n      order_by: { createdAt: desc }\n    ) {\n      ...AlbumFields\n    }\n  }\n"): typeof import('./graphql').LookAlbumsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query LookAlbumDetail($id: uuid!) @cached {\n    playlist_by_pk(id: $id) {\n      ...AlbumFields\n    }\n  }\n"): typeof import('./graphql').LookAlbumDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n"): typeof import('./graphql').PhotoFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment AlbumFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_photos(order_by: { position: asc }) {\n      position\n      photo {\n        ...PhotoFields\n      }\n    }\n  }\n"): typeof import('./graphql').AlbumFieldsFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query LookPhotoDetail($id: uuid!) @cached {\n    photos_by_pk(id: $id) {\n      ...PhotoFields\n    }\n  }\n"): typeof import('./graphql').LookPhotoDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query LookPhotos @cached {\n    photos(order_by: { takenAt: desc }) {\n      ...PhotoFields\n    }\n  }\n"): typeof import('./graphql').LookPhotosDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

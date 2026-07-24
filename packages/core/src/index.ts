@@ -2,6 +2,7 @@ import {
   mutationHooks as listenMutationHooks,
   queryHooks as listenQueryHooks,
 } from './listen';
+import { queryHooks as lookQueryHooks } from './look';
 import hooks, {
   commonHelpers,
   ErrorBoundary,
@@ -22,6 +23,7 @@ export { commonHelpers, requestHelpers };
 export {
   listenMutationHooks,
   listenQueryHooks,
+  lookQueryHooks,
   watchMutationHooks,
   watchQueryHooks,
 };

@@ -3550,6 +3550,10 @@ export type Mutation_Root = {
   delete_notifications?: Maybe<Notifications_Mutation_Response>;
   /** delete single row from the table: "notifications" */
   delete_notifications_by_pk?: Maybe<Notifications>;
+  /** delete data from the table: "photos" */
+  delete_photos?: Maybe<Photos_Mutation_Response>;
+  /** delete single row from the table: "photos" */
+  delete_photos_by_pk?: Maybe<Photos>;
   /** delete data from the table: "playlist" */
   delete_playlist?: Maybe<Playlist_Mutation_Response>;
   /** delete data from the table: "playlist_audios" */
@@ -3558,6 +3562,10 @@ export type Mutation_Root = {
   delete_playlist_audios_by_pk?: Maybe<Playlist_Audios>;
   /** delete single row from the table: "playlist" */
   delete_playlist_by_pk?: Maybe<Playlist>;
+  /** delete data from the table: "playlist_photos" */
+  delete_playlist_photos?: Maybe<Playlist_Photos_Mutation_Response>;
+  /** delete single row from the table: "playlist_photos" */
+  delete_playlist_photos_by_pk?: Maybe<Playlist_Photos>;
   /** delete data from the table: "playlist_videos" */
   delete_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** delete single row from the table: "playlist_videos" */
@@ -3670,6 +3678,10 @@ export type Mutation_Root = {
   insert_notifications?: Maybe<Notifications_Mutation_Response>;
   /** insert a single row into the table: "notifications" */
   insert_notifications_one?: Maybe<Notifications>;
+  /** insert data into the table: "photos" */
+  insert_photos?: Maybe<Photos_Mutation_Response>;
+  /** insert a single row into the table: "photos" */
+  insert_photos_one?: Maybe<Photos>;
   /** insert data into the table: "playlist" */
   insert_playlist?: Maybe<Playlist_Mutation_Response>;
   /** insert data into the table: "playlist_audios" */
@@ -3678,6 +3690,10 @@ export type Mutation_Root = {
   insert_playlist_audios_one?: Maybe<Playlist_Audios>;
   /** insert a single row into the table: "playlist" */
   insert_playlist_one?: Maybe<Playlist>;
+  /** insert data into the table: "playlist_photos" */
+  insert_playlist_photos?: Maybe<Playlist_Photos_Mutation_Response>;
+  /** insert a single row into the table: "playlist_photos" */
+  insert_playlist_photos_one?: Maybe<Playlist_Photos>;
   /** insert data into the table: "playlist_videos" */
   insert_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** insert a single row into the table: "playlist_videos" */
@@ -3818,6 +3834,12 @@ export type Mutation_Root = {
   update_notifications_by_pk?: Maybe<Notifications>;
   /** update multiples rows of table: "notifications" */
   update_notifications_many?: Maybe<Array<Maybe<Notifications_Mutation_Response>>>;
+  /** update data of the table: "photos" */
+  update_photos?: Maybe<Photos_Mutation_Response>;
+  /** update single row of the table: "photos" */
+  update_photos_by_pk?: Maybe<Photos>;
+  /** update multiples rows of table: "photos" */
+  update_photos_many?: Maybe<Array<Maybe<Photos_Mutation_Response>>>;
   /** update data of the table: "playlist" */
   update_playlist?: Maybe<Playlist_Mutation_Response>;
   /** update data of the table: "playlist_audios" */
@@ -3830,6 +3852,12 @@ export type Mutation_Root = {
   update_playlist_by_pk?: Maybe<Playlist>;
   /** update multiples rows of table: "playlist" */
   update_playlist_many?: Maybe<Array<Maybe<Playlist_Mutation_Response>>>;
+  /** update data of the table: "playlist_photos" */
+  update_playlist_photos?: Maybe<Playlist_Photos_Mutation_Response>;
+  /** update single row of the table: "playlist_photos" */
+  update_playlist_photos_by_pk?: Maybe<Playlist_Photos>;
+  /** update multiples rows of table: "playlist_photos" */
+  update_playlist_photos_many?: Maybe<Array<Maybe<Playlist_Photos_Mutation_Response>>>;
   /** update data of the table: "playlist_videos" */
   update_playlist_videos?: Maybe<Playlist_Videos_Mutation_Response>;
   /** update single row of the table: "playlist_videos" */
@@ -4081,6 +4109,18 @@ export type Mutation_RootDelete_Notifications_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_PhotosArgs = {
+  where: Photos_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Photos_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_PlaylistArgs = {
   where: Playlist_Bool_Exp;
 };
@@ -4102,6 +4142,19 @@ export type Mutation_RootDelete_Playlist_Audios_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Playlist_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Playlist_PhotosArgs = {
+  where: Playlist_Photos_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Playlist_Photos_By_PkArgs = {
+  photo_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
 };
 
 
@@ -4466,6 +4519,20 @@ export type Mutation_RootInsert_Notifications_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_PhotosArgs = {
+  objects: Array<Photos_Insert_Input>;
+  on_conflict?: InputMaybe<Photos_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Photos_OneArgs = {
+  object: Photos_Insert_Input;
+  on_conflict?: InputMaybe<Photos_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_PlaylistArgs = {
   objects: Array<Playlist_Insert_Input>;
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
@@ -4490,6 +4557,20 @@ export type Mutation_RootInsert_Playlist_Audios_OneArgs = {
 export type Mutation_RootInsert_Playlist_OneArgs = {
   object: Playlist_Insert_Input;
   on_conflict?: InputMaybe<Playlist_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Playlist_PhotosArgs = {
+  objects: Array<Playlist_Photos_Insert_Input>;
+  on_conflict?: InputMaybe<Playlist_Photos_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Playlist_Photos_OneArgs = {
+  object: Playlist_Photos_Insert_Input;
+  on_conflict?: InputMaybe<Playlist_Photos_On_Conflict>;
 };
 
 
@@ -4998,6 +5079,28 @@ export type Mutation_RootUpdate_Notifications_ManyArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_PhotosArgs = {
+  _inc?: InputMaybe<Photos_Inc_Input>;
+  _set?: InputMaybe<Photos_Set_Input>;
+  where: Photos_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Photos_By_PkArgs = {
+  _inc?: InputMaybe<Photos_Inc_Input>;
+  _set?: InputMaybe<Photos_Set_Input>;
+  pk_columns: Photos_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Photos_ManyArgs = {
+  updates: Array<Photos_Updates>;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_PlaylistArgs = {
   _append?: InputMaybe<Playlist_Append_Input>;
   _delete_at_path?: InputMaybe<Playlist_Delete_At_Path_Input>;
@@ -5046,6 +5149,28 @@ export type Mutation_RootUpdate_Playlist_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Playlist_ManyArgs = {
   updates: Array<Playlist_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_PhotosArgs = {
+  _inc?: InputMaybe<Playlist_Photos_Inc_Input>;
+  _set?: InputMaybe<Playlist_Photos_Set_Input>;
+  where: Playlist_Photos_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_Photos_By_PkArgs = {
+  _inc?: InputMaybe<Playlist_Photos_Inc_Input>;
+  _set?: InputMaybe<Playlist_Photos_Set_Input>;
+  pk_columns: Playlist_Photos_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Playlist_Photos_ManyArgs = {
+  updates: Array<Playlist_Photos_Updates>;
 };
 
 
@@ -5771,6 +5896,382 @@ export enum Order_By {
   DescNullsLast = 'desc_nulls_last'
 }
 
+/** Image metadata for the Look app */
+export type Photos = {
+  __typename?: 'photos';
+  blurHash?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['timestamptz']['output'];
+  height?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['uuid']['output'];
+  mediumUrl?: Maybe<Scalars['String']['output']>;
+  /** An array relationship */
+  playlist_photos: Array<Playlist_Photos>;
+  /** An aggregate relationship */
+  playlist_photos_aggregate: Playlist_Photos_Aggregate;
+  public: Scalars['Boolean']['output'];
+  slug?: Maybe<Scalars['String']['output']>;
+  source: Scalars['String']['output'];
+  takenAt?: Maybe<Scalars['timestamptz']['output']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['uuid']['output'];
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+
+/** Image metadata for the Look app */
+export type PhotosPlaylist_PhotosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+/** Image metadata for the Look app */
+export type PhotosPlaylist_Photos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+/** aggregated selection of "photos" */
+export type Photos_Aggregate = {
+  __typename?: 'photos_aggregate';
+  aggregate?: Maybe<Photos_Aggregate_Fields>;
+  nodes: Array<Photos>;
+};
+
+/** aggregate fields of "photos" */
+export type Photos_Aggregate_Fields = {
+  __typename?: 'photos_aggregate_fields';
+  avg?: Maybe<Photos_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Photos_Max_Fields>;
+  min?: Maybe<Photos_Min_Fields>;
+  stddev?: Maybe<Photos_Stddev_Fields>;
+  stddev_pop?: Maybe<Photos_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Photos_Stddev_Samp_Fields>;
+  sum?: Maybe<Photos_Sum_Fields>;
+  var_pop?: Maybe<Photos_Var_Pop_Fields>;
+  var_samp?: Maybe<Photos_Var_Samp_Fields>;
+  variance?: Maybe<Photos_Variance_Fields>;
+};
+
+
+/** aggregate fields of "photos" */
+export type Photos_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Photos_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Photos_Avg_Fields = {
+  __typename?: 'photos_avg_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "photos". All fields are combined with a logical 'AND'. */
+export type Photos_Bool_Exp = {
+  _and?: InputMaybe<Array<Photos_Bool_Exp>>;
+  _not?: InputMaybe<Photos_Bool_Exp>;
+  _or?: InputMaybe<Array<Photos_Bool_Exp>>;
+  blurHash?: InputMaybe<String_Comparison_Exp>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  height?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  mediumUrl?: InputMaybe<String_Comparison_Exp>;
+  playlist_photos?: InputMaybe<Playlist_Photos_Bool_Exp>;
+  playlist_photos_aggregate?: InputMaybe<Playlist_Photos_Aggregate_Bool_Exp>;
+  public?: InputMaybe<Boolean_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+  source?: InputMaybe<String_Comparison_Exp>;
+  takenAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Uuid_Comparison_Exp>;
+  width?: InputMaybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "photos" */
+export enum Photos_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  PhotosPkey = 'photos_pkey'
+}
+
+/** input type for incrementing numeric columns in table "photos" */
+export type Photos_Inc_Input = {
+  height?: InputMaybe<Scalars['Int']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "photos" */
+export type Photos_Insert_Input = {
+  blurHash?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mediumUrl?: InputMaybe<Scalars['String']['input']>;
+  playlist_photos?: InputMaybe<Playlist_Photos_Arr_Rel_Insert_Input>;
+  public?: InputMaybe<Scalars['Boolean']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate max on columns */
+export type Photos_Max_Fields = {
+  __typename?: 'photos_max_fields';
+  blurHash?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mediumUrl?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  source?: Maybe<Scalars['String']['output']>;
+  takenAt?: Maybe<Scalars['timestamptz']['output']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+/** aggregate min on columns */
+export type Photos_Min_Fields = {
+  __typename?: 'photos_min_fields';
+  blurHash?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  mediumUrl?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  source?: Maybe<Scalars['String']['output']>;
+  takenAt?: Maybe<Scalars['timestamptz']['output']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+  user_id?: Maybe<Scalars['uuid']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+/** response of any mutation on the table "photos" */
+export type Photos_Mutation_Response = {
+  __typename?: 'photos_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Photos>;
+};
+
+/** input type for inserting object relation for remote table "photos" */
+export type Photos_Obj_Rel_Insert_Input = {
+  data: Photos_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Photos_On_Conflict>;
+};
+
+/** on_conflict condition type for table "photos" */
+export type Photos_On_Conflict = {
+  constraint: Photos_Constraint;
+  update_columns?: Array<Photos_Update_Column>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "photos". */
+export type Photos_Order_By = {
+  blurHash?: InputMaybe<Order_By>;
+  createdAt?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  mediumUrl?: InputMaybe<Order_By>;
+  playlist_photos_aggregate?: InputMaybe<Playlist_Photos_Aggregate_Order_By>;
+  public?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+  source?: InputMaybe<Order_By>;
+  takenAt?: InputMaybe<Order_By>;
+  thumbnailUrl?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: photos */
+export type Photos_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "photos" */
+export enum Photos_Select_Column {
+  /** column name */
+  BlurHash = 'blurHash',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Height = 'height',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MediumUrl = 'mediumUrl',
+  /** column name */
+  Public = 'public',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Source = 'source',
+  /** column name */
+  TakenAt = 'takenAt',
+  /** column name */
+  ThumbnailUrl = 'thumbnailUrl',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+  /** column name */
+  Width = 'width'
+}
+
+/** input type for updating data in table "photos" */
+export type Photos_Set_Input = {
+  blurHash?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mediumUrl?: InputMaybe<Scalars['String']['input']>;
+  public?: InputMaybe<Scalars['Boolean']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Photos_Stddev_Fields = {
+  __typename?: 'photos_stddev_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Photos_Stddev_Pop_Fields = {
+  __typename?: 'photos_stddev_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Photos_Stddev_Samp_Fields = {
+  __typename?: 'photos_stddev_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "photos" */
+export type Photos_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Photos_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Photos_Stream_Cursor_Value_Input = {
+  blurHash?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  mediumUrl?: InputMaybe<Scalars['String']['input']>;
+  public?: InputMaybe<Scalars['Boolean']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  user_id?: InputMaybe<Scalars['uuid']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Photos_Sum_Fields = {
+  __typename?: 'photos_sum_fields';
+  height?: Maybe<Scalars['Int']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+/** update columns of table "photos" */
+export enum Photos_Update_Column {
+  /** column name */
+  BlurHash = 'blurHash',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Height = 'height',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MediumUrl = 'mediumUrl',
+  /** column name */
+  Public = 'public',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  Source = 'source',
+  /** column name */
+  TakenAt = 'takenAt',
+  /** column name */
+  ThumbnailUrl = 'thumbnailUrl',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'user_id',
+  /** column name */
+  Width = 'width'
+}
+
+export type Photos_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Photos_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Photos_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Photos_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Photos_Var_Pop_Fields = {
+  __typename?: 'photos_var_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Photos_Var_Samp_Fields = {
+  __typename?: 'photos_var_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Photos_Variance_Fields = {
+  __typename?: 'photos_variance_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+};
+
 /** Playlist contain set of videos or audios */
 export type Playlist = {
   __typename?: 'playlist';
@@ -5781,6 +6282,10 @@ export type Playlist = {
   playlist_audios: Array<Playlist_Audios>;
   /** An aggregate relationship */
   playlist_audios_aggregate: Playlist_Audios_Aggregate;
+  /** An array relationship */
+  playlist_photos: Array<Playlist_Photos>;
+  /** An aggregate relationship */
+  playlist_photos_aggregate: Playlist_Photos_Aggregate;
   /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
@@ -5824,6 +6329,26 @@ export type PlaylistPlaylist_Audios_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Playlist_Audios_Order_By>>;
   where?: InputMaybe<Playlist_Audios_Bool_Exp>;
+};
+
+
+/** Playlist contain set of videos or audios */
+export type PlaylistPlaylist_PhotosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+/** Playlist contain set of videos or audios */
+export type PlaylistPlaylist_Photos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
 };
 
 
@@ -6294,6 +6819,8 @@ export type Playlist_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   playlist_audios?: InputMaybe<Playlist_Audios_Bool_Exp>;
   playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Bool_Exp>;
+  playlist_photos?: InputMaybe<Playlist_Photos_Bool_Exp>;
+  playlist_photos_aggregate?: InputMaybe<Playlist_Photos_Aggregate_Bool_Exp>;
   playlist_videos?: InputMaybe<Playlist_Videos_Bool_Exp>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Bool_Exp>;
   public?: InputMaybe<Boolean_Comparison_Exp>;
@@ -6351,6 +6878,7 @@ export type Playlist_Insert_Input = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   playlist_audios?: InputMaybe<Playlist_Audios_Arr_Rel_Insert_Input>;
+  playlist_photos?: InputMaybe<Playlist_Photos_Arr_Rel_Insert_Input>;
   playlist_videos?: InputMaybe<Playlist_Videos_Arr_Rel_Insert_Input>;
   public?: InputMaybe<Scalars['Boolean']['input']>;
   /** Short id like Youtube video id */
@@ -6460,6 +6988,7 @@ export type Playlist_Order_By = {
   description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   playlist_audios_aggregate?: InputMaybe<Playlist_Audios_Aggregate_Order_By>;
+  playlist_photos_aggregate?: InputMaybe<Playlist_Photos_Aggregate_Order_By>;
   playlist_videos_aggregate?: InputMaybe<Playlist_Videos_Aggregate_Order_By>;
   public?: InputMaybe<Order_By>;
   sId?: InputMaybe<Order_By>;
@@ -6473,6 +7002,341 @@ export type Playlist_Order_By = {
   updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
+};
+
+/** Junction table between photos and playlist */
+export type Playlist_Photos = {
+  __typename?: 'playlist_photos';
+  createdAt: Scalars['timestamptz']['output'];
+  /** An object relationship */
+  photo: Photos;
+  photo_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  playlist: Playlist;
+  playlist_id: Scalars['uuid']['output'];
+  position: Scalars['Int']['output'];
+  updatedAt: Scalars['timestamptz']['output'];
+};
+
+/** aggregated selection of "playlist_photos" */
+export type Playlist_Photos_Aggregate = {
+  __typename?: 'playlist_photos_aggregate';
+  aggregate?: Maybe<Playlist_Photos_Aggregate_Fields>;
+  nodes: Array<Playlist_Photos>;
+};
+
+export type Playlist_Photos_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Playlist_Photos_Aggregate_Bool_Exp_Count>;
+};
+
+export type Playlist_Photos_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Playlist_Photos_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "playlist_photos" */
+export type Playlist_Photos_Aggregate_Fields = {
+  __typename?: 'playlist_photos_aggregate_fields';
+  avg?: Maybe<Playlist_Photos_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Playlist_Photos_Max_Fields>;
+  min?: Maybe<Playlist_Photos_Min_Fields>;
+  stddev?: Maybe<Playlist_Photos_Stddev_Fields>;
+  stddev_pop?: Maybe<Playlist_Photos_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Playlist_Photos_Stddev_Samp_Fields>;
+  sum?: Maybe<Playlist_Photos_Sum_Fields>;
+  var_pop?: Maybe<Playlist_Photos_Var_Pop_Fields>;
+  var_samp?: Maybe<Playlist_Photos_Var_Samp_Fields>;
+  variance?: Maybe<Playlist_Photos_Variance_Fields>;
+};
+
+
+/** aggregate fields of "playlist_photos" */
+export type Playlist_Photos_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "playlist_photos" */
+export type Playlist_Photos_Aggregate_Order_By = {
+  avg?: InputMaybe<Playlist_Photos_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Playlist_Photos_Max_Order_By>;
+  min?: InputMaybe<Playlist_Photos_Min_Order_By>;
+  stddev?: InputMaybe<Playlist_Photos_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Playlist_Photos_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Playlist_Photos_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Playlist_Photos_Sum_Order_By>;
+  var_pop?: InputMaybe<Playlist_Photos_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Playlist_Photos_Var_Samp_Order_By>;
+  variance?: InputMaybe<Playlist_Photos_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "playlist_photos" */
+export type Playlist_Photos_Arr_Rel_Insert_Input = {
+  data: Array<Playlist_Photos_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Playlist_Photos_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Playlist_Photos_Avg_Fields = {
+  __typename?: 'playlist_photos_avg_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "playlist_photos" */
+export type Playlist_Photos_Avg_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "playlist_photos". All fields are combined with a logical 'AND'. */
+export type Playlist_Photos_Bool_Exp = {
+  _and?: InputMaybe<Array<Playlist_Photos_Bool_Exp>>;
+  _not?: InputMaybe<Playlist_Photos_Bool_Exp>;
+  _or?: InputMaybe<Array<Playlist_Photos_Bool_Exp>>;
+  createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  photo?: InputMaybe<Photos_Bool_Exp>;
+  photo_id?: InputMaybe<Uuid_Comparison_Exp>;
+  playlist?: InputMaybe<Playlist_Bool_Exp>;
+  playlist_id?: InputMaybe<Uuid_Comparison_Exp>;
+  position?: InputMaybe<Int_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "playlist_photos" */
+export enum Playlist_Photos_Constraint {
+  /** unique or primary key constraint on columns "photo_id", "playlist_id" */
+  PlaylistPhotosPkey = 'playlist_photos_pkey'
+}
+
+/** input type for incrementing numeric columns in table "playlist_photos" */
+export type Playlist_Photos_Inc_Input = {
+  position?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "playlist_photos" */
+export type Playlist_Photos_Insert_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  photo?: InputMaybe<Photos_Obj_Rel_Insert_Input>;
+  photo_id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist?: InputMaybe<Playlist_Obj_Rel_Insert_Input>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate max on columns */
+export type Playlist_Photos_Max_Fields = {
+  __typename?: 'playlist_photos_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  photo_id?: Maybe<Scalars['uuid']['output']>;
+  playlist_id?: Maybe<Scalars['uuid']['output']>;
+  position?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by max() on columns of table "playlist_photos" */
+export type Playlist_Photos_Max_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  photo_id?: InputMaybe<Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Playlist_Photos_Min_Fields = {
+  __typename?: 'playlist_photos_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  photo_id?: Maybe<Scalars['uuid']['output']>;
+  playlist_id?: Maybe<Scalars['uuid']['output']>;
+  position?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by min() on columns of table "playlist_photos" */
+export type Playlist_Photos_Min_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  photo_id?: InputMaybe<Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "playlist_photos" */
+export type Playlist_Photos_Mutation_Response = {
+  __typename?: 'playlist_photos_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Playlist_Photos>;
+};
+
+/** on_conflict condition type for table "playlist_photos" */
+export type Playlist_Photos_On_Conflict = {
+  constraint: Playlist_Photos_Constraint;
+  update_columns?: Array<Playlist_Photos_Update_Column>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "playlist_photos". */
+export type Playlist_Photos_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  photo?: InputMaybe<Photos_Order_By>;
+  photo_id?: InputMaybe<Order_By>;
+  playlist?: InputMaybe<Playlist_Order_By>;
+  playlist_id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: playlist_photos */
+export type Playlist_Photos_Pk_Columns_Input = {
+  photo_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "playlist_photos" */
+export enum Playlist_Photos_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  PhotoId = 'photo_id',
+  /** column name */
+  PlaylistId = 'playlist_id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "playlist_photos" */
+export type Playlist_Photos_Set_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  photo_id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Playlist_Photos_Stddev_Fields = {
+  __typename?: 'playlist_photos_stddev_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "playlist_photos" */
+export type Playlist_Photos_Stddev_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Playlist_Photos_Stddev_Pop_Fields = {
+  __typename?: 'playlist_photos_stddev_pop_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "playlist_photos" */
+export type Playlist_Photos_Stddev_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Playlist_Photos_Stddev_Samp_Fields = {
+  __typename?: 'playlist_photos_stddev_samp_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "playlist_photos" */
+export type Playlist_Photos_Stddev_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "playlist_photos" */
+export type Playlist_Photos_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Playlist_Photos_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Playlist_Photos_Stream_Cursor_Value_Input = {
+  createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  photo_id?: InputMaybe<Scalars['uuid']['input']>;
+  playlist_id?: InputMaybe<Scalars['uuid']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Playlist_Photos_Sum_Fields = {
+  __typename?: 'playlist_photos_sum_fields';
+  position?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "playlist_photos" */
+export type Playlist_Photos_Sum_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "playlist_photos" */
+export enum Playlist_Photos_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  PhotoId = 'photo_id',
+  /** column name */
+  PlaylistId = 'playlist_id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+export type Playlist_Photos_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Playlist_Photos_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Playlist_Photos_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Playlist_Photos_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Playlist_Photos_Var_Pop_Fields = {
+  __typename?: 'playlist_photos_var_pop_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "playlist_photos" */
+export type Playlist_Photos_Var_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Playlist_Photos_Var_Samp_Fields = {
+  __typename?: 'playlist_photos_var_samp_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "playlist_photos" */
+export type Playlist_Photos_Var_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Playlist_Photos_Variance_Fields = {
+  __typename?: 'playlist_photos_variance_fields';
+  position?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "playlist_photos" */
+export type Playlist_Photos_Variance_Order_By = {
+  position?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: playlist */
@@ -7365,6 +8229,12 @@ export type Query_Root = {
   notifications_aggregate: Notifications_Aggregate;
   /** fetch data from the table: "notifications" using primary key columns */
   notifications_by_pk?: Maybe<Notifications>;
+  /** fetch data from the table: "photos" */
+  photos: Array<Photos>;
+  /** fetch aggregated fields from the table: "photos" */
+  photos_aggregate: Photos_Aggregate;
+  /** fetch data from the table: "photos" using primary key columns */
+  photos_by_pk?: Maybe<Photos>;
   /** fetch data from the table: "playlist" */
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
@@ -7377,6 +8247,12 @@ export type Query_Root = {
   playlist_audios_by_pk?: Maybe<Playlist_Audios>;
   /** fetch data from the table: "playlist" using primary key columns */
   playlist_by_pk?: Maybe<Playlist>;
+  /** An array relationship */
+  playlist_photos: Array<Playlist_Photos>;
+  /** An aggregate relationship */
+  playlist_photos_aggregate: Playlist_Photos_Aggregate;
+  /** fetch data from the table: "playlist_photos" using primary key columns */
+  playlist_photos_by_pk?: Maybe<Playlist_Photos>;
   /** An array relationship */
   playlist_videos: Array<Playlist_Videos>;
   /** An aggregate relationship */
@@ -7730,6 +8606,29 @@ export type Query_RootNotifications_By_PkArgs = {
 };
 
 
+export type Query_RootPhotosArgs = {
+  distinct_on?: InputMaybe<Array<Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Photos_Order_By>>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+
+export type Query_RootPhotos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Photos_Order_By>>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+
+export type Query_RootPhotos_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
 export type Query_RootPlaylistArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -7774,6 +8673,30 @@ export type Query_RootPlaylist_Audios_By_PkArgs = {
 
 export type Query_RootPlaylist_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+export type Query_RootPlaylist_PhotosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+export type Query_RootPlaylist_Photos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+export type Query_RootPlaylist_Photos_By_PkArgs = {
+  photo_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
 };
 
 
@@ -9182,6 +10105,14 @@ export type Subscription_Root = {
   notifications_by_pk?: Maybe<Notifications>;
   /** fetch data from the table in a streaming manner: "notifications" */
   notifications_stream: Array<Notifications>;
+  /** fetch data from the table: "photos" */
+  photos: Array<Photos>;
+  /** fetch aggregated fields from the table: "photos" */
+  photos_aggregate: Photos_Aggregate;
+  /** fetch data from the table: "photos" using primary key columns */
+  photos_by_pk?: Maybe<Photos>;
+  /** fetch data from the table in a streaming manner: "photos" */
+  photos_stream: Array<Photos>;
   /** fetch data from the table: "playlist" */
   playlist: Array<Playlist>;
   /** fetch aggregated fields from the table: "playlist" */
@@ -9196,6 +10127,14 @@ export type Subscription_Root = {
   playlist_audios_stream: Array<Playlist_Audios>;
   /** fetch data from the table: "playlist" using primary key columns */
   playlist_by_pk?: Maybe<Playlist>;
+  /** An array relationship */
+  playlist_photos: Array<Playlist_Photos>;
+  /** An aggregate relationship */
+  playlist_photos_aggregate: Playlist_Photos_Aggregate;
+  /** fetch data from the table: "playlist_photos" using primary key columns */
+  playlist_photos_by_pk?: Maybe<Playlist_Photos>;
+  /** fetch data from the table in a streaming manner: "playlist_photos" */
+  playlist_photos_stream: Array<Playlist_Photos>;
   /** fetch data from the table in a streaming manner: "playlist" */
   playlist_stream: Array<Playlist>;
   /** An array relationship */
@@ -9660,6 +10599,36 @@ export type Subscription_RootNotifications_StreamArgs = {
 };
 
 
+export type Subscription_RootPhotosArgs = {
+  distinct_on?: InputMaybe<Array<Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Photos_Order_By>>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+
+export type Subscription_RootPhotos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Photos_Order_By>>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+
+export type Subscription_RootPhotos_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootPhotos_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Photos_Stream_Cursor_Input>>;
+  where?: InputMaybe<Photos_Bool_Exp>;
+};
+
+
 export type Subscription_RootPlaylistArgs = {
   distinct_on?: InputMaybe<Array<Playlist_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -9711,6 +10680,37 @@ export type Subscription_RootPlaylist_Audios_StreamArgs = {
 
 export type Subscription_RootPlaylist_By_PkArgs = {
   id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootPlaylist_PhotosArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+export type Subscription_RootPlaylist_Photos_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Playlist_Photos_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Playlist_Photos_Order_By>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
+};
+
+
+export type Subscription_RootPlaylist_Photos_By_PkArgs = {
+  photo_id: Scalars['uuid']['input'];
+  playlist_id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootPlaylist_Photos_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Playlist_Photos_Stream_Cursor_Input>>;
+  where?: InputMaybe<Playlist_Photos_Bool_Exp>;
 };
 
 
@@ -14325,6 +15325,49 @@ export type ListenPlaylistsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ListenPlaylistsQuery = { __typename?: 'query_root', playlist: Array<{ __typename?: 'playlist', id: any, title: string, slug: string }> };
 
+export type LookAlbumsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LookAlbumsQuery = { __typename?: 'query_root', playlist: Array<(
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'AlbumFieldsFragment': AlbumFieldsFragment } }
+  )> };
+
+export type LookAlbumDetailQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type LookAlbumDetailQuery = { __typename?: 'query_root', playlist_by_pk?: (
+    { __typename?: 'playlist' }
+    & { ' $fragmentRefs'?: { 'AlbumFieldsFragment': AlbumFieldsFragment } }
+  ) | null };
+
+export type PhotoFieldsFragment = { __typename?: 'photos', id: any, source: string, mediumUrl?: string | null, thumbnailUrl?: string | null, blurHash?: string | null, width?: number | null, height?: number | null, takenAt?: any | null, slug?: string | null } & { ' $fragmentName'?: 'PhotoFieldsFragment' };
+
+export type AlbumFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl?: string | null, slug: string, createdAt: any, description?: string | null, playlist_photos: Array<{ __typename?: 'playlist_photos', position: number, photo: (
+      { __typename?: 'photos' }
+      & { ' $fragmentRefs'?: { 'PhotoFieldsFragment': PhotoFieldsFragment } }
+    ) }> } & { ' $fragmentName'?: 'AlbumFieldsFragment' };
+
+export type LookPhotoDetailQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type LookPhotoDetailQuery = { __typename?: 'query_root', photos_by_pk?: (
+    { __typename?: 'photos' }
+    & { ' $fragmentRefs'?: { 'PhotoFieldsFragment': PhotoFieldsFragment } }
+  ) | null };
+
+export type LookPhotosQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LookPhotosQuery = { __typename?: 'query_root', photos: Array<(
+    { __typename?: 'photos' }
+    & { ' $fragmentRefs'?: { 'PhotoFieldsFragment': PhotoFieldsFragment } }
+  )> };
+
 export type InsertPostMutationVariables = Exact<{
   object: Posts_Insert_Input;
 }>;
@@ -14632,6 +15675,45 @@ fragment PlaylistAudioFields on playlist_audios {
     ...AudioFields
   }
 }`, {"fragmentName":"ListenPlaylistFields"}) as unknown as TypedDocumentString<ListenPlaylistFieldsFragment, unknown>;
+export const PhotoFieldsFragmentDoc = new TypedDocumentString(`
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}
+    `, {"fragmentName":"PhotoFields"}) as unknown as TypedDocumentString<PhotoFieldsFragment, unknown>;
+export const AlbumFieldsFragmentDoc = new TypedDocumentString(`
+    fragment AlbumFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  playlist_photos(order_by: {position: asc}) {
+    position
+    photo {
+      ...PhotoFields
+    }
+  }
+}
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}`, {"fragmentName":"AlbumFields"}) as unknown as TypedDocumentString<AlbumFieldsFragment, unknown>;
 export const UserFieldsFragmentDoc = new TypedDocumentString(`
     fragment UserFields on users {
   username
@@ -15249,6 +16331,102 @@ export const ListenPlaylistsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ListenPlaylistsQuery, ListenPlaylistsQueryVariables>;
+export const LookAlbumsDocument = new TypedDocumentString(`
+    query LookAlbums @cached {
+  playlist(where: {site: {_eq: "look"}}, order_by: {createdAt: desc}) {
+    ...AlbumFields
+  }
+}
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}
+fragment AlbumFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  playlist_photos(order_by: {position: asc}) {
+    position
+    photo {
+      ...PhotoFields
+    }
+  }
+}`) as unknown as TypedDocumentString<LookAlbumsQuery, LookAlbumsQueryVariables>;
+export const LookAlbumDetailDocument = new TypedDocumentString(`
+    query LookAlbumDetail($id: uuid!) @cached {
+  playlist_by_pk(id: $id) {
+    ...AlbumFields
+  }
+}
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}
+fragment AlbumFields on playlist {
+  id
+  title
+  thumbnailUrl
+  slug
+  createdAt
+  description
+  playlist_photos(order_by: {position: asc}) {
+    position
+    photo {
+      ...PhotoFields
+    }
+  }
+}`) as unknown as TypedDocumentString<LookAlbumDetailQuery, LookAlbumDetailQueryVariables>;
+export const LookPhotoDetailDocument = new TypedDocumentString(`
+    query LookPhotoDetail($id: uuid!) @cached {
+  photos_by_pk(id: $id) {
+    ...PhotoFields
+  }
+}
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}`) as unknown as TypedDocumentString<LookPhotoDetailQuery, LookPhotoDetailQueryVariables>;
+export const LookPhotosDocument = new TypedDocumentString(`
+    query LookPhotos @cached {
+  photos(order_by: {takenAt: desc}) {
+    ...PhotoFields
+  }
+}
+    fragment PhotoFields on photos {
+  id
+  source
+  mediumUrl
+  thumbnailUrl
+  blurHash
+  width
+  height
+  takenAt
+  slug
+}`) as unknown as TypedDocumentString<LookPhotosQuery, LookPhotosQueryVariables>;
 export const InsertPostDocument = new TypedDocumentString(`
     mutation InsertPost($object: posts_insert_input!) {
   insert_posts_one(object: $object) {

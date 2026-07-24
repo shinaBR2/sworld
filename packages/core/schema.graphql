@@ -3903,6 +3903,17 @@ type mutation_root {
   """
   delete_notifications_by_pk(id: uuid!): notifications
   """
+  delete data from the table: "photos"
+  """
+  delete_photos(
+    """filter the rows which have to be deleted"""
+    where: photos_bool_exp!
+  ): photos_mutation_response
+  """
+  delete single row from the table: "photos"
+  """
+  delete_photos_by_pk(id: uuid!): photos
+  """
   delete data from the table: "playlist"
   """
   delete_playlist(
@@ -3924,6 +3935,17 @@ type mutation_root {
   delete single row from the table: "playlist"
   """
   delete_playlist_by_pk(id: uuid!): playlist
+  """
+  delete data from the table: "playlist_photos"
+  """
+  delete_playlist_photos(
+    """filter the rows which have to be deleted"""
+    where: playlist_photos_bool_exp!
+  ): playlist_photos_mutation_response
+  """
+  delete single row from the table: "playlist_photos"
+  """
+  delete_playlist_photos_by_pk(photo_id: uuid!, playlist_id: uuid!): playlist_photos
   """
   delete data from the table: "playlist_videos"
   """
@@ -4307,6 +4329,24 @@ type mutation_root {
     on_conflict: notifications_on_conflict
   ): notifications
   """
+  insert data into the table: "photos"
+  """
+  insert_photos(
+    """the rows to be inserted"""
+    objects: [photos_insert_input!]!
+    """upsert condition"""
+    on_conflict: photos_on_conflict
+  ): photos_mutation_response
+  """
+  insert a single row into the table: "photos"
+  """
+  insert_photos_one(
+    """the row to be inserted"""
+    object: photos_insert_input!
+    """upsert condition"""
+    on_conflict: photos_on_conflict
+  ): photos
+  """
   insert data into the table: "playlist"
   """
   insert_playlist(
@@ -4342,6 +4382,24 @@ type mutation_root {
     """upsert condition"""
     on_conflict: playlist_on_conflict
   ): playlist
+  """
+  insert data into the table: "playlist_photos"
+  """
+  insert_playlist_photos(
+    """the rows to be inserted"""
+    objects: [playlist_photos_insert_input!]!
+    """upsert condition"""
+    on_conflict: playlist_photos_on_conflict
+  ): playlist_photos_mutation_response
+  """
+  insert a single row into the table: "playlist_photos"
+  """
+  insert_playlist_photos_one(
+    """the row to be inserted"""
+    object: playlist_photos_insert_input!
+    """upsert condition"""
+    on_conflict: playlist_photos_on_conflict
+  ): playlist_photos
   """
   insert data into the table: "playlist_videos"
   """
@@ -5023,6 +5081,34 @@ type mutation_root {
     updates: [notifications_updates!]!
   ): [notifications_mutation_response]
   """
+  update data of the table: "photos"
+  """
+  update_photos(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: photos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: photos_set_input
+    """filter the rows which have to be updated"""
+    where: photos_bool_exp!
+  ): photos_mutation_response
+  """
+  update single row of the table: "photos"
+  """
+  update_photos_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: photos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: photos_set_input
+    pk_columns: photos_pk_columns_input!
+  ): photos
+  """
+  update multiples rows of table: "photos"
+  """
+  update_photos_many(
+    """updates to execute, in order"""
+    updates: [photos_updates!]!
+  ): [photos_mutation_response]
+  """
   update data of the table: "playlist"
   """
   update_playlist(
@@ -5106,6 +5192,34 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [playlist_updates!]!
   ): [playlist_mutation_response]
+  """
+  update data of the table: "playlist_photos"
+  """
+  update_playlist_photos(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: playlist_photos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_photos_set_input
+    """filter the rows which have to be updated"""
+    where: playlist_photos_bool_exp!
+  ): playlist_photos_mutation_response
+  """
+  update single row of the table: "playlist_photos"
+  """
+  update_playlist_photos_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: playlist_photos_inc_input
+    """sets the columns of the filtered rows to the given values"""
+    _set: playlist_photos_set_input
+    pk_columns: playlist_photos_pk_columns_input!
+  ): playlist_photos
+  """
+  update multiples rows of table: "playlist_photos"
+  """
+  update_playlist_photos_many(
+    """updates to execute, in order"""
+    updates: [playlist_photos_updates!]!
+  ): [playlist_photos_mutation_response]
   """
   update data of the table: "playlist_videos"
   """
@@ -6007,6 +6121,391 @@ enum order_by {
   desc_nulls_last
 }
 
+"""Image metadata for the Look app"""
+type photos {
+  blurHash: String
+  createdAt: timestamptz!
+  height: Int
+  id: uuid!
+  mediumUrl: String
+  """An array relationship"""
+  playlist_photos(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): [playlist_photos!]!
+  """An aggregate relationship"""
+  playlist_photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): playlist_photos_aggregate!
+  public: Boolean!
+  slug: String
+  source: String!
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz!
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+  width: Int
+}
+
+"""
+aggregated selection of "photos"
+"""
+type photos_aggregate {
+  aggregate: photos_aggregate_fields
+  nodes: [photos!]!
+}
+
+"""
+aggregate fields of "photos"
+"""
+type photos_aggregate_fields {
+  avg: photos_avg_fields
+  count(columns: [photos_select_column!], distinct: Boolean): Int!
+  max: photos_max_fields
+  min: photos_min_fields
+  stddev: photos_stddev_fields
+  stddev_pop: photos_stddev_pop_fields
+  stddev_samp: photos_stddev_samp_fields
+  sum: photos_sum_fields
+  var_pop: photos_var_pop_fields
+  var_samp: photos_var_samp_fields
+  variance: photos_variance_fields
+}
+
+"""aggregate avg on columns"""
+type photos_avg_fields {
+  height: Float
+  width: Float
+}
+
+"""
+Boolean expression to filter rows from the table "photos". All fields are combined with a logical 'AND'.
+"""
+input photos_bool_exp {
+  _and: [photos_bool_exp!]
+  _not: photos_bool_exp
+  _or: [photos_bool_exp!]
+  blurHash: String_comparison_exp
+  createdAt: timestamptz_comparison_exp
+  height: Int_comparison_exp
+  id: uuid_comparison_exp
+  mediumUrl: String_comparison_exp
+  playlist_photos: playlist_photos_bool_exp
+  playlist_photos_aggregate: playlist_photos_aggregate_bool_exp
+  public: Boolean_comparison_exp
+  slug: String_comparison_exp
+  source: String_comparison_exp
+  takenAt: timestamptz_comparison_exp
+  thumbnailUrl: String_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+  width: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "photos"
+"""
+enum photos_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  photos_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "photos"
+"""
+input photos_inc_input {
+  height: Int
+  width: Int
+}
+
+"""
+input type for inserting data into table "photos"
+"""
+input photos_insert_input {
+  blurHash: String
+  createdAt: timestamptz
+  height: Int
+  id: uuid
+  mediumUrl: String
+  playlist_photos: playlist_photos_arr_rel_insert_input
+  public: Boolean
+  slug: String
+  source: String
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user: users_obj_rel_insert_input
+  user_id: uuid
+  width: Int
+}
+
+"""aggregate max on columns"""
+type photos_max_fields {
+  blurHash: String
+  createdAt: timestamptz
+  height: Int
+  id: uuid
+  mediumUrl: String
+  slug: String
+  source: String
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+  width: Int
+}
+
+"""aggregate min on columns"""
+type photos_min_fields {
+  blurHash: String
+  createdAt: timestamptz
+  height: Int
+  id: uuid
+  mediumUrl: String
+  slug: String
+  source: String
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+  width: Int
+}
+
+"""
+response of any mutation on the table "photos"
+"""
+type photos_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [photos!]!
+}
+
+"""
+input type for inserting object relation for remote table "photos"
+"""
+input photos_obj_rel_insert_input {
+  data: photos_insert_input!
+  """upsert condition"""
+  on_conflict: photos_on_conflict
+}
+
+"""
+on_conflict condition type for table "photos"
+"""
+input photos_on_conflict {
+  constraint: photos_constraint!
+  update_columns: [photos_update_column!]! = []
+  where: photos_bool_exp
+}
+
+"""Ordering options when selecting data from "photos"."""
+input photos_order_by {
+  blurHash: order_by
+  createdAt: order_by
+  height: order_by
+  id: order_by
+  mediumUrl: order_by
+  playlist_photos_aggregate: playlist_photos_aggregate_order_by
+  public: order_by
+  slug: order_by
+  source: order_by
+  takenAt: order_by
+  thumbnailUrl: order_by
+  updatedAt: order_by
+  user: users_order_by
+  user_id: order_by
+  width: order_by
+}
+
+"""primary key columns input for table: photos"""
+input photos_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "photos"
+"""
+enum photos_select_column {
+  """column name"""
+  blurHash
+  """column name"""
+  createdAt
+  """column name"""
+  height
+  """column name"""
+  id
+  """column name"""
+  mediumUrl
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  source
+  """column name"""
+  takenAt
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  width
+}
+
+"""
+input type for updating data in table "photos"
+"""
+input photos_set_input {
+  blurHash: String
+  createdAt: timestamptz
+  height: Int
+  id: uuid
+  mediumUrl: String
+  public: Boolean
+  slug: String
+  source: String
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+  width: Int
+}
+
+"""aggregate stddev on columns"""
+type photos_stddev_fields {
+  height: Float
+  width: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type photos_stddev_pop_fields {
+  height: Float
+  width: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type photos_stddev_samp_fields {
+  height: Float
+  width: Float
+}
+
+"""
+Streaming cursor of the table "photos"
+"""
+input photos_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: photos_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input photos_stream_cursor_value_input {
+  blurHash: String
+  createdAt: timestamptz
+  height: Int
+  id: uuid
+  mediumUrl: String
+  public: Boolean
+  slug: String
+  source: String
+  takenAt: timestamptz
+  thumbnailUrl: String
+  updatedAt: timestamptz
+  user_id: uuid
+  width: Int
+}
+
+"""aggregate sum on columns"""
+type photos_sum_fields {
+  height: Int
+  width: Int
+}
+
+"""
+update columns of table "photos"
+"""
+enum photos_update_column {
+  """column name"""
+  blurHash
+  """column name"""
+  createdAt
+  """column name"""
+  height
+  """column name"""
+  id
+  """column name"""
+  mediumUrl
+  """column name"""
+  public
+  """column name"""
+  slug
+  """column name"""
+  source
+  """column name"""
+  takenAt
+  """column name"""
+  thumbnailUrl
+  """column name"""
+  updatedAt
+  """column name"""
+  user_id
+  """column name"""
+  width
+}
+
+input photos_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: photos_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: photos_set_input
+  """filter the rows which have to be updated"""
+  where: photos_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type photos_var_pop_fields {
+  height: Float
+  width: Float
+}
+
+"""aggregate var_samp on columns"""
+type photos_var_samp_fields {
+  height: Float
+  width: Float
+}
+
+"""aggregate variance on columns"""
+type photos_variance_fields {
+  height: Float
+  width: Float
+}
+
 """Playlist contain set of videos or audios"""
 type playlist {
   createdAt: timestamptz!
@@ -6038,6 +6537,32 @@ type playlist {
     """filter the rows returned"""
     where: playlist_audios_bool_exp
   ): playlist_audios_aggregate!
+  """An array relationship"""
+  playlist_photos(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): [playlist_photos!]!
+  """An aggregate relationship"""
+  playlist_photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): playlist_photos_aggregate!
   """An array relationship"""
   playlist_videos(
     """distinct select on columns"""
@@ -6567,6 +7092,8 @@ input playlist_bool_exp {
   id: uuid_comparison_exp
   playlist_audios: playlist_audios_bool_exp
   playlist_audios_aggregate: playlist_audios_aggregate_bool_exp
+  playlist_photos: playlist_photos_bool_exp
+  playlist_photos_aggregate: playlist_photos_aggregate_bool_exp
   playlist_videos: playlist_videos_bool_exp
   playlist_videos_aggregate: playlist_videos_aggregate_bool_exp
   public: Boolean_comparison_exp
@@ -6652,6 +7179,7 @@ input playlist_insert_input {
   description: String
   id: uuid
   playlist_audios: playlist_audios_arr_rel_insert_input
+  playlist_photos: playlist_photos_arr_rel_insert_input
   playlist_videos: playlist_videos_arr_rel_insert_input
   public: Boolean
   """Short id like Youtube video id"""
@@ -6772,6 +7300,7 @@ input playlist_order_by {
   description: order_by
   id: order_by
   playlist_audios_aggregate: playlist_audios_aggregate_order_by
+  playlist_photos_aggregate: playlist_photos_aggregate_order_by
   playlist_videos_aggregate: playlist_videos_aggregate_order_by
   public: order_by
   sId: order_by
@@ -6785,6 +7314,370 @@ input playlist_order_by {
   updatedAt: order_by
   user: users_order_by
   user_id: order_by
+}
+
+"""Junction table between photos and playlist"""
+type playlist_photos {
+  createdAt: timestamptz!
+  """An object relationship"""
+  photo: photos!
+  photo_id: uuid!
+  """An object relationship"""
+  playlist: playlist!
+  playlist_id: uuid!
+  position: Int!
+  updatedAt: timestamptz!
+}
+
+"""
+aggregated selection of "playlist_photos"
+"""
+type playlist_photos_aggregate {
+  aggregate: playlist_photos_aggregate_fields
+  nodes: [playlist_photos!]!
+}
+
+input playlist_photos_aggregate_bool_exp {
+  count: playlist_photos_aggregate_bool_exp_count
+}
+
+input playlist_photos_aggregate_bool_exp_count {
+  arguments: [playlist_photos_select_column!]
+  distinct: Boolean
+  filter: playlist_photos_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "playlist_photos"
+"""
+type playlist_photos_aggregate_fields {
+  avg: playlist_photos_avg_fields
+  count(columns: [playlist_photos_select_column!], distinct: Boolean): Int!
+  max: playlist_photos_max_fields
+  min: playlist_photos_min_fields
+  stddev: playlist_photos_stddev_fields
+  stddev_pop: playlist_photos_stddev_pop_fields
+  stddev_samp: playlist_photos_stddev_samp_fields
+  sum: playlist_photos_sum_fields
+  var_pop: playlist_photos_var_pop_fields
+  var_samp: playlist_photos_var_samp_fields
+  variance: playlist_photos_variance_fields
+}
+
+"""
+order by aggregate values of table "playlist_photos"
+"""
+input playlist_photos_aggregate_order_by {
+  avg: playlist_photos_avg_order_by
+  count: order_by
+  max: playlist_photos_max_order_by
+  min: playlist_photos_min_order_by
+  stddev: playlist_photos_stddev_order_by
+  stddev_pop: playlist_photos_stddev_pop_order_by
+  stddev_samp: playlist_photos_stddev_samp_order_by
+  sum: playlist_photos_sum_order_by
+  var_pop: playlist_photos_var_pop_order_by
+  var_samp: playlist_photos_var_samp_order_by
+  variance: playlist_photos_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "playlist_photos"
+"""
+input playlist_photos_arr_rel_insert_input {
+  data: [playlist_photos_insert_input!]!
+  """upsert condition"""
+  on_conflict: playlist_photos_on_conflict
+}
+
+"""aggregate avg on columns"""
+type playlist_photos_avg_fields {
+  position: Float
+}
+
+"""
+order by avg() on columns of table "playlist_photos"
+"""
+input playlist_photos_avg_order_by {
+  position: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "playlist_photos". All fields are combined with a logical 'AND'.
+"""
+input playlist_photos_bool_exp {
+  _and: [playlist_photos_bool_exp!]
+  _not: playlist_photos_bool_exp
+  _or: [playlist_photos_bool_exp!]
+  createdAt: timestamptz_comparison_exp
+  photo: photos_bool_exp
+  photo_id: uuid_comparison_exp
+  playlist: playlist_bool_exp
+  playlist_id: uuid_comparison_exp
+  position: Int_comparison_exp
+  updatedAt: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "playlist_photos"
+"""
+enum playlist_photos_constraint {
+  """
+  unique or primary key constraint on columns "photo_id", "playlist_id"
+  """
+  playlist_photos_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "playlist_photos"
+"""
+input playlist_photos_inc_input {
+  position: Int
+}
+
+"""
+input type for inserting data into table "playlist_photos"
+"""
+input playlist_photos_insert_input {
+  createdAt: timestamptz
+  photo: photos_obj_rel_insert_input
+  photo_id: uuid
+  playlist: playlist_obj_rel_insert_input
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""aggregate max on columns"""
+type playlist_photos_max_fields {
+  createdAt: timestamptz
+  photo_id: uuid
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+order by max() on columns of table "playlist_photos"
+"""
+input playlist_photos_max_order_by {
+  createdAt: order_by
+  photo_id: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""aggregate min on columns"""
+type playlist_photos_min_fields {
+  createdAt: timestamptz
+  photo_id: uuid
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""
+order by min() on columns of table "playlist_photos"
+"""
+input playlist_photos_min_order_by {
+  createdAt: order_by
+  photo_id: order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""
+response of any mutation on the table "playlist_photos"
+"""
+type playlist_photos_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+  """data from the rows affected by the mutation"""
+  returning: [playlist_photos!]!
+}
+
+"""
+on_conflict condition type for table "playlist_photos"
+"""
+input playlist_photos_on_conflict {
+  constraint: playlist_photos_constraint!
+  update_columns: [playlist_photos_update_column!]! = []
+  where: playlist_photos_bool_exp
+}
+
+"""Ordering options when selecting data from "playlist_photos"."""
+input playlist_photos_order_by {
+  createdAt: order_by
+  photo: photos_order_by
+  photo_id: order_by
+  playlist: playlist_order_by
+  playlist_id: order_by
+  position: order_by
+  updatedAt: order_by
+}
+
+"""primary key columns input for table: playlist_photos"""
+input playlist_photos_pk_columns_input {
+  photo_id: uuid!
+  playlist_id: uuid!
+}
+
+"""
+select columns of table "playlist_photos"
+"""
+enum playlist_photos_select_column {
+  """column name"""
+  createdAt
+  """column name"""
+  photo_id
+  """column name"""
+  playlist_id
+  """column name"""
+  position
+  """column name"""
+  updatedAt
+}
+
+"""
+input type for updating data in table "playlist_photos"
+"""
+input playlist_photos_set_input {
+  createdAt: timestamptz
+  photo_id: uuid
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""aggregate stddev on columns"""
+type playlist_photos_stddev_fields {
+  position: Float
+}
+
+"""
+order by stddev() on columns of table "playlist_photos"
+"""
+input playlist_photos_stddev_order_by {
+  position: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type playlist_photos_stddev_pop_fields {
+  position: Float
+}
+
+"""
+order by stddev_pop() on columns of table "playlist_photos"
+"""
+input playlist_photos_stddev_pop_order_by {
+  position: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type playlist_photos_stddev_samp_fields {
+  position: Float
+}
+
+"""
+order by stddev_samp() on columns of table "playlist_photos"
+"""
+input playlist_photos_stddev_samp_order_by {
+  position: order_by
+}
+
+"""
+Streaming cursor of the table "playlist_photos"
+"""
+input playlist_photos_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: playlist_photos_stream_cursor_value_input!
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input playlist_photos_stream_cursor_value_input {
+  createdAt: timestamptz
+  photo_id: uuid
+  playlist_id: uuid
+  position: Int
+  updatedAt: timestamptz
+}
+
+"""aggregate sum on columns"""
+type playlist_photos_sum_fields {
+  position: Int
+}
+
+"""
+order by sum() on columns of table "playlist_photos"
+"""
+input playlist_photos_sum_order_by {
+  position: order_by
+}
+
+"""
+update columns of table "playlist_photos"
+"""
+enum playlist_photos_update_column {
+  """column name"""
+  createdAt
+  """column name"""
+  photo_id
+  """column name"""
+  playlist_id
+  """column name"""
+  position
+  """column name"""
+  updatedAt
+}
+
+input playlist_photos_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: playlist_photos_inc_input
+  """sets the columns of the filtered rows to the given values"""
+  _set: playlist_photos_set_input
+  """filter the rows which have to be updated"""
+  where: playlist_photos_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type playlist_photos_var_pop_fields {
+  position: Float
+}
+
+"""
+order by var_pop() on columns of table "playlist_photos"
+"""
+input playlist_photos_var_pop_order_by {
+  position: order_by
+}
+
+"""aggregate var_samp on columns"""
+type playlist_photos_var_samp_fields {
+  position: Float
+}
+
+"""
+order by var_samp() on columns of table "playlist_photos"
+"""
+input playlist_photos_var_samp_order_by {
+  position: order_by
+}
+
+"""aggregate variance on columns"""
+type playlist_photos_variance_fields {
+  position: Float
+}
+
+"""
+order by variance() on columns of table "playlist_photos"
+"""
+input playlist_photos_variance_order_by {
+  position: order_by
 }
 
 """primary key columns input for table: playlist"""
@@ -7999,6 +8892,38 @@ type query_root {
   """fetch data from the table: "notifications" using primary key columns"""
   notifications_by_pk(id: uuid!): notifications
   """
+  fetch data from the table: "photos"
+  """
+  photos(
+    """distinct select on columns"""
+    distinct_on: [photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [photos_order_by!]
+    """filter the rows returned"""
+    where: photos_bool_exp
+  ): [photos!]!
+  """
+  fetch aggregated fields from the table: "photos"
+  """
+  photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [photos_order_by!]
+    """filter the rows returned"""
+    where: photos_bool_exp
+  ): photos_aggregate!
+  """fetch data from the table: "photos" using primary key columns"""
+  photos_by_pk(id: uuid!): photos
+  """
   fetch data from the table: "playlist"
   """
   playlist(
@@ -8058,6 +8983,34 @@ type query_root {
   playlist_audios_by_pk(audio_id: uuid!, playlist_id: uuid!): playlist_audios
   """fetch data from the table: "playlist" using primary key columns"""
   playlist_by_pk(id: uuid!): playlist
+  """An array relationship"""
+  playlist_photos(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): [playlist_photos!]!
+  """An aggregate relationship"""
+  playlist_photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): playlist_photos_aggregate!
+  """fetch data from the table: "playlist_photos" using primary key columns"""
+  playlist_photos_by_pk(photo_id: uuid!, playlist_id: uuid!): playlist_photos
   """An array relationship"""
   playlist_videos(
     """distinct select on columns"""
@@ -10022,6 +10975,49 @@ type subscription_root {
     where: notifications_bool_exp
   ): [notifications!]!
   """
+  fetch data from the table: "photos"
+  """
+  photos(
+    """distinct select on columns"""
+    distinct_on: [photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [photos_order_by!]
+    """filter the rows returned"""
+    where: photos_bool_exp
+  ): [photos!]!
+  """
+  fetch aggregated fields from the table: "photos"
+  """
+  photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [photos_order_by!]
+    """filter the rows returned"""
+    where: photos_bool_exp
+  ): photos_aggregate!
+  """fetch data from the table: "photos" using primary key columns"""
+  photos_by_pk(id: uuid!): photos
+  """
+  fetch data from the table in a streaming manner: "photos"
+  """
+  photos_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [photos_stream_cursor_input]!
+    """filter the rows returned"""
+    where: photos_bool_exp
+  ): [photos!]!
+  """
   fetch data from the table: "playlist"
   """
   playlist(
@@ -10092,6 +11088,45 @@ type subscription_root {
   ): [playlist_audios!]!
   """fetch data from the table: "playlist" using primary key columns"""
   playlist_by_pk(id: uuid!): playlist
+  """An array relationship"""
+  playlist_photos(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): [playlist_photos!]!
+  """An aggregate relationship"""
+  playlist_photos_aggregate(
+    """distinct select on columns"""
+    distinct_on: [playlist_photos_select_column!]
+    """limit the number of rows returned"""
+    limit: Int
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+    """sort the rows by one or more columns"""
+    order_by: [playlist_photos_order_by!]
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): playlist_photos_aggregate!
+  """fetch data from the table: "playlist_photos" using primary key columns"""
+  playlist_photos_by_pk(photo_id: uuid!, playlist_id: uuid!): playlist_photos
+  """
+  fetch data from the table in a streaming manner: "playlist_photos"
+  """
+  playlist_photos_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+    """cursor to stream the results returned by the query"""
+    cursor: [playlist_photos_stream_cursor_input]!
+    """filter the rows returned"""
+    where: playlist_photos_bool_exp
+  ): [playlist_photos!]!
   """
   fetch data from the table in a streaming manner: "playlist"
   """
