@@ -14,6 +14,7 @@
     "dev:game": "cp .env.development.local apps/game/.env.development.local && turbo watch 'dev' --filter=game",
     "dev:main": "cp .env.development.local apps/main/.env.development.local && turbo watch 'dev' --filter=main",
     "dev:watch": "cp .env.development.local apps/watch/.env.development.local && turbo watch 'dev' --filter=watch",
+    "dev:look": "cp .env.development.local apps/look/.env.development.local && turbo watch 'dev' --filter=look",
     "dev:til": "cp .env.development.local apps/til/.env.development.local && turbo watch 'dev' --filter=til",
     "dev:docs": "turbo watch 'dev' --filter=docs",
     "dev:extension": "turbo watch 'dev' --filter=extension",
