@@ -1,26 +1,12 @@
-import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { useLoadPhotos } from 'core/look/query-hooks/photos';
-import { useAuthContext } from 'core/providers/auth';
-import { PhotoTimelineContainer } from 'ui/look/home-page/container';
+import { createLazyFileRoute } from '@tanstack/react-router';
 import { AuthRoute } from 'ui/universal/authRoute';
-import { Layout } from '../components/layout';
-
-const Content = () => {
-  const { getAccessToken } = useAuthContext();
-  const photosResult = useLoadPhotos({ getAccessToken });
-
-  return (
-    <Layout>
-      <PhotoTimelineContainer queryRs={photosResult} LinkComponent={Link} />
-    </Layout>
-  );
-};
+import { TimelinePage } from '../components/timeline-page';
 
 export const Route = createLazyFileRoute('/')({
   component: () => {
     return (
       <AuthRoute>
-        <Content />
+        <TimelinePage />
       </AuthRoute>
     );
   },
