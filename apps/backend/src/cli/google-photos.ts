@@ -35,6 +35,15 @@
  * `photos/<userId>/<photoId>/{original,medium,thumb}.<ext>`, and the `insert_photos_one`
  * row — matches `image.ts` exactly, so photos ingested by either tool look identical.
  *
+ * VIDEOS in the export are ingested too: each is transcoded to HLS + a poster
+ * frame via the shared `./lib/video-ingest` pipeline and stored as a `type='video'`
+ * photo (HLS manifest in `source`, `duration` in seconds) under the same
+ * `photos/<userId>/<photoId>/` prefix. Date, dedup, and album linking are identical
+ * to an image — a video is "just another type of image". A Live/Motion Photo (a
+ * still plus a same-named video clip) ingests as just the still; the paired video is
+ * its motion component and is skipped, exactly as before video support. Formats Look
+ * still can't take (HEIC, …) are skipped and reported.
+ *
  * Dedup is by owner + slug: a photo Google placed in both an album and a year
  * bucket (Takeout duplicates it into each folder) is uploaded once; the second
  * sighting just links the existing photo into the album. Re-runs are idempotent.
@@ -64,6 +73,11 @@ import { GraphQLClient } from 'graphql-request';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import { flushThenExit } from './cli-exit';
+import {
+  isVideoFile,
+  probeVideo,
+  processVideoToStorage,
+} from './lib/video-ingest';
 
 // ─── Validation exit ─────────────────────────────────────────────────────────
 
@@ -262,25 +276,51 @@ const deriveMeta = (filePath: string): ImageMeta => {
   return { ext, slug };
 };
 
-/** The images in one folder, in filename (natural/numeric) order — the album order. */
-const imagesInFolder = (dir: string): string[] =>
-  readdirSync(dir)
-    .filter(
-      (name) =>
-        IMAGE_EXTENSIONS.has(path.extname(name).toLowerCase()) &&
-        statSync(path.join(dir, name)).isFile(),
-    )
-    .map((name) => path.join(dir, name))
-    // `img2` sorts before `img10`, not after — and this ordering is the album's.
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+type MediaKind = 'image' | 'video';
 
-/** Media Look can't take (video, HEIC, …), for the skipped-files report. */
+interface MediaFile {
+  path: string;
+  kind: MediaKind;
+}
+
+/**
+ * The ingestable media in one folder — images AND videos — in filename
+ * (natural/numeric) order, which is the album order. Each file is tagged with its
+ * kind so the caller dispatches to the image or the video ingest path. Videos are
+ * transcoded to HLS (see `./lib/video-ingest`); everything else about a video —
+ * date, dedup, album linking — is identical to an image.
+ */
+const mediaInFolder = (dir: string): MediaFile[] =>
+  readdirSync(dir)
+    .filter((name) => statSync(path.join(dir, name)).isFile())
+    .map((name) => path.join(dir, name))
+    .flatMap((full): MediaFile[] => {
+      const ext = path.extname(full).toLowerCase();
+      if (IMAGE_EXTENSIONS.has(ext)) return [{ path: full, kind: 'image' }];
+      if (isVideoFile(full)) return [{ path: full, kind: 'video' }];
+      return [];
+    })
+    // `img2` sorts before `img10`, not after — and this ordering is the album's.
+    // On a tie in the base name (a Live/Motion Photo's still + its video clip share
+    // one, e.g. `IMG_1.jpg` + `IMG_1.mp4`), the image sorts first so the STILL takes
+    // the slug and the video is recognised as its motion component (skipped below).
+    .sort((a, b) => {
+      const baseA = path.basename(a.path, path.extname(a.path));
+      const baseB = path.basename(b.path, path.extname(b.path));
+      const byBase = baseA.localeCompare(baseB, undefined, { numeric: true });
+      if (byBase !== 0) return byBase;
+      if (a.kind !== b.kind) return a.kind === 'image' ? -1 : 1;
+      return a.path.localeCompare(b.path, undefined, { numeric: true });
+    });
+
+/** Media Look can't take (HEIC, …) — neither image nor video — for the skipped-files report. */
 const skippedMediaInFolder = (dir: string): string[] =>
   readdirSync(dir).filter((name) => {
     const ext = path.extname(name).toLowerCase();
     return (
       ext !== '.json' &&
       !IMAGE_EXTENSIONS.has(ext) &&
+      !isVideoFile(name) &&
       statSync(path.join(dir, name)).isFile()
     );
   });
@@ -602,6 +642,47 @@ const createPhoto = async (
   return data.insert_photos_one.id;
 };
 
+interface VideoPhotoRow {
+  id: string;
+  /** HLS manifest URL (playlist.m3u8) — stored in `source`, exactly like a video. */
+  source: string;
+  mediumUrl: string;
+  thumbnailUrl: string;
+  blurHash: string;
+  width: number;
+  height: number;
+  duration: number;
+  takenAt: string;
+  slug: string;
+}
+
+/** Insert one `type='video'` photos row (HLS manifest in `source`, poster + duration). */
+const createVideoPhoto = async (
+  args: GooglePhotosArgs,
+  row: VideoPhotoRow,
+): Promise<string> => {
+  const data = await makeClient(args).request<{
+    insert_photos_one: { id: string };
+  }>(CREATE_PHOTO_MUTATION, {
+    object: {
+      id: row.id,
+      type: 'video',
+      source: row.source,
+      mediumUrl: row.mediumUrl,
+      thumbnailUrl: row.thumbnailUrl,
+      blurHash: row.blurHash,
+      width: row.width,
+      height: row.height,
+      duration: row.duration,
+      takenAt: row.takenAt,
+      slug: row.slug,
+      user_id: args.userId,
+      public: args.isPublic,
+    },
+  });
+  return data.insert_photos_one.id;
+};
+
 /**
  * Find-or-create the `site='look'` album by slug, returning its id and the next
  * free position. The cover (`thumbnail_url`) is set to the first photo's thumb
@@ -677,7 +758,7 @@ const linkPhoto = async (
 
 // ─── Per-file ingest ─────────────────────────────────────────────────────────
 
-type IngestOutcome = 'created' | 'existed' | 'dry-run' | 'failed';
+type IngestOutcome = 'created' | 'existed' | 'skipped' | 'dry-run' | 'failed';
 
 interface IngestResult {
   outcome: IngestOutcome;
@@ -691,7 +772,7 @@ const ingestOne = async (
   args: GooglePhotosArgs,
   bucket: Bucket | undefined,
   localFile: string,
-  seenSlugs: Set<string>,
+  seenSlugs: Map<string, MediaKind>,
 ): Promise<IngestResult> => {
   let meta: ImageMeta;
   try {
@@ -722,7 +803,7 @@ const ingestOne = async (
     );
     return { outcome: 'failed' };
   }
-  seenSlugs.add(meta.slug);
+  seenSlugs.set(meta.slug, 'image');
 
   if (args.dryRun) {
     const { takenAt, source } = await resolveTakenAt(localFile);
@@ -789,6 +870,127 @@ const ingestOne = async (
   return { outcome: 'created', photo: { id, thumbnailUrl }, source };
 };
 
+/**
+ * Ingest one video: resolve date (the same Takeout-aware sidecar → EXIF → mtime
+ * order as an image — Google writes the sidecar for videos too), dup-check by
+ * owner+slug, transcode to HLS + poster via the shared pipeline, upload, and
+ * insert a `type='video'` row. The container's own duration/date from the probe
+ * is not used here: the sidecar is the better date, exactly as for images.
+ */
+const ingestVideo = async (
+  args: GooglePhotosArgs,
+  bucket: Bucket | undefined,
+  localFile: string,
+  seenSlugs: Map<string, MediaKind>,
+): Promise<IngestResult> => {
+  let meta: ImageMeta;
+  try {
+    meta = deriveMeta(localFile);
+  } catch (error) {
+    console.error(
+      `  ✗ ${path.basename(localFile)}: ${(error as Error).message}`,
+    );
+    return { outcome: 'failed' };
+  }
+
+  // Same per-folder slug guard as images: two DISTINCT files that slugify alike
+  // would otherwise silently swallow the second — surface it so the operator
+  // renames one. (A video and an image that share a basename, e.g. `clip.jpg` +
+  // `clip.mp4`, also collide here by design — one photo per slug.)
+  // What already claimed this slug in the folder decides the outcome. A prior
+  // IMAGE is the still of a Live/Motion Photo (the still sorts first — see
+  // `mediaInFolder`): the still IS the photo, so skip its motion video benignly,
+  // the same outcome it had before video support. A prior VIDEO is instead a
+  // genuine two-distinct-file collision — surface it loudly like the image path
+  // does, so the operator renames one rather than silently losing the second clip.
+  const priorKind = seenSlugs.get(meta.slug);
+  if (priorKind === 'image') {
+    console.warn(
+      `  ⚠ ${meta.slug} — a still with this name was already ingested (a Live Photo); skipping its motion video.`,
+    );
+    return { outcome: 'skipped' };
+  }
+  if (priorKind === 'video') {
+    console.error(
+      `  ✗ ${path.basename(localFile)}: slug "${meta.slug}" collides with another video in this folder — rename to ingest both.`,
+    );
+    return { outcome: 'failed' };
+  }
+  seenSlugs.set(meta.slug, 'video');
+
+  if (args.dryRun) {
+    const { takenAt, source } = await resolveTakenAt(localFile);
+    // Duration is best-effort in a dry run — a probe failure shouldn't abort the
+    // preview, so report the date regardless.
+    let duration: number | undefined;
+    try {
+      duration = (await probeVideo(localFile)).duration;
+    } catch {
+      duration = undefined;
+    }
+    console.log(`  • ${path.basename(localFile)} (slug: ${meta.slug}) [video]`);
+    console.log(
+      `      taken_at: ${takenAt}  [${source}]${duration != null ? `  duration: ${duration}s` : ''}`,
+    );
+    return { outcome: 'dry-run', source };
+  }
+
+  // Already imported (same owner + slug): reuse the existing row for album linking.
+  if (!args.skipDb) {
+    const existing = await findPhoto(args, meta.slug);
+    if (existing) {
+      console.warn(`  ⚠ ${meta.slug} — already imported, reusing.`);
+      return { outcome: 'existed', photo: existing };
+    }
+  }
+
+  // bucket is only undefined on a dry run, which returned above.
+  if (!bucket) throw new Error('Storage bucket not initialised.');
+
+  const { takenAt, source: dateSource } = await resolveTakenAt(localFile);
+  const photoId = uuidv4();
+  const storageDir = `photos/${args.userId}/${photoId}`;
+
+  const result = await processVideoToStorage({
+    bucket,
+    bucketName: args.gcpBucket,
+    inputPath: localFile,
+    storageDir,
+  });
+  console.log(
+    `  ↑ ${storageDir}/ (${result.hlsFileCount} HLS files + poster medium/thumb)`,
+  );
+
+  if (args.skipDb) {
+    console.log(
+      `  ✓ ${meta.slug} (${result.width}×${result.height}, ${result.duration}s video, uploaded, DB skipped)`,
+    );
+    return { outcome: 'created', source: dateSource };
+  }
+
+  const id = await createVideoPhoto(args, {
+    id: photoId,
+    source: result.source,
+    mediumUrl: result.mediumUrl,
+    thumbnailUrl: result.thumbnailUrl,
+    blurHash: result.blurHash,
+    width: result.width,
+    height: result.height,
+    duration: result.duration,
+    takenAt,
+    slug: meta.slug,
+  });
+
+  console.log(
+    `  ✓ ${meta.slug} (${result.width}×${result.height}, ${result.duration}s video) [${dateSource}] → ${id}`,
+  );
+  return {
+    outcome: 'created',
+    photo: { id, thumbnailUrl: result.thumbnailUrl },
+    source: dateSource,
+  };
+};
+
 // ─── Per-folder ingest ───────────────────────────────────────────────────────
 
 interface Tallies {
@@ -813,31 +1015,36 @@ const ingestFolder = async (
   albumName: string | null,
   tallies: Tallies,
 ): Promise<void> => {
-  const files = imagesInFolder(folder);
+  const media = mediaInFolder(folder);
+  const imageCount = media.filter((item) => item.kind === 'image').length;
+  const videoCount = media.length - imageCount;
 
-  for (const media of skippedMediaInFolder(folder)) {
-    const ext = path.extname(media).toLowerCase();
+  for (const skipped of skippedMediaInFolder(folder)) {
+    const ext = path.extname(skipped).toLowerCase();
     tallies.skipped[ext] = (tallies.skipped[ext] ?? 0) + 1;
   }
 
   const label = albumName ? `album "${albumName}"` : 'loose (no album)';
   console.log(
-    `\n── ${path.basename(folder)} → ${label} (${files.length} images)`,
+    `\n── ${path.basename(folder)} → ${label} (${imageCount} images, ${videoCount} videos)`,
   );
 
   // Per-folder slug guard: only catches two DISTINCT files in THIS folder that
   // slugify alike. The same photo appearing across folders is deduped by the DB.
-  const seenSlugs = new Set<string>();
+  const seenSlugs = new Map<string, MediaKind>();
   let albumState: { id: string; nextPosition: number } | undefined;
 
-  for (const localFile of files) {
+  for (const item of media) {
     // One bad file in a folder shouldn't abort the rest — record it and move on.
     try {
-      const result = await ingestOne(args, bucket, localFile, seenSlugs);
+      const result =
+        item.kind === 'video'
+          ? await ingestVideo(args, bucket, item.path, seenSlugs)
+          : await ingestOne(args, bucket, item.path, seenSlugs);
       if (result.source) tallies.source[result.source] += 1;
       if (result.source === 'mtime') {
         tallies.mtimeFallback.push(
-          path.relative(args.takeout ?? folder, localFile),
+          path.relative(args.takeout ?? folder, item.path),
         );
       }
 
@@ -866,7 +1073,7 @@ const ingestFolder = async (
       tallies.outcome[result.outcome] += 1;
     } catch (error) {
       console.error(
-        `  ✗ ${path.basename(localFile)}: ${(error as Error).message}`,
+        `  ✗ ${path.basename(item.path)}: ${(error as Error).message}`,
       );
       tallies.outcome.failed += 1;
     }
@@ -956,7 +1163,7 @@ const handle = async (rawArgs: string[]): Promise<void> => {
     : createStorage(args.gcpKeyPath).bucket(args.gcpBucket);
 
   const tallies: Tallies = {
-    outcome: { created: 0, existed: 0, 'dry-run': 0, failed: 0 },
+    outcome: { created: 0, existed: 0, skipped: 0, 'dry-run': 0, failed: 0 },
     source: { sidecar: 0, exif: 0, mtime: 0 },
     mtimeFallback: [],
     skipped: {},
@@ -969,7 +1176,7 @@ const handle = async (rawArgs: string[]): Promise<void> => {
   // ─── Report ────────────────────────────────────────────────────────────────
   console.log('\n=== Done ===');
   console.log(
-    `  Created: ${tallies.outcome.created}  Existed: ${tallies.outcome.existed}  Planned: ${tallies.outcome['dry-run']}  Failed: ${tallies.outcome.failed}`,
+    `  Created: ${tallies.outcome.created}  Existed: ${tallies.outcome.existed}  Skipped: ${tallies.outcome.skipped}  Planned: ${tallies.outcome['dry-run']}  Failed: ${tallies.outcome.failed}`,
   );
   console.log(
     `  Dates → sidecar: ${tallies.source.sidecar}  exif: ${tallies.source.exif}  mtime: ${tallies.source.mtime}`,
@@ -986,7 +1193,7 @@ const handle = async (rawArgs: string[]): Promise<void> => {
   if (skippedEntries.length > 0) {
     const summary = skippedEntries.map(([ext, n]) => `${n}${ext}`).join(', ');
     console.log(
-      `\n  Skipped non-image media (Look is images-only): ${summary}`,
+      `\n  Skipped unsupported media (neither image nor video): ${summary}`,
     );
   }
 
@@ -1051,6 +1258,9 @@ const main = (): void => {
     );
     console.log('');
     console.log('Dates resolve: sidecar photoTakenTime → EXIF → file mtime.');
+    console.log(
+      'Videos in the export are transcoded to HLS and stored as type=video photos.',
+    );
     return;
   }
 
