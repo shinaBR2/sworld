@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
+import { alpha, type Theme } from '@mui/material/styles';
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { useEffect, useMemo } from 'react';
 import { LightboxImage } from '../lightbox-image';
@@ -17,15 +18,21 @@ interface PhotoLightboxProps {
   onActiveIdChange: (id: string) => void;
 }
 
-const EDGE_BUTTON_SX = {
+// The viewer is always solid black (see the paper sx below), so the controls
+// can't use theme text/action tokens — those follow the app's light/dark mode
+// and vanish against black. Pin them to white with a translucent-white hover
+// scrim, derived from the palette (not a raw rgba), so they read on black and
+// over any photo.
+const CONTROL_COLOR = 'common.white';
+const EDGE_BUTTON_SX = (theme: Theme) => ({
   position: 'absolute',
   top: '50%',
   transform: 'translateY(-50%)',
   zIndex: 1,
-  color: 'text.primary',
-  bgcolor: 'action.hover',
-  '&:hover': { bgcolor: 'action.selected' },
-} as const;
+  color: CONTROL_COLOR,
+  bgcolor: alpha(theme.palette.common.white, 0.12),
+  '&:hover': { bgcolor: alpha(theme.palette.common.white, 0.24) },
+});
 
 // Full-screen photo viewer. MUI Dialog gives the focus trap, backdrop, and
 // Escape-to-close; a document-level key listener adds ←/→ navigation. Navigation
@@ -73,8 +80,11 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
       fullScreen
       aria-label="Photo viewer"
       slotProps={{
+        // Solid black viewer, like Google Photos: the photo is letterboxed
+        // (object-fit: contain) and everything around it stays pure black in
+        // both themes, not the app's tinted surface color.
         paper: {
-          sx: { bgcolor: 'background.default', backgroundImage: 'none' },
+          sx: { bgcolor: 'common.black', backgroundImage: 'none' },
         },
       }}
     >
@@ -87,7 +97,7 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
             top: 1,
             right: 1,
             zIndex: 1,
-            color: 'text.primary',
+            color: CONTROL_COLOR,
           }}
         >
           <CloseIcon />
@@ -96,7 +106,7 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
           aria-label="Previous photo"
           onClick={() => prevId && onActiveIdChange(prevId)}
           disabled={!prevId}
-          sx={{ ...EDGE_BUTTON_SX, left: 1 }}
+          sx={[EDGE_BUTTON_SX, { left: 1 }]}
         >
           <ChevronLeftIcon />
         </IconButton>
@@ -104,7 +114,7 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
           aria-label="Next photo"
           onClick={() => nextId && onActiveIdChange(nextId)}
           disabled={!nextId}
-          sx={{ ...EDGE_BUTTON_SX, right: 1 }}
+          sx={[EDGE_BUTTON_SX, { right: 1 }]}
         >
           <ChevronRightIcon />
         </IconButton>
