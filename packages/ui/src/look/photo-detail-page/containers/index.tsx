@@ -107,13 +107,17 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
         <IconButton
           aria-label="Close"
           onClick={onClose}
-          sx={{
+          sx={(theme) => ({
             position: 'absolute',
             top: 1,
             right: 1,
             zIndex: 1,
             color: CONTROL_COLOR,
-          }}
+            // Bare white X at rest (like Google Photos), but a translucent-white
+            // hover so it gets the same feedback as the nav arrows on black —
+            // the theme default hover is a near-invisible dark tint here.
+            '&:hover': { bgcolor: alpha(theme.palette.common.white, 0.24) },
+          })}
         >
           <CloseIcon />
         </IconButton>
