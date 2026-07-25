@@ -67,6 +67,8 @@
     "@mui/icons-material": "^9.1.1",
     "@mui/material": "^9.1.2",
     "@tanstack/react-router": "^1.170.16",
+    "@tanstack/react-virtual": "3.14.6",
+    "blurhash": "2.0.5",
     "core": "workspace:*",
     "echarts": "^6.1.0",
     "echarts-for-react": "^3.0.2",
