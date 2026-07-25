@@ -12,16 +12,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 
-const AlbumsLazyRouteImport = createFileRoute('/albums')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const PhotoPhotoIdLazyRouteImport = createFileRoute('/photo/$photoId')()
 const AlbumAlbumIdLazyRouteImport = createFileRoute('/album/$albumId')()
 
-const AlbumsLazyRoute = AlbumsLazyRouteImport.update({
-  id: '/albums',
-  path: '/albums',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/albums.lazy').then((d) => d.Route))
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -44,47 +38,36 @@ const AlbumAlbumIdLazyRoute = AlbumAlbumIdLazyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/albums': typeof AlbumsLazyRoute
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/albums': typeof AlbumsLazyRoute
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
-  '/albums': typeof AlbumsLazyRoute
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/albums' | '/album/$albumId' | '/photo/$photoId'
+  fullPaths: '/' | '/album/$albumId' | '/photo/$photoId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/albums' | '/album/$albumId' | '/photo/$photoId'
-  id: '__root__' | '/' | '/albums' | '/album/$albumId' | '/photo/$photoId'
+  to: '/' | '/album/$albumId' | '/photo/$photoId'
+  id: '__root__' | '/' | '/album/$albumId' | '/photo/$photoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  AlbumsLazyRoute: typeof AlbumsLazyRoute
   AlbumAlbumIdLazyRoute: typeof AlbumAlbumIdLazyRoute
   PhotoPhotoIdLazyRoute: typeof PhotoPhotoIdLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/albums': {
-      id: '/albums'
-      path: '/albums'
-      fullPath: '/albums'
-      preLoaderRoute: typeof AlbumsLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -111,7 +94,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  AlbumsLazyRoute: AlbumsLazyRoute,
   AlbumAlbumIdLazyRoute: AlbumAlbumIdLazyRoute,
   PhotoPhotoIdLazyRoute: PhotoPhotoIdLazyRoute,
 }

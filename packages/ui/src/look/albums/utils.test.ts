@@ -1,22 +1,6 @@
-import type {
-  TransformedAlbum,
-  TransformedPhoto,
-} from 'core/look/query-hooks/types';
+import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { describe, expect, it } from 'vitest';
-import { buildAlbumRows, formatPhotoCount, genAlbumLinkProps } from './utils';
-
-const makeAlbum = (
-  overrides: Partial<TransformedAlbum> = {},
-): TransformedAlbum => ({
-  id: 'album-1',
-  title: 'Test Album',
-  thumbnailUrl: 'https://example.com/cover.jpg',
-  slug: 'test-album',
-  createdAt: '2023-01-01T00:00:00Z',
-  description: '',
-  photos: [],
-  ...overrides,
-});
+import { buildAlbumRows, formatPhotoCount } from './utils';
 
 const makePhotos = (count: number): TransformedPhoto[] =>
   Array.from({ length: count }, (_, index) => ({
@@ -30,18 +14,6 @@ const makePhotos = (count: number): TransformedPhoto[] =>
     takenAt: '2023-06-01T10:00:00Z',
     slug: `photo-${index}`,
   }));
-
-describe('genAlbumLinkProps', () => {
-  it('uses the album id as the route param', () => {
-    const result = genAlbumLinkProps(
-      makeAlbum({ id: 'album-9', slug: 'holiday' }),
-    );
-    expect(result).toEqual({
-      to: '/album/$albumId',
-      params: { albumId: 'album-9' },
-    });
-  });
-});
 
 describe('formatPhotoCount', () => {
   it('uses the singular noun for exactly one photo', () => {

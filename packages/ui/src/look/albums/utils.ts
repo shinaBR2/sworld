@@ -1,10 +1,5 @@
-import type {
-  TransformedAlbum,
-  TransformedPhoto,
-} from 'core/look/query-hooks/types';
+import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { chunk } from '../home-page/utils';
-
-const ALBUM_ROUTE = '/album/$albumId';
 
 // The virtualizer's row model for one album: a single header row (album title,
 // description, count), then either an empty-state row or the photos chunked into
@@ -32,15 +27,8 @@ const buildAlbumRows = (
   return rows;
 };
 
-// The route param is the album id (uuid): the detail route fetches by primary
-// key, so the id — not the slug — is what the URL must carry.
-const genAlbumLinkProps = (album: TransformedAlbum) => ({
-  to: ALBUM_ROUTE,
-  params: { albumId: album.id },
-});
-
 const formatPhotoCount = (count: number): string =>
   count === 1 ? '1 photo' : `${count} photos`;
 
-export { buildAlbumRows, formatPhotoCount, genAlbumLinkProps };
+export { buildAlbumRows, formatPhotoCount };
 export type { AlbumRow };

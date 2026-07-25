@@ -11,7 +11,7 @@ const Content = () => {
   const albumResult = useLoadAlbumDetail({ id: albumId, getAccessToken });
 
   return (
-    <Layout>
+    <Layout collectionValue={albumId}>
       <AlbumDetailContainer queryRs={albumResult} LinkComponent={Link} />
     </Layout>
   );
