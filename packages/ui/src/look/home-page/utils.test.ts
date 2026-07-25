@@ -146,17 +146,9 @@ describe('resolveColumns', () => {
 });
 
 describe('genPhotoLinkProps', () => {
-  it('uses the slug as the route param when present', () => {
-    const result = genPhotoLinkProps(makePhoto('a', null, { slug: 'sunset' }));
-    expect(result).toEqual({
-      to: '/photo/$photoId',
-      params: { photoId: 'sunset' },
-    });
-  });
-
-  it('falls back to the id when the slug is null', () => {
+  it('uses the photo id as the route param', () => {
     const result = genPhotoLinkProps(
-      makePhoto('photo-1', null, { slug: null }),
+      makePhoto('photo-1', null, { slug: 'sunset' }),
     );
     expect(result).toEqual({
       to: '/photo/$photoId',

@@ -1,22 +1,23 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { useLoadPhotos } from 'core/look/query-hooks/photos';
+import { useLoadAlbumDetail } from 'core/look/query-hooks/albums';
 import { useAuthContext } from 'core/providers/auth';
-import { PhotoTimelineContainer } from 'ui/look/home-page/container';
+import { AlbumDetailContainer } from 'ui/look/albums/album-detail';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { Layout } from '../components/layout';
 
 const Content = () => {
+  const { albumId } = Route.useParams();
   const { getAccessToken } = useAuthContext();
-  const photosResult = useLoadPhotos({ getAccessToken });
+  const albumResult = useLoadAlbumDetail({ id: albumId, getAccessToken });
 
   return (
     <Layout>
-      <PhotoTimelineContainer queryRs={photosResult} LinkComponent={Link} />
+      <AlbumDetailContainer queryRs={albumResult} LinkComponent={Link} />
     </Layout>
   );
 };
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/album/$albumId')({
   component: () => {
     return (
       <AuthRoute>
