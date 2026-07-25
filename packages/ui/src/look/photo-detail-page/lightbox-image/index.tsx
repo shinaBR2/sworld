@@ -1,27 +1,24 @@
 import Stack from '@mui/material/Stack';
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { blurHashToDataUri } from '../../photos/blur-image/blurhash';
+import { useEffect, useRef, useState } from 'react';
 import { LightboxImageLayer } from './styled';
 
 interface LightboxImageProps {
   photo: TransformedPhoto;
 }
 
-// Progressive full-screen image: the blur-hash placeholder shows immediately,
-// the medium resolution fades in over it, then the full original fades in on
-// top once loaded. Mount this keyed by photo id so each photo starts fresh.
+// Progressive full-screen image: the medium resolution fades in first, then the
+// full original fades in on top once loaded. Both are letterboxed
+// (object-fit: contain) over the viewer's solid black, so the margins stay
+// black. No blur-hash background here — decoded to a fixed square it can't match
+// a photo's aspect ratio and would bleed into the black letterbox. Mount this
+// keyed by photo id so each photo starts fresh.
 const LightboxImage = (props: LightboxImageProps) => {
   const { photo } = props;
   const previewRef = useRef<HTMLImageElement>(null);
   const fullRef = useRef<HTMLImageElement>(null);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [fullLoaded, setFullLoaded] = useState(false);
-
-  const placeholder = useMemo(
-    () => blurHashToDataUri(photo.blurHash),
-    [photo.blurHash],
-  );
 
   const previewSrc = photo.mediumUrl || photo.thumbnailUrl;
   const fullSrc = photo.source || previewSrc;
@@ -42,17 +39,7 @@ const LightboxImage = (props: LightboxImageProps) => {
   }, []);
 
   return (
-    <Stack
-      sx={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        backgroundImage: placeholder ? `url(${placeholder})` : undefined,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-      }}
-    >
+    <Stack sx={{ position: 'relative', width: '100%', height: '100%' }}>
       <LightboxImageLayer
         ref={previewRef}
         src={previewSrc}
