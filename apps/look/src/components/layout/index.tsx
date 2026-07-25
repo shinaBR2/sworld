@@ -1,6 +1,7 @@
 import { Link, useLocation } from '@tanstack/react-router';
 import { Auth } from 'core';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
+import { LookSettingsPanel } from 'ui/look/settings';
 import { FullPageContainer } from 'ui/universal/containers/full-page';
 import { Header } from 'ui/universal/header';
 
@@ -46,14 +47,21 @@ const Nav = () => {
 const Layout = (props: LayoutProps) => {
   const { children } = props;
   const { user, signOut } = Auth.useAuthContext();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <FullPageContainer>
       <Header
         LinkComponent={Link}
         user={user}
-        onAvatarClick={signOut}
+        onAvatarClick={() => setSettingsOpen(true)}
         actions={<Nav />}
+      />
+      <LookSettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onSignOut={signOut}
+        userName={user?.name}
       />
       {children}
     </FullPageContainer>

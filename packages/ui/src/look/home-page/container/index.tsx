@@ -27,9 +27,12 @@ const SKELETON_KEYS = Array.from(
   { length: 18 },
   (_, index) => `skeleton-${index}`,
 );
+// `minHeight: 0` lets this flex child shrink below its (very tall, virtualized)
+// content so `overflow: auto` scrolls it — without it the default
+// `min-height: auto` makes it grow past the fixed-height page and get clipped.
 const SCROLL_SX = {
   flex: 1,
-  height: 0,
+  minHeight: 0,
   py: 3,
   px: { xs: 2, sm: 3 },
   overflow: 'auto',

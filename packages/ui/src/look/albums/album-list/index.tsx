@@ -12,7 +12,15 @@ const SKELETON_KEYS = Array.from(
   { length: 8 },
   (_, index) => `album-skeleton-${index}`,
 );
-const GRID_SX = { py: 4, px: { xs: 2, sm: 3 } } as const;
+// Own scroll region: the page shell is a fixed-height column with overflow
+// hidden, so this flex child must shrink (`minHeight: 0`) and scroll itself.
+const GRID_SX = {
+  flex: 1,
+  minHeight: 0,
+  overflow: 'auto',
+  py: 4,
+  px: { xs: 2, sm: 3 },
+} as const;
 // Album tiles are larger than photo tiles: 2 up on phones, 3 on tablets, 4 on
 // desktop (out of MUI Grid's default 12 columns).
 const ALBUM_GRID_SIZE = { xs: 6, sm: 4, md: 3 } as const;
