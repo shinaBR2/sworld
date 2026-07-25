@@ -12,7 +12,15 @@ import { PhotoSkeleton } from '../../photos/photo-card/skeleton';
 import type { LinkComponentType } from '../../photos/types';
 import { formatPhotoCount } from '../utils';
 
-const CONTENT_SX = { py: 4, px: { xs: 2, sm: 3 } } as const;
+// Own scroll region: the page shell is a fixed-height column with overflow
+// hidden, so this flex child must shrink (`minHeight: 0`) and scroll itself.
+const CONTENT_SX = {
+  flex: 1,
+  minHeight: 0,
+  overflow: 'auto',
+  py: 4,
+  px: { xs: 2, sm: 3 },
+} as const;
 const SKELETON_KEYS = Array.from(
   { length: 12 },
   (_, index) => `album-photo-skeleton-${index}`,
