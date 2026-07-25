@@ -11,3 +11,9 @@ ALTER TABLE "public"."photos"
 -- Guard the discriminator at the database floor (the always-enforced layer).
 ALTER TABLE "public"."photos"
   ADD CONSTRAINT "photos_type_check" CHECK ("type" IN ('image', 'video'));
+
+-- Duration is meaningful only for videos and is never negative. An image carries
+-- no duration (NULL); a video may still be NULL when its length isn't yet known.
+ALTER TABLE "public"."photos"
+  ADD CONSTRAINT "photos_duration_check"
+  CHECK ("duration" IS NULL OR ("type" = 'video' AND "duration" >= 0));
