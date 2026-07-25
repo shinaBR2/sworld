@@ -149,6 +149,15 @@ Bucket: **`sworld-prod.appspot.com`**.
 videos/{userId}/{videoId}/playlist.m3u8     ← written to videos.source
 videos/{userId}/{videoId}/0.ts, 1.ts, …     ← the segments
 videos/{userId}/{videoId}/{name}.vtt        ← subtitle files
+
+photos/{userId}/{photoId}/original.<ext>    ← image: written to photos.source
+photos/{userId}/{photoId}/medium.<ext>      ← image: photos.mediumUrl
+photos/{userId}/{photoId}/thumb.<ext>       ← image: photos.thumbnailUrl
+
+photos/{userId}/{photoId}/playlist.m3u8     ← video (type='video'): photos.source
+photos/{userId}/{photoId}/init.mp4, 0.m4s…  ← the HLS (fMP4) segments
+photos/{userId}/{photoId}/medium.jpg        ← video: poster photos.mediumUrl
+photos/{userId}/{photoId}/thumb.jpg         ← video: poster photos.thumbnailUrl
 ```
 
 Public URL = `https://storage.googleapis.com/{bucket}/{path}`.
@@ -443,6 +452,69 @@ file's `taken_at` and planned writes with no creds/uploads/DB.
 | `--public` | Mark the photo(s) public (default: private). |
 | `--dry-run` | Show the plan; no uploads/DB writes, no creds needed. |
 | `--skip-db` | Upload to GCS but skip the Hasura insert (and album link). |
+| `--user-id <uuid>` | Owner (from `--user-id` > env > config `user-id`). |
+
+Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
+it once via `stream-m3u8.ts config set <key> <value>`.
+
+### `look-video.ts` — ingest a local video into the Look library
+
+The video counterpart to `image.ts`. A Look video is "just another type of
+image" (modeled on Google Photos): it lives in the **same `photos` table**,
+discriminated by `type = 'video'`. The transcode is the SHARED `convertToHLS`
+core — the exact same function the compute convert handler and `convert.ts` run
+(fMP4/CMAF), so the output format can never drift. The only things that differ
+from `convert.ts` are the storage path (`photos/…` not `videos/…`) and the
+target table (`photos`, not `videos`).
+
+Like `image.ts`, there is no automated pipeline, so this CLI is the primary way
+videos get into Look.
+
+```bash
+# One clip:
+npx tsx src/cli/look-video.ts --file ./clip.mp4
+
+# A whole folder into an album, dry-run first:
+npx tsx src/cli/look-video.ts --dir ./clips --album 'Summer' --dry-run
+```
+
+What it does, per file:
+
+1. **Probe** — `ffprobe` reads `duration` (seconds) and the date-taken (the
+   container's `creation_time` tag → `taken_at`, falling back to the file's
+   mtime when absent).
+2. **Transcode** — `convertToHLS` re-encodes to fMP4 HLS (`playlist.m3u8` +
+   `init.mp4` + `.m4s`) in a temp dir.
+3. **Poster** — grabs a frame (~1s, clamped below the duration), then `sharp`
+   derives a **medium** (~1200px) and **thumb** (~300px) JPEG plus a `blurhash`
+   placeholder, exactly like `image.ts`. `width`/`height` come from the frame
+   (the video's display size).
+4. **Dup-check** — an existing `(user_id, slug)` (slug = `slugify(basename)`, or
+   `--slug` for a single file) is skipped.
+5. **Upload** — the HLS bundle + `medium.jpg`/`thumb.jpg` →
+   `photos/{userId}/{photoId}/`.
+6. **Insert** the `photos` row → `{ type: 'video', source (playlist URL),
+   mediumUrl, thumbnailUrl, blurHash, width, height, duration, takenAt, slug,
+   user_id, public }`.
+7. **Album** (if `--album`) — same find-or-create + link as `image.ts`.
+
+A batch reports a `Created / Skipped / Planned / Failed` tally; one bad file
+doesn't abort the rest, and any failure makes the process exit non-zero.
+
+Supported containers: **.mp4 / .mov / .m4v / .webm / .mkv / .avi**. `--dry-run`
+reports each file's `duration`/`taken_at` and planned writes with no
+creds/transcode/uploads/DB.
+
+| Flag | Meaning |
+| ---- | ------- |
+| `--file <path>` | Local video to ingest. Use this **or** `--dir`. |
+| `--dir <path>` | Ingest every video in the folder (filename order). |
+| `--slug <slug>` | Slug for a single `--file` (default: from filename). |
+| `--album <name>` | Find-or-create a `look` album (by slug) and link each video. |
+| `--public` | Mark the video(s) public (default: private). |
+| `--concurrency <n>` | Parallel HLS segment uploads (default: 5). |
+| `--dry-run` | Show the plan; no transcode/uploads/DB writes, no creds needed. |
+| `--skip-db` | Transcode + upload to GCS but skip the Hasura insert (and album link). |
 | `--user-id <uuid>` | Owner (from `--user-id` > env > config `user-id`). |
 
 Config is shared with `stream-m3u8.ts` (`~/.sworld-cli/config.json`); configure
