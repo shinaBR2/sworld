@@ -13,6 +13,10 @@ const blurHashToDataUri = (hash: string): string | undefined => {
     return undefined;
   }
 
+  if (typeof document === 'undefined') {
+    return undefined;
+  }
+
   const canvas = document.createElement('canvas');
   canvas.width = BLURHASH_SIZE;
   canvas.height = BLURHASH_SIZE;

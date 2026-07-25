@@ -64,9 +64,10 @@ const chunk = <T>(items: T[], size: number): T[][] => {
   return rows;
 };
 
-// Bucket a flat, newest-first photo list into month groups. Insertion order
-// preserves the incoming order (newest month first); undated photos always sort
-// to the very end regardless of where they appeared in the input.
+// Bucket photos into month groups, newest month first. Dated groups are sorted
+// by month key descending so the order holds regardless of input order (the
+// 'YYYY-MM' key sorts lexicographically = chronologically); undated photos
+// always come last. Photos keep their incoming order within each month.
 const groupPhotosByMonth = (photos: TransformedPhoto[]): MonthGroup[] => {
   const groups = new Map<string, MonthGroup>();
 
@@ -81,7 +82,9 @@ const groupPhotosByMonth = (photos: TransformedPhoto[]): MonthGroup[] => {
   }
 
   const ordered = Array.from(groups.values());
-  const dated = ordered.filter((group) => group.key !== UNDATED_KEY);
+  const dated = ordered
+    .filter((group) => group.key !== UNDATED_KEY)
+    .sort((a, b) => b.key.localeCompare(a.key));
   const undated = ordered.filter((group) => group.key === UNDATED_KEY);
   return [...dated, ...undated];
 };

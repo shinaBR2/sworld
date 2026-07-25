@@ -63,6 +63,10 @@ const PhotoTimelineContainer = (props: PhotoTimelineContainerProps) => {
     getScrollElement: () => scrollRef.current,
     estimateSize: (index) =>
       rows[index].type === 'header' ? HEADER_ROW_ESTIMATE : PHOTO_ROW_ESTIMATE,
+    // Key measurements by the stable row key, not the default index — so a
+    // header's cached height isn't misapplied to a photo row when the column
+    // count changes and the rows re-chunk.
+    getItemKey: (index) => rows[index].key,
     overscan: OVERSCAN,
   });
 
@@ -107,7 +111,7 @@ const PhotoTimelineContainer = (props: PhotoTimelineContainerProps) => {
           const row = rows[virtualRow.index];
           return (
             <Stack
-              key={row.key}
+              key={virtualRow.key}
               data-index={virtualRow.index}
               ref={virtualizer.measureElement}
               sx={{

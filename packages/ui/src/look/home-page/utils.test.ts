@@ -60,6 +60,22 @@ describe('groupPhotosByMonth', () => {
     expect(groups[1].photos.map((photo) => photo.id)).toEqual(['a', 'c']);
   });
 
+  it('orders months newest-first even when the input is not sorted', () => {
+    const photos = [
+      makePhoto('a', '2023-01-20T08:00:00Z'),
+      makePhoto('b', '2023-03-15T10:00:00Z'),
+      makePhoto('c', '2022-12-01T00:00:00Z'),
+    ];
+
+    const groups = groupPhotosByMonth(photos);
+
+    expect(groups.map((group) => group.key)).toEqual([
+      '2023-03',
+      '2023-01',
+      '2022-12',
+    ]);
+  });
+
   it('returns an empty array for no photos', () => {
     expect(groupPhotosByMonth([])).toEqual([]);
   });
