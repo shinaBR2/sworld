@@ -2,11 +2,17 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { AuthRoute } from 'ui/universal/authRoute';
 import { TimelinePage } from '../components/timeline-page';
 
-export const Route = createLazyFileRoute('/')({
+const Content = () => {
+  const { photoId } = Route.useParams();
+
+  return <TimelinePage activePhotoId={photoId} />;
+};
+
+export const Route = createLazyFileRoute('/photo/$photoId')({
   component: () => {
     return (
       <AuthRoute>
-        <TimelinePage />
+        <Content />
       </AuthRoute>
     );
   },

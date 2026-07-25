@@ -127,9 +127,12 @@ const resolveColumns = (flags: ColumnBreakpointFlags): number => {
   return COLUMNS_BY_BREAKPOINT.xs;
 };
 
+// The route param is the photo id (uuid): the timeline loads the photo list
+// and the lightbox matches the active photo by id, so the id — not the slug —
+// is what the URL must carry.
 const genPhotoLinkProps = (photo: TransformedPhoto) => ({
   to: PHOTO_ROUTE,
-  params: { photoId: photo.slug ?? photo.id },
+  params: { photoId: photo.id },
 });
 
 export {

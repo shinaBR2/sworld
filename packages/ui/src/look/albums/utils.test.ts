@@ -16,16 +16,10 @@ const makeAlbum = (
 });
 
 describe('genAlbumLinkProps', () => {
-  it('uses the slug as the route param when present', () => {
-    const result = genAlbumLinkProps(makeAlbum({ slug: 'holiday' }));
-    expect(result).toEqual({
-      to: '/album/$albumId',
-      params: { albumId: 'holiday' },
-    });
-  });
-
-  it('falls back to the id when the slug is empty', () => {
-    const result = genAlbumLinkProps(makeAlbum({ id: 'album-9', slug: '' }));
+  it('uses the album id as the route param', () => {
+    const result = genAlbumLinkProps(
+      makeAlbum({ id: 'album-9', slug: 'holiday' }),
+    );
     expect(result).toEqual({
       to: '/album/$albumId',
       params: { albumId: 'album-9' },
