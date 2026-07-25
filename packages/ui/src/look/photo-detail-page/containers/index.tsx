@@ -8,6 +8,7 @@ import { alpha, type Theme } from '@mui/material/styles';
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { useEffect, useMemo } from 'react';
 import { LightboxImage } from '../lightbox-image';
+import { LightboxVideo } from '../lightbox-video';
 import { stepPhotoId } from '../utils';
 
 interface PhotoLightboxProps {
@@ -138,7 +139,11 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
           <ChevronRightIcon />
         </IconButton>
         {activePhoto ? (
-          <LightboxImage key={activePhoto.id} photo={activePhoto} />
+          activePhoto.type === 'video' ? (
+            <LightboxVideo key={activePhoto.id} photo={activePhoto} />
+          ) : (
+            <LightboxImage key={activePhoto.id} photo={activePhoto} />
+          )
         ) : null}
       </Stack>
     </Dialog>
