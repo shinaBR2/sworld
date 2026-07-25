@@ -137,6 +137,7 @@ const genPhotoLinkProps = (photo: TransformedPhoto) => ({
 
 export {
   buildTimelineRows,
+  chunk,
   genPhotoLinkProps,
   groupPhotosByMonth,
   resolveColumns,
