@@ -120,7 +120,11 @@ const probeVideo = (inputPath: string): Promise<VideoMeta> =>
         parsed && !Number.isNaN(parsed.getTime())
           ? parsed.toISOString()
           : statSync(inputPath).mtime.toISOString();
-      resolve({ duration: Math.floor(duration), takenAt });
+      // Floor to whole seconds, but never below 1 for a real clip: a sub-second
+      // video (0 < d < 1) passed the truthiness guard above, and flooring it to 0
+      // would finalize the "bogus duration" the guard exists to prevent (and hide
+      // the duration badge in the UI). Clamp to a 1s minimum instead.
+      resolve({ duration: Math.max(1, Math.floor(duration)), takenAt });
     });
   });
 

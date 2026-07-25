@@ -39,8 +39,10 @@
  * frame via the shared `./lib/video-ingest` pipeline and stored as a `type='video'`
  * photo (HLS manifest in `source`, `duration` in seconds) under the same
  * `photos/<userId>/<photoId>/` prefix. Date, dedup, and album linking are identical
- * to an image — a video is "just another type of image". Formats Look still can't
- * take (HEIC, …) are skipped and reported.
+ * to an image — a video is "just another type of image". A Live/Motion Photo (a
+ * still plus a same-named video clip) ingests as just the still; the paired video is
+ * its motion component and is skipped, exactly as before video support. Formats Look
+ * still can't take (HEIC, …) are skipped and reported.
  *
  * Dedup is by owner + slug: a photo Google placed in both an album and a year
  * bucket (Takeout duplicates it into each folder) is uploaded once; the second
@@ -299,7 +301,17 @@ const mediaInFolder = (dir: string): MediaFile[] =>
       return [];
     })
     // `img2` sorts before `img10`, not after — and this ordering is the album's.
-    .sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
+    // On a tie in the base name (a Live/Motion Photo's still + its video clip share
+    // one, e.g. `IMG_1.jpg` + `IMG_1.mp4`), the image sorts first so the STILL takes
+    // the slug and the video is recognised as its motion component (skipped below).
+    .sort((a, b) => {
+      const baseA = path.basename(a.path, path.extname(a.path));
+      const baseB = path.basename(b.path, path.extname(b.path));
+      const byBase = baseA.localeCompare(baseB, undefined, { numeric: true });
+      if (byBase !== 0) return byBase;
+      if (a.kind !== b.kind) return a.kind === 'image' ? -1 : 1;
+      return a.path.localeCompare(b.path, undefined, { numeric: true });
+    });
 
 /** Media Look can't take (HEIC, …) — neither image nor video — for the skipped-files report. */
 const skippedMediaInFolder = (dir: string): string[] =>
@@ -746,7 +758,7 @@ const linkPhoto = async (
 
 // ─── Per-file ingest ─────────────────────────────────────────────────────────
 
-type IngestOutcome = 'created' | 'existed' | 'dry-run' | 'failed';
+type IngestOutcome = 'created' | 'existed' | 'skipped' | 'dry-run' | 'failed';
 
 interface IngestResult {
   outcome: IngestOutcome;
@@ -885,11 +897,17 @@ const ingestVideo = async (
   // would otherwise silently swallow the second — surface it so the operator
   // renames one. (A video and an image that share a basename, e.g. `clip.jpg` +
   // `clip.mp4`, also collide here by design — one photo per slug.)
+  // A video whose slug is already taken in this folder is, almost always, the
+  // motion component of a Live/Motion Photo whose still we just ingested (the
+  // still sorts first — see `mediaInFolder`). The still IS the photo, so skip the
+  // video: the same benign outcome it had before video support, not a failure that
+  // would fail the whole batch. (A genuine two-distinct-file collision is still
+  // surfaced by this ⚠ line for the operator to notice.)
   if (seenSlugs.has(meta.slug)) {
-    console.error(
-      `  ✗ ${path.basename(localFile)}: slug "${meta.slug}" collides with another file in this folder — rename to ingest both.`,
+    console.warn(
+      `  ⚠ ${meta.slug} — a still with this name was already ingested (likely a Live Photo); skipping the video.`,
     );
-    return { outcome: 'failed' };
+    return { outcome: 'skipped' };
   }
   seenSlugs.add(meta.slug);
 
@@ -1138,7 +1156,7 @@ const handle = async (rawArgs: string[]): Promise<void> => {
     : createStorage(args.gcpKeyPath).bucket(args.gcpBucket);
 
   const tallies: Tallies = {
-    outcome: { created: 0, existed: 0, 'dry-run': 0, failed: 0 },
+    outcome: { created: 0, existed: 0, skipped: 0, 'dry-run': 0, failed: 0 },
     source: { sidecar: 0, exif: 0, mtime: 0 },
     mtimeFallback: [],
     skipped: {},
@@ -1151,7 +1169,7 @@ const handle = async (rawArgs: string[]): Promise<void> => {
   // ─── Report ────────────────────────────────────────────────────────────────
   console.log('\n=== Done ===');
   console.log(
-    `  Created: ${tallies.outcome.created}  Existed: ${tallies.outcome.existed}  Planned: ${tallies.outcome['dry-run']}  Failed: ${tallies.outcome.failed}`,
+    `  Created: ${tallies.outcome.created}  Existed: ${tallies.outcome.existed}  Skipped: ${tallies.outcome.skipped}  Planned: ${tallies.outcome['dry-run']}  Failed: ${tallies.outcome.failed}`,
   );
   console.log(
     `  Dates → sidecar: ${tallies.source.sidecar}  exif: ${tallies.source.exif}  mtime: ${tallies.source.mtime}`,
