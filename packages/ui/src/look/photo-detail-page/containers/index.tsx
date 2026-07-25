@@ -32,6 +32,13 @@ const EDGE_BUTTON_SX = (theme: Theme) => ({
   color: CONTROL_COLOR,
   bgcolor: alpha(theme.palette.common.white, 0.12),
   '&:hover': { bgcolor: alpha(theme.palette.common.white, 0.24) },
+  // At the first/last photo the button is disabled; keep it dimmed-but-visible
+  // on black instead of MUI's default action.disabled, a near-invisible dark
+  // token here.
+  '&.Mui-disabled': {
+    color: alpha(theme.palette.common.white, 0.3),
+    bgcolor: alpha(theme.palette.common.white, 0.06),
+  },
 });
 
 // Full-screen photo viewer. MUI Dialog gives the focus trap, backdrop, and
@@ -82,9 +89,17 @@ const PhotoLightbox = (props: PhotoLightboxProps) => {
       slotProps={{
         // Solid black viewer, like Google Photos: the photo is letterboxed
         // (object-fit: contain) and everything around it stays pure black in
-        // both themes, not the app's tinted surface color.
+        // both themes, not the app's tinted surface color. Clear the
+        // glassmorphism paper's border + backdrop blur so nothing frames the
+        // black.
         paper: {
-          sx: { bgcolor: 'common.black', backgroundImage: 'none' },
+          sx: {
+            bgcolor: 'common.black',
+            backgroundImage: 'none',
+            border: 'none',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+          },
         },
       }}
     >
