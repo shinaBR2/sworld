@@ -1,0 +1,14 @@
+{
+  // Cloudflare Workers config for the Look app — static-assets Worker (no server code).
+  // Built by Workers Builds from `main`; see SWO-621. The four existing apps stay on
+  // Cloudflare Pages for now (migration tracked in SWO-622).
+  "name": "look",
+  "compatibility_date": "2026-07-25",
+  "assets": {
+    // Vite build output for `look`; resolved relative to this file (apps/look/dist).
+    "directory": "./dist",
+    // SPA routing: serve index.html (200) for client-side routes like /albums
+    // instead of 404-ing, so TanStack Router can take over.
+    "not_found_handling": "single-page-application"
+  }
+}
