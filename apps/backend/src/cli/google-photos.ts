@@ -772,7 +772,7 @@ const ingestOne = async (
   args: GooglePhotosArgs,
   bucket: Bucket | undefined,
   localFile: string,
-  seenSlugs: Set<string>,
+  seenSlugs: Map<string, MediaKind>,
 ): Promise<IngestResult> => {
   let meta: ImageMeta;
   try {
@@ -803,7 +803,7 @@ const ingestOne = async (
     );
     return { outcome: 'failed' };
   }
-  seenSlugs.add(meta.slug);
+  seenSlugs.set(meta.slug, 'image');
 
   if (args.dryRun) {
     const { takenAt, source } = await resolveTakenAt(localFile);
@@ -881,7 +881,7 @@ const ingestVideo = async (
   args: GooglePhotosArgs,
   bucket: Bucket | undefined,
   localFile: string,
-  seenSlugs: Set<string>,
+  seenSlugs: Map<string, MediaKind>,
 ): Promise<IngestResult> => {
   let meta: ImageMeta;
   try {
@@ -897,19 +897,26 @@ const ingestVideo = async (
   // would otherwise silently swallow the second — surface it so the operator
   // renames one. (A video and an image that share a basename, e.g. `clip.jpg` +
   // `clip.mp4`, also collide here by design — one photo per slug.)
-  // A video whose slug is already taken in this folder is, almost always, the
-  // motion component of a Live/Motion Photo whose still we just ingested (the
-  // still sorts first — see `mediaInFolder`). The still IS the photo, so skip the
-  // video: the same benign outcome it had before video support, not a failure that
-  // would fail the whole batch. (A genuine two-distinct-file collision is still
-  // surfaced by this ⚠ line for the operator to notice.)
-  if (seenSlugs.has(meta.slug)) {
+  // What already claimed this slug in the folder decides the outcome. A prior
+  // IMAGE is the still of a Live/Motion Photo (the still sorts first — see
+  // `mediaInFolder`): the still IS the photo, so skip its motion video benignly,
+  // the same outcome it had before video support. A prior VIDEO is instead a
+  // genuine two-distinct-file collision — surface it loudly like the image path
+  // does, so the operator renames one rather than silently losing the second clip.
+  const priorKind = seenSlugs.get(meta.slug);
+  if (priorKind === 'image') {
     console.warn(
-      `  ⚠ ${meta.slug} — a still with this name was already ingested (likely a Live Photo); skipping the video.`,
+      `  ⚠ ${meta.slug} — a still with this name was already ingested (a Live Photo); skipping its motion video.`,
     );
     return { outcome: 'skipped' };
   }
-  seenSlugs.add(meta.slug);
+  if (priorKind === 'video') {
+    console.error(
+      `  ✗ ${path.basename(localFile)}: slug "${meta.slug}" collides with another video in this folder — rename to ingest both.`,
+    );
+    return { outcome: 'failed' };
+  }
+  seenSlugs.set(meta.slug, 'video');
 
   if (args.dryRun) {
     const { takenAt, source } = await resolveTakenAt(localFile);
@@ -1024,7 +1031,7 @@ const ingestFolder = async (
 
   // Per-folder slug guard: only catches two DISTINCT files in THIS folder that
   // slugify alike. The same photo appearing across folders is deduped by the DB.
-  const seenSlugs = new Set<string>();
+  const seenSlugs = new Map<string, MediaKind>();
   let albumState: { id: string; nextPosition: number } | undefined;
 
   for (const item of media) {
