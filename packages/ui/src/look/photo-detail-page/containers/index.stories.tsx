@@ -8,12 +8,14 @@ import { PhotoLightbox } from '.';
 const makePhotos = (count: number): TransformedPhoto[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `photo-${index}`,
+    type: 'image',
     source: `https://picsum.photos/seed/look-${index}/1600/1200`,
     mediumUrl: `https://picsum.photos/seed/look-${index}/1200/900`,
     thumbnailUrl: `https://picsum.photos/seed/look-${index}/400/300`,
     blurHash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
     width: 1600,
     height: 1200,
+    duration: null,
     takenAt: '2023-03-15T10:00:00Z',
     slug: `photo-${index}`,
   }));

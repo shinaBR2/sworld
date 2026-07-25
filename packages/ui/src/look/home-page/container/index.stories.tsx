@@ -27,12 +27,14 @@ const makePhotos = (count: number): TransformedPhoto[] =>
     const day = String((index % 27) + 1).padStart(2, '0');
     return {
       id: `photo-${index}`,
+      type: 'image',
       source: `https://picsum.photos/seed/look-${index}/1200/1200`,
       mediumUrl: `https://picsum.photos/seed/look-${index}/1200/1200`,
       thumbnailUrl: `https://picsum.photos/seed/look-${index}/400/400`,
       blurHash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
       width: 1200,
       height: 1200,
+      duration: null,
       takenAt: `${month}-${day}T10:00:00Z`,
       slug: `photo-${index}`,
     };

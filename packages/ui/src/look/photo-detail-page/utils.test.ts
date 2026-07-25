@@ -4,12 +4,14 @@ import { stepPhotoId } from './utils';
 
 const makePhoto = (id: string): TransformedPhoto => ({
   id,
+  type: 'image',
   source: `https://example.com/${id}.jpg`,
   mediumUrl: `https://example.com/${id}-medium.jpg`,
   thumbnailUrl: `https://example.com/${id}-thumb.jpg`,
   blurHash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
   width: 1920,
   height: 1080,
+  duration: null,
   takenAt: '2023-01-01T00:00:00Z',
   slug: `slug-${id}`,
 });

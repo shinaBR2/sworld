@@ -16,12 +16,14 @@ const MockLink: LinkComponentType = ({ to, children, style }) => (
 const makePhotos = (count: number): TransformedPhoto[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `photo-${index}`,
+    type: 'image',
     source: `https://picsum.photos/seed/detail-${index}/1200/1200`,
     mediumUrl: `https://picsum.photos/seed/detail-${index}/1200/1200`,
     thumbnailUrl: `https://picsum.photos/seed/detail-${index}/400/400`,
     blurHash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
     width: 1200,
     height: 1200,
+    duration: null,
     takenAt: `2023-06-${String((index % 27) + 1).padStart(2, '0')}T10:00:00Z`,
     slug: `photo-${index}`,
   }));

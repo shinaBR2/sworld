@@ -3,12 +3,14 @@ import { graphql } from '../../graphql';
 const PhotoFragment = graphql(/* GraphQL */ `
   fragment PhotoFields on photos {
     id
+    type
     source
     mediumUrl
     thumbnailUrl
     blurHash
     width
     height
+    duration
     takenAt
     slug
   }

@@ -8,12 +8,14 @@ describe('Look fragment transformations', () => {
   describe('transformPhotoFragment', () => {
     const mockPhotoData = {
       id: 'photo-123',
+      type: 'image',
       source: 'https://example.com/photo.jpg',
       mediumUrl: 'https://example.com/photo-medium.jpg',
       thumbnailUrl: 'https://example.com/photo-thumb.jpg',
       blurHash: 'LEHV6nWB2yk8pyo',
       width: 1920,
       height: 1080,
+      duration: null,
       takenAt: '2023-01-01T00:00:00Z',
       slug: 'test-photo',
     };
@@ -25,15 +27,34 @@ describe('Look fragment transformations', () => {
 
       expect(result).toEqual({
         id: 'photo-123',
+        type: 'image',
         source: 'https://example.com/photo.jpg',
         mediumUrl: 'https://example.com/photo-medium.jpg',
         thumbnailUrl: 'https://example.com/photo-thumb.jpg',
         blurHash: 'LEHV6nWB2yk8pyo',
         width: 1920,
         height: 1080,
+        duration: null,
         takenAt: '2023-01-01T00:00:00Z',
         slug: 'test-photo',
       });
+    });
+
+    it('should transform a video fragment with its duration', () => {
+      const videoData = {
+        ...mockPhotoData,
+        type: 'video',
+        source: 'https://example.com/video/playlist.m3u8',
+        duration: 42,
+      };
+
+      const result = transformPhotoFragment(
+        videoData as FragmentType<typeof PhotoFragment>,
+      );
+
+      expect(result.type).toBe('video');
+      expect(result.source).toBe('https://example.com/video/playlist.m3u8');
+      expect(result.duration).toBe(42);
     });
 
     it('should throw AppError when thumbnailUrl is missing', () => {
@@ -59,12 +80,14 @@ describe('Look fragment transformations', () => {
           position: 0,
           photo: {
             id: 'photo-123',
+            type: 'image',
             source: 'https://example.com/photo.jpg',
             mediumUrl: 'https://example.com/photo-medium.jpg',
             thumbnailUrl: 'https://example.com/photo-thumb.jpg',
             blurHash: 'LEHV6nWB2yk8pyo',
             width: 1920,
             height: 1080,
+            duration: null,
             takenAt: '2023-01-01T00:00:00Z',
             slug: 'test-photo',
           },
@@ -87,12 +110,14 @@ describe('Look fragment transformations', () => {
         photos: [
           {
             id: 'photo-123',
+            type: 'image',
             source: 'https://example.com/photo.jpg',
             mediumUrl: 'https://example.com/photo-medium.jpg',
             thumbnailUrl: 'https://example.com/photo-thumb.jpg',
             blurHash: 'LEHV6nWB2yk8pyo',
             width: 1920,
             height: 1080,
+            duration: null,
             takenAt: '2023-01-01T00:00:00Z',
             slug: 'test-photo',
           },

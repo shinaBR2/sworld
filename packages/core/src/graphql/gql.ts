@@ -50,7 +50,7 @@ type Documents = {
     "\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": typeof types.ListenPlaylistsDocument,
     "\n  query LookAlbums @cached {\n    playlist(\n      where: { site: { _eq: \"look\" } }\n      order_by: { createdAt: desc }\n    ) {\n      ...AlbumFields\n    }\n  }\n": typeof types.LookAlbumsDocument,
     "\n  query LookAlbumDetail($id: uuid!) @cached {\n    playlist_by_pk(id: $id) {\n      ...AlbumFields\n    }\n  }\n": typeof types.LookAlbumDetailDocument,
-    "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n": typeof types.PhotoFieldsFragmentDoc,
+    "\n  fragment PhotoFields on photos {\n    id\n    type\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    duration\n    takenAt\n    slug\n  }\n": typeof types.PhotoFieldsFragmentDoc,
     "\n  fragment AlbumFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_photos(order_by: { position: asc }) {\n      position\n      photo {\n        ...PhotoFields\n      }\n    }\n  }\n": typeof types.AlbumFieldsFragmentDoc,
     "\n  query LookPhotoDetail($id: uuid!) @cached {\n    photos_by_pk(id: $id) {\n      ...PhotoFields\n    }\n  }\n": typeof types.LookPhotoDetailDocument,
     "\n  query LookPhotos @cached {\n    photos(order_by: { takenAt: desc }) {\n      ...PhotoFields\n    }\n  }\n": typeof types.LookPhotosDocument,
@@ -124,7 +124,7 @@ const documents: Documents = {
     "\n  query ListenPlaylists {\n    playlist(\n      where: { site: { _eq: \"listen\" } }\n      order_by: { createdAt: desc }\n    ) {\n      id\n      title\n      slug\n    }\n  }\n": types.ListenPlaylistsDocument,
     "\n  query LookAlbums @cached {\n    playlist(\n      where: { site: { _eq: \"look\" } }\n      order_by: { createdAt: desc }\n    ) {\n      ...AlbumFields\n    }\n  }\n": types.LookAlbumsDocument,
     "\n  query LookAlbumDetail($id: uuid!) @cached {\n    playlist_by_pk(id: $id) {\n      ...AlbumFields\n    }\n  }\n": types.LookAlbumDetailDocument,
-    "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n": types.PhotoFieldsFragmentDoc,
+    "\n  fragment PhotoFields on photos {\n    id\n    type\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    duration\n    takenAt\n    slug\n  }\n": types.PhotoFieldsFragmentDoc,
     "\n  fragment AlbumFields on playlist {\n    id\n    title\n    thumbnailUrl\n    slug\n    createdAt\n    description\n    playlist_photos(order_by: { position: asc }) {\n      position\n      photo {\n        ...PhotoFields\n      }\n    }\n  }\n": types.AlbumFieldsFragmentDoc,
     "\n  query LookPhotoDetail($id: uuid!) @cached {\n    photos_by_pk(id: $id) {\n      ...PhotoFields\n    }\n  }\n": types.LookPhotoDetailDocument,
     "\n  query LookPhotos @cached {\n    photos(order_by: { takenAt: desc }) {\n      ...PhotoFields\n    }\n  }\n": types.LookPhotosDocument,
@@ -306,7 +306,7 @@ export function graphql(source: "\n  query LookAlbumDetail($id: uuid!) @cached {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment PhotoFields on photos {\n    id\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    takenAt\n    slug\n  }\n"): typeof import('./graphql').PhotoFieldsFragmentDoc;
+export function graphql(source: "\n  fragment PhotoFields on photos {\n    id\n    type\n    source\n    mediumUrl\n    thumbnailUrl\n    blurHash\n    width\n    height\n    duration\n    takenAt\n    slug\n  }\n"): typeof import('./graphql').PhotoFieldsFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
