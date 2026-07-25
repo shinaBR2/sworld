@@ -32,7 +32,7 @@ const TimelinePage = (props: TimelinePageProps) => {
         photos={photos}
         activeId={activePhotoId ?? ''}
         open={isPhotoOpen}
-        onClose={() => navigate({ to: '/' })}
+        onClose={() => navigate({ to: '/', replace: true })}
         onActiveIdChange={(id) =>
           navigate({
             to: '/photo/$photoId',
