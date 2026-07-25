@@ -6125,6 +6125,7 @@ enum order_by {
 type photos {
   blurHash: String
   createdAt: timestamptz!
+  duration: Int
   height: Int
   id: uuid!
   mediumUrl: String
@@ -6159,6 +6160,7 @@ type photos {
   source: String!
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String!
   updatedAt: timestamptz!
   """An object relationship"""
   user: users!
@@ -6193,6 +6195,7 @@ type photos_aggregate_fields {
 
 """aggregate avg on columns"""
 type photos_avg_fields {
+  duration: Float
   height: Float
   width: Float
 }
@@ -6206,6 +6209,7 @@ input photos_bool_exp {
   _or: [photos_bool_exp!]
   blurHash: String_comparison_exp
   createdAt: timestamptz_comparison_exp
+  duration: Int_comparison_exp
   height: Int_comparison_exp
   id: uuid_comparison_exp
   mediumUrl: String_comparison_exp
@@ -6216,6 +6220,7 @@ input photos_bool_exp {
   source: String_comparison_exp
   takenAt: timestamptz_comparison_exp
   thumbnailUrl: String_comparison_exp
+  type: String_comparison_exp
   updatedAt: timestamptz_comparison_exp
   user: users_bool_exp
   user_id: uuid_comparison_exp
@@ -6236,6 +6241,7 @@ enum photos_constraint {
 input type for incrementing numeric columns in table "photos"
 """
 input photos_inc_input {
+  duration: Int
   height: Int
   width: Int
 }
@@ -6246,6 +6252,7 @@ input type for inserting data into table "photos"
 input photos_insert_input {
   blurHash: String
   createdAt: timestamptz
+  duration: Int
   height: Int
   id: uuid
   mediumUrl: String
@@ -6255,6 +6262,7 @@ input photos_insert_input {
   source: String
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String
   updatedAt: timestamptz
   user: users_obj_rel_insert_input
   user_id: uuid
@@ -6265,6 +6273,7 @@ input photos_insert_input {
 type photos_max_fields {
   blurHash: String
   createdAt: timestamptz
+  duration: Int
   height: Int
   id: uuid
   mediumUrl: String
@@ -6272,6 +6281,7 @@ type photos_max_fields {
   source: String
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String
   updatedAt: timestamptz
   user_id: uuid
   width: Int
@@ -6281,6 +6291,7 @@ type photos_max_fields {
 type photos_min_fields {
   blurHash: String
   createdAt: timestamptz
+  duration: Int
   height: Int
   id: uuid
   mediumUrl: String
@@ -6288,6 +6299,7 @@ type photos_min_fields {
   source: String
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String
   updatedAt: timestamptz
   user_id: uuid
   width: Int
@@ -6325,6 +6337,7 @@ input photos_on_conflict {
 input photos_order_by {
   blurHash: order_by
   createdAt: order_by
+  duration: order_by
   height: order_by
   id: order_by
   mediumUrl: order_by
@@ -6334,6 +6347,7 @@ input photos_order_by {
   source: order_by
   takenAt: order_by
   thumbnailUrl: order_by
+  type: order_by
   updatedAt: order_by
   user: users_order_by
   user_id: order_by
@@ -6354,6 +6368,8 @@ enum photos_select_column {
   """column name"""
   createdAt
   """column name"""
+  duration
+  """column name"""
   height
   """column name"""
   id
@@ -6370,6 +6386,8 @@ enum photos_select_column {
   """column name"""
   thumbnailUrl
   """column name"""
+  type
+  """column name"""
   updatedAt
   """column name"""
   user_id
@@ -6383,6 +6401,7 @@ input type for updating data in table "photos"
 input photos_set_input {
   blurHash: String
   createdAt: timestamptz
+  duration: Int
   height: Int
   id: uuid
   mediumUrl: String
@@ -6391,6 +6410,7 @@ input photos_set_input {
   source: String
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String
   updatedAt: timestamptz
   user_id: uuid
   width: Int
@@ -6398,18 +6418,21 @@ input photos_set_input {
 
 """aggregate stddev on columns"""
 type photos_stddev_fields {
+  duration: Float
   height: Float
   width: Float
 }
 
 """aggregate stddev_pop on columns"""
 type photos_stddev_pop_fields {
+  duration: Float
   height: Float
   width: Float
 }
 
 """aggregate stddev_samp on columns"""
 type photos_stddev_samp_fields {
+  duration: Float
   height: Float
   width: Float
 }
@@ -6428,6 +6451,7 @@ input photos_stream_cursor_input {
 input photos_stream_cursor_value_input {
   blurHash: String
   createdAt: timestamptz
+  duration: Int
   height: Int
   id: uuid
   mediumUrl: String
@@ -6436,6 +6460,7 @@ input photos_stream_cursor_value_input {
   source: String
   takenAt: timestamptz
   thumbnailUrl: String
+  type: String
   updatedAt: timestamptz
   user_id: uuid
   width: Int
@@ -6443,6 +6468,7 @@ input photos_stream_cursor_value_input {
 
 """aggregate sum on columns"""
 type photos_sum_fields {
+  duration: Int
   height: Int
   width: Int
 }
@@ -6455,6 +6481,8 @@ enum photos_update_column {
   blurHash
   """column name"""
   createdAt
+  """column name"""
+  duration
   """column name"""
   height
   """column name"""
@@ -6471,6 +6499,8 @@ enum photos_update_column {
   takenAt
   """column name"""
   thumbnailUrl
+  """column name"""
+  type
   """column name"""
   updatedAt
   """column name"""
@@ -6490,18 +6520,21 @@ input photos_updates {
 
 """aggregate var_pop on columns"""
 type photos_var_pop_fields {
+  duration: Float
   height: Float
   width: Float
 }
 
 """aggregate var_samp on columns"""
 type photos_var_samp_fields {
+  duration: Float
   height: Float
   width: Float
 }
 
 """aggregate variance on columns"""
 type photos_variance_fields {
+  duration: Float
   height: Float
   width: Float
 }

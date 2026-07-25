@@ -16,14 +16,21 @@ const transformPhotoFragment = (
     );
   }
 
+  // The DB CHECK constraint guarantees `type` is 'image' | 'video'; narrow it here
+  // so consumers get a proper union instead of a bare string. For a video, `source`
+  // is the HLS manifest URL and `duration` is its length in seconds.
+  const isVideo = photo.type === 'video';
+
   return {
     id: photo.id,
+    type: isVideo ? ('video' as const) : ('image' as const),
     source: photo.source,
     mediumUrl: photo.mediumUrl || '',
     thumbnailUrl: photo.thumbnailUrl,
     blurHash: photo.blurHash || '',
     width: photo.width ?? null,
     height: photo.height ?? null,
+    duration: photo.duration ?? null,
     takenAt: photo.takenAt ?? null,
     slug: photo.slug ?? null,
   };

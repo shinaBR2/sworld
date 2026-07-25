@@ -5,12 +5,14 @@ import { buildAlbumRows, formatPhotoCount } from './utils';
 const makePhotos = (count: number): TransformedPhoto[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `photo-${index}`,
+    type: 'image',
     source: `https://example.com/${index}.jpg`,
     mediumUrl: `https://example.com/${index}-medium.jpg`,
     thumbnailUrl: `https://example.com/${index}-thumb.jpg`,
     blurHash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
     width: 1200,
     height: 1200,
+    duration: null,
     takenAt: '2023-06-01T10:00:00Z',
     slug: `photo-${index}`,
   }));

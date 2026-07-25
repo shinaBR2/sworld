@@ -5901,6 +5901,7 @@ export type Photos = {
   __typename?: 'photos';
   blurHash?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['timestamptz']['output'];
+  duration?: Maybe<Scalars['Int']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
   id: Scalars['uuid']['output'];
   mediumUrl?: Maybe<Scalars['String']['output']>;
@@ -5913,6 +5914,7 @@ export type Photos = {
   source: Scalars['String']['output'];
   takenAt?: Maybe<Scalars['timestamptz']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
   updatedAt: Scalars['timestamptz']['output'];
   /** An object relationship */
   user: Users;
@@ -5973,6 +5975,7 @@ export type Photos_Aggregate_FieldsCountArgs = {
 /** aggregate avg on columns */
 export type Photos_Avg_Fields = {
   __typename?: 'photos_avg_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -5984,6 +5987,7 @@ export type Photos_Bool_Exp = {
   _or?: InputMaybe<Array<Photos_Bool_Exp>>;
   blurHash?: InputMaybe<String_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  duration?: InputMaybe<Int_Comparison_Exp>;
   height?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   mediumUrl?: InputMaybe<String_Comparison_Exp>;
@@ -5994,6 +5998,7 @@ export type Photos_Bool_Exp = {
   source?: InputMaybe<String_Comparison_Exp>;
   takenAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   thumbnailUrl?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -6008,6 +6013,7 @@ export enum Photos_Constraint {
 
 /** input type for incrementing numeric columns in table "photos" */
 export type Photos_Inc_Input = {
+  duration?: InputMaybe<Scalars['Int']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -6016,6 +6022,7 @@ export type Photos_Inc_Input = {
 export type Photos_Insert_Input = {
   blurHash?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  duration?: InputMaybe<Scalars['Int']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   mediumUrl?: InputMaybe<Scalars['String']['input']>;
@@ -6025,6 +6032,7 @@ export type Photos_Insert_Input = {
   source?: InputMaybe<Scalars['String']['input']>;
   takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
@@ -6036,6 +6044,7 @@ export type Photos_Max_Fields = {
   __typename?: 'photos_max_fields';
   blurHash?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  duration?: Maybe<Scalars['Int']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   mediumUrl?: Maybe<Scalars['String']['output']>;
@@ -6043,6 +6052,7 @@ export type Photos_Max_Fields = {
   source?: Maybe<Scalars['String']['output']>;
   takenAt?: Maybe<Scalars['timestamptz']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
   width?: Maybe<Scalars['Int']['output']>;
@@ -6053,6 +6063,7 @@ export type Photos_Min_Fields = {
   __typename?: 'photos_min_fields';
   blurHash?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
+  duration?: Maybe<Scalars['Int']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   mediumUrl?: Maybe<Scalars['String']['output']>;
@@ -6060,6 +6071,7 @@ export type Photos_Min_Fields = {
   source?: Maybe<Scalars['String']['output']>;
   takenAt?: Maybe<Scalars['timestamptz']['output']>;
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['timestamptz']['output']>;
   user_id?: Maybe<Scalars['uuid']['output']>;
   width?: Maybe<Scalars['Int']['output']>;
@@ -6092,6 +6104,7 @@ export type Photos_On_Conflict = {
 export type Photos_Order_By = {
   blurHash?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
+  duration?: InputMaybe<Order_By>;
   height?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   mediumUrl?: InputMaybe<Order_By>;
@@ -6101,6 +6114,7 @@ export type Photos_Order_By = {
   source?: InputMaybe<Order_By>;
   takenAt?: InputMaybe<Order_By>;
   thumbnailUrl?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -6119,6 +6133,8 @@ export enum Photos_Select_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
+  Duration = 'duration',
+  /** column name */
   Height = 'height',
   /** column name */
   Id = 'id',
@@ -6135,6 +6151,8 @@ export enum Photos_Select_Column {
   /** column name */
   ThumbnailUrl = 'thumbnailUrl',
   /** column name */
+  Type = 'type',
+  /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
   UserId = 'user_id',
@@ -6146,6 +6164,7 @@ export enum Photos_Select_Column {
 export type Photos_Set_Input = {
   blurHash?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  duration?: InputMaybe<Scalars['Int']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   mediumUrl?: InputMaybe<Scalars['String']['input']>;
@@ -6154,6 +6173,7 @@ export type Photos_Set_Input = {
   source?: InputMaybe<Scalars['String']['input']>;
   takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
@@ -6162,6 +6182,7 @@ export type Photos_Set_Input = {
 /** aggregate stddev on columns */
 export type Photos_Stddev_Fields = {
   __typename?: 'photos_stddev_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -6169,6 +6190,7 @@ export type Photos_Stddev_Fields = {
 /** aggregate stddev_pop on columns */
 export type Photos_Stddev_Pop_Fields = {
   __typename?: 'photos_stddev_pop_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -6176,6 +6198,7 @@ export type Photos_Stddev_Pop_Fields = {
 /** aggregate stddev_samp on columns */
 export type Photos_Stddev_Samp_Fields = {
   __typename?: 'photos_stddev_samp_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -6192,6 +6215,7 @@ export type Photos_Stream_Cursor_Input = {
 export type Photos_Stream_Cursor_Value_Input = {
   blurHash?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  duration?: InputMaybe<Scalars['Int']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   mediumUrl?: InputMaybe<Scalars['String']['input']>;
@@ -6200,6 +6224,7 @@ export type Photos_Stream_Cursor_Value_Input = {
   source?: InputMaybe<Scalars['String']['input']>;
   takenAt?: InputMaybe<Scalars['timestamptz']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
   user_id?: InputMaybe<Scalars['uuid']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
@@ -6208,6 +6233,7 @@ export type Photos_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Photos_Sum_Fields = {
   __typename?: 'photos_sum_fields';
+  duration?: Maybe<Scalars['Int']['output']>;
   height?: Maybe<Scalars['Int']['output']>;
   width?: Maybe<Scalars['Int']['output']>;
 };
@@ -6218,6 +6244,8 @@ export enum Photos_Update_Column {
   BlurHash = 'blurHash',
   /** column name */
   CreatedAt = 'createdAt',
+  /** column name */
+  Duration = 'duration',
   /** column name */
   Height = 'height',
   /** column name */
@@ -6234,6 +6262,8 @@ export enum Photos_Update_Column {
   TakenAt = 'takenAt',
   /** column name */
   ThumbnailUrl = 'thumbnailUrl',
+  /** column name */
+  Type = 'type',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
@@ -6254,6 +6284,7 @@ export type Photos_Updates = {
 /** aggregate var_pop on columns */
 export type Photos_Var_Pop_Fields = {
   __typename?: 'photos_var_pop_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -6261,6 +6292,7 @@ export type Photos_Var_Pop_Fields = {
 /** aggregate var_samp on columns */
 export type Photos_Var_Samp_Fields = {
   __typename?: 'photos_var_samp_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -6268,6 +6300,7 @@ export type Photos_Var_Samp_Fields = {
 /** aggregate variance on columns */
 export type Photos_Variance_Fields = {
   __typename?: 'photos_variance_fields';
+  duration?: Maybe<Scalars['Float']['output']>;
   height?: Maybe<Scalars['Float']['output']>;
   width?: Maybe<Scalars['Float']['output']>;
 };
@@ -15343,7 +15376,7 @@ export type LookAlbumDetailQuery = { __typename?: 'query_root', playlist_by_pk?:
     & { ' $fragmentRefs'?: { 'AlbumFieldsFragment': AlbumFieldsFragment } }
   ) | null };
 
-export type PhotoFieldsFragment = { __typename?: 'photos', id: any, source: string, mediumUrl?: string | null, thumbnailUrl?: string | null, blurHash?: string | null, width?: number | null, height?: number | null, takenAt?: any | null, slug?: string | null } & { ' $fragmentName'?: 'PhotoFieldsFragment' };
+export type PhotoFieldsFragment = { __typename?: 'photos', id: any, type: string, source: string, mediumUrl?: string | null, thumbnailUrl?: string | null, blurHash?: string | null, width?: number | null, height?: number | null, duration?: number | null, takenAt?: any | null, slug?: string | null } & { ' $fragmentName'?: 'PhotoFieldsFragment' };
 
 export type AlbumFieldsFragment = { __typename?: 'playlist', id: any, title: string, thumbnailUrl?: string | null, slug: string, createdAt: any, description?: string | null, playlist_photos: Array<{ __typename?: 'playlist_photos', position: number, photo: (
       { __typename?: 'photos' }
@@ -15678,12 +15711,14 @@ fragment PlaylistAudioFields on playlist_audios {
 export const PhotoFieldsFragmentDoc = new TypedDocumentString(`
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }
@@ -15705,12 +15740,14 @@ export const AlbumFieldsFragmentDoc = new TypedDocumentString(`
 }
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }`, {"fragmentName":"AlbumFields"}) as unknown as TypedDocumentString<AlbumFieldsFragment, unknown>;
@@ -16339,12 +16376,14 @@ export const LookAlbumsDocument = new TypedDocumentString(`
 }
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }
@@ -16370,12 +16409,14 @@ export const LookAlbumDetailDocument = new TypedDocumentString(`
 }
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }
@@ -16401,12 +16442,14 @@ export const LookPhotoDetailDocument = new TypedDocumentString(`
 }
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }`) as unknown as TypedDocumentString<LookPhotoDetailQuery, LookPhotoDetailQueryVariables>;
@@ -16418,12 +16461,14 @@ export const LookPhotosDocument = new TypedDocumentString(`
 }
     fragment PhotoFields on photos {
   id
+  type
   source
   mediumUrl
   thumbnailUrl
   blurHash
   width
   height
+  duration
   takenAt
   slug
 }`) as unknown as TypedDocumentString<LookPhotosQuery, LookPhotosQueryVariables>;

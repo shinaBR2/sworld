@@ -41,6 +41,7 @@ select_permissions:
       columns:
         - blur_hash
         - created_at
+        - duration
         - height
         - id
         - medium_url
@@ -49,6 +50,7 @@ select_permissions:
         - source
         - taken_at
         - thumbnail_url
+        - type
         - updated_at
         - user_id
         - width
