@@ -65,6 +65,25 @@ import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import { flushThenExit } from './cli-exit';
 
+// ─── Validation exit ─────────────────────────────────────────────────────────
+
+/** Marker for a bad-argument / bad-config exit — swallowed by `main`'s catch. */
+class ArgError extends Error {}
+
+/**
+ * Print a validation error to stderr and exit non-zero, DRAINING stderr first so a
+ * piped message can't be truncated (a bare `process.exit` can cut it off — the very
+ * reason this file has `flushThenExit`). Returns `never`: `flushThenExit` exits on
+ * the stderr-flush callback, and the throw stops the caller proceeding on invalid
+ * input before that async exit lands. `main`'s catch recognises `ArgError` and stays
+ * quiet, so the message isn't printed twice.
+ */
+const failArgs = (...lines: string[]): never => {
+  for (const line of lines) console.error(line);
+  flushThenExit(1);
+  throw new ArgError(lines[0] ?? 'invalid arguments');
+};
+
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const CACHE_CONTROL = 'public, max-age=31536000';
@@ -154,39 +173,29 @@ const parseArgs = (rawArgs: string[]): GooglePhotosArgs => {
   const takeout = get('--takeout');
   const dir = get('--dir');
   if (takeout && dir) {
-    console.error('Error: use --takeout OR --dir, not both.');
-    process.exit(1);
+    failArgs('Error: use --takeout OR --dir, not both.');
   }
   if (!takeout && !dir) {
-    console.error(
+    failArgs(
       "Error: point at a Takeout root with --takeout <path> (the 'Google Photos' folder), or a single folder with --dir <path>.",
     );
-    process.exit(1);
   }
   const resolvedTakeout = takeout ? expandHome(takeout) : undefined;
   const resolvedDir = dir ? expandHome(dir) : undefined;
   if (resolvedTakeout && !existsSync(resolvedTakeout)) {
-    console.error(`Error: Takeout folder not found: ${resolvedTakeout}`);
-    process.exit(1);
+    failArgs(`Error: Takeout folder not found: ${resolvedTakeout}`);
   }
   if (resolvedDir && !existsSync(resolvedDir)) {
-    console.error(`Error: Directory not found: ${resolvedDir}`);
-    process.exit(1);
+    failArgs(`Error: Directory not found: ${resolvedDir}`);
   }
 
   // Owner comes from --user-id > env > config. Never hardcoded in source.
-  const userId = resolveValue(
-    get('--user-id'),
-    'DEFAULT_USER_ID',
-    'user-id',
-    config,
-  );
-  if (!userId) {
-    console.error(
+  // `|| failArgs` both enforces presence and narrows the type to string.
+  const userId =
+    resolveValue(get('--user-id'), 'DEFAULT_USER_ID', 'user-id', config) ||
+    failArgs(
       'Error: user-id not configured. Set it with `stream-m3u8.ts config set user-id <uuid>`, or pass --user-id <uuid>.',
     );
-    process.exit(1);
-  }
 
   const gcpKeyPath = resolveValue(
     get('--gcp-key'),
@@ -926,20 +935,20 @@ const handle = async (rawArgs: string[]): Promise<void> => {
 
   // Validate config the same way the other CLIs do.
   if (!args.dryRun && !args.gcpBucket) {
-    console.error(
+    failArgs(
       'Error: gcp-bucket not configured. Run: config set gcp-bucket <bucket-name>',
     );
-    process.exit(1);
   }
   if (
     !args.skipDb &&
     !args.dryRun &&
     (!args.hasuraEndpoint || !args.hasuraSecret)
   ) {
-    console.error('Error: hasura-endpoint and hasura-secret not configured.');
-    console.error('  Run: config set hasura-endpoint <url>');
-    console.error('  Run: config set hasura-secret <secret>');
-    process.exit(1);
+    failArgs(
+      'Error: hasura-endpoint and hasura-secret not configured.',
+      '  Run: config set hasura-endpoint <url>',
+      '  Run: config set hasura-secret <secret>',
+    );
   }
 
   const bucket = args.dryRun
@@ -1051,6 +1060,9 @@ const main = (): void => {
     // flushThenExit drains stdio first so output isn't truncated.
     .then(() => flushThenExit(0))
     .catch((error) => {
+      // A validation failure already printed its message and is flush-exiting via
+      // failArgs — don't print it again under an "=== Error ===" banner.
+      if (error instanceof ArgError) return;
       console.error('');
       console.error('=== Error ===');
       console.error(error.message || error);
