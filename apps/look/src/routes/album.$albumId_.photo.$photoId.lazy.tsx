@@ -8,7 +8,7 @@ const Content = () => {
   return <AlbumPage albumId={albumId} activePhotoId={photoId} />;
 };
 
-export const Route = createLazyFileRoute('/album/$albumId/photo/$photoId')({
+export const Route = createLazyFileRoute('/album/$albumId_/photo/$photoId')({
   component: () => {
     return (
       <AuthRoute>
