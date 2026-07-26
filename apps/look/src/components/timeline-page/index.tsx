@@ -1,4 +1,9 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import {
+  Link,
+  useCanGoBack,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
 import { useLoadPhotos } from 'core/look/query-hooks/photos';
 import { useAuthContext } from 'core/providers/auth';
 import { PhotoTimelineContainer } from 'ui/look/home-page/container';
@@ -15,9 +20,16 @@ interface TimelinePageProps {
 // link, deleted photo, load error → empty list) leaves the lightbox closed and
 // the user on the grid rather than a blank screen. Stepping replaces the URL so
 // Back leaves the lightbox in one step instead of walking every photo visited.
+//
+// Closing goes back in history so it returns to wherever the photo was opened
+// from — the timeline, or the album grid when opened from an album — instead of
+// always jumping home. When there's no in-app history to return to (a photo URL
+// opened directly, or reloaded), it falls back to the home route.
 const TimelinePage = (props: TimelinePageProps) => {
   const { activePhotoId } = props;
   const navigate = useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
   const { getAccessToken } = useAuthContext();
   const photosResult = useLoadPhotos({ getAccessToken });
   const { photos } = photosResult;
@@ -32,7 +44,11 @@ const TimelinePage = (props: TimelinePageProps) => {
         photos={photos}
         activeId={activePhotoId ?? ''}
         open={isPhotoOpen}
-        onClose={() => navigate({ to: '/', replace: true })}
+        onClose={() =>
+          canGoBack
+            ? router.history.back()
+            : navigate({ to: '/', replace: true })
+        }
         onActiveIdChange={(id) =>
           navigate({
             to: '/photo/$photoId',
