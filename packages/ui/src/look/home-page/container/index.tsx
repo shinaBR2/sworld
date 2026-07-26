@@ -15,12 +15,17 @@ import {
   buildTimelineRows,
   genPhotoLinkProps,
   groupPhotosByMonth,
+  photoRowHeight,
   resolveColumns,
 } from '../utils';
 
 // Row-height estimates (px) the virtualizer starts from before it measures the
 // real DOM heights — a virtualizer API contract, not a styling value.
 const HEADER_ROW_ESTIMATE = 64;
+// Only a first-paint fallback: photo rows are perfect squares, so once the
+// content width is known the real row height is computed exactly (see
+// `photoRowHeight`) and this constant is no longer used. A wrong estimate here
+// is what made rows snap/resize as they scrolled into view.
 const PHOTO_ROW_ESTIMATE = 220;
 const OVERSCAN = 6;
 const SKELETON_KEYS = Array.from(
@@ -47,6 +52,7 @@ const PhotoTimelineContainer = (props: PhotoTimelineContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { photos, isLoading } = queryRs;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
   const columns = resolveColumns({
@@ -61,11 +67,27 @@ const PhotoTimelineContainer = (props: PhotoTimelineContainerProps) => {
     [photos, columns],
   );
 
+  // The `spacing={1}` Grid gap and the row's `pb: 1` are both one spacing unit.
+  const rowGap = Number.parseFloat(theme.spacing(1));
+
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
+    // Every photo tile is a perfect square, so a row's height is exactly its
+    // width divided across the columns — read the live grid width straight from
+    // the DOM instead of guessing. That makes the estimate match what gets
+    // rendered, so `measureElement` finds nothing to correct and rows no longer
+    // snap/resize as they scroll in. The virtualizer re-runs this on scroll and
+    // on resize, so it tracks breakpoint and window changes on its own.
     estimateSize: (index) =>
-      rows[index].type === 'header' ? HEADER_ROW_ESTIMATE : PHOTO_ROW_ESTIMATE,
+      rows[index].type === 'header'
+        ? HEADER_ROW_ESTIMATE
+        : photoRowHeight({
+            contentWidth: contentRef.current?.clientWidth ?? 0,
+            columns,
+            gap: rowGap,
+            rowPadding: rowGap,
+          }) || PHOTO_ROW_ESTIMATE,
     // Key measurements by the stable row key, not the default index — so a
     // header's cached height isn't misapplied to a photo row when the column
     // count changes and the rows re-chunk.
@@ -104,6 +126,7 @@ const PhotoTimelineContainer = (props: PhotoTimelineContainerProps) => {
       sx={SCROLL_SX}
     >
       <Stack
+        ref={contentRef}
         sx={{
           position: 'relative',
           width: '100%',
