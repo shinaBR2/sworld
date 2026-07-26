@@ -175,6 +175,29 @@ describe('photoRowHeight', () => {
       photoRowHeight({ contentWidth: 0, columns: 4, gap: 8, rowPadding: 8 }),
     ).toBe(0);
   });
+
+  it('yields a different height when the column count changes at the same width', () => {
+    // A breakpoint flip re-chunks rows but keeps their keys, so the virtualizer
+    // reuses cached heights. Because the height genuinely changes here (5 vs 6
+    // columns at one width), that change is the signal the container keys its
+    // measurement-cache invalidation on. If these ever matched, the offscreen
+    // rows would keep stale heights after a resize.
+    const width = 1740;
+    const atFive = photoRowHeight({
+      contentWidth: width,
+      columns: 5,
+      gap: 8,
+      rowPadding: 8,
+    });
+    const atSix = photoRowHeight({
+      contentWidth: width,
+      columns: 6,
+      gap: 8,
+      rowPadding: 8,
+    });
+    expect(atFive).not.toBe(atSix);
+    expect(atFive).toBeGreaterThan(atSix);
+  });
 });
 
 describe('genPhotoLinkProps', () => {
