@@ -8,11 +8,15 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { useLoadAlbumDetail } from 'core/look/query-hooks/albums';
 import { useMemo, useRef } from 'react';
-import { genPhotoLinkProps, resolveColumns } from '../../home-page/utils';
+import { resolveColumns } from '../../home-page/utils';
 import { PhotoCard } from '../../photos/photo-card';
 import { PhotoSkeleton } from '../../photos/photo-card/skeleton';
 import type { LinkComponentType } from '../../photos/types';
-import { buildAlbumRows, formatPhotoCount } from '../utils';
+import {
+  buildAlbumRows,
+  formatPhotoCount,
+  genAlbumPhotoLinkProps,
+} from '../utils';
 
 // Row-height estimates (px) the virtualizer starts from before it measures the
 // real DOM heights — a virtualizer API contract, not a styling value.
@@ -36,6 +40,10 @@ const CONTENT_SX = {
 interface AlbumDetailContainerProps {
   queryRs: ReturnType<typeof useLoadAlbumDetail>;
   LinkComponent: LinkComponentType;
+  // The album these photos belong to — its id namespaces each photo card's link
+  // to the album-scoped viewer route (`/album/$albumId/photo/$photoId`), so the
+  // viewer stays in album context instead of the whole-library route.
+  albumId: string;
 }
 
 // One album's photos, grouped by the month they were taken like the timeline,
@@ -43,7 +51,7 @@ interface AlbumDetailContainerProps {
 // PhotoCard + blur placeholder and the same virtualized row model, so a large
 // album mounts only the visible rows.
 const AlbumDetailContainer = (props: AlbumDetailContainerProps) => {
-  const { queryRs, LinkComponent } = props;
+  const { queryRs, LinkComponent, albumId } = props;
   const { album, isLoading } = queryRs;
   const scrollRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -163,7 +171,7 @@ const AlbumDetailContainer = (props: AlbumDetailContainerProps) => {
                       <PhotoCard
                         photo={photo}
                         LinkComponent={LinkComponent}
-                        linkProps={genPhotoLinkProps(photo)}
+                        linkProps={genAlbumPhotoLinkProps(albumId, photo)}
                       />
                     </Grid>
                   ))}

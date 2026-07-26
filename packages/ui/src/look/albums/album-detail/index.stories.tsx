@@ -52,7 +52,7 @@ const meta: Meta<typeof AlbumDetailContainer> = {
       </Stack>
     ),
   ],
-  args: { LinkComponent: MockLink },
+  args: { LinkComponent: MockLink, albumId: 'album-1' },
   tags: ['autodocs'],
 };
 
