@@ -12,18 +12,27 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 
-const IndexLazyRouteImport = createFileRoute('/')()
+const TimelineLazyRouteImport = createFileRoute('/_timeline')()
+const TimelineIndexLazyRouteImport = createFileRoute('/_timeline/')()
 const AlbumAlbumIdLazyRouteImport = createFileRoute('/album/$albumId')()
-const PhotoPhotoIdLazyRouteImport = createFileRoute('/photo/$photoId')()
+const TimelinePhotoPhotoIdLazyRouteImport = createFileRoute(
+  '/_timeline/photo/$photoId',
+)()
 const AlbumAlbumIdPhotoPhotoIdLazyRouteImport = createFileRoute(
   '/album/$albumId_/photo/$photoId',
 )()
 
-const IndexLazyRoute = IndexLazyRouteImport.update({
+const TimelineLazyRoute = TimelineLazyRouteImport.update({
+  id: '/_timeline',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/_timeline.lazy').then((d) => d.Route))
+const TimelineIndexLazyRoute = TimelineIndexLazyRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+  getParentRoute: () => TimelineLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_timeline.index.lazy').then((d) => d.Route),
+)
 const AlbumAlbumIdLazyRoute = AlbumAlbumIdLazyRouteImport.update({
   id: '/album/$albumId',
   path: '/album/$albumId',
@@ -31,13 +40,14 @@ const AlbumAlbumIdLazyRoute = AlbumAlbumIdLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/album.$albumId.lazy').then((d) => d.Route),
 )
-const PhotoPhotoIdLazyRoute = PhotoPhotoIdLazyRouteImport.update({
-  id: '/photo/$photoId',
-  path: '/photo/$photoId',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() =>
-  import('./routes/photo.$photoId.lazy').then((d) => d.Route),
-)
+const TimelinePhotoPhotoIdLazyRoute =
+  TimelinePhotoPhotoIdLazyRouteImport.update({
+    id: '/photo/$photoId',
+    path: '/photo/$photoId',
+    getParentRoute: () => TimelineLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/_timeline.photo.$photoId.lazy').then((d) => d.Route),
+  )
 const AlbumAlbumIdPhotoPhotoIdLazyRoute =
   AlbumAlbumIdPhotoPhotoIdLazyRouteImport.update({
     id: '/album/$albumId_/photo/$photoId',
@@ -48,22 +58,23 @@ const AlbumAlbumIdPhotoPhotoIdLazyRoute =
   )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof TimelineIndexLazyRoute
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
-  '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/photo/$photoId': typeof TimelinePhotoPhotoIdLazyRoute
   '/album/$albumId/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
-  '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/': typeof TimelineIndexLazyRoute
+  '/photo/$photoId': typeof TimelinePhotoPhotoIdLazyRoute
   '/album/$albumId/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
+  '/_timeline': typeof TimelineLazyRouteWithChildren
   '/album/$albumId': typeof AlbumAlbumIdLazyRoute
-  '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/_timeline/': typeof TimelineIndexLazyRoute
+  '/_timeline/photo/$photoId': typeof TimelinePhotoPhotoIdLazyRoute
   '/album/$albumId_/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRouteTypes {
@@ -75,33 +86,40 @@ export interface FileRouteTypes {
     | '/album/$albumId/photo/$photoId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/album/$albumId'
+    | '/'
     | '/photo/$photoId'
     | '/album/$albumId/photo/$photoId'
   id:
     | '__root__'
-    | '/'
+    | '/_timeline'
     | '/album/$albumId'
-    | '/photo/$photoId'
+    | '/_timeline/'
+    | '/_timeline/photo/$photoId'
     | '/album/$albumId_/photo/$photoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  TimelineLazyRoute: typeof TimelineLazyRouteWithChildren
   AlbumAlbumIdLazyRoute: typeof AlbumAlbumIdLazyRoute
-  PhotoPhotoIdLazyRoute: typeof PhotoPhotoIdLazyRoute
   AlbumAlbumIdPhotoPhotoIdLazyRoute: typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_timeline': {
+      id: '/_timeline'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof TimelineLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_timeline/': {
+      id: '/_timeline/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof TimelineIndexLazyRouteImport
+      parentRoute: typeof TimelineLazyRoute
     }
     '/album/$albumId': {
       id: '/album/$albumId'
@@ -110,12 +128,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumAlbumIdLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/photo/$photoId': {
-      id: '/photo/$photoId'
+    '/_timeline/photo/$photoId': {
+      id: '/_timeline/photo/$photoId'
       path: '/photo/$photoId'
       fullPath: '/photo/$photoId'
-      preLoaderRoute: typeof PhotoPhotoIdLazyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof TimelinePhotoPhotoIdLazyRouteImport
+      parentRoute: typeof TimelineLazyRoute
     }
     '/album/$albumId_/photo/$photoId': {
       id: '/album/$albumId_/photo/$photoId'
@@ -127,10 +145,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface TimelineLazyRouteChildren {
+  TimelineIndexLazyRoute: typeof TimelineIndexLazyRoute
+  TimelinePhotoPhotoIdLazyRoute: typeof TimelinePhotoPhotoIdLazyRoute
+}
+
+const TimelineLazyRouteChildren: TimelineLazyRouteChildren = {
+  TimelineIndexLazyRoute: TimelineIndexLazyRoute,
+  TimelinePhotoPhotoIdLazyRoute: TimelinePhotoPhotoIdLazyRoute,
+}
+
+const TimelineLazyRouteWithChildren = TimelineLazyRoute._addFileChildren(
+  TimelineLazyRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  TimelineLazyRoute: TimelineLazyRouteWithChildren,
   AlbumAlbumIdLazyRoute: AlbumAlbumIdLazyRoute,
-  PhotoPhotoIdLazyRoute: PhotoPhotoIdLazyRoute,
   AlbumAlbumIdPhotoPhotoIdLazyRoute: AlbumAlbumIdPhotoPhotoIdLazyRoute,
 }
 export const routeTree = rootRouteImport
