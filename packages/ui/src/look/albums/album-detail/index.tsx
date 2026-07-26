@@ -38,10 +38,10 @@ interface AlbumDetailContainerProps {
   LinkComponent: LinkComponentType;
 }
 
-// One album's photos, in stored position order. Reuses the same square PhotoCard
-// + blur placeholder as the timeline, and the same virtualized row model so a
-// large album mounts only the visible rows — but as a flat header + grid (no
-// month grouping), since an album is a single ordered set.
+// One album's photos, grouped by the month they were taken like the timeline,
+// under a fixed album header (title, description, count). Reuses the same square
+// PhotoCard + blur placeholder and the same virtualized row model, so a large
+// album mounts only the visible rows.
 const AlbumDetailContainer = (props: AlbumDetailContainerProps) => {
   const { queryRs, LinkComponent } = props;
   const { album, isLoading } = queryRs;
@@ -146,6 +146,15 @@ const AlbumDetailContainer = (props: AlbumDetailContainerProps) => {
                     No photos in this album
                   </Typography>
                 </Stack>
+              ) : null}
+              {row.type === 'month' ? (
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ pt: 3, pb: 1, color: 'text.primary' }}
+                >
+                  {row.label}
+                </Typography>
               ) : null}
               {row.type === 'photos' ? (
                 <Grid container spacing={1} columns={columns} sx={{ pb: 1 }}>

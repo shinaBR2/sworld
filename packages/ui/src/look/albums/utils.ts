@@ -1,13 +1,14 @@
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
-import { chunk } from '../home-page/utils';
+import { chunk, groupPhotosByMonth } from '../home-page/utils';
 
-// The virtualizer's row model for one album: a single header row (album title,
-// description, count), then either an empty-state row or the photos chunked into
-// rows of `columns`. Unlike the timeline there is no month grouping — an album
-// is one ordered set — so this is a flat list with a fixed leading header.
+// The virtualizer's row model for one album: a fixed leading header row (album
+// title, description, count), then either an empty-state row or — like the
+// timeline — the photos grouped by the month they were taken, each month a
+// heading row followed by its photos chunked into rows of `columns`.
 type AlbumRow =
   | { type: 'header'; key: string }
   | { type: 'empty'; key: string }
+  | { type: 'month'; key: string; label: string }
   | { type: 'photos'; key: string; photos: TransformedPhoto[] };
 
 const buildAlbumRows = (
@@ -21,9 +22,20 @@ const buildAlbumRows = (
     return rows;
   }
 
-  chunk(photos, columns).forEach((rowPhotos, index) => {
-    rows.push({ type: 'photos', key: `album-row-${index}`, photos: rowPhotos });
-  });
+  for (const group of groupPhotosByMonth(photos)) {
+    rows.push({
+      type: 'month',
+      key: `album-month-${group.key}`,
+      label: group.label,
+    });
+    chunk(group.photos, columns).forEach((rowPhotos, index) => {
+      rows.push({
+        type: 'photos',
+        key: `album-row-${group.key}-${index}`,
+        photos: rowPhotos,
+      });
+    });
+  }
   return rows;
 };
 
