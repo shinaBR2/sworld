@@ -15,6 +15,9 @@ import { Route as rootRouteImport } from './routes/__root'
 const IndexLazyRouteImport = createFileRoute('/')()
 const PhotoPhotoIdLazyRouteImport = createFileRoute('/photo/$photoId')()
 const AlbumAlbumIdLazyRouteImport = createFileRoute('/album/$albumId')()
+const AlbumAlbumIdPhotoPhotoIdLazyRouteImport = createFileRoute(
+  '/album/$albumId/photo/$photoId',
+)()
 
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
@@ -35,34 +38,58 @@ const AlbumAlbumIdLazyRoute = AlbumAlbumIdLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/album.$albumId.lazy').then((d) => d.Route),
 )
+const AlbumAlbumIdPhotoPhotoIdLazyRoute =
+  AlbumAlbumIdPhotoPhotoIdLazyRouteImport.update({
+    id: '/photo/$photoId',
+    path: '/photo/$photoId',
+    getParentRoute: () => AlbumAlbumIdLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/album.$albumId.photo.$photoId.lazy').then((d) => d.Route),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/album/$albumId': typeof AlbumAlbumIdLazyRoute
+  '/album/$albumId': typeof AlbumAlbumIdLazyRouteWithChildren
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/album/$albumId/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/album/$albumId': typeof AlbumAlbumIdLazyRoute
+  '/album/$albumId': typeof AlbumAlbumIdLazyRouteWithChildren
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/album/$albumId/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
-  '/album/$albumId': typeof AlbumAlbumIdLazyRoute
+  '/album/$albumId': typeof AlbumAlbumIdLazyRouteWithChildren
   '/photo/$photoId': typeof PhotoPhotoIdLazyRoute
+  '/album/$albumId/photo/$photoId': typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/album/$albumId' | '/photo/$photoId'
+  fullPaths:
+    | '/'
+    | '/album/$albumId'
+    | '/photo/$photoId'
+    | '/album/$albumId/photo/$photoId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/album/$albumId' | '/photo/$photoId'
-  id: '__root__' | '/' | '/album/$albumId' | '/photo/$photoId'
+  to:
+    | '/'
+    | '/album/$albumId'
+    | '/photo/$photoId'
+    | '/album/$albumId/photo/$photoId'
+  id:
+    | '__root__'
+    | '/'
+    | '/album/$albumId'
+    | '/photo/$photoId'
+    | '/album/$albumId/photo/$photoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  AlbumAlbumIdLazyRoute: typeof AlbumAlbumIdLazyRoute
+  AlbumAlbumIdLazyRoute: typeof AlbumAlbumIdLazyRouteWithChildren
   PhotoPhotoIdLazyRoute: typeof PhotoPhotoIdLazyRoute
 }
 
@@ -89,12 +116,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumAlbumIdLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/album/$albumId/photo/$photoId': {
+      id: '/album/$albumId/photo/$photoId'
+      path: '/photo/$photoId'
+      fullPath: '/album/$albumId/photo/$photoId'
+      preLoaderRoute: typeof AlbumAlbumIdPhotoPhotoIdLazyRouteImport
+      parentRoute: typeof AlbumAlbumIdLazyRoute
+    }
   }
 }
 
+interface AlbumAlbumIdLazyRouteChildren {
+  AlbumAlbumIdPhotoPhotoIdLazyRoute: typeof AlbumAlbumIdPhotoPhotoIdLazyRoute
+}
+
+const AlbumAlbumIdLazyRouteChildren: AlbumAlbumIdLazyRouteChildren = {
+  AlbumAlbumIdPhotoPhotoIdLazyRoute: AlbumAlbumIdPhotoPhotoIdLazyRoute,
+}
+
+const AlbumAlbumIdLazyRouteWithChildren =
+  AlbumAlbumIdLazyRoute._addFileChildren(AlbumAlbumIdLazyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  AlbumAlbumIdLazyRoute: AlbumAlbumIdLazyRoute,
+  AlbumAlbumIdLazyRoute: AlbumAlbumIdLazyRouteWithChildren,
   PhotoPhotoIdLazyRoute: PhotoPhotoIdLazyRoute,
 }
 export const routeTree = rootRouteImport

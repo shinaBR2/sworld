@@ -1,6 +1,10 @@
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { describe, expect, it } from 'vitest';
-import { buildAlbumRows, formatPhotoCount } from './utils';
+import {
+  buildAlbumRows,
+  formatPhotoCount,
+  genAlbumPhotoLinkProps,
+} from './utils';
 
 const makePhoto = (id: string, takenAt: string | null): TransformedPhoto => ({
   id,
@@ -89,5 +93,15 @@ describe('buildAlbumRows', () => {
       { type: 'month', key: 'album-month-undated', label: 'Undated' },
       { type: 'photos', key: 'album-row-undated-0', photos: [undated] },
     ]);
+  });
+});
+
+describe('genAlbumPhotoLinkProps', () => {
+  it('links to the album-scoped photo route with both ids', () => {
+    const photo = makePhoto('photo-9', '2023-06-01T10:00:00Z');
+    expect(genAlbumPhotoLinkProps('album-3', photo)).toEqual({
+      to: '/album/$albumId/photo/$photoId',
+      params: { albumId: 'album-3', photoId: 'photo-9' },
+    });
   });
 });

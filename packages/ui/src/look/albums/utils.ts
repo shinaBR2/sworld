@@ -1,6 +1,17 @@
 import type { TransformedPhoto } from 'core/look/query-hooks/types';
 import { chunk, groupPhotosByMonth } from '../home-page/utils';
 
+const ALBUM_PHOTO_ROUTE = '/album/$albumId/photo/$photoId';
+
+// The album-scoped photo route: opening a photo from an album keeps the album
+// as the collection, so the viewer's ←/→ arrows step the album's photos (not
+// the whole library) and closing returns to the album. Mirrors the timeline's
+// genPhotoLinkProps, but carries the album id so the URL names the album.
+const genAlbumPhotoLinkProps = (albumId: string, photo: TransformedPhoto) => ({
+  to: ALBUM_PHOTO_ROUTE,
+  params: { albumId, photoId: photo.id },
+});
+
 // The virtualizer's row model for one album: a fixed leading header row (album
 // title, description, count), then either an empty-state row or — like the
 // timeline — the photos grouped by the month they were taken, each month a
@@ -42,5 +53,5 @@ const buildAlbumRows = (
 const formatPhotoCount = (count: number): string =>
   count === 1 ? '1 photo' : `${count} photos`;
 
-export { buildAlbumRows, formatPhotoCount };
+export { buildAlbumRows, formatPhotoCount, genAlbumPhotoLinkProps };
 export type { AlbumRow };
