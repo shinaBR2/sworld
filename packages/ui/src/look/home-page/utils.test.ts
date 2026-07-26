@@ -4,6 +4,7 @@ import {
   buildTimelineRows,
   genPhotoLinkProps,
   groupPhotosByMonth,
+  photoRowHeight,
   resolveColumns,
 } from './utils';
 
@@ -144,6 +145,58 @@ describe('resolveColumns', () => {
     expect(
       resolveColumns({ isSm: false, isMd: false, isLg: false, isXl: false }),
     ).toBe(2);
+  });
+});
+
+describe('photoRowHeight', () => {
+  it('divides the content width across the columns, minus the gaps, plus the row padding', () => {
+    // 6 columns, 8px gap: usable width = 1740 - 5*8 = 1700, tile = 283.333…,
+    // row = tile + 8px padding. Matches a measured desktop tile of ~283.4.
+    const height = photoRowHeight({
+      contentWidth: 1740,
+      columns: 6,
+      gap: 8,
+      rowPadding: 8,
+    });
+    expect(height).toBeCloseTo(1700 / 6 + 8, 5);
+  });
+
+  it('accounts for the gaps between tiles (a single column has no gap)', () => {
+    expect(
+      photoRowHeight({ contentWidth: 300, columns: 1, gap: 8, rowPadding: 8 }),
+    ).toBe(308);
+    expect(
+      photoRowHeight({ contentWidth: 300, columns: 2, gap: 8, rowPadding: 8 }),
+    ).toBe((300 - 8) / 2 + 8);
+  });
+
+  it('returns 0 when the width is not known yet, so the caller can fall back', () => {
+    expect(
+      photoRowHeight({ contentWidth: 0, columns: 4, gap: 8, rowPadding: 8 }),
+    ).toBe(0);
+  });
+
+  it('yields a different height when the column count changes at the same width', () => {
+    // A breakpoint flip re-chunks rows but keeps their keys, so the virtualizer
+    // reuses cached heights. Because the height genuinely changes here (5 vs 6
+    // columns at one width), that change is the signal the container keys its
+    // measurement-cache invalidation on. If these ever matched, the offscreen
+    // rows would keep stale heights after a resize.
+    const width = 1740;
+    const atFive = photoRowHeight({
+      contentWidth: width,
+      columns: 5,
+      gap: 8,
+      rowPadding: 8,
+    });
+    const atSix = photoRowHeight({
+      contentWidth: width,
+      columns: 6,
+      gap: 8,
+      rowPadding: 8,
+    });
+    expect(atFive).not.toBe(atSix);
+    expect(atFive).toBeGreaterThan(atSix);
   });
 });
 

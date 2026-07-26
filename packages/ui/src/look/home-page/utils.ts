@@ -111,6 +111,32 @@ const buildTimelineRows = (
   return rows;
 };
 
+// Exact rendered height (px) of one photo row, so the virtualizer estimates it
+// instead of guessing. Every tile is a perfect square (PhotoCard locks
+// aspectRatio 1/1), and the MUI Grid lays `columns` of them out with a `gap`
+// between — so the tile width, and thus its height, is fully determined:
+//   tileWidth = (contentWidth - (columns - 1) * gap) / columns
+// The row adds `rowPadding` (the Grid's bottom padding) below the tiles.
+// Returns 0 when the content width isn't known yet, so the caller falls back to
+// its own estimate for the first paint.
+const photoRowHeight = ({
+  contentWidth,
+  columns,
+  gap,
+  rowPadding,
+}: {
+  contentWidth: number;
+  columns: number;
+  gap: number;
+  rowPadding: number;
+}): number => {
+  if (contentWidth <= 0 || columns <= 0) {
+    return 0;
+  }
+  const tileWidth = (contentWidth - (columns - 1) * gap) / columns;
+  return tileWidth + rowPadding;
+};
+
 const resolveColumns = (flags: ColumnBreakpointFlags): number => {
   if (flags.isXl) {
     return COLUMNS_BY_BREAKPOINT.xl;
@@ -140,6 +166,7 @@ export {
   chunk,
   genPhotoLinkProps,
   groupPhotosByMonth,
+  photoRowHeight,
   resolveColumns,
 };
 export type { ColumnBreakpointFlags, MonthGroup, TimelineRow };
