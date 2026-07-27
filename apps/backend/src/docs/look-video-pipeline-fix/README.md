@@ -86,7 +86,7 @@ prod on merge — the gate catches it first.
 
 Each edge is a real `blocks`/`blocked-by` relation in Linear.
 
-```
+```text
 SWO-635 (this doc) ─▶ SWO-636 ─▶ SWO-637 ─▶ SWO-638
                                      └─────▶ SWO-639
 ```
@@ -104,7 +104,7 @@ may overlap it, but they validate/ship against the fixed binary.
 
 ## The two-defect fix, at a glance
 
-```
+```text
 BEFORE (broken):
   ffmpeg 4.4  → empty 0.m4s (24 B)            → freeze at first segment
   -crf 18, no VBV cap → ~30 Mbps off GCS      → mid-playback stall (~11–12s)
