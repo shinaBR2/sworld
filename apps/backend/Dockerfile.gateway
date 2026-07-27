@@ -5,6 +5,14 @@ FROM --platform=linux/amd64 node:24.18.0-slim
 # corepack resolves pnpm from the root package.json `packageManager` field.
 RUN corepack enable
 
+# ffmpeg for the set-thumbnail route, which extracts a frame via the shared ffmpeg
+# helper — it now resolves ffmpeg from PATH instead of a bundled npm binary
+# (SWO-637). Thumbnails don't need ffmpeg 7 (that's only for compute's HLS
+# convert), so this stays on the bookworm base's apt ffmpeg.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Manifests first so the install layer is only rebuilt when a dependency changes.

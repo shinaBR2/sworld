@@ -6,9 +6,11 @@ import * as path from 'path';
 import { getCurrentLogger } from 'src/utils/logger';
 import { videoConfig } from '../../config';
 
-// ffmpeg resolves from PATH (system ffmpeg on the host, apt-installed ffmpeg in
-// the compute image) — it must be >= 7 (see assertFfmpegVersion). ffprobe still
-// ships in-tarball via @ffprobe-installer (unaffected by the ffmpeg-7 upgrade).
+// ffmpeg resolves from PATH (system ffmpeg on the host; apt-installed in each
+// service image) instead of a bundled npm binary. HLS convert requires ffmpeg
+// >= 7 (SWO-633) — the compute service asserts that at startup
+// (assertFfmpegVersion); thumbnail frame extraction (io/gateway) works on any
+// recent ffmpeg. ffprobe still ships in-tarball via @ffprobe-installer.
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
 /**
