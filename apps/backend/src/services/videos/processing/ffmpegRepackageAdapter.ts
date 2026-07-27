@@ -1,13 +1,20 @@
-import { createReadStream, readdirSync, readFileSync, statSync } from 'node:fs';
-import { appendFile, readFile } from 'node:fs/promises';
+import {
+  createReadStream,
+  createWriteStream,
+  readdirSync,
+  readFileSync,
+  statSync,
+} from 'node:fs';
 import path from 'node:path';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import {
   cleanupDirectory,
   createDirectory,
-  downloadFile,
   generateTempDir,
 } from 'src/services/videos/helpers/file';
+import { videoConfig } from '../config';
 import { EMPTY_SEGMENT_MAX_BYTES } from './selectFmp4Parts';
 import type { Fmp4Artifacts, RepackagePort, RepackageSource } from './types';
 
@@ -81,21 +88,32 @@ const runFfmpeg = (
  * videos, so the concatenation is a valid fMP4 byte stream ffmpeg can re-segment
  * (SWO-639, the Infinix recovery).
  *
- * Each part is a single fMP4 fragment (small by construction), so a
- * read-into-memory append keeps the concat simple and — unlike a persistent
- * write stream — has no mid-write `error` event that could crash the process
- * unhandled. Downloads reuse the shared `downloadFile` helper (size-limit guard
- * + partial-file cleanup).
+ * Each part is streamed straight into the combined file in append mode. Not the
+ * shared `downloadFile` helper: this appends (that writes a fresh file) and,
+ * more importantly, `pipeline` resolves only after the write has flushed and
+ * closed — so every part is fully on disk before ffmpeg reads the result, and a
+ * mid-write stream error surfaces as a rejection rather than an unhandled crash.
  */
 const concatParts = async (
   partUrls: string[],
   workDir: string,
 ): Promise<string> => {
   const combinedPath = path.join(workDir, 'combined.mp4');
-  for (let i = 0; i < partUrls.length; i++) {
-    const partPath = path.join(workDir, `part-${i}`);
-    await downloadFile(partUrls[i], partPath);
-    await appendFile(combinedPath, await readFile(partPath));
+  for (const url of partUrls) {
+    const response = await fetch(url);
+    if (!response.ok || !response.body) {
+      throw new Error(`Download failed (${response.status}) for ${url}`);
+    }
+    if (
+      Number(response.headers.get('content-length') ?? 0) >
+      videoConfig.maxFileSize
+    ) {
+      throw new Error(`fMP4 part exceeds the max file size: ${url}`);
+    }
+    await pipeline(
+      Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0]),
+      createWriteStream(combinedPath, { flags: 'a' }),
+    );
   }
   return combinedPath;
 };
@@ -106,16 +124,23 @@ const segmentIndex = (name: string): number =>
 const readArtifacts = (outputDir: string): Fmp4Artifacts => {
   const segmentNames = readdirSync(outputDir)
     .filter((name) => name.endsWith('.m4s'))
-    // Drop any empty (moof-only, <= 24-byte) output segment. With ffmpeg >= 7
-    // the valid paths never produce one; an empty segment appears only when a
-    // media-less init was remuxed alone — dropping it collapses to the engine's
-    // "no segments" failure instead of re-shipping the empty-first-segment bug
-    // this whole fix exists to remove (SWO-633/639).
-    .filter(
-      (name) =>
-        statSync(path.join(outputDir, name)).size > EMPTY_SEGMENT_MAX_BYTES,
-    )
     .sort((a, b) => segmentIndex(a) - segmentIndex(b));
+
+  // Fail hard on ANY empty (moof-only, <= 24-byte) output segment rather than
+  // dropping it: the manifest (`playlistContent`) references every segment
+  // ffmpeg wrote, so silently omitting one from the upload would ship a
+  // rendition whose manifest points at a missing object. With ffmpeg >= 7 (both
+  // callers enforce it) the valid paths never emit one; an empty segment means
+  // either a media-less init remuxed alone or a pre-7 ffmpeg reintroducing the
+  // very empty-first-segment bug this fix removes — both must fail, not ship
+  // (SWO-633/639).
+  for (const name of segmentNames) {
+    if (statSync(path.join(outputDir, name)).size <= EMPTY_SEGMENT_MAX_BYTES) {
+      throw new Error(
+        `Remux produced an empty segment (${name}) — no playable media`,
+      );
+    }
+  }
 
   return {
     init: {

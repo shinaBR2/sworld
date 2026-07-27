@@ -61,5 +61,5 @@ const planReprocess = (
   return { source, outputStoragePath };
 };
 
-export { planReprocess, toStoredParts, PLAYLIST_NAME };
+export { planReprocess, toStoredParts };
 export type { StoredObject };
