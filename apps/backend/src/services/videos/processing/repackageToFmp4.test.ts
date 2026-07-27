@@ -1,10 +1,13 @@
-import { Readable } from 'node:stream';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { repackageToFmp4 } from './repackageToFmp4';
-import type { Fmp4Artifacts, RepackageDeps } from './types';
+import type { Fmp4Artifacts, RepackageDeps, RepackageSource } from './types';
+import { Readable } from 'node:stream';
 
-const STORAGE_PATH = 'videos/user-1/video-1';
-const PLAYLIST_URL = `https://storage.test/${STORAGE_PATH}/playlist.m3u8`;
+const OUTPUT_PATH = 'videos/user-1/video-1/v2';
+const SOURCE: RepackageSource = {
+  kind: 'hls-url',
+  url: 'https://storage.test/videos/user-1/video-1/playlist.m3u8',
+};
 
 const FMP4_PLAYLIST = `#EXTM3U
 #EXT-X-VERSION:7
@@ -48,66 +51,71 @@ const makeDeps = (
   return { deps, cleanup };
 };
 
+const run = (deps: RepackageDeps) =>
+  repackageToFmp4({ source: SOURCE, outputStoragePath: OUTPUT_PATH }, deps);
+
 describe('repackageToFmp4', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('feeds the stored playlist URL to the repackage port', async () => {
+  it('feeds the source through to the repackage port', async () => {
     const { deps } = makeDeps();
 
-    await repackageToFmp4({ storagePath: STORAGE_PATH }, deps);
+    await run(deps);
 
-    expect(deps.storage.getDownloadUrl).toHaveBeenCalledWith(
-      `${STORAGE_PATH}/playlist.m3u8`,
-    );
-    expect(deps.repackage.repackageToFmp4).toHaveBeenCalledWith(PLAYLIST_URL);
+    expect(deps.repackage.repackageToFmp4).toHaveBeenCalledWith(SOURCE);
   });
 
-  it('uploads init + each .m4s with the right content types and paths', async () => {
+  it('uploads init + each .m4s + the manifest, all under the versioned dir', async () => {
     const { deps } = makeDeps();
 
-    const result = await repackageToFmp4({ storagePath: STORAGE_PATH }, deps);
+    const result = await run(deps);
 
-    // 1 init + 2 segments = 3 uploads. NOT the playlist (P2 swaps that).
-    expect(deps.storage.uploadStream).toHaveBeenCalledTimes(3);
+    // 1 init + 2 segments + 1 manifest = 4 uploads, every one under v2/.
+    expect(deps.storage.uploadStream).toHaveBeenCalledTimes(4);
     expect(deps.storage.uploadStream).toHaveBeenCalledWith(
       expect.objectContaining({
-        storagePath: `${STORAGE_PATH}/init.mp4`,
+        storagePath: `${OUTPUT_PATH}/init.mp4`,
         contentType: 'video/mp4',
       }),
     );
     expect(deps.storage.uploadStream).toHaveBeenCalledWith(
       expect.objectContaining({
-        storagePath: `${STORAGE_PATH}/0.m4s`,
+        storagePath: `${OUTPUT_PATH}/0.m4s`,
         contentType: 'video/iso.segment',
+      }),
+    );
+    expect(deps.storage.uploadStream).toHaveBeenCalledWith(
+      expect.objectContaining({
+        storagePath: `${OUTPUT_PATH}/playlist.m3u8`,
+        contentType: 'application/vnd.apple.mpegurl',
       }),
     );
 
     expect(result).toEqual({
       initName: 'init.mp4',
       segmentNames: ['0.m4s', '1.m4s'],
-      playlistContent: FMP4_PLAYLIST,
+      manifestStoragePath: `${OUTPUT_PATH}/playlist.m3u8`,
     });
   });
 
-  it('never writes the shared playlist.m3u8 (additive only)', async () => {
+  it('uploads the manifest last, after every segment', async () => {
     const { deps } = makeDeps();
 
-    await repackageToFmp4({ storagePath: STORAGE_PATH }, deps);
+    await run(deps);
 
-    const wrotePlaylist = (
+    const calls = (
       deps.storage.uploadStream as ReturnType<typeof vi.fn>
-    ).mock.calls.some(([arg]) =>
-      (arg as { storagePath: string }).storagePath.endsWith('playlist.m3u8'),
-    );
-    expect(wrotePlaylist).toBe(false);
+    ).mock.calls.map(([arg]) => (arg as { storagePath: string }).storagePath);
+    const manifestIdx = calls.findIndex((p) => p.endsWith('playlist.m3u8'));
+    expect(manifestIdx).toBe(calls.length - 1);
   });
 
   it('always cleans up temp resources on success', async () => {
     const { deps, cleanup } = makeDeps();
 
-    await repackageToFmp4({ storagePath: STORAGE_PATH }, deps);
+    await run(deps);
 
     expect(cleanup).toHaveBeenCalledTimes(1);
   });
@@ -115,9 +123,7 @@ describe('repackageToFmp4', () => {
   it('throws and still cleans up when no segments were produced', async () => {
     const { deps, cleanup } = makeDeps({ artifacts: makeArtifacts(0) });
 
-    await expect(
-      repackageToFmp4({ storagePath: STORAGE_PATH }, deps),
-    ).rejects.toThrow('Repackage produced no segments');
+    await expect(run(deps)).rejects.toThrow('Repackage produced no segments');
     expect(deps.storage.uploadStream).not.toHaveBeenCalled();
     expect(cleanup).toHaveBeenCalledTimes(1);
   });
@@ -129,11 +135,11 @@ describe('repackageToFmp4', () => {
       },
     });
 
-    const result = await repackageToFmp4({ storagePath: STORAGE_PATH }, deps);
+    const result = await run(deps);
 
     expect(result.initName).toBe('init.mp4');
     expect(deps.logger.warn).toHaveBeenCalledWith(
-      expect.objectContaining({ storagePath: STORAGE_PATH }),
+      expect.objectContaining({ outputStoragePath: OUTPUT_PATH }),
       'fMP4 repackage cleanup failed',
     );
   });
@@ -148,9 +154,7 @@ describe('repackageToFmp4', () => {
       },
     });
 
-    await expect(
-      repackageToFmp4({ storagePath: STORAGE_PATH }, deps),
-    ).rejects.toThrow('Failed to upload fMP4 artifacts');
+    await expect(run(deps)).rejects.toThrow('Failed to upload fMP4 artifacts');
     expect(deps.logger.warn).toHaveBeenCalled();
   });
 
@@ -161,9 +165,7 @@ describe('repackageToFmp4', () => {
       },
     });
 
-    await expect(
-      repackageToFmp4({ storagePath: STORAGE_PATH }, deps),
-    ).rejects.toThrow('Failed to upload fMP4 artifacts');
+    await expect(run(deps)).rejects.toThrow('Failed to upload fMP4 artifacts');
     expect(cleanup).toHaveBeenCalledTimes(1);
   });
 });

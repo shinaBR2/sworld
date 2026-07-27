@@ -1,25 +1,17 @@
-import {
-  createReadStream,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-} from 'node:fs';
-import { rm } from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { Storage } from '@google-cloud/storage';
-import ffmpeg from 'fluent-ffmpeg';
 import type { RepairFmp4HandlerRequest } from 'src/schema/videos/repair-fmp4-handler';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
 import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
+import { buildFfmpegRepackage } from 'src/services/videos/processing/ffmpegRepackageAdapter';
+import { planReprocessSource } from 'src/services/videos/processing/planReprocessSource';
 import { repackageToFmp4 } from 'src/services/videos/processing/repackageToFmp4';
+import type { StoredPart } from 'src/services/videos/processing/selectFmp4Parts';
 import type {
-  Fmp4Artifacts,
   RepackageDeps,
-  RepackagePort,
+  RepackageSource,
 } from 'src/services/videos/processing/types';
+import { nextVersionDir } from 'src/services/videos/processing/versioning';
 import { CustomError } from 'src/utils/custom-error';
 import { envConfig } from 'src/utils/envConfig';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
@@ -30,98 +22,41 @@ import { AppResponse } from 'src/utils/schema';
 // ffmpeg resolves from PATH — apt-installed (>= 7) in the compute image (SWO-633).
 
 const PLAYLIST_NAME = 'playlist.m3u8';
-const FMP4_PLAYLIST_NAME = 'playlist-fmp4.m3u8';
-const PLAYLIST_CONTENT_TYPE = 'application/vnd.apple.mpegurl';
 const SOURCE = 'apps/compute/videos/routes/repair-fmp4/index.ts';
 
-const buildFfmpegRepackage = (): RepackagePort => ({
-  repackageToFmp4: async (sourceUrl: string) => {
-    const tempDir = mkdtempSync(path.join(os.tmpdir(), 'fmp4-repair-'));
-    const outputDir = path.join(tempDir, 'out');
-    mkdirSync(outputDir, { recursive: true });
-    const playlistPath = path.join(outputDir, PLAYLIST_NAME);
-
-    await new Promise<void>((res, rej) => {
-      ffmpeg(sourceUrl)
-        .outputOptions([
-          '-c:v',
-          'copy',
-          '-c:a',
-          'aac',
-          '-b:a',
-          '128k',
-          '-ac',
-          '2',
-          '-ar',
-          '44100',
-          '-hls_time',
-          '6',
-          '-hls_playlist_type',
-          'vod',
-          '-hls_segment_type',
-          'fmp4',
-          '-hls_fmp4_init_filename',
-          'init.mp4',
-        ])
-        .format('hls')
-        .output(playlistPath)
-        .on('end', () => res())
-        .on('error', (err, _stdout, stderr) =>
-          rej(
-            new Error(
-              `ffmpeg fMP4 remux failed: ${err.message}\n${stderr ?? ''}`,
-            ),
-          ),
-        )
-        .run();
-    });
-
-    const segmentNames = readdirSync(outputDir)
-      .filter((name) => name.endsWith('.m4s'))
-      .sort(
-        (a, b) =>
-          Number(a.match(/\d+/)?.[0] ?? 0) - Number(b.match(/\d+/)?.[0] ?? 0),
-      );
-
-    const artifacts: Fmp4Artifacts = {
-      init: {
-        name: 'init.mp4',
-        stream: createReadStream(path.join(outputDir, 'init.mp4')),
-      },
-      segments: segmentNames.map((name) => ({
-        name,
-        stream: createReadStream(path.join(outputDir, name)),
-      })),
-      playlistContent: readFileSync(playlistPath, 'utf-8'),
-    };
-
-    return {
-      artifacts,
-      cleanup: async () => {
-        await rm(tempDir, { recursive: true, force: true });
-      },
-    };
+const buildRepairDeps = (
+  bucket: ReturnType<Storage['bucket']>,
+): RepackageDeps => ({
+  storage: {
+    uploadStream: ({ stream, storagePath, contentType }) =>
+      pipeline(
+        stream,
+        bucket.file(storagePath).createWriteStream({
+          contentType,
+          metadata: { cacheControl: 'public, max-age=31536000' },
+        }),
+      ),
+    getDownloadUrl: (storagePath) => getDownloadUrl(storagePath),
   },
+  repackage: buildFfmpegRepackage(),
+  logger: getCurrentLogger(),
 });
 
-const buildRepairDeps = (): RepackageDeps => {
-  const storage = new Storage();
-  const bucket = storage.bucket(envConfig.storageBucket as string);
-
+/** Objects stored directly under `basePath` (excludes any `v<N>/` rendition). */
+const listStoredObjects = async (
+  bucket: ReturnType<Storage['bucket']>,
+  basePath: string,
+): Promise<{ relativeNames: string[]; topLevel: StoredPart[] }> => {
+  const [files] = await bucket.getFiles({ prefix: `${basePath}/` });
+  const relative = files
+    .map((file) => ({
+      name: file.name.slice(basePath.length + 1),
+      size: Number(file.metadata?.size ?? 0),
+    }))
+    .filter((part) => part.name.length > 0);
   return {
-    storage: {
-      uploadStream: ({ stream, storagePath, contentType }) =>
-        pipeline(
-          stream,
-          bucket.file(storagePath).createWriteStream({
-            contentType,
-            metadata: { cacheControl: 'public, max-age=31536000' },
-          }),
-        ),
-      getDownloadUrl: (storagePath) => getDownloadUrl(storagePath),
-    },
-    repackage: buildFfmpegRepackage(),
-    logger: getCurrentLogger(),
+    relativeNames: relative.map((part) => part.name),
+    topLevel: relative.filter((part) => !part.name.includes('/')),
   };
 };
 
@@ -141,20 +76,37 @@ const repairFmp4Handler = async (
     );
 
     const storagePath = `videos/${userId}/${videoId}`;
-    const { playlistContent } = await repackageToFmp4(
-      { storagePath },
-      buildRepairDeps(),
-    );
-
     const storage = new Storage();
     const bucket = storage.bucket(envConfig.storageBucket as string);
-    const fmp4PlaylistPath = `${storagePath}/${FMP4_PLAYLIST_NAME}`;
-    await bucket.file(fmp4PlaylistPath).save(playlistContent, {
-      contentType: PLAYLIST_CONTENT_TYPE,
-      metadata: { cacheControl: 'no-cache' },
-    });
 
-    const newSource = getDownloadUrl(fmp4PlaylistPath);
+    const { relativeNames, topLevel } = await listStoredObjects(
+      bucket,
+      storagePath,
+    );
+    // Fresh versioned dir for ALL outputs — never overwrites a 1-year-cached
+    // object (SWO-639).
+    const outputStoragePath = `${storagePath}/${nextVersionDir(relativeNames)}`;
+
+    const plan = planReprocessSource(topLevel);
+    const source: RepackageSource =
+      plan.kind === 'hls-ts'
+        ? {
+            kind: 'hls-url',
+            url: getDownloadUrl(`${storagePath}/${PLAYLIST_NAME}`),
+          }
+        : {
+            kind: 'fmp4-parts',
+            partUrls: plan.partNames.map((name) =>
+              getDownloadUrl(`${storagePath}/${name}`),
+            ),
+          };
+
+    const { manifestStoragePath } = await repackageToFmp4(
+      { source, outputStoragePath },
+      buildRepairDeps(bucket),
+    );
+
+    const newSource = getDownloadUrl(manifestStoragePath);
 
     await finishVideoProcess({
       taskId,

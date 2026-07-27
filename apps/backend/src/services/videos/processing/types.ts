@@ -139,13 +139,25 @@ interface RepackageOutput {
 }
 
 /**
- * Port that reads an HLS source URL and remuxes it to fMP4/CMAF — no video
+ * Where a reprocess reads its media from. Both variants produce a clean fMP4 via
+ * a lossless `-c copy` remux (SWO-639):
+ * - `hls-url`: remux an HLS playlist URL directly (a stored `.ts` playlist).
+ * - `fmp4-parts`: download the given fMP4 object URLs, concatenate them, and
+ *   remux the result — recovers a broken fMP4 (the Infinix case: a media-bearing
+ *   `init.mp4` + an empty first `.m4s`) whose playlist ffmpeg can't read directly.
+ */
+type RepackageSource =
+  | { kind: 'hls-url'; url: string }
+  | { kind: 'fmp4-parts'; partUrls: string[] };
+
+/**
+ * Port that turns a {@link RepackageSource} into fMP4/CMAF artifacts — no video
  * transcode. The real implementation (fluent-ffmpeg + a temp dir) is the
- * adapter's (P2); the engine only sees this interface, which keeps it
- * env-agnostic and unit-testable with a fake.
+ * adapter's; the engine only sees this interface, which keeps it env-agnostic
+ * and unit-testable with a fake.
  */
 interface RepackagePort {
-  repackageToFmp4(sourceUrl: string): Promise<RepackageOutput>;
+  repackageToFmp4(source: RepackageSource): Promise<RepackageOutput>;
 }
 
 interface RepackageDeps {
@@ -156,17 +168,27 @@ interface RepackageDeps {
 }
 
 interface RepackageInput {
-  /** Base storage path of the already-streamed video, e.g. `videos/<user>/<id>`. */
-  storagePath: string;
+  /** The media to remux (a stored `.ts` playlist URL, or fMP4 parts to concat). */
+  source: RepackageSource;
+  /**
+   * Versioned directory ALL outputs (init, segments, manifest) are written
+   * under, e.g. `videos/<user>/<id>/v2`. A fresh `v<N>/` per reprocess is what
+   * makes the fix cache-safe — it never overwrites a 1-year-cached object.
+   */
+  outputStoragePath: string;
 }
 
 interface RepackageResult {
-  /** Uploaded init object name (relative to `storagePath`). */
+  /** Uploaded init object name (relative to `outputStoragePath`). */
   initName: string;
-  /** Uploaded `.m4s` object names (relative to `storagePath`). */
+  /** Uploaded `.m4s` object names (relative to `outputStoragePath`). */
   segmentNames: string[];
-  /** fMP4 playlist text for the caller to swap into `playlist.m3u8` (P2). */
-  playlistContent: string;
+  /**
+   * Full storage path of the uploaded manifest, e.g.
+   * `videos/<user>/<id>/v2/playlist.m3u8`. The caller repoints `videos.source`
+   * at this object's download URL.
+   */
+  manifestStoragePath: string;
 }
 
 export type {
@@ -185,6 +207,7 @@ export type {
   Fmp4Artifact,
   Fmp4Artifacts,
   RepackageOutput,
+  RepackageSource,
   RepackagePort,
   RepackageDeps,
   RepackageInput,
