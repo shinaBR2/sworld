@@ -30,4 +30,8 @@ describe('planReprocessSource', () => {
       planReprocessSource([{ name: 'playlist.m3u8', size: 300 }]),
     ).toThrow(/no init\.mp4/);
   });
+
+  it('throws a clear error when nothing is stored at all', () => {
+    expect(() => planReprocessSource([])).toThrow(/Nothing stored/);
+  });
 });

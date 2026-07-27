@@ -33,14 +33,9 @@ import { Storage } from '@google-cloud/storage';
 import { GraphQLClient } from 'graphql-request';
 import { assertFfmpegVersion } from 'src/services/videos/helpers/ffmpeg';
 import { buildFfmpegRepackage } from 'src/services/videos/processing/ffmpegRepackageAdapter';
-import { planReprocessSource } from 'src/services/videos/processing/planReprocessSource';
+import { planReprocess } from 'src/services/videos/processing/planReprocess';
 import { repackageToFmp4 } from 'src/services/videos/processing/repackageToFmp4';
-import type { StoredPart } from 'src/services/videos/processing/selectFmp4Parts';
-import type {
-  RepackageDeps,
-  RepackageSource,
-} from 'src/services/videos/processing/types';
-import { nextVersionDir } from 'src/services/videos/processing/versioning';
+import type { RepackageDeps } from 'src/services/videos/processing/types';
 
 // ffmpeg resolves from PATH — must be >= 7 (see SWO-633). On the host this is
 // the developer's system ffmpeg; in the compute image it is apt-installed.
@@ -253,44 +248,25 @@ async function handleRepair(rawArgs: string[]) {
   const storage = createStorage(args.gcpKeyPath);
   const bucket = storage.bucket(args.gcpBucket);
 
-  // Read what's stored to decide the input mode and the next version dir. Only
-  // TOP-LEVEL objects feed the source decision — a reprocess always reads the
-  // original outputs, never a previous v<N>/ rendition.
+  // Plan a cache-safe reprocess from what's stored: the source to remux and a
+  // fresh v<N>/ dir for ALL outputs (never overwrites a 1-year-cached object).
   const [existing] = await bucket.getFiles({ prefix: `${storagePath}/` });
-  const relative = existing
-    .map((f) => ({
-      name: f.name.slice(storagePath.length + 1),
+  const { source, outputStoragePath } = planReprocess(
+    existing.map((f) => ({
+      name: f.name,
       size: Number(f.metadata?.size ?? 0),
-    }))
-    .filter((p) => p.name.length > 0);
-  const topLevel: StoredPart[] = relative.filter((p) => !p.name.includes('/'));
-  const outputStoragePath = `${storagePath}/${nextVersionDir(
-    relative.map((p) => p.name),
-  )}`;
-
-  const plan = planReprocessSource(topLevel);
-  const source: RepackageSource =
-    plan.kind === 'hls-ts'
-      ? {
-          kind: 'hls-url',
-          url: getDownloadUrl(
-            args.gcpBucket,
-            `${storagePath}/${PLAYLIST_NAME}`,
-          ),
-        }
-      : {
-          kind: 'fmp4-parts',
-          partUrls: plan.partNames.map((n) =>
-            getDownloadUrl(args.gcpBucket, `${storagePath}/${n}`),
-          ),
-        };
+    })),
+    storagePath,
+    (p) => getDownloadUrl(args.gcpBucket, p),
+  );
   const newSource = getDownloadUrl(
     args.gcpBucket,
     `${outputStoragePath}/${PLAYLIST_NAME}`,
   );
 
+  const partCount = source.kind === 'fmp4-parts' ? source.partUrls.length : 0;
   console.log(
-    `  Input mode:   ${plan.kind === 'hls-ts' ? 'remux stored .ts' : `recover fMP4 (${plan.partNames.length} parts)`}`,
+    `  Input mode:   ${source.kind === 'hls-url' ? 'remux stored .ts' : `recover fMP4 (${partCount} parts)`}`,
   );
   console.log(`  Output dir:   ${outputStoragePath}/`);
 
@@ -298,7 +274,7 @@ async function handleRepair(rawArgs: string[]) {
     console.log('');
     console.log('[DRY RUN] Would:');
     console.log(
-      `  1. ${plan.kind === 'hls-ts' ? `remux ${storagePath}/${PLAYLIST_NAME}` : `concat + remux ${plan.partNames.length} stored fMP4 part(s)`} → fMP4`,
+      `  1. ${source.kind === 'hls-url' ? `remux ${storagePath}/${PLAYLIST_NAME}` : `concat + remux ${partCount} stored fMP4 part(s)`} → fMP4`,
     );
     console.log(
       `  2. upload init.mp4 + .m4s + ${PLAYLIST_NAME} under ${outputStoragePath}/`,

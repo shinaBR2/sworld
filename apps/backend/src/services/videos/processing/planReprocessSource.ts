@@ -16,12 +16,15 @@ type ReprocessSourcePlan =
  * base (callers exclude any previous `v<N>/` rendition — a reprocess always
  * reads the original outputs, never a prior reprocess).
  *
- * @throws (via {@link selectFmp4Parts}) when there is no `.ts` and no recoverable
- *   fMP4 either — there is nothing to reprocess.
+ * @throws when nothing is stored at the base, or (via {@link selectFmp4Parts})
+ *   when there is no `.ts` and no recoverable fMP4 either — nothing to reprocess.
  */
 const planReprocessSource = (
   topLevelParts: StoredPart[],
 ): ReprocessSourcePlan => {
+  if (!topLevelParts.length) {
+    throw new Error('Nothing stored to reprocess at this path');
+  }
   const hasTs = topLevelParts.some((part) => part.name.endsWith('.ts'));
   if (hasTs) {
     return { kind: 'hls-ts' };

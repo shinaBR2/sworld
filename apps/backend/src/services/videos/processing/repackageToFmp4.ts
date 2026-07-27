@@ -1,5 +1,5 @@
+import path from 'node:path';
 import { Readable } from 'node:stream';
-import path from 'path';
 import { CustomError } from 'src/utils/custom-error';
 import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import type { RepackageDeps, RepackageInput, RepackageResult } from './types';
@@ -105,6 +105,16 @@ const repackageToFmp4 = async (
       });
     }
   } finally {
+    // Close any artifact stream that wasn't consumed. An upload failure above
+    // leaves the not-yet-uploaded segment streams — and, on the no-segments
+    // guard, the init stream — open; their fds would otherwise linger until GC
+    // in the long-lived compute worker. Fully-uploaded streams are already
+    // destroyed (pipeline destroys on completion), so this is a no-op for them.
+    for (const artifact of [artifacts.init, ...artifacts.segments]) {
+      if (!artifact.stream.destroyed) {
+        artifact.stream.destroy();
+      }
+    }
     // Cleanup (temp dir removal) must never mask the real failure above, nor
     // fail an otherwise-successful reprocess — a leaked temp dir is only worth a
     // warning. So swallow-and-log; the primary error always propagates.

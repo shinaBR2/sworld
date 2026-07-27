@@ -37,12 +37,14 @@ describe('selectFmp4Parts', () => {
     );
   });
 
-  it('throws when every segment is empty (nothing to recover)', () => {
-    expect(() =>
+  it('returns the init alone when every .m4s is empty (single-fragment recovery)', () => {
+    // A short video whose whole media lives in the (large) init, with only an
+    // empty 0.m4s — [init] alone is still a valid remuxable stream.
+    expect(
       selectFmp4Parts([
-        { name: 'init.mp4', size: 1400 },
+        { name: 'init.mp4', size: 1_533_135 },
         { name: '0.m4s', size: 24 },
       ]),
-    ).toThrow(/no non-empty/);
+    ).toEqual(['init.mp4']);
   });
 });

@@ -1,17 +1,14 @@
-import {
-  createReadStream,
-  createWriteStream,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-} from 'node:fs';
-import { rm } from 'node:fs/promises';
-import os from 'node:os';
+import { createReadStream, readdirSync, readFileSync, statSync } from 'node:fs';
+import { appendFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
+import {
+  cleanupDirectory,
+  createDirectory,
+  downloadFile,
+  generateTempDir,
+} from 'src/services/videos/helpers/file';
+import { EMPTY_SEGMENT_MAX_BYTES } from './selectFmp4Parts';
 import type { Fmp4Artifacts, RepackagePort, RepackageSource } from './types';
 
 // ffmpeg resolves from PATH — apt-installed (>= 7) in the compute image, system
@@ -78,53 +75,47 @@ const runFfmpeg = (
       .run();
   });
 
-const downloadTo = async (url: string, dest: string): Promise<void> => {
-  const response = await fetch(url);
-  if (!response.ok || !response.body) {
-    throw new Error(`Download failed (${response.status}) for ${url}`);
-  }
-  await pipeline(
-    Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0]),
-    createWriteStream(dest),
-  );
-};
-
 /**
  * Concatenate the fMP4 parts (init + non-empty segments, in order) into one
  * file. The init already embeds the first fragment's media on the affected
  * videos, so the concatenation is a valid fMP4 byte stream ffmpeg can re-segment
  * (SWO-639, the Infinix recovery).
+ *
+ * Each part is a single fMP4 fragment (small by construction), so a
+ * read-into-memory append keeps the concat simple and — unlike a persistent
+ * write stream — has no mid-write `error` event that could crash the process
+ * unhandled. Downloads reuse the shared `downloadFile` helper (size-limit guard
+ * + partial-file cleanup).
  */
 const concatParts = async (
   partUrls: string[],
   workDir: string,
 ): Promise<string> => {
   const combinedPath = path.join(workDir, 'combined.mp4');
-  const out = createWriteStream(combinedPath);
-  try {
-    for (let i = 0; i < partUrls.length; i++) {
-      const partPath = path.join(workDir, `part-${i}`);
-      await downloadTo(partUrls[i], partPath);
-      await new Promise<void>((resolve, reject) => {
-        const rs = createReadStream(partPath);
-        rs.on('error', reject);
-        rs.on('end', () => resolve());
-        rs.pipe(out, { end: false });
-      });
-    }
-  } finally {
-    await new Promise<void>((resolve) => out.end(resolve));
+  for (let i = 0; i < partUrls.length; i++) {
+    const partPath = path.join(workDir, `part-${i}`);
+    await downloadFile(partUrls[i], partPath);
+    await appendFile(combinedPath, await readFile(partPath));
   }
   return combinedPath;
 };
 
+const segmentIndex = (name: string): number =>
+  Number(name.match(/\d+/)?.[0] ?? 0);
+
 const readArtifacts = (outputDir: string): Fmp4Artifacts => {
   const segmentNames = readdirSync(outputDir)
     .filter((name) => name.endsWith('.m4s'))
-    .sort(
-      (a, b) =>
-        Number(a.match(/\d+/)?.[0] ?? 0) - Number(b.match(/\d+/)?.[0] ?? 0),
-    );
+    // Drop any empty (moof-only, <= 24-byte) output segment. With ffmpeg >= 7
+    // the valid paths never produce one; an empty segment appears only when a
+    // media-less init was remuxed alone — dropping it collapses to the engine's
+    // "no segments" failure instead of re-shipping the empty-first-segment bug
+    // this whole fix exists to remove (SWO-633/639).
+    .filter(
+      (name) =>
+        statSync(path.join(outputDir, name)).size > EMPTY_SEGMENT_MAX_BYTES,
+    )
+    .sort((a, b) => segmentIndex(a) - segmentIndex(b));
 
   return {
     init: {
@@ -147,24 +138,29 @@ const readArtifacts = (outputDir: string): Fmp4Artifacts => {
  */
 const buildFfmpegRepackage = (): RepackagePort => ({
   repackageToFmp4: async (source: RepackageSource) => {
-    const tempDir = mkdtempSync(path.join(os.tmpdir(), 'fmp4-repair-'));
-    const outputDir = path.join(tempDir, 'out');
-    mkdirSync(outputDir, { recursive: true });
-    const playlistPath = path.join(outputDir, PLAYLIST_NAME);
+    const tempDir = generateTempDir();
+    try {
+      const outputDir = path.join(tempDir, 'out');
+      await createDirectory(outputDir);
+      const playlistPath = path.join(outputDir, PLAYLIST_NAME);
 
-    if (source.kind === 'hls-url') {
-      await runFfmpeg(source.url, HLS_URL_OUTPUT_OPTIONS, playlistPath);
-    } else {
-      const combinedPath = await concatParts(source.partUrls, tempDir);
-      await runFfmpeg(combinedPath, FMP4_PARTS_OUTPUT_OPTIONS, playlistPath);
+      if (source.kind === 'hls-url') {
+        await runFfmpeg(source.url, HLS_URL_OUTPUT_OPTIONS, playlistPath);
+      } else {
+        const combinedPath = await concatParts(source.partUrls, tempDir);
+        await runFfmpeg(combinedPath, FMP4_PARTS_OUTPUT_OPTIONS, playlistPath);
+      }
+
+      return {
+        artifacts: readArtifacts(outputDir),
+        cleanup: () => cleanupDirectory(tempDir),
+      };
+    } catch (error) {
+      // Any failure here happens before `cleanup` is handed back, so the engine
+      // never gets a chance to remove the temp dir — clean it up ourselves.
+      await cleanupDirectory(tempDir);
+      throw error;
     }
-
-    return {
-      artifacts: readArtifacts(outputDir),
-      cleanup: async () => {
-        await rm(tempDir, { recursive: true, force: true });
-      },
-    };
   },
 });
 
