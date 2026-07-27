@@ -34,6 +34,7 @@ import { pipeline } from 'node:stream/promises';
 import { Storage } from '@google-cloud/storage';
 import ffmpeg from 'fluent-ffmpeg';
 import { GraphQLClient } from 'graphql-request';
+import { assertFfmpegVersion } from 'src/services/videos/helpers/ffmpeg';
 import { repackageToFmp4 } from 'src/services/videos/processing/repackageToFmp4';
 import type {
   Fmp4Artifacts,
@@ -365,6 +366,13 @@ async function handleRepair(rawArgs: string[]) {
     console.log('[DRY RUN] Done — nothing written.');
     return;
   }
+
+  // Enforce the ffmpeg >= 7 prerequisite (SWO-633) before any real work: the
+  // repackage below drives the same fMP4/CMAF HLS muxer whose 4.x version emits
+  // the empty first segment, so an old host ffmpeg would "repair" the video into
+  // the very bug we're fixing and upload it. Fail fast instead — compute enforces
+  // the same check at startup.
+  assertFfmpegVersion();
 
   // 1-2. Repackage + upload the new fMP4 segments (additive, non-destructive).
   console.log('');
