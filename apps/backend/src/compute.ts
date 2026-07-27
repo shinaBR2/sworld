@@ -5,6 +5,7 @@ import { bodyLimit } from 'hono/body-limit';
 import { contextStorage } from 'hono/context-storage';
 import { requestId } from 'hono/request-id';
 import { rateLimiter } from 'hono-rate-limiter';
+import { assertFfmpegVersion } from 'src/services/videos/helpers/ffmpeg';
 import { envConfig } from 'src/utils/envConfig';
 import {
   createHonoLoggingMiddleware,
@@ -71,6 +72,10 @@ app.onError((e, c) => {
   // TODO: handle proper response
   return c.json({ error: e.message }, 500);
 });
+
+// Fail fast if the environment's ffmpeg is older than 7 — ffmpeg 4.4 emitted an
+// empty first HLS segment and every converted video froze (SWO-633).
+assertFfmpegVersion();
 
 serve(
   {

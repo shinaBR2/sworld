@@ -74,9 +74,9 @@ transcoded (they proxy the external URL), so they're excluded from every check.
 - [ ] **Local Docker build gate:** `docker build -f apps/backend/Dockerfile.compute .` succeeds; inside the resulting `linux/amd64` image `ffmpeg -version` is ≥7, the binary is executable, and a sample convert runs end-to-end (real first segment).
 - [ ] A re-processed video gets fresh (versioned) URLs and its `source` is repointed, so a fix is visible immediately despite the 1-year object cache.
 
-The **Docker gate** is load-bearing, not a formality: `ffmpeg-static` ships a
-different binary per platform, so a host/macOS check does **not** prove the
-production binary. And because a merge auto-deploys the compute service to Cloud
+The **Docker gate** is load-bearing, not a formality: the container's
+apt-installed ffmpeg is a different binary from the host's, so a host/macOS check
+does **not** prove the production binary. And because a merge auto-deploys the compute service to Cloud
 Run (`.github/workflows/backend-prod-compute.yml`), a broken image would ship to
 prod on merge — the gate catches it first.
 
@@ -95,7 +95,7 @@ SWO-635 (this doc) ─▶ SWO-636 ─▶ SWO-637 ─▶ SWO-638
 | - | - | - |
 | Goal & verification | **SWO-635** | this README (corpus + done checklist) |
 | Validate the binary | **SWO-636** | run the corpus through ffmpeg ≥7 **inside a locally-built compute image**; go/no-go on the exact version |
-| Swap the binary | **SWO-637** | replace `@ffmpeg-installer/ffmpeg` (4.4) with `ffmpeg-static` (≥7) across the shared helper + both `repair-fmp4` paths; `Dockerfile.compute` `chmod`; kills the empty first segment |
+| Swap the binary | **SWO-637** | drop `@ffmpeg-installer/ffmpeg` (4.4); resolve `ffmpeg` from PATH across the shared helper + both `repair-fmp4` paths; apt-install ffmpeg (≥7) in `Dockerfile.compute`; startup version assertion; kills the empty first segment |
 | Encode profile | **SWO-638** | VBV cap `-crf 23 -maxrate 4M -bufsize 8M`, never-upscale ≤1080p scale, `-force_key_frames` — kills the mid-playback stall |
 | Cache-safe reprocess | **SWO-639** | versioned output names (init/segments **and** manifest) + repoint `source`; re-transcode and lossless-remux paths |
 
@@ -110,7 +110,7 @@ BEFORE (broken):
   -crf 18, no VBV cap → ~30 Mbps off GCS      → mid-playback stall (~11–12s)
 
 AFTER (this epic):
-  ffmpeg ≥7 (ffmpeg-static)                   → real first segment      [SWO-637]
+  ffmpeg ≥7 (apt in container / system on host) → real first segment    [SWO-637]
   -crf 23 -maxrate 4M -bufsize 8M + ≤1080p    → streamable off GCS       [SWO-638]
   versioned URLs + repoint source on reprocess → fix visible past cache  [SWO-639]
 ```

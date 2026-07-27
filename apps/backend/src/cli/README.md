@@ -286,8 +286,8 @@ root, e.g. `https://somesite.com/`).
 ### `convert.ts` — convert a local video file to HLS
 
 The operator-local counterpart to the compute **convert** flow (mp4 → HLS).
-Point it at a **local video file**; it runs ffmpeg locally (bundled
-`@ffmpeg-installer`, no system ffmpeg needed), uploads the HLS output to GCS, and
+Point it at a **local video file**; it runs ffmpeg locally (the system ffmpeg on
+your PATH — must be **≥7**, see SWO-633), uploads the HLS output to GCS, and
 writes the `videos` row. It reuses the same ffmpeg command as the compute flow
 (`videoConfig.ffmpegCommands`), so the output is the same **fMP4/CMAF**
 (`playlist.m3u8` + `init.mp4` + `.m4s`) — see `src/docs/fmp4-default-output/`.

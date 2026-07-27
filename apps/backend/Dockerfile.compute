@@ -1,9 +1,20 @@
 # Build context is the MONOREPO ROOT, not apps/backend:
 #   docker build -f apps/backend/Dockerfile.compute .
-FROM --platform=linux/amd64 node:24.18.0-slim
+# Debian trixie (not bookworm): its apt ffmpeg is 7.1.x. bookworm's is 5.1, which
+# still hits the SWO-633 empty-first-segment bug. Node version stays exact-pinned.
+FROM --platform=linux/amd64 node:24.18.0-trixie-slim
 
 # corepack resolves pnpm from the root package.json `packageManager` field.
 RUN corepack enable
+
+# ffmpeg >= 7 for the video convert pipeline. SWO-633: ffmpeg 4.4 emitted an empty
+# first HLS segment (every video froze). Installed via apt, not an npm package,
+# because the workspace blocks dependency install scripts (onlyBuiltDependencies:
+# [] + --ignore-scripts below) so ffmpeg-static's binary download would never run;
+# the Debian base ships ffmpeg >= 7. The service also asserts this at startup.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

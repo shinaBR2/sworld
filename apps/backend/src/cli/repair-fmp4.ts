@@ -31,7 +31,6 @@ import { rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import { Storage } from '@google-cloud/storage';
 import ffmpeg from 'fluent-ffmpeg';
 import { GraphQLClient } from 'graphql-request';
@@ -42,7 +41,8 @@ import type {
   RepackagePort,
 } from 'src/services/videos/processing/types';
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+// ffmpeg resolves from PATH — must be >= 7 (see SWO-633). On the host this is
+// the developer's system ffmpeg; in the compute image it is apt-installed.
 
 // ─── Config (reads the shared CLI config; never writes it) ──────────────────
 

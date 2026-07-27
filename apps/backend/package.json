@@ -44,7 +44,6 @@
     "vitest": "^4"
   },
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@google-cloud/storage": "^7.15.0",
     "@google-cloud/tasks": "^6.2.3",
