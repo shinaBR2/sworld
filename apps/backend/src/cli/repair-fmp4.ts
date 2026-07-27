@@ -259,7 +259,9 @@ async function handleRepair(rawArgs: string[]) {
     storagePath,
     (p) => getDownloadUrl(args.gcpBucket, p),
   );
-  const newSource = getDownloadUrl(
+  // Preview URL for the dry-run only; the real repoint URL is derived from the
+  // engine's returned manifestStoragePath after the upload (below).
+  const plannedSource = getDownloadUrl(
     args.gcpBucket,
     `${outputStoragePath}/${PLAYLIST_NAME}`,
   );
@@ -279,7 +281,7 @@ async function handleRepair(rawArgs: string[]) {
     console.log(
       `  2. upload init.mp4 + .m4s + ${PLAYLIST_NAME} under ${outputStoragePath}/`,
     );
-    console.log(`  3. point videos.source → ${newSource}`);
+    console.log(`  3. point videos.source → ${plannedSource}`);
     console.log('  4. leave the previous objects untouched (harmless orphans)');
     console.log('[DRY RUN] Done — nothing written.');
     return;
@@ -311,6 +313,9 @@ async function handleRepair(rawArgs: string[]) {
     );
   }
 
+  // Repoint at the manifest the engine actually wrote (not a pre-guessed path),
+  // so the URL we verified above is exactly the one we point videos.source at.
+  const newSource = getDownloadUrl(args.gcpBucket, manifestStoragePath);
   console.log('Pointing videos.source → versioned fMP4 manifest…');
   await updateVideoSource(args, newSource);
 

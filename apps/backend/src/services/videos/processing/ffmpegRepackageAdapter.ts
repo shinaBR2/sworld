@@ -6,7 +6,7 @@ import {
   statSync,
 } from 'node:fs';
 import path from 'node:path';
-import { Readable } from 'node:stream';
+import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import {
@@ -14,6 +14,8 @@ import {
   createDirectory,
   generateTempDir,
 } from 'src/services/videos/helpers/file';
+import { fetchWithError } from 'src/utils/fetch';
+import { systemConfig } from 'src/utils/systemConfig';
 import { videoConfig } from '../config';
 import { EMPTY_SEGMENT_MAX_BYTES } from './selectFmp4Parts';
 import type { Fmp4Artifacts, RepackagePort, RepackageSource } from './types';
@@ -83,6 +85,25 @@ const runFfmpeg = (
   });
 
 /**
+ * A Transform that fails the stream once more than `limit` bytes have passed
+ * through — enforces the size cap on the ACTUAL bytes received, so a response
+ * with a missing or lying `content-length` can't write an unbounded file.
+ */
+const cappedAt = (limit: number): Transform => {
+  let total = 0;
+  return new Transform({
+    transform(chunk, _encoding, callback) {
+      total += chunk.length;
+      if (total > limit) {
+        callback(new Error('fMP4 part exceeds the max file size'));
+        return;
+      }
+      callback(null, chunk);
+    },
+  });
+};
+
+/**
  * Concatenate the fMP4 parts (init + non-empty segments, in order) into one
  * file. The init already embeds the first fragment's media on the affected
  * videos, so the concatenation is a valid fMP4 byte stream ffmpeg can re-segment
@@ -93,6 +114,9 @@ const runFfmpeg = (
  * more importantly, `pipeline` resolves only after the write has flushed and
  * closed — so every part is fully on disk before ffmpeg reads the result, and a
  * mid-write stream error surfaces as a rejection rather than an unhandled crash.
+ * `fetchWithError` bounds each fetch with the external-request timeout (a stalled
+ * download can't hang the task) and classifies 4xx/5xx; `cappedAt` enforces the
+ * size limit on the real byte count.
  */
 const concatParts = async (
   partUrls: string[],
@@ -100,18 +124,15 @@ const concatParts = async (
 ): Promise<string> => {
   const combinedPath = path.join(workDir, 'combined.mp4');
   for (const url of partUrls) {
-    const response = await fetch(url);
-    if (!response.ok || !response.body) {
-      throw new Error(`Download failed (${response.status}) for ${url}`);
-    }
-    if (
-      Number(response.headers.get('content-length') ?? 0) >
-      videoConfig.maxFileSize
-    ) {
-      throw new Error(`fMP4 part exceeds the max file size: ${url}`);
+    const response = await fetchWithError(url, {
+      timeout: systemConfig.defaultExternalRequestTimeout,
+    });
+    if (!response.body) {
+      throw new Error(`Empty response body for ${url}`);
     }
     await pipeline(
       Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0]),
+      cappedAt(videoConfig.maxFileSize),
       createWriteStream(combinedPath, { flags: 'a' }),
     );
   }
