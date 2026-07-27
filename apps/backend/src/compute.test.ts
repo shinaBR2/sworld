@@ -8,6 +8,12 @@ vi.mock('hono/body-limit');
 vi.mock('hono/request-id');
 vi.mock('hono-rate-limiter');
 vi.mock('src/utils/envConfig');
+// compute.ts calls assertFfmpegVersion() at module scope (it shells out to
+// `ffmpeg -version`). Stub it so importing the bootstrap here doesn't depend on
+// the test runner having ffmpeg >= 7 on PATH.
+vi.mock('src/services/videos/helpers/ffmpeg', () => ({
+  assertFfmpegVersion: vi.fn(),
+}));
 vi.mock('src/utils/logger', () => {
   const mockLogger = {
     info: vi.fn(),

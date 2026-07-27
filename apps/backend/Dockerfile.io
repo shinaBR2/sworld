@@ -2,10 +2,13 @@
 #   docker build -f apps/backend/Dockerfile.io .
 FROM --platform=linux/amd64 node:24.18.0-slim
 
-# Install procps package to provide the 'ps' command
-# (required for the PlaywrightCrawler)
+# procps provides 'ps' (required by PlaywrightCrawler). ffmpeg is needed because
+# the fix-thumbnail route extracts frames via the shared ffmpeg helper, which now
+# resolves ffmpeg from PATH instead of a bundled npm binary (SWO-637). Thumbnails
+# don't need ffmpeg 7 (that's only for compute's HLS convert), so this stays on
+# the bookworm base's apt ffmpeg.
 RUN apt-get update && \
-    apt-get install -y procps && \
+    apt-get install -y --no-install-recommends procps ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
 # corepack resolves pnpm from the root package.json `packageManager` field.

@@ -48,9 +48,9 @@ import { convertToHLS } from 'src/services/videos/helpers/ffmpeg';
 import { uploadThumbnailFromUrl } from 'src/services/videos/helpers/thumbnail-from-url';
 import { flushThenExit } from './cli-exit';
 
-// convertToHLS (imported above) sets the ffmpeg binary path on the shared
-// fluent-ffmpeg singleton at its module load; we set ffprobe here for the
-// duration probe below.
+// ffmpeg itself resolves from PATH (the shared helper no longer bundles an npm
+// binary — SWO-637); we still point fluent-ffmpeg at the bundled ffprobe here
+// for the duration probe below.
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
 // ─── Constants ──────────────────────────────────────────────────────────────

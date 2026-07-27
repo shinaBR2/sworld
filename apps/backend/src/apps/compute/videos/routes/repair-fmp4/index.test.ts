@@ -51,12 +51,8 @@ vi.mock('fluent-ffmpeg', () => {
     on: vi.fn().mockReturnThis(),
     run: vi.fn(),
   }));
-  (m as any).setFfmpegPath = vi.fn();
   return { default: m };
 });
-vi.mock('@ffmpeg-installer/ffmpeg', () => ({
-  default: { path: '/fake/ffmpeg' },
-}));
 
 const createCtx = (videoId = 'v1', userId = 'u1', taskId = 't1') => ({
   validatedData: {

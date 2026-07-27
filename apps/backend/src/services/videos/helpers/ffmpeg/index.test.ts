@@ -1,3 +1,4 @@
+import { execFileSync } from 'child_process';
 import ffmpeg, { type FfprobeData } from 'fluent-ffmpeg';
 import { existsSync } from 'fs';
 import * as path from 'path';
@@ -11,6 +12,7 @@ import {
   type Mock,
 } from 'vitest';
 import {
+  assertFfmpegVersion,
   convertToHLS,
   getDuration,
   takeScreenshot,
@@ -21,6 +23,9 @@ import { videoConfig } from '../../config';
 // Mock all external dependencies
 vi.mock('fluent-ffmpeg');
 vi.mock('@google-cloud/storage');
+vi.mock('child_process', () => ({
+  execFileSync: vi.fn(),
+}));
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
 }));
@@ -491,6 +496,45 @@ describe('FFmpeg Helpers', () => {
         takeScreenshotAtTime(videoPath, outputDir, filename, 1),
       ).rejects.toThrow('FFmpeg error: boom');
       expect(mockLogger.error).toHaveBeenCalled();
+    });
+  });
+
+  describe('assertFfmpegVersion', () => {
+    const mockExecFileSync = execFileSync as unknown as Mock;
+
+    beforeEach(() => {
+      mockExecFileSync.mockReset();
+    });
+
+    it('passes for ffmpeg major >= 7', () => {
+      mockExecFileSync.mockReturnValue(
+        'ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026\n',
+      );
+      expect(() => assertFfmpegVersion()).not.toThrow();
+    });
+
+    it('passes for an "n"-prefixed build version (e.g. n7.0.2)', () => {
+      mockExecFileSync.mockReturnValue('ffmpeg version n7.0.2 Copyright\n');
+      expect(() => assertFfmpegVersion()).not.toThrow();
+    });
+
+    it('throws for ffmpeg major < 7', () => {
+      mockExecFileSync.mockReturnValue(
+        'ffmpeg version 5.1.9-0+deb12u1 Copyright (c) 2000-2026\n',
+      );
+      expect(() => assertFfmpegVersion()).toThrow(/ffmpeg >= 7 required/);
+    });
+
+    it('throws when the version string is unparseable', () => {
+      mockExecFileSync.mockReturnValue('not an ffmpeg version line\n');
+      expect(() => assertFfmpegVersion()).toThrow(/ffmpeg >= 7 required/);
+    });
+
+    it('throws when ffmpeg is not on PATH', () => {
+      mockExecFileSync.mockImplementation(() => {
+        throw new Error('ENOENT');
+      });
+      expect(() => assertFfmpegVersion()).toThrow(/ffmpeg not found on PATH/);
     });
   });
 });

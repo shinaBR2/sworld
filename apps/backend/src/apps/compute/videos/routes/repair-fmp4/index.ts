@@ -10,25 +10,24 @@ import os from 'node:os';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { Storage } from '@google-cloud/storage';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
+import type { RepairFmp4HandlerRequest } from 'src/schema/videos/repair-fmp4-handler';
 import { finishVideoProcess } from 'src/services/hasura/mutations/videos/finalize';
+import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
 import { repackageToFmp4 } from 'src/services/videos/processing/repackageToFmp4';
 import type {
   Fmp4Artifacts,
   RepackageDeps,
   RepackagePort,
 } from 'src/services/videos/processing/types';
-import { getDownloadUrl } from 'src/services/videos/helpers/gcp-cloud-storage';
-import type { RepairFmp4HandlerRequest } from 'src/schema/videos/repair-fmp4-handler';
 import { CustomError } from 'src/utils/custom-error';
-import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { envConfig } from 'src/utils/envConfig';
+import { VIDEO_ERRORS } from 'src/utils/error-codes';
 import { getCurrentLogger } from 'src/utils/logger';
 import type { HandlerContext } from 'src/utils/requestHandler';
 import { AppResponse } from 'src/utils/schema';
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+// ffmpeg resolves from PATH — apt-installed (>= 7) in the compute image (SWO-633).
 
 const PLAYLIST_NAME = 'playlist.m3u8';
 const FMP4_PLAYLIST_NAME = 'playlist-fmp4.m3u8';

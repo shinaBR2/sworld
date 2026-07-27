@@ -31,10 +31,10 @@ import { rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import { Storage } from '@google-cloud/storage';
 import ffmpeg from 'fluent-ffmpeg';
 import { GraphQLClient } from 'graphql-request';
+import { assertFfmpegVersion } from 'src/services/videos/helpers/ffmpeg';
 import { repackageToFmp4 } from 'src/services/videos/processing/repackageToFmp4';
 import type {
   Fmp4Artifacts,
@@ -42,7 +42,8 @@ import type {
   RepackagePort,
 } from 'src/services/videos/processing/types';
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+// ffmpeg resolves from PATH — must be >= 7 (see SWO-633). On the host this is
+// the developer's system ffmpeg; in the compute image it is apt-installed.
 
 // ─── Config (reads the shared CLI config; never writes it) ──────────────────
 
@@ -365,6 +366,13 @@ async function handleRepair(rawArgs: string[]) {
     console.log('[DRY RUN] Done — nothing written.');
     return;
   }
+
+  // Enforce the ffmpeg >= 7 prerequisite (SWO-633) before any real work: the
+  // repackage below drives the same fMP4/CMAF HLS muxer whose 4.x version emits
+  // the empty first segment, so an old host ffmpeg would "repair" the video into
+  // the very bug we're fixing and upload it. Fail fast instead — compute enforces
+  // the same check at startup.
+  assertFfmpegVersion();
 
   // 1-2. Repackage + upload the new fMP4 segments (additive, non-destructive).
   console.log('');

@@ -1,12 +1,16 @@
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffprobeInstaller from '@ffprobe-installer/ffprobe';
+import { execFileSync } from 'child_process';
 import ffmpeg, { type FfprobeData } from 'fluent-ffmpeg';
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { getCurrentLogger } from 'src/utils/logger';
 import { videoConfig } from '../../config';
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+// ffmpeg resolves from PATH (system ffmpeg on the host; apt-installed in each
+// service image) instead of a bundled npm binary. HLS convert requires ffmpeg
+// >= 7 (SWO-633) — the compute service asserts that at startup
+// (assertFfmpegVersion); thumbnail frame extraction (io/gateway) works on any
+// recent ffmpeg. ffprobe still ships in-tarball via @ffprobe-installer.
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
 /**
@@ -215,4 +219,47 @@ const takeScreenshotAtTime = async (
   });
 };
 
-export { convertToHLS, getDuration, takeScreenshot, takeScreenshotAtTime };
+/**
+ * Asserts that the ffmpeg resolved from PATH is >= 7.
+ *
+ * ffmpeg is no longer bundled via npm (it resolves from PATH: apt-installed in
+ * the compute image, system ffmpeg on the host), so the version is an ambient
+ * property of the environment rather than a compile-time guarantee. ffmpeg 4.x
+ * emitted an empty first HLS segment (SWO-633) — this fails the service fast and
+ * loud if it ever boots on an ffmpeg older than 7 instead of silently producing
+ * broken videos again.
+ *
+ * Called at service startup (see compute bootstrap), NOT at module import, so it
+ * never runs during unit tests or in CI (where the runner's ffmpeg may be older).
+ *
+ * @throws {Error} if ffmpeg is missing from PATH or reports a major version < 7
+ */
+const MIN_FFMPEG_MAJOR = 7;
+const assertFfmpegVersion = (): void => {
+  const logger = getCurrentLogger();
+  let output: string;
+  try {
+    output = execFileSync('ffmpeg', ['-version'], { encoding: 'utf8' });
+  } catch (error) {
+    logger.error(error, 'ffmpeg not found on PATH');
+    throw new Error('ffmpeg not found on PATH — install ffmpeg >= 7');
+  }
+
+  const match = output.match(/ffmpeg version n?(\d+)\./);
+  const major = match ? Number(match[1]) : NaN;
+  if (!Number.isInteger(major) || major < MIN_FFMPEG_MAJOR) {
+    throw new Error(
+      `ffmpeg >= ${MIN_FFMPEG_MAJOR} required, found "${output.split('\n')[0]}"`,
+    );
+  }
+
+  logger.info(`[ffmpeg] version check passed: major ${major}`);
+};
+
+export {
+  assertFfmpegVersion,
+  convertToHLS,
+  getDuration,
+  takeScreenshot,
+  takeScreenshotAtTime,
+};
