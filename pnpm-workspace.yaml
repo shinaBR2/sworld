@@ -16,6 +16,11 @@ minimumReleaseAgeExclude:
   - "vite"
   - "@vitejs/*"
   - "postcss"
+  # brace-expansion 5.0.8 is the security fix for GHSA-mh99-v99m-4gvg (SWO-642)
+  # but was published <7 days ago, which the cooldown would otherwise block.
+  # Per-package bypass for a well-scrutinised leaf util's patch; drop this line
+  # once it ages past the 7-day window (published 2026-07-23).
+  - "brace-expansion"
 # Dependency lifecycle scripts are blocked (pnpm 10 default); nothing in the
 # workspace needs one — build/test verified green with all scripts ignored.
 onlyBuiltDependencies: []
