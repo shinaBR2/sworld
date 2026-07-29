@@ -124,7 +124,6 @@ const styles = `
 
 .cv-about footer { margin-top: clamp(3.5rem, 7vw, 5rem); padding-top: 2rem; border-top: 1px solid var(--rule-strong); }
 .cv-about .sign { font-family: var(--serif); font-style: italic; font-size: var(--step-2); line-height: 1.4; color: var(--ink); max-width: 32rem; text-wrap: pretty; margin: 0; }
-.cv-about .sign .who { display: block; margin-top: 0.8rem; font-family: var(--mono); font-style: normal; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--faint); text-transform: uppercase; }
 .cv-about .backhome { display: inline-block; margin-top: 2rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); border: none; letter-spacing: 0.02em; }
 .cv-about .backhome:hover { color: var(--accent); }
 
@@ -479,7 +478,6 @@ const About = () => {
           <p className="sign">
             “Don't run behind success. Follow behind excellence — success will
             come all the way behind you.”
-            <span className="who">Vincent Tran</span>
           </p>
           <Link to="/" className="backhome">
             ← back home
