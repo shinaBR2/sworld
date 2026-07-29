@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 
 const PairLazyRouteImport = createFileRoute('/pair')()
 const FinanceLazyRouteImport = createFileRoute('/finance')()
+const AboutLazyRouteImport = createFileRoute('/about')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const LibraryIndexLazyRouteImport = createFileRoute('/library/')()
 const JournalIndexLazyRouteImport = createFileRoute('/journal/')()
@@ -32,6 +33,11 @@ const FinanceLazyRoute = FinanceLazyRouteImport.update({
   path: '/finance',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/finance.lazy').then((d) => d.Route))
+const AboutLazyRoute = AboutLazyRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -62,6 +68,7 @@ const LibraryBooksBookIdLazyRoute = LibraryBooksBookIdLazyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/pair': typeof PairLazyRoute
   '/journal/$date': typeof JournalDateLazyRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/pair': typeof PairLazyRoute
   '/journal/$date': typeof JournalDateLazyRoute
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
   '/finance': typeof FinanceLazyRoute
   '/pair': typeof PairLazyRoute
   '/journal/$date': typeof JournalDateLazyRoute
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/finance'
     | '/pair'
     | '/journal/$date'
@@ -101,6 +111,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/finance'
     | '/pair'
     | '/journal/$date'
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/finance'
     | '/pair'
     | '/journal/$date'
@@ -120,6 +132,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  AboutLazyRoute: typeof AboutLazyRoute
   FinanceLazyRoute: typeof FinanceLazyRoute
   PairLazyRoute: typeof PairLazyRoute
   JournalDateLazyRoute: typeof JournalDateLazyRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/finance'
       fullPath: '/finance'
       preLoaderRoute: typeof FinanceLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -184,6 +204,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  AboutLazyRoute: AboutLazyRoute,
   FinanceLazyRoute: FinanceLazyRoute,
   PairLazyRoute: PairLazyRoute,
   JournalDateLazyRoute: JournalDateLazyRoute,
