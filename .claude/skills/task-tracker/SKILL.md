@@ -39,7 +39,8 @@ live in Linear.
   walks up to a parent. That file is gitignored, so a fresh git worktree starts without
   one and the CLI silently falls back to the account's default workspace — which is not
   `sworld`: reads return another workspace's data, writes fail with `Team not found: SWO`.
-  `parallel-workflow`'s worktree setup copies it in. If a tracker command misbehaves in a
+  The repo's `.worktreeinclude` auto-copies it into every worktree Claude Code creates, so a
+  worktree entered via `EnterWorktree` already has it. If a tracker command misbehaves in a
   worktree, check that file first.
 - **For anything the CLI doesn't expose** (e.g. querying parent/sub-issue relationships), use
   `linear auth token` + a direct Linear GraphQL API call with curl.
@@ -131,9 +132,13 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 
 ## The GitHub link
 
-The issue identifier (`SWO-NNN`) is what ties an issue to its code, so it drives the branch/worktree
-name: a kebab-case slug **prefixed with the identifier**, e.g. `swo-123-sticky-progress-bar`. That
-prefix is what lets the GitHub↔Linear integration auto-link the PR to the issue — and, once linked,
-fire the automatic status transitions above (PR opened → `In Review`, merged → `Done`). Referencing
-`SWO-NNN` in the PR description links it too. Consumers (`parallel-workflow`, `pr-descriptions`, …)
-just follow this convention and point here; they carry none of these specifics.
+The issue identifier (`SWO-NNN`) is what ties an issue to its code, so it drives the worktree
+name: a kebab-case slug **prefixed with the identifier**, e.g. `swo-123-sticky-progress-bar` — the
+name you pass `EnterWorktree`. Claude Code creates the branch from that name with a `worktree-`
+prefix (`worktree-swo-123-sticky-progress-bar`); the embedded `SWO-NNN` is what lets the
+GitHub↔Linear integration auto-link the PR to the issue — and, once linked, fire the automatic
+status transitions above (PR opened → `In Review`, merged → `Done`). The identifier is matched
+*anywhere* in the branch name (not anchored to the start), so the `worktree-` prefix breaks
+neither the Linear link nor the repo's local branch-ticket parser. Referencing `SWO-NNN` in the
+PR description links it too. Consumers (`parallel-workflow`, `pr-descriptions`, …) just follow this
+convention and point here; they carry none of these specifics.

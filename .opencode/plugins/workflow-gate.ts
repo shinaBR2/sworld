@@ -16,7 +16,10 @@ const getMergeBase = async ($: any, cwd: string) => {
 };
 
 const getTicketFromBranch = (branch: string) => {
-  const match = branch.match(/^(swo-\d+)/i);
+  // Match the ticket anywhere in the branch, not just at the start: the native
+  // EnterWorktree tool names branches `worktree-swo-NNN-slug` (Claude Code prefixes
+  // `worktree-`), so an anchored `^swo-` would miss the ticket and deny every edit.
+  const match = branch.match(/(swo-\d+)/i);
   return match ? match[1].toUpperCase() : null;
 };
 

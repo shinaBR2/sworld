@@ -9,7 +9,7 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
-- **ALWAYS work in a dedicated worktree.** NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there advances the local `main` ref (the fast-forward refresh the `cleanup` skill owns — see "Keep local `main` fresh" below). No branch work, no manual edits.
+- **ALWAYS work in a dedicated worktree** — enter one with the `EnterWorktree` tool (see *Creating a worktree*). NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the only operations permitted there are read-only git (the `git fetch origin main` you run before branching, plus `git status` / a diff / a log) and the fast-forward refresh that advances the local `main` ref (the `cleanup` skill owns it — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: one repo, the whole product
 
@@ -39,10 +39,12 @@ The refresh mechanic and every trigger for it are owned by the `cleanup` skill �
 
 ## Creating a worktree
 
-5. `git fetch origin main` first, then create worktree inside `.claude/worktrees/` from `origin/main`.
-6. Create the worktree under `.claude/worktrees/` — self-contained, gitignored, and aligned with Claude Code's official default — named for the issue per `task-tracker`'s branch convention.
-7. **Copy `.linear.toml` from the repo root into the worktree root.** It is gitignored (it can hold a plaintext API key), so a fresh worktree starts without it — and the `linear` CLI's config lookup stops at the checkout root, never walking up to the main worktree. Without it every tracker command silently resolves to the account's *default* workspace, which is not `sworld`: reads return the wrong workspace's data, and writes fail with `Team not found: SWO`.
-8. Copy `.env` files from the main worktree into the matching `apps/<app>/` directories. **Also copy `packages/core/.env`** — `pnpm codegen` reads `HASURA_GRAPHQL_URL` / `HASURA_ADMIN_SECRET` from it; without it codegen aborts with `Unable to find any GraphQL type definitions ... - undefined`. Then run `pnpm install` in the worktree.
+Use the native **`EnterWorktree`** tool — it creates the worktree, bases it on the default branch, provisions gitignored config, and switches the session's working directory *into* it, so everything from here on uses plain relative paths (no `git -C <worktree>` juggling).
+
+5. **`git fetch origin main` first.** `EnterWorktree`'s own base-ref fetch is throttled to once per 24h — too coarse for this chronically-behind repo — so fetch explicitly to guarantee the worktree branches off genuinely-current `main`.
+6. **`EnterWorktree` with `name` = the issue slug** (`swo-NNN-slug`, per `task-tracker`'s convention). It creates the worktree at `.claude/worktrees/swo-NNN-slug/` on branch `worktree-swo-NNN-slug` (Claude Code prefixes `worktree-`; the embedded `SWO-NNN` is matched *anywhere* in the branch name — not anchored to the start — by both the Linear auto-link and the repo's branch-ticket parser, so the prefix is safe), bases it on `origin/main` (the `worktree.baseRef: fresh` default), and moves the session into it. **Each agent working an issue enters its own worktree** — parallel issues run fully isolated; a subagent inherits its parent's worktree unless it enters its own.
+7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: `.linear.toml`, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. (Without `.linear.toml` the `linear` CLI silently resolves to the account default workspace, not `sworld`; without `packages/core/.env` codegen aborts with `Unable to find any GraphQL type definitions`. `.worktreeinclude` is what prevents both.)
+8. **Run `pnpm install` in the worktree** — the one setup step no hook covers (a fresh worktree has no `node_modules`).
 
 ## During work
 
@@ -58,7 +60,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 ## Codegen
 
 - ALWAYS `git fetch origin main && git merge origin/main` before running codegen.
-- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types. Needs `packages/core/.env` in the worktree (see step 8) — codegen introspects the live Hasura schema using the URL/secret from it.
+- Run `pnpm codegen` in `packages/core` to regenerate GraphQL types. Needs `packages/core/.env` in the worktree (auto-provisioned via `.worktreeinclude`, step 7) — codegen introspects the live Hasura schema using the URL/secret from it.
 - See `architecture` skill for GraphQL conventions (generated files, `graphql()` usage).
 
 ## Resolving conflicts
