@@ -150,6 +150,7 @@ packages/ui/src/          # shared MUI + Emotion components (+ Storybook)
 `gh` commands authenticate via the `GH_TOKEN` env var. The token lives in `.claude/settings.local.json` under `env.GH_TOKEN` — export it **before** any `gh` call. Do NOT use `gh auth switch` or rely on the keyring; the settings.local token is the only one with collaborator access to the `shinaBR2/sworld` repo.
 
 ```bash
+# requires python3 (preinstalled on macOS), run from the monorepo root
 export GH_TOKEN=$(python3 -c "import json; print(json.load(open('.claude/settings.local.json'))['env']['GH_TOKEN'])")
 ```
 

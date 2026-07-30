@@ -29,6 +29,8 @@ apps/listen/stats.html
 
 # Local Claude Code state — machine-local, never committed
 # (memory/transcripts/global settings live in ~/.claude, outside the repo)
+# settings.local.json holds the GH_TOKEN secret — ignore it in-repo, not only via a global gitignore
+.claude/settings.local.json
 .codegraph/
 .claude/worktrees/
 .claude/usage-tracking/
