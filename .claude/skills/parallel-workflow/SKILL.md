@@ -9,7 +9,7 @@ user-invocable: false
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
-- **ALWAYS work in a dedicated worktree** — enter one with the `EnterWorktree` tool (see *Creating a worktree*). NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the *only* permitted operation there advances the local `main` ref (the fast-forward refresh the `cleanup` skill owns — see "Keep local `main` fresh" below). No branch work, no manual edits.
+- **ALWAYS work in a dedicated worktree** — enter one with the `EnterWorktree` tool (see *Creating a worktree*). NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the only operations permitted there are read-only git (the `git fetch origin main` you run before branching, plus `git status` / a diff / a log) and the fast-forward refresh that advances the local `main` ref (the `cleanup` skill owns it — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: one repo, the whole product
 
