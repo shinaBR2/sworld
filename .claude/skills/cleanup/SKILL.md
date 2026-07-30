@@ -35,9 +35,10 @@ for the tracker coupling — here on the git-cleanup axis.
 ## The one repo
 
 Everything — frontend apps, shared packages, backend, Hasura — lives in `ShinaBR2/sworld`, so every branch
-and worktree belongs to that single clone. Cleanup always runs via `git -C "$repo_path"`, never relying on
-the current directory, which may still be the worktree being torn down. Set `repo_path` once to the clone's
-absolute path and confirm it really is a clone before any `git -C`:
+and worktree belongs to that single clone. The manual teardown (A2) and the `main` refresh (B) run via
+`git -C "$repo_path"`, never relying on the current directory, which may still be the worktree being torn
+down. (The same-session path A1 uses `ExitWorktree`, which restores the cwd itself.) Set `repo_path` once to
+the clone's absolute path and confirm it really is a clone before any `git -C`:
 
 ```bash
 repo_path="<path-to-sworld-clone>"   # absolute path to the sworld clone — substitute the real one
@@ -59,13 +60,43 @@ state=$(gh pr view <N> --repo ShinaBR2/sworld --json state -q .state)
 ```
 
 **Only ever tear down a `MERGED` PR.** If `CLOSED`, do nothing — the branch and worktree may still be
-wanted. If `OPEN`, it isn't ready; that's `ci-loop`'s job, not this skill's. Enforce it, then run the
-teardown — **abort on the first failure** and report the partial state, never fall through or claim
-completion:
+wanted. If `OPEN`, it isn't ready; that's `ci-loop`'s job, not this skill's. Enforce the gate first:
 
 ```bash
 [ "$state" = "MERGED" ] || { echo "PR <N>: state is '$state', not MERGED — cleanup only tears down merged PRs; stop"; exit 1; }
+```
 
+Then pick the teardown path by **whether *this* session created the worktree** — **abort on the first
+failure** and report the partial state, never fall through or claim completion.
+
+### A1 — Same-session teardown (preferred): `ExitWorktree`
+
+When the worktree was created by **`EnterWorktree` earlier in *this* session**, tear it down with the native
+**`ExitWorktree`** tool — it removes the worktree directory *and* its local branch, and restores the
+session's cwd to the repo root, so you are never stranded in a just-deleted directory (the exact hazard the
+manual path below has to work around):
+
+```text
+ExitWorktree(action: "remove")
+```
+
+A squash-merge leaves the branch with one commit not on local `main` — the pre-squash twin — so
+`ExitWorktree` refuses and lists it. The `MERGED` gate above already confirmed that work reached
+`origin/main` via the squash, so that one flagged commit is a duplicate: re-invoke with
+`discard_changes: true`. **Only ever discard after the `MERGED` gate has passed, and only when the flagged
+work is exactly that merged commit** — if `ExitWorktree` lists anything beyond it (an extra local commit
+made after the merge), stop and inspect, because that work is *not* on the PR and `discard_changes` would
+lose it. `ExitWorktree` acts *only* on worktrees this session created via `EnterWorktree`; for anything
+else, use A2.
+
+### A2 — Cross-session / manual teardown: `git -C`
+
+When a **different or later session** tears down the merge (e.g. `wait-for-pr-merge` polling in a fresh
+session), or the worktree wasn't created via `EnterWorktree` this session, `ExitWorktree` can't touch it —
+remove it manually via `git -C "$repo_path"`, which never relies on the current directory (which may still
+be the worktree being torn down):
+
+```bash
 branch=$(gh pr view <N> --repo ShinaBR2/sworld --json headRefName -q .headRefName)
 [ -n "$branch" ] || { echo "PR <N>: cannot resolve branch — aborting cleanup"; exit 1; }
 
@@ -84,7 +115,8 @@ Guardrails baked in above, all load-bearing: exact `refs/heads/$branch` match (a
 remove the wrong worktree), never act on an empty `$branch` (empty matches every worktree), only remove a
 worktree that exists, `-D` because squash-merge leaves the branch technically unmerged.
 
-Then **refresh local `main`** (section B) — a torn-down branch means `main` just moved.
+Then **refresh local `main`** (section B) — a torn-down branch means `main` just moved. (After A1's
+`ExitWorktree` the session is back in the main worktree, so section B's `main`-checked-out path applies.)
 
 ## B. Refresh local `main`
 
