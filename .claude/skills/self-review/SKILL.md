@@ -110,8 +110,8 @@ Each returns findings with `file:line` and the concrete inputs that trigger them
 
 Rules:
 
-- **Anchor to the worktree.** Subagents run in the session's root cwd, not your worktree — always pass an absolute `git -C <worktree> diff origin/main`.
-- **Verify scope.** The files reported MUST match `git diff origin/main --name-only` in the worktree. A mismatch, or "no changes found", is a FAILED run, not a clean pass — fix the anchoring and re-run.
+- **Subagents inherit the worktree cwd.** Because you entered the worktree with `EnterWorktree`, a spawned finder subagent runs *inside* it — plain `git diff origin/main` resolves correctly, no absolute `git -C <worktree>` needed. (The exception is an agent whose cwd was pinned elsewhere at launch — explicit `cwd` or worktree-isolation; if you spawn one of those, it must enter this worktree first.)
+- **Verify scope.** The files reported MUST match `git diff origin/main --name-only`. A mismatch, or "no changes found", is a FAILED run, not a clean pass — confirm the subagent actually ran in this worktree and re-run.
 - **Empty is a valid result.** For a small or declarative diff it's the expected one. Never manufacture a finding to look thorough; a confident-but-wrong finding burns trust in the whole gate. When in doubt, drop it.
 - **Trust boundaries get more.** If the diff touches Hasura permissions/metadata, Hono Action/Event/webhook handlers, or auth, also run `security-reviewer`.
 
