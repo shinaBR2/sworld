@@ -26,3 +26,9 @@ apps/listen/stats.html
 
 # Linear CLI local workspace config (may contain api_key)
 .linear.toml
+
+# Local Claude Code state — machine-local, never committed
+# (memory/transcripts/global settings live in ~/.claude, outside the repo)
+.codegraph/
+.claude/worktrees/
+.claude/usage-tracking/
