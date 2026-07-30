@@ -137,6 +137,8 @@ name: a kebab-case slug **prefixed with the identifier**, e.g. `swo-123-sticky-p
 name you pass `EnterWorktree`. Claude Code creates the branch from that name with a `worktree-`
 prefix (`worktree-swo-123-sticky-progress-bar`); the embedded `SWO-NNN` is what lets the
 GitHub↔Linear integration auto-link the PR to the issue — and, once linked, fire the automatic
-status transitions above (PR opened → `In Review`, merged → `Done`). Referencing `SWO-NNN` in the
+status transitions above (PR opened → `In Review`, merged → `Done`). The identifier is matched
+*anywhere* in the branch name (not anchored to the start), so the `worktree-` prefix breaks
+neither the Linear link nor the repo's local branch-ticket parser. Referencing `SWO-NNN` in the
 PR description links it too. Consumers (`parallel-workflow`, `pr-descriptions`, …) just follow this
 convention and point here; they carry none of these specifics.
