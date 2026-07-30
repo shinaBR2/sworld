@@ -2,6 +2,12 @@
 
 Context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo holding the whole product: the web apps, the shared packages, the backend, and the data layer. The how-to-code conventions live in `.claude/skills/` and trigger automatically by task; this file is the always-on context around them.
 
+## Scope: this monorepo is the whole project
+
+**All project work — every file you author, edit, or ship — lives under this monorepo and nowhere else.** Always launch Claude Code from the monorepo root. The old `Projects/sworld/` workspace wrapper (which held separate `sworld-backend`/`sworld-hasura-v2` checkouts before consolidation) is retired; there are no sibling repos to reach into.
+
+The one sanctioned location outside the monorepo is your global `~/.claude/` — where the tool keeps its own per-user state (memory, session transcripts, global settings). That is not project storage: it is personal and secret-adjacent, this repo is **public**, and the path is harness-owned, so it stays out by design. Never treat any directory above the monorepo as a project directory.
+
 ## Hard gate: plan before code — always
 
 **You must NOT write a single line of code, propose implementation solutions, or suggest specific APIs/libraries until these steps are done:**
@@ -138,3 +144,16 @@ apps/hasura/              # migrations/ (SQL), metadata/ (YAML), tests/ — the 
 packages/core/src/        # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
 packages/ui/src/          # shared MUI + Emotion components (+ Storybook)
 ```
+
+## GitHub CLI
+
+`gh` commands authenticate via the `GH_TOKEN` env var. The token lives in `.claude/settings.local.json` under `env.GH_TOKEN` — export it **before** any `gh` call. Do NOT use `gh auth switch` or rely on the keyring; the settings.local token is the only one with collaborator access to the `shinaBR2/sworld` repo.
+
+```bash
+# requires python3 (preinstalled on macOS), run from the monorepo root
+export GH_TOKEN=$(python3 -c "import json; print(json.load(open('.claude/settings.local.json'))['env']['GH_TOKEN'])")
+```
+
+## Compact instructions
+
+When compacting, preserve: the current task/goal, decisions already made, the files touched and pending edits, and any commands still to run. Drop verbose tool output (full file dumps, large command logs, codegraph listings) — keep only the conclusions drawn from them.
