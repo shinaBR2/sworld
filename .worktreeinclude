@@ -1,0 +1,27 @@
+# Gitignored config that a fresh worktree needs, auto-copied by Claude Code when
+# it creates a worktree (--worktree, EnterWorktree, or a subagent with
+# `isolation: worktree`). Uses .gitignore syntax; only files that match a pattern
+# AND are gitignored are copied, so tracked files (e.g. .env.example) are never
+# duplicated. node_modules is intentionally NOT listed — run `pnpm install` after
+# entering the worktree (there is no worktree-entry hook to run it automatically).
+#
+# Patterns are ANCHORED (leading /) on purpose: an unanchored **/.env would also
+# match .env files vendored inside node_modules (e.g. @ffmpeg-installer) and copy
+# junk into the worktree.
+
+# Linear CLI workspace config — without it, the `linear` CLI resolves to the
+# account default workspace, not sworld (reads wrong data, writes fail "Team not found: SWO").
+/.linear.toml
+
+# Root env (VITE_ app config + Auth0 dev tenant)
+/.env
+/.env.local
+/.env.development.local
+
+# Per-app env — the leading /apps/*/ keeps this to real apps, never node_modules
+/apps/*/.env
+/apps/*/.env.local
+/apps/*/.env.development.local
+
+# packages/core/.env feeds `pnpm codegen` (HASURA_GRAPHQL_URL / HASURA_ADMIN_SECRET)
+/packages/core/.env
