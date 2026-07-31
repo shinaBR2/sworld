@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
-# Blocks file writes to a repo's main worktree, unconditionally — the main
-# worktree of every repo in this workspace must only ever hold `main`, never
-# feature work (see .claude/skills/parallel-workflow: "NEVER create branches or
-# make changes in the main worktree"). Unlike the branch-aware variants elsewhere,
-# there is no "a branch is deliberately checked out here" exception: any write to
-# a main worktree is the accident this guards against.
+# Backstop for the worktree-native workflow. The primary mechanism is the
+# EnterWorktree tool: all feature work happens in a linked worktree it creates and
+# moves the session into (see .claude/skills/parallel-workflow), so the main worktree
+# should only ever hold `main`. This hook is the safety net, not the primary rule —
+# it catches the accidental case, a stray Edit/Write that lands on the main worktree
+# instead of a worktree. It blocks regardless of which branch the main worktree sits
+# on: unlike the branch-aware variants elsewhere, there is no "a branch is deliberately
+# checked out here" exception, because any write to a main worktree is exactly the
+# accident it guards against. The one exception is a single local-config file — the
+# narrow carve-out (below): `.claude/settings.local.json`, local machine config that
+# only ever lives in the main worktree and is never copied into a worktree.
 #
 # A linked worktree's git dir (.git/worktrees/<name>) differs from its common dir
 # (.git); in the main worktree the two are identical. That is the whole worktree
@@ -51,6 +56,15 @@ common_dir=$(git -C "$dir" rev-parse --path-format=absolute --git-common-dir 2>/
 
 toplevel=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)
 
+# Narrow carve-out: settings.local.json is local, gitignored machine config that ONLY
+# ever lives at the repo root's .claude/ in the main worktree — never copied into a
+# linked worktree — so editing it there is legitimate config work (e.g. permissions,
+# env), not stray feature work on main. Match the repo-root file EXACTLY, comparing the
+# physically-resolved parent dir ($dir) against $toplevel/.claude — a trailing-suffix
+# glob would also allow vendored node_modules/**/.claude/settings.local.json. Everything
+# else on a main worktree is blocked.
+[ "$dir" = "$toplevel/.claude" ] && [ "$(basename -- "$target")" = "settings.local.json" ] && exit 0
+
 resolved_note=""
 [ "$target" = "$file_path" ] || resolved_note="
   (via symlink, resolves to $target)"
@@ -64,8 +78,10 @@ All work happens in a linked worktree — the main worktree is never edited, wha
 branch it currently sits on. To do this work, use a worktree (see the
 parallel-workflow skill):
   1. Make sure a Linear issue exists for this work.
-  2. git -C $toplevel fetch origin main
-  3. git -C $toplevel worktree add -b swo-NNN-<slug> .claude/worktrees/swo-NNN-<slug> origin/main
+  2. git -C $toplevel fetch origin main   (EnterWorktree's own base fetch is 24h-throttled)
+  3. Enter a worktree with the EnterWorktree tool, named swo-NNN-<slug> — it creates
+     .claude/worktrees/swo-NNN-<slug> off origin/main, provisions gitignored config,
+     and moves the session into it.
   4. Re-run this edit against the path inside that worktree.
 
 This hook gates the Edit, Write and NotebookEdit tools. Reading the main worktree
