@@ -120,6 +120,6 @@ comparison, present on every route that needs it, and a secret with real entropy
 ## Can't be verified from the repo
 
 The actual `WEBHOOK_SIGNATURE` / `HASURA_ADMIN_SECRET` / `HASHNODE_WEBHOOK_SECRET` values, their
-entropy and rotation cadence, live in the deploy consoles. The backend's container build and deploy
-pipeline are **mid-rework**, so don't infer deploy-time or ingress behaviour from what is currently in
-the repo. Flag all of these as needs-verification rather than asserting on them.
+entropy and rotation cadence, live in the deploy consoles. Flag those as needs-verification rather
+than asserting on them. (Deploy-time and ingress behaviour, by contrast, *is* inferable from the
+`backend-prod-*.yml` workflows — see `architecture`.)
