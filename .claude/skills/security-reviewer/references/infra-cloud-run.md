@@ -15,8 +15,13 @@ can't see; say what to confirm in the console.
 - **Deploy:** Cloudflare Pages builds and deploys each frontend from its own pipeline on merge to
   main; Hasura Cloud applies metadata from its GitHub integration. The backend deploys to Cloud Run
   on merge via three workflows (`backend-prod-{compute,gateway,io}.yml`) — `architecture` owns the
-  deploy model. The ingress split is real and security-relevant: **gateway is public**
-  (`--allow-unauthenticated`), compute and io are internal-only. Treat the deploy config as live
+  deploy model. The **IAM invocation gate** is what the workflows set, and it's security-relevant:
+  **gateway deploys with `--allow-unauthenticated`** (publicly invokable, no IAM check), while
+  **compute and io omit it**, so Cloud Run requires an authenticated caller — Cloud Tasks and the
+  gateway invoke them with an OIDC identity token, so they are *not* publicly invokable. Note the
+  distinction below: this is the *IAM* gate, not network *ingress* — none of the three sets
+  `--ingress`, so ingress stays at Cloud Run's default (`all`), and tightening it is a hardening
+  opportunity, not something the workflows currently enforce. Treat the deploy config as live
   infrastructure you can review, not a gap.
 - **Secrets:** backend / Hasura runtime env (set in their consoles) + CI secrets. Only `.example`
   templates are committed. Note the backend's `envConfig.ts` does **not** validate at boot (see

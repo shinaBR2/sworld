@@ -210,7 +210,7 @@ Local testing options:
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
 
-The last rung runs against deployed services: merging ships the change to Cloud Run (see `architecture` for the deploy model), so the end-to-end integration test happens post-merge in production. There is no pre-merge end-to-end locally — `createCloudTasks` never delivers a task locally — so plan a backend change knowing its full integration test only runs once the change is merged and live.
+The last rung runs against deployed services: merging ships the change to Cloud Run (see `architecture` for the deploy model), so the end-to-end integration test happens post-merge in production. There is no pre-merge end-to-end locally — `createCloudTasks` never delivers a task locally — so plan a backend change knowing its full integration test only runs once the change is merged and live. Because that rung runs against production and writes real data (it inserts notifications), treat it as a deliberate, cleaned-up test with data you own — not a casual re-run — since there is no isolated environment to absorb the side effects.
 
 ## Business constraints
 
