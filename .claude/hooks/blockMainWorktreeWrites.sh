@@ -78,13 +78,13 @@ All work happens in a linked worktree — the main worktree is never edited, wha
 branch it currently sits on. To do this work, use a worktree (see the
 parallel-workflow skill):
   1. Make sure a Linear issue exists for this work.
-  2. git -C $toplevel fetch origin main   (EnterWorktree's own base fetch is 24h-throttled)
+  2. git -C "$toplevel" fetch origin main   (EnterWorktree's own base fetch is 24h-throttled)
   3. Enter a worktree with the EnterWorktree tool, named swo-NNN-<slug> — it creates
      .claude/worktrees/swo-NNN-<slug> off origin/main, provisions gitignored config,
      and moves the session into it.
   4. Re-run this edit against the path inside that worktree.
 
 This hook gates the Edit, Write and NotebookEdit tools. Reading the main worktree
-is fine, as is advancing it with: git -C $toplevel pull --ff-only origin main
+is fine, as is advancing it with: git -C "$toplevel" pull --ff-only origin main
 EOF
 exit 2
