@@ -25,7 +25,7 @@ Everything now lives in one repo, so nothing stops you combining pieces that sho
 - A single PR touches **at most one** of: one `apps/<app>` directory — including `apps/backend` and `apps/hasura` — or `packages/core`, or `packages/ui`.
 - Touching two apps in one PR is wrong. An app plus `packages/core` in one PR is wrong. `packages/core` plus `packages/ui` in one PR is wrong.
 - Each layer carries different review and verification concerns — an app PR is checked by running that app; a `packages/core` PR is checked by its unit tests and `pnpm codegen`; a `packages/ui` PR is checked in Storybook. A PR mixing them can't be reviewed properly or reverted cleanly.
-- **One repo is not permission to merge layers.** A Hasura migration in `apps/hasura` and the frontend's regenerated types in `packages/core` are still two PRs, in that order (see `parallel-workflow`) — the schema has to be live before the generated types mean anything. Sharing a repo removes the friction, not the dependency.
+- **One repo is not permission to merge layers.** A Hasura migration in `apps/hasura` and the frontend's regenerated types in `packages/core` are still two PRs, in that order — the schema has to be live before the generated types mean anything. Sharing a repo removes the friction, not the dependency.
 
 ## Blockers land first, as their own PRs
 
