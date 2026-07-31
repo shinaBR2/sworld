@@ -30,11 +30,11 @@ One `pnpm-lock.yaml` at the repo root covers everything — there is no per-app 
 
 Gateway, io, and compute run as separate Cloud Run services off one codebase, each with its own entry point (different `CMD` in its Dockerfile).
 
-### Container deploy is mid-rebuild — the images build, nothing ships them yet
+### Container build and deploy
 
-The three Dockerfiles now **build and boot** from a monorepo-root build context (`docker build -f apps/backend/Dockerfile.gateway .`), installing the `backend...` workspace slice with pnpm against the single root `pnpm-lock.yaml`, on `linux/amd64` to match Cloud Run (SWO-545). But the workflows that deployed the backend were removed in the monorepo move with nothing yet in their place — nothing here builds, pushes, or deploys those images today, so nothing ships the backend.
+The three Dockerfiles **build and boot** from a monorepo-root build context (`docker build -f apps/backend/Dockerfile.gateway .`), installing the `backend` workspace slice with pnpm against the single root `pnpm-lock.yaml`, on `linux/amd64` to match Cloud Run.
 
-The deploy half is still being rebuilt: SWO-546 owns restoring the pipeline. Until it lands, treat a backend change as unshippable, and check that ticket rather than this skill for how a deploy will work.
+Merging ships each service to Cloud Run — `architecture` owns the deploy model (the three `backend-prod-*.yml` workflows, WIF auth, `gcloud run deploy`); follow it there rather than restating it here. Because merge = deploy, a broken image reaches prod on merge, so validate anything image-level in a locally-built image first.
 
 ## The full pipeline: Hasura Event → video processing
 
@@ -206,11 +206,18 @@ Local testing options:
 | **Unit tests** | `vitest` with mocked deps | Handler business logic, schema validation, error paths |
 | **Direct handler call** | `curl POST localhost:4000/videos/<handler> -H 'x-task-id: <uuid>' -d '{...}'` | Handler in isolation (bypasses Cloud Tasks) |
 | **Gateway + Compute locally** | From `apps/backend`, `pnpm dev-gateway` and `pnpm dev-compute` in separate terminals, then call the action manually | Action → Gateway → Cloud Task creation (but task never delivers locally) |
-| **Full integration** | Run against real Cloud Run, trigger via Hasura — **blocked today, see below** | End-to-end: action → gateway → cloud task → handler → notification |
+| **Full integration** | Run against real Cloud Run, trigger via Hasura — post-merge only, see below | End-to-end: action → gateway → cloud task → handler → notification |
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
 
-The last rung has no route today: the images build and boot, but with the deploy workflows gone (see above) there is no way to ship a backend change to Cloud Run and close the loop. Plan a backend change knowing its integration test is blocked until the deploy pipeline is restored (SWO-546).
+The last rung runs against deployed services: merging ships the change to Cloud Run (see `architecture` for the deploy model), so the end-to-end integration test happens post-merge in production. There is no pre-merge end-to-end locally — `createCloudTasks` never delivers a task locally — so plan a backend change knowing its full integration test only runs once the change is merged and live.
+
+**Because that rung runs against production, it writes real data (it inserts notifications) and there is no isolated environment to absorb the side effects — so treat it as a deliberate, controlled test, not a casual re-run.** The controls that keep a prod integration test from polluting or mutating unrelated data:
+
+- **Own the test data.** Trigger the flow only with a record you created for the test, under a user/account you control — never someone else's rows. You must be able to identify every row the run touches.
+- **Clean up after.** Delete the notifications and any other records the run generated once you've asserted on them; leave prod as you found it. Nothing else prunes them.
+- **Assume retries, so keep it idempotent.** Cloud Tasks retries on non-2xx (see the task lifecycle above), so a single trigger can run the handler more than once — a correct handler is idempotent, and your test data/assertions must tolerate a re-delivery rather than assuming exactly one.
+- **Keep the blast radius small.** One record, not a batch; verify, clean up, and stop — don't leave a loop hammering the live pipeline.
 
 ## Business constraints
 

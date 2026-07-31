@@ -13,19 +13,23 @@ can't see; say what to confirm in the console.
   `apps/backend`, Hasura metadata and migrations under `apps/hasura` — but they still deploy to
   three separate places, so "same repo" does **not** mean "same trust zone".
 - **Deploy:** Cloudflare Pages builds and deploys each frontend from its own pipeline on merge to
-  main; Hasura Cloud applies metadata from its GitHub integration. **The backend's container images
-  build again, but its deploy pipeline is mid-rework** — the old per-repo deploy workflows are gone
-  and the replacement isn't in place yet. Don't describe backend deploy mechanics as though they
-  exist, and don't infer them from leftover files.
+  main; Hasura Cloud applies metadata from its GitHub integration. The backend deploys to Cloud Run
+  on merge via three workflows (`backend-prod-{compute,gateway,io}.yml`) — `architecture` owns the
+  deploy model. The **IAM invocation gate** is what the workflows set, and it's security-relevant:
+  **gateway deploys with `--allow-unauthenticated`** (publicly invokable, no IAM check), while
+  **compute and io omit it**, so Cloud Run requires an authenticated caller — Cloud Tasks and the
+  gateway invoke them with an OIDC identity token, so they are *not* publicly invokable. Note the
+  distinction below: this is the *IAM* gate, not network *ingress* — none of the three sets
+  `--ingress`, so ingress stays at Cloud Run's default (`all`), and tightening it is a hardening
+  opportunity, not something the workflows currently enforce. Treat the deploy config as live
+  infrastructure you can review, not a gap.
 - **Secrets:** backend / Hasura runtime env (set in their consoles) + CI secrets. Only `.example`
   templates are committed. Note the backend's `envConfig.ts` does **not** validate at boot (see
   `hono-backend.md`), so a missing secret shows up at request time, not startup.
 - **Container:** the `apps/backend/Dockerfile.*` files **build and boot** — they install the
   `backend...` workspace slice with pnpm against the single root `pnpm-lock.yaml` from a
   monorepo-root build context, on `linux/amd64` to match Cloud Run (SWO-545). Review their contents
-  as real, live infrastructure — a finding in them is a finding in an image that runs. What's still
-  missing is the pipeline that builds and pushes them (see Deploy above); that gap doesn't make a
-  Dockerfile finding moot.
+  as real, live infrastructure — a finding in them is a finding in an image that runs, and merging pushes that image to Cloud Run (see Deploy above).
 
 ## The invocation model — get this right
 
