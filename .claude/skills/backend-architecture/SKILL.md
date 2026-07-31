@@ -210,7 +210,14 @@ Local testing options:
 
 When developing a new Cloud Task handler, the practical workflow is: unit tests (full confidence in logic) → local direct call (sanity check) → real integration. Never expect `createCloudTasks` to deliver a task locally — it will fail with missing GCP credentials or be silently ignored.
 
-The last rung runs against deployed services: merging ships the change to Cloud Run (see `architecture` for the deploy model), so the end-to-end integration test happens post-merge in production. There is no pre-merge end-to-end locally — `createCloudTasks` never delivers a task locally — so plan a backend change knowing its full integration test only runs once the change is merged and live. Because that rung runs against production and writes real data (it inserts notifications), treat it as a deliberate, cleaned-up test with data you own — not a casual re-run — since there is no isolated environment to absorb the side effects.
+The last rung runs against deployed services: merging ships the change to Cloud Run (see `architecture` for the deploy model), so the end-to-end integration test happens post-merge in production. There is no pre-merge end-to-end locally — `createCloudTasks` never delivers a task locally — so plan a backend change knowing its full integration test only runs once the change is merged and live.
+
+**Because that rung runs against production, it writes real data (it inserts notifications) and there is no isolated environment to absorb the side effects — so treat it as a deliberate, controlled test, not a casual re-run.** The controls that keep a prod integration test from polluting or mutating unrelated data:
+
+- **Own the test data.** Trigger the flow only with a record you created for the test, under a user/account you control — never someone else's rows. You must be able to identify every row the run touches.
+- **Clean up after.** Delete the notifications and any other records the run generated once you've asserted on them; leave prod as you found it. Nothing else prunes them.
+- **Assume retries, so keep it idempotent.** Cloud Tasks retries on non-2xx (see the task lifecycle above), so a single trigger can run the handler more than once — a correct handler is idempotent, and your test data/assertions must tolerate a re-delivery rather than assuming exactly one.
+- **Keep the blast radius small.** One record, not a batch; verify, clean up, and stop — don't leave a loop hammering the live pipeline.
 
 ## Business constraints
 
