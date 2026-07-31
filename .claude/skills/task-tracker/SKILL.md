@@ -109,8 +109,8 @@ and add `--no-interactive` when creating issues so it never prompts.
 - Remove one: `linear issue relation delete SWO-<child> blocked-by SWO-<dep>`
 - List an issue's relations: `linear issue relation list SWO-NNN`
 
-`blocked-by` is the dependency edge; a set of them is what encodes waves. `writing-task-specs` owns
-*when* a blocker is earned; this skill owns the command that records it.
+`blocked-by` is the dependency edge; a set of them is what encodes waves. `dependency-analysis` owns
+*when* a blocker is earned (the real-vs-fake test); this skill owns the command that records it.
 
 ### Projects & documents
 
