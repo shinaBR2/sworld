@@ -46,9 +46,9 @@ actually there, not memory.
 ### 1. Requirement re-derivation
 
 Read the spec as if you were about to grill it, and run `grill-me`'s **completeness sweep** against what's
-already written — walk the actors/roles, states & scale, and failure & timing axes and confirm each is
-either handled in the spec or *explicitly* ruled out of scope. `grill-me` owns the method; here you apply
-it to an existing document instead of a live conversation. A silent axis is a requirement nobody wrote.
+already written — walk each of its axes and confirm each is either handled in the spec or *explicitly*
+ruled out of scope. `grill-me` owns the method and the axes; here you apply it to an existing document
+instead of a live conversation. A silent axis is a requirement nobody wrote.
 
 This is the pass that catches the expensive class of gap — the actor nobody enumerated, the half-finished
 state nobody handled — at analysis time instead of during implementation self-review.
@@ -95,14 +95,14 @@ A per-user third-party login feature (connect an external account, then import f
 plus sub-issues. Here's what an up-front analyze pass catches — each of which, skipped, tends to surface the
 expensive way, mid-build in a sub-issue's self-review:
 
-- **Requirement pass (actor axis):** the connect/import actions are marked for any signed-in user, but the
+- **Requirement pass (actor gap):** the connect/import actions are marked for any signed-in user, but the
   implementation runs against a single shared account belonging to the owner — so any user could act as the
-  owner. "What does a *non-owner* user actually get here?" was never enumerated. The actor axis surfaces it
+  owner. "What does a *non-owner* user actually get here?" was never enumerated. The completeness sweep surfaces it
   before it's built.
-- **Requirement pass (failure / half-finished axis):** a user who already has a working connection starts a
+- **Requirement pass (failure / half-finished gap):** a user who already has a working connection starts a
   re-login and abandons it — and the design reuses the same field for the in-progress session, so the
   abandoned attempt overwrites and destroys their working one. Data-loss. "Returning user, login left
-  half-finished" was never handled; the failure axis names exactly that case.
+  half-finished" was never handled; the sweep names exactly that case.
 - **Breakdown integrity:** the parent sits live with a `blocked-by` pointing at a sub-issue that's already
   been closed/superseded; a schema block in the parent that never gained a column a later sub-issue added;
   and a dependency diagram labelled "unchanged" that omits a real new deploy-order blocker — one that, under
