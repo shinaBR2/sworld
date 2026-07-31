@@ -50,12 +50,14 @@ Hook has no `onError`; call-site has no `onError` → the global handler shows a
 
 ```ts
 // Hook — no onError
-export function useArchiveProjectMutation() {
+const useArchiveProjectMutation = () => {
   return useMutation({
     mutationFn: async (input) => { ... },
     onSuccess: () => { queryClient.invalidateQueries(...); },
   });
-}
+};
+
+export { useArchiveProjectMutation };
 
 // Component — no onError
 archiveMutation.mutate({ id, isArchived: true });
@@ -67,7 +69,7 @@ Hook defines `onError` for rollback only — does *not* show a toast. Call-site 
 
 ```ts
 // Hook — onError for rollback only (suppresses global handler)
-export function useCreateProjectMutation() {
+const useCreateProjectMutation = () => {
   return useMutation({
     mutationFn: async (input) => { ... },
     onError: (_err, _vars, context) => {
@@ -75,7 +77,9 @@ export function useCreateProjectMutation() {
     },
     onSuccess: () => { queryClient.invalidateQueries(...); },
   });
-}
+};
+
+export { useCreateProjectMutation };
 
 // Component — handles inline display
 createMutation.mutate(data, {
@@ -92,7 +96,7 @@ Hook defines `onError` for rollback *and* toast; call-site shows nothing.
 
 ```ts
 // Hook — rollback + toast
-export function useUpdateLineItemMutation() {
+const useUpdateLineItemMutation = () => {
   return useMutation({
     mutationFn: async (input) => { ... },
     onError: (error, _vars, context) => {
@@ -102,7 +106,9 @@ export function useUpdateLineItemMutation() {
     },
     onSuccess: () => { queryClient.invalidateQueries(...); },
   });
-}
+};
+
+export { useUpdateLineItemMutation };
 ```
 
 ## Rules
