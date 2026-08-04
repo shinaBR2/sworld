@@ -47,10 +47,7 @@ const styles = `
 .cv-about a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
 .cv-about .hero { margin-bottom: clamp(3rem, 7vw, 5rem); }
-.cv-about .name { font-family: var(--sans); font-weight: 800; font-size: var(--step-5); line-height: 1.02; letter-spacing: -0.03em; margin: 1rem 0 0.4rem; text-wrap: balance; }
-.cv-about .handle { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); letter-spacing: 0.02em; margin: 0 0 2rem; }
-.cv-about .handle a { border: none; color: var(--muted); }
-.cv-about .handle a:hover { color: var(--accent); }
+.cv-about .name { font-family: var(--sans); font-weight: 800; font-size: var(--step-5); line-height: 1.02; letter-spacing: -0.03em; margin: 1rem 0 2rem; text-wrap: balance; }
 .cv-about .thesis { font-size: var(--step-2); line-height: 1.5; font-weight: 400; max-width: 34rem; margin: 0; text-wrap: pretty; }
 .cv-about .thesis b { font-weight: 700; color: var(--ink); }
 .cv-about .thesis .del { color: var(--signal); font-weight: 600; }
@@ -164,10 +161,6 @@ const About = () => {
             Software engineer · systems &amp; product judgment
           </p>
           <h1 className="name rise d1">Vincent Tran</h1>
-          <p className="handle rise d1">
-            <a href="https://github.com/shinaBR2">github.com/shinaBR2</a>
-            {' · '}shinaBR2
-          </p>
           <p className="thesis rise d2">
             Writing code is the cheap part now. The value is the judgment around
             it — deciding <b>what to build</b>,{' '}
