@@ -21,6 +21,15 @@ minimumReleaseAgeExclude:
   # Per-package bypass for a well-scrutinised leaf util's patch; drop this line
   # once it ages past the 7-day window (published 2026-07-23).
   - "brace-expansion"
+  # Dependabot security patches (SWO-660) published <7 days ago, which the
+  # cooldown would otherwise block from resolving. Well-scrutinised patch
+  # releases; drop each line once it ages past the 7-day window.
+  # hono 4.12.34 (2026-08-03), undici 6.28.0/7.29.0 (2026-08-03),
+  # fast-uri 3.1.5 (2026-08-02), ip-address 10.3.1 (2026-07-31).
+  - "hono"
+  - "undici"
+  - "fast-uri"
+  - "ip-address"
 # Dependency lifecycle scripts are blocked (pnpm 10 default); nothing in the
 # workspace needs one — build/test verified green with all scripts ignored.
 onlyBuiltDependencies: []
