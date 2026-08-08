@@ -8,8 +8,7 @@ user-invocable: false
 
 The **data path** — how server data is fetched, transformed, and consumed.
 Placement (which package/folder) is `frontend-ui-architecture`; the structural
-anatomy and the deploy model are facts in `references/architecture.md` and
-`references/deployment-model.md`.
+anatomy is a fact in `references/architecture.md`.
 
 ## Server state
 
@@ -61,8 +60,9 @@ Schema + permissions live in `apps/hasura`, never in a frontend app or core.
   locally, then codegen introspects it, so types match the schema you're
   building and pick up no Cloud drift.
 - **The data-layer PR lands before the frontend PR that uses the new shape** —
-  the query only works once the schema is live (merge = deploy,
-  `references/deployment-model.md`; the slicing is `micro-prs`).
+  the query only works once the schema is live. That this is a real ordering
+  constraint, and how to slice the two PRs, is `dependency-analysis` and
+  `micro-prs`.
 
 ## First principle: never trust the frontend
 
