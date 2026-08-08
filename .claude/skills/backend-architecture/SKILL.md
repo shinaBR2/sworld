@@ -13,8 +13,7 @@ rests on live elsewhere, so nothing here drifts:
   `references/architecture.md`.
 - The platforms (Cloud Run, Cloud Tasks, GCS, how they authenticate) →
   `references/infrastructure.md`.
-- Merge = deploy, and what a backend merge triggers →
-  `references/deployment-model.md`.
+- What a backend merge deploys, and when → `references/deployment-model.md`.
 - Database-layer rules (single-gateway, write atomicity, validation) →
   `hasura-architecture`.
 - GCS layout and operator CLIs → `backend-ops`.
@@ -89,8 +88,7 @@ pipeline, entered through an Action instead of an Event.
 
 Cloud Tasks has no local emulator (`references/infrastructure.md`), so the full
 flow can't run on your machine. Locally you can unit-test handler logic with
-mocked deps and call a handler directly to sanity-check it. Everything above that is real integration, and since merge = deploy
-(`references/deployment-model.md`), that integration test happens **in production,
+mocked deps and call a handler directly to sanity-check it. Everything above that is real integration, and since there is no staging, that integration test happens **in production,
 after merge**.
 
 Plan backend work knowing the last mile is only verifiable live, and when you run
