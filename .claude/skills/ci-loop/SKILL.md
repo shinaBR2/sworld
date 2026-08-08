@@ -29,12 +29,12 @@ restart, never hand an unsettled PR back.
 
 1. **Merge status.** Merged → run `cleanup` (pass the PR number); done. Closed → tell the user; done. Open → Step 2.
 2. **Conflicts.** Conflicting → merge latest `main`, resolve, push, wait, restart. Clean → Step 3.
-3. **CodeRabbit finished?** Its check is `SUCCESS` the whole time it reviews, so colour tells you nothing — the only "done" signal is its `StatusContext` **`description` reading `"Review completed"`**. Not that yet → wait, restart. Done → Step 4.
-4. **Unresolved comments.** Any thread with `isResolved: false` → read it, fix the code, push, wait, restart. None → Step 5. (Never manually resolve a bot's thread — fix the code and let it re-resolve.)
+3. **CodeRabbit finished?** Only when it reports `"Review completed"` — read it per `references/github-cli.md`. Not yet → wait, restart. Done → Step 4.
+4. **Unresolved comments.** Any unresolved thread → read it, fix the code, push, wait, restart. None → Step 5. (Never manually resolve a bot's thread — fix the code and let it re-resolve.)
 5. **CI green.** Any failure → fix, push, wait, restart. Any check pending → wait, restart. All green → **settled: report to the user.**
 
 ## Notes
 
-- The `gh` auth and the GraphQL queries Steps 3 and 4 need (a status's `description`, a thread's `isResolved` — neither is in the plain check list) live in `references/github-cli.md`.
+- `gh` auth, and how to read CodeRabbit's status (Step 3) and the review threads (Step 4): `references/github-cli.md`.
 - A `skipped` check is green, not pending (path-filtered jobs skip the expensive half) — never wait on it. An E2E job that failed at an infra step (deps, runner, cache) on a PR that doesn't touch tests is not a real failure — treat it as green.
 - Waiting means a **background** `sleep`, never a foreground wait or the Monitor tool — a hook denies it.
