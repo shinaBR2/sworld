@@ -58,18 +58,19 @@ threads require, and the merge traps.
 
 ## Step 3: Check unresolved review comments
 
-- List the PR's review threads and their resolved status — `references/github-cli.md` has the query this needs (the obvious path can't report resolved state).
+- **First, confirm CodeRabbit has actually finished** — an empty thread list is meaningless until it has. Read CodeRabbit's `StatusContext` `description` (`references/github-cli.md` has the query and why pass/fail can't tell you this). Proceed **only** when it reads `"Review completed"`. Anything else — still in progress, or the context not there yet — means CodeRabbit is `pending`: background `sleep 360`, then **restart from Step 1**. Do NOT read the thread list as final until this marker is green; exiting on a not-yet-posted empty list is the #1 way this loop misses comments.
+- With CodeRabbit done, list the PR's review threads and their resolved status — `references/github-cli.md` has the query this needs (the obvious path can't report resolved state).
 - Filter to unresolved threads only.
 - If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If no unresolved threads → proceed to Step 4.
-- **NEVER manually resolve bugbot threads** — fix code, let bugbot re-resolve on next push.
-- Bugbot CI check **ALWAYS shows SUCCESS** even when it finds real bugs, and shows SUCCESS while the review is still running. CI green means NOTHING about comments — you must read threads regardless, and a bot that hasn't reported yet is `pending`, not `pass` (see "Merging" below).
+- **NEVER manually resolve review-bot threads** — fix code, let the bot re-resolve on next push.
+- A review bot's CI check **ALWAYS shows SUCCESS** even when it finds real bugs, and shows SUCCESS while the review is still running. CI green means NOTHING about comments — you must read threads regardless, and the only trustworthy "the bot has spoken" signal is CodeRabbit's `"Review completed"` marker above, never its check colour (see "Merging" below).
 
 ## Step 4: Check CI
 
 - Read the PR's CI checks (never in a blocking watch mode — see `references/github-cli.md`).
 - If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If **any check is `pending`** → nothing to fix, and nothing to report. Background-`sleep 360`, then **restart from Step 1**. A review bot still marked "Review in progress" counts as pending: it has not yet had its say, and Step 3 is the gate it feeds.
+- If **any check is `pending`** → nothing to fix, and nothing to report. Background-`sleep 360`, then **restart from Step 1**. CodeRabbit counts as pending until its `StatusContext` `description` reads `"Review completed"` (Step 3 owns this check) — its check colour is `SUCCESS` throughout and says nothing.
 - **A `skipped` check counts as green, not as pending.** Gates that filter by path run a cheap always-on filter job and skip the expensive one when nothing relevant changed (see `e2e-main-pr.yml`); the checks list prints these as `skipped`. That is the designed pass state — never wait on it. Its *filter* job going red is a real failure and blocks like any other.
 - If all green AND no unresolved comments → PR is ready. Report to user.
 - **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
@@ -81,16 +82,16 @@ threads require, and the merge traps.
 - **DEFAULT: never merge.** The user reviews every PR themselves. The loop's terminal action for an OPEN, settled PR is ALWAYS "report to the user that it's ready" — merging is a separate, explicit action taken only when the user has authorized it for that PR (e.g. "you can merge" / "merge when settled").
 - **A PR is "settled"** only when **all three** hold at once. Any one of them missing means unsettled, and unsettled means go round again:
   1. **No conflicts** — OPEN and `MERGEABLE`.
-  2. **No unresolved review threads** — zero `isResolved: false`. This is the whole point of the loop.
+  2. **No unresolved review threads** — CodeRabbit's `description` reads `"Review completed"` AND then zero `isResolved: false`. The completion marker is load-bearing: zero threads before CodeRabbit finishes is not "clean", it's "too early to tell". This is the whole point of the loop.
   3. **All CI green** — every check passed or was `skipped`, nothing `pending`, nothing failed or `CANCELLED` (a cancelled check is not green — rerun or investigate it).
-- **A review bot's CI check going green does NOT mean the bot has finished reviewing.** CodeRabbit and Cursor bugbot report `SUCCESS` on their status check while the review itself is still running — and they report `SUCCESS` again after finding real bugs. So fully green CI can sit alongside a bot that has not yet said anything, and moments later it posts blocking comments. Treat a bot as finished only when its check is green **and** it has actually left its review (its check description no longer reads "Review in progress", and Step 3's thread query reflects its verdict). Until then it is `pending`, whatever colour the check is — background-`sleep 360` and restart from Step 1. **Never call a PR settled on green CI alone.**
-- **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
+- **A review bot's CI check going green does NOT mean the bot has finished reviewing.** CodeRabbit reports `SUCCESS` on its status while the review is still running — and `SUCCESS` again after finding real bugs. So fully green CI can sit alongside a bot that has not yet said anything, and moments later it posts blocking comments. The finish signal is not the colour — it's CodeRabbit's `StatusContext` `description` reading exactly `"Review completed"` (see `references/github-cli.md`). Gate on that **positive** marker; until it shows, CodeRabbit is `pending` whatever colour its check is — background-`sleep 360` and restart from Step 1. **Never call a PR settled on green CI alone.**
+- **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green CodeRabbit *check* says nothing about whether it finished or left real comments — only the `"Review completed"` marker does.
 - **Never delegate the merge condition to the platform's auto-merge** — in this repo it ships before CI is green (`references/github-cli.md` explains why). Run the full CI loop yourself — Steps 1–4 above, including Step 4's checks — then merge manually with a squash once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this repo's merge-is-deploy model means shipping broken code to production.
 - Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
 
 ## The rule that gets violated
 
-The #1 failure mode: batching multiple checks in parallel, fixing multiple things at once, or skipping Step 3 because CI is green. The steps are gates in strict order because each push triggers new CI + bugbot runs. Checking later steps before earlier ones settle is meaningless — the state changes after every push.
+The #1 failure mode: batching multiple checks in parallel, fixing multiple things at once, or skipping Step 3 because CI is green. The steps are gates in strict order because each push triggers new CI + review-bot runs. Checking later steps before earlier ones settle is meaningless — the state changes after every push.
 
 ## Reporting
 
