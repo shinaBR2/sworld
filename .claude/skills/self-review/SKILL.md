@@ -29,26 +29,15 @@ This is the only place code review is defined; other skills call it by name.
 
 Exit when a fresh run finds nothing blocking and no edit has happened since — the
 reviewer runs via Bash and does **not** satisfy the gate, so the last action before
-the PR is always to re-invoke this skill through the Skill tool (see the gate
-below). Never invent a finding to keep looping, nor dismiss a real one to stop. The
-bar: CodeRabbit finds nothing on the PR.
+the PR is always to re-invoke this skill through the Skill tool. Never invent a
+finding to keep looping, nor dismiss a real one to stop. The bar: CodeRabbit finds
+nothing on the PR.
 
 A diff too sprawling or mixed to review with confidence *is* the finding — split it
 (`micro-prs`) before shipping. A trust-boundary diff (auth, Hasura
 permissions/metadata, a Hono webhook/action handler, secrets, `VITE_` env vars)
 also needs `security-reviewer` — the cold-eyes pass is not the stack-aware security
 review.
-
-## Gate mode vs a plain review
-
-By default this is `parallel-workflow`'s pre-PR gate (pushing is never gated, only
-PR creation): the loop above runs to convergence, and `.claude/hooks/review-gate.sh`
-blocks the PR until it has. Read the hook for the exact stamp mechanics — which tool
-calls clear it, how it keys sessions — before relying on it.
-
-When the user just asks "review this" or "is this ready?", it's not the gate: run
-the reviewer, relay what it found in plain language, and let them decide — don't
-force the fix loop unless they want the fixes made.
 
 ## Reporting back
 
