@@ -88,17 +88,6 @@ processing itself is still eventually-consistent.
   processing handlers — don't wrap repair-style handlers that run on
   already-`ready` videos.
 
-## Validate an image-level change before you merge
-
-Merging ships the image straight to prod (`references/deployment-model.md`), so a
-broken image is a production incident, not a failed build. When a change is
-image-level — a system dependency, a `Dockerfile` edit, a bundled binary —
-validate it in a locally-built image before merging: run **both** a `docker
-build` **and** a `docker run` that exercises the change (a binary resolves on
-`PATH`, the service boots, a real conversion completes). A green build only
-proves the layers assemble; only running the container proves it boots and the
-change actually works.
-
 ## Testing: the last mile only runs live, so run it deliberately
 
 Cloud Tasks has no local emulator (`references/infrastructure.md`), so the full

@@ -16,7 +16,7 @@ treat every merge as a release.
 |--------------|-----------|-----|----------|
 | a frontend app | Cloudflare (Pages, or Workers for Look) | the site's own Cloudflare pipeline | nothing in `.github/workflows` does this — the repo looks like it doesn't deploy the frontend, but Cloudflare does |
 | `apps/hasura` | Hasura Cloud (migrations + metadata) | Hasura Cloud's GitHub integration | the `hasura-pr` workflow only **lints**, so a merge *looks* inert — it isn't |
-| `apps/backend` | Cloud Run | three `backend-prod-*` GitHub Actions workflows (test → Docker build/push → WIF auth → `gcloud run deploy`) | a **broken image reaches prod on merge**, so validate anything image-level in a locally-built image first |
+| `apps/backend` | Cloud Run | three `backend-prod-*` GitHub Actions workflows (test → Docker build/push → WIF auth → `gcloud run deploy`) | a **broken image reaches prod on merge**, so validate any image-level change locally first — `docker build` **and** `docker run`, not build alone |
 
 A backend merge ships a service when it touches that service's code *or* shared
 backend source, its Dockerfile, `package.json`, `packages/core`, or the root
