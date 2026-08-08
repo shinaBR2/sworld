@@ -34,25 +34,35 @@ name and know nothing about how it works.
 Launch the review as a brand-new headless session, from inside the worktree:
 
 ```
-claude -p "/code-review high" --dangerously-skip-permissions
+claude -p "/code-review high origin/main...HEAD" --dangerously-skip-permissions
 ```
 
 Why each part:
 
 - **`claude -p`** starts a new session with no memory of this conversation. It
-  sees only the code and the branch's changes since it forked from `main`. That
-  cold read is the entire value — it reviews like a teammate who wasn't in the room.
+  sees only the code and the branch's changes since it forked from `origin/main`.
+  That cold read is the entire value — it reviews like a teammate who wasn't in the
+  room.
 - **`/code-review high`** is the built-in reviewer at high effort: broad coverage
   of correctness bugs plus reuse/simplification/efficiency cleanups. It already
   reads this repo's `AGENTS.md`/`CLAUDE.md`, so it reviews with our conventions in
   mind.
+- **`origin/main...HEAD`** is the explicit review target, and it is not optional.
+  With no target, `/code-review` reviews only "commits ahead of `@{upstream}` plus
+  uncommitted changes" — which is **empty** on a committed-and-pushed branch (the
+  workflow's normal state, since pushing is backup), giving a silent false-clean
+  pass. It also falls back to *local* `main`, which is almost always stale. Naming
+  `origin/main...HEAD` pins the review to exactly the diff this branch adds since it
+  forked from the real `origin/main` — the same diff the PR will show. This is why
+  step 1 fetches `origin/main` first.
 - **`--dangerously-skip-permissions`** — the review is read-only (no `--fix`; this
   session does the fixing). Skip-permissions only keeps the headless session from
   deadlocking on a prompt it can't answer. Never pass `--fix` to the reviewer.
 
-The reviewer returns findings as a JSON array (empty `[]` when clean). Each
-finding carries a `category` — `correctness`, `simplification`, `efficiency`,
-`test-coverage`, and so on. That category is how the loop decides what blocks.
+Run it from Bash; its findings print to stdout as a JSON array (empty `[]` when
+clean) — read them there. Each finding carries a `category` — `correctness`,
+`simplification`, `efficiency`, `test-coverage`, and so on. That category is how
+the loop decides what blocks.
 
 - **`correctness` (and any real bug / broken-contract / security finding) is
   blocking** — fix it, then loop.
@@ -76,11 +86,13 @@ pushing is backup, not publication; the PR is what this gate unlocks.
 3. **Run the reviewer** (fresh session, as above).
 4. **Act on what it found:**
    - **Blocking finding** → fix it *in this session* (full context makes the fix
-     better than a blind `--fix`). The fix is new code **and** it deleted the gate
-     stamp, so start a fresh pass by **re-invoking this skill through the Skill
-     tool** — that re-stamps the gate and launches a new fresh session to re-review
-     the *fixed* diff with cold eyes. (Re-running step 3's reviewer alone does not
-     re-stamp the gate.)
+     better than a blind `--fix`). A fix is new code, so start a fresh pass — two
+     separate actions, both required: (a) **re-run step 3's reviewer command** over
+     the *fixed* diff (that is what actually re-reviews it), and (b) **re-invoke
+     this skill through the Skill tool** to re-stamp the gate, since the `Write`/
+     `Edit` that made the fix deleted the stamp. Re-invoking the skill only reloads
+     these instructions and re-stamps the gate — it does **not** run any review; the
+     `claude -p` reviewer in (a) is the only thing that does.
    - **A finding that needs the owner's decision** (a real fork, a
      product/behaviour call, a destructive or irreversible change) → **stop and
      ask.** Don't guess past a judgment call.
@@ -92,10 +104,10 @@ pushing is backup, not publication; the PR is what this gate unlocks.
 Loop discipline:
 
 - **Every fix is new, unreviewed code** *and* invalidates the gate stamp, so after
-  any fix the loop restarts by **re-invoking this skill** (which re-stamps the gate
-  and launches a fresh reviewer). There is no "review once, fix, ship" — the last
-  thing that runs is always a clean cold-eyes pass over the final diff, with no
-  edit after it.
+  any fix the loop restarts with both actions from step 4: re-run the reviewer over
+  the fixed diff, and re-invoke this skill to re-stamp the gate. There is no "review
+  once, fix, ship" — the last thing that runs is always a clean cold-eyes pass over
+  the final diff, with no edit after it.
 - **A clean pass is the goal, not a failure to find something.** Never invent a
   finding to keep the loop going, and never dismiss a real one to end it early.
 - **The bar: CodeRabbit finds nothing.** A substantive bot finding on the PR
@@ -110,11 +122,17 @@ denies PR creation until this skill has run and **no file has been edited since*
 - **Invoke this skill through the Skill tool.** Only a Skill-tool invocation
   stamps the gate — the `/self-review` slash command and doing the steps by hand
   do not.
-- **The stamp records "the skill was loaded and nothing has been edited since."**
-  It approximates loop convergence only because every fix stamps `last_edit` and
-  forces a fresh invocation. So the loop's final, clean pass must come *after* the
-  last fix: fix (invalidates) → re-invoke this skill → fresh review finds nothing
-  → no edits after → gate opens.
+- **The stamp records "the skill was loaded and nothing has been edited since" —
+  not "a review actually ran."** It fires when this skill is invoked, *before* the
+  separate `claude -p` reviewer runs — and it fires just the same if the reviewer
+  never runs, errors out, or you skip it. So invoking the skill and skipping the
+  reviewer opens the gate over a **completely unreviewed diff**; the stamp cannot
+  tell the difference. This trap is sharper now that the review is a separate manual
+  command, not something this skill runs for you — you must actually run it every
+  pass. The stamp only approximates loop convergence because every fix stamps
+  `last_edit` and forces a fresh invocation, so the final clean pass must come
+  *after* the last fix: fix (invalidates) → re-run the reviewer (finds nothing) →
+  re-invoke this skill (re-stamp) → no edits after → gate opens.
 - **The `last_edit` stamp fires on `Write`/`Edit` only, not Bash.** A file written
   by a build, a formatter, or a stray `sed` after the final pass will NOT re-flag
   it as stale, so it can silently ship unreviewed. Do all rebuilds and probes
@@ -137,9 +155,11 @@ recommendation. This is not the gate: don't force the fix loop unless they want
 the fixes made — surface the findings and let them decide.
 
 For a harsher pass — "thermo-nuclear review", "deep code quality audit", "be
-really strict about maintainability" — run the `thermo-nuclear-code-quality-review`
-skill over the same diff in addition to the cold-eyes pass. That band is never
-chosen automatically; the user asks for it.
+really strict about maintainability" — that's the
+`thermo-nuclear-code-quality-review` band. It's a separate skill the user invokes
+directly, and it runs its own cold-eyes pass at the harshest local effort. It is
+never triggered automatically, so don't invoke it from here — just point the user
+to it.
 
 ## Reporting back
 

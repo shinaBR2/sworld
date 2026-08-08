@@ -5,26 +5,38 @@ description: Run the harshest band of code review — an extremely strict mainta
 
 # Thermo-Nuclear Code Quality Review
 
-The harshest review band. It runs **on top of** `self-review`'s cold-eyes pass,
-not instead of it. Never chosen automatically — the user asks for it:
+The harshest review band. Never chosen automatically — the user asks for it:
 "thermo-nuclear review", "deep code quality audit", "be really strict about
-maintainability". Same target as `self-review`: the LOCAL working diff vs
-`origin/main`.
+maintainability". Same target and same cold-eyes principle as `self-review`: the
+review is done by a **fresh, zero-context `claude -p` session** over the LOCAL diff
+vs `origin/main`, never by the session that wrote the code. This session drives and
+fixes; the stranger judges.
 
 ## How to run it
 
-1. **Run the cold-eyes correctness pass first** — invoke the `self-review` skill so
-   a fresh `/code-review high` session covers correctness over the same diff, and
-   fix anything blocking it finds. This step is not optional: entering here
-   directly (via "thermo-nuclear review") must still run it, or correctness never
-   gets checked at all. There's no point hardening the structure of code that's
-   still wrong.
-2. **Then apply the maintainability bar below** to that same diff, at full
-   strength, treating its presumptive blockers as blockers.
+1. **Run a fresh cold-eyes pass at the harshest local band**, from inside the
+   worktree (fetch `origin/main` first so the target is current):
 
-Because step 1 owns correctness, here **correctness is table stakes** — working
-code is not a pass. The only question this band adds is whether the codebase is
-*better* after the change than before.
+   ```
+   claude -p "/code-review max origin/main...HEAD" --dangerously-skip-permissions
+   ```
+
+   `max` is the deepest *local* effort band — not `ultra`, which is the billed
+   cloud review you can't launch. It covers correctness **and** deep
+   simplification/structure in one zero-context pass, so entering thermo directly
+   still gets correctness checked. Run it from Bash and read its JSON findings from
+   stdout. **Do not invoke the `self-review` skill from here** — it points back at
+   this band, so invoking it would loop; just run this command.
+
+2. **Fix what it surfaces in this context-rich session**, holding the
+   maintainability bar below as the standard — how hard to push on structure, which
+   presumptive blockers to treat as blockers, and which remedies to prefer. As in
+   `self-review`, the *reviewer* is cold eyes; the *fixer* is this session with full
+   context. Loop until a fresh `max` pass over the fixed diff is clean.
+
+**Correctness is table stakes** at this band — working code is not a pass. The only
+question this band adds is whether the codebase is *better* after the change than
+before.
 
 ## The bar — maintainability becomes the review
 
