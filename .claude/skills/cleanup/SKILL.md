@@ -2,28 +2,30 @@
 name: cleanup
 description: >-
   Owns the mechanical git chores after a PR merges: from the main worktree, remove the merged worktree +
-  its branch, then `git pull`. Also does the standalone `git pull` refresh on demand. Triggers: a merged PR
-  needing teardown, or "cleanup", "clean up the worktree", "refresh main", "update main", "pull main",
-  /cleanup. Callers (`ci-loop`, `wait-for-pr-merge`) point here. Not issue status (that's `task-tracker`),
-  not CI/conflict/review fixing (that's `ci-loop`).
+  its local branch, then pull latest `main`. Also does the standalone `main` pull on demand. Triggers: a
+  merged PR needing teardown, or "cleanup", "clean up the worktree", "refresh main", "update main", "pull
+  main", /cleanup. Callers (`ci-loop`, `wait-for-pr-merge`) point here. Not issue status (that's
+  `task-tracker`), not CI/conflict/review fixing (that's `ci-loop`).
 user-invocable: true
 ---
 
 # Cleanup
 
-Once a PR has merged, from the main worktree (where every session starts):
+Once a PR has merged, from the main worktree:
 
-```bash
-git worktree remove .claude/worktrees/<slug>   # --force only if it refuses (dirty tree)
-git branch -D worktree-<slug>                  # -D: a squash-merge leaves the branch "unmerged"
-git pull --ff-only origin main
-```
+1. **Remove its worktree.**
+2. **Remove its local branch.**
+3. **Pull latest `main`.**
 
-`<slug>` is the issue slug; the branch is `worktree-<slug>` (see `parallel-workflow`).
+Paths and branch names follow `parallel-workflow`.
 
-If you're **inside** the worktree, `ExitWorktree(action: "remove")` removes it and drops you back at the root
-in one step — then just `git pull`. It refuses on uncommitted or unmerged commits; only pass
-`discard_changes: true` once you've confirmed the flagged commit is exactly the squash-merged work.
+Two things that aren't obvious from the intent:
 
-The `git pull` also runs on its own whenever `main` needs to be current — before new work, or on "refresh
-main". `--ff-only` so a surprise divergence fails loudly instead of making a merge commit on `main`.
+- **If you're inside the worktree, use `ExitWorktree(action: "remove")`** — it does steps 1 and 2 and returns
+  you to the root in one move (you can't remove the worktree you're standing in).
+- **This repo squash-merges,** so a merged branch still looks *unmerged* to git. Expect the force path on the
+  branch delete, and expect `ExitWorktree` to refuse until you pass `discard_changes: true` — but only once
+  you've confirmed the flagged commit is exactly that merged work and nothing beyond it.
+
+The `main` pull also runs on its own whenever `main` needs to be current — before new work, or on "refresh
+main".
