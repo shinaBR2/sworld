@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: The single place all code review happens in this repo — bugs and code quality both, since `/code-review` covers both. Use as the mandatory pre-PR gate in the parallel workflow — it drives a loop of cold-eyes `/code-review` passes over the LOCAL working diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup; the PR is what's gated). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", "do a deep code quality audit", "be really strict about this", "thermo-nuclear review", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR.
+description: The single place all code review happens in this repo — bugs and code quality both, since `/code-review` covers both. Use as the mandatory pre-PR gate in the parallel workflow — it drives a loop of cold-eyes `/code-review` passes over this branch's committed diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup; the PR is what's gated). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", "do a deep code quality audit", "be really strict about this", "thermo-nuclear review", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR.
 ---
 
 # Self-review
@@ -16,8 +16,10 @@ name and know nothing about how it works.
 
 ## Critical rules
 
-- **The review target is the LOCAL working diff, never a remote PR.** No PR exists
-  at review time — the local diff and the eventual PR diff are the same thing.
+- **The review target is this branch's own diff vs `origin/main`, never a remote
+  PR.** No PR exists at review time — this branch's diff and the eventual PR diff
+  are the same thing. Commit first (the `origin/main...HEAD` range is defined by
+  commits) so what's reviewed is exactly what the PR will show.
 - **The reviewer is a fresh, zero-context session** — see "The reviewer" below for
   the exact command. Never review the diff yourself from inside this session — that
   is marking your own homework, which is the whole thing this skill exists to
@@ -190,7 +192,8 @@ Keep it short and human. Lead with the verdict, then the substance:
 ## Validation before reporting
 
 - Did the review run in a **fresh `claude -p` session**, not in this one?
-- Did it target the LOCAL working diff vs `origin/main`?
+- Did it target this branch's committed diff vs `origin/main` (the
+  `origin/main...HEAD` range), over a non-empty diff?
 - Did the loop actually converge — a final fresh pass with zero blocking findings
   and **no edits after it** — rather than being declared done?
 - Trust-boundary diff → did `security-reviewer` also run?
