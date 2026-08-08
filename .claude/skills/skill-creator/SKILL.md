@@ -62,6 +62,18 @@ Based on the interview, fill in:
 
 When editing a skill, grep the other skills for its name and check every hit is still a name-only mention. Stale restatements are the failure mode this rule exists to prevent.
 
+#### State intent, not the commands the agent already knows
+
+A skill says *what to do* and *why*. It trusts the agent to supply the mechanics it already knows cold at runtime — the git, the shell, the everyday tooling. Spelling those out is worse than redundant: an inlined command drifts out of date while the agent's own knowledge stays current, and every extra line buries the one thing the skill alone can tell the reader. A skill that reads like a script the agent could have written itself is mostly noise; cut it down to the intent.
+
+Reserve explicit, literal detail for the three cases where the agent *can't* be trusted to get it right unaided:
+
+- **Non-obvious** — a step no reasonable agent would infer (a surprising ordering, a subtle precondition).
+- **Repo-specific** — a path, name, flag, or convention that only holds here and can't be guessed.
+- **Destructive-if-wrong** — where a wrong guess loses work or ships something bad, so pinning down the exact form earns its space.
+
+One genuine exception runs the other way: **code that executes without the agent in the loop must be a literal, checkable script**, not intent. A background poll loop (as `wait-for-pr-merge` externalizes) runs detached — the agent isn't there to fill in the mechanics, so intent can't stand in for it. The line is simple: run *by* the agent → intent is enough; run *detached* → write the script.
+
 #### Anatomy of a skill
 
 ```
