@@ -18,11 +18,10 @@ name and know nothing about how it works.
 
 - **The review target is the LOCAL working diff, never a remote PR.** No PR exists
   at review time — the local diff and the eventual PR diff are the same thing.
-- **The reviewer is a fresh, zero-context session**, launched with
-  `claude -p "/code-review high" --dangerously-skip-permissions` from the worktree
-  (see "The reviewer" below). Never review the diff yourself from inside this
-  session — that is marking your own homework, which is the whole thing this skill
-  exists to prevent.
+- **The reviewer is a fresh, zero-context session** — see "The reviewer" below for
+  the exact command. Never review the diff yourself from inside this session — that
+  is marking your own homework, which is the whole thing this skill exists to
+  prevent.
 - Post-PR concerns (review threads, CI, bots) belong to the `ci-loop` skill —
   this skill stops at the pre-PR gate.
 - **Reviewing a PR that already exists on GitHub is not this skill's job.** Check
@@ -41,8 +40,8 @@ claude -p "/code-review high" --dangerously-skip-permissions
 Why each part:
 
 - **`claude -p`** starts a new session with no memory of this conversation. It
-  sees only the code and `git diff origin/main`. That cold read is the entire
-  value — it reviews like a teammate who wasn't in the room.
+  sees only the code and the branch's changes since it forked from `main`. That
+  cold read is the entire value — it reviews like a teammate who wasn't in the room.
 - **`/code-review high`** is the built-in reviewer at high effort: broad coverage
   of correctness bugs plus reuse/simplification/efficiency cleanups. It already
   reads this repo's `AGENTS.md`/`CLAUDE.md`, so it reviews with our conventions in
@@ -77,8 +76,11 @@ pushing is backup, not publication; the PR is what this gate unlocks.
 3. **Run the reviewer** (fresh session, as above).
 4. **Act on what it found:**
    - **Blocking finding** → fix it *in this session* (full context makes the fix
-     better than a blind `--fix`). Then go back to step 3 — a **new** fresh
-     session re-reviews the *fixed* diff with cold eyes again.
+     better than a blind `--fix`). The fix is new code **and** it deleted the gate
+     stamp, so start a fresh pass by **re-invoking this skill through the Skill
+     tool** — that re-stamps the gate and launches a new fresh session to re-review
+     the *fixed* diff with cold eyes. (Re-running step 3's reviewer alone does not
+     re-stamp the gate.)
    - **A finding that needs the owner's decision** (a real fork, a
      product/behaviour call, a destructive or irreversible change) → **stop and
      ask.** Don't guess past a judgment call.
@@ -89,9 +91,11 @@ pushing is backup, not publication; the PR is what this gate unlocks.
 
 Loop discipline:
 
-- **Every fix is new, unreviewed code**, so after any fix the loop restarts at
-  step 3 with a fresh reviewer. There is no "review once, fix, ship" — the last
-  thing that runs is always a clean cold-eyes pass over the final diff.
+- **Every fix is new, unreviewed code** *and* invalidates the gate stamp, so after
+  any fix the loop restarts by **re-invoking this skill** (which re-stamps the gate
+  and launches a fresh reviewer). There is no "review once, fix, ship" — the last
+  thing that runs is always a clean cold-eyes pass over the final diff, with no
+  edit after it.
 - **A clean pass is the goal, not a failure to find something.** Never invent a
   finding to keep the loop going, and never dismiss a real one to end it early.
 - **The bar: CodeRabbit finds nothing.** A substantive bot finding on the PR

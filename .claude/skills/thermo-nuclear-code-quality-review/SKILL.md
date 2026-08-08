@@ -6,14 +6,25 @@ description: Run the harshest band of code review — an extremely strict mainta
 # Thermo-Nuclear Code Quality Review
 
 The harshest review band. It runs **on top of** `self-review`'s cold-eyes pass,
-not instead of it: `self-review` (via a fresh `/code-review high` session) already
-covers correctness, so here **correctness is table stakes** — working code is not
-a pass. The only question this band asks is whether the codebase is *better* after
-the change than before.
+not instead of it. Never chosen automatically — the user asks for it:
+"thermo-nuclear review", "deep code quality audit", "be really strict about
+maintainability". Same target as `self-review`: the LOCAL working diff vs
+`origin/main`.
 
-Never chosen automatically — the user asks for it: "thermo-nuclear review", "deep
-code quality audit", "be really strict about maintainability". Same target as
-`self-review`: the LOCAL working diff vs `origin/main`.
+## How to run it
+
+1. **Run the cold-eyes correctness pass first** — invoke the `self-review` skill so
+   a fresh `/code-review high` session covers correctness over the same diff, and
+   fix anything blocking it finds. This step is not optional: entering here
+   directly (via "thermo-nuclear review") must still run it, or correctness never
+   gets checked at all. There's no point hardening the structure of code that's
+   still wrong.
+2. **Then apply the maintainability bar below** to that same diff, at full
+   strength, treating its presumptive blockers as blockers.
+
+Because step 1 owns correctness, here **correctness is table stakes** — working
+code is not a pass. The only question this band adds is whether the codebase is
+*better* after the change than before.
 
 ## The bar — maintainability becomes the review
 
