@@ -6,84 +6,65 @@ user-invocable: false
 
 # Architecture Rules
 
-This skill covers the **data path** — how server data is fetched, transformed, and consumed. For **where** frontend code lives — which package and folder new code belongs in — see `frontend-ui-architecture`. Placement is that skill's job; data flow is this one's.
+The **data path** — how server data is fetched, transformed, and consumed.
+Placement (which package/folder) is `frontend-ui-architecture`; the structural
+anatomy is a fact in `references/architecture.md`.
 
-## Server state management
+## Server state
 
-- Server state MUST always be managed by **react-query** (TanStack Query).
-- NEVER store server data in local state (`useState`) or a client store — use `useQuery` / `useMutation`.
-- Client state stores are only for client-side UI state (modals, selections, sidebar open/closed, etc.).
+Server state is **react-query** (TanStack Query), always — `useQuery` /
+`useMutation`, never `useState` or a client store. Client stores hold UI state
+only (modals, selections, sidebar open/closed).
 
-## One page = one query = one transformer (MUST)
+## One page = one query = one transformer
 
-This is the most fundamental data-fetching rule in this codebase. Hasura exposes a **single** GraphQL endpoint where any number of root fields compose into one request — use that.
+The core data-fetching rule. Hasura is a single GraphQL endpoint, so any page's
+fields compose into one request.
 
-- **Exactly one query per page.** A page fires **one** Hasura request that returns **everything that page needs — no more, no less**. Never two hooks side by side on the same page (e.g. `useLoadAudios` + `useLoadPlaylists`); collapse their root fields (`audios`, `tags`, `playlist`, …) into a single query for that page.
-- **Each page owns its query.** Two pages needing "playlists" do **not** each fetch through a shared page-level query built for the *other* page — each page owns the one query that selects exactly what it renders. Reuse happens at the **fragment** level (`packages/core/src/<domain>/query-hooks/fragments.ts`), never by pointing one page at another page's query. Shared fields → shared fragment; per-page selection → per-page query.
-- **One transformer per query.** Each query owns its own transformer (via react-query `select` / the `useRequest` result), shaping that page's response into exactly the client model that page consumes. Do not reuse one transformer across queries.
-- **Filter by role on Hasura, not in the query.** Do **not** encode authorization in the frontend query (e.g. `audios(where: { public: { _eq: true } })` for anonymous visitors). Write **one role-agnostic query** and vary only the token — attach it when signed in, omit it for anonymous so Hasura runs the `anonymous` role. Hasura's row permissions decide the rows each role may see; the query key includes the role so views never share a cache entry. A `where` that re-implements a permission is duplicated, drift-prone authorization living on the wrong side of the trust boundary (see *NEVER trust the frontend* below). A role-agnostic query is therefore the correct building block, not a smell — a single such query can legitimately back both the signed-in and anonymous rendering of the same page.
+- **One query per page** — one request returning exactly what the page needs,
+  no more. Never two hooks side by side; collapse their root fields into one.
+- **Each page owns its query** — never point a page at another page's query.
+  Reuse at the **fragment** level, not the query level.
+- **One transformer per query** — never shared across queries.
+- **Role-agnostic query, vary the token** — never encode authorization in the
+  query (no `where: { public: { _eq: true } }`). Write one query; attach the
+  token when signed in, omit it for anonymous. Hasura's row permissions decide
+  the rows, and the role is part of the query key. A `where` that re-implements
+  a permission is authorization on the wrong side of the trust boundary.
 
-**Why:** the transformer is the single gate between server and client. One page → one query → one transformer means one place to look, one request on the wire, and one boundary to keep the frontend working regardless of what the backend does. Building a page around a query shaped for a *different* page couples them to one server shape and breaks this guarantee.
+Before adding a query, check the existing one's fragments — a nested
+relationship often already returns what you need, so a derived view is a
+client-side filter, not a second fetch.
 
-**Before adding a new query or hook, read the existing query's fragments first.** Hasura nested relationships often already return what you need — e.g. a video-listing query that embeds `user_video_histories { last_watched_at, progress_seconds }` already has everything a "continue watching" derived view needs; that's a client-side filter/sort on the existing result, not a second fetch. Only add a query when the field is genuinely absent from the page's current selection.
+## Transformers
 
-## Transformer pattern (MUST)
+Every query/mutation owns a transformer that converts the API shape into the
+client model (via react-query `select`), placed alongside it in the domain's
+query-/mutation-hooks. It is the single gate between server and client: when the
+API changes, only the transformer moves and the frontend keeps working.
 
-- ALWAYS have a transformer to convert server-side data into the format the frontend consumes.
-- Transformers decouple the frontend from the API shape — when the API changes, only the transformer needs updating. The frontend must keep working regardless of the backend — the transformer is that gate.
-- Place transformers alongside their queries/mutations in `packages/core/src/<domain>/query-hooks` / `mutation-hooks`. Each query has its **own** transformer — never share one across queries.
+## GraphQL
 
-```ts
-// Example: packages/core/src/<domain>/query-hooks/useProjectQuery.ts
+- Use the generated `graphql()` helper, never raw template strings; operations
+  run through `useRequest` / `useMutationRequest`.
+- Never hand-edit codegen output — change the source operation or schema and
+  re-run codegen.
+- All database access is through Hasura; the backend only handles Hasura
+  Actions/Events (`backend-architecture`).
 
-// Transformer — converts API response to frontend model
-function transformProject(raw: ProjectApiResponse): Project {
-  return {
-    id: raw.id,
-    name: raw.project_name,
-    status: raw.is_active ? 'active' : 'inactive',
-    createdAt: new Date(raw.created_at),
-  };
-}
+## Schema changes and codegen
 
-// Query — uses transformer in select
-export function useProjectQuery(id: string) {
-  return useQuery({
-    queryKey: ['project', id],
-    queryFn: () => fetchProject(id),
-    select: transformProject,
-  });
-}
-```
+Schema + permissions live in `apps/hasura`, never in a frontend app or core.
 
-## GraphQL conventions
+- **Run codegen against LOCAL Hasura, never Cloud** — apply your migration
+  locally, then codegen introspects it, so types match the schema you're
+  building and pick up no Cloud drift.
+- **The data-layer PR lands before the frontend PR that uses the new shape** —
+  the query only works once the schema is live. That this is a real ordering
+  constraint, and how to slice the two PRs, is `dependency-analysis` and
+  `micro-prs`.
 
-- ALWAYS use the generated `graphql()` helper for GraphQL queries and mutations — never raw template literal strings. Operations are fed through `useRequest` / `useMutationRequest`.
-- NEVER manually edit generated GraphQL output — the typed `graphql()` client and the introspected `schema.graphql` are owned by codegen. Change the source operation or the schema and re-run `pnpm codegen` (in `packages/core`); never hand-edit what it produces.
-- All database operations go through Hasura. The backend (`apps/backend`) only handles Hasura Actions/Events.
+## First principle: never trust the frontend
 
-## Data layer: schema changes and codegen
-
-Schema and permission changes live in **`apps/hasura`** (migrations + metadata), never in a frontend app or `packages/core`.
-
-- **ALWAYS run `pnpm codegen` against LOCAL Hasura** (`localhost:8030`), never against Cloud. Local is the only environment where you control exactly which migrations/metadata are applied — apply your schema change locally first (`hasura migrate apply` / `hasura metadata apply` from `apps/hasura`), then codegen introspects it. This keeps generated types in sync with the schema you're building against and avoids picking up unrelated Cloud drift.
-- **Sequence the merges.** A frontend query/mutation on a new table/column only works at runtime once the schema change is merged and live. Land the data-layer PR before any frontend PR that reads/writes the new shape goes live. Now that both live in one repo, nothing *stops* you committing them together — the runtime ordering is the reason not to; splitting them is `micro-prs`' rule.
-
-## Deployment: merging is deploying
-
-This skill owns the deploy model — other skills point here rather than restating it.
-
-**Merging into `main` ships to production.** There is no promote step, no staging, and no manual deploy: the only two environments are **local** and **production**. Treat every merge as a release.
-
-- **Frontend** — **Cloudflare** hosts the frontend (Pages, plus Workers for one app); which app ships where, and its domain, is the roster in `references/apps.md`. Each site has its own build pipeline and env vars, configured in the Cloudflare dashboard and **not in this repo**. Nothing in `.github/workflows` deploys a frontend app.
-- **Data layer** — merging a change under `apps/hasura` applies its migrations + metadata to Hasura Cloud production, via Hasura Cloud's GitHub integration rather than a GitHub Actions workflow. `hasura-pr.yml` only lints, so merging *looks* inert. It isn't.
-- **Backend** — merging a change under `apps/backend` deploys it to **Cloud Run** (`asia-southeast1`). Three workflows — `backend-prod-{compute,gateway,io}.yml` — each trigger on a push to `main` under their service's path filters, run `test:ci`, then Docker build+push → WIF auth → `gcloud run deploy` (gateway deploys `--allow-unauthenticated` so it's publicly invokable; compute/io omit it, so Cloud Run requires an authenticated caller — Cloud Tasks/gateway invoke them with an OIDC token). A merge touching a service's code — or shared `src/{services,middleware,schema,utils}`, its `Dockerfile.<service>`, `package.json`, `packages/core`, or `pnpm-lock.yaml` — ships that service automatically, so a broken image reaches prod on merge; validate anything image-level in a locally-built image first.
-
-**The frontend live-checks after a merge verify, not deploy.** `Live Listen` runs Playwright + Argos and a Lighthouse budget against the live site; `Live Watch` runs a Lighthouse budget. A red check there means production is bad — not that a deploy failed. Neither waits for Cloudflare to finish publishing, so both can measure the previous release (SWO-558).
-
-**Before reasoning about what is actually live, compare `assets/*.js` hashes.** A dashboard, a green workflow, and the running site can all disagree.
-
-## First principle: NEVER trust the frontend
-
-- All validation, calculations, and business logic belong on the server.
-- The frontend is a display and input layer only.
+All validation, calculation, and business logic live on the server. The frontend
+only displays and collects input.

@@ -29,7 +29,7 @@ restart, never hand an unsettled PR back.
 
 1. **Merge status.** Merged → run `cleanup` (pass the PR number); done. Closed → tell the user; done. Open → Step 2.
 2. **Conflicts.** Conflicting → merge latest `main`, resolve, push, wait, restart. Clean → Step 3.
-3. **CodeRabbit finished?** Only when it reports `"Review completed"` — read it per `references/github-cli.md`. Not yet → wait, restart. Done → Step 4.
+3. **CodeRabbit finished?** Determine it per `references/github-cli.md` (which status values count as done). Not yet → wait, restart. Done → Step 4.
 4. **Unresolved comments.** Any unresolved thread → read it, fix the code, push, wait, restart. None → Step 5. (Never manually resolve a bot's thread — fix the code and let it re-resolve.)
 5. **CI green.** Any failure → fix, push, wait, restart. Any check pending → wait, restart. All green → **settled: report to the user.**
 

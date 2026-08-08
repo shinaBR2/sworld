@@ -16,8 +16,6 @@ Human/ops access follows the same rule: **use the Hasura Console, never a direct
 
 **Why:** one gateway means one place that enforces permissions, one place that validates input, one schema that's ever out of sync with reality. A direct connection anywhere — even "just for this one ops task" — creates a second path that Hasura's rules don't cover.
 
-**Deployment:** we run Hasura Cloud, and merging is deploying — see `architecture`. The consequence for this skill: treat a merge as a live schema change.
-
 ## Writes: default is fine, until two things can race
 
 **Default pattern: one query to fetch what you need, manipulate, one mutation to persist it.** This is correct and sufficient for the overwhelming majority of writes — a user editing their own single row has no real contention to guard against.

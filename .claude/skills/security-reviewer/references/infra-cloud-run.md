@@ -14,8 +14,8 @@ can't see; say what to confirm in the console.
   three separate places, so "same repo" does **not** mean "same trust zone".
 - **Deploy:** Cloudflare Pages builds and deploys each frontend from its own pipeline on merge to
   main; Hasura Cloud applies metadata from its GitHub integration. The backend deploys to Cloud Run
-  on merge via three workflows (`backend-prod-{compute,gateway,io}.yml`) — `architecture` owns the
-  deploy model. The **IAM invocation gate** is what the workflows set, and it's security-relevant:
+  on merge via three workflows (`backend-prod-{compute,gateway,io}.yml`) — `references/deployment-model.md`
+  owns the deploy model. The **IAM invocation gate** is what the workflows set, and it's security-relevant:
   **gateway deploys with `--allow-unauthenticated`** (publicly invokable, no IAM check), while
   **compute and io omit it**, so Cloud Run requires an authenticated caller — Cloud Tasks and the
   gateway invoke them with an OIDC identity token, so they are *not* publicly invokable. Note the
