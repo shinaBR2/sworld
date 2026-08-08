@@ -6,9 +6,10 @@ description: >-
   whenever another skill says "the task tracker", "the tracker issue", "the issue's state", or
   points at `task-tracker`. It owns the tool (Linear, via the `linear` CLI — never the Linear
   MCP), auth, the SWorld team and `SWO` key, the project-is-an-app model, the
-  Backlog→Todo→In Progress→In Review→Done lifecycle, and the exact issue/relation/document
-  command forms. Reach for it any time a workflow step runs a `linear …` command or names a
-  tracker concept, even when the triggering skill refers to "the issue" only generically.
+  Backlog→Todo→In Progress→In Review→Done lifecycle, and the issue/relation/document
+  intents (CLI mechanics in `references/linear-cli.md`). Reach for it any time a workflow step
+  talks to the tracker or names a tracker concept, even when the triggering skill refers to
+  "the issue" only generically.
 ---
 
 # Task Tracker
@@ -29,21 +30,11 @@ live in Linear.
 
 - **Team:** everything goes in the **SWorld** team, key `SWO`. Identifiers look like `SWO-123` —
   Linear assigns them, you never pick one.
-- **Tool:** the **`linear` CLI** ([schpet/linear-cli](https://github.com/schpet/linear-cli),
-  installed via `brew install schpet/tap/linear`, authenticated with `linear auth login`), run
-  through Bash.
+- **Tool:** the **`linear` CLI**, run through Bash. Its setup, workspace-resolution trap, and
+  driving gotchas live in `references/linear-cli.md` — read that before running commands.
 - **Never the Linear MCP.** A connected Linear MCP server authenticates as the *wrong account* —
   never use `mcp__*Linear*` tools for any tracker operation. If the CLI is missing or broken, stop
   and tell the user; do not fall back to MCP.
-- **The CLI resolves its workspace from `.linear.toml` at the checkout root**, and never
-  walks up to a parent. That file is gitignored, so a fresh git worktree starts without
-  one and the CLI silently falls back to the account's default workspace — which is not
-  `sworld`: reads return another workspace's data, writes fail with `Team not found: SWO`.
-  The repo's `.worktreeinclude` auto-copies it into every worktree Claude Code creates, so a
-  worktree entered via `EnterWorktree` already has it. If a tracker command misbehaves in a
-  worktree, check that file first.
-- **For anything the CLI doesn't expose** (e.g. querying parent/sub-issue relationships), use
-  `linear auth token` + a direct Linear GraphQL API call with curl.
 
 ## The project-is-an-app model
 
@@ -91,20 +82,10 @@ So in practice you touch status exactly once — at the start; moments 2 and 3 h
 
 ## Command mechanics
 
-Drive the CLI by *intent* and discover the exact current flags at runtime — `linear --help`, then
-`linear <noun> [<verb>] --help` (e.g. `linear issue create --help`). Don't rely on a flag list frozen
-here: this is a third-party CLI, and a version bump renaming or reshaping a flag would leave a stale
-command that silently does the wrong thing. What *is* stable and worth knowing up front — the
-gotchas, not the syntax:
-
-- **Everything resolves by name, not UUID.** Pass a state, project, or label by its name
-  (`"In Progress"`, `"Main"`) and the CLI maps it to the workspace ID for you.
-- **Pass markdown bodies as a file, never inline.** Issue descriptions, comments, and document
-  contents each take a file flag; an inline string mangles multi-line markdown.
-- **Create issues non-interactively.** There's a flag to suppress prompts — without it a create can
-  hang in a non-interactive shell.
-- **The CLI reads the issue id from the git branch name**, so most issue commands need no explicit id
-  inside a correctly-named worktree.
+Drive the CLI by *intent* and discover the exact current flags at runtime. The setup, the
+workspace-resolution trap, and the stable gotchas (resolve-by-name, markdown-body-as-a-file,
+create-non-interactively, id-read-from-the-branch) all live in `references/linear-cli.md` — read
+it before running commands. What this skill owns is *what* each intent maps to:
 
 ### What you can do, and where it maps
 

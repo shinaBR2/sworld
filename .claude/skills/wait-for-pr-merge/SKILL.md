@@ -12,9 +12,9 @@ The human merges a READY PR by hand on GitHub. This skill watches for that merge
 
 ## 1. Poll the PRs
 
-Everything lives in the one repo, `ShinaBR2/sworld` — a PR number identifies a PR outright, with nothing to resolve. Still pass `--repo ShinaBR2/sworld` explicitly on every `gh pr view`: the poll runs from a background shell whose working directory isn't guaranteed to be a checkout, and a bare `gh pr view` resolves against the current directory's remote. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
+A PR number identifies a PR outright, with nothing to resolve. Because the poll runs from a background shell whose working directory isn't guaranteed to be a checkout, name the repo explicitly on every PR read — that fact and this repo's other `gh` facts live in `references/github-cli.md`. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
 
-A failed `gh` call (auth, network, bad PR number) must NOT be mistaken for `OPEN` — otherwise the loop spins silently forever. Treat only a successful, non-empty state as truth; retry a few times before declaring a PR unreachable. **NEVER** use `gh pr view --watch` / `gh pr checks --watch`.
+A failed `gh` call (auth, network, bad PR number) must NOT be mistaken for `OPEN` — otherwise the loop spins silently forever. Treat only a successful, non-empty state as truth; retry a few times before declaring a PR unreachable. Never poll in a blocking watch mode (see `references/github-cli.md`).
 
 Keep the poll script **portable across sh / bash / zsh** — the background shell is not guaranteed to be any one of them: NO bash-only constructs (`declare -A`, associative arrays); put the PR numbers in **positional parameters** (`set -- …`) and loop with `for n in "$@"`. Do NOT write `for n in $LIST` — zsh does not word-split an unquoted variable, so it would iterate once over the whole string and poll a bogus number. **Brace any expansion followed by `:`** (`"ERROR:${n}:…"`, never `"ERROR:$n:…"`) — zsh reads `$n:g` as a history modifier and silently swallows the number, so the emitted line stops matching the format below.
 

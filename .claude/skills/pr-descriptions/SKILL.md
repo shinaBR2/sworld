@@ -133,15 +133,15 @@ Versioning and changelog entries are driven by changesets. Add a changeset with 
 
 You usually have full context from working on the task. Even so, **review the actual diff before opening the PR** — context drifts, and the description must match what's really on the branch.
 
-1. **Run and read the diff.** `git diff origin/main...HEAD --stat` then `git diff origin/main...HEAD`. Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
+1. **Read the diff between the branch and `main`.** Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
 2. **Decide the PR type** — user-facing, or no-user-facing-change (refactor / tech-debt). This drives the whole body.
 3. Confirm the title — `[WIP]` prefix, conventional commit format, no task ID.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
-6. Open the PR with `gh pr create` (confirm its exact flags via `gh pr create --help`). Pass the multi-line body through a heredoc — `--body "$(cat <<'EOF' … EOF)"` — so the markdown survives instead of being flattened; that idiom is the one detail worth remembering, the flags themselves are stable gh core.
+6. Open the PR. Pass the multi-line body through a heredoc so the markdown survives instead of being flattened — that idiom is the one detail worth remembering (`references/github-cli.md`); confirm the current flags with `gh pr create --help`.
 
-Never `--draft`. Work-in-progress is signalled by the `[WIP]` title prefix, so a
-GitHub draft PR would be a second, competing signal for the same thing.
+Never open it as a GitHub draft PR. Work-in-progress is signalled by the `[WIP]`
+title prefix, so a draft would be a second, competing signal for the same thing.
 
 ## Updating an existing PR
 
@@ -149,7 +149,7 @@ When updating an existing PR, rewrite the title and Summary to reflect the curre
 
 Do not use language like "also adds", "now includes", "additionally". Describe the whole PR as it stands.
 
-**Do not use `gh pr edit` for the title or body — it does not reliably update them.** It hits a deprecated Projects (classic) GraphQL field and, depending on the `gh` version, either errors/aborts or leaves the title/body unchanged. Update through the **REST API PATCH** on the PR instead — `gh api repos/{owner}/{repo}/pulls/<n> -X PATCH` with `title` / `body` fields, passing the body via the same heredoc idiom (exact flags via `gh api --help`; `{owner}/{repo}` is auto-filled from the current repo). This gotcha, not the syntax, is the point. After running it, **re-read the PR to confirm the update actually landed** — `gh pr edit` failing silently is exactly why.
+**Do not use `gh pr edit` for the title or body — it does not reliably update them,** and fails silently. Update through the PR's REST API instead, and re-read the PR afterwards to confirm the change landed. The mechanics and the *why* are in `references/github-cli.md`; this gotcha, not the syntax, is the point.
 
 ## Worked examples
 
@@ -204,7 +204,7 @@ Adds a way to paste a list in the Library app and have it split into separate it
 
 Before opening the PR:
 
-- Diff actually reviewed (`git diff origin/main...HEAD`) and what was reviewed is stated
+- Diff between the branch and `main` actually reviewed, and what was reviewed is stated
 - Title has `[WIP]` prefix
 - Title uses conventional commit format with a scope
 - Summary is 1–3 sentences and does not restate the diff

@@ -71,10 +71,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 ## GitHub auth (`gh` / `GH_TOKEN`)
 
-Every `gh` call in this flow (and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions`) authenticates via the `GH_TOKEN` env var — the only token with collaborator access to `ShinaBR2/sworld`, so `gh auth switch` and the keyring are never the right source. It's a personal secret kept in the **main clone's** `.claude/settings.local.json` (`env.GH_TOKEN`); read it from that absolute path, since a fresh worktree has no copy of its own. Two constraints, no fixed recipe (derive the exact extraction at runtime, so a `gh` or tooling change can't leave a stale command here):
-
-- Make it available to `gh` **before** the first PR/CI command.
-- This repo is **public**, so don't leave a session-wide `export GH_TOKEN` active while running repository code (tests, package scripts, build) — any of it could read the token. Scope it to the `gh` calls themselves.
+Every `gh` call in this flow — and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — authenticates via the `GH_TOKEN` env var, sourced from the main clone's local settings, with a public-repo scoping constraint. The token facts and both constraints live in `references/github-cli.md` — read that before the first `gh` call.
 
 ## PR submission
 
