@@ -28,11 +28,11 @@ The monorepo pins an **exact** Node version everywhere (`.nvmrc`, Dockerfiles, C
 
 A release cooldown makes pnpm refuse to *resolve* any version published inside the window; `supply-chain-security` owns the setting, its value, and why. Frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are. The trap: adding *any* dependency triggers a broad re-resolve that can trip the cooldown on recently-bumped packages, one at a time, until they age past the window — effectively freezing dependency work for days after a big toolchain bump. Wait it out, or add each vetted, intentionally-upgraded package to the cooldown's exclude list, re-running until none trips. **Never hand-edit the lockfile** to dodge it — let the tool own it.
 
-## CodeGraph index lives at the workspace root
+## CodeGraph index lives at the monorepo root
 
-The CodeGraph index (`.codegraph/`) is initialized at the **workspace root** — the directory *containing* the `sworld` checkout, not inside it — so one graph covers everything under it. The workspace root isn't a git repo, so the index is machine-local; if `codegraph_*` tools ever report "not initialized," re-run `codegraph init -i` there. Reach for `codegraph_*` first for structural questions (definitions, callers, impact) — grep only for literal text.
+The CodeGraph index (`.codegraph/`) is initialized at the **monorepo root** — the `sworld` checkout itself — so one graph covers the whole product (frontend apps, `apps/backend`, `apps/hasura`, and every package). It's machine-local; if `codegraph_*` tools ever report "not initialized," re-initialize it there (discover the exact init command from the tool's own help). Reach for `codegraph_*` first for structural questions (definitions, callers, impact) — grep only for literal text.
 
-**Read the path on every hit before trusting it.** The index spans sibling checkouts and every `.claude/worktrees/` worktree, so one symbol commonly returns many identical-looking results. Since the backend and data layer moved into the monorepo, the pre-move `sworld-backend` / `sworld-hasura-v2` checkouts still exist on disk and are still indexed — so a backend symbol returns hits under both `sworld/apps/backend/…` and the old `sworld-backend/…`, and only the first is live code. Take the `sworld/apps/…` hit (or the one inside the worktree you're working in); an edit made against an old path silently changes nothing.
+**Read the path on every hit before trusting it.** The index also spans every `.claude/worktrees/` worktree, so one symbol commonly returns many identical-looking results across worktrees. Take the hit inside the worktree you're working in; an edit made against another worktree's copy silently changes nothing.
 
 ## Don't defer error tracking for bundle size
 

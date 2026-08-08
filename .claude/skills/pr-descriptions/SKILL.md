@@ -32,7 +32,7 @@ Good titles:
 - `refactor(core): rename abbreviated names in the query and mutation hooks`
 - `fix(listen): playback position now persists across reloads`
 - `feat(library): bulk import items from a pasted list`
-- `chore(ci): bump node version in github actions`
+- `chore(ci): bump node version in the CI workflow`
 
 Bad titles:
 
@@ -131,30 +131,16 @@ Versioning and changelog entries are driven by changesets. Add a changeset with 
 
 You usually have full context from working on the task. Even so, **review the actual diff before opening the PR** — context drifts, and the description must match what's really on the branch.
 
-1. **Run and read the diff.** `git diff origin/main...HEAD --stat` then `git diff origin/main...HEAD`. Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
+1. **Read the diff between the branch and `origin/main`** (fetch it first — local `main` is chronically stale). Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
 2. **Decide the PR type** — user-facing, or no-user-facing-change (refactor / tech-debt). This drives the whole body.
 3. Confirm the title — conventional commit format with a scope.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
-6. Open the PR with `gh pr create`.
+6. Open the PR. Pass the multi-line body through a heredoc so the markdown survives instead of being flattened — that idiom is the one detail worth remembering (`references/github-cli.md`).
 
-```bash
-gh pr create --title "type(scope): description" --body "$(cat <<'EOF'
-## Summary
-
-...
-
-## Test plan
-
-- [ ] ...
-- [ ] CI green
-EOF
-)"
-```
-
-Never open the PR as a draft (`--draft`). The only reviewers here are the
-code-review bots, and a draft PR can stop them from running — which defeats the
-whole point of opening it.
+Never open the PR as a draft. The only reviewers here are the code-review bots,
+and a draft PR can stop them from running — which defeats the whole point of
+opening it.
 
 ## Updating an existing PR
 
@@ -162,25 +148,7 @@ When updating an existing PR, rewrite the title and Summary to reflect the curre
 
 Do not use language like "also adds", "now includes", "additionally". Describe the whole PR as it stands.
 
-**Do not use `gh pr edit` for the title or body — it does not reliably update them.** It hits a deprecated Projects (classic) GraphQL field and, depending on the `gh` version, either errors/aborts or leaves the title/body unchanged. Use the REST API instead:
-
-```bash
-gh api repos/{owner}/{repo}/pulls/<pr_number> -X PATCH \
-  -f title="type(scope): description" \
-  -f body="$(cat <<'EOF'
-## Summary
-
-...
-
-## Test plan
-
-- [ ] ...
-- [ ] CI green
-EOF
-)"
-```
-
-`{owner}/{repo}` is filled in automatically by `gh` from the current repo. `<pr_number>` is the literal PR number (e.g. `3036`). After running it, re-read the PR (`gh pr view <pr_number> --json title,body`) to confirm the update actually landed.
+**Updating an existing PR's title or body has a trap: the obvious edit command fails silently.** Use the reliable path in `references/github-cli.md`, and re-read the PR afterwards to confirm the change landed.
 
 ## Worked examples
 
@@ -235,7 +203,7 @@ Adds a way to paste a list in the Library app and have it split into separate it
 
 Before opening the PR:
 
-- Diff actually reviewed (`git diff origin/main...HEAD`) and what was reviewed is stated
+- Diff between the branch and `origin/main` actually reviewed, and what was reviewed is stated
 - Title uses conventional commit format with a scope
 - Summary is 1–3 sentences and does not restate the diff
 - PR type decided: user-facing, or starts with `No user-facing changes.`
