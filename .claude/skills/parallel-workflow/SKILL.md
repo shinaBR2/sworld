@@ -6,10 +6,18 @@ user-invocable: false
 
 # Parallel Workflow Rules
 
+**We work in parallel by default.** This is the whole reason the workflow exists.
+Every issue runs in its own isolated worktree, side by side with the others — that's
+the normal state, not a special occasion, and it's how we maximize productivity. One
+consequence follows directly and shapes every rule below: because work is always
+landing on `origin/main`, the local `main` is *chronically* behind. That's expected —
+the fix is to always pull it fresh before you start (the `cleanup` skill owns that
+one-command refresh), never to design around a stale baseline.
+
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
-- **ALWAYS work in a dedicated worktree** — enter one with the `EnterWorktree` tool (see *Creating a worktree*). NEVER create branches or make changes in the main worktree. The main worktree is **never touched** — the only thing you ever do against it is read-only git (`git fetch origin main` before branching, which advances shared refs without touching its working tree, plus `git status` / a diff / a log). No branch work, no manual edits, and no "refresh" — local `main` is left stale on purpose (see *Git fundamentals*).
+- **ALWAYS work in a dedicated worktree** — enter one with the `EnterWorktree` tool (see *Creating a worktree*). NEVER create branches or make changes in the main worktree. The main worktree must stay clean — the only operations permitted there are read-only git (the `git fetch origin main` you run before branching, plus `git status` / a diff / a log) and the fast-forward refresh that advances the local `main` ref (the `cleanup` skill owns it — see "Keep local `main` fresh" below). No branch work, no manual edits.
 
 ## Scope: one repo, the whole product
 
@@ -20,13 +28,15 @@ Everything ships from a single repo — the frontend apps, the shared packages, 
 
 ## Git fundamentals
 
-- **"main branch" ALWAYS means `origin/main`** — never local `main`. Fetch first with `git fetch origin main`, then name `origin/main` in every base, merge, diff, and read.
+- "main branch" ALWAYS means `origin/main` — fetch first with `git fetch origin main`. The local `main` is often stale.
 - ALWAYS `git merge`, NEVER `git rebase`. This applies everywhere — syncing, resolving divergence, integrating changes.
-- **Sync before analyzing, not just before coding.** Before exploring or reasoning about code, fetch and `git merge origin/main` into your worktree first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
+- **Sync before analyzing, not just before coding.** Before exploring or reasoning about code anywhere in the repo, check `git status` and pull/fast-forward to `origin/main` first. Analyzing a stale checkout produces wrong conclusions and clarifying questions that contradict what's actually on main.
 
-### Local `main` is intentionally stale
+### Keep local `main` fresh
 
-Fetching advances the `origin/main` **ref**; the local `main` branch pointer stays behind — and we leave it there. Nothing in this workflow reads local `main`: every worktree bases off `origin/main` (the `EnterWorktree` default), every sync merges `origin/main`, every diff and read names `origin/main`. So there is nothing to "keep fresh" and no reason to touch the main worktree to advance it. Always name `origin/main`; never `main`.
+Fetching only advances the `origin/main` **ref** — the local `main` branch pointer stays stale, so any lazy reference to local `main` (a code read, a diff, a new worktree base) is wrong. Because of the parallel-worktree workflow, local `main` is *chronically* behind — keep the pointer current.
+
+The refresh mechanic and every trigger for it are owned by the `cleanup` skill — see `cleanup`. Refresh `main` before you start new work or read off it.
 
 ## Before starting
 
@@ -39,7 +49,7 @@ Fetching advances the `origin/main` **ref**; the local `main` branch pointer sta
 
 Use the native **`EnterWorktree`** tool — it creates the worktree, bases it on the default branch, provisions gitignored config, and switches the session's working directory *into* it, so everything from here on uses plain relative paths (no `git -C <worktree>` juggling).
 
-5. **`git fetch origin main` first.** `EnterWorktree`'s own base-ref fetch is throttled to once per 24h — too coarse for this fast-moving repo — so fetch explicitly to guarantee the worktree branches off genuinely-current `origin/main`.
+5. **`git fetch origin main` first.** `EnterWorktree`'s own base-ref fetch is throttled to once per 24h — too coarse for this chronically-behind repo — so fetch explicitly to guarantee the worktree branches off genuinely-current `main`.
 6. **`EnterWorktree` with `name` = the issue slug** (`swo-NNN-slug`, per `task-tracker`'s convention). It creates the worktree at `.claude/worktrees/swo-NNN-slug/` on branch `worktree-swo-NNN-slug` (Claude Code prefixes `worktree-`; the embedded `SWO-NNN` is matched *anywhere* in the branch name — not anchored to the start — by both the Linear auto-link and the repo's branch-ticket parser, so the prefix is safe), bases it on `origin/main` (the `worktree.baseRef: fresh` default), and moves the session into it. **Each agent working an issue enters its own worktree** — parallel issues run fully isolated; a subagent inherits its parent's worktree unless it enters its own.
 7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: `.linear.toml`, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. (Without `.linear.toml` the `linear` CLI silently resolves to the account default workspace, not `sworld`; without `packages/core/.env` codegen aborts with `Unable to find any GraphQL type definitions`. `.worktreeinclude` is what prevents both.)
 8. **Run `pnpm install` in the worktree** — the one setup step no hook covers (a fresh worktree has no `node_modules`).

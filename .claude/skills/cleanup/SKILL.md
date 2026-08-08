@@ -1,26 +1,26 @@
 ---
 name: cleanup
 description: >-
-  The single owner of the mechanical git cleanup after a PR merges — remove its throwaway worktree and
-  delete its local branch. Use whenever a PR has merged and its worktree/branch need tearing down, or the
-  user says "cleanup", "clean up the worktree", or invokes /cleanup. Other skills (`ci-loop`,
-  `wait-for-pr-merge`) point here for teardown and carry none of the commands. It never refreshes local
-  `main` — we never reference it; work always bases off `origin/main` (see `parallel-workflow`). It never
-  touches issue status (that's the tracker's — see `task-tracker`) and never fixes CI, conflicts, or
+  The single owner of the mechanical git cleanup after a PR merges — remove its throwaway worktree, delete
+  its local branch, and fast-forward local `main` with a plain `git pull` — plus that same `main` refresh
+  on demand. Use whenever a PR has merged and its worktree/branch need tearing down, or the user says
+  "cleanup", "clean up the worktree", "refresh main", "update main", "pull main", or invokes /cleanup. Other
+  skills (`ci-loop`, `wait-for-pr-merge`) point here for these steps and carry none of the commands. It
+  never touches issue status (that's the tracker's — see `task-tracker`) and never fixes CI, conflicts, or
   review comments (that's the loop — see `ci-loop`).
 user-invocable: true
 ---
 
 # Cleanup
 
-When a PR merges, two git chores follow: **remove its worktree** and **delete its local branch**. This
-skill owns those commands so every caller just says "run cleanup" — the exact commands and guardrails live
-in one place, never copy-pasted.
+When a PR merges, three git chores follow: **remove its worktree**, **delete its local branch**, and
+**fast-forward local `main`** so the next piece of work starts from the latest code. This skill owns those
+commands so every caller just says "run cleanup" — the exact commands and guardrails live in one place,
+never copy-pasted. It also owns the standalone **refresh local `main`** action on its own.
 
-There is deliberately **no "refresh local `main`" step**. Local `main` is left stale on purpose: nothing
-ever reads it — every worktree bases off `origin/main` and every sync merges `origin/main` (see
-`parallel-workflow`), so keeping a local pointer current would be busywork that touches the main worktree
-for no reason.
+We work in parallel by default, so `origin/main` moves constantly and the main worktree's local `main`
+falls behind — that's expected, not a problem to design around. The remedy is dead simple: a plain
+`git pull` keeps it current (see section B).
 
 Same "centralise a duplicated mechanic into one owner, consumers reference it" move `task-tracker` made
 for the tracker coupling — here on the git-cleanup axis.
@@ -30,11 +30,11 @@ for the tracker coupling — here on the git-cleanup axis.
 - **No tracker writes.** Issue status is entirely the tracker's concern — see `task-tracker`. This skill
   never touches it.
 - **No CI / conflict / comment fixing.** Getting a PR *to* merged — CI, merge conflicts, review threads —
-  is the loop ("do the loop"; see `ci-loop`). This skill runs only *after* a merge.
-- **Never touches the main worktree.** Teardown runs entirely on shared repo admin (`git worktree remove`,
-  `branch -D`) or via `ExitWorktree`; it never edits the main worktree's files and never advances local
-  `main`. That keeps it aligned with the `blockMainWorktreeWrites` hook — the main worktree is never meant
-  to be written to at all.
+  is the loop ("do the loop"; see `ci-loop`). This skill runs only *after* a merge (teardown) or on its own
+  (refresh).
+- **No manual edits or branch work in the main worktree.** The only thing it ever does to the main worktree
+  is the fast-forward `git pull` in section B; it never edits files or creates branches there — that is what
+  linked worktrees are for.
 
 ## The one repo
 
@@ -102,5 +102,26 @@ the branch. The load-bearing guardrails live in the script and its comments: the
 branch (empty matches every worktree), only removing a worktree that exists, `-D` because a squash-merge
 leaves the branch technically unmerged, and aborting on the first failure.
 
-That completes teardown. Local `main` is intentionally **not** refreshed afterwards — nothing reads it;
-the next piece of work bases off `origin/main` (see `parallel-workflow`).
+Then **refresh local `main`** (section B) — a torn-down branch means `main` just moved. (After A1's
+`ExitWorktree` the session is back in the main worktree, so the pull runs right there.)
+
+## B. Refresh local `main`
+
+The main worktree always sits on `main` — all real work happens in linked worktrees, so the clone itself
+never leaves `main`. Keeping it current is therefore a plain fast-forward pull, nothing more:
+
+```bash
+git -C "<repo_path>" pull --ff-only origin main
+```
+
+`--ff-only` so a surprise divergence fails loudly instead of quietly making a merge commit on `main`;
+`<repo_path>` (the clone's absolute path) makes it work whether you run it from the clone or from a linked
+worktree. If the pull fails, **stop** — do not report success (and, for a caller that relaunches a poll, do
+not relaunch).
+
+Run it:
+
+1. **As the tail of every teardown** (section A) — the branch just torn down moved `main`.
+2. **Before starting new work** — so the next worktree branches off genuinely-current code.
+3. **Standalone, on demand** — whenever the user says "refresh main", "update main", or "pull main". It's a
+   one-command action, never a question: just run it and report.

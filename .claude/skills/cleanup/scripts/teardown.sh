@@ -9,9 +9,9 @@
 #              be the worktree being removed)
 #
 # Runs via git -C "$REPO_PATH" throughout. Aborts on the first failure and reports the
-# partial state — never falls through or claims completion. Local `main` is deliberately
-# NOT refreshed afterwards — we never reference local `main`; work always bases off
-# `origin/main` (see the parallel-workflow skill).
+# partial state — never falls through or claims completion. This tears down the branch/worktree
+# only; afterwards the caller refreshes local `main` with a plain `git pull` (cleanup skill,
+# section B) — the branch just removed moved `main`.
 
 pr="${1:?usage: teardown.sh <PR_NUMBER> <REPO_PATH>}"
 repo="${2:?usage: teardown.sh <PR_NUMBER> <REPO_PATH>}"

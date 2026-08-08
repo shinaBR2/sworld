@@ -28,11 +28,13 @@ we can have in the product.
 - **Plan carefully, then build fast.** Most of the work is understanding the code,
   the problem, and the plan — roughly 80%; the writing itself is 20% or less. A
   good plan is what makes the build fast and safe.
-- **Work in parallel, fully isolated.** Independent work runs side by side by
-  default, each piece walled off so it can never disturb another or the shared
-  baseline — parallelism is how we maximize productivity, not a special occasion.
-  Always start from the latest shared baseline; never build on a stale one. (The
-  `parallel-workflow` skill owns the how.)
+- **We work in parallel by default.** Every piece of work runs side by side in its
+  own isolated worktree — parallelism is the normal state, not a special occasion,
+  and it's how we maximize productivity. One consequence follows directly: because
+  work is always landing, the local `main` is almost always behind — that's
+  expected, not a problem to design around. So always start from the latest by
+  pulling `main` fresh; never build on a stale baseline. (The `parallel-workflow`
+  skill owns the how.)
 - **Avoid drift.** Every fact has exactly one home. Prefer a skill over memory,
   one source over a copy. Never restate what another place already owns — a copy
   always drifts.
