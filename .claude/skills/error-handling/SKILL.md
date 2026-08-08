@@ -12,11 +12,11 @@ For how the mutation hooks themselves are structured (payload builders, the gene
 
 ## The three layers, by responsibility
 
-They fire in this order, and each can bow out in favour of a more specific one.
+They form a precedence chain: the **most specific** handler that claims the error owns its display, and the others must show nothing. Ownership, not timing, decides who displays.
 
-- **Global fallback (fires first).** A catch-all at the query-client level: if nothing more specific handles the error, it shows a toast. Most mutations need no error-handling code at all — they fall through to this. The moment a more specific layer takes the error, the fallback must show nothing.
-- **The mutation hook (fires second).** Owns rollback of any optimistic update. It *may* also show a toast — but only when no component will display the error itself. Its presence is the signal that tells the fallback to stay quiet.
-- **The call site (fires last).** The component that fired the mutation. Owns component-specific display: an inline error under a field, closing a dialog, resetting a form. The component decides *how* the error appears.
+- **Global fallback (least specific).** A catch-all at the query-client level: it shows a toast *only* when neither the hook nor the call site claims the error. Most mutations need no error-handling code at all — they fall through to this.
+- **The mutation hook (more specific).** Always owns rollback of any optimistic update. It *may* also claim the display with a toast — but only when no component will show the error itself. A hook that only rolls back claims nothing, and the error falls through to the fallback.
+- **The call site (most specific).** The component that fired the mutation. When it renders the error itself — inline under a field, closing a dialog, resetting a form — it claims ownership, and neither the hook nor the fallback shows anything. The component decides *how* the error appears.
 
 ## The rules
 
@@ -38,3 +38,4 @@ Where the error came from decides how friendly its message already is:
 
 - Hono Action errors: the `message` is already meant for the user — display it as-is.
 - Direct Hasura mutation errors: map the `code` to a friendly message, or fall back to a generic one — never surface the raw constraint text.
+- Non-GraphQL errors (network, unexpected): treat `error.message` as unsafe — show a known-safe mapping if one exists, otherwise a generic message. Never render the raw string.

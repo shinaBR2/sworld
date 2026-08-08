@@ -66,7 +66,7 @@ The hook just forwards the payload to Hasura. It knows nothing about the payload
 
 ## In practice
 
-The generic mutation hook (in the shared core package) takes a typed Hasura input and forwards it — nothing more. The domain logic — what to copy, reset, or default — lives in the payload builder that produces that input, colocated with the component.
+The generic mutation hook (in the shared core package) is payload-agnostic: it takes a typed Hasura input and forwards it, never inspecting or shaping a field. It still owns the shared mutation lifecycle — optimistic update, rollback, query invalidation (see layer 4). The domain logic — what to copy, reset, or default — lives in the payload builder that produces that input, colocated with the component.
 
 - A **duplicate** action calls its own builder to shape the input from the source view type, then hands the result to the hook.
 - A **trivial add** can build the input inline at the call site.

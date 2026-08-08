@@ -14,7 +14,7 @@ Three rules hold for every spec.
 
 Query only what the user can perceive: `getByRole`, `getByLabel`, `getByText`. Never a CSS class, `data-testid`, xpath, or DOM traversal — those bind the test to implementation detail and break on any refactor that doesn't change behaviour.
 
-If an element has no accessible handle, **fix the component** — give it an `aria-label` or a `role` — then select it. The test drives accessibility into the app; it never works around a missing handle.
+If an element has no accessible handle, **fix the component** — prefer a native semantic element (a real button, link, or heading), which brings a role and keyboard behaviour for free; add an `aria-label` or `role` only when native semantics can't express it. Then select it. The test drives real accessibility into the app; slapping a `role` on a generic `div` just to satisfy the locator is working around a missing handle, not fixing it.
 
 Assert exact values (`{ exact: true }`, `toHaveText`, `toHaveValue`). `code-conventions` owns the exact-vs-fuzzy matcher rule and it applies here unchanged.
 
@@ -33,7 +33,7 @@ Run headless by default — CI runs headless, so that's the environment that has
 The build under test is a real production bundle built with fixed mock `VITE_*` values and served locally by the Playwright config — no deployed environment, no real backend:
 
 - **Auth is seeded, not performed.** A well-formed fake Auth0 session is written into `localStorage` before any app script runs, so the app boots signed-in with no Auth0 network call.
-- **The API is intercepted.** `page.route()` on the Hasura endpoint returns a fixed fixture per query; external hosts (auth, error tracking) are aborted so a stray request can't flake the run.
+- **The API is intercepted.** `page.route()` on the Hasura endpoint answers each query with deterministic data — a fixed fixture for a read-only spec, or, where a write must be reflected, data drawn from the mock's own state (rule 2) so the refetch sees the new value; external hosts (auth, error tracking) are aborted so a stray request can't flake the run.
 - **Keep the mock constants in step with the e2e build's `VITE_*` values** — the fake session only works if its audience and client id match what the build baked in.
 
 Run the suite through the app's own e2e script, which builds and serves the mock bundle itself. Don't point it at a hand-started dev server — that isn't the mock build the specs depend on.
