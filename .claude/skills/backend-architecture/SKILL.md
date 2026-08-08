@@ -18,6 +18,8 @@ rests on live elsewhere, so nothing here drifts:
 - Database-layer rules (single-gateway, write atomicity, validation) →
   `hasura-architecture`.
 - GCS layout and operator CLIs → `backend-ops`.
+- Whether a table's rows may be deleted (a product rule, not a backend
+  assumption) → `references/business-constraints.md`.
 
 ## Where does a new handler go — io or compute?
 
@@ -44,17 +46,31 @@ production timeout under load; toward "Cloud Task" is a little latency.
 
 ## Event or Action — which door?
 
-They answer different questions:
+Two things separate them; the second is the one that protects the data.
 
-- **Event** — *something happened* (a row changed). Automatic, fire-and-forget,
-  signed. This is how ingestion starts.
-- **Action** — *a user asked for something*. Session-carried, must answer within
-  the 30s window.
+- **Who starts it.** An **Event** fires because *something happened* — a row
+  changed: automatic, fire-and-forget, signed. This is how ingestion starts. An
+  **Action** answers *a user asking for something*: session-carried, must reply
+  within the 30s window.
+- **Whether integrity is guaranteed — the deciding factor.** An **Action is
+  synchronous**: its handler runs inside the caller's request, and the caller
+  sees success only if the handler succeeded, so the effect is confirmed before
+  the caller moves on — no committed-then-maybe-fail gap. An **Event Trigger
+  fires *after* the triggering write has already committed, in a separate
+  transaction** — the two are never atomic. That write stands whether or not the
+  handler ever succeeds, so a failed handler leaves a committed row with its
+  follow-up missing: an inconsistency only idempotent retries can *eventually*
+  reconcile, never atomically.
 
-So a new **user-initiated** heavy operation has a fixed shape: define an Action
-that returns a task id immediately, have its gateway handler create a Cloud Task
-to compute, and let the handler finalize and notify — the ingestion pipeline,
-entered through an Action instead of an Event.
+When the follow-up must stay consistent with the change that triggered it, use
+an **Action**. Use an **Event** only where the follow-up is genuinely allowed to
+lag and be retried — ingestion is exactly that: the video row sits "processing"
+until the async work catches up.
+
+A new **user-initiated** heavy operation therefore has a fixed shape: define an
+Action that returns a task id immediately, have its gateway handler create a
+Cloud Task to compute, and let the handler finalize and notify — the ingestion
+pipeline, entered through an Action instead of an Event.
 
 ## The two rules a reasonable person would get wrong unaided
 
@@ -88,8 +104,3 @@ mess:
 - **Expect a re-delivery** — Cloud Tasks retries, so the handler can run more than
   once on one trigger; your handler and assertions must tolerate it.
 - **Keep the blast radius to one record** — verify, clean up, stop.
-
-## Deletes
-
-Whether a user may delete a table's rows is a product decision, not a backend
-assumption — see `references/business-constraints.md` before building one.
