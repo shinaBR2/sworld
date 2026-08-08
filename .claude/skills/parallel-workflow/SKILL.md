@@ -76,7 +76,7 @@ Every `gh` call in this flow — and in `ci-loop`, `cleanup`, `wait-for-pr-merge
 ## PR submission
 
 - A PR may ONLY be created after the self-review loop (step 11) has exited clean. Pushing commits needs no gate; creating the PR does.
-- Create PR with `[WIP]` prefix (not draft).
+- Create the PR (not as a draft — see `pr-descriptions`).
 - Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).
 - Ensure PR is independent and mergeable without other PRs.

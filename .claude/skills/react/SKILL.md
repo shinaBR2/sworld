@@ -24,7 +24,7 @@ user-invocable: false
 
 ## Reusability
 
-- Always search for existing reusable logic before writing new code — check the shared `packages/core` and `packages/ui` (and the app's own `src/lib`) first.
+- Always search for existing reusable logic before writing new code — check the shared `packages/core` and `packages/ui` first.
 
 ## Document metadata (React 19)
 

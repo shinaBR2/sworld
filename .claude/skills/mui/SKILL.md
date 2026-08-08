@@ -20,14 +20,16 @@ import { Button, TextField, Stack } from '@mui/material';
 import { CustomButton } from '@/components/ui/CustomButton';
 ```
 
-## 2. NEVER use Box
+## 2. Reach for a semantic component before Box
 
-Use semantic MUI components instead:
+Prefer the component that names its intent:
 - `Stack` for flex layouts
 - `Container` for page containers
 - `Paper` for elevated surfaces
 - `Card` for content cards
 - `Grid` for grid layouts
+
+`Box` is a sanctioned primitive for genuinely generic layout — use it when none of the above expresses what you mean, not as the default reach. If a `Box` is really a `Stack` or a `Container`, use the semantic one.
 
 ## 3. NEVER use className
 
@@ -72,17 +74,10 @@ Use relative units that scale with user preferences:
 
 ## 7. Container/Presentational pattern
 
-For complex components:
+For complex components, split the stateful shell from the pure view:
 
-```
-src/components/features/[feature]/
-  index.tsx           # Container — state, hooks, API calls
-  [Feature]UI.tsx     # Presentational — pure rendering from props
-  [Feature].stories.tsx  # Storybook — tests UI directly
-```
+- **Container** — owns state, hooks, and data fetching; passes everything down as props.
+- **Presentational** — pure rendering from props: no state, no hooks, no data fetching.
+- **Storybook** — drives the presentational component directly with mocked props, so no API mocking is needed.
 
-**Container** (`index.tsx`): manages state, fetches data, contains handlers, passes everything to UI via props.
-
-**UI** (`[Feature]UI.tsx`): pure presentational — no state, no hooks, no API calls. All data via props.
-
-**Storybook** (`[Feature].stories.tsx`): tests UI component directly with mocked props. No API mocking needed.
+The split is what lets Storybook test the view in isolation. For where these files live and how they're named, follow `frontend-ui-architecture`.

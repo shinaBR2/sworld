@@ -59,7 +59,7 @@ export function useProjectQuery(id: string) {
 ## GraphQL conventions
 
 - ALWAYS use the generated `graphql()` helper for GraphQL queries and mutations — never raw template literal strings. Operations are fed through `useRequest` / `useMutationRequest`.
-- NEVER manually edit generated files (`generated/graphql.ts`, `generated/gql.ts`, `schema.graphql`) — always run `pnpm codegen` (in `packages/core`).
+- NEVER manually edit generated GraphQL output — the typed `graphql()` client and the introspected `schema.graphql` are owned by codegen. Change the source operation or the schema and re-run `pnpm codegen` (in `packages/core`); never hand-edit what it produces.
 - All database operations go through Hasura. The backend (`apps/backend`) only handles Hasura Actions/Events.
 
 ## Data layer: schema changes and codegen
