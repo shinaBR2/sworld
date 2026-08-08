@@ -122,6 +122,6 @@ comparison, present on every route that needs it, and a secret with real entropy
 The actual `WEBHOOK_SIGNATURE` / `HASURA_ADMIN_SECRET` / `HASHNODE_WEBHOOK_SECRET` values, their
 entropy and rotation cadence, live in the deploy consoles. Flag those as needs-verification rather
 than asserting on them. (Deploy-time behaviour and the *IAM* invocation posture — which services set
-`--allow-unauthenticated` — *are* inferable from the `backend-prod-*.yml` workflows; see `architecture`.
+`--allow-unauthenticated` — *are* inferable from the `backend-prod-*.yml` workflows; see `references/deployment-model.md`.
 Network *ingress* is **not**: none of the workflows set `--ingress`, so it stays at Cloud Run's default
 and remains needs-verification until the console or a workflow declares it.)

@@ -28,7 +28,7 @@ Two rosters sit close together; keep them straight:
 
 The *deploy targets* are the fact; the deploy *model* (merge = deploy, no
 staging, each Cloudflare site's pipeline lives in the dashboard, not the repo)
-is owned by the `architecture` skill.
+is owned by `references/deployment-model.md`.
 
 ## Two things that aren't a product app
 

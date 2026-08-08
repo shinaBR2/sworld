@@ -13,7 +13,7 @@ Two rules decide **WHERE** frontend code lives. They are the most load-bearing s
 - `writing-task-specs` — a sub-task is one app/package; placement follows the rules below.
 - `self-review` — review checks code landed in the right package/folder.
 
-This skill is only about **where**. For **how** to style, see `mui`.
+This skill is only about **where**. For **how** to style, see `mui`. This skill owns the placement *rule*; the top-level structural facts it rests on (the package homes, the system anatomy) are `references/repo-map.md` and `references/architecture.md`.
 
 ## Rule 1 — `packages/ui` is the single source of truth for ALL UI
 

@@ -22,7 +22,7 @@ The answer is knowable, and close to exact, from the moment you look. A signatur
 
 ## The test — three questions, asked about real impact
 
-We ship as fast as we can, and **merging is deploying** (see `architecture`). So "isolated" does not mean "structurally unrelated." It means one thing:
+We ship as fast as we can, and **merging is deploying** (see `references/deployment-model.md`). So "isolated" does not mean "structurally unrelated." It means one thing:
 
 > **If this merges right now, on its own — is that safe?**
 
@@ -91,7 +91,7 @@ The sharpest real dependencies run **between layers**, where nothing type-checks
 - A frontend query on a new table or column is blocked by the `apps/hasura` migration that adds it.
 - A frontend call to a new Action is blocked by the `apps/backend` handler behind it.
 
-Merging is deploying (see `architecture`), so these edges are also a **live ordering constraint in production**, not just a build-order preference. Land the data layer first and let it deploy.
+Merging is deploying (see `references/deployment-model.md`), so these edges are also a **live ordering constraint in production**, not just a build-order preference. Land the data layer first and let it deploy.
 
 ## Where the answer goes
 
