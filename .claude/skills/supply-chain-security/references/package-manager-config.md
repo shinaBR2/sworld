@@ -22,13 +22,22 @@ list if they move:
 | Lifecycle scripts | `onlyBuiltDependencies: []` — **nothing** may run install scripts | `pnpm-workspace.yaml` |
 | Security overrides | pinned-forward transitive versions | `pnpm.overrides` in root `package.json` |
 
-Two notes that bite in practice:
+Three notes that bite in practice:
 
 - The 7-day cooldown blocks *any* local re-resolve while a recently-bumped package is still young.
   Add a targeted `minimumReleaseAgeExclude` entry with a comment explaining why — never lower the
   global window and never hand-edit the lockfile.
 - `onlyBuiltDependencies: []` is an empty allowlist, not a missing one. Adding a dependency that
   demands a build script is a decision to make deliberately, with a reason recorded next to it.
+- A security override whose vulnerable range spans **multiple major lines** must be pinned
+  **per major line**, not with one blanket range. A blanket `"pkg@<=X": "Y"` drags old-major
+  consumers onto the new major, whose export shape may have changed — e.g. a cross-major
+  `brace-expansion` pin changed its export and broke `minimatch`'s use of it, taking down CI.
+  Instead write one keyed entry per line, each carrying the package name and its own major's fix
+  version (`"pkg@>=1.0.0 <1.2.0": "1.2.0"`, `"pkg@>=2.0.0 <2.4.0": "2.4.0"`, …), so each consumer
+  keeps a compatible major. Confirm by running the repo's own check that actually exercises the
+  affected consumer — the build or test path that would break if the pin is wrong (in the SWO-642
+  case, the CI build that pulls in `minimatch`), not a proxy like a bare typecheck.
 
 ## pnpm
 

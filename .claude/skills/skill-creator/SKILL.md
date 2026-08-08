@@ -73,10 +73,17 @@ A skill records *what to do* and *why* — and only the parts the agent couldn't
 Reserve explicit, literal detail for the three cases where the agent *can't* be trusted to get it right unaided:
 
 - **Non-obvious** — a step no reasonable agent would infer (a surprising ordering, a subtle precondition).
-- **Repo-specific** — a path, name, flag, or convention that only holds here and can't be guessed.
+- **Repo-specific** — a name, flag, or convention that only holds here and can't be guessed. (Not a *path used to say where something lives* — see *Two things whose home is outside the skill* below.)
 - **Destructive-if-wrong** — where a wrong guess loses work or ships something bad, so pinning down the exact form earns its space.
 
 One genuine exception runs the other way: **code that executes without the agent in the loop must be a literal, checkable script**, not intent. A background poll loop (as `wait-for-pr-merge` externalizes) runs detached — the agent isn't there to fill in the mechanics, so intent can't stand in for it. The line is simple: run *by* the agent → intent is enough; run *detached* → write the script.
+
+#### Two things whose home is outside the skill
+
+Each lives elsewhere, so a copy inside the skill is drift or a leak:
+
+- **Repo paths.** Name locations by concept ("the shared core package", "the Hasura metadata"), not by path — a path is the first thing a refactor breaks, and the current one is always discoverable from the code. Fine to keep: a pointer to a `references/` fact-file, and the path slot an example command needs (`docker build -f <dockerfile> .`).
+- **Private values.** Public repo — state the *mechanism* (which keys exist, that a flag overrides a default), never the *values* (user IDs, account names, secrets), which stay in local config and memory. Use a placeholder and scan the diff for real IDs, handles, and tokens before finishing.
 
 #### Anatomy of a skill
 
