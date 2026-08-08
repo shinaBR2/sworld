@@ -1,10 +1,10 @@
 # AGENTS.md
 
-Context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo holding the whole product: the web apps, the shared packages, the backend, and the data layer. The how-to-code conventions live in `.claude/skills/` and trigger automatically by task; this file is the always-on context around them.
+Always-on context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo holding the whole product (web apps, shared packages, backend, data layer). This file holds only what never changes: the scope, the gates, and the mindset. Everything tool-, command-, or architecture-specific lives in `.claude/skills/` (auto-triggered by task) or is derivable from the code — this file points at it rather than restating it, so there is one source of truth to keep current.
 
 ## Scope: this monorepo is the whole project
 
-**All project work — every file you author, edit, or ship — lives under this monorepo and nowhere else.** Always launch Claude Code from the monorepo root. The old `Projects/sworld/` workspace wrapper (which held separate `sworld-backend`/`sworld-hasura-v2` checkouts before consolidation) is retired; there are no sibling repos to reach into.
+**All project work — every file you author, edit, or ship — lives under this monorepo and nowhere else.** Always launch Claude Code from the monorepo root; there are no sibling repos to reach into.
 
 The one sanctioned location outside the monorepo is your global `~/.claude/` — where the tool keeps its own per-user state (memory, session transcripts, global settings). That is not project storage: it is personal and secret-adjacent, this repo is **public**, and the path is harness-owned, so it stays out by design. Never treat any directory above the monorepo as a project directory.
 
@@ -42,117 +42,15 @@ Every change should answer four questions:
 3. Does it improve the user experience?
 4. Can we delete code instead of adding it?
 
-## The apps & packages
-
-Everything below is a member of the one pnpm workspace, resolved by the single root `pnpm-lock.yaml`. Frontend, backend, and data layer all land here; no change moves to another repo.
-
-### Frontend applications (`apps/`)
-
-- **docs** — Docusaurus documentation site with technical guides and blog posts
-- **extension** — Browser extension
-- **game** — Phaser.js gaming platform with multiple games (Bobble Dungeon, Evil Minds)
-- **listen** — Audio/music streaming application
-- **main** — Main application with finance, journal, and library features
-- **til** — "Today I Learned" blog/notes application
-- **watch** — Video streaming/watching application
-
-### Backend & data layer
-
-- **`apps/backend`** (package `backend`) — Hono backend handling Hasura Actions / Events (custom business logic triggered by Hasura). Three services — gateway, io, compute — in one package; it consumes `core` as a workspace dependency (`workspace:*`).
-- **`apps/hasura`** (package `sworld-hasura-v2` — the one package whose name doesn't match its directory, so `cd` rather than `--filter` it) — Hasura GraphQL + Postgres: migrations, metadata, and permissions, the data layer the frontend queries. Hasura Cloud's GitHub integration watches this directory and applies metadata and migrations when a change merges to `main`.
-
-How this pair differs from the frontend apps:
-
-- **Neither is linted by the root command.** `biome.json` excludes both, so `pnpm lint` skips them — each kept its own toolchain through the move rather than having its history rewritten by a different formatter. Lint them from their own directory (`apps/backend` has its own Biome config, `apps/hasura` uses eslint). On PRs, `hasura-pr.yml` gates Hasura's JS/TS files — not its SQL migrations or YAML metadata — and nothing gates the backend's lint at all.
-- **Root `typecheck` and `test` reach the backend but not Hasura.** Hasura's suite is named `test:local` / `test:ci` on purpose: it needs a live Hasura endpoint and Auth0 credentials, and naming it `test` would drag it into the root gate. Run it yourself from `apps/hasura`; don't "fix" the missing script.
-- **The backend deploys on merge, like everything else.** Three workflows — `backend-prod-{compute,gateway,io}.yml` (ported into the monorepo in #520) — each trigger on a push to `main` under their service's path filters, run `test:ci`, then Docker build+push → WIF auth → `gcloud run deploy` to Cloud Run (`asia-southeast1`; gateway is public via `--allow-unauthenticated`, compute/io omit it so Cloud Run requires an authenticated caller). So a merge touching a service's code (or shared `src/{services,middleware,schema,utils}`, its `Dockerfile.<service>`, `package.json`, `packages/core`, or `pnpm-lock.yaml`) ships that service to prod automatically. The images build from the monorepo root. Because a merge auto-deploys, a broken image reaches prod on merge — validate anything image-level (e.g. a native-binary swap) in a locally-built image first.
-
-### Shared packages (`packages/`)
-
-- **core** — Core business logic: GraphQL operations (`graphql()` + `useRequest`/`useMutationRequest`), Auth0, React Query, and error handling. Data hooks live under `packages/core/src/<domain>/{query-hooks,mutation-hooks}`.
-- **ui** — UI component library using Material-UI and Emotion (+ Storybook)
-- **tsconfig** — Shared TypeScript configurations
-
-## Tech Stack
-
-- **Frontend:** React 18, TypeScript, Material-UI, Emotion, Vite, TanStack Router
-- **Data:** GraphQL via Hasura, Auth0 for auth, React Query for server state
-- **Backend:** Hono (Hasura Actions/Events) in `apps/backend`
-- **Testing:** Vitest, Playwright, Storybook
-- **Build:** Turborepo, pnpm, tsup
-- **Gaming:** Phaser.js, Matter.js physics
-- **Package Manager:** pnpm (>=10.34.3) · **Node:** >=24
-
 ## Where knowledge lives
 
-**Skills** (`.claude/skills/`) — task-triggered conventions. They fire automatically, but reach for them deliberately too:
+This file deliberately holds no app catalogue, tech-stack list, command reference, or directory map — those drift, and each already has a home. Reach for it there:
 
-- _Code:_ `code-conventions`, `react`, `mui`, `architecture`, `mutation-data-flow`, `error-handling`, `e2e-testing`, `design-principles`
-- _Workflow:_ `parallel-workflow`, `ci-loop`, `cleanup`, `micro-prs`, `pr-descriptions`, `writing-task-specs`, `dependency-analysis`, `self-review`, `product-planning`, `plain-english`, `analyze`, `task-tracker`
-- _Meta / quality:_ `grill-me`, `skill-creator`, `thermo-nuclear-code-quality-review`, `security-reviewer`, `supply-chain-security`
-- _Architecture:_ `frontend-ui-architecture`, `hasura-architecture`, `backend-architecture`
-- _Ops:_ `backend-ops`, `dev-environment-gotchas`
-
-**Tasks & requirements** — the source of truth for work is the **task tracker**, and a **project is an app** (Til, Watch, Listen, Game, Docs, Main — Main covers the main app's finance, journal, and library areas): every issue belongs to one. Bugs and small features are single issues; a large feature is a **parent issue** (with sub-issues) inside the app's project, its description + a concept document holding the spec, with blocking relations encoding the dependency waves. The `task-tracker` skill owns *which* tracker this is and every command; `writing-task-specs` owns how to author the specs; `parallel-workflow` owns how an issue's state moves as work ships.
-
-## Development Commands
-
-```bash
-pnpm install        # Install dependencies
-pnpm dev            # Run all apps in development mode
-pnpm dev:main       # Run a specific app + auto-reload its package deps (turbo watch)
-pnpm dev:listen     # …also: dev:game, dev:watch, dev:til, dev:docs, dev:extension
-pnpm build          # Build all packages and apps
-pnpm test           # Run tests across all packages
-pnpm lint           # Lint (Biome)
-pnpm format         # Format (Biome)
-```
-
-App-specific `dev:*` commands use `turbo watch`. How a `packages/core` / `packages/ui` edit reaches a running app varies per app, and getting it wrong looks like a Vite bug — see `dev-environment-gotchas`.
-
-Per-package:
-
-```bash
-cd packages/core && pnpm codegen        # Regenerate GraphQL types (also: pnpm watch-codegen)
-cd packages/ui   && pnpm storybook      # Component development
-cd apps/backend  && pnpm dev-gateway    # Run a backend service (also: dev-io, dev-compute)
-cd apps/backend  && pnpm lint           # Biome, and it auto-fixes (`--write`)
-cd apps/hasura   && pnpm lint           # eslint
-```
-
-Root `pnpm lint` skips `apps/backend` and `apps/hasura` — lint those two from their own directory.
-
-## Common Workflows
-
-- **Before any work touching `apps/backend` or `apps/hasura`** — load the `backend-architecture` skill. It documents the full service architecture, Cloud Task pipeline, task lifecycle, notification flow, and event vs action patterns. Do not reason about the backend without it.
-- **Before designing a new mutation/Action, or reasoning about concurrent writes or data validation** — load the `hasura-architecture` skill. It covers the single-gateway rule, when a write needs a concurrency-safe database pattern, and the three validation layers.
-- **Code exploration — always use CodeGraph first, not grep.** Setup and the exact rule live in `dev-environment-gotchas`.
-- **Adding a feature** — identify which app(s) change; decide where the code lives (`frontend-ui-architecture`); run the relevant `dev:*` command; make changes; run `pnpm lint` and `pnpm test` before committing.
-- **Working with GraphQL** — update operations in `packages/core`, run `pnpm codegen`, use the generated types in apps.
-- **Adding UI components** — all UI lives in `packages/ui` (placement per `frontend-ui-architecture`): create it there, export from `packages/ui/src/index.tsx`, build, then import in apps.
-
-## Code style
-
-The style law lives in the `code-conventions` skill, which auto-triggers on any TypeScript/TSX write or edit — the moment the rules apply.
-
-## Key directories
-
-```text
-apps/<frontend app>/src/  # per-app frontend source (routes/, components/, config)
-apps/backend/src/         # Hono services (gateway, io, compute) + their handlers
-apps/hasura/              # migrations/ (SQL), metadata/ (YAML), tests/ — the data layer
-packages/core/src/        # graphql/, providers/ (auth, query), <domain>/{query-hooks,mutation-hooks}
-packages/ui/src/          # shared MUI + Emotion components (+ Storybook)
-```
-
-## GitHub CLI
-
-`gh` commands authenticate via the `GH_TOKEN` env var. The token lives in `.claude/settings.local.json` under `env.GH_TOKEN` — export it **before** any `gh` call. Do NOT use `gh auth switch` or rely on the keyring; the settings.local token is the only one with collaborator access to the `shinaBR2/sworld` repo.
-
-```bash
-# requires python3 (preinstalled on macOS), run from the monorepo root
-export GH_TOKEN=$(python3 -c "import json; print(json.load(open('.claude/settings.local.json'))['env']['GH_TOKEN'])")
-```
+- **How to code** — the `.claude/skills/` conventions; they auto-trigger by task. Browse the directory for the full set.
+- **Commands, scripts, tooling** — `package.json` (root and per-package) and the Turborepo pipeline. Local-dev traps live in `dev-environment-gotchas`.
+- **Architecture & where code belongs** — `frontend-ui-architecture`, `backend-architecture`, `hasura-architecture`.
+- **Tasks & requirements** — the source of truth for work is the **task tracker**, and a **project is an app**: every issue belongs to one. `task-tracker` owns which tracker it is and every command; `writing-task-specs` owns how to author specs; `parallel-workflow` owns how an issue's state moves as work ships.
+- **Ops & auth** — media/prod-data operations in `backend-ops`; the `gh` / `GH_TOKEN` bootstrap and the whole git/worktree/PR flow in `parallel-workflow`.
 
 ## Compact instructions
 

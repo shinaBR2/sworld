@@ -69,6 +69,15 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 - NEVER rebase. ALWAYS merge.
 - If conflicts are in codegen-generated files, take the changes from main and re-run `pnpm codegen` in `packages/core`.
 
+## GitHub auth (`gh` / `GH_TOKEN`)
+
+Every `gh` call in this flow (and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions`) authenticates via the `GH_TOKEN` env var — export it **before** the first `gh` call of a session. The token lives in `.claude/settings.local.json` under `env.GH_TOKEN`. Do NOT use `gh auth switch` or rely on the keyring; the settings.local token is the only one with collaborator access to `ShinaBR2/sworld`.
+
+```bash
+# requires python3 (preinstalled on macOS), run from the monorepo root
+export GH_TOKEN=$(python3 -c "import json; print(json.load(open('.claude/settings.local.json'))['env']['GH_TOKEN'])")
+```
+
 ## PR submission
 
 - A PR may ONLY be created after the self-review loop (step 11) has exited clean. Pushing commits needs no gate; creating the PR does.
