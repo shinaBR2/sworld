@@ -39,9 +39,9 @@ the tracker's concern; see `task-tracker`.
 Every PR runs through this same loop; which checks actually run on a given PR is whatever the repo's
 workflows decide, so read the PR's checks rather than assuming a layer is covered.
 
-The steps below describe each gate by *intent*. Confirm the current command flags at runtime with
-`gh <command> --help`, and see `references/github-cli.md` for this repo's non-obvious command facts —
-the GraphQL query resolved review threads require, and the merge traps.
+The steps below describe each gate by *intent*. Confirm the current command flags at runtime, and see
+`references/github-cli.md` for this repo's non-obvious command facts — the query resolved review
+threads require, and the merge traps.
 
 ## Step 1: Check merge status
 
@@ -58,7 +58,7 @@ the GraphQL query resolved review threads require, and the merge traps.
 
 ## Step 3: Check unresolved review comments
 
-- List the PR's review threads and their resolved status. This must go through the GraphQL API — REST doesn't expose whether a thread is resolved; `references/github-cli.md` has the query.
+- List the PR's review threads and their resolved status — `references/github-cli.md` has the query this needs (the obvious path can't report resolved state).
 - Filter to unresolved threads only.
 - If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
 - If no unresolved threads → proceed to Step 4.
@@ -85,7 +85,7 @@ the GraphQL query resolved review threads require, and the merge traps.
   3. **All CI green** — every check passed or was `skipped`, nothing `pending`, nothing failed.
 - **A review bot's CI check going green does NOT mean the bot has finished reviewing.** CodeRabbit and Cursor bugbot report `SUCCESS` on their status check while the review itself is still running — and they report `SUCCESS` again after finding real bugs. So fully green CI can sit alongside a bot that has not yet said anything, and moments later it posts blocking comments. Treat a bot as finished only when its check is green **and** it has actually left its review (its check description no longer reads "Review in progress", and Step 3's thread query reflects its verdict). Until then it is `pending`, whatever colour the check is — background-`sleep 360` and restart from Step 1. **Never call a PR settled on green CI alone.**
 - **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green bugbot/CodeRabbit *check* says nothing about whether they left real comments.
-- **Never delegate the merge condition to GitHub's auto-merge.** In this repo it merges the instant the PR is mergeable — auto-merge only waits on *required* status checks, and this repo's branch protection defines none, so it does not wait for `test`/E2E to go green (see `references/github-cli.md`). Run the full CI loop yourself — Steps 1–4 above, including Step 4's checks — then merge manually with a squash once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this repo's merge-is-deploy model means shipping broken code to production.
+- **Never delegate the merge condition to the platform's auto-merge** — in this repo it ships before CI is green (`references/github-cli.md` explains why). Run the full CI loop yourself — Steps 1–4 above, including Step 4's checks — then merge manually with a squash once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this repo's merge-is-deploy model means shipping broken code to production.
 - Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
 
 ## The rule that gets violated

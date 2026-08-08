@@ -12,8 +12,8 @@ This skill is the **only** place code review is defined. Other skills call it by
 ## Critical rules
 
 - **The review target is the LOCAL working diff, never a remote PR.** Get it with `git fetch origin main`, then `git diff origin/main`. No PR exists at review time — the local diff and the eventual PR diff are the same thing.
-- Never touch `gh pr` in this skill. Post-PR concerns (review threads, CI, bots) belong to the `ci-loop` skill.
-- **Reviewing a PR that already exists on GitHub is not this skill's job** — use the built-in `/code-review`. To get a sworld-aware pass on one, check the branch out and review its local diff here instead.
+- Never drive the remote PR from this skill. Post-PR concerns (review threads, CI, bots) belong to the `ci-loop` skill.
+- **Reviewing a PR that already exists is not this skill's job** — use the built-in `/code-review`. To get a sworld-aware pass on one, check the branch out and review its local diff here instead.
 - For follow-up questions, work from what's already in context. Re-run the diff only when the code has changed (e.g. the next iteration of the self-review loop).
 - If the diff is too large or sprawling to confidently review, push back before doing the review. Do not power through a review you don't trust.
 - Be direct and conversational, like a colleague leaving a comment on the PR. No padded preamble, no exhaustive bullet lists, no review-theatre.
@@ -323,7 +323,7 @@ Good to go — merging.
 
 ## Validation before delivering the review
 
-- Did I review the LOCAL working diff vs `origin/main` (fetched `origin main` first, never touched `gh pr`)?
+- Did I review the LOCAL working diff vs `origin/main` (fetched `origin main` first, never touched the remote PR)?
 - In self-review mode: did I treat every concern as a work item to fix, and is the loop exit (verdict "Merge", zero concerns) genuinely earned rather than declared?
 - Did I make a judgment call about reviewability before diving in?
 - Did I match depth to risk and surface area?

@@ -7,7 +7,7 @@ description: >-
   points at `task-tracker`. It owns the tool (Linear, via the `linear` CLI — never the Linear
   MCP), auth, the SWorld team and `SWO` key, the project-is-an-app model, the
   Backlog→Todo→In Progress→In Review→Done lifecycle, and the issue/relation/document
-  intents (CLI mechanics in `references/linear-cli.md`). Reach for it any time a workflow step
+  intents. Reach for it any time a workflow step
   talks to the tracker or names a tracker concept, even when the triggering skill refers to
   "the issue" only generically.
 ---
@@ -30,8 +30,7 @@ live in Linear.
 
 - **Team:** everything goes in the **SWorld** team, key `SWO`. Identifiers look like `SWO-123` —
   Linear assigns them, you never pick one.
-- **Tool:** the **`linear` CLI**, run through Bash. Its setup, workspace-resolution trap, and
-  driving gotchas live in `references/linear-cli.md` — read that before running commands.
+- **Tool:** the **`linear` CLI**, run through Bash.
 - **Never the Linear MCP.** A connected Linear MCP server authenticates as the *wrong account* —
   never use `mcp__*Linear*` tools for any tracker operation. If the CLI is missing or broken, stop
   and tell the user; do not fall back to MCP.
@@ -41,8 +40,7 @@ live in Linear.
 **A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`,
 `Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library
 areas). A project is *never* a single feature, and is **never marked `Done`**. Every issue belongs
-to exactly one project — its app. For a brand-new app surface, create the project with
-`linear project create` first.
+to exactly one project — its app. For a brand-new app surface, create the project first.
 
 ## The state lifecycle
 
@@ -60,7 +58,7 @@ Backlog → Todo → In Progress → In Review → Done
 
 Only *issues* move through this lifecycle; a *project* (an app) never does. `parallel-workflow`
 owns *when* each transition happens as work ships — this skill owns the vocabulary and the fact that
-a transition is a `linear issue` update to the target state (discover the exact flag via `--help`).
+a transition is an issue-state update.
 
 ### Status changes: three moments, and what each needs today
 
@@ -69,8 +67,7 @@ An issue's status only ever changes at **three moments** in the work — *start 
 the moment and defer here. What each moment does in our current GitHub↔Linear setup:
 
 1. **You start working on something** → set the issue to `In Progress`, **by hand** — the integration
-   doesn't cover this one (a `linear issue` state update; flags via `--help`). This is the **only**
-   status change you ever make yourself.
+   doesn't cover this one. This is the **only** status change you ever make yourself.
 2. **It's ready for review** → opening the PR auto-moves the issue to `In Review` (the integration,
    keyed off the `SWO-NNN` in the branch / PR body — see *The GitHub link* below). Nothing to do.
 3. **It's done** → merging auto-moves the issue to `Done` **only when the PR uses a closing keyword**
@@ -80,26 +77,16 @@ the moment and defer here. What each moment does in our current GitHub↔Linear 
 
 So in practice you touch status exactly once — at the start; moments 2 and 3 happen on their own.
 
-## Command mechanics
+## What you track, and what each carries
 
-Drive the CLI by *intent* and discover the exact current flags at runtime. The setup, the
-workspace-resolution trap, and the stable gotchas (resolve-by-name, markdown-body-as-a-file,
-create-non-interactively, id-read-from-the-branch) all live in `references/linear-cli.md` — read
-it before running commands. What this skill owns is *what* each intent maps to:
-
-### What you can do, and where it maps
-
-| Intent | Where |
-|---|---|
-| Create / read / update / comment on an **issue** | `linear issue …` — set team `SWO`, the app `project`, a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`) |
-| Record a **dependency** — the `blocked-by` edge that encodes waves | `linear issue relation …` (add / remove / list). `dependency-analysis` owns *when* a blocker is earned (the real-vs-fake test); this skill owns only that the edge is a `blocked-by` relation |
-| Create a **project** (new app surface only) | `linear project …` |
-| Create a **document** (a heavy concept spec) | `linear document …` — attached to the app's project |
+- **Issue** — the unit of work: on team `SWO`, in one app `project`, with a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`).
+- **Dependency** — a `blocked-by` edge between issues, which is how waves are encoded. `dependency-analysis` owns *when* a blocker is earned; this skill owns only that the edge is `blocked-by`.
+- **Project** — an app surface (see the model above); created only for a brand-new app.
+- **Document** — a heavy concept spec, attached to its app's project.
 
 ### The field mapping
 
-What an in-repo tracker would keep in a file's frontmatter, Linear keeps as native fields, all set
-through `linear issue`:
+What an in-repo tracker would keep in a file's frontmatter, Linear keeps as native fields:
 
 | Frontmatter concept | Linear field |
 |---|---|

@@ -43,7 +43,7 @@ Use the native **`EnterWorktree`** tool — it creates the worktree, bases it on
 
 5. **`git fetch origin main` first.** `EnterWorktree`'s own base-ref fetch is throttled to once per 24h — too coarse for this chronically-behind repo — so fetch explicitly to guarantee the worktree branches off genuinely-current `main`.
 6. **`EnterWorktree` with `name` = the issue slug** (`swo-NNN-slug`, per `task-tracker`'s convention). It creates the worktree at `.claude/worktrees/swo-NNN-slug/` on branch `worktree-swo-NNN-slug` (Claude Code prefixes `worktree-`; the embedded `SWO-NNN` is matched *anywhere* in the branch name — not anchored to the start — by both the Linear auto-link and the repo's branch-ticket parser, so the prefix is safe), bases it on `origin/main` (the `worktree.baseRef: fresh` default), and moves the session into it. **Each agent working an issue enters its own worktree** — parallel issues run fully isolated; a subagent inherits its parent's worktree unless it enters its own.
-7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: `.linear.toml`, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. (Without `.linear.toml` the `linear` CLI silently resolves to the account default workspace, not `sworld`; without `packages/core/.env` codegen aborts with `Unable to find any GraphQL type definitions`. `.worktreeinclude` is what prevents both.)
+7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: the tracker's workspace config, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. Without them, tracker commands hit the wrong workspace and codegen aborts.
 8. **Run `pnpm install` in the worktree** — the one setup step no hook covers (a fresh worktree has no `node_modules`).
 
 ## During work
@@ -69,9 +69,9 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 - NEVER rebase. ALWAYS merge.
 - If conflicts are in codegen-generated files, take the changes from main and re-run `pnpm codegen` in `packages/core`.
 
-## GitHub auth (`gh` / `GH_TOKEN`)
+## PR auth
 
-Every `gh` call in this flow — and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — authenticates via the `GH_TOKEN` env var, sourced from the main clone's local settings, with a public-repo scoping constraint. The token facts and both constraints live in `references/github-cli.md` — read that before the first `gh` call.
+Every command that talks to the PR host — in this flow and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — needs the token and scoping described in `references/github-cli.md`. Read that before the first one.
 
 ## PR submission
 
