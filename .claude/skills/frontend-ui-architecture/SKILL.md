@@ -34,7 +34,7 @@ Both packages use the **same** filing system. Folder location — not per-change
 | `*/universal/*` | used by EVERY app | `ui/universal/header`, `ui/universal/containers/generic` | `core/universal/hooks/useRequest` |
 | `*/<site>/*` | one app only | `ui/listen/minimalism`, `ui/watch/video-detail-page` | `core/listen/query-hooks` |
 
-`<site>` ∈ `watch | listen | til | main | game | journal | finance | …` (the app / domain).
+`<site>` is one app (the roster is `references/apps.md`) or a domain area within one (e.g. main's `journal`, `finance`).
 
 **Placement decision, every time:**
 

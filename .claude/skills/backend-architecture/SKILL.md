@@ -17,7 +17,7 @@ The backend and the data layer are workspace packages in the sworld monorepo, no
 | `backend` | `apps/backend` | Hono services. Depends on `core` via `workspace:*`; the whole `backend` → `core` chain is ESM (`"type": "module"` on both). |
 | `sworld-hasura-v2` | `apps/hasura` | The one workspace package whose name doesn't match its directory. Keeps its own eslint toolchain; excluded from biome. |
 
-One `pnpm-lock.yaml` at the repo root covers everything — there is no per-app lockfile and no `npm ci` anywhere. Every `src/…` path below is relative to `apps/backend`.
+The one root `pnpm-lock.yaml` covers this too — pnpm-only, no per-app lockfile (`references/repo-map.md` owns the repo shape). Every `src/…` path below is relative to `apps/backend`.
 
 ## The four services
 
