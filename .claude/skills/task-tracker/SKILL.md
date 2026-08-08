@@ -37,10 +37,13 @@ live in Linear.
 
 ## The project-is-an-app model
 
-**A `project` is an app** — the long-lived container for everything in one app: `Til`, `Watch`,
-`Listen`, `Game`, `Docs`, and `Main` (the main app, covering its finance, journal, and library
-areas). A project is *never* a single feature, and is **never marked `Done`**. Every issue belongs
+**A `project` is an app** — the long-lived container for everything in one app. The app roster
+(and where each one ships) lives in `references/apps.md`; read the list there rather than restating
+it. A project is *never* a single feature, and is **never marked `Done`**. Every issue belongs
 to exactly one project — its app. For a brand-new app surface, create the project first.
+
+The one documented exception is the **Tooling** project (tooling / skills / infra work), which has
+no app — see `references/apps.md`.
 
 ## The state lifecycle
 
