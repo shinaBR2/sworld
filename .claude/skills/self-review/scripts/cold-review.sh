@@ -4,10 +4,12 @@
 # Run from inside the worktree. The loop in SKILL.md owns how to read the result.
 set -euo pipefail
 
-# Best-effort refresh of origin/main. If it fails (offline, wrong remote, no such
-# branch) let the rev-parse guard below give the actionable message, rather than
-# set -e aborting here with git's raw error.
-git fetch --quiet origin main || true
+# Refresh origin/main so the diff is measured against the current base. A failure
+# here (offline, wrong remote) must not set -e-abort before the friendly guards
+# below — but warn, because the review then runs against a possibly-stale base.
+if ! git fetch --quiet origin main; then
+  echo "cold-review: couldn't fetch origin/main — reviewing against the local ref, which may be stale." >&2
+fi
 
 # A clean `[]` is worthless over an empty range. On a committed-and-pushed branch an
 # unset review target reviews nothing and "passes" silently — so the target is
@@ -25,6 +27,12 @@ fi
 if ! command -v claude >/dev/null; then
   echo "cold-review: 'claude' not on PATH — install the CLI to run the reviewer." >&2
   exit 2
+fi
+
+# The reviewer only sees committed code (origin/main...HEAD). Uncommitted changes are
+# invisible to it, so a fix left unstaged can pass as clean — warn, don't block.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "cold-review: uncommitted changes are not reviewed — commit them first for a true pass." >&2
 fi
 
 # No --fix — the reviewer reports rather than applies; this session does the fixing.
