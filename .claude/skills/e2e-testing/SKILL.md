@@ -6,7 +6,7 @@ user-invocable: false
 
 # E2E Testing
 
-E2E specs live under an app's `e2e/` directory (`apps/main/e2e/`, `apps/listen/e2e/`) and run on Playwright. They exist to prove one thing: **the built frontend behaves correctly for a user** — the right page renders, a route change works, a click updates what's on screen. Keep them lean and smoke-level; detailed component states belong in Storybook, which is faster and closer to the component.
+Each app keeps its own E2E suite, run on Playwright. They exist to prove one thing: **the built frontend behaves correctly for a user** — the right page renders, a route change works, a click updates what's on screen. Keep them lean and smoke-level; detailed component states belong in Storybook, which is faster and closer to the component.
 
 Three rules hold for every spec.
 
