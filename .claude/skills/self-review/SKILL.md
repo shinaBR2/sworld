@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: The single place all code review happens in this repo — bugs and code quality both. Use as the mandatory pre-PR gate in the parallel workflow — a loop of fresh, zero-context reviews of this branch's diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup; the PR is what's gated). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated — including a request to be especially strict or thorough. The target is ALWAYS the local diff, never a remote PR.
+description: The single place all code review happens in this repo — bugs and code quality both. Use as the required pre-PR review in the parallel workflow — a loop of fresh, zero-context reviews of this branch's diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated — including a request to be especially strict or thorough. The target is ALWAYS the local diff, never a remote PR.
 ---
 
 # Self-review
@@ -27,11 +27,9 @@ This is the only place code review is defined; other skills call it by name.
    - **Ambiguous** → treat as blocking. **Needs an owner's call** → stop and ask.
 4. Fixed something? That's new, unreviewed code — commit and go back to step 2.
 
-Exit when a fresh run finds nothing blocking and no edit has happened since — the
-reviewer runs via Bash and does **not** satisfy the gate, so the last action before
-the PR is always to re-invoke this skill through the Skill tool. Never invent a
-finding to keep looping, nor dismiss a real one to stop. The bar: CodeRabbit finds
-nothing on the PR.
+Exit when a fresh run finds nothing blocking and no edit has happened since. Never
+invent a finding to keep looping, nor dismiss a real one to stop. The bar:
+CodeRabbit finds nothing on the PR.
 
 A diff too sprawling or mixed to review with confidence *is* the finding — split it
 (`micro-prs`) before shipping. A trust-boundary diff (auth, Hasura
