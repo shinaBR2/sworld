@@ -41,7 +41,7 @@ workflows decide, so read the PR's checks rather than assuming a layer is covere
 
 The steps below describe each gate by *intent*. Confirm the current command flags at runtime with
 `gh <command> --help`, and see `references/github-cli.md` for this repo's non-obvious command facts —
-the repo it lives in, the GraphQL query resolved review threads require, and the merge traps.
+the GraphQL query resolved review threads require, and the merge traps.
 
 ## Step 1: Check merge status
 

@@ -6,17 +6,10 @@ repo. Everything here is either a decision or a trap — the kind of thing
 open a PR, read a diff) are **not** here on purpose: drive those by intent and
 confirm the current flags at runtime with `gh <command> --help`.
 
-## The repo
-
-Every PR lives in **`ShinaBR2/sworld`** — frontend, backend, and Hasura all ship
-from the one repo. When a command can't rely on the current directory's remote
-(e.g. a background shell whose working directory isn't a checkout), name the repo
-explicitly.
-
 ## Authentication — `GH_TOKEN`
 
 Every `gh` call authenticates via the `GH_TOKEN` env var — the only token with
-collaborator access to `ShinaBR2/sworld`, so `gh auth switch` and the keyring are
+collaborator access to the repo, so `gh auth switch` and the keyring are
 never the right source. It's a personal secret kept in the **main clone's**
 `.claude/settings.local.json` (`env.GH_TOKEN`); read it from there, since a fresh
 worktree has no copy of its own. Two constraints, no fixed recipe (derive the
@@ -30,11 +23,13 @@ exact extraction at runtime so a tooling change can't leave a stale command here
 ## Reading resolved review threads needs GraphQL
 
 The REST API does **not** expose whether a review thread is resolved, so listing
-"unresolved comments" has to go through the GraphQL API. This query is worth
-keeping verbatim — substitute `NUMBER`:
+"unresolved comments" has to go through the GraphQL API — which, unlike
+`gh api repos/{owner}/{repo}/…`, does not auto-fill the repo, so it has to be
+named. The query shape is what's worth keeping verbatim — fill in the repo
+`OWNER`/`REPO` and the PR `NUMBER`:
 
 ```bash
-gh api graphql -f query='{ repository(owner:"ShinaBR2", name:"sworld") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
+gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
 ```
 
 Filter to `isResolved: false`.

@@ -18,7 +18,7 @@ A PR number identifies a PR outright, with nothing to resolve. The poll itself i
 .claude/skills/wait-for-pr-merge/scripts/poll.sh <PR> [<PR> ...]
 ```
 
-It loops until any tracked PR is terminal (MERGED/CLOSED) or stays unreachable after retries, then exits. The load-bearing details live in the script and its comments: a failed `gh` call (auth, network, bad number) is never mistaken for `OPEN` — it retries and treats only a successful, non-empty state as truth; it stays portable across sh / bash / zsh (PR numbers in positional parameters, `for n in "$@"`, every expansion braced before a `:`); and it follows this repo's `gh` conventions — the explicit `--repo`, the `--watch` ban — which live in `references/github-cli.md`. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
+It loops until any tracked PR is terminal (MERGED/CLOSED) or stays unreachable after retries, then exits. The load-bearing details live in the script and its comments: a failed `gh` call (auth, network, bad number) is never mistaken for `OPEN` — it retries and treats only a successful, non-empty state as truth; it stays portable across sh / bash / zsh (PR numbers in positional parameters, `for n in "$@"`, every expansion braced before a `:`); and it never uses a blocking `--watch` (see `references/github-cli.md`). Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
 
 When it exits, read the `FINAL:<n>:<state>` and `ERROR:<n>:...` lines it emitted and handle each (below). Then **re-launch the poll for the PRs still pending** and repeat, until none are left.
 
