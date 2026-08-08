@@ -89,12 +89,14 @@ pushing is backup, not publication; the PR is what this gate unlocks.
    it's too sprawling or mixes unrelated concerns to review with confidence, that
    IS the finding: stop and split the work (`micro-prs`) before shipping anything.
    Don't power through a review you won't trust.
-3. **Run the reviewer** (fresh session, as above).
+3. **Commit, then run the reviewer** (fresh session, as above). The reviewer reads
+   *committed* code — the `origin/main...HEAD` range — so commit your work first or
+   the reviewer won't see it.
 4. **Act on what it found:**
    - **Blocking finding** → fix it *in this session* (full context makes the fix
      better than a blind `--fix`). A fix is new code, so start a fresh pass — two
-     separate actions, both required: (a) **re-run step 3's reviewer command** over
-     the *fixed* diff (that is what actually re-reviews it), and (b) **re-invoke
+     separate actions, both required: (a) **commit the fix and re-run step 3's
+     reviewer** over it (that is what actually re-reviews it), and (b) **re-invoke
      this skill through the Skill tool** to re-stamp the gate, since the `Write`/
      `Edit` that made the fix deleted the stamp. Re-invoking the skill only reloads
      these instructions and re-stamps the gate — it does **not** run any review; the
@@ -160,13 +162,6 @@ branch checked out. Run the same fresh cold-eyes reviewer over the local diff,
 then relay what it found in plain, conversational language and give a clear
 recommendation. This is not the gate: don't force the fix loop unless they want
 the fixes made — surface the findings and let them decide.
-
-For a harsher pass — "thermo-nuclear review", "deep code quality audit", "be
-really strict about maintainability" — that's the
-`thermo-nuclear-code-quality-review` band. It's a separate skill the user invokes
-directly, and it runs its own cold-eyes pass at the harshest local effort. It is
-never triggered automatically, so don't invoke it from here — just point the user
-to it.
 
 ## Reporting back
 
