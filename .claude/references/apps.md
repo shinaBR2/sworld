@@ -1,6 +1,6 @@
 # Apps — the product roster
 
-The single home for **which apps exist**, what each one is, and where it ships.
+The single home for **which apps exist** and what each one is.
 Any skill that needs the app list points here instead of restating it — a copied
 list drifts, and this one already had: the old hardcoded lists were missing
 `Look` and `Tooling`.
@@ -15,20 +15,16 @@ Two rosters sit close together; keep them straight:
 
 ## The apps
 
-| App | What it is | Ships to |
-|-----|-----------|----------|
-| Main | The main app — its finance, journal, and library areas | Cloudflare Pages (`shinabr2.com`) |
-| Listen | Audio / music | Cloudflare Pages |
-| Watch | Video | Cloudflare Pages |
-| Til | "Today I learned" notes | Cloudflare Pages |
-| Look | Image / video viewer | Cloudflare Workers (`wrangler`) |
-| Game | Games | not deployed |
-| Docs | Documentation site | not deployed |
-| Extension | Browser extension | a browser store (outside the frontend deploy model) |
-
-The *deploy targets* are the fact; the deploy *model* (merge = deploy, no
-staging, each Cloudflare site's pipeline lives in the dashboard, not the repo)
-is owned by `references/deployment-model.md`.
+| App | What it is |
+|-----|-----------|
+| Main | The main app — its finance, journal, and library areas |
+| Listen | Audio / music |
+| Watch | Video |
+| Til | "Today I learned" notes |
+| Look | Image / video viewer |
+| Game | Games |
+| Docs | Documentation site |
+| Extension | Browser extension |
 
 ## Two things that aren't a product app
 
@@ -37,5 +33,5 @@ is owned by `references/deployment-model.md`.
   one documented exception to `task-tracker`'s "a project is an app" model: a
   project that is not an app.
 - **Backend & data layer** — `apps/backend` (the Hono backend) and `apps/hasura`
-  (migrations + metadata) are shipped surfaces but not *product apps*, and have
+  (migrations + metadata) are part of the product but not *product apps*, and have
   no Linear project of their own. `backend-architecture` owns their layout.

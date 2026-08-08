@@ -22,6 +22,9 @@ A backend merge ships a service when it touches that service's code *or* shared
 backend source, its Dockerfile, `package.json`, `packages/core`, or the root
 lockfile.
 
+Not every app deploys: **Game** and **Docs** aren't wired to any deploy, and the
+browser **Extension** ships to a browser store — outside this merge = deploy model.
+
 ## Two consequences worth carrying
 
 - **The frontend "Live" checks verify, they don't deploy.** They run against the

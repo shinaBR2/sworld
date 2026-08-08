@@ -6,8 +6,8 @@ instead of restating it.
 
 Keep three neighbours straight:
 
-- The **per-app deploy target** (which app ships to which platform) is
-  `references/apps.md`.
+- The **app roster** (which apps exist and what each is) is `references/apps.md`;
+  which app runs on which platform is this file's tables below.
 - The **deploy model** (merge = deploy, what triggers each deploy) is
   `references/deployment-model.md`.
 - This file owns the **platforms themselves** — the accounts, services, regions,
