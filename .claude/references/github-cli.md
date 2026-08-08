@@ -39,15 +39,21 @@ An empty result is **only trustworthy once CodeRabbit has finished reviewing** �
 ## Knowing CodeRabbit has finished reviewing
 
 CodeRabbit's `state` is `SUCCESS` the whole time it reviews — colour never tells you it's done. The
-one field that moves is its `description`, which reads exactly `"Review completed"` when finished.
-It's a `StatusContext` (not a check run), so read it via GraphQL and match on that string:
+one field that moves is its `description`. Two values mean there is nothing left to wait for:
+
+- `"Review completed"` — it finished and posted its review.
+- `"Review rate limited"` — it hit its own rate limit and won't review this push. That limit doesn't
+  clear on our wait cadence, so treating it as "still working" stalls the loop on a review that
+  isn't coming. Treat it exactly like `"Review completed"`: CodeRabbit is done, advance.
+
+It's a `StatusContext` (not a check run), so read it via GraphQL and match on the `description`:
 
 ```bash
 gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(number:NUMBER) { commits(last:1) { nodes { commit { statusCheckRollup { contexts(first:100) { nodes { ... on StatusContext { context state description } } } } } } } } } }'
 ```
 
-Anything other than `"Review completed"` on the `CodeRabbit` node means it is still working. Each
-push resets the review, so the marker returns to not-done until the fresh review completes.
+Any other `description` on the `CodeRabbit` node means it is still working. Each push resets the
+review, so the marker returns to not-done until the fresh review completes (or is rate limited).
 
 ## Updating a PR title/body — never `gh pr edit`
 
