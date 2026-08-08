@@ -28,15 +28,14 @@ platform facts are here.
 | **Workers** | `sworld-posthog-reverse-proxy` | infra, not an app — a reverse proxy for PostHog analytics |
 
 Each site's **build pipeline and env vars live in the Cloudflare dashboard, not
-in the repo** — nothing under `.github/workflows` builds or deploys a frontend
-app.
+in the repo**.
 
 ## Hasura Cloud — the data layer
 
-Hasura GraphQL Engine + its Postgres, run as **Hasura Cloud**. It is the only
-thing that talks to Postgres (the single-gateway rule is owned by the
-`hasura-architecture` skill). Schema + permissions come from `apps/hasura`
-(migrations + metadata).
+Hasura GraphQL Engine + its Postgres, run as **Hasura Cloud** — the product's
+data layer. That nothing reaches Postgres except through it is the
+single-gateway rule, owned by the `hasura-architecture` skill. Schema +
+permissions come from `apps/hasura` (migrations + metadata).
 
 ## Google Cloud — backend, async work, storage
 

@@ -87,7 +87,7 @@ pipeline, entered through an Action instead of an Event.
 
 Cloud Tasks has no local emulator (`references/infrastructure.md`), so the full
 flow can't run on your machine. Locally you can unit-test handler logic with
-mocked deps and call a handler directly to sanity-check it. Everything above that is real integration, and it only runs for real once it is live — **in production, after merge**.
+mocked deps and call a handler directly to sanity-check it. Everything above that is real integration, and it only runs for real against the live system — **in production**.
 
 Plan backend work knowing the last mile is only verifiable live, and when you run
 it, treat it as a controlled test — it writes real rows and nothing absorbs the
