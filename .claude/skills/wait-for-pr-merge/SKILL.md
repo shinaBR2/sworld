@@ -12,37 +12,15 @@ The human merges a READY PR by hand on GitHub. This skill watches for that merge
 
 ## 1. Poll the PRs
 
-Everything lives in the one repo, `ShinaBR2/sworld` — a PR number identifies a PR outright, with nothing to resolve. Still pass `--repo ShinaBR2/sworld` explicitly on every `gh pr view`: the poll runs from a background shell whose working directory isn't guaranteed to be a checkout, and a bare `gh pr view` resolves against the current directory's remote. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
-
-A failed `gh` call (auth, network, bad PR number) must NOT be mistaken for `OPEN` — otherwise the loop spins silently forever. Treat only a successful, non-empty state as truth; retry a few times before declaring a PR unreachable. **NEVER** use `gh pr view --watch` / `gh pr checks --watch`.
-
-Keep the poll script **portable across sh / bash / zsh** — the background shell is not guaranteed to be any one of them: NO bash-only constructs (`declare -A`, associative arrays); put the PR numbers in **positional parameters** (`set -- …`) and loop with `for n in "$@"`. Do NOT write `for n in $LIST` — zsh does not word-split an unquoted variable, so it would iterate once over the whole string and poll a bogus number. **Brace any expansion followed by `:`** (`"ERROR:${n}:…"`, never `"ERROR:$n:…"`) — zsh reads `$n:g` as a history modifier and silently swallows the number, so the emitted line stops matching the format below.
+Everything lives in the one repo, `ShinaBR2/sworld` — a PR number identifies a PR outright, with nothing to resolve. The poll itself is `scripts/poll.sh`, run with the background flag and given the watched PR numbers as arguments:
 
 ```sh
-# Replace the numbers below with the PRs being watched (445 446 are only an example).
-# Exits as soon as any tracked PR is terminal (MERGED/CLOSED) or stays unreachable after 3 quick retries.
-set -- 445 446
-while true; do
-  hit=0
-  for n in "$@"; do
-    s=""; i=1
-    while [ "$i" -le 3 ]; do
-      s=$(gh pr view "$n" --repo ShinaBR2/sworld --json state -q .state 2>/dev/null)
-      [ -n "$s" ] && break
-      i=$((i + 1)); sleep 5
-    done
-    if [ -z "$s" ]; then
-      echo "ERROR:${n}:gh-unreachable"; hit=1
-    elif [ "$s" = "MERGED" ] || [ "$s" = "CLOSED" ]; then
-      echo "FINAL:$n:$s"; hit=1
-    fi
-  done
-  [ "$hit" = 1 ] && exit 0
-  sleep 120
-done
+.claude/skills/wait-for-pr-merge/scripts/poll.sh <PR> [<PR> ...]
 ```
 
-Run it with the background flag. When it exits, read the `FINAL:<n>:<state>` and `ERROR:<n>:...` lines and handle each (below). Then **re-launch the poll for the PRs still pending** and repeat, until none are left.
+It loops until any tracked PR is terminal (MERGED/CLOSED) or stays unreachable after retries, then exits. The load-bearing details live in the script and its comments: a failed `gh` call (auth, network, bad number) is never mistaken for `OPEN` — it retries and treats only a successful, non-empty state as truth; it passes `--repo ShinaBR2/sworld` explicitly (the background shell's cwd isn't guaranteed to be a checkout); it stays portable across sh / bash / zsh (PR numbers in positional parameters, `for n in "$@"`, every expansion braced before a `:`); and it never uses `gh pr view --watch`. Per-PR cleanup is delegated to the `cleanup` skill — this skill just passes it the PR number.
+
+When it exits, read the `FINAL:<n>:<state>` and `ERROR:<n>:...` lines it emitted and handle each (below). Then **re-launch the poll for the PRs still pending** and repeat, until none are left.
 
 ## 2. Handle each event
 

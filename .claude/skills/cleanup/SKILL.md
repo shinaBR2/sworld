@@ -35,15 +35,12 @@ for the tracker coupling — here on the git-cleanup axis.
 ## The one repo
 
 Everything — frontend apps, shared packages, backend, Hasura — lives in `ShinaBR2/sworld`, so every branch
-and worktree belongs to that single clone. The manual teardown (A2) and the `main` refresh (B) run via
-`git -C "$repo_path"`, never relying on the current directory, which may still be the worktree being torn
-down. (The same-session path A1 uses `ExitWorktree`, which restores the cwd itself.) Set `repo_path` once to
-the clone's absolute path and confirm it really is a clone before any `git -C`:
-
-```bash
-repo_path="<path-to-sworld-clone>"   # absolute path to the sworld clone — substitute the real one
-git -C "$repo_path" rev-parse --git-dir >/dev/null 2>&1 || { echo "cleanup: $repo_path is not a git clone — stop"; exit 1; }
-```
+and worktree belongs to that single clone. The git-based steps live as scripts in `scripts/` beside this
+file — `teardown.sh` (A2) and `refresh-main.sh` (B). Each takes the clone's **absolute path** as an
+argument and runs via `git -C`, never relying on the current directory (which may still be the worktree
+being torn down), and each validates that the path really is a clone before touching it. (The same-session
+path A1 uses `ExitWorktree`, which restores the cwd itself.) Pass the real absolute path of the sworld
+clone as that argument.
 
 ## A. Tear down a merged branch
 
@@ -53,21 +50,14 @@ unambiguous — and derives the branch from it; a caller with the branch already
 path.** The two automated callers (`wait-for-pr-merge`, `ci-loop`) invoke teardown only after they've
 observed the merge, so they satisfy it; a direct `/cleanup` invocation must confirm it here.
 
-Read the PR's state:
-
-```bash
-state=$(gh pr view <N> --repo ShinaBR2/sworld --json state -q .state)
-```
-
 **Only ever tear down a `MERGED` PR.** If `CLOSED`, do nothing — the branch and worktree may still be
-wanted. If `OPEN`, it isn't ready; that's `ci-loop`'s job, not this skill's. Enforce the gate first:
+wanted. If `OPEN`, it isn't ready; that's `ci-loop`'s job, not this skill's. The A2 script enforces this
+gate itself (it reads the PR state and refuses anything but `MERGED`); the A1 path uses the `ExitWorktree`
+tool, so confirm the gate there first — `gh pr view <N> --repo ShinaBR2/sworld --json state -q .state` must
+return `MERGED` before you remove anything.
 
-```bash
-[ "$state" = "MERGED" ] || { echo "PR <N>: state is '$state', not MERGED — cleanup only tears down merged PRs; stop"; exit 1; }
-```
-
-Then pick the teardown path by **whether *this* session created the worktree** — **abort on the first
-failure** and report the partial state, never fall through or claim completion.
+Pick the teardown path by **whether *this* session created the worktree** — either path aborts on the first
+failure and reports the partial state, never falling through or claiming completion.
 
 ### A1 — Same-session teardown (preferred): `ExitWorktree`
 
@@ -93,27 +83,20 @@ else, use A2.
 
 When a **different or later session** tears down the merge (e.g. `wait-for-pr-merge` polling in a fresh
 session), or the worktree wasn't created via `EnterWorktree` this session, `ExitWorktree` can't touch it —
-remove it manually via `git -C "$repo_path"`, which never relies on the current directory (which may still
+remove it manually with the teardown script, which never relies on the current directory (which may still
 be the worktree being torn down):
 
 ```bash
-branch=$(gh pr view <N> --repo ShinaBR2/sworld --json headRefName -q .headRefName)
-[ -n "$branch" ] || { echo "PR <N>: cannot resolve branch — aborting cleanup"; exit 1; }
-
-# Exact worktree path for this branch (porcelain, exact ref match — never substring; handles paths with spaces).
-wt=$(git -C "$repo_path" worktree list --porcelain | awk -v b="refs/heads/$branch" '
-  /^worktree /{p=substr($0,10)} $0=="branch "b{print p}')
-
-# Only ever remove a MERGED worktree; skip cleanly if there is none. Abort if removal fails.
-[ -n "$wt" ] && { git -C "$repo_path" worktree remove "$wt" || { echo "PR <N>: worktree remove failed — aborting"; exit 1; }; }
-
-# squash-merge leaves the branch not-fully-merged, so -D. Abort if deletion fails.
-git -C "$repo_path" branch -D "$branch" || { echo "PR <N>: branch delete failed — aborting"; exit 1; }
+# Located via <repo_path> too, not a bare relative path — the caller's cwd may not be a
+# checkout (or may be the very worktree being removed); the script itself lives in the clone.
+"<repo_path>"/.claude/skills/cleanup/scripts/teardown.sh <N> "<repo_path>"
 ```
 
-Guardrails baked in above, all load-bearing: exact `refs/heads/$branch` match (a substring match could
-remove the wrong worktree), never act on an empty `$branch` (empty matches every worktree), only remove a
-worktree that exists, `-D` because squash-merge leaves the branch technically unmerged.
+It re-checks the `MERGED` gate, resolves the branch from the PR, removes the branch's worktree, and deletes
+the branch. The load-bearing guardrails live in the script and its comments: the `MERGED` gate, an exact
+`refs/heads/$branch` match (a substring match could remove the wrong worktree), never acting on an empty
+branch (empty matches every worktree), only removing a worktree that exists, `-D` because a squash-merge
+leaves the branch technically unmerged, and aborting on the first failure.
 
 Then **refresh local `main`** (section B) — a torn-down branch means `main` just moved. (After A1's
 `ExitWorktree` the session is back in the main worktree, so section B's `main`-checked-out path applies.)
@@ -125,28 +108,19 @@ reference to local `main` (a code read, a diff, a new worktree base) is wrong. I
 workflow local `main` is *chronically* behind, so keep the pointer current — refresh before you read off
 `main` or branch from it.
 
-Fast-forward only, never rebase, never a merge commit on `main`. Which command depends on what the repo's
-**main worktree** (the first entry in `git worktree list`) is checked out on — probe it, then pick:
+Fast-forward only, never rebase, never a merge commit on `main`. The exact command depends on what the
+repo's **main worktree** (the first entry in `git worktree list`) is checked out on — the refresh script
+probes that and picks the right one (`git pull --ff-only origin main` when the main worktree sits on `main`,
+`git fetch origin main:main` to advance the ref without a checkout when it sits on a feature branch, the
+common case):
 
 ```bash
-# Emits "main" if the main worktree sits on `main`, else the feature-branch name (empty/detached => not on main).
-onmain=$(git -C "$repo_path" worktree list --porcelain | awk '
-  /^branch refs\/heads\//{sub(/^branch refs\/heads\//,""); print; found=1} /^$/{if(!found)print"detached"; exit}')
-
-case "$onmain" in
-  # Main worktree sits on `main`: advance the branch pointer AND its checkout. --ff-only so a diverged
-  # main errors loudly instead of silently creating a merge commit; name `origin main` so it can't
-  # depend on — or advance — the wrong upstream.
-  main) (cd "$repo_path" && git pull --ff-only origin main) || { echo "main refresh failed — stop"; exit 1; } ;;
-  # Main worktree sits on a feature branch (the common case here): advance the local `main` ref without a
-  # checkout and without touching any working tree. It refuses loudly if `main` IS checked out somewhere —
-  # that refusal is the tell to use `git pull --ff-only` in that worktree instead.
-  *)    git -C "$repo_path" fetch origin main:main || { echo "main refresh failed — stop"; exit 1; } ;;
-esac
+"<repo_path>"/.claude/skills/cleanup/scripts/refresh-main.sh "<repo_path>"
 ```
 
-A failed refresh must **stop** success reporting (and, for a caller that relaunches a poll, prevent the
-relaunch).
+It exits non-zero on a failed refresh (`--ff-only`, the wrong upstream, or `main` checked out elsewhere), so
+a caller **must stop** success reporting on that non-zero exit (and, for a caller that relaunches a poll,
+prevent the relaunch). The reasoning behind each branch lives in the script's comments.
 
 Run the refresh:
 
