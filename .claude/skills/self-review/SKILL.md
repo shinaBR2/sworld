@@ -16,9 +16,9 @@ This is the only place code review is defined; other skills call it by name.
 
 1. Commit your work.
 2. Run the reviewer: `.claude/skills/self-review/scripts/cold-review.sh` (from the
-   worktree root). It prints findings as JSON (`[]` is clean). A non-zero exit is
-   never a pass — it prints why: do what the message says (commit first, fix the
-   branch) or, for a genuine hang, re-run.
+   worktree root). It prints its review, ending with a JSON array of findings (`[]`
+   is clean). A non-zero exit is never a pass — it prints why: do what the message
+   says (commit first, fix the branch) or, for a genuine hang, re-run.
 3. Act on each finding:
    - **Blocking** — a real bug, a broken contract, a security hole, or a missing
      test for a case that can actually happen. Fix it.

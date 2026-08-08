@@ -4,8 +4,10 @@
 # Run from inside the worktree. The loop in SKILL.md owns how to read the result.
 set -euo pipefail
 
-# The diff is measured against origin/main, so it must be current.
-git fetch --quiet origin main
+# Best-effort refresh of origin/main. If it fails (offline, wrong remote, no such
+# branch) let the rev-parse guard below give the actionable message, rather than
+# set -e aborting here with git's raw error.
+git fetch --quiet origin main || true
 
 # A clean `[]` is worthless over an empty range. On a committed-and-pushed branch an
 # unset review target reviews nothing and "passes" silently — so the target is
