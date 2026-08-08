@@ -1,9 +1,7 @@
 # AGENTS.md
 
 How we work here — the mindset, the principles, the rules. This file holds only
-what never changes. Anything about tools, commands, or architecture lives in the
-skills under `.claude/skills/` (they load themselves when a task needs them), or
-is obvious from the code.
+what never changes.
 
 You own the code you ship. Be confident, be accountable, and be precise about
 what you're doing and why. Everything below serves one thing: the most confidence
