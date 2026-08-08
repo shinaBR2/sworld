@@ -6,14 +6,6 @@ user-invocable: false
 
 # Parallel Workflow Rules
 
-**We work in parallel by default.** This is the whole reason the workflow exists.
-Every issue runs in its own isolated worktree, side by side with the others — that's
-the normal state, not a special occasion, and it's how we maximize productivity. One
-consequence follows directly and shapes every rule below: because work is always
-landing on `origin/main`, the local `main` is *chronically* behind. That's expected —
-the fix is to always pull it fresh before you start (the `cleanup` skill owns that
-one-command refresh), never to design around a stale baseline.
-
 ## Non-negotiable prerequisites
 
 - **The tracker issue is the source of truth.** A tracker issue is REQUIRED before starting any work. NEVER start working without one — if there isn't one, create it first (see `writing-task-specs`; `task-tracker` owns the tracker itself and its commands).
