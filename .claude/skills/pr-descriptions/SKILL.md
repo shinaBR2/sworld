@@ -15,15 +15,13 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 - Do not include "Generated with Claude Code" or any AI attribution
 - Do not mention Claude, AI, or assistants anywhere in the PR
 - Do not pad the description by restating the diff
-- Do not put the tracker issue ID in the title — keep the title clean and reference the issue in the body instead (see `task-tracker`)
+- The one thing that must be true: the PR is linked to its tracker issue. The `SWO-NNN` has to reach the integration — through the branch name and/or the body — so it moves the issue to In Review (see `task-tracker`). Where the ID appears is an implementation detail; the link is what matters.
 
 ## Title format
 
 Use conventional commits. This is enforced by the repo.
 
-Pattern: `[WIP] type(scope): <short imperative description>`
-
-Always prefix with `[WIP]` (not draft). This is mandatory on every PR title.
+Pattern: `type(scope): <short imperative description>`
 
 Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `perf`, `style`, `build`, `ci`.
 
@@ -31,10 +29,10 @@ Scope is the area of the codebase or product surface. Examples seen in this repo
 
 Good titles:
 
-- `[WIP] refactor(core): rename abbreviated names in the query and mutation hooks`
-- `[WIP] fix(listen): playback position now persists across reloads`
-- `[WIP] feat(library): bulk import items from a pasted list`
-- `[WIP] chore(ci): bump node version in github actions`
+- `refactor(core): rename abbreviated names in the query and mutation hooks`
+- `fix(listen): playback position now persists across reloads`
+- `feat(library): bulk import items from a pasted list`
+- `chore(ci): bump node version in github actions`
 
 Bad titles:
 
@@ -135,13 +133,13 @@ You usually have full context from working on the task. Even so, **review the ac
 
 1. **Run and read the diff.** `git diff origin/main...HEAD --stat` then `git diff origin/main...HEAD`. Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
 2. **Decide the PR type** — user-facing, or no-user-facing-change (refactor / tech-debt). This drives the whole body.
-3. Confirm the title — `[WIP]` prefix, conventional commit format, no task ID.
+3. Confirm the title — conventional commit format with a scope.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
 6. Open the PR with `gh pr create`.
 
 ```bash
-gh pr create --title "[WIP] type(scope): description" --body "$(cat <<'EOF'
+gh pr create --title "type(scope): description" --body "$(cat <<'EOF'
 ## Summary
 
 ...
@@ -154,8 +152,9 @@ EOF
 )"
 ```
 
-Never `--draft`. Work-in-progress is signalled by the `[WIP]` title prefix, so a
-GitHub draft PR would be a second, competing signal for the same thing.
+Never open the PR as a draft (`--draft`). The only reviewers here are the
+code-review bots, and a draft PR can stop them from running — which defeats the
+whole point of opening it.
 
 ## Updating an existing PR
 
@@ -167,7 +166,7 @@ Do not use language like "also adds", "now includes", "additionally". Describe t
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/<pr_number> -X PATCH \
-  -f title="[WIP] type(scope): description" \
+  -f title="type(scope): description" \
   -f body="$(cat <<'EOF'
 ## Summary
 
@@ -187,7 +186,7 @@ EOF
 
 ### Example 1: Pure refactor (no user-facing change)
 
-Title: `[WIP] refactor(core): rename abbreviated names in the query and mutation hooks`
+Title: `refactor(core): rename abbreviated names in the query and mutation hooks`
 
 ```markdown
 ## Summary
@@ -203,7 +202,7 @@ No user-facing changes. Renames a set of short, cryptic variable names in the qu
 
 ### Example 2: Bug fix (user-facing)
 
-Title: `[WIP] fix(listen): playback position now persists across reloads`
+Title: `fix(listen): playback position now persists across reloads`
 
 ```markdown
 ## Summary
@@ -219,7 +218,7 @@ Fixes where playback resumes in the Listen app. Before, reloading the page dropp
 
 ### Example 3: Feature behind a flag (user-facing)
 
-Title: `[WIP] feat(library): bulk import items from a pasted list`
+Title: `feat(library): bulk import items from a pasted list`
 
 ```markdown
 ## Summary
@@ -237,10 +236,9 @@ Adds a way to paste a list in the Library app and have it split into separate it
 Before opening the PR:
 
 - Diff actually reviewed (`git diff origin/main...HEAD`) and what was reviewed is stated
-- Title has `[WIP]` prefix
 - Title uses conventional commit format with a scope
 - Summary is 1–3 sentences and does not restate the diff
 - PR type decided: user-facing, or starts with `No user-facing changes.`
 - User-facing test steps name the exact page, the exact thing to look at, and plain pass/fail — no file/function names
 - No AI attribution anywhere
-- No task ID in the title
+- PR is linked to its tracker issue — `SWO-NNN` is in the branch name and/or the body (see `task-tracker`)

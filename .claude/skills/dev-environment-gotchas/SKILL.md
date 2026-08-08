@@ -6,49 +6,27 @@ user-invocable: false
 
 # Dev Environment Gotchas
 
-Symptoms in this repo that look like framework bugs but have a known, boring cause. Check here before assuming Vite/Turbo/pnpm is broken.
+Symptoms in this repo that look like framework bugs but have a known, boring cause. Check here before assuming Vite, Turbo, or pnpm is broken.
 
-## `core`/`ui` dev-watch gutting dist
+## A shared package's dev-watch can gut its own build output
 
-`packages/core` and `packages/ui`'s `dev` script is `tsup ... --watch`, while `tsup.config.ts` has `clean: true` and a full `src/**/*.ts` entry glob. Running the dev script directly (or via a stray `turbo watch`) wipes `dist/` and rebuilds **only the root entry**, leaving `dist/providers/…`, `dist/<domain>/query-hooks/…`, etc. missing.
+The shared packages (`core`, `ui`) build in a watch mode that wipes the output and rebuilds **only the root entry**, leaving every subpath export missing. Run that watch build directly — or trip it with a stray `turbo watch` — and an app's dev server then fails to resolve a subpath import from that package. It looks like a Vite resolver bug; it isn't. Rebuild the package and it's fixed.
 
-**Symptom:** an app dev server fails with `Failed to resolve import "core/providers/auth"` (or any `core`/`ui` subpath) — looks like a Vite resolver bug, isn't. Check `find packages/core/dist -name index.mjs | wc -l` (healthy ≈ 58, gutted = 1) and run `pnpm --filter core build` (or `--filter ui`).
+## Some apps serve the shared packages from built output, not source
 
-## Listen dev serves `ui`/`core` from dist, not source
+An app's dev server can resolve the shared packages through their published entry points — their **built output**, with no alias back to source. Editing the package source then does **not** show up through HMR; the browser keeps running the last build. The tell: a new log or behaviour never appears no matter how many times you restart. Rebuild the package's output first, then restart the dev server. Stale build output, not a caching fluke.
 
-`apps/listen`'s vite dev server resolves `ui` and `core` through their package.json `exports`, which point to `./dist/` — there is **no** `resolve.alias` to source in `apps/listen/vite.config.ts`. Editing `packages/ui/src/**` or `packages/core/src/**` does **not** show up via HMR; the browser keeps running the last-built `dist`.
+## Turbo's cache can mask a bundle verification
 
-**To live-verify a `packages/ui`/`packages/core` source change in the listen app:** rebuild the dist first, then restart the dev server —
-```
-pnpm exec turbo run build --filter=ui   # or --filter=listen to chain core→ui→listen
-pkill -f "vite --port 3001"
-rm -rf apps/listen/node_modules/.vite
-cd apps/listen && pnpm exec vite --port 3001 --force
-```
-Tell: a new `console.log`/behavior never appears no matter how many times you restart — that's stale dist, not a caching fluke.
+`turbo build` reporting a cache hit ("FULL TURBO" / "cached") can restore build output from **before** the change you're verifying — so a broken tree looks verified. When you're checking what a dependency or code change actually did to a built bundle, force a real build, confirm the log shows a real compile, then serve that output and drive it headlessly to read the console for runtime errors — a throwaway probe, deleted after use.
 
-## Turbo cache can mask a bundle verification
+## Node and package managers
 
-Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO" / "cached") when verifying what a dependency or code change actually did to a built bundle — turbo restores `dist/` from cache when its input hash matches, which can be a dist built **before** the change under test, making a broken tree look verified.
-
-**How to apply:** for bundle verification, run the app's `vite build` directly (with any env vars that gate conditional providers, e.g. `VITE_PUBLIC_POSTHOG_KEY`) or `turbo build --force`. Confirm the log shows a real build ("✓ built in …"), then serve the dist and drive it headlessly with Playwright to read the console for runtime errors: launch a browser, register `page.on('console'/'pageerror')` handlers, navigate to the served dist, and check what got logged — a throwaway script deleted after use, not a checked-in test.
-
-## Node version and package managers
-
-- The whole monorepo — frontend apps, `apps/backend`, `apps/hasura`, and every package — runs **Node 24.18.0**, exact-pinned. Local: `nvm use 24`. If a non-interactive shell warns `Unsupported engine`, it's likely on the default alias — prefix with `source ~/.nvm/nvm.sh && nvm use 24.18.0`.
-- **Pinning convention:** pin the **exact** version (`24.18.0`) in `.nvmrc`, Dockerfiles (`node:24.18.0-slim`, never the moving `node:24-slim` tag), and CI `actions/setup-node`. Keep `engines.node` as a **range** (`>=24`) — it's a floor, not a pin.
-- **One package manager, one lockfile.** Everything is a single pnpm workspace with one root `pnpm-lock.yaml`. There is no `package-lock.json` and no `npm ci` — reach for `pnpm`, `pnpm --filter <pkg> …`, `pnpm outdated -r` everywhere, including in `apps/backend` and `apps/hasura`. The backend gets `core` as `workspace:*` off the local source, not from npm.
-- **`apps/hasura` is the one package whose name doesn't match its directory** — it's still `sworld-hasura-v2`. `pnpm --filter` on a name that matches nothing exits 0 with "No projects matched", so a filter built from the directory name silently does nothing. Run its scripts from the directory (`cd apps/hasura && pnpm run lint`).
-- **Lint tooling is split, and the root config skips the two backend directories.** `biome.json` at the root excludes `apps/backend` and `apps/hasura`, so a root `pnpm lint` says nothing about either. `apps/backend` has its own `biome.json` and `lint` script; `apps/hasura` uses eslint. Lint those from their own directories.
-- **`apps/game` is a dead/frozen app** — still on Vite 6 (the rest of the frontend is on Vite 8), deliberately excluded from the Node 24 migration, and no longer deployed anywhere. It has no tests at all — unit tests everywhere else in the workspace run on Vitest. Don't assume it's maintained or apply workspace-wide tooling changes to it without checking first.
+The monorepo pins an **exact** Node version everywhere (`.nvmrc`, Dockerfiles, CI) while keeping `engines.node` a floor, not a pin — match the pin locally or installs warn. It's a single pnpm workspace with one lockfile: reach for `pnpm` everywhere, including the backend and the Hasura data layer, never `npm`. Two traps silently no-op a command: one package's name doesn't match its directory, so a `--filter` built from the directory name matches nothing and does nothing (run that package's scripts from its own directory); and lint tooling is split, so a root lint says nothing about the two backend directories — lint those from their own directories. One app is dead and frozen on an old toolchain with no tests — don't apply a workspace-wide tooling change to it without checking first.
 
 ## pnpm's dependency cooldown can freeze dep work for days
 
-`pnpm-workspace.yaml` sets a release cooldown (`minimumReleaseAge`) — pnpm refuses to *resolve* any version published more recently than the window. `supply-chain-security` owns the setting, its value, and why it exists. The gotcha here: frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are.
-
-**The sworld-specific trap:** adding/changing ANY dependency triggers a broad re-resolve. If a recent toolchain bump pulled fresh packages (e.g. a major Vite upgrade), every re-resolve trips the cooldown on them (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`) — one package at a time, since pnpm only reports the next blocked package per run — until they age past 7 days, effectively freezing dependency work for a week after a big bump.
-
-**Fixes, in order:** wait it out; add each vetted, intentionally-upgraded package to `minimumReleaseAgeExclude:` in `pnpm-workspace.yaml`, re-running and repeating until no package trips the cooldown (pnpm surfaces them one at a time — there's no single command that lists them all up front); or a one-off `pnpm install --config.minimumReleaseAge=0` for a genuinely urgent unblock (still drags collateral re-resolve churn). **Never hand-edit `pnpm-lock.yaml`** to dodge this — let the tool own the lockfile.
+A release cooldown makes pnpm refuse to *resolve* any version published inside the window; `supply-chain-security` owns the setting, its value, and why. Frozen installs (CI, `--frozen-lockfile`) are unaffected — only local re-resolves are. The trap: adding *any* dependency triggers a broad re-resolve that can trip the cooldown on recently-bumped packages, one at a time, until they age past the window — effectively freezing dependency work for days after a big toolchain bump. Wait it out, or add each vetted, intentionally-upgraded package to the cooldown's exclude list, re-running until none trips. **Never hand-edit the lockfile** to dodge it — let the tool own it.
 
 ## CodeGraph index lives at the workspace root
 

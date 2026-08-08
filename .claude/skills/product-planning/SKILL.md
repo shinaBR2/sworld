@@ -154,7 +154,7 @@ rock-solid?) and **the non-gating posture**.
 For a small, clear problem you'll skip most of the above — but never skip the critical instinct.
 On *every* request, still ask: what's the best way to do this? What are the alternatives? Is there a
 solution that doesn't require building this at all? Is this a true first-order problem, or a
-second-order symptom of something else? Those four questions from `AGENTS.md` are the floor:
+second-order symptom of something else? These four questions are the floor:
 
 1. Does it make the codebase simpler?
 2. Does it help us ship faster?

@@ -18,7 +18,7 @@ list if they move:
 | Package manager | `pnpm@10.34.3`, `engines.pnpm >= 10.34.3` | root `package.json` |
 | Workspace members | `apps/*`, `packages/*` — the backend and data layer included | `pnpm-workspace.yaml` |
 | Cooldown | `minimumReleaseAge: 10080` (7 days) | `pnpm-workspace.yaml` |
-| Cooldown exclusions | the vite/rolldown build toolchain + `postcss`, each with a written reason | `pnpm-workspace.yaml` |
+| Cooldown exclusions | the vite/rolldown build toolchain + `postcss` — package-wide entries so an intentional bump isn't frozen for a week, each with a written reason; see the file for the current set | `pnpm-workspace.yaml` |
 | Lifecycle scripts | `onlyBuiltDependencies: []` — **nothing** may run install scripts | `pnpm-workspace.yaml` |
 | Security overrides | pinned-forward transitive versions | `pnpm.overrides` in root `package.json` |
 

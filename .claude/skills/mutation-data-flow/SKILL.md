@@ -64,37 +64,14 @@ The hook just forwards the payload to Hasura. It knows nothing about the payload
 - **Forms derive from X, not from the API.** A form component receives a slice of X (via a transformer like `toBookEditData`), never the raw API response.
 - **One builder per action.** Don't make a generic "buildPayload" that handles add, duplicate, and edit — each action has different semantics.
 
-## Example: Duplicate Book
+## In practice
 
-```ts
-// 1. X = BookView (from transformer)
-// 2. Builder picks what it needs from X, shapes Hasura input
-const object = buildDuplicateBookInput(sourceBook, shelfId, sortOrder);
+The generic mutation hook (in the shared core package) is payload-agnostic: it takes a typed Hasura input and forwards it, never inspecting or shaping a field. It still owns the shared mutation lifecycle — optimistic update, rollback, query invalidation (see layer 4). The domain logic — what to copy, reset, or default — lives in the payload builder that produces that input, colocated with the component.
 
-// 3. Hook just forwards it
-createItem({
-  collection: 'library',
-  shelfId,
-  object,
-});
-```
+- A **duplicate** action calls its own builder to shape the input from the source view type, then hands the result to the hook.
+- A **trivial add** can build the input inline at the call site.
 
-## Example: Add Book (inline)
-
-```ts
-// Builder is inline because the payload is trivial
-createItem({
-  collection: 'library',
-  shelfId,
-  object: {
-    shelfId,
-    title: '',
-    author: '',
-    status: 'unread',
-    sortOrder: shelf.books.length,
-  },
-});
-```
+Either way the hook never looks inside the payload; the builder (or the inline object) owns every field decision, and the hook just pipes it to Hasura.
 
 ## Anti-patterns
 

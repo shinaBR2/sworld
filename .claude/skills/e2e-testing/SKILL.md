@@ -1,86 +1,39 @@
 ---
 name: e2e-testing
-description: Enforces Playwright E2E conventions — canonical locators, semantic selectors, cross-page input→navigate→consume flow, exact assertions, dynamic mocks — and how to debug a runtime-only browser error by driving a headless Playwright probe. Auto-triggers when writing or editing any *.spec.ts file under e2e/ or its helpers/mocks, or when reaching for Playwright to read the browser console for a bug with no build/lint signal.
+description: The rules for this repo's Playwright e2e tests — locate by accessibility only, mock the server and test the frontend's behaviour against known data, and run headless like CI. Auto-triggers when writing or editing any spec or support file under an app's e2e/ directory.
 user-invocable: false
 ---
 
-# E2E Testing Conventions
+# E2E Testing
 
-Playwright E2E specs live under an app's `e2e/` directory (e.g. `apps/main/e2e/`). They cover **user journeys that interact with APIs** (fully mocked via `page.route()`): routing, auth, cross-component flows. Keep them lean — critical paths only. Component-level regression (form validation, edge cases, error states) belongs in **Storybook play functions**, not E2E (E2E has an ~8min CI timeout and is slower).
+Each app keeps its own E2E suite, run on Playwright. They exist to prove one thing: **the built frontend behaves correctly for a user** — the right page renders, a route change works, a click updates what's on screen. Keep them lean and smoke-level; detailed component states belong in Storybook, which is faster and closer to the component.
 
-## 1. Locators — import from `e2e/locators/`, never hand-roll
+Three rules hold for every spec.
 
-The canonical locator source is the app's **`e2e/locators/`** directory. Import the finder that matches the element's **role/semantics**. Do NOT write locators inline in specs.
+## 1. Locate by accessibility, nothing else
 
-| Module | Function | Use for | Strategy |
-|---|---|---|---|
-| `sections.ts` | `findSectionByRegion(page, title)` | section / panel cards | `getByRole('region', { name })` |
-| | `findSectionByTestId(page, testId)` | sections without a semantic handle (documented exception) | `getByTestId` |
-| `tabs.ts` | `findCategoryTab(section, name)` | category/chip tabs | `getByRole('tab', { name, exact: true })` |
-| | `findItemTab(page, name)` | top-level nav tabs | `getByRole('tab', { name })` |
-| | `getActiveTab(section)` | selected tab text | `getByRole('tab', { selected: true })` |
-| `lineItems.ts` | `findLineItemInputRow(container, name)` | **editable** list/row inputs | `getByRole('group', { name, exact: true })` |
-| `totals.ts` | `findTotalRow(section, label='Total')` | total/subtotal footer | `getByLabel(label, { exact: true })` |
-| `cardRows.ts` | `findCardRow(container, name)` | **read-only** metric display rows | `[aria-label="name"]` |
-| `tableRows.ts` | `findTableRow(container, name)` | report table rows | `getByRole('row', { name, exact: true })` |
+Query only what the user can perceive: `getByRole`, `getByLabel`, `getByText`. Never a CSS class, `data-testid`, xpath, or DOM traversal — those bind the test to implementation detail and break on any refactor that doesn't change behaviour.
 
-**The locator is chosen by the element's role, not by DOM convenience** — an editable input row is a `group`, a read-only display row is a `cardRow`, a table row is a `row`. Each lives in its own module so the call site communicates intent.
+If an element has no accessible handle, **fix the component** — prefer a native semantic element (a real button, link, or heading), which brings a role and keyboard behaviour for free; add an `aria-label` or `role` only when native semantics can't express it. Then select it. The test drives real accessibility into the app; slapping a `role` on a generic `div` just to satisfy the locator is working around a missing handle, not fixing it.
 
-**DEPRECATED — do not copy:** any locator-finding functions inside `e2e/scenarios/*/shared/helpers.ts` that use CSS-structure selectors (`div:has(> button[aria-label=...])`), `input[value="..."]`, xpath ancestor walks, and `data-testid` fallbacks. When you touch one of these, migrate it to an `e2e/locators/` finder — never replicate the pattern in a new spec.
+Assert exact values (`{ exact: true }`, `toHaveText`, `toHaveValue`). `code-conventions` owns the exact-vs-fuzzy matcher rule and it applies here unchanged.
 
-## 2. Semantic selectors only
+## 2. Mock the server; test the frontend, not the data
 
-- Query by what the **user perceives**: `getByRole`, `getByLabel`, `getByText`. Never `data-testid` or CSS class selectors (`.MuiStack-root`, `.recharts-*`, `div:has(> ...)`).
-- If a target lacks a semantic handle, **fix the component** — add an `aria-label` (or `role`) to the component, then select it. Never work around it in the test with `data-testid`, `.locator('..')`, or DOM traversal. Tests drive a11y adoption, they don't cement bad patterns.
-- Calculated/derived display values get `role="status"` + `aria-label` so they're both announceable and reliably targetable: `getByRole('status', { name: 'Total duration' })`.
-- MUI Selects already expose `aria-label` (e.g. `Status`, `Category`) — use those.
+The server is always mocked — a seeded fake auth session plus `page.route()` intercepts that answer the app's queries with fixed data. The test then asserts the frontend does the right thing **given known-correct data**.
 
-## 3. Exact assertions, always
+Whether the real server returns correct data is the backend's problem, not an e2e test's. Never point a spec at a live backend: it makes the test slow, flaky, and about the wrong layer. If a write must change what a later read returns, make the mock stateful (update its state on the mutation) so the refetch sees the new value — a static mock will fight optimistic updates.
 
-- Pass `{ exact: true }` to `getByText` / `getByLabel` name & presence checks **from the first draft**. Bare `getByText('Chapter One')` substring-matches and collides with accessible-name text like an svg `titleAccess="Chapter One bookmark"` → strict-mode violation. Treat bare `getByText('Name')` as a smell.
-- Assert **exact values** — `code-conventions` owns the exact-vs-fuzzy matcher rule; it applies here unchanged, with Playwright's own exact matchers (`toHaveValue`, `toHaveAttribute`).
-- In metric cards, assert **both the label and the value** — don't use the label only as a container anchor.
-- Reuse the app's real formatters (`formatDate`, `formatNumber`, etc.) and named seed constants for expected values — no magic strings.
+## 3. Headless, the way CI runs
 
-## 4. Cross-page = input → navigate → consume
+Run headless by default — CI runs headless, so that's the environment that has to pass. A headed browser is only ever a debugging convenience, never the target. Don't run two e2e builds at once on the same machine: the preview server binds a fixed port and parallel runs collide.
 
-A cross-page spec must **follow the doc's steps literally**: navigate to each input tab, verify the seeded/entered data renders there, *then* navigate to the consuming tab and assert the derived values. A spec that skips the input tabs and only asserts on the final view is a display test, not a cross-page test — it doesn't prove the pipeline.
+## How a spec is wired
 
-- **Container-first scoping:** find the container (`findSectionByRegion`, a `tabpanel`, etc.) first, then locate inside it. Never bare page-level `page.getByText(...)`.
-- Cover **100% of inputs** that affect a calculated output — every input field that changes the result needs a case.
-- Reference pattern: look at an existing cross-page journey under `e2e/scenarios/cross-page/`.
+The build under test is a real production bundle built with fixed mock `VITE_*` values and served locally by the Playwright config — no deployed environment, no real backend:
 
-## 5. Mocks — dynamic, no response-waiting
+- **Auth is seeded, not performed.** A well-formed fake Auth0 session is written into `localStorage` before any app script runs, so the app boots signed-in with no Auth0 network call.
+- **The API is intercepted.** `page.route()` on the Hasura endpoint answers each query with deterministic data — a fixed fixture for a read-only spec, or, where a write must be reflected, data drawn from the mock's own state (rule 2) so the refetch sees the new value; external hosts (auth, error tracking) are aborted so a stray request can't flake the run.
+- **Keep the mock constants in step with the e2e build's `VITE_*` values** — the fake session only works if its audience and client id match what the build baked in.
 
-- Use **dynamic/stateful mocks** that mutate their state when a mutation fires (e.g. `setStatus('read')`), so query refetches return the new data — just like the real server. Static mocks overwrite optimistic updates with stale data and cause races.
-- **Don't `waitForResponse`** for optimistic-rendering assertions — the point is the UI updates without the round-trip. Assert on the resulting UI state instead.
-- Read the actual constants file for exact enum values — never guess.
-
-## 6. Structure & helpers
-
-- One folder per journey: `<feature>/<journey>/{journey.spec.ts, mocks.ts, helpers.ts}`. Domain seeds in `shared/`, constants in `e2e/constants/`.
-- Generic cross-domain helpers (tab switching, totals) live in `e2e/helpers/common.ts`.
-
-## 7. Running & CI
-
-- Build then run against the preview server: `pnpm build --force` then `CI=1 npx playwright test`. The dev server on port 3000 may serve a different worktree's code.
-- Run `npx prettier --write` on every touched file before pushing — the CI quality gate fails on unformatted code.
-- **Never run multiple E2E builds/tests in parallel** — all preview servers share port 4173, so parallel runs conflict and flake. When fixing several E2E PRs, agents only *write*; build/test sequentially, one worktree at a time.
-- **Don't auto-rerun a flaky E2E failure** when it cancelled at an infra/setup step (`Install Playwright OS dependencies`, runner allocation, network) and the PR doesn't touch test code — that's noise, not a real failure.
-
-## 8. Debugging a runtime-only browser error
-
-When a bug only shows in the browser console (not in any build/lint log) and the Claude Chrome extension isn't connected, drive Playwright headlessly to read the console yourself instead of guessing — it's already a dep. Pattern (a throwaway `probe.mjs` inside the app dir so `@playwright/test` resolves; `pnpm exec playwright install chromium` first):
-
-```js
-import { chromium } from '@playwright/test';
-const b = await chromium.launch(); const p = await b.newPage();
-const errs = [];
-p.on('pageerror', e => errs.push(e.message));
-p.on('console', m => { if (m.type()==='error') errs.push(m.text()); });
-await p.goto('http://localhost:3001/', { waitUntil: 'load', timeout: 30000 });
-await p.waitForTimeout(4000); await b.close();
-console.log('MATCH=', errs.filter(e => /createTheme/i.test(e)).length, 'TOTAL=', errs.length);
-```
-
-**Always reproduce the baseline first** — run the probe against the broken state and confirm it detects the error — before trusting a "0 errors" result on a fix. Delete the probe file before committing. This technique is often used to confirm dist/HMR-staleness bugs, where a change silently doesn't take effect in the running dev server.
+Run the suite through the app's own e2e script, which builds and serves the mock bundle itself. Don't point it at a hand-started dev server — that isn't the mock build the specs depend on.
