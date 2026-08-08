@@ -1,56 +1,45 @@
 # AGENTS.md
 
-Always-on context for AI agents working in **sworld** — a personal Turborepo + pnpm monorepo holding the whole product (web apps, shared packages, backend, data layer). This file holds only what never changes: the scope, the gates, and the mindset. Everything tool-, command-, or architecture-specific lives in `.claude/skills/` (auto-triggered by task) or is derivable from the code — this file points at it rather than restating it, so there is one source of truth to keep current.
+How we work here — the mindset, the principles, the rules. This file holds only
+what never changes. Anything about tools, commands, or architecture lives in the
+skills under `.claude/skills/` (they load themselves when a task needs them), or
+is obvious from the code.
 
-## Scope: this monorepo is the whole project
+You own the code you ship. Be confident, be accountable, and be precise about
+what you're doing and why. Everything below serves one thing: the most confidence
+we can have in the product.
 
-**All project work — every file you author, edit, or ship — lives under this monorepo and nowhere else.** Always launch Claude Code from the monorepo root; there are no sibling repos to reach into.
+## Never — no exceptions
 
-The one sanctioned location outside the monorepo is your global `~/.claude/` — where the tool keeps its own per-user state (memory, session transcripts, global settings). That is not project storage: it is personal and secret-adjacent, this repo is **public**, and the path is harness-owned, so it stays out by design. Never treat any directory above the monorepo as a project directory.
-
-## Hard gate: plan before code — always
-
-**You must NOT write a single line of code, propose implementation solutions, or suggest specific APIs/libraries until these steps are done:**
-
-1. Load the `product-planning` skill and work through the concept with the user — interrogate motivation, constraints, and edge cases until shared understanding is reached
-2. Create tracker subtask(s) via `writing-task-specs`
-3. Get explicit user approval on the plan
-
-Only after step 3 is complete may you write code. No proto, no scaffold, no "here's a quick implementation" — the plan comes first, always.
-
-## Mandatory gates — never skip either loop
-
-Two loops gate every change; neither is optional. Each is a skill that owns its own steps — this is the always-on reminder that they exist and are mandatory, not a restatement of them.
-
-- **Loop A — Self-review, before creating a PR.** Never skip it. Owned by `parallel-workflow`.
-- **Loop B — CI, after creating a PR and before merging.** Run the `ci-loop` skill and drive the PR to settled; never merge unless the user explicitly authorized it for that PR. Owned by `ci-loop`.
+- **Never start coding before you understand the problem and have a plan.** Know
+  *why* it's needed and what problem it solves, cold, before a single line.
+- **Never use jargon.**
+- **Never assume.** Verify first. Work from evidence, never a guess.
+- **Never merge without a green build and my explicit go-ahead.**
 
 ## How we work
 
-You are part of this project and you own the code you ship. Be confident, be accountable, and be precise about what you're doing and why. The aim of everything below is one thing — the most confidence we can have in the product.
-
-**First principles before code.** Don't write a line until the concept is genuinely clear. If the idea, the edge cases, or the downstream impact aren't thought through, that's a stop signal — not something to figure out as you go. Question assumptions, surface what's unclear, and stress-test the design before committing to it.
-
-**Plan deeply, then ship fast.** Speed comes from the quality of the planning, not from cutting corners. Invest the time up front — think, iterate, pressure-test — then break the work into tracker issues and micro-PRs (see the `writing-task-specs`, `micro-prs`, and `parallel-workflow` skills). Deep planning is what makes fast, direct-to-main work safe.
-
-**Default to less.** Before adding, ask whether you can delete or extend instead, and whether the platform already solves it — can an existing pattern, package, or tool do this for us? No cleverness for its own sake, no abstractions until there are 3+ real uses, no new dependencies without justification. Boring and proven beats clever; the most maintainable solution wins.
-
-Every change should answer four questions:
-
-1. Does it make the codebase simpler?
-2. Does it help us ship faster?
-3. Does it improve the user experience?
-4. Can we delete code instead of adding it?
-
-## Where knowledge lives
-
-This file deliberately holds no app catalogue, tech-stack list, command reference, or directory map — those drift, and each already has a home (the intro above already points how-to-code conventions at `.claude/skills/`). Reach for the rest there:
-
-- **Commands, scripts, tooling** — `package.json` (root and per-package) and the Turborepo pipeline. Local-dev traps live in `dev-environment-gotchas`.
-- **Architecture & where code belongs** — `frontend-ui-architecture`, `backend-architecture`, `hasura-architecture`.
-- **Tasks & requirements** — the source of truth for work is the **task tracker**, and a **project is an app**: every issue belongs to one. `task-tracker` owns which tracker it is and every command; `writing-task-specs` owns how to author specs; `parallel-workflow` owns how an issue's state moves as work ships.
-- **Ops & auth** — media/prod-data operations in `backend-ops`; the `gh` / `GH_TOKEN` bootstrap and the whole git/worktree/PR flow in `parallel-workflow`.
+- **Simplicity is the rule of thumb.** The simplest thing that works wins.
+- **Speak plainly — no jargon, ever.** Being easy to understand is the most
+  important thing in any communication. Explain from the end user's point of view
+  first, then the technical side, and always so the newest developer can follow.
+- **Start at the high level.** Foundations and fundamentals come before
+  implementation detail, always.
+- **Default to less.** Before adding anything, ask whether removing or reusing
+  makes life simpler. Whatever makes life simpler wins.
+- **Plan carefully, then build fast.** Most of the work is understanding the code,
+  the problem, and the plan — roughly 80%; the writing itself is 20% or less. A
+  good plan is what makes the build fast and safe.
+- **Avoid drift.** Every fact has exactly one home. Prefer a skill over memory,
+  one source over a copy. Never restate what another place already owns — a copy
+  always drifts.
+- **Review your own work before you ship it.**
+- **Don't ask obvious questions.** If I'd say yes 100% of the time, just do it. If
+  my "no" would change nothing, there's no point asking. When you *should* ask is
+  a short list — read `.claude/references/when-to-ask.md` before deciding to.
 
 ## Compact instructions
 
-When compacting, preserve: the current task/goal, decisions already made, the files touched and pending edits, and any commands still to run. Drop verbose tool output (full file dumps, large command logs, codegraph listings) — keep only the conclusions drawn from them.
+When compacting, preserve: the current task/goal, decisions already made, the
+files touched and pending edits, and any commands still to run. Drop verbose tool
+output — keep only the conclusions drawn from it.
