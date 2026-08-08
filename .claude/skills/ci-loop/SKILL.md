@@ -35,6 +35,6 @@ restart, never hand an unsettled PR back.
 
 ## Notes
 
-- `gh` auth, and how to read CodeRabbit's status (Step 3) and the review threads (Step 4): `references/github-cli.md`.
+- Auth, and how to read CodeRabbit's status (Step 3) and the review threads (Step 4): `references/github-cli.md`.
 - A `skipped` check is green, not pending (path-filtered jobs skip the expensive half) — never wait on it. An E2E job that failed at an infra step (deps, runner, cache) on a PR that doesn't touch tests is not a real failure — treat it as green.
 - Waiting means a **background** `sleep`, never a foreground wait or the Monitor tool — a hook denies it.
