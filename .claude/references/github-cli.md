@@ -32,7 +32,7 @@ named. The query shape is what's worth keeping verbatim — fill in the repo
 gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(number:NUMBER) { reviewThreads(first:100) { nodes { isResolved comments(first:1) { nodes { body path line } } } } } } }'
 ```
 
-Filter to `isResolved: false`.
+Filter to `isResolved: false`. (`first:100` covers any real PR; only paginate with `after`/`endCursor` if one ever exceeds it.)
 
 ## Updating a PR title/body — never `gh pr edit`
 

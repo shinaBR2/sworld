@@ -55,6 +55,7 @@ Backlog → Todo → In Progress → In Review → Done
 - **In Progress** — actively being worked (set before starting).
 - **In Review** — a PR is open for it.
 - **Done** — merged and cleaned up.
+- **Canceled / Duplicate** — the other way an issue can end. Terminal, like `Done`: never reopen one or force it back onto the lifecycle.
 
 Only *issues* move through this lifecycle; a *project* (an app) never does. `parallel-workflow`
 owns *when* each transition happens as work ships — this skill owns the vocabulary and the fact that

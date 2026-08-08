@@ -131,7 +131,7 @@ Versioning and changelog entries are driven by changesets. Add a changeset with 
 
 You usually have full context from working on the task. Even so, **review the actual diff before opening the PR** — context drifts, and the description must match what's really on the branch.
 
-1. **Read the diff between the branch and `main`.** Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
+1. **Read the diff between the branch and `origin/main`** (fetch it first — local `main` is chronically stale). Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
 2. **Decide the PR type** — user-facing, or no-user-facing-change (refactor / tech-debt). This drives the whole body.
 3. Confirm the title — conventional commit format with a scope.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
@@ -203,7 +203,7 @@ Adds a way to paste a list in the Library app and have it split into separate it
 
 Before opening the PR:
 
-- Diff between the branch and `main` actually reviewed, and what was reviewed is stated
+- Diff between the branch and `origin/main` actually reviewed, and what was reviewed is stated
 - Title uses conventional commit format with a scope
 - Summary is 1–3 sentences and does not restate the diff
 - PR type decided: user-facing, or starts with `No user-facing changes.`
