@@ -91,7 +91,7 @@ The sharpest real dependencies run **between layers**, where nothing type-checks
 - A frontend query on a new table or column is blocked by the `apps/hasura` migration that adds it.
 - A frontend call to a new Action is blocked by the `apps/backend` handler behind it.
 
-Merging is deploying (see `references/deployment-model.md`), so these edges are also a **live ordering constraint in production**, not just a build-order preference. Land the data layer first and let it deploy.
+Because a merge deploys, these edges are also a **live ordering constraint in production**, not just a build-order preference. Land the data layer first and let it deploy.
 
 ## Where the answer goes
 
