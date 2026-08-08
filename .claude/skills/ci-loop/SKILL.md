@@ -41,6 +41,11 @@ every PR runs through this same loop. The `gh` calls below name that repo explic
 on the current directory's remote. Which checks actually run on a given PR is whatever the repo's
 workflows decide; read `gh pr checks` rather than assuming a layer is covered.
 
+The `gh` invocations in the steps below are spelled out **for the gotcha attached to each**, not as
+frozen syntax — *why* review threads need the GraphQL API (REST can't report resolved status), why
+`--watch` is banned, the `gh pr merge --auto` trap. Those gotchas are the load-bearing content; the
+plain flags are stable gh core you can reconfirm any time with `gh <command> --help`.
+
 ## Step 1: Check merge status
 
 - Run `gh pr view <number> --repo ShinaBR2/sworld --json state` as the **ONLY** command. Do NOT batch it with anything else.

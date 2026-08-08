@@ -68,8 +68,8 @@ Backlog → Todo → In Progress → In Review → Done
 - **Done** — merged and cleaned up.
 
 Only *issues* move through this lifecycle; a *project* (an app) never does. `parallel-workflow`
-owns *when* each transition happens as work ships — this skill owns the vocabulary and the command
-that performs a transition (`linear issue update SWO-NNN -s "<state>"`).
+owns *when* each transition happens as work ships — this skill owns the vocabulary and the fact that
+a transition is a `linear issue` update to the target state (discover the exact flag via `--help`).
 
 ### Status changes: three moments, and what each needs today
 
@@ -78,57 +78,56 @@ An issue's status only ever changes at **three moments** in the work — *start 
 the moment and defer here. What each moment does in our current GitHub↔Linear setup:
 
 1. **You start working on something** → set the issue to `In Progress`, **by hand** — the integration
-   doesn't cover this one: `linear issue update SWO-NNN -s "In Progress"`. This is the **only** status
-   change you ever make yourself.
+   doesn't cover this one (a `linear issue` state update; flags via `--help`). This is the **only**
+   status change you ever make yourself.
 2. **It's ready for review** → opening the PR auto-moves the issue to `In Review` (the integration,
    keyed off the `SWO-NNN` in the branch / PR body — see *The GitHub link* below). Nothing to do.
-3. **It's done** → merging auto-moves the issue to `Done`, and a parent auto-closes once its last
-   child is `Done`. Nothing to do.
+3. **It's done** → merging auto-moves the issue to `Done` **only when the PR uses a closing keyword**
+   (`Fixes`/`Closes SWO-NNN`); a bare `Refs SWO-NNN` links and reviews but does *not* close on merge
+   (see *The GitHub link*). A parent auto-closes once its last child is `Done`. Verify the final state
+   after the last merge rather than assuming it.
 
 So in practice you touch status exactly once — at the start; moments 2 and 3 happen on their own.
 
 ## Command mechanics
 
-The CLI resolves `--state`, `--project`, and `--label` **by name** (e.g. `-s "In Progress"`,
-`--project "Main"`) to the workspace's IDs — you never pass raw UUIDs. Pass markdown bodies with
-`--description-file` (issues) / `--content-file` or `-f` (documents) rather than inline strings,
-and add `--no-interactive` when creating issues so it never prompts.
+Drive the CLI by *intent* and discover the exact current flags at runtime — `linear --help`, then
+`linear <noun> [<verb>] --help` (e.g. `linear issue create --help`). Don't rely on a flag list frozen
+here: this is a third-party CLI, and a version bump renaming or reshaping a flag would leave a stale
+command that silently does the wrong thing. What *is* stable and worth knowing up front — the
+gotchas, not the syntax:
 
-### Issues
+- **Everything resolves by name, not UUID.** Pass a state, project, or label by its name
+  (`"In Progress"`, `"Main"`) and the CLI maps it to the workspace ID for you.
+- **Pass markdown bodies as a file, never inline.** Issue descriptions, comments, and document
+  contents each take a file flag; an inline string mangles multi-line markdown.
+- **Create issues non-interactively.** There's a flag to suppress prompts — without it a create can
+  hang in a non-interactive shell.
+- **The CLI reads the issue id from the git branch name**, so most issue commands need no explicit id
+  inside a correctly-named worktree.
 
-| Intent | Command |
+### What you can do, and where it maps
+
+| Intent | Where |
 |---|---|
-| Create | `linear issue create --team SWO --project "<app>" -s "<state>" [--estimate N] [-l <label>] [--parent SWO-NNN] -t "<title>" --description-file <file.md> --no-interactive` |
-| Read | `linear issue view SWO-NNN` |
-| Update (e.g. state) | `linear issue update SWO-NNN -s "<state>"` |
-| Comment | `linear issue comment add SWO-NNN --body-file <file.md>` |
-
-### Relations (dependencies / waves)
-
-- Add a dependency: `linear issue relation add SWO-<child> blocked-by SWO-<dep>`
-- Remove one: `linear issue relation delete SWO-<child> blocked-by SWO-<dep>`
-- List an issue's relations: `linear issue relation list SWO-NNN`
-
-`blocked-by` is the dependency edge; a set of them is what encodes waves. `dependency-analysis` owns
-*when* a blocker is earned (the real-vs-fake test); this skill owns the command that records it.
-
-### Projects & documents
-
-- Create a project (new app surface only): `linear project create`
-- Create a document (a heavy concept spec): `linear document create --project "<app>" -t "<title>" -f <doc.md>`
+| Create / read / update / comment on an **issue** | `linear issue …` — set team `SWO`, the app `project`, a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`) |
+| Record a **dependency** — the `blocked-by` edge that encodes waves | `linear issue relation …` (add / remove / list). `dependency-analysis` owns *when* a blocker is earned (the real-vs-fake test); this skill owns only that the edge is a `blocked-by` relation |
+| Create a **project** (new app surface only) | `linear project …` |
+| Create a **document** (a heavy concept spec) | `linear document …` — attached to the app's project |
 
 ### The field mapping
 
-What an in-repo tracker would keep in a file's frontmatter, Linear keeps as native fields:
+What an in-repo tracker would keep in a file's frontmatter, Linear keeps as native fields, all set
+through `linear issue`:
 
-| Frontmatter concept | Linear field (via `linear issue create` / `update`) |
+| Frontmatter concept | Linear field |
 |---|---|
-| `status:` | `-s/--state` — a state from the lifecycle above |
-| `estimate:` | `--estimate` |
-| which app | `--project` |
-| `parent:` (which feature) | `--parent SWO-NNN` |
-| `blocked-by:` | `linear issue relation add SWO-child blocked-by SWO-dep` |
-| bug / user-story tagging | `-l/--label` (repeatable) |
+| `status:` | the issue **state** (from the lifecycle above) |
+| `estimate:` | the issue **estimate** |
+| which app | the **project** |
+| `parent:` (which feature) | the **parent** issue (`SWO-NNN`) |
+| `blocked-by:` | a **`blocked-by` relation** between issues |
+| bug / user-story tagging | one or more **labels** |
 
 ## The GitHub link
 
@@ -137,8 +136,13 @@ name: a kebab-case slug **prefixed with the identifier**, e.g. `swo-123-sticky-p
 name you pass `EnterWorktree`. Claude Code creates the branch from that name with a `worktree-`
 prefix (`worktree-swo-123-sticky-progress-bar`); the embedded `SWO-NNN` is what lets the
 GitHub↔Linear integration auto-link the PR to the issue — and, once linked, fire the automatic
-status transitions above (PR opened → `In Review`, merged → `Done`). The identifier is matched
-*anywhere* in the branch name (not anchored to the start), so the `worktree-` prefix breaks
-neither the Linear link nor the repo's local branch-ticket parser. Referencing `SWO-NNN` in the
-PR description links it too. Consumers (`parallel-workflow`, `pr-descriptions`, …) just follow this
-convention and point here; they carry none of these specifics.
+status transitions above (PR opened → `In Review`). The identifier is matched *anywhere* in the
+branch name (not anchored to the start), so the `worktree-` prefix breaks neither the Linear link
+nor the repo's local branch-ticket parser. Referencing `SWO-NNN` in the PR description links it too.
+
+**Linking and closing are different, though.** A link (branch name, or a bare `Refs SWO-NNN` in the
+body) is enough to move the issue to `In Review` on open — but the merged → `Done` transition fires
+only for a **closing keyword** (`Fixes`/`Closes SWO-NNN`). A PR that merely *references* the issue
+leaves it in `In Review` after merge, so confirm the final state rather than assuming the merge
+closed it. Consumers (`parallel-workflow`, `pr-descriptions`, …) just follow this convention and
+point here; they carry none of these specifics.

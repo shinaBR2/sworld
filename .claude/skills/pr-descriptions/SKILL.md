@@ -138,21 +138,7 @@ You usually have full context from working on the task. Even so, **review the ac
 3. Confirm the title — `[WIP]` prefix, conventional commit format, no task ID.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
-6. Open the PR with `gh pr create`.
-
-```bash
-gh pr create --title "[WIP] type(scope): description" --body "$(cat <<'EOF'
-## Summary
-
-...
-
-## Test plan
-
-- [ ] ...
-- [ ] CI green
-EOF
-)"
-```
+6. Open the PR with `gh pr create` (confirm its exact flags via `gh pr create --help`). Pass the multi-line body through a heredoc — `--body "$(cat <<'EOF' … EOF)"` — so the markdown survives instead of being flattened; that idiom is the one detail worth remembering, the flags themselves are stable gh core.
 
 Never `--draft`. Work-in-progress is signalled by the `[WIP]` title prefix, so a
 GitHub draft PR would be a second, competing signal for the same thing.
@@ -163,25 +149,7 @@ When updating an existing PR, rewrite the title and Summary to reflect the curre
 
 Do not use language like "also adds", "now includes", "additionally". Describe the whole PR as it stands.
 
-**Do not use `gh pr edit` for the title or body — it does not reliably update them.** It hits a deprecated Projects (classic) GraphQL field and, depending on the `gh` version, either errors/aborts or leaves the title/body unchanged. Use the REST API instead:
-
-```bash
-gh api repos/{owner}/{repo}/pulls/<pr_number> -X PATCH \
-  -f title="[WIP] type(scope): description" \
-  -f body="$(cat <<'EOF'
-## Summary
-
-...
-
-## Test plan
-
-- [ ] ...
-- [ ] CI green
-EOF
-)"
-```
-
-`{owner}/{repo}` is filled in automatically by `gh` from the current repo. `<pr_number>` is the literal PR number (e.g. `3036`). After running it, re-read the PR (`gh pr view <pr_number> --json title,body`) to confirm the update actually landed.
+**Do not use `gh pr edit` for the title or body — it does not reliably update them.** It hits a deprecated Projects (classic) GraphQL field and, depending on the `gh` version, either errors/aborts or leaves the title/body unchanged. Update through the **REST API PATCH** on the PR instead — `gh api repos/{owner}/{repo}/pulls/<n> -X PATCH` with `title` / `body` fields, passing the body via the same heredoc idiom (exact flags via `gh api --help`; `{owner}/{repo}` is auto-filled from the current repo). This gotcha, not the syntax, is the point. After running it, **re-read the PR to confirm the update actually landed** — `gh pr edit` failing silently is exactly why.
 
 ## Worked examples
 

@@ -50,11 +50,11 @@ Don't trust `pnpm exec turbo build` output that reports a cache hit ("FULL TURBO
 
 **Fixes, in order:** wait it out; add each vetted, intentionally-upgraded package to `minimumReleaseAgeExclude:` in `pnpm-workspace.yaml`, re-running and repeating until no package trips the cooldown (pnpm surfaces them one at a time — there's no single command that lists them all up front); or a one-off `pnpm install --config.minimumReleaseAge=0` for a genuinely urgent unblock (still drags collateral re-resolve churn). **Never hand-edit `pnpm-lock.yaml`** to dodge this — let the tool own the lockfile.
 
-## CodeGraph index lives at the workspace root
+## CodeGraph index lives at the monorepo root
 
-The CodeGraph index (`.codegraph/`) is initialized at the **workspace root** — the directory *containing* the `sworld` checkout, not inside it — so one graph covers everything under it. The workspace root isn't a git repo, so the index is machine-local; if `codegraph_*` tools ever report "not initialized," re-run `codegraph init -i` there. Reach for `codegraph_*` first for structural questions (definitions, callers, impact) — grep only for literal text.
+The CodeGraph index (`.codegraph/`) is initialized at the **monorepo root** — the `sworld` checkout itself — so one graph covers the whole product (frontend apps, `apps/backend`, `apps/hasura`, and every package). It's machine-local; if `codegraph_*` tools ever report "not initialized," re-initialize it there (discover the exact init command from the tool's own help). Reach for `codegraph_*` first for structural questions (definitions, callers, impact) — grep only for literal text.
 
-**Read the path on every hit before trusting it.** The index spans sibling checkouts and every `.claude/worktrees/` worktree, so one symbol commonly returns many identical-looking results. Since the backend and data layer moved into the monorepo, the pre-move `sworld-backend` / `sworld-hasura-v2` checkouts still exist on disk and are still indexed — so a backend symbol returns hits under both `sworld/apps/backend/…` and the old `sworld-backend/…`, and only the first is live code. Take the `sworld/apps/…` hit (or the one inside the worktree you're working in); an edit made against an old path silently changes nothing.
+**Read the path on every hit before trusting it.** The index also spans every `.claude/worktrees/` worktree, so one symbol commonly returns many identical-looking results across worktrees. Take the hit inside the worktree you're working in; an edit made against another worktree's copy silently changes nothing.
 
 ## Don't defer error tracking for bundle size
 
