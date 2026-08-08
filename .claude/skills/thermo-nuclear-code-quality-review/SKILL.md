@@ -25,8 +25,10 @@ fixes; the stranger judges.
    cloud review you can't launch. It covers correctness **and** deep
    simplification/structure in one zero-context pass, so entering thermo directly
    still gets correctness checked. Run it from Bash and read its JSON findings from
-   stdout. **Do not invoke the `self-review` skill from here** — it points back at
-   this band, so invoking it would loop; just run this command.
+   stdout. **Do not invoke the `self-review` skill from here** — this band runs its
+   own cold-eyes pass, so there's nothing to gain, and the two skills deliberately
+   never invoke each other (that's what keeps either from looping into the other);
+   just run this command.
 
 2. **Fix what it surfaces in this context-rich session**, holding the
    maintainability bar below as the standard — how hard to push on structure, which

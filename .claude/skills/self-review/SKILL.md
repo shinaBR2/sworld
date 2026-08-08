@@ -39,10 +39,11 @@ claude -p "/code-review high origin/main...HEAD" --dangerously-skip-permissions
 
 Why each part:
 
-- **`claude -p`** starts a new session with no memory of this conversation. It
-  sees only the code and the branch's changes since it forked from `origin/main`.
-  That cold read is the entire value — it reviews like a teammate who wasn't in the
-  room.
+- **`claude -p`** starts a new session with no memory of this conversation. The
+  isolation is *contextual*, not filesystem-scoped: it can read the whole tree for
+  context, like any reviewer, but it carries none of *our* rationalisations about
+  why each line exists. That cold read is the entire value — it reviews the diff
+  like a teammate who wasn't in the room.
 - **`/code-review high`** is the built-in reviewer at high effort: broad coverage
   of correctness bugs plus reuse/simplification/efficiency cleanups. It already
   reads this repo's `AGENTS.md`/`CLAUDE.md`, so it reviews with our conventions in
@@ -60,14 +61,19 @@ Why each part:
   deadlocking on a prompt it can't answer. Never pass `--fix` to the reviewer.
 
 Run it from Bash; its findings print to stdout as a JSON array (empty `[]` when
-clean) — read them there. Each finding carries a `category` — `correctness`,
-`simplification`, `efficiency`, `test-coverage`, and so on. That category is how
-the loop decides what blocks.
+clean) — read them there. Each finding is a `{file, line, summary,
+failure_scenario}` object. There is **no `category` field** to switch on, so you
+classify each finding yourself by reading its `summary` and `failure_scenario` and
+judging what it actually is:
 
-- **`correctness` (and any real bug / broken-contract / security finding) is
-  blocking** — fix it, then loop.
-- **`simplification`, `efficiency`, `test-coverage` and the like are nits** —
-  collect them, report at the end, don't loop on them alone.
+- **Blocking** — a real correctness bug, a broken contract, a security hole, or a
+  missing test for a genuine case (an edge or failure path that can really occur).
+  Fix it, then loop.
+- **Nit** — a pure cleanup: simplification, micro-efficiency, style, or a
+  nice-to-have test that covers no real gap. Collect these, report at the end,
+  don't loop on them alone.
+- **When a finding is genuinely ambiguous between the two, treat it as blocking.**
+  The bar is "CodeRabbit finds nothing", so err toward fixing.
 - **Trust-boundary diffs get more.** If the diff touches Auth0/JWT, Hasura
   permissions or metadata, a Hono Action/Event/webhook handler, the admin secret,
   or `VITE_`-prefixed env vars, also run the `security-reviewer` skill over it —
@@ -96,8 +102,9 @@ pushing is backup, not publication; the PR is what this gate unlocks.
    - **A finding that needs the owner's decision** (a real fork, a
      product/behaviour call, a destructive or irreversible change) → **stop and
      ask.** Don't guess past a judgment call.
-   - **Nit** (`simplification`/`efficiency`/style/`test-coverage` that isn't a
-     real gap) → collect it for the final report; it doesn't force another loop.
+   - **Nit** (a pure cleanup, or a test that covers no real gap — see the
+     blocking/nit split above) → collect it for the final report; it doesn't force
+     another loop.
 5. **Exit when a fresh review returns no blocking findings** — and no edit has
    happened since that clean pass.
 
