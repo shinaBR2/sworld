@@ -37,30 +37,19 @@ Ops tasks reach prod data through Hasura, same as everything else — `hasura-ar
 
 ## Operator CLIs in `apps/backend/src/cli/`
 
-Run them from `apps/backend` (that's where `tsx` and the backend's dependencies resolve):
+Run them from `apps/backend` (that's where `tsx` and the backend's dependencies resolve), via
+`pnpm exec tsx src/cli/<name>.ts`. Discover each one's current flags from the CLI itself
+(`… <name>.ts --help`) or the full docs in `src/cli/README.md` — the per-command *purposes* below are
+stable, the exact flags aren't:
 
-```bash
-cd apps/backend && pnpm exec tsx src/cli/<x>.ts …
-```
-
-- **convert.ts** — local video file → fMP4 HLS, upload to GCS, create/finalize the `videos` row (`--file`, `--title`, `--video-id`, `--playlist`, `--public`, `--dry-run`, `--user-id`).
-- **stream-m3u8.ts** — fix a failed video: process an `.m3u8` (master or media) → GCS, finalize an existing `videos` row (`--url`/`--file`, `--video-id`, `--referer`, `--playlist`). Also owns the shared CLI config (`config set <key> <value>`).
-- **upload-subtitle.ts** — upload a `.vtt` (local or URL) → GCS, insert/update `subtitles` row.
+- **convert.ts** — local video file → fMP4 HLS, upload to GCS, create/finalize the `videos` row.
+- **stream-m3u8.ts** — fix a failed video: process an `.m3u8` (master or media) → GCS, finalize an existing `videos` row. Also owns the shared CLI config (`config set`).
+- **upload-subtitle.ts** — upload a `.vtt` (local or URL) → GCS, insert/update the `subtitles` row.
 - **repair-fmp4.ts** — repackage a video's stored `.ts` → fMP4 (fixes garbled desktop-Chrome audio).
-- **audio.ts** — publish a local `.mp3` to the listen library: no transcode, just upload verbatim to GCS + insert the `audios` row (`--file <path>` or `--dir <path>` for a whole folder, `--name`/`--artist` overrides, `--public`, `--dry-run`, `--skip-db`, `--user-id`). Handles dup-checking and filename metadata parsing itself — see below. Full CLI docs: `apps/backend/src/cli/README.md`.
+- **audio.ts** — publish a local `.mp3` to the listen library: no transcode, just upload verbatim to GCS + insert the `audios` row (a single file, or a whole folder). Handles dup-checking and filename metadata parsing itself — see below.
 
 ## Recurring task: "create audios"
 
-The owner's most common recurring ops ask: they have local `.mp3` files and ask to "create new audios." Just run `audio.ts` — don't explain the plumbing (GCS, CLI internals) unless asked; keep it simple.
+The owner's most common recurring ops ask: they have local `.mp3` files and ask to "create new audios." Just run `audio.ts` on the file (or a whole folder — dry-run it first) as the intended acting account — don't explain the plumbing (GCS, CLI internals) unless asked; keep it simple. Its `--help` has the exact flags.
 
-```bash
-cd apps/backend
-
-# One file (name + artist parsed from "Title - Artist.mp3"):
-pnpm exec tsx src/cli/audio.ts --file './Shape of You - Ed Sheeran.mp3' --user-id <user-id>
-
-# A whole folder, dry-run first:
-pnpm exec tsx src/cli/audio.ts --dir ./album --user-id <user-id> --dry-run
-```
-
-The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`artist_name` is NOT NULL — a file with no parseable artist and no `--artist` is reported and skipped, not silently defaulted), `public: false` by default (add `--public` only if explicitly asked — publishing is an act of owning the database, not a user capability, so only flip it on explicit instruction), an existing `(user_id, name)` skipped as a dup, and a `Created / Skipped / Failed` tally on a batch. The new rows are owned by whichever account `--user-id` names, falling back to the configured one.
+The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`Title - Artist.mp3`); `artist_name` is NOT NULL, so a file with no parseable artist and no override is reported and skipped, not silently defaulted; `public: false` by default — only publish on explicit instruction, since publishing is an act of owning the database, not a user capability; an existing `(user_id, name)` is skipped as a dup; and a batch ends with a `Created / Skipped / Failed` tally. New rows are owned by the account passed as the acting user, falling back to the configured one.

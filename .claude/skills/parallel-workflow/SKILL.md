@@ -13,7 +13,7 @@ user-invocable: false
 
 ## Scope: one repo, the whole product
 
-Everything ships from a single repo — the frontend apps, the shared packages, the Hono backend (`apps/backend`), and the Hasura data layer (`apps/hasura`). One lockfile, one branch, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
+Everything ships from a single repo (its shape and folder map: `references/repo-map.md`) — one branch, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
 
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — a change touching them MUST also run `security-reviewer` inside the self-review loop (step 11).
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: after the migration, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura) and land the regenerated types as a follow-up PR, linked in the tracker with a blocking relation from the Hasura issue. That these are two PRs in that order — schema first, because the schema must be live before the generated types mean anything — is `micro-prs`' slicing rule ("Blockers land first"), not restated here.
@@ -42,8 +42,8 @@ The refresh mechanic and every trigger for it are owned by the `cleanup` skill �
 Use the native **`EnterWorktree`** tool — it creates the worktree, bases it on the default branch, provisions gitignored config, and switches the session's working directory *into* it, so everything from here on uses plain relative paths (no `git -C <worktree>` juggling).
 
 5. **`git fetch origin main` first.** `EnterWorktree`'s own base-ref fetch is throttled to once per 24h — too coarse for this chronically-behind repo — so fetch explicitly to guarantee the worktree branches off genuinely-current `main`.
-6. **`EnterWorktree` with `name` = the issue slug** (`swo-NNN-slug`, per `task-tracker`'s convention). It creates the worktree at `.claude/worktrees/swo-NNN-slug/` on branch `worktree-swo-NNN-slug` (Claude Code prefixes `worktree-`; the embedded `SWO-NNN` is matched *anywhere* in the branch name — not anchored to the start — by both the Linear auto-link and the repo's branch-ticket parser, so the prefix is safe), bases it on `origin/main` (the `worktree.baseRef: fresh` default), and moves the session into it. **Each agent working an issue enters its own worktree** — parallel issues run fully isolated; a subagent inherits its parent's worktree unless it enters its own.
-7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: `.linear.toml`, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. (Without `.linear.toml` the `linear` CLI silently resolves to the account default workspace, not `sworld`; without `packages/core/.env` codegen aborts with `Unable to find any GraphQL type definitions`. `.worktreeinclude` is what prevents both.)
+6. **`EnterWorktree` with `name` = the issue slug** (`swo-NNN-slug`; `task-tracker` owns the slug and branch naming, and why the embedded `SWO-NNN` still auto-links under the `worktree-` prefix). It creates the worktree under `.claude/worktrees/`, bases it on `origin/main` (the `worktree.baseRef: fresh` default), and moves the session into it. **Each agent working an issue enters its own worktree** — parallel issues run fully isolated; a subagent inherits its parent's worktree unless it enters its own.
+7. **Gitignored config is auto-provisioned** by the repo's `.worktreeinclude`: the tracker's workspace config, the app `.env` files, and `packages/core/.env` are copied into the new worktree automatically — no manual copying. Without them, tracker commands hit the wrong workspace and codegen aborts.
 8. **Run `pnpm install` in the worktree** — the one setup step no hook covers (a fresh worktree has no `node_modules`).
 
 ## During work
@@ -69,12 +69,9 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 - NEVER rebase. ALWAYS merge.
 - If conflicts are in codegen-generated files, take the changes from main and re-run `pnpm codegen` in `packages/core`.
 
-## GitHub auth (`gh` / `GH_TOKEN`)
+## PR auth
 
-Every `gh` call in this flow (and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions`) authenticates via the `GH_TOKEN` env var — the only token with collaborator access to `ShinaBR2/sworld`, so `gh auth switch` and the keyring are never the right source. It's a personal secret kept in the **main clone's** `.claude/settings.local.json` (`env.GH_TOKEN`); read it from that absolute path, since a fresh worktree has no copy of its own. Two constraints, no fixed recipe (derive the exact extraction at runtime, so a `gh` or tooling change can't leave a stale command here):
-
-- Make it available to `gh` **before** the first PR/CI command.
-- This repo is **public**, so don't leave a session-wide `export GH_TOKEN` active while running repository code (tests, package scripts, build) — any of it could read the token. Scope it to the `gh` calls themselves.
+Every command that talks to the PR host — in this flow and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — needs the token and scoping described in `references/github-cli.md`. Read that before the first one.
 
 ## PR submission
 

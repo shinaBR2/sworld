@@ -1,9 +1,11 @@
 name: Unit Test on PR
 
-# Skips only a PR whose every changed file lives in apps/hasura — the one part
-# of the workspace `pnpm test` genuinely cannot reach (SWO-549). See the long
-# note in typecheck-pr.yml: the filter belongs in the `changes` job rather than
-# `on:`, and backend is deliberately NOT excluded.
+# Skips a PR whose every changed file lives in apps/hasura or .claude — the
+# parts a workspace `pnpm test` genuinely cannot reach: apps/hasura (SWO-549)
+# and .claude (skills/references/config — not a workspace package, so turbo
+# never runs a test there). See the long note in typecheck-pr.yml: the filter
+# belongs in the `changes` job rather than `on:`, and backend is deliberately
+# NOT excluded.
 #
 # The same asymmetry applies here. `pnpm test` is `turbo run test`, and
 # apps/backend exposes a `test` script (vitest), so this gate really does cover
@@ -34,15 +36,18 @@ jobs:
       - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         id: filter
         with:
-          # Negated pattern: matches any changed file outside apps/hasura, so
-          # the output is false only when *every* changed file is inside it.
-          # Deliberately not a positive allow-list, and the manifest is re-armed
-          # so the PR that gives apps/hasura a `test` script can't be the one
-          # that skips. The re-arm is one-shot — if apps/hasura ever does gain a
-          # `test` script, delete this filter. Full reasoning in typecheck-pr.yml.
+          # Negated pattern: matches any changed file outside both apps/hasura
+          # and .claude, so the output is false only when *every* changed file
+          # is inside one of them. Deliberately not a positive allow-list, and
+          # the manifest is re-armed so the PR that gives apps/hasura a `test`
+          # script can't be the one that skips. The re-arm is one-shot — if
+          # apps/hasura ever does gain a `test` script, delete this filter.
+          # .claude needs no such re-arm: pnpm-workspace.yaml is apps/* +
+          # packages/* only, so nothing under .claude is a workspace package and
+          # turbo can never run a test there. Full reasoning in typecheck-pr.yml.
           filters: |
             test:
-              - '!apps/hasura/**'
+              - '!{apps/hasura,.claude}/**'
               - 'apps/hasura/package.json'
 
   test:
