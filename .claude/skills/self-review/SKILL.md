@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: The single place all code review happens in this repo. Use as the mandatory pre-PR gate in the parallel workflow — it drives a loop of cold-eyes `/code-review` passes over the LOCAL working diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup; the PR is what's gated). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR.
+description: The single place all code review happens in this repo — bugs and code quality both, since `/code-review` covers both. Use as the mandatory pre-PR gate in the parallel workflow — it drives a loop of cold-eyes `/code-review` passes over the LOCAL working diff vs origin/main until nothing blocking is left, before the PR is created (commits are pushed freely as backup; the PR is what's gated). Also fires whenever the user asks to "review this", "look at this branch", "what do you think of this", "give me feedback on this", "is this ready to merge", "do a deep code quality audit", "be really strict about this", "thermo-nuclear review", or any variant where current work is being evaluated. The target is ALWAYS the local diff, never a remote PR.
 ---
 
 # Self-review
@@ -61,8 +61,10 @@ Why each part:
   deadlocking on a prompt it can't answer. Never pass `--fix` to the reviewer.
 
 Run it from Bash; its findings print to stdout as a JSON array (empty `[]` when
-clean) — read them there. Each finding is a `{file, line, summary,
-failure_scenario}` object. There is **no `category` field** to switch on, so you
+clean) — read them there. **An empty or errored run is not a clean pass.** Only a
+run that finished and printed `[]` counts as clean; a timeout, a non-zero exit, or
+empty stdout means the review didn't happen — re-run it, never treat it as a pass.
+Each finding is a `{file, line, summary, failure_scenario}` object. There is **no `category` field** to switch on, so you
 classify each finding yourself by reading its `summary` and `failure_scenario` and
 judging what it actually is:
 
@@ -89,9 +91,9 @@ pushing is backup, not publication; the PR is what this gate unlocks.
    it's too sprawling or mixes unrelated concerns to review with confidence, that
    IS the finding: stop and split the work (`micro-prs`) before shipping anything.
    Don't power through a review you won't trust.
-3. **Commit, then run the reviewer** (fresh session, as above). The reviewer reads
-   *committed* code — the `origin/main...HEAD` range — so commit your work first or
-   the reviewer won't see it.
+3. **Commit, then run the reviewer** (fresh session, as above). The
+   `origin/main...HEAD` range is defined by commits, so commit your work first — it
+   guarantees the reviewer sees exactly the diff the PR will show.
 4. **Act on what it found:**
    - **Blocking finding** → fix it *in this session* (full context makes the fix
      better than a blind `--fix`). A fix is new code, so start a fresh pass — two
@@ -158,17 +160,21 @@ denies PR creation until this skill has run and **no file has been edited since*
 ## When the user just asks for a review
 
 "review this", "what do you think of this", "is this ready to merge" — with the
-branch checked out. Run the same fresh cold-eyes reviewer over the local diff,
-then relay what it found in plain, conversational language and give a clear
-recommendation. This is not the gate: don't force the fix loop unless they want
-the fixes made — surface the findings and let them decide.
+branch checked out. Run the same fresh cold-eyes reviewer over the local diff:
+`git fetch origin main` first (the `origin/main...HEAD` target resolves against a
+stale local ref otherwise), and commit any work-in-progress so it lands in the
+range. Then relay what the reviewer found in plain, conversational language and
+give a clear recommendation. This is not the gate: don't force the fix loop unless
+they want the fixes made — surface the findings and let them decide.
 
 ## Reporting back
 
 Keep it short and human. Lead with the verdict, then the substance:
 
-1. **Verdict.** One line: clean and gated / blocked on findings / too sprawling to
-   review — plus, when useful, a rough confidence score out of 100.
+1. **Verdict.** One line: clean / blocked on findings / too sprawling to review —
+   plus, when useful, a rough confidence score out of 100. On the gate path, "clean"
+   means the gate passed; on the ad-hoc path it's just the review's verdict, no gate
+   state to claim.
 2. **What the cold-eyes loop did.** How many passes, what it caught and you fixed.
 3. **Nits.** The non-blocking findings you collected, so the owner can decide
    whether any are worth a follow-up. Don't silently drop them.
