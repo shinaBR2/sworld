@@ -10,23 +10,11 @@ Playwright E2E specs live under an app's `e2e/` directory (e.g. `apps/main/e2e/`
 
 ## 1. Locators — import from `e2e/locators/`, never hand-roll
 
-The canonical locator source is the app's **`e2e/locators/`** directory. Import the finder that matches the element's **role/semantics**. Do NOT write locators inline in specs.
+The canonical locator source is the app's **`e2e/locators/`** directory. Import the finder that matches the element's **role/semantics**; do NOT write locators inline in specs.
 
-| Module | Function | Use for | Strategy |
-|---|---|---|---|
-| `sections.ts` | `findSectionByRegion(page, title)` | section / panel cards | `getByRole('region', { name })` |
-| | `findSectionByTestId(page, testId)` | sections without a semantic handle (documented exception) | `getByTestId` |
-| `tabs.ts` | `findCategoryTab(section, name)` | category/chip tabs | `getByRole('tab', { name, exact: true })` |
-| | `findItemTab(page, name)` | top-level nav tabs | `getByRole('tab', { name })` |
-| | `getActiveTab(section)` | selected tab text | `getByRole('tab', { selected: true })` |
-| `lineItems.ts` | `findLineItemInputRow(container, name)` | **editable** list/row inputs | `getByRole('group', { name, exact: true })` |
-| `totals.ts` | `findTotalRow(section, label='Total')` | total/subtotal footer | `getByLabel(label, { exact: true })` |
-| `cardRows.ts` | `findCardRow(container, name)` | **read-only** metric display rows | `[aria-label="name"]` |
-| `tableRows.ts` | `findTableRow(container, name)` | report table rows | `getByRole('row', { name, exact: true })` |
+**Choose the locator by the element's role, not by DOM convenience** — an editable input row, a read-only display row, and a table row are different roles and get different finders, each in its own module so the call site communicates intent.
 
-**The locator is chosen by the element's role, not by DOM convenience** — an editable input row is a `group`, a read-only display row is a `cardRow`, a table row is a `row`. Each lives in its own module so the call site communicates intent.
-
-**DEPRECATED — do not copy:** any locator-finding functions inside `e2e/scenarios/*/shared/helpers.ts` that use CSS-structure selectors (`div:has(> button[aria-label=...])`), `input[value="..."]`, xpath ancestor walks, and `data-testid` fallbacks. When you touch one of these, migrate it to an `e2e/locators/` finder — never replicate the pattern in a new spec.
+When a target lacks a semantic handle, **fix the component** (add an `aria-label`/`role`), then select it — never fall back to CSS-structure selectors (`div:has(> button[aria-label=...])`), `input[value="..."]`, xpath ancestor walks, or `data-testid`. If you meet an old locator built that way, migrate it to a semantic `e2e/locators/` finder rather than copying the pattern into a new spec.
 
 ## 2. Semantic selectors only
 
@@ -48,7 +36,7 @@ A cross-page spec must **follow the doc's steps literally**: navigate to each in
 
 - **Container-first scoping:** find the container (`findSectionByRegion`, a `tabpanel`, etc.) first, then locate inside it. Never bare page-level `page.getByText(...)`.
 - Cover **100% of inputs** that affect a calculated output — every input field that changes the result needs a case.
-- Reference pattern: look at an existing cross-page journey under `e2e/scenarios/cross-page/`.
+- Reference pattern: follow an existing cross-page journey already in the app's `e2e/` tree.
 
 ## 5. Mocks — dynamic, no response-waiting
 
@@ -58,14 +46,14 @@ A cross-page spec must **follow the doc's steps literally**: navigate to each in
 
 ## 6. Structure & helpers
 
-- One folder per journey: `<feature>/<journey>/{journey.spec.ts, mocks.ts, helpers.ts}`. Domain seeds in `shared/`, constants in `e2e/constants/`.
-- Generic cross-domain helpers (tab switching, totals) live in `e2e/helpers/common.ts`.
+- One folder per journey, colocating that journey's spec with its mocks.
+- Put shared domain seeds, constants, and generic cross-domain helpers where the app's `e2e/` tree already keeps them — reuse the existing home, don't invent a parallel one.
 
 ## 7. Running & CI
 
-- Build then run against the preview server: `pnpm build --force` then `CI=1 npx playwright test`. The dev server on port 3000 may serve a different worktree's code.
-- Run `npx prettier --write` on every touched file before pushing — the CI quality gate fails on unformatted code.
-- **Never run multiple E2E builds/tests in parallel** — all preview servers share port 4173, so parallel runs conflict and flake. When fixing several E2E PRs, agents only *write*; build/test sequentially, one worktree at a time.
+- Run the suite through the app's **Playwright config**, which builds the mock-env preview and serves it itself. Don't point the tests at the ad-hoc dev server — it may be serving another worktree's code, and it isn't built with the mock env the specs depend on.
+- Run the formatter on every touched file before pushing — the CI quality gate fails on unformatted code.
+- **Never run multiple E2E builds/tests in parallel** — the preview server binds a fixed port, so parallel runs collide and flake. When fixing several E2E PRs, build/test sequentially, one worktree at a time.
 - **Don't auto-rerun a flaky E2E failure** when it cancelled at an infra/setup step (`Install Playwright OS dependencies`, runner allocation, network) and the PR doesn't touch test code — that's noise, not a real failure.
 
 ## 8. Debugging a runtime-only browser error

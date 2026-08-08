@@ -53,5 +53,6 @@ Biome enforces what it can. The rest you check by eye — these are exactly the 
 
 - Pure logic MUST have unit tests in the same PR.
 - ALWAYS use exact assertions (`toBe`, `toEqual`, `toStrictEqual`, and framework equivalents like Playwright's `toHaveValue` / `toHaveAttribute`).
-- NEVER use a fuzzy, range, or substring matcher when the exact value is known — approximation (`toBeCloseTo`), comparison (`toBeGreaterThan`, `toBeLessThan`), and containment (`toContain`) all hide the value you meant to assert. `expect(items).toHaveLength(3)` — not `toBeGreaterThan(0)`.
-- Only use them for genuinely non-deterministic values (timestamps, random IDs) — never as a way to avoid pinning down a value you could know.
+- NEVER reach for a fuzzy matcher to dodge a value you could pin. Approximation (`toBeCloseTo`) and comparison (`toBeGreaterThan`, `toBeLessThan`) hide the exact value — write `expect(items).toHaveLength(3)`, never `toBeGreaterThan(0)`.
+- Containment (`toContain`) is the exception, not a sibling of those. Use it to assert one part of a value you deliberately don't pin whole — one width inside a generated `srcSet`, one class inside a framework-generated `className`. Do NOT use it to approximate a value you could match exactly.
+- Reserve any fuzzy matcher for genuinely non-deterministic values (timestamps, random IDs) — never as a way to avoid a value you could know.

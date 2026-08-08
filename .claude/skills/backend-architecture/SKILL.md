@@ -66,7 +66,7 @@ Queues are defined in `src/utils/systemConfig.ts:9`. Service URLs come from env 
 
 ## Cloud Task mechanics
 
-### Task creation (`src/utils/cloud-task.ts:62`)
+### Task creation (`src/utils/cloud-task.ts`, `createCloudTasks`)
 
 1. Generate a deterministic task ID via `uuidv5(entityType + entityId + type, namespace)` — same inputs always produce the same task ID
 2. **Insert/upsert** a row in the `tasks` table (`status: 'pending'`, `completed: false`) — if the same task already exists with `completed: true`, the function returns `null` (short-circuits, no re-enqueue)
@@ -221,4 +221,4 @@ The last rung runs against deployed services: merging ships the change to Cloud 
 
 ## Business constraints
 
-**No delete for user role.** The `user` role cannot delete anything — not videos, not audios, not playlists. Only the admin (database access via Hasura admin secret) can delete. This is enforced by Hasura permissions: `delete_permissions` is absent for the `user` role on all content tables. Never implement delete buttons or delete features in the frontend unless the user explicitly approves a Hasura permission change first.
+**Deletes are decided per table in Hasura, not assumed.** Whether the `user` role may delete a table's rows lives in that table's `delete_permissions` in `apps/hasura/metadata` — the metadata is the source of truth, and it varies by table: for some content a user may delete their own rows, for other content (e.g. `videos`) only the admin may. Never assume a blanket rule in either direction. Before building a delete in the frontend, check the table's permission; if it isn't granted there, that's a Hasura permission change to approve first — the frontend can't grant it.

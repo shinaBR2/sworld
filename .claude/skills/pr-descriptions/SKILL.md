@@ -15,7 +15,7 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 - Do not include "Generated with Claude Code" or any AI attribution
 - Do not mention Claude, AI, or assistants anywhere in the PR
 - Do not pad the description by restating the diff
-- Do not put the tracker issue ID in the title — keep the title clean and reference the issue in the body instead (see `task-tracker`)
+- The one thing that must be true: the PR is linked to its tracker issue. The `SWO-NNN` has to reach the integration — through the branch name and/or the body — so it moves the issue to In Review (see `task-tracker`). Where the ID appears is an implementation detail; the link is what matters.
 
 ## Title format
 
@@ -135,7 +135,7 @@ You usually have full context from working on the task. Even so, **review the ac
 
 1. **Run and read the diff.** `git diff origin/main...HEAD --stat` then `git diff origin/main...HEAD`. Confirm the files and changes match what you're about to describe. State what you reviewed in your reply (e.g. "Reviewed the diff: 2 files, ~30 lines, all in the playback hook") — don't just assert it's reviewed.
 2. **Decide the PR type** — user-facing, or no-user-facing-change (refactor / tech-debt). This drives the whole body.
-3. Confirm the title — `[WIP]` prefix, conventional commit format, no task ID.
+3. Confirm the title — `[WIP]` prefix, conventional commit format.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
 6. Open the PR with `gh pr create`.
@@ -243,4 +243,4 @@ Before opening the PR:
 - PR type decided: user-facing, or starts with `No user-facing changes.`
 - User-facing test steps name the exact page, the exact thing to look at, and plain pass/fail — no file/function names
 - No AI attribution anywhere
-- No task ID in the title
+- PR is linked to its tracker issue — `SWO-NNN` is in the branch name and/or the body (see `task-tracker`)

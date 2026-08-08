@@ -12,7 +12,7 @@ Symptoms in this repo that look like framework bugs but have a known, boring cau
 
 `packages/core` and `packages/ui`'s `dev` script is `tsup ... --watch`, while `tsup.config.ts` has `clean: true` and a full `src/**/*.ts` entry glob. Running the dev script directly (or via a stray `turbo watch`) wipes `dist/` and rebuilds **only the root entry**, leaving `dist/providers/…`, `dist/<domain>/query-hooks/…`, etc. missing.
 
-**Symptom:** an app dev server fails with `Failed to resolve import "core/providers/auth"` (or any `core`/`ui` subpath) — looks like a Vite resolver bug, isn't. Check `find packages/core/dist -name index.mjs | wc -l` (healthy ≈ 58, gutted = 1) and run `pnpm --filter core build` (or `--filter ui`).
+**Symptom:** an app dev server fails with `Failed to resolve import "core/providers/auth"` (or any `core`/`ui` subpath) — looks like a Vite resolver bug, isn't. Check `find packages/core/dist -name index.mjs | wc -l` (healthy = dozens, gutted = 1) and run `pnpm --filter core build` (or `--filter ui`).
 
 ## Listen dev serves `ui`/`core` from dist, not source
 
