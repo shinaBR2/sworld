@@ -34,6 +34,21 @@ gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(
 
 Filter to `isResolved: false`. (`first:100` covers any real PR; only paginate with `after`/`endCursor` if one ever exceeds it.)
 
+An empty result is **only trustworthy once CodeRabbit has finished reviewing** — see the next section.
+
+## Knowing CodeRabbit has finished reviewing
+
+CodeRabbit's `state` is `SUCCESS` the whole time it reviews — colour never tells you it's done. The
+one field that moves is its `description`, which reads exactly `"Review completed"` when finished.
+It's a `StatusContext` (not a check run), so read it via GraphQL and match on that string:
+
+```bash
+gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(number:NUMBER) { commits(last:1) { nodes { commit { statusCheckRollup { contexts(first:100) { nodes { ... on StatusContext { context state description } } } } } } } } } }'
+```
+
+Anything other than `"Review completed"` on the `CodeRabbit` node means it is still working. Each
+push resets the review, so the marker returns to not-done until the fresh review completes.
+
 ## Updating a PR title/body — never `gh pr edit`
 
 `gh pr edit` does **not** reliably update the title or body: it hits a deprecated
