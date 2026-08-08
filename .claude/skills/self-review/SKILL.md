@@ -39,21 +39,16 @@ permissions/metadata, a Hono webhook/action handler, secrets, `VITE_` env vars)
 also needs `security-reviewer` — the cold-eyes pass is not the stack-aware security
 review.
 
-## The pre-PR gate
+## Gate mode vs a plain review
 
-This loop is `parallel-workflow`'s gate before a PR is created (pushing is never
-gated). `.claude/hooks/review-gate.sh` blocks PR creation until this skill is
-invoked **through the Skill tool** with no edit afterward. The stamp only proves the
-skill loaded — not that the reviewer ran — so the loop above has to actually run;
-and since any edit clears the stamp, the converged reviewer pass and the stamping
-invocation are the last two things before the PR. Read the hook for the exact stamp
-mechanics (which tool calls clear it, how it keys sessions) before relying on it.
+By default this is `parallel-workflow`'s pre-PR gate (pushing is never gated, only
+PR creation): the loop above runs to convergence, and `.claude/hooks/review-gate.sh`
+blocks the PR until it has. Read the hook for the exact stamp mechanics — which tool
+calls clear it, how it keys sessions — before relying on it.
 
-## When the user just asks for a review
-
-"review this", "is this ready to merge" — run the reviewer, relay what it found in
-plain language, and recommend. This is not the gate: surface the findings and let
-them decide; don't force the fix loop unless they want the fixes made.
+When the user just asks "review this" or "is this ready?", it's not the gate: run
+the reviewer, relay what it found in plain language, and let them decide — don't
+force the fix loop unless they want the fixes made.
 
 ## Reporting back
 

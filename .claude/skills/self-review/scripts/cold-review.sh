@@ -22,6 +22,10 @@ if [ -z "$(git diff --name-only origin/main...HEAD)" ]; then
   echo "cold-review: origin/main...HEAD is empty — commit your work or check the branch." >&2
   exit 2
 fi
+if ! command -v claude >/dev/null; then
+  echo "cold-review: 'claude' not on PATH — install the CLI to run the reviewer." >&2
+  exit 2
+fi
 
 # No --fix — the reviewer reports rather than applies; this session does the fixing.
 # Skip-permissions only stops the headless session stalling on a prompt it cannot
