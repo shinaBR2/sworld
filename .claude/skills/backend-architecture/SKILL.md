@@ -68,7 +68,12 @@ until the async work catches up.
 A new **user-initiated** heavy operation therefore has a fixed shape: define an
 Action that returns a task id immediately, have its gateway handler create a
 Cloud Task to compute, and let the handler finalize and notify — the ingestion
-pipeline, entered through an Action instead of an Event.
+pipeline, entered through an Action instead of an Event. The Action's synchronous
+success here confirms only that the work was **accepted** (the task exists), not
+that it finished — the heavy step still completes asynchronously and reconciles by
+the idempotent-retry rule below, exactly as ingestion does. What the Action buys
+over an Event is the immediate, in-session handshake the user is waiting on; the
+processing itself is still eventually-consistent.
 
 ## The two rules a reasonable person would get wrong unaided
 

@@ -8,7 +8,7 @@ user-invocable: false
 
 How to perform sworld operational tasks (create audios/videos, upload assets, touch prod data) from **`apps/backend`** in the sworld monorepo. This is separate from the `parallel-workflow` PR process — these are direct, already-authorized ops tasks, not feature work. Don't re-ask the user for credentials or access; they're already configured.
 
-These CLIs are operator tools run straight from source with `tsx` — they don't go through the container images at all, so they run the same whether or not anything has been deployed.
+These CLIs are operator tools run straight from source with `tsx` — they don't go through the container images at all, so running one never waits on a backend deploy. They do read and write the **live** Hasura and GCS, though, so a command that depends on a new schema still needs that migration deployed first.
 
 ## Which account an op runs as
 

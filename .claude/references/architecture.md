@@ -37,9 +37,12 @@ decision the `backend-architecture` skill owns.
 
 ## The ingestion pipeline
 
-The spine every heavy backend flow follows:
+The spine for **asynchronous, row-change-triggered ingestion** — the async path,
+not every backend flow (a fast synchronous Action returns through its own Action
+response; a user-initiated heavy op enters this same spine through an Action, per
+`backend-architecture`):
 
-```
+```text
 Hasura Event (row change)
   → gateway  (validate signature, decide file type)
     → Cloud Task  (carries the work across the service boundary)
@@ -49,8 +52,9 @@ Hasura Event (row change)
           → frontend subscription pushes "it's ready"
 ```
 
-No handler talks to the browser directly; the result always arrives via a
-Hasura subscription on notifications.
+No handler talks to the browser directly; on this asynchronous path the result
+arrives via a Hasura subscription on notifications. (A synchronous Action returns
+its result inline through the Action response instead.)
 
 ## The processing core is environment-agnostic (ports & adapters)
 

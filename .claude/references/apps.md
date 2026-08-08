@@ -34,4 +34,5 @@ Two rosters sit close together; keep them straight:
   project that is not an app.
 - **Backend & data layer** — `apps/backend` (the Hono backend) and `apps/hasura`
   (migrations + metadata) are part of the product but not *product apps*, and have
-  no Linear project of their own. `backend-architecture` owns their layout.
+  no Linear project of their own. `backend-architecture` owns the `apps/backend`
+  layout; `hasura-architecture` owns `apps/hasura` (matching `references/repo-map.md`).
