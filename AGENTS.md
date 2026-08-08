@@ -35,10 +35,6 @@ we can have in the product.
   expected, not a problem to design around. So always start from the latest by
   pulling `main` fresh; never build on a stale baseline. (The `parallel-workflow`
   skill owns the how.)
-- **Merging is deploying.** There is no staging and no promote step — a merge
-  into `main` ships straight to production, so treat every merge as a release,
-  not a checkpoint. What each kind of merge actually triggers, and the traps in
-  it, is `references/deployment-model.md`.
 - **Avoid drift.** Every fact has exactly one home. Prefer a skill over memory,
   one source over a copy. Never restate what another place already owns — a copy
   always drifts.

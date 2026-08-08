@@ -22,7 +22,7 @@ The answer is knowable, and close to exact, from the moment you look. A signatur
 
 ## The test — three questions, asked about real impact
 
-We ship as fast as we can, and every merge ships straight to production. So "isolated" does not mean "structurally unrelated." It means one thing:
+We ship as fast as we can, and merging is deploying (see `references/deployment-model.md`). So "isolated" does not mean "structurally unrelated." It means one thing:
 
 > **If this merges right now, on its own — is that safe?**
 
