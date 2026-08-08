@@ -62,9 +62,13 @@ Based on the interview, fill in:
 
 When editing a skill, grep the other skills for its name and check every hit is still a name-only mention. Stale restatements are the failure mode this rule exists to prevent.
 
-#### State intent, not the commands the agent already knows
+#### Write only what the agent can't work out at runtime
 
-A skill says *what to do* and *why*. It trusts the agent to supply the mechanics it already knows cold at runtime — the git, the shell, the everyday tooling. Spelling those out is worse than redundant: an inlined command drifts out of date while the agent's own knowledge stays current, and every extra line buries the one thing the skill alone can tell the reader. A skill that reads like a script the agent could have written itself is mostly noise; cut it down to the intent.
+A skill records *what to do* and *why* — and only the parts the agent couldn't get right on its own. Everything else is noise that buries the one thing the skill alone can tell the reader. Before writing any line, ask: **would I get this right at runtime without being told?** If yes, leave it out. This is the single biggest source of bloat, and it comes in two shapes:
+
+- **The obvious.** Mechanics the agent knows cold — the git, the shell, the everyday tooling — and steps or caveats a competent agent supplies unaided. A skill that reads like a script the agent could have written itself is mostly noise. Inlined detail also *drifts*: the command goes stale while the agent's own knowledge stays current.
+- **The restatement.** Saying a thing more than once — a summary section that re-derives the steps, a definition repeated for emphasis, the same rule stated in three places. State each fact once, where it belongs. A second copy is drift waiting to happen (see *One canonical owner*). What matters in most skills is a tiny core — the **conditions** and **definitions** the agent can't infer; write those sharply and let the rest go.
+- **The leaked mechanic.** When a reference file owns a tool (its commands, flags, quirks — even its *name*), route everything about it through the pointer. Say "read X per `references/foo.md`" and stop; don't name the tool or explain how it works in the skill body. The tool name is itself a mechanic — a second copy that drifts if the tool ever changes. State the condition or intent; let the reference own the how.
 
 Reserve explicit, literal detail for the three cases where the agent *can't* be trusted to get it right unaided:
 
