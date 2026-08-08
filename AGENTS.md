@@ -44,9 +44,8 @@ Every change should answer four questions:
 
 ## Where knowledge lives
 
-This file deliberately holds no app catalogue, tech-stack list, command reference, or directory map — those drift, and each already has a home. Reach for it there:
+This file deliberately holds no app catalogue, tech-stack list, command reference, or directory map — those drift, and each already has a home (the intro above already points how-to-code conventions at `.claude/skills/`). Reach for the rest there:
 
-- **How to code** — the `.claude/skills/` conventions; they auto-trigger by task. Browse the directory for the full set.
 - **Commands, scripts, tooling** — `package.json` (root and per-package) and the Turborepo pipeline. Local-dev traps live in `dev-environment-gotchas`.
 - **Architecture & where code belongs** — `frontend-ui-architecture`, `backend-architecture`, `hasura-architecture`.
 - **Tasks & requirements** — the source of truth for work is the **task tracker**, and a **project is an app**: every issue belongs to one. `task-tracker` owns which tracker it is and every command; `writing-task-specs` owns how to author specs; `parallel-workflow` owns how an issue's state moves as work ships.
