@@ -29,19 +29,27 @@ if ! command -v claude >/dev/null; then
   exit 2
 fi
 
-# The reviewer only sees committed code (origin/main...HEAD). Uncommitted changes are
-# invisible to it, so a fix left unstaged can pass as clean — warn, don't block.
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "cold-review: uncommitted changes are not reviewed — commit them first for a true pass." >&2
+# The reviewer only sees committed code (origin/main...HEAD). Uncommitted or untracked
+# changes are invisible to it, so a fix left unstaged would pass as clean — a false
+# pass, the same failure the other guards exit on. --untracked-files=all so a brand-new
+# unstaged file counts too. Commit first; don't review a tree that doesn't match what
+# the reviewer sees.
+if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+  echo "cold-review: uncommitted or untracked changes — commit them first so the review matches your work." >&2
+  exit 2
 fi
 
 # No --fix — the reviewer reports rather than applies; this session does the fixing.
-# Skip-permissions only stops the headless session stalling on a prompt it cannot
-# answer. A timeout bounds a
-# hung run (hitting it is a failed run for the caller to retry, not an empty pass),
-# but only if one is installed — GNU `timeout` isn't on stock macOS. Without it the
-# review still runs, just unbounded.
+# --disallowed-tools removes the write tools from the reviewer's environment entirely,
+# so a review of our own diff can't modify this worktree even though permission prompts
+# are skipped. Bash stays (the review needs git), so this is defence-in-depth over our
+# own code, not a full sandbox. Skip-permissions only stops the headless session
+# stalling on a prompt it cannot answer. A timeout bounds a hung run (hitting it is a
+# failed run for the caller to retry, not an empty pass), but only if one is installed —
+# GNU `timeout` isn't on stock macOS. Without it the review still runs, just unbounded.
 TIMEOUT=""
 if command -v timeout >/dev/null; then TIMEOUT="timeout 1800"
 elif command -v gtimeout >/dev/null; then TIMEOUT="gtimeout 1800"; fi
-$TIMEOUT claude -p "/code-review high origin/main...HEAD" --dangerously-skip-permissions
+$TIMEOUT claude -p "/code-review high origin/main...HEAD" \
+  --dangerously-skip-permissions \
+  --disallowed-tools Write Edit MultiEdit NotebookEdit
