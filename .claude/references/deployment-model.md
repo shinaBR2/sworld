@@ -22,12 +22,6 @@ A backend merge ships a service when it touches that service's code *or* shared
 backend source, its Dockerfile, `package.json`, `packages/core`, or the root
 lockfile.
 
-Validating "in a locally-built image" means **both** a `docker build` **and** a
-`docker run` that exercises the change (a binary on `PATH`, the service booting,
-a real conversion). A green build only proves the layers assemble; it says
-nothing about whether the container boots or the changed behaviour works at
-runtime.
-
 Not every app deploys: **Game** and **Docs** aren't wired to any deploy, and the
 browser **Extension** ships to a browser store — outside this merge = deploy model.
 

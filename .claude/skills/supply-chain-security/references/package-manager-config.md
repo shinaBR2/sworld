@@ -35,9 +35,9 @@ Three notes that bite in practice:
   `brace-expansion` pin changed its export and broke `minimatch`'s use of it, taking down CI.
   Instead write one keyed entry per line, each carrying the package name and its own major's fix
   version (`"pkg@>=1.0.0 <1.2.0": "1.2.0"`, `"pkg@>=2.0.0 <2.4.0": "2.4.0"`, …), so each consumer
-  keeps a compatible major. Confirm by running the real check of the consumer the override could
-  break — that package's own tests or build (e.g. `minimatch`'s, in the case above), not a proxy
-  like a bare typecheck.
+  keeps a compatible major. Confirm by running the repo's own check that actually exercises the
+  affected consumer — the build or test path that would break if the pin is wrong (in the SWO-642
+  case, the CI build that pulls in `minimatch`), not a proxy like a bare typecheck.
 
 ## pnpm
 
