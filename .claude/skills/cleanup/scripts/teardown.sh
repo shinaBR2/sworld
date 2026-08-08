@@ -9,8 +9,9 @@
 #              be the worktree being removed)
 #
 # Runs via git -C "$REPO_PATH" throughout. Aborts on the first failure and reports the
-# partial state — never falls through or claims completion. Refresh local main
-# (refresh-main.sh) afterwards; the torn-down branch just moved main.
+# partial state — never falls through or claims completion. Local `main` is deliberately
+# NOT refreshed afterwards — we never reference local `main`; work always bases off
+# `origin/main` (see the parallel-workflow skill).
 
 pr="${1:?usage: teardown.sh <PR_NUMBER> <REPO_PATH>}"
 repo="${2:?usage: teardown.sh <PR_NUMBER> <REPO_PATH>}"
@@ -41,4 +42,4 @@ fi
 # -D (not -d) because a squash-merge leaves the branch technically unmerged. Abort if deletion fails.
 git -C "$repo" branch -D "$branch" || { echo "PR $pr: branch delete failed — aborting"; exit 1; }
 
-echo "PR $pr: torn down (worktree + branch '$branch'). Now run refresh-main.sh."
+echo "PR $pr: torn down (worktree + branch '$branch')."

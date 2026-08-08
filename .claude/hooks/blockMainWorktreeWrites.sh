@@ -85,6 +85,6 @@ parallel-workflow skill):
   4. Re-run this edit against the path inside that worktree.
 
 This hook gates the Edit, Write and NotebookEdit tools. Reading the main worktree
-is fine, as is advancing it with: git -C "$toplevel" pull --ff-only origin main
+is fine; it is never advanced or refreshed — work always bases off origin/main.
 EOF
 exit 2
