@@ -1,7 +1,8 @@
 name: Typecheck on PR
 
-# Skips only a PR whose every changed file lives in apps/hasura — the one part
-# of the workspace `pnpm typecheck` genuinely cannot reach (SWO-549).
+# Skips a PR whose every changed file lives in apps/hasura or .claude — the
+# parts a workspace `pnpm typecheck` genuinely cannot reach: apps/hasura
+# (SWO-549) and .claude (skills/references/config — not a workspace package).
 #
 # The filter lives in the `changes` job, NOT in `on:`. An `on: paths` filter
 # stops the workflow triggering at all, so no check run is created and a
@@ -48,11 +49,12 @@ jobs:
         id: filter
         with:
           # A negated pattern, on purpose: it matches any changed file outside
-          # apps/hasura, so the output is false only when *every* changed file
-          # is inside it. Written this way rather than as a positive allow-list
-          # because an allow-list has to be extended for every new app and every
-          # new root config file, and forgetting silently reports green. A new
-          # path anywhere outside apps/hasura runs the gate by default.
+          # both apps/hasura and .claude, so the output is false only when
+          # *every* changed file is inside one of them. Written this way rather
+          # than as a positive allow-list because an allow-list has to be
+          # extended for every new app and every new root config file, and
+          # forgetting silently reports green. A new path anywhere outside those
+          # two runs the gate by default.
           #
           # The second pattern re-arms the gate for the one hasura-internal file
           # that can invalidate the assumption above: skipping is sound ONLY
@@ -64,9 +66,12 @@ jobs:
           # Note the re-arm is one-shot: it catches the manifest change, not the
           # hasura-only PRs that follow it. So if apps/hasura ever does gain a
           # `typecheck` script, delete this filter rather than trusting it.
+          # .claude needs no such re-arm: pnpm-workspace.yaml is apps/* +
+          # packages/* only, so nothing under .claude is a workspace package and
+          # turbo can never visit it for a typecheck.
           filters: |
             typecheck:
-              - '!apps/hasura/**'
+              - '!{apps/hasura,.claude}/**'
               - 'apps/hasura/package.json'
 
   typecheck:

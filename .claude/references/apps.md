@@ -2,8 +2,8 @@
 
 The single home for **which apps exist**, what each one is, and where it ships.
 Any skill that needs the app list points here instead of restating it — a copied
-list drifts, and this one already had (the old hardcoded lists were missing
-`Look` and `Tooling`).
+list drifts, and this one already had: the old hardcoded lists were missing
+`Look` and `Tooling`.
 
 Two rosters sit close together; keep them straight:
 
