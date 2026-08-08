@@ -1,7 +1,7 @@
 # Repository map — where code lives
 
 The single home for the repo's shape and its top-level folder map. This is the
-positive form of the "no hardcoded paths in a skill" rule (SWO-664): a skill
+positive form of the "no hardcoded paths in a skill" rule: a skill
 that needs to say *where* something lives points here instead of hardcoding the
 path, because a path copied into several skills drifts.
 
