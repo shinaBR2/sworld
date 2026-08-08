@@ -52,10 +52,10 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 9. The 3 files limit is soft — more is fine if changes are small, cohesive, and easy to review.
 10. NEVER bypass commit hooks — code MUST be formatted, linted, and type-checked.
-11. **Self-review before creating the PR** — run the `self-review` skill and follow it to a clean exit. It gates PR creation, not pushing (see step 14).
+11. **Self-review before creating the PR** — run the `self-review` skill and follow it to a clean exit. This is a required step before the PR, but only the PR: pushing needs no review (see step 14).
 12. Always verify `git branch --show-current` before committing.
 13. Don't dismiss automated review findings without thorough verification.
-14. Commit often and push immediately — never ask, just do it. Pushing is **backup, not publication**: a pushed branch with no PR is invisible, and it means a broken laptop loses zero work. Pushing is NEVER gated; only PR creation is (step 11).
+14. Commit often and push immediately — never ask, just do it. Pushing is **backup, not publication**: a pushed branch with no PR is invisible, and it means a broken laptop loses zero work. Push freely — self-review (step 11) comes before the PR, never before a push.
 
 ## Codegen
 
@@ -75,7 +75,7 @@ Every command that talks to the PR host — in this flow and in `ci-loop`, `clea
 
 ## PR submission
 
-- A PR may ONLY be created after the self-review loop (step 11) has exited clean. Pushing commits needs no gate; creating the PR does.
+- Create the PR only after the self-review loop (step 11) has exited clean. Pushing commits needs no review; creating the PR does.
 - Create the PR (not as a draft — see `pr-descriptions`).
 - Reference the tracker issue in the PR description (see `task-tracker`).
 - ALWAYS assign PR to the user (`--assignee "@me"`).
