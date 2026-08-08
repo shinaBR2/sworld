@@ -64,7 +64,12 @@ Run it from Bash; its findings print to stdout as a JSON array (empty `[]` when
 clean) — read them there. **An empty or errored run is not a clean pass.** Only a
 run that finished and printed `[]` counts as clean; a timeout, a non-zero exit, or
 empty stdout means the review didn't happen — re-run it, never treat it as a pass.
-Each finding is a `{file, line, summary, failure_scenario}` object. There is **no `category` field** to switch on, so you
+And a clean `[]` is only trustworthy if the reviewer actually saw the diff: before
+believing it, confirm `git diff origin/main...HEAD --stat` is non-empty (and, when
+the reviewer named files, that they belong to it). A clean pass over an empty or
+stale diff — a reviewer launched against the wrong ref or outside the worktree —
+is a failed run, not a pass. Each finding is a `{file, line, summary,
+failure_scenario}` object. There is **no `category` field** to switch on, so you
 classify each finding yourself by reading its `summary` and `failure_scenario` and
 judging what it actually is:
 
