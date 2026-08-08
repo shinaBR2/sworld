@@ -4,8 +4,8 @@ description: >-
   The post-PR loop — drives one open PR to "settled" (merge status → conflicts → CodeRabbit done →
   unresolved comments → CI green), fixing/waiting/restarting until settled, then reporting (never
   auto-merging). Use whenever the user says "do the loop", "run the loop", "the CI loop", "check the
-  PR", or invokes /ci-loop. On merge it runs `cleanup`. It is NOT the pre-PR self-review (that's
-  `parallel-workflow`'s gate) and never touches issue status (that's `task-tracker`).
+  PR", or invokes /ci-loop. On merge it runs `cleanup`. It is NOT the pre-PR self-review
+  (`parallel-workflow` owns that) and never touches issue status (that's `task-tracker`).
 user-invocable: true
 ---
 
