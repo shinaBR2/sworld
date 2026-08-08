@@ -1,98 +1,40 @@
 ---
 name: ci-loop
 description: >-
-  The post-PR CI gate loop — a strict sequential state machine that drives an open PR to settled:
-  merge status → conflicts → unresolved review threads → CI checks, fixing/pushing/waiting/restarting
-  until every gate is green, then reporting ready (never auto-merging). Use whenever the user says
-  "do the loop", "run the loop", "the CI loop", "check the PR", or invokes /ci-loop. On merge it runs
-  `cleanup` for teardown. It does NOT do the pre-PR self-review (that's `parallel-workflow`'s gate)
-  and never touches issue status (that's the tracker's — see `task-tracker`).
+  The post-PR loop — drives one open PR to "settled" (merge status → conflicts → CodeRabbit done →
+  unresolved comments → CI green), fixing/waiting/restarting until settled, then reporting (never
+  auto-merging). Use whenever the user says "do the loop", "run the loop", "the CI loop", "check the
+  PR", or invokes /ci-loop. On merge it runs `cleanup`. It is NOT the pre-PR self-review (that's
+  `parallel-workflow`'s gate) and never touches issue status (that's `task-tracker`).
 user-invocable: true
 ---
 
 # CI loop ("do the loop")
 
-A strict sequential state machine. Each step is a **gate**. If any gate triggers a code change, push
-the fix, wait 6 minutes for CI, then **restart from Step 1**. NEVER proceed to the next step after
-fixing something. NEVER batch multiple steps in parallel.
+**Goal:** drive one open PR to **settled**, then report to the user. Never merge yourself — the
+user merges. (If they've said "merge when clean", merge once settled, not before.)
 
-**It is a LOOP, not a single pass.** There are exactly two ways out: the PR is `MERGED`/`CLOSED`
-(Step 1), or every gate is green and stable — *settled*, as defined under "Merging" below. Anything
-else means go round again.
+**A PR is settled** when it is one of:
 
-**`pending` is a third state, and it is NOT an exit.** A gate that hasn't decided yet is neither a
-pass nor a failure — it is *unsettled*, and the loop's job is to wait it out, not to hand back. When
-any gate is pending: `sleep 360` in the **background** (never a foreground wait, never the Monitor
-tool — a hook denies it), and on wake **restart from Step 1**. Do not report, do not ask the user
-whether to continue, do not treat "I have nothing to fix right now" as done. Handing an unsettled PR
-back to the user is the single most common way this loop gets broken.
+- **Merged**, or
+- **Closed**, or
+- **Open** AND: no conflicts, CodeRabbit finished, no unresolved comments, CI green.
 
-Before entering the gates, push any unpushed local commits so the remote PR reflects the latest work.
+**Loop rule:** the steps are sequential. Any fix → push → wait 6 minutes → **restart from Step 1**.
+Never batch steps, never skip ahead — every push resets CI and the bots, so a later step read
+before an earlier one settles is meaningless. A `pending` gate is not a pass: wait it out and
+restart, never hand an unsettled PR back.
 
-## Scope boundary
+## Steps
 
-This loop runs **after** a PR exists, to get it to merged. Do NOT arm a monitor or idle-poll while waiting — a hook denies the Monitor tool outright; drive the gates and stop. It is not the pre-PR self-review — that
-loop (the `self-review` skill, before the PR is created) is `parallel-workflow`'s
-pre-PR gate. When a PR merges, Step 1 hands off to `cleanup`. Issue status is never touched here — that's
-the tracker's concern; see `task-tracker`.
+1. **Merge status.** Merged → run `cleanup` (pass the PR number); done. Closed → tell the user; done. Open → Step 2.
+2. **Conflicts.** Conflicting → merge latest `main`, resolve, push, wait, restart. Clean → Step 3.
+3. **CodeRabbit finished?** Its check is `SUCCESS` the whole time it reviews, so colour tells you nothing — the only "done" signal is its `StatusContext` **`description` reading `"Review completed"`**. Not that yet → wait, restart. Done → Step 4.
+4. **Unresolved comments.** Any thread with `isResolved: false` → read it, fix the code, push, wait, restart. None → Step 5. (Never manually resolve a bot's thread — fix the code and let it re-resolve.)
+5. **CI green.** Any failure → fix, push, wait, restart. Any check pending → wait, restart. All green → **settled: report to the user.**
 
-Every PR runs through this same loop; which checks actually run on a given PR is whatever the repo's
-workflows decide, so read the PR's checks rather than assuming a layer is covered.
+## Notes
 
-The steps below describe each gate by *intent*. Confirm the current command flags at runtime, and see
-`references/github-cli.md` for this repo's non-obvious command facts — the query resolved review
-threads require, and the merge traps.
-
-## Step 1: Check merge status
-
-- Read the PR's merge state as the **ONLY** thing this step does. Do NOT batch it with anything else.
-- If `MERGED` → run `cleanup` for this PR (pass its number). Issue status is the tracker's — see `task-tracker`. Loop is done.
-- If `CLOSED` → stop the loop. Report to user that the PR was closed without merging.
-- If `OPEN` → proceed to Step 2.
-
-## Step 2: Check merge conflicts
-
-- Read whether the PR is mergeable.
-- If conflicting → merge the latest `main` into the branch, resolve conflicts, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If clean → proceed to Step 3.
-
-## Step 3: Check unresolved review comments
-
-- **First, confirm CodeRabbit has actually finished** — an empty thread list is meaningless until it has. Read CodeRabbit's `StatusContext` `description` (`references/github-cli.md` has the query and why pass/fail can't tell you this). Proceed **only** when it reads `"Review completed"`. Anything else — still in progress, or the context not there yet — means CodeRabbit is `pending`: background `sleep 360`, then **restart from Step 1**. Do NOT read the thread list as final until this marker is green; exiting on a not-yet-posted empty list is the #1 way this loop misses comments.
-- With CodeRabbit done, list the PR's review threads and their resolved status — `references/github-cli.md` has the query this needs (the obvious path can't report resolved state).
-- Filter to unresolved threads only.
-- If unresolved threads exist → read them, fix the code, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If no unresolved threads → proceed to Step 4.
-- **NEVER manually resolve review-bot threads** — fix code, let the bot re-resolve on next push.
-- A review bot's CI check **ALWAYS shows SUCCESS** even when it finds real bugs, and shows SUCCESS while the review is still running. CI green means NOTHING about comments — you must read threads regardless, and the only trustworthy "the bot has spoken" signal is CodeRabbit's `"Review completed"` marker above, never its check colour (see "Merging" below).
-
-## Step 4: Check CI
-
-- Read the PR's CI checks (never in a blocking watch mode — see `references/github-cli.md`).
-- If failures → fix them, push. **STOP. Wait 6 minutes. Restart from Step 1.**
-- If **any check is `pending`** → nothing to fix, and nothing to report. Background-`sleep 360`, then **restart from Step 1**. CodeRabbit counts as pending until its `StatusContext` `description` reads `"Review completed"` (Step 3 owns this check) — its check colour is `SUCCESS` throughout and says nothing.
-- **A `skipped` check counts as green, not as pending.** Gates that filter by path run a cheap always-on filter job and skip the expensive one when nothing relevant changed (see `e2e-main-pr.yml`); the checks list prints these as `skipped`. That is the designed pass state — never wait on it. Its *filter* job going red is a real failure and blocks like any other.
-- If all green AND no unresolved comments → PR is ready. Report to user.
-- **Flaky E2E**: if an E2E job failed at an infra/setup step (Playwright OS deps, Node.js setup, cache, runner allocation) and the PR doesn't touch test code, treat it as green — don't trigger reruns or block readiness on it. Reruns are only appropriate when the failure is in a step that executes changed code.
-- **Known non-blocking checks** — confirm the specific failure mode before waving these through, then gate on `test` + CodeRabbit instead:
-  - **Argos visual-regression** (`argos/Listen E2E`) does a pixel-perfect diff against the anonymous home, which is data-driven (the live production site against prod Hasura, no mocking) — it reports "changed" whenever the underlying data changes, not just on real UI regressions. Root-cause fix tracked separately (mask the data-driven pixels). If the diff is plausibly a genuine intended UI change, say so — it needs approving in Argos, not dismissing.
-
-## Merging — never automatic
-
-- **DEFAULT: never merge.** The user reviews every PR themselves. The loop's terminal action for an OPEN, settled PR is ALWAYS "report to the user that it's ready" — merging is a separate, explicit action taken only when the user has authorized it for that PR (e.g. "you can merge" / "merge when settled").
-- **A PR is "settled"** only when **all three** hold at once. Any one of them missing means unsettled, and unsettled means go round again:
-  1. **No conflicts** — OPEN and `MERGEABLE`.
-  2. **No unresolved review threads** — CodeRabbit's `description` reads `"Review completed"` AND then zero `isResolved: false`. The completion marker is load-bearing: zero threads before CodeRabbit finishes is not "clean", it's "too early to tell". This is the whole point of the loop.
-  3. **All CI green** — every check passed or was `skipped`, nothing `pending`, nothing failed or `CANCELLED` (a cancelled check is not green — rerun or investigate it).
-- **A review bot's CI check going green does NOT mean the bot has finished reviewing.** CodeRabbit reports `SUCCESS` on its status while the review is still running — and `SUCCESS` again after finding real bugs. So fully green CI can sit alongside a bot that has not yet said anything, and moments later it posts blocking comments. The finish signal is not the colour — it's CodeRabbit's `StatusContext` `description` reading exactly `"Review completed"` (see `references/github-cli.md`). Gate on that **positive** marker; until it shows, CodeRabbit is `pending` whatever colour its check is — background-`sleep 360` and restart from Step 1. **Never call a PR settled on green CI alone.**
-- **"You can auto merge when clean" means:** run the full loop until the PR is settled, THEN merge it yourself. It does NOT mean skip the flow and merge now, and it never means skip the review-comment gate (Step 3) — that is the single most important gate, since a green CodeRabbit *check* says nothing about whether it finished or left real comments — only the `"Review completed"` marker does.
-- **Never delegate the merge condition to the platform's auto-merge** — in this repo it ships before CI is green (`references/github-cli.md` explains why). Run the full CI loop yourself — Steps 1–4 above, including Step 4's checks — then merge manually with a squash once settled. Skipping straight to Steps 1–3 and merging without Step 4 ships whatever CI state happens to be current, which given this repo's merge-is-deploy model means shipping broken code to production.
-- Any fix mid-loop → push → wait 6 minutes → restart from Step 1. A new instruction mid-task folds into this process; it never cancels it or justifies a shortcut.
-
-## The rule that gets violated
-
-The #1 failure mode: batching multiple checks in parallel, fixing multiple things at once, or skipping Step 3 because CI is green. The steps are gates in strict order because each push triggers new CI + review-bot runs. Checking later steps before earlier ones settle is meaningless — the state changes after every push.
-
-## Reporting
-
-After each iteration, report what you found and fixed. Lead with unresolved comments if they exist — that's the #1 thing the user cares about.
+- The `gh` auth and the GraphQL queries Steps 3 and 4 need (a status's `description`, a thread's `isResolved` — neither is in the plain check list) live in `references/github-cli.md`.
+- A `skipped` check is green, not pending (path-filtered jobs skip the expensive half) — never wait on it. An E2E job that failed at an infra step (deps, runner, cache) on a PR that doesn't touch tests is not a real failure — treat it as green.
+- Waiting means a **background** `sleep`, never a foreground wait or the Monitor tool — a hook denies it.

@@ -36,28 +36,18 @@ Filter to `isResolved: false`. (`first:100` covers any real PR; only paginate wi
 
 An empty result is **only trustworthy once CodeRabbit has finished reviewing** — see the next section.
 
-## CodeRabbit's "done" marker lives in `description`, not pass/fail
+## Knowing CodeRabbit has finished reviewing
 
-CodeRabbit reports as a **`StatusContext`** (context `"CodeRabbit"`), *not* a check run — so it
-never appears in `gh pr checks`' pass/fail list the way a workflow does. Its `state` is `SUCCESS`
-the **entire** time: while it's still reviewing *and* after it's done, and again even when it has
-posted blocking comments. So pass/fail tells you nothing about whether it has finished.
-
-The **only** field that moves is `description`: it flips to exactly `"Review completed"` when the
-review is genuinely done. Read that field — it's the one observable finish signal, and it's what an
-empty unresolved-thread list depends on to mean anything.
+CodeRabbit's `state` is `SUCCESS` the whole time it reviews — colour never tells you it's done. The
+one field that moves is its `description`, which reads exactly `"Review completed"` when finished.
+It's a `StatusContext` (not a check run), so read it via GraphQL and match on that string:
 
 ```bash
 gh api graphql -f query='{ repository(owner:"OWNER", name:"REPO") { pullRequest(number:NUMBER) { commits(last:1) { nodes { commit { statusCheckRollup { contexts(first:100) { nodes { ... on StatusContext { context state description } } } } } } } } } }'
 ```
 
-Find the node with `context == "CodeRabbit"` and read its `description`. **Proceed only when it
-reads `"Review completed"`.** Anything else — an in-progress/queued description, or the context
-absent entirely — means CodeRabbit is still working: it is `pending`, whatever its `state`. Gate on
-this **positive** marker (the exact `"Review completed"` string is verified against a finished
-review); never gate on the absence of some in-progress wording, which is unverified and can clear a
-beat before the last comment lands. Each push resets the review, so the marker returns to not-done
-until the fresh review completes.
+Anything other than `"Review completed"` on the `CodeRabbit` node means it is still working. Each
+push resets the review, so the marker returns to not-done until the fresh review completes.
 
 ## Updating a PR title/body — never `gh pr edit`
 
