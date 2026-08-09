@@ -85,8 +85,8 @@ regenerated types) in its own package. Because codegen reads the *live* schema,
 the migration must deploy first; it lands as its own PR and the query+codegen PR
 is blocked by it — that ordering is `dependency-analysis`'.
 
-These four tests judge whether a diff is *good*. How to actually split one that
-fails a test — which side lands first, blockers before dependents — is
+These four tests judge whether a diff is *good*. When one fails, the split
+itself — which pieces are genuinely separate, and which must land first — is
 `dependency-analysis`'.
 
 ## Worked examples
