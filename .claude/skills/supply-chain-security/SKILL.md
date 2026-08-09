@@ -98,32 +98,18 @@ Aim for all of these. Most are one-time setup.
    that one package (`minimumReleaseAgeExclude`) rather than lowering the global window. Requires
    pnpm ≥ 10.16. Note: frozen installs (CI/deploy) install exact _locked_ versions regardless of age,
    so a long cooldown never breaks a build — it only governs the moment you deliberately resolve.
-7. **Keep the package manager itself current and patched.** The CLI isn't just plumbing — during an
-   install it runs with your full user privileges and writes across the filesystem, so a bug _in pnpm_
-   is as dangerous as a bug in a dependency. pnpm has shipped real CLI advisories — for example
-   scoped-bin-name **path traversal / arbitrary file write** outside `node_modules/.bin`
-   (GHSA-xpqm-wm3m-f34h, fixed in **10.28.1**) and **command injection** via environment-variable
-   substitution in an `.npmrc` `tokenHelper` (CVE-2025-69262), with further CLI advisories patched
-   across the 10.29+ releases through 2026. So:
-   - **Don't anchor on a fixed floor — stay on the latest 10.x patch.** Below `10.16` you can't set the
-     cooldown at all; `10.28.1` closed the path-traversal escapes; later 10.x patches close further CLI
-     advisories. The rule is the latest patch of your major line, not a single "safe" version.
-   - **Target: the latest pnpm 10.x (10.34.x at time of writing).** This is the stable, safe choice for
-     most repos. It already gives you lifecycle-scripts-off-by-default, the cooldown (≥ 10.16) and the
-     path-traversal fixes (≥ 10.28.1), and it runs on **Node ≥ 18.12** — so you get the whole posture
-     without touching your Node floor. Don't reach for pnpm 11 just for the security fixes; 10.x has them.
-   - **pnpm 11 is gated on Node 22.** The current major requires **Node 22+** (engines: `node >= 22.13`) and renames
-     `onlyBuiltDependencies` → `allowBuilds`. It ships the cooldown, lifecycle-script blocking and
-     exotic-subdep blocking _on by default_, but adopting it means committing the whole repo — CI,
-     contributors, and `engines.node` — to a Node 22+ floor. That's a deliberate, separate decision, not
-     a security necessity (10.x already closes the known holes). Move to 11 only once that floor is in
-     place, repo by repo via `"packageManager": "pnpm@11.x"` after a build-check — never by flipping a
-     global switch across every project at once.
-   - Upgrade the CLI **the same way it was installed** — check first with `ls -l "$(which pnpm)"`
-     (`npm i -g pnpm@10` for an npm-global install; the standalone installer or `corepack` otherwise).
+7. **Keep the package manager itself current and patched.** During an install the CLI runs with your
+   full user privileges, so a bug _in pnpm_ is as dangerous as a bug in a dependency — it has shipped
+   real CLI advisories. Stay on the **latest patch of the 10.x line** — the cooldown first exists at
+   `10.16` and no older-major patch ever reaches it, so a project below `10.16` has to cross the major
+   boundary, not just take its own line's latest patch. The version-by-version specifics — which advisories each
+   patch closes, why the latest 10.x is the safe default, and the Node-22 floor that gates pnpm 11 —
+   are in `references/package-manager-config.md`. Upgrade the CLI the same way it was installed
+   (`ls -l "$(which pnpm)"` to check).
 
-If a project is on pnpm < 10.16 the cooldown isn't available, and older 10.x patches carry known CLI
-advisories — flag it and bump to the latest 10.x patch before relying on this posture.
+If a project is on pnpm < 10.16 the cooldown isn't available and older patches carry known CLI
+advisories — flag it and bump onto the latest 10.x patch (crossing the major boundary if it's on 9
+or older) before relying on this posture.
 
 ## Procedures
 

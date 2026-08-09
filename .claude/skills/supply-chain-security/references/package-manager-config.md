@@ -36,8 +36,8 @@ Three notes that bite in practice:
   Instead write one keyed entry per line, each carrying the package name and its own major's fix
   version (`"pkg@>=1.0.0 <1.2.0": "1.2.0"`, `"pkg@>=2.0.0 <2.4.0": "2.4.0"`, …), so each consumer
   keeps a compatible major. Confirm by running the repo's own check that actually exercises the
-  affected consumer — the build or test path that would break if the pin is wrong (in the SWO-642
-  case, the CI build that pulls in `minimatch`), not a proxy like a bare typecheck.
+  affected consumer — the build or test path that would break if the pin is wrong (here, the CI
+  build that pulls in `minimatch`), not a proxy like a bare typecheck.
 
 ## pnpm
 
@@ -98,11 +98,17 @@ blockExoticSubdeps: true
 
 ### Recommended pnpm baseline
 
+The CLI advisories behind item 7's "latest patch, not a fixed floor" rule: scoped-bin-name path
+traversal / arbitrary file write (GHSA-xpqm-wm3m-f34h, fixed in 10.28.1) and command injection via
+an `.npmrc` `tokenHelper` (CVE-2025-69262). Both are in the installer itself, which is why an
+unpatched pnpm is the exposure item 7 describes.
+
 Target the **latest pnpm 10.x** (10.34.x at time of writing). It runs on **Node ≥ 18.12** and already
 gives you lifecycle-scripts-off-by-default, the `minimumReleaseAge` cooldown (≥ 10.16) and the
-path-traversal fixes (≥ 10.28.1) — the full posture without a Node-floor bump. Pin it explicitly via
-`"packageManager": "pnpm@10.34.x"` and `engines.pnpm`, and upgrade the global CLI the same way it was
-installed (`npm i -g pnpm@10` for an npm-global install; the standalone installer or `corepack` otherwise).
+path-traversal fixes (≥ 10.28.1) — the full posture without a Node-floor bump. Pin it explicitly:
+`"packageManager"` takes the **exact** patch Corepack enforces (e.g. `pnpm@10.34.3`), while
+`engines.pnpm` can hold a range. Upgrade the global CLI the same way it was installed
+(`npm i -g pnpm@10` for an npm-global install; the standalone installer or `corepack` otherwise).
 
 pnpm 11 turns the cooldown and exotic-subdep blocking on by default, but requires **Node ≥ 22.13** and
 renames `onlyBuiltDependencies` → `allowBuilds`. Move to it only after committing the repo to a Node 22+
