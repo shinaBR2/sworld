@@ -11,7 +11,6 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 
 ## Critical rules
 
-- No AI attribution anywhere — in the title, body, or commits (AGENTS.md owns this rule)
 - Do not pad the description by restating the diff
 - The one thing that must be true: the PR is linked to its tracker issue. The `SWO-NNN` has to reach the integration — through the branch name and/or the body — so it moves the issue to In Review (see `task-tracker`). Where the ID appears is an implementation detail; the link is what matters.
 
@@ -139,5 +138,4 @@ Before opening the PR:
 - Summary is 1–3 sentences and does not restate the diff
 - PR type decided: user-facing, or starts with `No user-facing changes.`
 - User-facing test steps name the exact page, the exact thing to look at, and plain pass/fail — no file/function names
-- No AI attribution anywhere (AGENTS.md)
 - PR is linked to its tracker issue — `SWO-NNN` is in the branch name and/or the body (see `task-tracker`)
