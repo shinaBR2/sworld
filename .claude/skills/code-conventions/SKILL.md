@@ -43,11 +43,6 @@ Biome enforces what it can. The rest you check by eye — these are exactly the 
 - AVOID cross-feature imports as much as possible.
 - If a cross-feature import is unavoidable, add a `// TODO: refactor cross-feature import` comment so it can be addressed later.
 
-## Control flow
-
-- PREFER early return over deep nesting or else blocks.
-- NEVER use complex inline ternaries like `a ? (b ? c : d) : e` — extract to a function with early returns.
-
 ## Naming conventions
 
 - **File names**: camelCase preferred (e.g. `envConfig.ts`, `useProjectData.ts`). Exception: React component files use PascalCase (e.g. `ProjectCard.tsx`, `SignUpFormUI.tsx`)
