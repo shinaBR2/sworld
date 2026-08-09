@@ -40,14 +40,6 @@ The load-bearing point: **size is not risk.** A rename across 30 files within on
 app or package is a *good* diff even though it's large. A five-line change to a
 permission rule is the one to keep smallest and review hardest.
 
-Once the risk is judged, line count is a secondary sanity check — a rough hint,
-never a rule that overrides the table above:
-
-- **0–50 lines** — perfect.
-- **51–150 lines** — good for a cohesive change.
-- **151–300 lines** — needs a reason: why can't this be smaller?
-- **300+ lines** — almost certainly more than one purpose (Test 1); re-check.
-
 ## Test 3 — behaviour that changes is covered by a test
 
 A change in behaviour ships with a test. A new feature or a bug fix carries a
