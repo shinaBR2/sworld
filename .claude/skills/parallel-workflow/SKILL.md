@@ -50,4 +50,5 @@ Two rules frame everything:
   lands, re-run `pnpm codegen` in `packages/core` (fetch and merge `origin/main`
   first) and ship the regenerated types as a follow-up — schema first, because
   the generated types mean nothing until it's live (`micro-prs`, "blockers land
-  first"; GraphQL conventions in `architecture`).
+  first"; GraphQL conventions in `architecture`). A merge conflict in a
+  generated file is never hand-resolved: take main's version and re-run codegen.
