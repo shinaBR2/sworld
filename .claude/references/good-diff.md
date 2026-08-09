@@ -1,8 +1,9 @@
 # What makes a good diff
 
 The single home for the "is this a good diff / good PR?" judging criteria.
-Applies to both a local diff and a PR — same two tests, and a good diff passes
-both. `self-review` and `micro-prs` link here when they need the full criteria.
+Applies to both a local diff and a PR — same three tests, and a good diff passes
+all three. `self-review` and `micro-prs` link here when they need the full
+criteria.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -39,7 +40,21 @@ The load-bearing point: **size is not risk.** A rename across 30 files or a
 constants-only change is a *good* diff even though it's large. A five-line
 change to a permission rule is the one to keep smallest and review hardest.
 
-These two tests judge a diff's *purpose* and *risk* — not how to split the work.
-The rule that one diff stays inside one app or one shared package, and the
-line-count sizing hints, are `micro-prs`' — a large multi-file diff still has to
-obey them.
+## Test 3 — behaviour that changes is covered by a test
+
+A change in behaviour ships with a test. A new feature or a bug fix carries a
+test that **fails without the change and passes with it** — that's the proof it
+works now, and the guard that stops it breaking silently later. A bug fix, in
+particular, ships with a test that reproduces the bug.
+
+Not every diff adds a test: a pure refactor changes no behaviour, so it rides on
+the existing tests staying green; a docs- or constants-only change needs none.
+The test is only owed where behaviour a user or a caller can observe changes.
+
+The finding: **an observable change in behaviour with no test is not a good
+diff.**
+
+These three tests judge a diff's *purpose*, *risk*, and *test coverage* — not how
+to split the work. The rule that one diff stays inside one app or one shared
+package, and the line-count sizing hints, are `micro-prs`' — a large multi-file
+diff still has to obey them.
