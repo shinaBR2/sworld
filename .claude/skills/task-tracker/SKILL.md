@@ -74,10 +74,9 @@ the moment and defer here. What each moment does in our current GitHub↔Linear 
    doesn't cover this one. This is the **only** status change you ever make yourself.
 2. **It's ready for review** → opening the PR auto-moves the issue to `In Review` (the integration,
    keyed off the `SWO-NNN` in the branch / PR body — see *The GitHub link* below). Nothing to do.
-3. **It's done** → merging auto-moves the issue to `Done` **only when the PR uses a closing keyword**
-   (`Fixes`/`Closes SWO-NNN`); a bare `Refs SWO-NNN` links and reviews but does *not* close on merge
-   (see *The GitHub link*). A parent auto-closes once its last child is `Done`. Verify the final state
-   after the last merge rather than assuming it.
+3. **It's done** → merging auto-moves the issue to `Done`, but only when the PR uses a closing keyword
+   rather than a bare reference — *The GitHub link* below owns that distinction. A parent auto-closes
+   once its last child is `Done`. Verify the final state after the last merge rather than assuming it.
 
 So in practice you touch status exactly once — at the start; moments 2 and 3 happen on their own.
 

@@ -1,7 +1,7 @@
 # Worked PR examples
 
 Three complete title-plus-body examples, one per PR type. Read this when you want to see a whole PR
-assembled, not just the Summary / Test-plan fragments the SKILL.md shows inline. The rules these
+assembled, not just the rules and anti-patterns the SKILL.md shows inline. The rules these
 illustrate — audience, before→after Summary, plain-English test steps — all live in the SKILL.md;
 these are only the filled-in form. Two rules aren't shown in the bodies below and aren't meant to
 be: the tracker ID (`SWO-NNN`) rides in the branch name rather than the body, and a real test step
@@ -14,7 +14,7 @@ Title: `refactor(core): rename abbreviated names in the query and mutation hooks
 ```markdown
 ## Summary
 
-No user-facing changes. Renames a set of short, cryptic variable names in the query and mutation hooks to full descriptive names, so the code is easier to read. The behaviour it produces is identical. Split from #2578.
+No user-facing changes. Renames a set of short, cryptic variable names in the query and mutation hooks to full descriptive names, so the code is easier to read. The behaviour it produces is identical.
 
 ## Test plan
 

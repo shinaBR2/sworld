@@ -30,15 +30,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 
 Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
 
-The jargon-free law itself (what counts as plain, the comprehension test it must pass, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill owns *where* the block sits and the header and length each shape uses — both spelled out in the shape templates below. The Bug, small-feature, and large-feature-parent shapes all use:
-
-```markdown
-**In plain words**  _(no code, no jargon — anyone can read this)_
-
-[2–4 sentences. What a user actually experiences going wrong, or wants — and why it matters. If a number is wrong, show it with round numbers. Must pass `plain-english`'s comprehension test.]
-```
-
-This block is mandatory on the Bug, Small feature, and Large-feature-parent shapes. The **User story** already opens this way — its `**The user's problem**` section *is* the plain-words block, no separate header needed. A **sub-issue** (the small child of a large feature) opens with a one-line `**Why this matters**` instead — same law, just one sentence: what part of the user-facing feature this piece contributes to, so whoever picks it up knows the point without decoding the title or re-reading the parent.
+The jargon-free law itself — what counts as plain, the comprehension test it must pass, worked before/after examples, and the header and length each context uses — lives in the `plain-english` skill. Load it before writing this block and take the header and length for your shape from its table. This skill owns only *where* the block sits: it is mandatory as the opening of the Bug, Small feature, and Large-feature-parent shapes (using the `**In plain words**` header); the **User story** already opens this way, so its `**The user's problem**` section *is* the plain-words block, no separate header needed; and a **sub-issue** (the small child of a large feature) opens with the `**Why this matters**` variant instead — what part of the user-facing feature this piece contributes to, so whoever picks it up knows the point without decoding the title or re-reading the parent. Each shape template below shows the block in place.
 
 ## The four spec shapes
 
