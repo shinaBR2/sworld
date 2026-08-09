@@ -1,8 +1,9 @@
 name: Typecheck on PR
 
-# Skips a PR whose every changed file lives in apps/hasura or .claude — the
-# parts a workspace `pnpm typecheck` genuinely cannot reach: apps/hasura
-# (SWO-549) and .claude (skills/references/config — not a workspace package).
+# Skips a PR whose every changed file lives in apps/hasura, .claude, or root
+# markdown — the parts a workspace `pnpm typecheck` genuinely cannot reach:
+# apps/hasura (SWO-549), .claude (skills/references/config — not a workspace
+# package), and root-level docs like AGENTS.md/README.md.
 #
 # The filter lives in the `changes` job, NOT in `on:`. An `on: paths` filter
 # stops the workflow triggering at all, so no check run is created and a
@@ -49,12 +50,22 @@ jobs:
         id: filter
         with:
           # A negated pattern, on purpose: it matches any changed file outside
-          # both apps/hasura and .claude, so the output is false only when
-          # *every* changed file is inside one of them. Written this way rather
-          # than as a positive allow-list because an allow-list has to be
+          # apps/hasura, .claude, and root-level markdown, so the output is false
+          # only when *every* changed file is one of those. Written this way
+          # rather than as a positive allow-list because an allow-list has to be
           # extended for every new app and every new root config file, and
           # forgetting silently reports green. A new path anywhere outside those
-          # two runs the gate by default.
+          # runs the gate by default.
+          #
+          # Root-level '*.md' (AGENTS.md, README.md, …) is documentation that
+          # cannot break `tsc`, so a pure-docs PR should skip. It MUST be folded
+          # into this one negated brace, NOT added as a separate `!*.md` line:
+          # paths-filter OR's its patterns, and a standalone `!*.md` matches every
+          # non-markdown file, which would force the gate to run on *every* PR —
+          # including the apps/hasura- and .claude-only ones this filter exists to
+          # skip. '*.md' is one path segment in the picomatch dialect, so it
+          # catches root markdown only; a nested doc (apps/x/README.md) still runs
+          # — deliberately conservative, since that's rare and running is harmless.
           #
           # The second pattern re-arms the gate for the one hasura-internal file
           # that can invalidate the assumption above: skipping is sound ONLY
@@ -71,7 +82,7 @@ jobs:
           # turbo can never visit it for a typecheck.
           filters: |
             typecheck:
-              - '!{apps/hasura,.claude}/**'
+              - '!{apps/hasura/**,.claude/**,*.md}'
               - 'apps/hasura/package.json'
 
   typecheck:
