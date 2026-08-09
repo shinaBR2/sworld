@@ -22,8 +22,7 @@ we can have in the product.
   work is a self-contained block: you can build, test, review, ship, and undo it
   on its own, without waiting on or breaking the pieces around it. A component
   you can run on its own, a change you can undo by itself — the same shape
-  everywhere. Tangled work collides and copies fall out of sync; separate pieces
-  can move at the same time and stay easy to change.
+  everywhere.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
