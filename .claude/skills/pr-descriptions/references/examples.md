@@ -22,7 +22,7 @@ Renames a set of short, cryptic variable names in the query and mutation hooks t
 
 ## Test plan
 
-Nothing to verify by hand — a pure rename with no behaviour change; CI's type-checks and unit tests cover it.
+Nothing to verify by hand — a pure rename with no behaviour change; CI covers it.
 ```
 
 ## Example 2: Bug fix (user-facing)
@@ -53,7 +53,7 @@ Title: `feat(library): bulk import items from a pasted list`
 
 ## Summary
 
-Adds a way to paste a list in the Library app and have it split into separate items automatically, instead of typing each one. Behind feature flag `bulk_import` — but with the flag on the end user sees a new import box, so it counts as user-facing.
+Adds a way to paste a list in the Library app and have it split into separate items automatically, instead of typing each one. It's rolled out gradually, but wherever it's switched on people see a new import box — so it counts as a user-facing change.
 
 ## Test plan
 
