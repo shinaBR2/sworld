@@ -73,7 +73,7 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 
 ### 3. One-purpose / scope
 
-Apply the does-one-thing bar (`.claude/references/good-diff.md` Test 1) to each sub-issue as it stands. A sub-issue that has quietly grown a
+Apply the does-one-thing and one-boundary bars (`.claude/references/good-diff.md`, Tests 1 and 4) to each sub-issue as it stands. A sub-issue that has quietly grown a
 second purpose, or now spans two apps or an app plus a shared package, is a split — flag it before it's built, not at review.
 
 ## Output
