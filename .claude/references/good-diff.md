@@ -2,7 +2,7 @@
 
 The home for the four tests that answer "is this a good diff / good PR?". Applies
 to both a local diff and a PR — a good diff passes all four. `self-review` and
-`micro-prs` each link here for the test behind a call they make.
+`micro-prs` both link here.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -58,11 +58,11 @@ diff.**
 
 ## Test 4 — one side of a boundary
 
-A good diff stays within one side of a boundary. A side is one app, or one shared
-package — touch two of them in one diff and it's a crossing. Even a few lines that
-way is bad: each side is reviewed and rolled back on its own terms, so a crossing
-can't be reviewed or reverted cleanly. Which directories make up each side is
-`micro-prs`' rule 2.
+A good diff stays within one side of a boundary — one self-contained unit that's
+built, reviewed, and reverted on its own terms. Span two of them in one diff and
+it's a crossing; even a few lines that way is bad, because a crossing can't be
+reviewed or reverted cleanly. Which directories count as one unit is `micro-prs`'
+rule 2.
 
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
