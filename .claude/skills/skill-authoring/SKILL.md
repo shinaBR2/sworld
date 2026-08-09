@@ -3,7 +3,7 @@ name: skill-authoring
 description: Create new skills and iteratively improve existing ones. Use whenever the work touches a skill at all — creating one from scratch, editing, refining, trimming, or splitting an existing skill, testing a skill against realistic prompts, or sharpening a `description:` so it triggers reliably. Fires on any edit under `.claude/skills/` or to a `SKILL.md`, even when the user doesn't say "skill".
 ---
 
-# Skill Creator
+# Skill Authoring
 
 Creating a skill is ordinary work — make the directory, copy the frontmatter shape
 from a sibling skill, draft, ask about edge cases, iterate. You do all of that
