@@ -23,9 +23,8 @@ catching that drift here is cheap, three sub-issues deep it isn't.
 Where it sits: `product-planning`/`grill-me` make the breakdown (forward, idea → plan); **`analyze`
 audits that breakdown before code** (backward); `self-review` audits the code. It doesn't re-plan —
 it reuses `grill-me` for the requirement pass and `.claude/references/good-diff.md` for the scope
-pass, and adds the one check only it can: the breakdown still holds against the moved codebase. Run
-it once the sub-issues exist (the integrity pass needs them); `parallel-workflow` calls for it on
-any non-trivial or reopened issue.
+pass, and adds the one check only it can: the breakdown still holds against the moved codebase.
+`parallel-workflow` calls for it on any non-trivial or reopened issue.
 
 Highest value on a large-feature parent with sub-issues, on anything scoped a while ago, and on
 anything reopened or reworked — where plan and reality have drifted most. Pull the issue, its
@@ -40,7 +39,9 @@ either handled or *explicitly* ruled out of scope. A silent axis is a requiremen
 
 ### 2. Breakdown integrity
 
-Analyze's own contribution — does the parent still match its sub-issues and their relations?
+Analyze's own contribution, and the pass that needs the sub-issues to exist — does the parent still
+match its sub-issues and their relations? (On an issue not yet broken down, only passes 1 and 3
+apply.)
 
 - **Stale blockers** — a `blocked-by` pointing at an issue since closed, merged, or superseded. A
   dead blocker makes startable work look blocked; a blocker dropped in prose only makes blocked work
