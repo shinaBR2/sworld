@@ -6,10 +6,6 @@ user-invocable: false
 
 # React Rules
 
-## Pure logic
-
-- Keeping pure logic out of components (extract to a dedicated file, unit-tested) and the Container/Presentational split are `code-conventions`.
-
 ## Callbacks
 
 - AVOID inline callbacks (e.g. `onChange={() => {...}}`) as much as possible — prefer `useCallback` instead.

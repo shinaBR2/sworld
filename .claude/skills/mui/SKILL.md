@@ -48,7 +48,7 @@ Corollary: never restyle a component to "match" a design system — if many comp
 
 ## 5. NEVER use px units
 
-Use relative units that scale with user preferences:
+Raw px ignores the user's font-size setting. Type carries its own unit; spacing goes through the theme:
 
 | Property | Bad | Good |
 |----------|-----|------|
