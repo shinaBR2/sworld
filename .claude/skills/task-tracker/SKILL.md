@@ -82,7 +82,7 @@ So in practice you touch status exactly once — at the start; moments 2 and 3 h
 
 ## What you track, and what each carries
 
-- **Issue** — the unit of work: on team `SWO`, in one app `project`, with a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`).
+- **Issue** — the unit of work: on team `SWO`, in one app `project`, with a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`). Give it a plain, specific title — no `[bracket]` prefixes; the project and labels already carry that grouping.
 - **Dependency** — a `blocked-by` edge between issues, which is how waves are encoded. `dependency-analysis` owns *when* a blocker is earned; this skill owns only that the edge is `blocked-by`.
 - **Project** — an app surface (see the model above); created only for a brand-new app.
 - **Document** — a heavy concept spec, attached to its app's project.
@@ -99,6 +99,8 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 | `parent:` (which feature) | the **parent** issue (`SWO-NNN`) |
 | `blocked-by:` | a **`blocked-by` relation** between issues |
 | bug / user-story tagging | one or more **labels** |
+
+A bug ticket carries the `bug` label, and a user story the `user-story` label; that is how each is found and filtered.
 
 ## The GitHub link
 
