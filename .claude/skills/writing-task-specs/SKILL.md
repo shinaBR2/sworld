@@ -9,7 +9,7 @@ A ticket is ordinary writing — you draft it yourself. This skill holds only th
 
 ## Two rules
 
-- **One purpose per ticket.** Same bar as `micro-prs`: it does one thing. If the work is too big for one purpose, it's a *parent*: create the ticket, break it into child sub-tickets — one purpose each, and each inside a single app/package (split again if one spans two) — and use `dependency-analysis` to decide which children block which. That's the only thing that earns a `blocked-by` edge (see `task-tracker`).
+- **One purpose per ticket.** The same does-one-thing bar as `.claude/references/good-diff.md` Test 1. If the work is too big for one purpose, it's a *parent*: create the ticket, break it into child sub-tickets — one purpose each, and each inside a single app/package (Test 4 — split again if one spans two) — and use `dependency-analysis` to decide which children block which. That's the only thing that earns a `blocked-by` edge (see `task-tracker`).
 - **Plain words, always.** Every ticket opens by explaining the problem in plain language (`plain-english` owns what counts as plain). This doubles as a decomposition check: **if you can't explain the problem shortly, it's too big — break it down further.**
 
 ## The shape

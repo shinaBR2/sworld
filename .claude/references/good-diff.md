@@ -1,8 +1,7 @@
 # What makes a good diff
 
 The home for the four tests that answer "is this a good diff / good PR?". Applies
-to both a local diff and a PR — a good diff passes all four. `self-review` and
-`micro-prs` both link here.
+to both a local diff and a PR — a good diff passes all four.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -61,18 +60,24 @@ diff.**
 A good diff stays within one side of a boundary — one self-contained unit that's
 built, reviewed, and reverted on its own terms. Span two of them in one diff and
 it's a crossing; even a few lines that way is bad, because a crossing can't be
-reviewed or reverted cleanly. Which directories count as one unit is `micro-prs`'
-rule 2.
+reviewed or reverted cleanly. One unit is **at most one** of: a single app (each
+app counts on its own — including the backend and the Hasura layer), the shared
+core package, or the shared UI package. Touching two apps, or an app plus a
+shared package, or both shared packages, in one diff is a crossing.
 
-Generated code that lands beside its own source is not a second side: a frontend
-GraphQL query change and its regenerated types (both in `packages/core`) are one
-diff, one purpose (Test 1). But when the source and its generated code sit on
-opposite sides of a boundary, changing both in one diff is a crossing (Test 4),
-not one diff; how that splits is `micro-prs`'.
+Generated code that lands beside its own source is not a second side: a GraphQL
+query change and its regenerated types are one diff, one purpose (Test 1) —
+codegen writes its output into the same package or app as the query, so it never
+crosses a boundary on its own. The crossing to watch is different: a query that
+needs a **new column or table** and the Hasura schema change that adds it. Those
+are two sides — the migration in the Hasura app, the query (carrying its
+regenerated types) in its own package. Because codegen reads the *live* schema,
+the migration must deploy first; it lands as its own PR and the query+codegen PR
+is blocked by it — that ordering is what `dependency-analysis` decides.
 
-These four tests judge whether a diff is *good*. How to actually split one that
-fails a test — which side lands first, blockers before dependents, the
-line-count sizing hints — is `micro-prs`'.
+These four tests judge whether a diff is *good*. When one fails, the split
+itself — which pieces are genuinely separate, and which must land first — is
+what `dependency-analysis` decides.
 
 ## Worked examples
 

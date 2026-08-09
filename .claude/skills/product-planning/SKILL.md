@@ -9,7 +9,7 @@ description: >-
   domain concept is on the table — especially when the real risk is whether the *concept* is
   understood, not how to code it. It interrogates whether the thinking is genuinely clear, captures
   the concept as documentation up-front, weighs architecture, and shapes a high-level parent —
-  conducting grill-me, writing-task-specs and micro-prs as it goes. Not for trivial, well-understood
+  conducting grill-me and writing-task-specs as it goes. Not for trivial, well-understood
   changes that should go straight to code — though its critical-thinking instinct still applies even
   then.
 ---
@@ -131,7 +131,7 @@ Nail the parent's **Goal first** (`writing-task-specs`) — a concrete, plain-En
 feature finished and how anyone would know. If that can't be written concretely yet, say so and suggest
 going back to Steps 1–3 rather than inventing sub-issues around a fuzzy goal — same non-gating
 posture as above: raise the concern, then follow the user's call if they want to proceed anyway.
-Then break it into sub-issues, applying `micro-prs`' does-one-thing bar and one-app/package scope to each,
+Then break it into sub-issues, applying the does-one-thing bar and one-app/package scope (`.claude/references/good-diff.md`, Tests 1 and 4) to each,
 sequencing them (flat by default, waves only where a real dependency exists — see `dependency-analysis`),
 and respecting the deployment model (small, independently mergeable, revertible). This is deliberately
 *separate* from Steps 1–3 — don't race ahead into it before the shape is agreed.
@@ -147,7 +147,8 @@ rock-solid?) and **the non-gating posture**.
 | Interrogating the thinking | `grill-me` |
 | Nailing the concept | a short tracker document |
 | Parent issue + sub-issues | `writing-task-specs` |
-| Decomposition & sequencing | `micro-prs` |
+| Splitting into one-purpose pieces | `.claude/references/good-diff.md` |
+| Real dependencies & sequencing | `dependency-analysis` |
 
 ## Always on, even when you skip the full chain
 
