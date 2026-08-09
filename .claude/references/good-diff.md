@@ -74,11 +74,15 @@ app counts on its own — including the backend and the Hasura layer), the share
 core package, or the shared UI package. Touching two apps, or an app plus a
 shared package, or both shared packages, in one diff is a crossing.
 
-Generated code that lands beside its own source is not a second side: a frontend
-GraphQL query change and its regenerated types (both in `packages/core`) are one
-diff, one purpose (Test 1). But when the source and its generated code sit on
-opposite sides of a boundary, changing both in one diff is a crossing (Test 4),
-not one diff.
+Generated code that lands beside its own source is not a second side: a GraphQL
+query change and its regenerated types are one diff, one purpose (Test 1) —
+codegen writes its output into the same package or app as the query, so it never
+crosses a boundary on its own. The crossing to watch is different: a query that
+needs a **new column or table** and the Hasura schema change that adds it. Those
+are two sides — the migration in the Hasura app, the query (carrying its
+regenerated types) in its own package. Because codegen reads the *live* schema,
+the migration must deploy first; it lands as its own PR and the query+codegen PR
+is blocked by it — that ordering is `dependency-analysis`'.
 
 These four tests judge whether a diff is *good*. How to actually split one that
 fails a test — which side lands first, blockers before dependents — is
