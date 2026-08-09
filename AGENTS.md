@@ -21,10 +21,10 @@ we can have in the product.
 - **Build in independent blocks — isolation is the default.** Every piece of
   work is a self-contained block with a clean edge — built, tested, reviewed,
   shipped, and reverted on its own, without waiting on or breaking its
-  neighbours. Most rules here are instances of it: the isolated worktree, one
-  problem per ticket, one home per fact, a component that runs alone, a PR you
-  can revert by itself. Tangling breeds drift and merge pain; a clean edge is
-  what makes parallel work and cheap change possible.
+  neighbours. Much of how we work applies it: the parallel worktree and one home
+  per fact (both below), one problem per ticket, a component that runs alone, a
+  PR you can revert by itself. Tangling breeds drift and merge pain; a clean edge
+  is what makes parallel work and cheap change possible.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
