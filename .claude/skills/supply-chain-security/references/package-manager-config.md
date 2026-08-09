@@ -98,11 +98,10 @@ blockExoticSubdeps: true
 
 ### Recommended pnpm baseline
 
-The CLI runs with your full user privileges during an install and writes across the filesystem, so a
-bug *in pnpm itself* is as dangerous as a bug in a dependency — pnpm has shipped real ones, e.g.
-scoped-bin-name path traversal / arbitrary file write (GHSA-xpqm-wm3m-f34h, fixed in 10.28.1) and
-command injection via an `.npmrc` `tokenHelper` (CVE-2025-69262). So stay on the latest patch of your
-major line, not a fixed floor.
+The CLI advisories behind item 7's "latest patch, not a fixed floor" rule: scoped-bin-name path
+traversal / arbitrary file write (GHSA-xpqm-wm3m-f34h, fixed in 10.28.1) and command injection via
+an `.npmrc` `tokenHelper` (CVE-2025-69262). Both are in the installer itself, which is why an
+unpatched pnpm is the exposure item 7 describes.
 
 Target the **latest pnpm 10.x** (10.34.x at time of writing). It runs on **Node ≥ 18.12** and already
 gives you lifecycle-scripts-off-by-default, the `minimumReleaseAge` cooldown (≥ 10.16) and the
