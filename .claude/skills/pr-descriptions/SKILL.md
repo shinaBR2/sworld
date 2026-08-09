@@ -1,6 +1,6 @@
 ---
 name: pr-descriptions
-description: This skill should be used whenever the user asks to "create a PR", "open a pull request", "raise a PR", "push and PR", "write a PR description", or "draft a PR". Also use when updating an existing PR's title or description. Enforces the conventional commit title format and the lean Summary + Test plan body.
+description: This skill should be used whenever the user asks to "create a PR", "open a pull request", "raise a PR", "push and PR", "write a PR description", or "draft a PR". Also use when updating an existing PR's title or description. Enforces the conventional commit title format and the lean body: a Category + Impact header, then Summary and Test plan.
 ---
 
 # PR Descriptions
