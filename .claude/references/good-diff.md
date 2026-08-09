@@ -1,9 +1,7 @@
 # What makes a good diff
 
 The home for the four tests that answer "is this a good diff / good PR?". Applies
-to both a local diff and a PR — a good diff passes all four. Many planning and
-review skills link here for these tests — it's a shared home, so weigh the blast
-radius before editing.
+to both a local diff and a PR — a good diff passes all four.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
