@@ -33,8 +33,13 @@ small and surgical it has to be:
 |------|-----------------|---------|
 | **Highest — can break production** | a migration, auth, a permission rule, a shared contract many callers depend on | keep it tiny and surgical |
 | **Middle — user-facing** | UI, copy, behaviour a user sees | keep it to one visible change |
-| **Lowest — refactor / tech-debt** | rename, extract, props-drilling, constants-only | can span many files and still be good — the risk is low even when the size is large |
+| **Lowest — refactor / tech-debt** | a rename, pulling shared code into a helper, passing a value down through many files, a constants-only change | can span many files and still be good — the risk is low even when the size is large |
 
 The load-bearing point: **size is not risk.** A rename across 30 files or a
 constants-only change is a *good* diff even though it's large. A five-line
 change to a permission rule is the one to keep smallest and review hardest.
+
+These two tests judge a diff's *purpose* and *risk* — not how to split the work.
+The rule that one diff stays inside one app or one shared package, and the
+line-count sizing hints, are `micro-prs`' — a large multi-file diff still has to
+obey them.
