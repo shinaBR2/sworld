@@ -39,9 +39,7 @@ either handled or *explicitly* ruled out of scope. A silent axis is a requiremen
 
 ### 2. Breakdown integrity
 
-Analyze's own contribution, and the pass that needs the sub-issues to exist — does the parent still
-match its sub-issues and their relations? (On an issue not yet broken down, only passes 1 and 3
-apply.)
+Analyze's own contribution — does the parent still match its sub-issues and their relations?
 
 - **Stale blockers** — a `blocked-by` pointing at an issue since closed, merged, or superseded. A
   dead blocker makes startable work look blocked; a blocker dropped in prose only makes blocked work
@@ -53,7 +51,8 @@ apply.)
   delivers.
 - **Deploy-order as a real relation** — a "must ship before X" living only in prose is a trap under
   merge-is-deploy: a migration a consumer's query needs must be a `blocks` relation, not a sentence
-  someone has to remember. See `dependency-analysis`.
+  someone has to remember. See `dependency-analysis` (is the edge real) and `writing-task-specs`
+  (how it's recorded).
 - **Waves earned** — re-run `dependency-analysis`' test over each `blocked-by`; it survives only as
   a genuine dependency, not ordering invented to make the plan feel structured.
 
