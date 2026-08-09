@@ -61,10 +61,10 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 - **Stale blockers** — a `blocked-by` pointing at an issue that's since closed, merged, or been superseded.
   A dead blocker makes startable work look blocked (and a removed-in-prose-only blocker makes blocked work
   look startable). Reconcile the relations to reality.
-- **Parent drift** — the parent description no longer matches the actual sub-issue set: its Goal no longer
-  describes what the children actually deliver, or a real new blocker between children isn't reflected in the
-  parent's plan. The parent is the source of truth — when it lies, everyone downstream inherits the lie.
-- **Orphans & gaps** — a sub-issue not reflected in the parent's plan, or planned work with no sub-issue.
+- **Parent drift** — the parent no longer matches the actual sub-issue set: its Goal no longer
+  describes what the children actually deliver, or a real new blocker between children isn't captured as a
+  `blocked-by` relation. The parent is the source of truth — when it lies, everyone downstream inherits the lie.
+- **Orphans & gaps** — a sub-issue whose purpose the parent's Goal doesn't cover, or part of the Goal with no sub-issue delivering it.
 - **Deploy-order encoded as a real relation** — a "must ship before X" that lives only in prose is a trap
   under this workspace's merge-is-deploy model (a schema migration a consumer's query needs must be a
   `blocks` relation, not a sentence someone has to remember). See `dependency-analysis` and `writing-task-specs`.
@@ -73,15 +73,15 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 
 ### 3. One-purpose / scope
 
-Apply `micro-prs`' one-purpose test to each sub-issue as it stands. A sub-issue that has quietly grown a
+Apply `micro-prs`' does-one-thing bar to each sub-issue as it stands. A sub-issue that has quietly grown a
 second purpose, or now spans two repos, is a split — flag it before it's built, not at review.
 
 ## Output
 
 A short report, findings ordered by severity, each tagged as one of:
 
-- **Reconcile now** — unambiguous bookkeeping the analysis can just fix: delete a stale relation, update the
-  parent's drifted schema/graph/status. Do these and say what changed.
+- **Reconcile now** — unambiguous bookkeeping the analysis can just fix: delete a stale relation, or bring the
+  parent's drifted Goal back in line with what the children deliver. Do these and say what changed.
 - **Owner decision** — anything that changes child scope or adds a requirement (a missing actor's behaviour,
   a new failure path, a sub-issue that should split). Raise it clearly; the owner decides — you don't
   silently rewrite their breakdown. (`product-planning`'s non-gating posture applies: surface and offer.)
