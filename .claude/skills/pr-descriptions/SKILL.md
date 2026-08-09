@@ -36,7 +36,7 @@ Nothing else.
 
 ## Test plan
 
-- [ ] [a manual step — the exact page, the thing to look at, pass/fail]
+- [ ] [user-facing step — exact page, thing to look at, pass/fail. Not user-facing: no checkboxes, see below.]
 ```
 
 - **Category** — exactly one: **bug fix**; **pure blocker** (exists only to unblock later
