@@ -19,12 +19,12 @@ we can have in the product.
 
 - **Simplicity is the rule of thumb.** The simplest thing that works wins.
 - **Build in independent blocks — isolation is the default.** Every piece of
-  work is a self-contained block with a clean edge — built, tested, reviewed,
-  shipped, and reverted on its own, without waiting on or breaking its
-  neighbours. Much of how we work applies it: the parallel worktree and one home
-  per fact (both below), one problem per ticket, a component that runs alone, a
-  PR you can revert by itself. Tangling breeds drift and merge pain; a clean edge
-  is what makes parallel work and cheap change possible.
+  work is a self-contained block: you can build, test, review, ship, and undo it
+  on its own, without waiting on or breaking the pieces around it. A component
+  that runs on its own, one problem per ticket, a change you can undo by itself
+  are all the same idea — and so are the two rules just below. Tangled work
+  collides and copies fall out of sync; separate pieces can move at the same time
+  and stay easy to change.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
