@@ -83,11 +83,11 @@ needs a **new column or table** and the Hasura schema change that adds it. Those
 are two sides — the migration in the Hasura app, the query (carrying its
 regenerated types) in its own package. Because codegen reads the *live* schema,
 the migration must deploy first; it lands as its own PR and the query+codegen PR
-is blocked by it — that ordering is `dependency-analysis`'.
+is blocked by it — that ordering is what `dependency-analysis` decides.
 
 These four tests judge whether a diff is *good*. When one fails, the split
 itself — which pieces are genuinely separate, and which must land first — is
-`dependency-analysis`'.
+what `dependency-analysis` decides.
 
 ## Worked examples
 
