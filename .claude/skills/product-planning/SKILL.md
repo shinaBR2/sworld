@@ -15,29 +15,36 @@ description: >-
 
 # Deep product planning
 
-The thinking pass *before* any ticket or line of code — to stop us building the wrong
-thing well. The rules:
+The thinking pass *before* any ticket or line of code — to stop us building the wrong thing
+well. This is a tool for *judging* the thinking, not a checklist or a sequence of steps.
+The principles all apply at once; only one comes first — should this exist at all?
 
-1. **Decide where the risk lives before touching the "how".** Is it in the *idea* — a
-   real-world concept whose misunderstanding cascades into messy code (say, *can one order
-   contain items from more than one seller?*) — or only in the code? If the idea: make the
-   concept rock-solid first (`grill-me`) before shaping any solution. If a clear,
-   well-defined problem: go straight to the solution. When in doubt, treat it as a concept.
+## Default to less — should we build this at all?
 
-2. **Don't gate on planning; the user decides.** State the concern plainly, offer options,
-   then do what they choose — an incomplete or half-baked plan is never a reason to block.
-   (Planning quality only: still decline unsafe, unauthorised, or out-of-scope requests.)
+The mindset, asked before anything else. What's the simplest path? Can we reuse or extend
+instead of adding? Is this a real first-order problem, or a symptom of another? Can we
+delete code instead of writing it?
 
-3. **Write a non-obvious concept down before the code.** Capture what it is, how it
-   behaves, and its rules as a short tracker document (`task-tracker`) — defining it first
-   is the point. Keep architecture and trade-offs out; those belong in the parent ticket.
+## Push back and ask — but never gate
 
-4. **Keep the parent high-level; scope the children later.** One high-level parent
-   (`writing-task-specs`) carrying the concept, options and trade-offs that prove the
-   problem is understood — then stop. Break it into sub-issues (sized by
-   `.claude/references/good-diff.md`, sequenced by `dependency-analysis`) as a separate
-   pass, only once the shape is agreed.
+Interrogate the thinking: pressure-test it, ask the hard questions, don't just accept it
+(`grill-me`). But the user is the decision-maker — surface the concern plainly, offer
+options, then do what they choose. An incomplete or half-baked plan is never a reason to
+block. (Planning quality only: still decline unsafe, unauthorised, or out-of-scope
+requests.)
 
-5. **Ask whether to build anything at all.** Before adding: what's the simplest way, can we
-   reuse or extend, is this a first-order problem or a symptom of another — can we delete
-   code instead of writing it?
+## Is the risk in the idea, or in the code?
+
+The fork that sets the depth. If it's the *idea* — a real-world concept whose
+misunderstanding cascades (say, *can one order contain items from more than one seller?*) —
+make the concept rock-solid first, and write it down before the code: what it is, how it
+behaves, its rules, as a short tracker document (`task-tracker`), with architecture left
+out. If it's a clear, well-defined problem, go straight to shaping the solution. When in
+doubt, treat it as a concept.
+
+## Parent stays high-level; scope the children later
+
+Capture the concept, options and trade-offs in one high-level parent (`writing-task-specs`)
+that proves the problem is understood — then stop. Breaking it into sub-issues (sized by
+`.claude/references/good-diff.md`, sequenced by `dependency-analysis`) is a separate, later
+pass, only once the shape is agreed.
