@@ -14,7 +14,7 @@ The PR is linked to its tracker issue: the `SWO-NNN` reaches the integration (th
 branch name and/or the body) so the issue moves to In Review. Where the ID sits is an
 implementation detail; the link is what matters. (`task-tracker`)
 
-## Title — conventional commits (repo-enforced)
+## Title — conventional commits (house convention)
 
 `type(scope): <short imperative>` — e.g. `fix(listen): playback position persists across
 reloads`. The repo-specific part is the **scope**: the app or surface actually changing —
