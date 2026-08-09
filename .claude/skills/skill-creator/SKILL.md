@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Create new skills and iteratively improve existing ones. Use when users want to create a skill from scratch, edit or refine an existing skill, test a skill by running it against realistic prompts, or sharpen a skill's description so it triggers reliably.
+description: Create new skills and iteratively improve existing ones. Use whenever the work touches a skill at all — creating one from scratch, editing, refining, trimming, or splitting an existing skill, testing a skill against realistic prompts, or sharpening a `description:` so it triggers reliably. Fires on any edit under `.claude/skills/` or to a `SKILL.md`, even when the user doesn't say "skill".
 ---
 
 # Skill Creator
