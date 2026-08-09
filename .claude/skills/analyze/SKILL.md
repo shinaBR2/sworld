@@ -29,7 +29,7 @@ It is the **audit** direction, and it's why it's its own skill:
 | `self-review` | backward | a code diff |
 
 Analyze reuses the thinking tools rather than restating them — it points at `grill-me` for the
-requirement pass and `good-diff` for the scope pass, and adds the one thing neither has: checking that
+requirement pass and `.claude/references/good-diff.md` for the scope pass, and adds the one thing neither has: checking that
 a breakdown is still internally consistent with itself.
 
 ## When to run it
@@ -61,11 +61,10 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 - **Stale blockers** — a `blocked-by` pointing at an issue that's since closed, merged, or been superseded.
   A dead blocker makes startable work look blocked (and a removed-in-prose-only blocker makes blocked work
   look startable). Reconcile the relations to reality.
-- **Parent drift** — the parent description's schema, dependency graph, status table, or estimates no longer
-  match the actual sub-issue set (a column a child added but the parent's schema block never gained; a
-  "dependency graph (unchanged shape)" that omits a real new blocker; a sub-issue missing from the status
-  table). The parent is the source of truth — when it lies, everyone downstream inherits the lie.
-- **Orphans & gaps** — a sub-issue not reflected in the parent's plan, or planned work with no sub-issue.
+- **Parent drift** — the parent no longer matches the actual sub-issue set: its Goal no longer
+  describes what the children actually deliver, or a real new blocker between children isn't captured as a
+  `blocked-by` relation. The parent is the source of truth — when it lies, everyone downstream inherits the lie.
+- **Orphans & gaps** — a sub-issue whose purpose the parent's Goal doesn't cover, or part of the Goal with no sub-issue delivering it.
 - **Deploy-order encoded as a real relation** — a "must ship before X" that lives only in prose is a trap
   under this workspace's merge-is-deploy model (a schema migration a consumer's query needs must be a
   `blocks` relation, not a sentence someone has to remember). See `dependency-analysis` and `writing-task-specs`.
@@ -74,15 +73,15 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 
 ### 3. One-purpose / scope
 
-Apply `good-diff`'s one-purpose test (Test 1) to each sub-issue as it stands. A sub-issue that has quietly grown a
+Apply the does-one-thing bar (`.claude/references/good-diff.md` Test 1) to each sub-issue as it stands. A sub-issue that has quietly grown a
 second purpose, or now spans two apps or an app plus a shared package, is a split — flag it before it's built, not at review.
 
 ## Output
 
 A short report, findings ordered by severity, each tagged as one of:
 
-- **Reconcile now** — unambiguous bookkeeping the analysis can just fix: delete a stale relation, update the
-  parent's drifted schema/graph/status. Do these and say what changed.
+- **Reconcile now** — unambiguous bookkeeping the analysis can just fix: delete a stale relation, or bring the
+  parent's drifted Goal back in line with what the children deliver. Do these and say what changed.
 - **Owner decision** — anything that changes child scope or adds a requirement (a missing actor's behaviour,
   a new failure path, a sub-issue that should split). Raise it clearly; the owner decides — you don't
   silently rewrite their breakdown. (`product-planning`'s non-gating posture applies: surface and offer.)
@@ -105,8 +104,8 @@ expensive way, mid-build in a sub-issue's self-review:
   abandoned attempt overwrites and destroys their working one. Data-loss. "Returning user, login left
   half-finished" was never handled; the sweep names exactly that case.
 - **Breakdown integrity:** the parent sits live with a `blocked-by` pointing at a sub-issue that's already
-  been closed/superseded; a schema block in the parent that never gained a column a later sub-issue added;
-  and a dependency diagram labelled "unchanged" that omits a real new deploy-order blocker — one that, under
+  been closed/superseded; the parent's Goal still promises behaviour no remaining sub-issue delivers;
+  and a real new deploy-order blocker between two children lives only in prose — one that, under
   this workspace's merge-is-deploy model, would break prod if the two shipped in the wrong order.
 
 The first two are *Owner decision* findings (they change what gets built); the integrity ones are *Reconcile

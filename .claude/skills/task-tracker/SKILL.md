@@ -53,7 +53,7 @@ Every issue moves through the **SWorld team lifecycle**, in order:
 Backlog → Todo → In Progress → In Review → Done
 ```
 
-- **Backlog** — captured, not yet ready to work (e.g. an unscoped user story).
+- **Backlog** — captured, not yet ready to work (e.g. a feature's parent ticket carrying just its user story, not yet broken into children).
 - **Todo** — ready to pick up.
 - **In Progress** — actively being worked (set before starting).
 - **In Review** — a PR is open for it.
@@ -82,7 +82,7 @@ So in practice you touch status exactly once — at the start; moments 2 and 3 h
 
 ## What you track, and what each carries
 
-- **Issue** — the unit of work: on team `SWO`, in one app `project`, with a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`).
+- **Issue** — the unit of work: on team `SWO`, in one app `project`, with a lifecycle `state`; optionally an estimate, label(s), and a `parent` (`SWO-NNN`). Give it a plain, specific title — no `[bracket]` prefixes; the project and labels already carry that grouping.
 - **Dependency** — a `blocked-by` edge between issues, which is how waves are encoded. `dependency-analysis` owns *when* a blocker is earned; this skill owns only that the edge is `blocked-by`.
 - **Project** — an app surface (see the model above); created only for a brand-new app.
 - **Document** — a heavy concept spec, attached to its app's project.
@@ -98,7 +98,7 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 | which app | the **project** |
 | `parent:` (which feature) | the **parent** issue (`SWO-NNN`) |
 | `blocked-by:` | a **`blocked-by` relation** between issues |
-| bug / user-story tagging | one or more **labels** |
+| bug / user-story tagging | one or more **labels** (a bug carries the `bug` label) |
 
 ## The GitHub link
 

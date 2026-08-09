@@ -14,6 +14,8 @@ we can have in the product.
 - **Never use jargon.**
 - **Never assume.** Verify first. Work from evidence, never a guess.
 - **Never merge without a green build and my explicit go-ahead.**
+- **Never put AI attribution on anything we ship.** No "Generated with…", no
+  `Co-Authored-By` — not in commits, PRs, tickets, or code.
 
 ## How we work
 
@@ -24,6 +26,9 @@ we can have in the product.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
+- **Match the codebase's spelling.** It's British (behaviour, colour, initialise)
+  — keep it that way in code, docs, tickets, and PRs. This is consistency, not
+  dogma; a US/UK mix is the thing to avoid.
 - **Start at the high level.** Foundations and fundamentals come before
   implementation detail, always.
 - **Default to less.** Before adding anything, ask whether removing or reusing
