@@ -2,7 +2,7 @@
 
 The home for the four tests that answer "is this a good diff / good PR?". Applies
 to both a local diff and a PR — a good diff passes all four. `self-review` and
-`micro-prs` link here when they need the full criteria.
+`micro-prs` each link here for the test behind a call they make.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -67,8 +67,9 @@ can't be reviewed or reverted cleanly. Which directories make up each side is
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
 diff, one purpose (Test 1). But when the source sits across a boundary — a Hasura
-schema change in `apps/hasura` whose types regenerate in `packages/core` — the two
-are *separate* PRs in order, not one diff; that sequencing is `micro-prs`'.
+schema change in `apps/hasura` whose types regenerate in `packages/core` — that's a
+crossing like any other (Test 4), not one diff. How the resulting PRs are split and
+ordered is `micro-prs`'.
 
 These four tests judge whether a diff is *good*. How to actually split one that
 fails a test — which side lands first, blockers before dependents, the
