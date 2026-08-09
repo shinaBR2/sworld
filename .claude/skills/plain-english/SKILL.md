@@ -21,7 +21,7 @@ Read it back as someone who has never seen this codebase, this domain, or this f
 
 ## Applying it by context
 
-The law doesn't change — only the header and length it sits under. This table is the single catalogue of both; the consuming skill picks the row for the block it's writing rather than restating the header and length itself:
+The law doesn't change — only the header and length it sits under. This table is the source of truth for both; a consuming skill picks the row for the block it's writing. Where a shape template echoes a length as a fill-in hint, this table still governs if the two ever differ:
 
 | Context | Header | Length | Used by |
 |---|---|---|---|
