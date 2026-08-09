@@ -63,8 +63,6 @@ Two facts that drive every rule below:
 
 So the whole game is: **carry as few dependencies as possible, don't resolve a freshly-compromised
 version, don't let dependency code execute unnecessarily, and keep credentials out of easy reach.**
-The cheapest defence of all is the dependency you never add — every package is both its own attack
-surface and a doorway to its entire transitive tree.
 
 ## The standing posture (what every project should have)
 
@@ -88,28 +86,23 @@ Aim for all of these. Most are one-time setup.
    (`postinstall` etc.) unless allowlisted via `onlyBuiltDependencies` in `package.json`. Keep that
    list minimal — typically only build-needing native packages (e.g. `esbuild`, `sharp`). This closes
    the most common code-execution path outright.
-6. **Add a cooldown, and make it long.** pnpm's `minimumReleaseAge` (in `pnpm-workspace.yaml`) refuses
-   to resolve any version published less than N minutes ago. Compromised releases are almost always
-   spotted and yanked within hours to a couple of days, so a cooldown filters out the smash-and-grab
-   campaigns at near-zero cost. Prefer the **longest window you can tolerate: 7 days (`10080`) is the
-   recommended conservative default** — it clears essentially every smash-and-grab incident on record,
-   and you almost never need a release in its first week. `1440` (1 day) is the minimum worth setting;
-   pnpm 11 enables `1440` by default. When you genuinely need a just-published fix, bypass the wait for
-   that one package (`minimumReleaseAgeExclude`) rather than lowering the global window. Requires
-   pnpm ≥ 10.16. Note: frozen installs (CI/deploy) install exact _locked_ versions regardless of age,
-   so a long cooldown never breaks a build — it only governs the moment you deliberately resolve.
+6. **Add a cooldown, and make it long.** A cooldown (pnpm's `minimumReleaseAge`) refuses to resolve
+   any freshly-published version, so it filters out the smash-and-grab campaigns — almost always
+   spotted and yanked within hours to a couple of days — at near-zero cost. Prefer the **longest
+   window you can tolerate**; when you genuinely need a just-published fix, bypass the wait for that
+   one package rather than lowering the global window. Frozen installs (CI/deploy) install exact
+   _locked_ versions regardless of age, so a long cooldown never breaks a build — it only governs the
+   moment you deliberately resolve. The window this repo sets, the exclusion mechanism and the
+   pnpm-version floor are in `references/package-manager-config.md`.
 7. **Keep the package manager itself current and patched.** During an install the CLI runs with your
    full user privileges, so a bug _in pnpm_ is as dangerous as a bug in a dependency — it has shipped
-   real CLI advisories. Stay on the **latest patch of the 10.x line** — the cooldown first exists at
-   `10.16` and no older-major patch ever reaches it, so a project below `10.16` has to cross the major
-   boundary, not just take its own line's latest patch. The version-by-version specifics — which advisories each
-   patch closes, why the latest 10.x is the safe default, and the Node-22 floor that gates pnpm 11 —
-   are in `references/package-manager-config.md`. Upgrade the CLI the same way it was installed
-   (`ls -l "$(which pnpm)"` to check).
+   real CLI advisories. Stay on the **latest patch of the 10.x line**, and upgrade the CLI the same
+   way it was installed (`ls -l "$(which pnpm)"` to check). The advisories behind this, why the latest
+   10.x is the safe default, and the Node-22 floor that gates pnpm 11 are in
+   `references/package-manager-config.md`.
 
-If a project is on pnpm < 10.16 the cooldown isn't available and older patches carry known CLI
-advisories — flag it and bump onto the latest 10.x patch (crossing the major boundary if it's on 9
-or older) before relying on this posture.
+An old pnpm undercuts this whole posture — no cooldown, unpatched CLI — so flag it and bump onto the
+latest 10.x before relying on the rest (see `references/package-manager-config.md` for the floors).
 
 ## Procedures
 
@@ -227,7 +220,7 @@ Deleting files does **not** un-leak anything already exfiltrated. The meaningful
 | Reproduce locked versions safely (default)                                        | `pnpm install --frozen-lockfile` |
 | Resync lockfile to package.json, no install                                       | `pnpm install --lockfile-only`   |
 | Inspect what changed before trusting it                                           | `git diff pnpm-lock.yaml`        |
-| Check pnpm version (≥ 10.16 for cooldown, ≥ 10.28.1 for the path-traversal fixes) | `pnpm -v`                        |
+| Check pnpm version (floors in `references/package-manager-config.md`)              | `pnpm -v`                        |
 
 **Mental model in one line:** pinned versions + committed lockfile + frozen installs mean a
 compromised release can't touch you until you choose to update — so make the update moment
