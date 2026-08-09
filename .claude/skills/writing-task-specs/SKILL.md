@@ -17,7 +17,7 @@ A ticket is ordinary writing — you draft it yourself. This skill holds only th
 Every ticket, whatever its size, is these sections in order — keep the ones that apply, drop the ones that don't:
 
 - **In plain words** — the problem, short, no jargon (`plain-english`). Always first.
-- **User story** — only on a parent ticket for a feature: who needs this and why, from the user's side.
+- **User story** — on a feature's parent ticket: who needs this and why, from the user's side. A feature often starts life as just this — a parent carrying the user story, captured before it's broken into children.
 - **Root cause & solution** — what's actually wrong (a bug) or what's being built (a feature), and the approach. Skip root cause if it still needs investigating; say so.
 - **Goal — what it looks like when this is done.** Concrete and checkable: what a person can now see or do that they couldn't before. This is the acceptance test — specific enough that someone with no context can confirm it.
 
