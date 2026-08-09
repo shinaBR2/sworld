@@ -123,6 +123,6 @@ The actual `WEBHOOK_SIGNATURE` / `HASURA_ADMIN_SECRET` / `HASHNODE_WEBHOOK_SECRE
 entropy and rotation cadence, live in the deploy consoles. Flag those as needs-verification rather
 than asserting on them. (The *IAM* invocation posture — which services set `--allow-unauthenticated` — *is*
 inferable from the `backend-prod-*.yml` workflows and is owned by `references/infra-cloud-run.md`;
-the merge-triggered deploy model itself is `references/deployment-model.md`.
+the merge-triggered deploy model itself is `.claude/references/deployment-model.md`.
 Network *ingress* is **not** inferable: none of the workflows set `--ingress`, so it stays at Cloud
 Run's default and remains needs-verification until the console or a workflow declares it.)

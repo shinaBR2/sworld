@@ -10,7 +10,7 @@ These are product-taste decisions from the owner, not derived from the code — 
 
 ## Generous spacing, always
 
-Across ALL apps (the roster is `references/apps.md`), the design language is **generous spacing** — large paddings/margins, airy layouts, roomy components, deliberately. More spacing reads as more generous to the end user; dense, neat, tightly-packed UI is explicitly disliked.
+Across ALL apps (the roster is `.claude/references/apps.md`), the design language is **generous spacing** — large paddings/margins, airy layouts, roomy components, deliberately. More spacing reads as more generous to the end user; dense, neat, tightly-packed UI is explicitly disliked.
 
 - Never suggest tightening density, shrinking components, or "filling empty space" to make a layout more compact.
 - If something looks off in an airy layout, the fix is almost never *less space* — it's fixing broken-looking content (grey/placeholder holes, failed-avatar icons) so the emptiness reads as intentional, not shrinking the footprint.

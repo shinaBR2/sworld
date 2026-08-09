@@ -22,7 +22,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
 - **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test.
 - **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
-- Attach every issue to the matching app **project** (the roster is `references/apps.md`; see `task-tracker` for the project-is-an-app model) — a large feature is a parent issue *inside* its app's project, not a project of its own
+- Attach every issue to the matching app **project** (the roster is `.claude/references/apps.md`; see `task-tracker` for the project-is-an-app model) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, start it in the tracker (see `task-tracker`)
 - **Every ticket opens in plain words** — see below. No exceptions.
 
