@@ -14,12 +14,15 @@ Describe the whole diff in one sentence. If you can't, it's more than one diff.
 
 Watch for "and" in that sentence — it usually joins two purposes. But not
 always: "add X and its test", "rename foo and update its callers" read as "and"
-yet are one purpose. The real test is:
+yet are one purpose, because the second half exists *only to serve* the first —
+the test has no reason to exist without X, the caller updates none without the
+rename. The real test:
 
-> Could either half ship, or be reverted, on its own?
+> Does each half stand on its own as a separate purpose?
 
-If yes → they're independent → split into two diffs. If no → it's one purpose,
-keep it together.
+- One half exists only because of the other → **one purpose, keep it together.**
+- Both stand alone — a feature and an unrelated bug fix → **two purposes, split
+  them.**
 
 ## Test 2 — small blast radius, judged by risk not size
 
