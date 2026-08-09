@@ -1,8 +1,8 @@
 # What makes a good diff
 
-The single home for the four tests that answer "is this a good diff / good
-PR?". Applies to both a local diff and a PR — a good diff passes all four.
-`self-review` and `micro-prs` link here when they need the full criteria.
+The home for the four tests that answer "is this a good diff / good PR?". Applies
+to both a local diff and a PR — a good diff passes all four. `self-review` and
+`micro-prs` link here when they need the full criteria.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -57,16 +57,17 @@ diff.**
 
 ## Test 4 — one side of a boundary
 
-A good diff stays on one side of a boundary. A diff that touches both the data
-layer (`apps/hasura`) and the frontend, or two apps at once, is bad **even at a
-few lines** — each side is reviewed and rolled back differently, so a
-boundary-crossing diff can't be reviewed or reverted cleanly.
+A good diff stays on one side of a boundary — a single app, `apps/hasura`,
+`packages/core`, or `packages/ui`. A diff that spans two (the data layer and the
+frontend, two apps, or `core` and `ui`) is bad **even at a few lines** — each
+side is reviewed and rolled back differently, so a boundary-crossing diff can't
+be reviewed or reverted cleanly.
 
-Generated code is not a second side. A source change and the code generated
-*from* it are one purpose and belong in the same diff — a GraphQL query change
-and its regenerated types (that's Test 1: the generated half only exists to serve
-the source half). They live on the same side anyway, so this is no crossing —
-it's called out only because the extra generated files can *look* like one.
+Generated code that lands beside its own source is not a second side: a frontend
+GraphQL query change and its regenerated types (both in `packages/core`) are one
+diff, one purpose (Test 1). But when the source sits across a boundary — a Hasura
+schema change whose types regenerate in the frontend — the two are *separate* PRs
+in order, not one diff; that sequencing is `micro-prs`'.
 
 These four tests judge whether a diff is *good*. How to actually split one that
 fails a test — which side lands first, blockers before dependents, the
