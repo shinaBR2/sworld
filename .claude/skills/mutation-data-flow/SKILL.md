@@ -62,16 +62,7 @@ The hook just forwards the payload to Hasura. It knows nothing about the payload
 - **Mutation hooks are payload-agnostic.** They receive a typed Hasura input and forward it. No defaults, no overrides, no field-level logic inside the hook.
 - **Payload builders own the domain logic.** Deciding which fields to copy, reset, or default is the builder's job, not the hook's.
 - **Forms derive from X, not from the API.** A form component receives a slice of X (via a transformer like `toBookEditData`), never the raw API response.
-- **One builder per action.** Don't make a generic "buildPayload" that handles add, duplicate, and edit — each action has different semantics.
-
-## In practice
-
-The generic mutation hook (in the shared core package) is payload-agnostic: it takes a typed Hasura input and forwards it, never inspecting or shaping a field. It still owns the shared mutation lifecycle — optimistic update, rollback, query invalidation (see layer 4). The domain logic — what to copy, reset, or default — lives in the payload builder that produces that input, colocated with the component.
-
-- A **duplicate** action calls its own builder to shape the input from the source view type, then hands the result to the hook.
-- A **trivial add** can build the input inline at the call site.
-
-Either way the hook never looks inside the payload; the builder (or the inline object) owns every field decision, and the hook just pipes it to Hasura.
+- **One builder per action.** Don't make a generic "buildPayload" that handles add, duplicate, and edit — each action has different semantics. (A trivial add can build its input inline at the call site instead of a named builder; the point is that add/duplicate/edit never share one.)
 
 ## Anti-patterns
 

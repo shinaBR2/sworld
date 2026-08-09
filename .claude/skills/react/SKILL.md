@@ -8,8 +8,7 @@ user-invocable: false
 
 ## Pure logic
 
-- NEVER put pure logic inside React components — extract to a dedicated file and unit test it.
-- See `code-conventions` skill for testing rules.
+- Keeping pure logic out of components (extract to a dedicated file, unit-tested) and the Container/Presentational split are `code-conventions`.
 
 ## Callbacks
 
