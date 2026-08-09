@@ -75,7 +75,7 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 ### 3. One-purpose / scope
 
 Apply `good-diff`'s one-purpose test (Test 1) to each sub-issue as it stands. A sub-issue that has quietly grown a
-second purpose, or now spans two repos, is a split — flag it before it's built, not at review.
+second purpose, or now spans two apps or an app plus a shared package, is a split — flag it before it's built, not at review.
 
 ## Output
 

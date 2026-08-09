@@ -147,7 +147,8 @@ rock-solid?) and **the non-gating posture**.
 | Interrogating the thinking | `grill-me` |
 | Nailing the concept | a short tracker document |
 | Parent issue + sub-issues | `writing-task-specs` |
-| Decomposition & sequencing | `dependency-analysis` |
+| Splitting into one-purpose pieces | `good-diff` |
+| Real dependencies & sequencing | `dependency-analysis` |
 
 ## Always on, even when you skip the full chain
 
