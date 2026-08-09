@@ -20,8 +20,7 @@ we can have in the product.
 - **Simplicity is the rule of thumb.** The simplest thing that works wins.
 - **Isolation is the default — it applies to everything.** Every piece of work is
   a self-contained block: you can build, test, review, ship, and undo it on its
-  own, without waiting on or breaking the pieces around it. A worktree, a ticket,
-  a component, a fact, a PR — each one stands alone.
+  own, without waiting on or breaking the pieces around it.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
