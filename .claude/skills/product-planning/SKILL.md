@@ -127,12 +127,12 @@ decide a change doesn't need team sign-off, and that's their call. Don't hold th
 ## Step 4 — Detailed scoping (a separate, later pass)
 
 Only once the user (and, where they chose to, the team) is aligned: break the parent into children.
-Write the **goal & verification sub-issue first** (`writing-task-specs`) — the plain-English walkthrough and
-"how to know it's done" checklist. If that can't be written concretely yet, say so and suggest
+Nail the parent's **Goal first** (`writing-task-specs`) — a concrete, plain-English picture of the whole
+feature finished and how anyone would know. If that can't be written concretely yet, say so and suggest
 going back to Steps 1–3 rather than inventing sub-issues around a fuzzy goal — same non-gating
 posture as above: raise the concern, then follow the user's call if they want to proceed anyway.
-Then break the rest into sub-issues, applying `micro-prs`' one-purpose test and one-app/repo scope to each,
-sequencing them (flat by default, waves only where a real dependency exists — see `writing-task-specs`),
+Then break it into sub-issues, applying `micro-prs`' does-one-thing bar and one-app/package scope to each,
+sequencing them (flat by default, waves only where a real dependency exists — see `dependency-analysis`),
 and respecting the deployment model (small, independently mergeable, revertible). This is deliberately
 *separate* from Steps 1–3 — don't race ahead into it before the shape is agreed.
 
