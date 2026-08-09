@@ -44,7 +44,8 @@ doubt, treat it as a concept.
 
 ## Parent stays high-level; scope the children later
 
-Capture the concept, options and trade-offs in one high-level parent (`writing-task-specs`)
-that proves the problem is understood — then stop. Breaking it into sub-issues (sized by
-`.claude/references/good-diff.md`, sequenced by `dependency-analysis`) is a separate, later
-pass, only once the shape is agreed.
+Capture the problem, the options and the trade-offs in one high-level parent
+(`writing-task-specs`) that proves it's understood — pointing at the concept document where
+one exists rather than restating it. Keep it high-level, then stop. Breaking it into
+sub-issues (sized by `.claude/references/good-diff.md`, sequenced by `dependency-analysis`)
+is a separate, later pass, only once the shape is agreed.
