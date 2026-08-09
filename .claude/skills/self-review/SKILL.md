@@ -32,8 +32,8 @@ invent a finding to keep looping, nor dismiss a real one to stop. The bar:
 CodeRabbit finds nothing on the PR.
 
 A diff too sprawling or mixed to review with confidence *is* the finding — judge it
-against `.claude/references/good-diff.md` (one purpose, small blast radius) and split
-it (`micro-prs`) before shipping. A trust-boundary diff (auth, Hasura
+against `.claude/references/good-diff.md` (one purpose, low risk, covered by a test)
+and split it (`micro-prs`) before shipping. A trust-boundary diff (auth, Hasura
 permissions/metadata, a Hono webhook/action handler, secrets, `VITE_` env vars)
 also needs `security-reviewer` — the cold-eyes pass is not the stack-aware security
 review.
