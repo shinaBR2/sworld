@@ -64,8 +64,7 @@ Schema + permissions live in `apps/hasura`, never in a frontend app or core.
   building and pick up no Cloud drift.
 - **The data-layer PR lands before the frontend PR that uses the new shape** —
   the query only works once the schema is live. That this is a real ordering
-  constraint, and how to slice the two PRs, is `dependency-analysis` and
-  `micro-prs`.
+  constraint, and why the two ship as separate PRs, is what `dependency-analysis` decides.
 
 ## First principle: never trust the frontend
 

@@ -9,7 +9,7 @@ description: >-
   domain concept is on the table — especially when the real risk is whether the *concept* is
   understood, not how to code it. It interrogates whether the thinking is genuinely clear, captures
   the concept as documentation up-front, weighs architecture, and shapes a high-level parent —
-  conducting grill-me, writing-task-specs and micro-prs as it goes. Not for trivial, well-understood
+  conducting grill-me and writing-task-specs as it goes. Not for trivial, well-understood
   changes that should go straight to code — though its critical-thinking instinct still applies even
   then.
 ---
@@ -23,7 +23,7 @@ everything built on top of it becomes a mess. Get the thinking rock-solid first;
 everything downstream gets easier. Use the most capable model available — this is the
 work that most rewards it.
 
-This skill conducts other thinking tools (`grill-me`, `writing-task-specs`, `micro-prs`,
+This skill conducts other thinking tools (`grill-me`, `writing-task-specs`,
 `dependency-analysis`) and adds only the two things none of them have on their own: **the
 non-gating posture** and **the concept-gate judgment**. Those two are its real content.
 
@@ -103,8 +103,9 @@ understood. Keep it high-level — do **not** scope the children yet.
 ## Step 4 — Detailed scoping (a separate, later pass)
 
 Only once the user (and, where they chose it, the team) is aligned, break the parent into
-children — nailing the parent's Goal first per `writing-task-specs`, sizing each with
-`micro-prs`, and sequencing per `dependency-analysis`. If the Goal can't be written
+children — nailing the parent's Goal first per `writing-task-specs`, applying the
+does-one-thing bar and one-app/package scope (`.claude/references/good-diff.md`, Tests 1
+and 4) to each, and sequencing per `dependency-analysis`. If the Goal can't be written
 concretely yet, say so and suggest returning to Steps 1–3 rather than inventing sub-issues
 around a fuzzy goal. This is deliberately separate — don't race into it before the shape is
 agreed.
