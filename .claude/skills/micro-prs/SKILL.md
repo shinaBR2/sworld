@@ -61,7 +61,7 @@ Common shapes:
 - **151–300 lines** — needs justification: why can't this be smaller?
 - **300+ lines** — almost certainly more than one job. Re-check the scope.
 
-See `parallel-workflow` for the file-count view and the good-PR criteria — same idea from the other axis.
+See `.claude/references/good-diff.md` for the good-diff/PR criteria (one purpose, small blast radius) — the same "is this a good diff?" judgement from the other axis.
 
 ## Ship incomplete work safely with flags
 
