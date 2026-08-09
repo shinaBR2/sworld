@@ -85,8 +85,6 @@ Function names and internal terms a user can't see.
 
 Doesn't flag that there's no user impact, and leans on insider shorthand a new developer wouldn't recognise.
 
-For the assembled Good forms of all three PR types, see `references/examples.md`.
-
 ### Test plan
 
 **User-facing PR — steps a non-technical person can actually follow.** Each step names the exact page (click by click to get there), the exact thing to look at, and what pass vs. fail looks like in plain terms — apply the `plain-english` law. Before publishing a step, make sure the thing is genuinely visible on that page and that it actually changes in the example given. Avoid the vague, developer-seat version:
@@ -95,7 +93,7 @@ For the assembled Good forms of all three PR types, see `references/examples.md`
 - [ ] Listen app loads
 - [ ] Playback position works after reload
 
-No page path, no concrete behaviour, nothing a user can verify. The assembled Good test plans are in `references/examples.md`.
+No page path, no concrete behaviour, nothing a user can verify.
 
 **No-user-facing-change PR (refactor / tech-debt) — developer checks are fine,** because there's nothing on screen to look at. Pick the checks that actually fit what changed — don't list irrelevant ones. Keep them concrete and in plain words:
 
@@ -132,7 +130,7 @@ Do not use language like "also adds", "now includes", "additionally". Describe t
 
 ## Worked examples
 
-Three complete title-plus-body examples — a pure refactor, a user-facing bug fix, and a flag-gated feature — are in `references/examples.md`. Read it when you want to see a whole PR assembled, not just the Summary / Test-plan fragments shown above.
+Three complete title-plus-body examples — a pure refactor, a user-facing bug fix, and a flag-gated feature — are in `references/examples.md`. Read it when you want to see a whole PR assembled — the Good forms in full, not just the rules and anti-patterns shown above.
 
 ## Validation checklist
 
