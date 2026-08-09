@@ -36,7 +36,7 @@ Nothing else.
 
 ## Test plan
 
-[User-facing: one checkbox per manual step. Not user-facing: any check CI can't run, else one line saying CI covers it.]
+- [ ] [user-facing: one manual step per checkbox. Not user-facing: any check CI can't run, else no checkbox — one line saying CI covers it.]
 ```
 
 - **Category** — exactly one: **bug fix**; **pure blocker** (exists only to unblock later
