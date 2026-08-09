@@ -87,9 +87,9 @@ Aim for all of these. Most are one-time setup.
    list minimal — typically only build-needing native packages (e.g. `esbuild`, `sharp`). This closes
    the most common code-execution path outright.
 6. **Add a cooldown, and make it long.** A cooldown (pnpm's `minimumReleaseAge`) refuses to resolve
-   any freshly-published version, so it filters out the smash-and-grab campaigns — almost always
-   spotted and yanked within hours to a couple of days — at near-zero cost. Prefer the **longest
-   window you can tolerate — 7 days (`10080`) the recommended conservative default, `1440` (1 day)
+   any freshly-published version, so it filters out the smash-and-grab campaigns (almost always
+   spotted and yanked within hours to a couple of days) at near-zero cost. Prefer the **longest
+   window you can tolerate: 7 days (`10080`) the recommended conservative default, `1440` (1 day)
    the minimum worth setting**; when you genuinely need a just-published fix, bypass the wait for that
    one package rather than lowering the global window. Frozen installs (CI/deploy) install exact
    _locked_ versions regardless of age, so a long cooldown never breaks a build — it only governs the
