@@ -21,9 +21,15 @@ reloads`. The repo-specific part is the **scope**: the app or surface actually c
 `library`, `listen`, `watch`, `til`, `game`, `docs`, `extension`, `core`, `ui`, `auth`,
 `db`, `ci`. No `[bracket]` prefixes.
 
-## Body — two sections, nothing else
+## Body — a two-line header, then two sections
+
+Open with the header — category and impact, one per line — then Summary and Test plan.
+Nothing else.
 
 ```markdown
+**Category:** <bug fix | pure blocker | wiring | refactor>
+**Impact:** <user-facing change | no user-facing change>
+
 ## Summary
 
 [1–3 sentences: what changed and why. Link related PRs as #NNNN.]
@@ -31,21 +37,27 @@ reloads`. The repo-specific part is the **scope**: the app or surface actually c
 ## Test plan
 
 - [ ] [specific check]
-- [ ] CI green
 ```
 
-Both are read by a **non-technical end user** — write them to the `plain-english` law: no
-function names, file paths, or insider shorthand. The one exception is a PR with **no
-user-facing change** (pure refactor, tech-debt, build/CI): open the Summary with a literal
-`No user-facing changes.` line, after which a plainly-explained developer view is fine. When
-in doubt, treat it as user-facing.
+- **Category** — exactly one: **bug fix**; **pure blocker** (exists only to unblock later
+  work, e.g. a migration that must deploy first); **wiring** (connecting already-built
+  pieces — this is how a new feature lands); **refactor** (no behaviour change — also covers
+  docs, chore, CI, and config).
+- **Impact** — user-facing or not. A flag-gated change is still **user-facing** if, with the
+  flag on, an end user sees something different. When in doubt, treat it as user-facing.
 
-- **Summary** — state the change directly. User-facing: what changes *on screen*, before →
-  after. No-user-facing: the `No user-facing changes.` line, then the plain explanation.
-- **Test plan** — user-facing: steps a non-technical person can follow, naming the exact
-  page (click by click), the exact thing to look at, and plain pass/fail; confirm it's
-  genuinely visible and actually changes. No-user-facing: the developer checks that fit what
-  changed (type-checks/tests pass for a refactor; often just `CI green` for docs/config).
+The Summary, and any user-facing test step, are read by a **non-technical end user** — write
+them to the `plain-english` law: no function names, file paths, or insider shorthand. A
+no-user-facing-change PR may then explain the developer's view, still plainly.
+
+**The test plan follows from the impact:**
+
+- **User-facing** — manual steps a non-technical person can follow: the exact page (click by
+  click), the exact thing to look at, plain pass/fail. Confirm the thing is genuinely visible
+  and actually changes.
+- **Not user-facing** — CI already proves a refactor/wiring/blocker works, so don't re-list
+  the automated checks (type-checks, unit tests, "CI green" are all redundant). List only a
+  check CI *can't* run; if there's none, say in one line that CI covers it.
 
 No changelog section — versioning is driven by changesets (`pnpm changeset` when the change
 should appear in a package's changelog).
