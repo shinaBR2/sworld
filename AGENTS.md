@@ -21,10 +21,9 @@ we can have in the product.
 - **Build in independent blocks — isolation is the default.** Every piece of
   work is a self-contained block: you can build, test, review, ship, and undo it
   on its own, without waiting on or breaking the pieces around it. A component
-  that runs on its own, one problem per ticket, a change you can undo by itself
-  are all the same idea — and so are the two rules just below. Tangled work
-  collides and copies fall out of sync; separate pieces can move at the same time
-  and stay easy to change.
+  that runs on its own, one problem per ticket, a change you can undo by itself —
+  all the same idea. Tangled work collides and copies fall out of sync; separate
+  pieces can move at the same time and stay easy to change.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
