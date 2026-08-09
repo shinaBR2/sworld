@@ -16,7 +16,8 @@ Apply these mechanically, before anything else — when breaking a ticket into s
 
 ### 1. One PR solves exactly ONE problem
 
-Not "mostly one". One. If describing the PR needs an "and", it's two PRs.
+Not "mostly one". One. If describing the PR needs an "and", split it — unless that
+"and" is still one purpose by `.claude/references/good-diff.md`'s test.
 
 ### 2. ONE app or ONE shared package — never combine
 
