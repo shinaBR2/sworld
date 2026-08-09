@@ -6,7 +6,8 @@ user-invocable: false
 
 # Mutation Data Flow Pattern
 
-This pattern defines how data flows through the frontend for CRUD operations. Every feature (library books, journal entries, listen playlists, etc.) follows this same architecture.
+How data flows through the frontend for CRUD operations. Every feature (library
+books, journal entries, listen playlists) follows this same path.
 
 ## The Flow
 
@@ -20,53 +21,46 @@ Hasura ──query──> transformer ──> X (view type, source of truth)
                                         └──> mutation hook (generic, forwards to Hasura)
 ```
 
-## Four Layers
+## The layers
 
-### 1. Transformer: Server → Client
+### 1. Transformer: server → client
 
-Converts the raw Hasura response into a **view type** (e.g., `BookView`). This type `X` is the single source of truth for all frontend logic.
+Converts the raw Hasura response into a **view type** (e.g. `BookView`). This
+type `X` is the single source of truth for all frontend logic — every table,
+form, and calculation derives from `X`, never from the raw API.
 
-- Lives in `packages/core/src/<domain>/query-hooks` next to the query
-- Tested independently
-- Decouples frontend from DB schema
+- Lives in `packages/core/src/<domain>/query-hooks`, next to the query
+- Tested on its own
 
-### 2. View Type X: Source of Truth
+A form receives a *slice* of `X` via its own transformer (e.g. `toBookEditData`
+extracts the editable fields of `BookView`), never the raw API response.
 
-All frontend operations derive from `X`. No component should fetch or compute data outside of `X`.
+### 2. Payload builder: client → Hasura input
 
-- UI tables read fields directly from `X`
-- Forms pick **a subset** of `X` — only what that form needs (e.g., `toBookEditData` extracts editable fields from `BookView`)
-- Calculations derive from `X`
+A pure function that shapes data from `X` (or a subset) into the Hasura mutation
+input (`HasuraInsertInput`). This is where the domain logic lives — what to copy,
+reset, or default.
 
-### 3. Payload Builder: Client → Hasura Input
+- Colocated with the component that uses it — **not** in `packages/core`
+- One builder per action: `buildAddBookInput`, `buildDuplicateBookInput`. Never a
+  generic `buildPayload` with flags — add/duplicate/edit have different semantics
+  and never share a builder. (A trivial add may build its input inline at the call
+  site instead of a named builder.)
+- Tested on its own as a pure function
 
-A pure function that shapes data into the Hasura mutation input type. This is where domain logic lives — what to copy, what to reset, what to default.
+### 3. Mutation hook: generic pipe
 
-- Colocated with the component that uses it (not in `packages/core`)
-- Takes data from `X` (or a subset), returns `HasuraInsertInput`
-- Examples: `buildDuplicateBookInput`, `buildAddBookInput`
-- Each action (add, duplicate, edit) has its own builder
-- Tested independently as pure functions
-
-### 4. Mutation Hook: Generic Pipe
-
-The hook just forwards the payload to Hasura. It knows nothing about the payload contents.
-
-- Lives in `packages/core/src/<domain>/mutation-hooks`
-- Receives the full `object` (Hasura input) from the caller
-- Handles: optimistic cache update, error rollback, query invalidation
-- NEVER inspects or transforms the payload — that's the builder's job
-
-## Rules
-
-- **Mutation hooks are payload-agnostic.** They receive a typed Hasura input and forward it. No defaults, no overrides, no field-level logic inside the hook.
-- **Payload builders own the domain logic.** Deciding which fields to copy, reset, or default is the builder's job, not the hook's.
-- **Forms derive from X, not from the API.** A form component receives a slice of X (via a transformer like `toBookEditData`), never the raw API response.
-- **One builder per action.** Don't make a generic "buildPayload" that handles add, duplicate, and edit — each action has different semantics. (A trivial add can build its input inline at the call site instead of a named builder; the point is that add/duplicate/edit never share one.)
+Lives in `packages/core/src/<domain>/mutation-hooks`. Receives the full `object`
+(the Hasura input) and forwards it, handling the optimistic cache update, error
+rollback, and query invalidation. It is **payload-agnostic**: it never inspects or
+transforms `object` — that is the builder's job.
 
 ## Anti-patterns
 
-- **Hook inspects payload fields** — e.g., reading `status` from the request to apply defaults. The hook should never look inside `object`.
-- **Discriminated union for hook input** — e.g., per-collection types with required `status` at request level. If the hook doesn't use it, don't type it.
-- **Duplicate data at request level and inside object** — e.g., `status` both at top-level and inside `object`. The object is the payload; everything the hook needs for routing (collection, shelfId) goes at top-level.
-- **Generic builder for multiple actions** — don't merge add/duplicate/edit into one function with flags. Each action is a separate builder.
+- **Hook reads inside `object`** — e.g. reading `status` to apply a default. Only
+  the routing fields the hook actually needs (collection, shelfId) sit at the *top
+  level* of the request; everything else stays inside `object`, untouched.
+- **Discriminated-union hook input** — per-collection request types carrying a
+  required field the hook never uses. If the hook doesn't use it, don't type it.
+- **A field duplicated at request level and inside `object`** — `object` is the
+  payload; don't carry its fields alongside it too.
