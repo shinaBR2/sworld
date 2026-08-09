@@ -14,7 +14,7 @@ Title: `refactor(core): rename abbreviated names in the query and mutation hooks
 ```markdown
 ## Summary
 
-No user-facing changes. Renames a set of short, cryptic variable names in the query and mutation hooks to full descriptive names, so the code is easier to read. The behaviour it produces is identical. Split from #2578.
+No user-facing changes. Renames a set of short, cryptic variable names in the query and mutation hooks to full descriptive names, so the code is easier to read. The behaviour it produces is identical. Split from #NNNN.
 
 ## Test plan
 

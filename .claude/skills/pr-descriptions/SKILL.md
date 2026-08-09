@@ -73,49 +73,29 @@ No "Changelog" section in the PR body. The changelog is driven by changesets (se
 
 1–3 sentences, plain English. State the change directly. Link related PRs as `#NNNN`. Reference the tracker issue it came from (see `task-tracker`).
 
-**User-facing PR — describe what the user sees, before → after.**
-
-Good:
-
-> Fixes where playback resumes in the Listen app. Before, reloading the page dropped you back to the start of a track; now it picks up exactly where you left off.
-
-> Adds a way to paste a list in the Library app and have it split into separate items automatically, instead of typing each one by hand. Behind feature flag `bulk_import`.
-
-Bad:
+**User-facing PR — describe what the user sees, before → after.** Say what changes *on screen*, never the developer's mental model. This is the trap:
 
 > Fixes the player pulling position from a stale local value instead of the live state computed by `usePlaybackPosition`.
 
-That's the developer's mental model — function names and internal terms a user can't see. Say what changes *on screen*.
+Function names and internal terms a user can't see.
 
-**No-user-facing-change PR (refactor / tech-debt) — say so on the first line, then explain plainly.**
-
-Good:
-
-> No user-facing changes. Renames a set of short, cryptic variable names in the query and mutation hooks to full descriptive names, so the code is easier to read. The behaviour is identical. Split from #2578.
-
-Bad:
+**No-user-facing-change PR (refactor / tech-debt) — say so on the first line, then explain plainly.** This is the trap:
 
 > Wave 2a of the naming standardisation. Replaces abbreviations in the queryHooks, mutationHooks & store.
 
 Doesn't flag that there's no user impact, and leans on insider shorthand a new developer wouldn't recognise.
 
+For the assembled Good forms of all three PR types, see `references/examples.md`.
+
 ### Test plan
 
-**User-facing PR — steps a non-technical person can actually follow.** Each step names the exact page (click by click to get there), the exact thing to look at, and what pass vs. fail looks like in plain terms — apply the `plain-english` law. Before publishing a step, make sure the thing is genuinely visible on that page and that it actually changes in the example given.
-
-Good:
-
-- [ ] Open the **Listen** app, start a track, then reload the page. Playback should resume from where you left off, not jump back to the start.
-- [ ] In the **Library** app, paste the sample list into the import box. Three separate items should appear, matching the pasted list.
-- [ ] CI green
-
-Bad:
+**User-facing PR — steps a non-technical person can actually follow.** Each step names the exact page (click by click to get there), the exact thing to look at, and what pass vs. fail looks like in plain terms — apply the `plain-english` law. Before publishing a step, make sure the thing is genuinely visible on that page and that it actually changes in the example given. Avoid the vague, developer-seat version:
 
 - [ ] Tested
 - [ ] Listen app loads
 - [ ] Playback position works after reload
 
-Too vague, or written from the developer's seat — no page path, no concrete behaviour, nothing a user can verify.
+No page path, no concrete behaviour, nothing a user can verify. The assembled Good test plans are in `references/examples.md`.
 
 **No-user-facing-change PR (refactor / tech-debt) — developer checks are fine,** because there's nothing on screen to look at. Pick the checks that actually fit what changed — don't list irrelevant ones. Keep them concrete and in plain words:
 

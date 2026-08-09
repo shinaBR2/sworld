@@ -55,7 +55,7 @@ Based on the interview, fill in:
 
 **This rule outranks every style preference below.** Manage skills the way this repo manages reusable code: isolated units, a clear API, no leaked internals. Duplication across skills drifts exactly like copy-pasted code drifts, and nothing type-checks it.
 
-- **One owner per concern.** Exactly one skill defines a given thing. If a topic is already owned, extend that skill — do not write a second one that covers part of it. A skill being long is fine; length is never a reason to split. Splitting is justified by a *different concern*, not by size.
+- **One owner per concern.** Exactly one skill defines a given thing — a topic, or a single rule, law, or convention. If it's already owned, extend that skill and reference it by name; don't write a second one that covers part of it. When a rule has no home yet but several skills need it, create the canonical skill first, then wire the references (as `plain-english` did for the jargon-free law, and `frontend-ui-architecture` for UI placement). A skill being long is fine; length is never a reason to split. Splitting is justified by a *different concern*, not by size.
 - **Consumers call by name and nothing more.** A skill that invokes another names it and states what it's for — the way a caller invokes a method. It must NOT restate the callee's steps, commands, thresholds, tool mechanics, vocabulary, or history. If the callee changes, no consumer should need editing.
 - **No private helper promoted to public API.** If a skill exists only to be run by one other skill, it isn't a skill — it's a section of that skill. Fold it in.
 - **A cross-reference is one clause.** "Run the `X` skill" or "see `X` for Y". The moment a reference starts explaining *how* X works, the boundary has leaked.
@@ -67,7 +67,7 @@ When editing a skill, grep the other skills for its name and check every hit is 
 A skill records *what to do* and *why* — and only the parts the agent couldn't get right on its own. Everything else is noise that buries the one thing the skill alone can tell the reader. Before writing any line, ask: **would I get this right at runtime without being told?** If yes, leave it out. This is the single biggest source of bloat, and it comes in two shapes:
 
 - **The obvious.** Mechanics the agent knows cold — the git, the shell, the everyday tooling — and steps or caveats a competent agent supplies unaided. A skill that reads like a script the agent could have written itself is mostly noise. Inlined detail also *drifts*: the command goes stale while the agent's own knowledge stays current.
-- **The restatement.** Saying a thing more than once — a summary section that re-derives the steps, a definition repeated for emphasis, the same rule stated in three places. State each fact once, where it belongs. A second copy is drift waiting to happen (see *One canonical owner*). What matters in most skills is a tiny core — the **conditions** and **definitions** the agent can't infer; write those sharply and let the rest go.
+- **The restatement.** Saying a thing more than once — a summary section that re-derives the steps, a definition repeated for emphasis, the same rule stated in three places. State each fact once, where it belongs. A second copy is drift waiting to happen (see *One owner per concern* above). What matters in most skills is a tiny core — the **conditions** and **definitions** the agent can't infer; write those sharply and let the rest go.
 - **The leaked mechanic.** When a reference file owns a tool (its commands, flags, quirks — even its *name*), route everything about it through the pointer. Say "read X per `references/foo.md`" and stop; don't name the tool or explain how it works in the skill body. The tool name is itself a mechanic — a second copy that drifts if the tool ever changes. State the condition or intent; let the reference own the how.
 
 Reserve explicit, literal detail for the three cases where the agent *can't* be trusted to get it right unaided:
@@ -126,12 +126,6 @@ cloud-deploy/
     └── azure.md
 ```
 
-#### One canonical owner (don't duplicate across skills)
-
-A rule, law, or convention lives in exactly ONE skill — its canonical owner. Every other skill that needs it *references it by name* ("see `plain-english`", "placement per `frontend-ui-architecture`") rather than restating the content. Reference it like calling a shared function; never copy the body.
-
-Duplicated rule text drifts — two copies edited independently silently disagree, and the reader can't tell which is authoritative. When you find yourself about to restate another skill's rule, stop and point to it instead. When a rule has no home yet but several skills need it, create the canonical skill first, then wire the references (as `plain-english` did for the jargon-free law, and `frontend-ui-architecture` for UI placement).
-
 #### Principle of lack of surprise
 
 Skills must not contain malware, exploit code, or anything that could compromise security. A skill's contents shouldn't surprise the user given its stated intent. Don't create misleading skills, or skills designed to facilitate unauthorized access, data exfiltration, or other malicious activity. (Harmless things like "roleplay as an X" are fine.)
@@ -158,8 +152,6 @@ Output: feat(auth): implement JWT-based authentication
 ```
 
 **Keep examples evergreen.** An example illustrates a rule — it must not tie the skill to volatile state. No real ticket or PR numbers, dated URLs, or live record IDs: the moment that ticket closes or that record changes, the example is stale and misleads the next reader. Use a generic, self-contained scenario that still reads true a year from now. A concrete example is good; a concrete example anchored to something that will move is a maintenance bug.
-
-**Reuse, don't duplicate.** If a rule already has a canonical home in another skill, reference it rather than copying the text. Duplicated prose drifts — one copy gets refined in a review and the other quietly rots, so the two skills start contradicting each other. Point at the owning skill and spell out only what *this* skill adds on top.
 
 #### Writing style
 
