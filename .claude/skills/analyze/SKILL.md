@@ -68,7 +68,7 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 - **Orphans & gaps** — a sub-issue not reflected in the parent's plan, or planned work with no sub-issue.
 - **Deploy-order encoded as a real relation** — a "must ship before X" that lives only in prose is a trap
   under this workspace's merge-is-deploy model (a schema migration a consumer's query needs must be a
-  `blocks` relation, not a sentence someone has to remember). See `parallel-workflow` and `writing-task-specs`.
+  `blocks` relation, not a sentence someone has to remember). See `dependency-analysis` and `writing-task-specs`.
 - **Waves earned** — re-run `dependency-analysis`' test over each `blocked-by`: it survives only if it is a
   genuine dependency, not ordering invented to make the plan feel structured.
 

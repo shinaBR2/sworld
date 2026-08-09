@@ -20,7 +20,7 @@ Once a PR has merged, from the main worktree:
 Cleanup is not done until step 3 has actually advanced local `main` — removing the worktree is not the
 finish line, a current `main` is.
 
-Paths and branch names follow `parallel-workflow`.
+Branch and worktree names follow `task-tracker`.
 
 Two things that aren't obvious from the intent:
 
