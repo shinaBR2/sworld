@@ -14,17 +14,21 @@ description: >-
 
 # Analyze
 
-A scoped ticket and its sub-issue breakdown are a set of claims about what to build and in what
-order. Audit them before building — catching a missing requirement or a wrong dependency here is
-cheap; three sub-issues deep it isn't. `parallel-workflow` calls for this on any non-trivial or
-reopened issue.
+A breakdown is written once, against the codebase as it was then. Here work lands in parallel
+constantly, so by the time you pick an issue up, the plan describes a codebase that has moved on — a
+blocker since closed, a sibling that shipped its part differently, a Goal no remaining child
+delivers. Analyze checks the plan still matches reality **at the moment you build against it**;
+catching that drift here is cheap, three sub-issues deep it isn't.
 
-It's the **audit** direction: it doesn't re-plan. It reuses `grill-me` for the requirement pass and
-`.claude/references/good-diff.md` for the scope pass, and adds the one thing neither covers —
-checking a breakdown is still consistent with itself.
+Where it sits: `product-planning`/`grill-me` make the breakdown (forward, idea → plan); **`analyze`
+audits that breakdown before code** (backward); `self-review` audits the code. It doesn't re-plan —
+it reuses `grill-me` for the requirement pass and `.claude/references/good-diff.md` for the scope
+pass, and adds the one check only it can: the breakdown still holds against the moved codebase. Run
+it once the sub-issues exist (the integrity pass needs them); `parallel-workflow` calls for it on
+any non-trivial or reopened issue.
 
 Highest value on a large-feature parent with sub-issues, on anything scoped a while ago, and on
-anything reopened or reworked (where parent and sub-issues drift apart most). Pull the issue, its
+anything reopened or reworked — where plan and reality have drifted most. Pull the issue, its
 relations, and its sub-issues (`task-tracker`) so you audit what's there, not memory.
 
 ## The three passes
