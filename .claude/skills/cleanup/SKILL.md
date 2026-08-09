@@ -4,7 +4,7 @@ description: >-
   Owns the mechanical git chores after a PR merges: from the main worktree, remove the merged worktree +
   its local branch, then pull latest `main`. Also does the standalone `main` pull on demand. Triggers: a
   merged PR needing teardown — including the user just saying it merged ("PR is merged", "PR 607 is
-  merged", "it's merged", "merged") — or "cleanup", "clean up the worktree", "refresh main", "update
+  merged", "it's merged") — or "cleanup", "clean up the worktree", "refresh main", "update
   main", "pull main", /cleanup. Callers (`ci-loop`, `wait-for-pr-merge`) point here. Not issue status
   (that's `task-tracker`), not CI/conflict/review fixing (that's `ci-loop`).
 user-invocable: true
