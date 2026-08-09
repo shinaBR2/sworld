@@ -15,8 +15,9 @@ Two rules frame everything:
 - **A tracker issue comes first — always.** No issue, no work; create one first
   (`writing-task-specs`; `task-tracker` owns the tracker itself).
 - **All work is isolated.** Every change is its own block in its own worktree
-  (the default `AGENTS.md` sets). The main worktree stays clean — read-only git
-  there, never edits or branches.
+  (the default `AGENTS.md` sets). The main worktree stays clean — no feature
+  work, no manual edits or branches there; its only writes are the housekeeping
+  `cleanup` owns (refreshing local `main`, pruning merged worktrees).
 
 ## The flow
 
