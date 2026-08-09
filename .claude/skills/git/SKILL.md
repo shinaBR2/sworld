@@ -1,6 +1,6 @@
 ---
 name: git
-description: The git rules that hold everywhere in this repo — how we branch, sync, and integrate. Open before a rebase-or-merge choice, a force-push, resolving conflicts, or anything touching `main` and worktrees.
+description: Load before any git step beyond an everyday commit — merging or syncing a branch, resolving a conflict, a force-push, a checkout, or branching off `main`. It's what stops you rebasing, force-pushing, or building on a stale `main` out of habit.
 user-invocable: false
 ---
 
