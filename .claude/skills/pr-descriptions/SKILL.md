@@ -36,7 +36,7 @@ Nothing else.
 
 ## Test plan
 
-- [ ] [user-facing: one manual step per checkbox. Not user-facing: remove the checkbox — one line saying CI covers it, plus any check CI can't run.]
+- [ ] [a manual step — the exact page, the thing to look at, pass/fail]
 ```
 
 - **Category** — exactly one: **bug fix**; **pure blocker** (exists only to unblock later
@@ -55,10 +55,10 @@ no-user-facing-change PR may then explain the developer's view, still plainly.
 - **User-facing** — manual steps a non-technical person can follow: the exact page (click by
   click), the exact thing to look at, plain pass/fail. Confirm the thing is genuinely visible
   and actually changes.
-- **Not user-facing** — CI already proves the change works, so don't re-list the automated
-  checks (type-checks, unit tests, "CI green" are all redundant). List only a check CI
-  *can't* run (e.g. a deploy-order check for a blocker); if there's none, say in one line
-  that CI covers it.
+- **Not user-facing** — no checkbox list. CI already proves the change works, so don't
+  re-list the automated checks (type-checks, unit tests, "CI green" are all redundant). List
+  only a check CI *can't* run (e.g. a deploy-order check for a blocker); if there's none, one
+  line saying CI covers it.
 
 No changelog section — versioning is driven by changesets (`pnpm changeset` when the change
 should appear in a package's changelog).

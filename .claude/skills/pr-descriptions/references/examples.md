@@ -53,7 +53,7 @@ Title: `feat(library): bulk import items from a pasted list`
 
 ## Summary
 
-Adds a way to paste a list in the Library app and have it split into separate items automatically, instead of typing each one. It's rolled out gradually, but wherever it's switched on people see a new import box — so it counts as a user-facing change.
+Adds a way to paste a list in the Library app and have it split into separate items automatically, instead of typing each one. It's rolled out gradually, but wherever it's switched on people see a new import box.
 
 ## Test plan
 
