@@ -50,8 +50,8 @@ Not every diff adds a test: a pure refactor changes no behaviour, so it rides on
 the existing tests staying green; a docs change, or adding a constant nothing
 reads yet, owes none. The test is only owed where behaviour a user or a caller
 can observe changes — *changing* a live limit's value (a size cap, a page size)
-is exactly that, and the test is the case at the new boundary the old value would
-have rejected.
+is exactly that, and the test is a value that lands on the far side of the change:
+allowed under one limit, blocked under the other.
 
 The finding: **an observable change in behaviour with no test is not a good
 diff.**
