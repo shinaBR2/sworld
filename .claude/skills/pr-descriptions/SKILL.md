@@ -11,9 +11,7 @@ For how to *slice and size* the work into small PRs, see `micro-prs`. This skill
 
 ## Critical rules
 
-- Do not add `Co-Authored-By` headers on commits
-- Do not include "Generated with Claude Code" or any AI attribution
-- Do not mention Claude, AI, or assistants anywhere in the PR
+- No AI attribution anywhere — in the title, body, or commits (AGENTS.md owns this rule)
 - Do not pad the description by restating the diff
 - The one thing that must be true: the PR is linked to its tracker issue. The `SWO-NNN` has to reach the integration — through the branch name and/or the body — so it moves the issue to In Review (see `task-tracker`). Where the ID appears is an implementation detail; the link is what matters.
 

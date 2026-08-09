@@ -98,9 +98,7 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 | which app | the **project** |
 | `parent:` (which feature) | the **parent** issue (`SWO-NNN`) |
 | `blocked-by:` | a **`blocked-by` relation** between issues |
-| bug / user-story tagging | one or more **labels** |
-
-A bug ticket carries the `bug` label, and a user story the `user-story` label; that is how each is found and filtered.
+| bug / user-story tagging | the `bug` / `user-story` **label** (how each is found and filtered) |
 
 ## The GitHub link
 
