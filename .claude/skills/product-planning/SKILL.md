@@ -131,7 +131,7 @@ Nail the parent's **Goal first** (`writing-task-specs`) — a concrete, plain-En
 feature finished and how anyone would know. If that can't be written concretely yet, say so and suggest
 going back to Steps 1–3 rather than inventing sub-issues around a fuzzy goal — same non-gating
 posture as above: raise the concern, then follow the user's call if they want to proceed anyway.
-Then break it into sub-issues, applying `micro-prs`' one-purpose test and one-app/package scope to each,
+Then break it into sub-issues, applying `micro-prs`' does-one-thing bar and one-app/package scope to each,
 sequencing them (flat by default, waves only where a real dependency exists — see `dependency-analysis`),
 and respecting the deployment model (small, independently mergeable, revertible). This is deliberately
 *separate* from Steps 1–3 — don't race ahead into it before the shape is agreed.
