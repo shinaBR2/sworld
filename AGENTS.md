@@ -18,11 +18,10 @@ we can have in the product.
 ## How we work
 
 - **Simplicity is the rule of thumb.** The simplest thing that works wins.
-- **Build in independent blocks — isolation is the default.** Every piece of
-  work is a self-contained block: you can build, test, review, ship, and undo it
-  on its own, without waiting on or breaking the pieces around it. A component
-  you can run on its own, a change you can undo by itself — the same shape
-  everywhere.
+- **Isolation is the default — it applies to everything.** Every piece of work is
+  a self-contained block: you can build, test, review, ship, and undo it on its
+  own, without waiting on or breaking the pieces around it. A worktree, a ticket,
+  a component, a fact, a PR — each one stands alone.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
@@ -33,15 +32,15 @@ we can have in the product.
 - **Plan carefully, then build fast.** Most of the work is understanding the code,
   the problem, and the plan — roughly 80%; the writing itself is 20% or less. A
   good plan is what makes the build fast and safe.
-- **Work in parallel by default — isolation applied to how work runs.** Every
-  piece runs side by side in its own isolated worktree. One
-  consequence follows directly: because work is always landing, the local `main`
-  is almost always behind — that's expected, not a problem to design around. So
-  always start from the latest by pulling `main` fresh; never build on a stale
-  baseline. (The `parallel-workflow` skill owns the how.)
-- **Avoid drift — isolation applied to knowledge.** Every fact has
-  exactly one home. Prefer a skill over memory, one source over a copy. Never
-  restate what another place already owns — a copy always drifts.
+- **Work in parallel by default.** Every piece runs side by side in its own
+  isolated worktree. One consequence follows directly: because work is always
+  landing, the local `main` is almost always behind — that's expected, not a
+  problem to design around. So always start from the latest by pulling `main`
+  fresh; never build on a stale baseline. (The `parallel-workflow` skill owns the
+  how.)
+- **Avoid drift.** Every fact has exactly one home. Prefer a skill over memory,
+  one source over a copy. Never restate what another place already owns — a copy
+  always drifts.
 - **Review your own work before you ship it.**
 - **Don't ask obvious questions.** If I'd say yes 100% of the time, just do it. If
   my "no" would change nothing, there's no point asking. When you *should* ask is
