@@ -1,6 +1,6 @@
 ---
 name: git
-description: Load before any git step beyond an everyday commit — merging or syncing a branch, resolving a conflict, a force-push, a checkout, or branching off `main`. It's what stops you rebasing, force-pushing, or building on a stale `main` out of habit.
+description: Use whenever you touch git beyond an everyday commit — merging, syncing, resolving a conflict, force-pushing, a checkout, or branching off `main`.
 user-invocable: false
 ---
 
