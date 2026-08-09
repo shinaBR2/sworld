@@ -30,7 +30,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 
 Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
 
-The jargon-free law itself (what counts as plain, the comprehension test it must pass, worked before/after examples) lives in the `plain-english` skill — load it before writing this block, and `plain-english`'s table is also where the header and length for each shape live. This skill only owns *where* the block sits inside each spec shape. The Bug / small-feature / large-feature-parent shape:
+The jargon-free law itself (what counts as plain, the comprehension test it must pass, worked before/after examples) lives in the `plain-english` skill — load it before writing this block. This skill owns *where* the block sits, plus the header and length for each shape (`plain-english`'s table lists those, but its `Owned by` column attributes them back here — this is their single home). The Bug / small-feature / large-feature-parent shape:
 
 ```markdown
 **In plain words**  _(no code, no jargon — anyone can read this)_
