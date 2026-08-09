@@ -5,49 +5,22 @@ description: This skill should be used whenever the user asks to "create a ticke
 
 # Writing Task Specs
 
-Produce clear, consistent task specs in the task tracker that match the shape of the work. A great spec lets a developer (or AI agent) pick it up and start without asking questions.
+Produce clear, consistent task specs that match the shape of the work, so a developer (or AI agent) can pick one up and start without asking questions.
 
-This skill owns the **shapes** of a good spec; the `task-tracker` skill owns the tracker itself — which tool it is, the team, the project-is-an-app model, the state lifecycle, and every command form. Read `task-tracker` for how to create and wire what this skill describes; the short version of the model:
+This skill owns the **shapes** of a good spec — the templates below. The `task-tracker` skill owns the tracker itself: which tool it is, the team, the project-is-an-app model, the state lifecycle, and every command form. Read it for how to create and wire what this skill describes. The model in one line: every issue lives in an **app's project**, and a large feature is a **parent issue inside** that project — never a project of its own.
 
-Every issue belongs to an **app's project** (see `task-tracker` for the project-is-an-app model). A large feature is a **parent issue** *inside* its app's project — not a project of its own.
+## The four shapes — identify which one first
 
-- **Bug / small feature** → a single **issue** in the app's project. Bugs carry the `bug` label.
-- **User story** → an **issue in `Backlog`**, written in plain language, not technically scoped. When a developer picks it up and scopes it, it spawns a large feature.
-- **Large feature (scoped)** → a **parent issue** with one **sub-issue** per sub-task. The parent issue's description + (for a heavy concept) a tracker **document** hold the spec; **waves** are encoded by **blocking relations** between sub-issues (a `blocked-by` edge, optionally a `wave-N` label); **estimate** is the issue estimate field. See `task-tracker` for the relation and document commands.
-
-## Critical rules
-
-- Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
-- For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
-- Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
-- **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test.
-- **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
-- Attach every issue to the matching app **project** (the roster is `.claude/references/apps.md`; see `task-tracker` for the project-is-an-app model) — a large feature is a parent issue *inside* its app's project, not a project of its own
-- Before starting work on an issue, start it in the tracker (see `task-tracker`)
-- **Every ticket opens in plain words** — see below. No exceptions.
-
-## Every ticket opens in plain words
-
-Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's answer to "what is this about?" Anyone who opens it — a non-technical tester, a first-week dev, the owner skimming the tracker on their phone — must understand what is wrong (or wanted) and why it matters *before* a single file path, symbol name, or domain acronym appears.
-
-The jargon-free law itself — what counts as plain, the comprehension test it must pass, worked before/after examples, and the header and length each context uses — lives in the `plain-english` skill. Load it before writing this block and take the header and length for your shape from its table. This skill owns only *where* the block sits: it is mandatory as the opening of the Bug, Small feature, and Large-feature-parent shapes (using the `**In plain words**` header); the **User story** already opens this way, so its `**The user's problem**` section *is* the plain-words block, no separate header needed; and a **sub-issue** (the small child of a large feature) opens with the `**Why this matters**` variant instead — what part of the user-facing feature this piece contributes to, so whoever picks it up knows the point without decoding the title or re-reading the parent. Each shape template below shows the block in place.
-
-## The four spec shapes
-
-Before writing anything, identify which shape applies. The shapes are not interchangeable — they serve different purposes and have different audiences.
+The shapes are not interchangeable; they serve different audiences. Pick the shape before writing anything (ask if unsure), and match its detail level — neither over- nor under-documented.
 
 | Shape | Purpose | Typical outcome |
 |-------|---------|-----------------|
 | **Bug** | Something is broken. Specific, reproducible. | One issue → one PR fix |
 | **Small feature** | A single focused change that maps to one PR | One issue → one PR |
-| **User story** | A user need or product direction, written in plain language. Not technically scoped. | One issue in `Backlog` → later becomes a parent issue when a developer picks it up |
+| **User story** | A user need or product direction, in plain language. Not technically scoped. | One issue in `Backlog` → later becomes a parent issue when a developer picks it up |
 | **Large feature (scoped)** | A technically broken-down feature with sequenced sub-tasks. The *result* of scoping a user story. | One parent issue + sub-issues → many PRs |
 
-### The user story → large feature progression
-
-These two shapes are connected. A **user story** describes *what* and *why* from the user's perspective. When a developer picks it up, they scope it technically — that scoping produces a **parent issue** (with sub-issues) inside the app's project.
-
-The user story content often gets carried forward into the parent issue's context. The user story issue stays as a reference — link it from the parent issue (mention it in the description and relate the parent to it).
+A **user story** and a **large feature** are the same work at two stages: a story describes *what* and *why* from the user's side; when a developer picks it up and scopes it technically, that produces the parent issue (with sub-issues). The story stays as a reference — link it from the parent.
 
 ```
 User story issue (plain language, user perspective, in Backlog)
@@ -57,37 +30,35 @@ Parent issue (description + document, sub-issues wired by blocking relations)
 PRs merge to main
 ```
 
-Not every user story becomes a large feature — sometimes scoping reveals it's actually a small feature. That's fine. The point is that the user story doesn't try to answer technical questions.
+Not every story becomes a large feature — scoping sometimes reveals it's really a small feature. That's fine; the point is the story doesn't try to answer technical questions.
 
-## Title and slug conventions
+## Every ticket opens in plain words
 
-The issue/project **title** should be specific enough that a developer knows what they're looking at before opening it. The tracker assigns the identifier; you don't pick one (see `task-tracker`).
+Whatever the shape, the **first thing in the description** is a plain-English orientation block — the ticket's answer to "what is this about?" — that anyone (a non-technical tester, a first-week dev, the owner skimming on their phone) understands *before* any file path, symbol, or acronym appears.
 
-- Active voice or noun phrase, no gerunds in active titles ("Fix" not "Fixing")
-- Reference the app or domain when relevant (library, listen, watch, til, finance, journal)
-- No square-bracket prefixes — put the domain in the title naturally
-- No Claude / AI attribution
+The jargon-free law — what counts as plain, the comprehension test, before/after examples, and the header and length per context — lives in `plain-english`; load it before writing the block. This skill owns only *where* the block sits and which header each shape uses:
 
-A **slug** is still useful — it's the kebab-case short form derived from the title, used to name the worktree and branch when the work starts (see `task-tracker`). Keep it short: `sticky-progress-bar`, `bulk-import-tracks`.
+- **Bug, Small feature, Large-feature parent** → `**In plain words**`.
+- **User story** → its own `**The user's problem**` section *is* the block; no separate header.
+- **Sub-issue** → `**Why this matters**`: one line on what part of the user-facing feature this piece contributes.
 
-Good titles:
+## Titles and slugs
 
-- `Library progress bar loses its label when many chapters are listed`
-- `Add bulk import for listen playlist tracks`
-- `Migrate library read path to compute-on-read GraphQL`
-- `Document ingestion — AI extraction with human review`
+The title should tell a developer what they're looking at before they open it. The tracker assigns the identifier; you don't pick one (see `task-tracker`).
 
-Bad:
+- Active voice or noun phrase, no gerunds ("Fix" not "Fixing")
+- Name the app or domain when relevant (library, listen, watch, til, finance, journal)
+- No square-bracket prefixes — put the domain in the title naturally; no AI attribution
 
-- `Bug in library` (vague)
-- `[finance] Fix totals` (square brackets, not specific — use the domain in the title naturally)
-- `As a user I want to import tracks` (user-story prefix, redundant for the title)
+The **slug** is the kebab-case short form of the title, used to name the worktree and branch (see `task-tracker`). Keep it short: `sticky-progress-bar`, `bulk-import-tracks`.
+
+Good: `Library progress bar loses its label when many chapters are listed` · `Add bulk import for listen playlist tracks` · `Migrate library read path to compute-on-read GraphQL`
+
+Bad: `Bug in library` (vague) · `[finance] Fix totals` (brackets, not specific) · `As a user I want to import tracks` (story prefix, redundant)
 
 ## Shape 1 — Bug
 
-For a specific, reproducible issue. Direct, short, focused on getting the fix right. Create a single issue with the `bug` label, ready to pick up, and an `estimate`. The body below is the issue **description** (tracker descriptions are Markdown).
-
-### Description structure
+A specific, reproducible issue. Create a single issue with the `bug` label and an `estimate`. The body below is the issue **description** (Markdown).
 
 ```markdown
 **In plain words**  _(see `plain-english`)_
@@ -113,21 +84,11 @@ For a specific, reproducible issue. Direct, short, focused on getting the fix ri
 * [No regression on X]
 ```
 
-### Example
-
-A filled-in bug — the library progress bug — is in `references/spec-examples.md`. Read it when you want to see this template turned into a real spec.
-
-### Bug tips
-
-- Always note who reported it if known — useful for follow-up
-- If root cause is unclear, write "Root cause: needs investigation" rather than guessing
-- Acceptance criteria should include "no regression" checks where the fix touches shared code
+Note who reported it if known, and where the fix touches shared code, make "no regression on X" a criterion. A filled-in example is in `references/spec-examples.md`.
 
 ## Shape 2 — Small feature / improvement
 
-For a single focused change that maps to one PR. Short spec, no sub-tasks. A single issue (ready to pick up, an `estimate`, attached to the relevant `project`).
-
-### Description structure
+A single focused change that maps to one PR. No sub-tasks. One issue with an `estimate`, attached to its project.
 
 ```markdown
 **In plain words**  _(see `plain-english`)_
@@ -148,28 +109,13 @@ For a single focused change that maps to one PR. Short spec, no sub-tasks. A sin
 * [Concrete outcome 2]
 ```
 
-### Example
-
-A filled-in small feature — bulk import for listen tracks — is in `references/spec-examples.md`.
+A filled-in example — bulk import for listen tracks — is in `references/spec-examples.md`.
 
 ## Shape 3 — User story
 
-A user story captures a user need or product direction in plain language. It does **not** try to solve the problem technically — that happens later when a developer scopes it into a large feature. Create it as an issue in **`Backlog`** (`state: "Backlog"`; see `task-tracker`). When it's scoped, link it from the resulting parent issue.
+Captures a user need in plain language. It does **not** solve the problem technically — that happens later when a developer scopes it. Create it as an issue in **`Backlog`** (see `task-tracker`); link it from the parent issue once scoped.
 
-### What a user story is for
-
-- Describing the problem from the user's perspective
-- Exploring ideas and possible approaches without committing to one
-- Capturing context that would otherwise live only in someone's head
-- Creating a starting point that a developer can pick up and scope technically
-
-### What a user story is NOT
-
-- A technical spec (no file paths, no architecture diagrams, no sub-tasks)
-- A commitment to a specific implementation
-- A spec that gets worked on directly — it spawns work (a parent issue + sub-issues), it doesn't *become* work
-
-### Description structure
+A user story is for describing the problem from the user's side, exploring approaches without committing to one, and giving a developer a starting point to scope. It is **not** a technical spec, a commitment to an implementation, or something worked on directly — it *spawns* work, it doesn't *become* work.
 
 ```markdown
 **The user's problem**
@@ -205,42 +151,28 @@ A user story captures a user need or product direction in plain language. It doe
 [Things that would be valuable later but are explicitly deferred. Useful context for the developer doing the scoping — they'll know what to design for without building it.]
 ```
 
-### Example
-
-A filled-in user story — document ingestion for the til app, with the full Ideas/UX/Scope/Open-questions sections — is in `references/spec-examples.md`. It's the richest of the three, so read it when scoping any user story.
-
-### User story tips
-
-- Write for a reader who doesn't know the codebase. Plain language throughout.
-- The "Ideas and approaches" section is the most valuable part — it gives the developer options and tradeoffs to work with during scoping
-- Don't force a single solution. If there are multiple good approaches, describe them all.
-- Keep "Open questions" honest. Unanswered questions are better than assumed answers.
+The **Ideas and approaches** and **Open questions** sections carry the most value — give real options and tradeoffs, and list unknowns honestly rather than inventing answers. The richest filled-in example — document ingestion for til — is in `references/spec-examples.md`; read it when scoping any user story.
 
 ## Shape 4 — Large feature (scoped)
 
-A technically broken-down feature with sequenced sub-tasks. This is the *output* of scoping — usually produced when a developer takes a user story and works out the implementation. It is a **parent issue** in the app's project whose **description** carries the technical scope, with one **sub-issue per sub-task** (each with the parent set), and **blocking relations** for the dependency graph (which also encode the waves). See `task-tracker` for the create and relation commands.
+A parent issue in the app's project whose **description** carries the technical scope, with one **sub-issue per sub-task** and **blocking relations** for the dependency graph (which also encode waves). Usually the output of a developer scoping a user story; occasionally created directly for well-understood work. See `task-tracker` for the create and relation commands.
 
-### When this shape is created
+### Scoping conversation
 
-- A developer picks up a user story and scopes it technically
-- The user and developer have a scoping conversation to break down the work
-- Occasionally, for well-understood work, a large feature is created directly (no user story precursor needed)
+Before creating anything:
 
-### Scoping conversation steps
+1. **Start from the user story** (if any) — the problem, ideas explored, open questions.
+2. **Identify the architectural shape.** What's touched — a frontend app, `packages/core` hooks, the Hasura layer, the Hono backend? Is there an existing pattern? For frontend work, `frontend-ui-architecture` decides *where* each piece lands, which shapes how a sub-task is scoped.
+3. **Resolve the open questions** — they become decisions in the parent description.
+4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled — go back to `product-planning`.
+5. **Break into sub-tasks**, each passing `micro-prs`' one-purpose test and staying inside one app/package — split now, at scoping time, not after the branch is built.
+6. **Derive the dependency graph from the code** with `dependency-analysis` — it decides which sub-tasks are isolated and which carry a real `blockedBy`. This skill only records what it returns.
+7. **Group into waves only where step 6 found a real blocker.** If everything is parallel, skip waves and the dependency-graph section.
+8. **Confirm the breakdown with the user** before creating anything.
 
-1. **Start from the user story.** Read the user story issue. Understand the problem, the ideas explored, and the open questions.
-2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer in `apps/hasura`, the Hono backend in `apps/backend`? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
-3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
-4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
-5. **Break into sub-tasks by one-purpose, one-app-or-package scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
-6. **Derive the dependency graph from the code** — run `dependency-analysis` over the candidates. It decides which are isolated and which carry a real `blockedBy`; this skill only records what it returns.
-7. **Group into waves only where step 6 found a real blocker**, and render them per the templates below. If everything is parallel, skip waves and the dependency graph section entirely.
-8. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
-9. **Confirm with the user** before creating the parent issue and sub-issues. Show the proposed breakdown (flat list, or waves if any are real). Adjust until it's right.
+### Parent issue description
 
-### Parent issue description structure
-
-The parent issue holds the technical scope. It is not worked on directly — its sub-issues do the work. Set this as the parent issue `description` (and, for a heavy domain concept, also create a tracker **document** attached to the app's project — see `product-planning` and `task-tracker`).
+Not worked on directly — its sub-issues do the work. For a heavy domain concept, also create a tracker **document** attached to the project (see `product-planning` and `task-tracker`).
 
 ```markdown
 **In plain words**  _(see `plain-english`)_
@@ -271,13 +203,13 @@ For features involving data models or complex logic, include sections like:
 
 **Sub-tasks (N total)**
 
-Flat by default — one table, no waves, when nothing has a real dependency (the common case, see "Sequencing examples" below):
+Flat by default — one table, no waves, when nothing has a real dependency (the common case):
 
 | Sub-task | Work | Est |
 |----------|------|-----|
 | <title> | <description> | Xh |
 
-Only when a real dependency exists, group into waves instead and add a **Dependency graph** section (a text diagram of what blocks what — see "Sequencing examples" below):
+Only when a real dependency exists, group into waves instead and add a **Dependency graph** section (a text diagram of what blocks what):
 
 **Wave 0 — [Wave name]**
 
@@ -307,9 +239,9 @@ Only when a real dependency exists, group into waves instead and add a **Depende
 * [Tracker document or external doc] — relevant patterns
 ```
 
-### Sub-task issue structure
+### Sub-task issue
 
-Each sub-task is one sub-issue under the parent, and a small focused PR. It inherits context from the parent issue — do not repeat the architecture or rationale. Create each as a sub-issue under the parent, ready to pick up, with an estimate, then add a `blocked-by` relation for each dependency (see `task-tracker` for the commands).
+Each sub-task is one sub-issue under the parent, and one small PR. It inherits context from the parent — do not repeat the architecture or rationale.
 
 ```markdown
 **Why this matters**  _(one plain-language line — see `plain-english`)_
@@ -331,13 +263,13 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 * [No regression on dependent code]
 ```
 
-**Before creating it, run `micro-prs`' one-purpose test** against this sub-task's `What` and `Files / scope`. If it fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
+Run `micro-prs`' one-purpose test against the `What` and `Files / scope` before creating it — if either quietly covers more than one independently-nameable job, it's two sub-tasks, not one.
 
 ### The goal & verification sub-issue — every large feature's first sub-issue
 
-Before any code sub-issue is created, write one sub-issue whose entire job is answering: **"how does anyone — with zero context — know the whole feature works when every sub-issue is done?"** Each sub-issue's own acceptance criteria only proves its own slice; nobody's acceptance criteria proves the assembled feature actually delivers the user story. This sub-issue is that missing check, written before the breakdown so it also doubles as a sanity check on the breakdown itself — if you can't write a concrete verification step, the shape probably isn't settled yet either.
+Before any code sub-issue, write one whose entire job is answering: **"how does anyone, with zero context, know the whole feature works once every sub-issue is done?"** Each sub-issue's own acceptance criteria only prove its own slice; nobody's prove the assembled feature delivers the user story. This sub-issue is that missing check — and writing it first doubles as a sanity check on the breakdown, because if you can't write a concrete verification step, the shape isn't settled.
 
-Create it as the **first** sub-issue under the parent, ready to pick up, titled `Goal & verification — <feature>` (no `blockedBy` — nothing needs to finish before this is written, and every other sub-issue may link back to it). See `task-tracker` for the command:
+Create it as the **first** sub-issue, titled `Goal & verification — <feature>`, with no `blockedBy` (nothing precedes it; every other sub-issue may link back to it):
 
 ```markdown
 **Why this matters**
@@ -371,22 +303,15 @@ N. [The observable result that proves it worked]
 [What this feature deliberately does NOT do, so review doesn't drift into scope creep]
 ```
 
-Mark it `Done` once the user confirms the walkthrough matches their intent — its own deliverable is the spec being right, not code. It then sits as the reference every other sub-issue links back to, and is the actual acceptance test for the parent issue once every sub-issue merges.
+Mark it `Done` once the user confirms the walkthrough matches their intent — its deliverable is the spec being right, not code. It then sits as the reference every other sub-issue links back to, and is the acceptance test for the parent once every sub-issue merges.
 
 ### Sub-task titles
 
-The parent issue gives the context, so the sub-task title can be short:
+The parent gives the context, so titles can be short and untagged (no `[domain]` prefix): `Reading-stats aggregation in readingStats query-hook` · `Compute total listening time in listen query-hook` · `Hook wiring (useCurrentReading)`.
 
-- `Reading-stats aggregation in readingStats query-hook`
-- `Compute total listening time in listen query-hook`
-- `Types + helper for monthly finance comparison`
-- `Hook wiring (useCurrentReading)`
+### Sequencing — flat by default, waves only when earned
 
-Do not prefix with `[domain]` or other tags — the parent issue already scopes the work.
-
-### Sequencing examples — flat by default, waves only when earned
-
-Most breakdowns are a flat list — nothing here has a real dependency, so nothing gets a `blockedBy`:
+Most breakdowns are a flat list — nothing has a real dependency, so nothing gets a `blockedBy`:
 
 ```text
 No waves — all startable now:
@@ -396,7 +321,7 @@ No waves — all startable now:
   hasura-permissions     — read permission for the new table (apps/hasura, its own PR)
 ```
 
-A worked dependency graph for an `Import notes` parent issue where a real blocker exists (waves are encoded by `blockedBy` relations between sub-issues — imposed here only because `dependency-analysis` returned those edges as real):
+Waves appear only where `dependency-analysis` returned real edges. A worked graph for an `Import notes` parent:
 
 ```text
 Wave 0 — Foundations (no blockers):
@@ -410,34 +335,17 @@ Wave 2 — Save:
   save-wiring            — blockedBy: [preview-table]
 ```
 
-Each issue's `blockedBy` lists the issues above it. A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`. Never write a `blockedBy` this skill worked out for itself: every edge comes from `dependency-analysis` (step 6 above), which owns the real-vs-fake test. This skill only records what it returns.
+A sub-task can be *developed* in parallel even when blocked — it just can't merge until its blockers are `Done`. Never invent a `blockedBy`: every edge comes from `dependency-analysis`, which owns the real-vs-fake test.
 
-## Process
+## Creating it
 
-When Claude has been working with the developer and a spec is needed:
+Creating an issue is an external write, so **get the user's sign-off on the plan before creating anything — for every shape**, not just large features (this mirrors the workspace's plan-before-code gate). Draft the spec matching the shape, using the developer's existing context rather than re-investigating what's already been discussed. Then create it per `task-tracker` — one issue for a bug / small feature / user story; for a large feature, the parent first, then the goal & verification sub-issue, then one sub-issue per code sub-task (parent, project, estimate set, and a `blocked-by` only where step 6 found a real dependency). Confirm back to the user with the identifiers and URLs.
 
-1. **Identify the shape** — bug, small feature, user story, or large feature. Ask if unsure.
-2. **For user stories** — focus on capturing the user's problem and ideas in plain language, as an issue in `Backlog`. Do not jump to technical scoping.
-3. **For large features** — run the scoping conversation before creating anything, including the goal & verification sub-issue's content. Confirm the breakdown with the user. If there's an existing user story, start from it.
-4. **Draft the spec** matching the shape's structure, applying `plain-english` to its opening block. Use the developer's existing context, do not re-investigate things already discussed.
-5. **Get explicit approval, then create in the tracker.** Creating an issue is an external write — get the user's sign-off on the plan **before** creating anything, for *every* shape, not just large features (this mirrors the workspace's plan-before-code gate; the large-feature scoping conversation in step 3 already ends this way, and a bug / small feature / user story needs the same green light). Only then create (see `task-tracker` for every command) — one issue for a bug / small feature / user story; for a large feature: the parent (attached to the app's project), then the goal & verification sub-issue first, then one sub-issue per code sub-task with parent, project, and estimate set, plus a `blocked-by` relation only where step 6 of the scoping conversation found a real dependency. For a heavy domain concept, add a tracker document attached to the app's project.
-6. **Confirm to the user** what was created, with the issue identifiers and URLs.
+## Before you create — checklist
 
-## Validation checklist
+The template shows each shape's own sections; these are the cross-shape things it doesn't:
 
-Before creating a spec:
-
-- Title is specific; no square-bracket prefixes
-- Attached to the right app **project** (see `task-tracker`)
-- Shape matches the work (bug / small feature / user story / large feature)
-- Detail level matches the shape — not over-documented, not under-documented
-- Opens with the `plain-english` block (`**In plain words**`, `**Why this matters**`, or the user story's own opening section) — no exceptions
-- Tracker fields set: state, plus estimate / label / parent / blocked-by relations where relevant (see `task-tracker`)
-- For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
-- For small features: problem, proposed solution, acceptance criteria
-- For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly
-- For large features: scoping conversation done, goal & verification sub-issue created first, every code sub-task passes the one-purpose test (`micro-prs`) and stays inside one app/repo, `blockedBy` wiring reflects only real dependencies (flat list is the default, not a gap), links back to the user story issue if one exists
-- UK English throughout
-- No AI attribution
-
-Internal-only refactors (type fixes, performance, cleanup users won't feel) don't need a spec note about visibility; user-facing changes should say so in the spec.
+- Shape matches the work, and detail level matches the shape
+- Title specific, no bracket prefixes; attached to the right app project
+- Plan signed off by the user before this write
+- UK English throughout; no AI attribution
