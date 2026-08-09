@@ -44,7 +44,7 @@ A "yes" is not a verdict. Before recording an edge, check whether one of these d
 
 ### 1. A feature flag — for question 3
 
-Put the change behind a flag and the user sees nothing, so it ships safely on its own. That is what the flag system is for; see `micro-prs` for how to use it.
+Put the change behind a flag and the user sees nothing, so it ships safely on its own. That is what the flag system is for.
 
 ### 2. A behaviour-preserving default — for questions 1 and 2
 
@@ -55,7 +55,7 @@ Answer two questions, in order:
 1. **What is the *correct* API at the final state?** Design it properly. If the new prop/param should be **required**, make it required — don't deform the design to make sequencing easier.
 2. **What default value makes every current consumer behave exactly as it does today?** ***Knowing this value is the key.***
 
-**If you can name that value:** land the new prop/param carrying it. Every existing caller keeps compiling and behaving identically, so nothing is blocked — consumers then migrate **in parallel, independently**, and a follow-up task removes the default once they all pass it explicitly (that removal is `micro-prs`' "remove old code, its own PR, after the replacement is live").
+**If you can name that value:** land the new prop/param carrying it. Every existing caller keeps compiling and behaving identically, so nothing is blocked — consumers then migrate **in parallel, independently**, and a follow-up task removes the default once they all pass it explicitly — that removal is its own PR, landed after every consumer passes the value.
 
 **If you cannot name it:** you have now *proven* a real dependency instead of guessing at one — and the investigation tells you exactly which consumers form the edge.
 
@@ -97,5 +97,4 @@ Because a merge deploys, these edges are also a **live ordering constraint in pr
 
 - `writing-task-specs` — renders the result: a flat table, or waves plus a dependency-graph section.
 - `task-tracker` — the command that records a `blockedBy` edge.
-- `micro-prs` — takes it as given and slices each piece by layer.
 - `analyze` — audits an existing breakdown against this test, and flags edges that were never earned.

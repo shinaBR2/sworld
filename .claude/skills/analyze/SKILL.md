@@ -29,7 +29,7 @@ It is the **audit** direction, and it's why it's its own skill:
 | `self-review` | backward | a code diff |
 
 Analyze reuses the thinking tools rather than restating them — it points at `grill-me` for the
-requirement pass and `micro-prs` for the scope pass, and adds the one thing neither has: checking that
+requirement pass and `good-diff` for the scope pass, and adds the one thing neither has: checking that
 a breakdown is still internally consistent with itself.
 
 ## When to run it
@@ -74,7 +74,7 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 
 ### 3. One-purpose / scope
 
-Apply `micro-prs`' one-purpose test to each sub-issue as it stands. A sub-issue that has quietly grown a
+Apply `good-diff`'s one-purpose test (Test 1) to each sub-issue as it stands. A sub-issue that has quietly grown a
 second purpose, or now spans two repos, is a split — flag it before it's built, not at review.
 
 ## Output

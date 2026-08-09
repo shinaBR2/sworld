@@ -20,7 +20,7 @@ Every issue belongs to an **app's project** (see `task-tracker` for the project-
 - Match the spec shape to the work — do not force a bug template onto a feature, or vice versa
 - For large features, do the scoping work in conversation with the user before creating the parent issue and sub-issues — do not invent sub-tasks without confirming the breakdown
 - Sub-tasks must respect the deployment model: each one is small, independently mergeable, and revertible
-- **Every sub-task solves exactly one problem** — see `micro-prs`' one-purpose test.
+- **Every sub-task solves exactly one problem** — see `good-diff`'s one-purpose test (Test 1).
 - **Every large feature's first sub-issue is the goal & verification sub-issue** — see below. Write it before any code sub-issue.
 - Attach every issue to the matching app **project** (the roster is `.claude/references/apps.md`; see `task-tracker` for the project-is-an-app model) — a large feature is a parent issue *inside* its app's project, not a project of its own
 - Before starting work on an issue, start it in the tracker (see `task-tracker`)
@@ -232,7 +232,7 @@ A technically broken-down feature with sequenced sub-tasks. This is the *output*
 2. **Identify the architectural shape.** What systems are touched? Frontend app, `packages/core` hooks, the Hasura layer in `apps/hasura`, the Hono backend in `apps/backend`? Is there an existing pattern to follow? For frontend work, `frontend-ui-architecture` decides *where* each piece lands (which package and folder), which shapes how a sub-task is scoped.
 3. **Resolve the open questions.** The user story's open questions become decisions in the parent issue's description.
 4. **Write the goal & verification sub-issue first** (see below) — before naming a single code sub-task. If you can't write a concrete walkthrough and "how to know it's done" list yet, the concept isn't settled enough to scope — go back to `product-planning`, don't invent sub-tasks around a fuzzy goal.
-5. **Break into sub-tasks by one-purpose, one-app-or-package scope.** Apply `micro-prs`' one-purpose test to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
+5. **Break into sub-tasks by one-purpose, one-app-or-package scope.** Apply `good-diff`'s one-purpose test (Test 1) to each candidate before it becomes a sub-issue — split it now, at scoping time, not after the branch is built.
 6. **Derive the dependency graph from the code** — run `dependency-analysis` over the candidates. It decides which are isolated and which carry a real `blockedBy`; this skill only records what it returns.
 7. **Group into waves only where step 6 found a real blocker**, and render them per the templates below. If everything is parallel, skip waves and the dependency graph section entirely.
 8. **Map to the deployment model.** Each sub-task must be small, independently mergeable, and revertible. Anything user-facing sits behind a feature flag until ready.
@@ -322,7 +322,7 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 
 **Files / scope**
 
-[Files or modules touched, in this ONE repo/app only — see `micro-prs`. If the list spans two apps or two repos, split the sub-task before creating it.]
+[Files or modules touched, in this ONE app or package only — see `good-diff` Test 4. If the list spans two apps, or an app plus a shared package, split the sub-task before creating it.]
 
 **Acceptance criteria**
 
@@ -331,7 +331,7 @@ Each sub-task is one sub-issue under the parent, and a small focused PR. It inhe
 * [No regression on dependent code]
 ```
 
-**Before creating it, run `micro-prs`' one-purpose test** against this sub-task's `What` and `Files / scope`. If it fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
+**Before creating it, run `good-diff`'s one-purpose test (Test 1)** against this sub-task's `What` and `Files / scope`. If it fails, it's two sub-tasks, not one. A common failure shape: a sub-task titled around one piece of work (e.g. "client factory") that quietly also adds an unrelated data-access module, unrelated constants, and a cleanup deletion — each of those is independently nameable in one sentence, which is the tell it should have been three or four sub-tasks instead of one.
 
 ### The goal & verification sub-issue — every large feature's first sub-issue
 
@@ -436,7 +436,7 @@ Before creating a spec:
 - For bugs: `bug` label; problem, root cause (or note that it's unknown), solution (if known), acceptance criteria
 - For small features: problem, proposed solution, acceptance criteria
 - For user stories: `state: Backlog`, user problem front and centre, ideas explored but no technical spec, open questions listed honestly
-- For large features: scoping conversation done, goal & verification sub-issue created first, every code sub-task passes the one-purpose test (`micro-prs`) and stays inside one app/repo, `blockedBy` wiring reflects only real dependencies (flat list is the default, not a gap), links back to the user story issue if one exists
+- For large features: scoping conversation done, goal & verification sub-issue created first, every code sub-task passes the one-purpose test (`good-diff` Test 1) and stays inside one app/package, `blockedBy` wiring reflects only real dependencies (flat list is the default, not a gap), links back to the user story issue if one exists
 - UK English throughout
 - No AI attribution
 

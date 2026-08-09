@@ -1,8 +1,8 @@
 # What makes a good diff
 
 The home for the four tests that answer "is this a good diff / good PR?". Applies
-to both a local diff and a PR — a good diff passes all four. `self-review` and
-`micro-prs` both link here.
+to both a local diff and a PR — a good diff passes all four. `self-review` links
+here to judge a finished diff.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
@@ -39,6 +39,14 @@ The load-bearing point: **size is not risk.** A rename across 30 files within on
 app or package is a *good* diff even though it's large. A five-line change to a
 permission rule is the one to keep smallest and review hardest.
 
+Once the risk is judged, line count is a secondary sanity check — a rough hint,
+never a rule that overrides the table above:
+
+- **0–50 lines** — perfect.
+- **51–150 lines** — good for a cohesive change.
+- **151–300 lines** — needs a reason: why can't this be smaller?
+- **300+ lines** — almost certainly more than one purpose (Test 1); re-check.
+
 ## Test 3 — behaviour that changes is covered by a test
 
 A change in behaviour ships with a test. A new feature or a bug fix carries a
@@ -61,18 +69,20 @@ diff.**
 A good diff stays within one side of a boundary — one self-contained unit that's
 built, reviewed, and reverted on its own terms. Span two of them in one diff and
 it's a crossing; even a few lines that way is bad, because a crossing can't be
-reviewed or reverted cleanly. Which directories count as one unit is `micro-prs`'
-rule 2.
+reviewed or reverted cleanly. One unit is **at most one** of: a single app (each
+app counts on its own — including the backend and the Hasura layer), the shared
+core package, or the shared UI package. Touching two apps, or an app plus a
+shared package, or both shared packages, in one diff is a crossing.
 
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
 diff, one purpose (Test 1). But when the source and its generated code sit on
 opposite sides of a boundary, changing both in one diff is a crossing (Test 4),
-not one diff; how that splits is `micro-prs`'.
+not one diff.
 
 These four tests judge whether a diff is *good*. How to actually split one that
-fails a test — which side lands first, blockers before dependents, the
-line-count sizing hints — is `micro-prs`'.
+fails a test — which side lands first, blockers before dependents — is
+`dependency-analysis`'.
 
 ## Worked examples
 

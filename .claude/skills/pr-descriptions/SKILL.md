@@ -7,7 +7,7 @@ description: This skill should be used whenever the user asks to "create a PR", 
 
 Produce short, scannable PRs. A reviewer should be oriented in 30 seconds. Aim for under 100 words in the body.
 
-For how to *slice and size* the work into small PRs, see `micro-prs`. This skill covers writing the title and body once a change is scoped.
+For whether a change is well-scoped to ship as one PR, see `.claude/references/good-diff.md`; for how to sequence a split, `dependency-analysis`. This skill covers writing the title and body once a change is scoped.
 
 ## Critical rules
 
