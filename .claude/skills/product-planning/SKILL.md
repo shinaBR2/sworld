@@ -38,9 +38,8 @@ requests.)
 The fork that sets the depth. If it's the *idea* — a real-world concept whose
 misunderstanding cascades (say, *can one order contain items from more than one seller?*) —
 make the concept rock-solid first, and write it down before the code: what it is, how it
-behaves, its rules, as a short tracker document (`task-tracker`), with architecture left
-out. If it's a clear, well-defined problem, go straight to shaping the solution. When in
-doubt, treat it as a concept.
+behaves, its rules, as a short tracker document (`task-tracker`). If it's a clear,
+well-defined problem, go straight to building it. When in doubt, treat it as a concept.
 
 ## Parent stays high-level; scope the children later
 
