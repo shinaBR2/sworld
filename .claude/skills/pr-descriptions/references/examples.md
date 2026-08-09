@@ -3,7 +3,9 @@
 Three complete title-plus-body examples, one per PR type. Read this when you want to see a whole PR
 assembled, not just the Summary / Test-plan fragments the SKILL.md shows inline. The rules these
 illustrate — audience, before→after Summary, plain-English test steps — all live in the SKILL.md;
-these are only the filled-in form.
+these are only the filled-in form. Two rules aren't shown in the bodies below and aren't meant to
+be: the tracker ID (`SWO-NNN`) rides in the branch name rather than the body, and a real test step
+names the exact page and click path — kept short here for readability, spelled out in the SKILL.md.
 
 ## Example 1: Pure refactor (no user-facing change)
 

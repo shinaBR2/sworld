@@ -105,9 +105,10 @@ unpatched pnpm is the exposure item 7 describes.
 
 Target the **latest pnpm 10.x** (10.34.x at time of writing). It runs on **Node ≥ 18.12** and already
 gives you lifecycle-scripts-off-by-default, the `minimumReleaseAge` cooldown (≥ 10.16) and the
-path-traversal fixes (≥ 10.28.1) — the full posture without a Node-floor bump. Pin it explicitly via
-`"packageManager": "pnpm@10.34.x"` and `engines.pnpm`, and upgrade the global CLI the same way it was
-installed (`npm i -g pnpm@10` for an npm-global install; the standalone installer or `corepack` otherwise).
+path-traversal fixes (≥ 10.28.1) — the full posture without a Node-floor bump. Pin it explicitly:
+`"packageManager"` takes the **exact** patch Corepack enforces (e.g. `pnpm@10.34.3`), while
+`engines.pnpm` can hold a range. Upgrade the global CLI the same way it was installed
+(`npm i -g pnpm@10` for an npm-global install; the standalone installer or `corepack` otherwise).
 
 pnpm 11 turns the cooldown and exotic-subdep blocking on by default, but requires **Node ≥ 22.13** and
 renames `onlyBuiltDependencies` → `allowBuilds`. Move to it only after committing the repo to a Node 22+

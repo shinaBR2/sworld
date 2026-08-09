@@ -100,14 +100,16 @@ Aim for all of these. Most are one-time setup.
    so a long cooldown never breaks a build — it only governs the moment you deliberately resolve.
 7. **Keep the package manager itself current and patched.** During an install the CLI runs with your
    full user privileges, so a bug _in pnpm_ is as dangerous as a bug in a dependency — it has shipped
-   real CLI advisories. Stay on the **latest patch of your major line**, not a fixed floor; below
-   `10.16` you can't set the cooldown at all. The version-by-version specifics — which advisories each
+   real CLI advisories. Stay on the **latest patch of the 10.x line** — the cooldown first exists at
+   `10.16` and no older-major patch ever reaches it, so a project below `10.16` has to cross the major
+   boundary, not just take its own line's latest patch. The version-by-version specifics — which advisories each
    patch closes, why the latest 10.x is the safe default, and the Node-22 floor that gates pnpm 11 —
    are in `references/package-manager-config.md`. Upgrade the CLI the same way it was installed
    (`ls -l "$(which pnpm)"` to check).
 
 If a project is on pnpm < 10.16 the cooldown isn't available and older patches carry known CLI
-advisories — flag it and bump to the latest patch of its major line before relying on this posture.
+advisories — flag it and bump onto the latest 10.x patch (crossing the major boundary if it's on 9
+or older) before relying on this posture.
 
 ## Procedures
 
