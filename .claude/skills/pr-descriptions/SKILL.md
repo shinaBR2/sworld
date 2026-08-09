@@ -114,7 +114,7 @@ You usually have full context from working on the task. Even so, **review the ac
 3. Confirm the title — conventional commit format with a scope.
 4. Draft the Summary in 1–3 sentences for the right audience (see above).
 5. Draft a Test plan: dead-simple user steps for a user-facing PR, or plain developer checks for a no-user-facing-change PR.
-6. Open the PR. Pass the multi-line body through a heredoc so the markdown survives instead of being flattened — that idiom is the one detail worth remembering (`.claude/references/github-cli.md`).
+6. Open the PR, assigned to the user (`--assignee "@me"`) so it lands in their queue. Pass the multi-line body through a heredoc so the markdown survives instead of being flattened — that idiom is the one detail worth remembering (`.claude/references/github-cli.md`).
 
 Never open the PR as a draft. The only reviewers here are the code-review bots,
 and a draft PR can stop them from running — which defeats the whole point of
