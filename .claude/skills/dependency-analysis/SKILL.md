@@ -1,6 +1,6 @@
 ---
 name: dependency-analysis
-description: Work out the true dependency graph of a change from the code — which pieces are isolated, which are genuinely blocked by another, and which block others. Auto-triggers when breaking a feature into sub-tasks, deciding whether a `blockedBy` edge is real, sequencing work into waves, asking "can these run in parallel?", or judging what breaks if a signature/schema/contract changes. Owns the investigation and the real-vs-fake test; `writing-task-specs` renders the result into a spec and `task-tracker` records the edge.
+description: Work out the true dependency graph of a change from the code — which pieces are isolated, which are genuinely blocked by another, and which block others. Auto-triggers when breaking a feature into sub-tasks, deciding whether a `blockedBy` edge is real, sequencing work into waves, asking "can these run in parallel?", or judging what breaks if a signature/schema/contract changes. Owns the investigation and the real-vs-fake test; `writing-task-specs` captures the result in the ticket breakdown and `task-tracker` records the edge.
 user-invocable: false
 ---
 
@@ -95,7 +95,7 @@ Because a merge deploys, these edges are also a **live ordering constraint in pr
 
 ## Where the answer goes
 
-- `writing-task-specs` — renders the result: a flat table, or waves plus a dependency-graph section.
+- `writing-task-specs` — captures the result as the parent's child tickets, each with a `blocked-by` edge only where this analysis found a real one.
 - `task-tracker` — the command that records a `blockedBy` edge.
 - `micro-prs` — takes it as given and slices each piece by layer.
 - `analyze` — audits an existing breakdown against this test, and flags edges that were never earned.

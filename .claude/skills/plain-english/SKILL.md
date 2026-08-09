@@ -1,6 +1,6 @@
 ---
 name: plain-english
-description: The jargon-free "plain words" writing rule and the block templates that apply it — the mandatory opening summary a reader with zero context can understand in ten seconds, with no code, file paths, symbol names, or unexplained acronyms. Referenced by `writing-task-specs` (ticket "In plain words" / "Why this matters" blocks) and `pr-descriptions` (PR summary and user-facing test plan) rather than duplicated in each. Auto-triggers whenever drafting any of those, or any other doc that needs to read cleanly for a non-technical reader.
+description: The jargon-free "plain words" writing rule and the block templates that apply it — the mandatory opening summary a reader with zero context can understand in ten seconds, with no code, file paths, symbol names, or unexplained acronyms. Referenced by `writing-task-specs` (a ticket's "In plain words" opening) and `pr-descriptions` (PR summary and user-facing test plan) rather than duplicated in each. Auto-triggers whenever drafting any of those, or any other doc that needs to read cleanly for a non-technical reader.
 ---
 
 # Plain English
@@ -25,9 +25,7 @@ The law doesn't change — only the header and length it sits under. This table 
 
 | Context | Header | Length | Used by |
 |---|---|---|---|
-| Bug / small feature / large-feature-parent ticket | `**In plain words**` | 2–4 sentences | `writing-task-specs` |
-| Sub-issue (child of a large feature) | `**Why this matters**` | one sentence | `writing-task-specs` |
-| User story | no separate header — its opening section already is the plain-words block | 2–4 paragraphs | `writing-task-specs` |
+| Any ticket (bug, feature, parent, or child sub-ticket) | `**In plain words**` | short — a sentence for a child, up to a few for a parent | `writing-task-specs` |
 | PR summary | the description's opening sentences | 1–3 sentences | `pr-descriptions` |
 | PR test plan (user-facing change) | Test plan steps | click-by-click | `pr-descriptions` |
 
@@ -43,4 +41,4 @@ Good:
 
 ## Why this is its own skill, not copy-pasted text
 
-The rule already has two independent, real consumers — `writing-task-specs`'s four ticket shapes and `pr-descriptions`'s summary/test-plan — not a hypothetical future one. Duplicating prose risks drift: one copy gets refined during a review and the other quietly falls behind. Whenever this law changes, it changes once, here, and both consumers pick it up.
+The rule already has two independent, real consumers — `writing-task-specs`'s ticket opening and `pr-descriptions`'s summary/test-plan — not a hypothetical future one. Duplicating prose risks drift: one copy gets refined during a review and the other quietly falls behind. Whenever this law changes, it changes once, here, and both consumers pick it up.
