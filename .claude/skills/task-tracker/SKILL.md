@@ -20,7 +20,7 @@ Every skill that plans, specs, or ships work talks to a task tracker — but onl
 "the task tracker", "the issue", "the issue's state" — and point here for the actual tool and
 commands. The split is deliberate: if we ever switch trackers, this one skill changes and every
 other skill keeps working unedited. So keep tracker specifics *here*, never scattered across the
-skills that consume them — that scattering is exactly the drift `skill-creator`'s reuse-not-duplicate
+skills that consume them — that scattering is exactly the drift `skill-authoring`'s reuse-not-duplicate
 rule warns against.
 
 ## The tracker: Linear
