@@ -63,7 +63,7 @@ Common shapes:
 - **151–300 lines** — needs justification: why can't this be smaller?
 - **300+ lines** — almost certainly more than one job. Re-check the scope.
 
-See `.claude/references/good-diff.md` for the good-diff/PR criteria — the same "is this a good diff?" judgement from the other axis.
+See `.claude/references/good-diff.md` for the good-diff/PR criteria.
 
 ## Ship incomplete work safely with flags
 
