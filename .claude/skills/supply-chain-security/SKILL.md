@@ -89,7 +89,8 @@ Aim for all of these. Most are one-time setup.
 6. **Add a cooldown, and make it long.** A cooldown (pnpm's `minimumReleaseAge`) refuses to resolve
    any freshly-published version, so it filters out the smash-and-grab campaigns — almost always
    spotted and yanked within hours to a couple of days — at near-zero cost. Prefer the **longest
-   window you can tolerate**; when you genuinely need a just-published fix, bypass the wait for that
+   window you can tolerate — 7 days (`10080`) the recommended conservative default, `1440` (1 day)
+   the minimum worth setting**; when you genuinely need a just-published fix, bypass the wait for that
    one package rather than lowering the global window. Frozen installs (CI/deploy) install exact
    _locked_ versions regardless of age, so a long cooldown never breaks a build — it only governs the
    moment you deliberately resolve. The window this repo sets, the exclusion mechanism and the
@@ -102,7 +103,8 @@ Aim for all of these. Most are one-time setup.
    `references/package-manager-config.md`.
 
 An old pnpm undercuts this whole posture — no cooldown, unpatched CLI — so flag it and bump onto the
-latest 10.x before relying on the rest (see `references/package-manager-config.md` for the floors).
+latest 10.x before relying on the rest — a major-version jump if it is on pnpm 9 or older (see
+`references/package-manager-config.md` for the floors).
 
 ## Procedures
 
