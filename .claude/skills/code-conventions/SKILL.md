@@ -33,6 +33,11 @@ Biome enforces what it can. The rest you check by eye — these are exactly the 
 - NEVER put constants inside React components or helper functions.
 - ALWAYS place constants in a dedicated constants folder/file.
 
+## Component structure
+
+- **Keep pure logic out of components.** Extract calculations and business rules to a dedicated file so they can be unit-tested (see Testing below). Same family as the constants rule above — a component wires up state, hooks, and rendering; the pure logic and constants it *uses* live outside it.
+- **Container/Presentational split** for complex components: a **Container** owns state, hooks, and data fetching and passes everything down as props; a **Presentational** component renders purely from props — no state, no hooks, no fetching. The split is what lets Storybook drive the presentational component with mocked props, so the view is tested in isolation with no API mocking. Where these files live (which package and folder) is `frontend-ui-architecture`.
+
 ## Cross-feature imports
 
 - AVOID cross-feature imports as much as possible.

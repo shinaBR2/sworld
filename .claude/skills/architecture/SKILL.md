@@ -38,10 +38,13 @@ client-side filter, not a second fetch.
 
 ## Transformers
 
-Every query/mutation owns a transformer that converts the API shape into the
-client model (via react-query `select`), placed alongside it in the domain's
-query-/mutation-hooks. It is the single gate between server and client: when the
-API changes, only the transformer moves and the frontend keeps working.
+Every query owns a transformer (react-query `select`) that converts the API shape
+into the client model — the single gate between server and client, so when the API
+changes only the transformer moves and the frontend keeps working. The full rule —
+where it lives, that it's the client's source of truth, that it's tested on its
+own — is `mutation-data-flow`'s layer 1. Mutation *input* is the mirror image, and
+`select` doesn't apply to it: action-specific payload builders shape it, also
+`mutation-data-flow`.
 
 ## GraphQL
 
@@ -66,5 +69,7 @@ Schema + permissions live in `apps/hasura`, never in a frontend app or core.
 
 ## First principle: never trust the frontend
 
-All validation, calculation, and business logic live on the server. The frontend
-only displays and collects input.
+All *authoritative* validation, calculation, and business rules live on the
+server; the frontend may shape payloads and derive values for display, but none of
+that is trusted for enforcement. What actually enforces this — the layers that
+validate data before it lands — is `hasura-architecture`.

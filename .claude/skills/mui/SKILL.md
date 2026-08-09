@@ -74,10 +74,4 @@ Use relative units that scale with user preferences:
 
 ## 7. Container/Presentational pattern
 
-For complex components, split the stateful shell from the pure view:
-
-- **Container** — owns state, hooks, and data fetching; passes everything down as props.
-- **Presentational** — pure rendering from props: no state, no hooks, no data fetching.
-- **Storybook** — drives the presentational component directly with mocked props, so no API mocking is needed.
-
-The split is what lets Storybook test the view in isolation. For where these files live and how they're named, follow `frontend-ui-architecture`.
+Splitting a complex component's stateful shell from its pure, Storybook-driven view is `code-conventions`.
