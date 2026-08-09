@@ -23,7 +23,7 @@ defines the workspace and `turbo.json` drives the task graph.
 | `packages/ui/` | **all** shared UI | `frontend-ui-architecture` |
 | `packages/core/` | shared data — queries, mutations, hooks, transformers | `architecture` / `mutation-data-flow` |
 | `packages/tsconfig/` | shared TypeScript config | — |
-| `.claude/skills/`, `.claude/references/` | these skills and the references they point at | `skill-creator` |
+| `.claude/skills/`, `.claude/references/` | these skills and the references they point at | `skill-authoring` |
 | `.claude/worktrees/` | per-issue worktrees | `task-tracker` (naming) |
 
 The paths above are the map. The *conventions* about what goes where inside a
