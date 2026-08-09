@@ -10,8 +10,8 @@ user-invocable: false
 
 - **No work without a task.** Pick up an issue or create one first
   (`writing-task-specs`; `task-tracker` owns the tracker).
-- **Never build outside a worktree.** Before you write code: pull `main` (a plain
-  `git pull` in the main worktree), then `EnterWorktree`.
+- **Never build outside a worktree.** Before you write code: pull `main`, then
+  `EnterWorktree`.
 - A fresh worktree needs `pnpm install` — no hook covers it.
 - Never bypass commit hooks.
 - **Never merge a PR** unless the user says so ("merge when settled"). They
