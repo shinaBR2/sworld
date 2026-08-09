@@ -14,21 +14,23 @@ description: >-
 
 # Analyze
 
-A breakdown is written once, against the codebase as it was then. Here work lands in parallel
-constantly, so by the time you pick an issue up, the plan describes a codebase that has moved on — a
+Before you build a non-trivial or reopened issue, audit its plan — catching a missing requirement, a
+scope that's crept, or a dependency gone stale is cheap here and expensive three sub-issues deep.
+This is `parallel-workflow`'s step-one gate: run it on any non-trivial or reopened issue you pick up,
+before the worktree.
+
+Beyond a fresh read of the spec, here's the reason it pays: a plan is written once, but work lands in
+parallel constantly, so by the time you build it can describe a codebase that has moved on — a
 blocker since closed, a sibling that shipped its part differently, a Goal no remaining child
-delivers. Analyze checks the plan still matches reality **at the moment you build against it**;
-catching that drift here is cheap, three sub-issues deep it isn't.
+delivers. That drift is sharpest on a **parent with sub-issues**, and invisible until something
+checks.
 
-Where it sits: `product-planning`/`grill-me` make the breakdown (forward, idea → plan); **`analyze`
-audits that breakdown before code** (backward); `self-review` audits the code. It doesn't re-plan —
-it reuses `grill-me` for the requirement pass and `.claude/references/good-diff.md` for the scope
-pass, and adds the one check only it can: the breakdown still holds against the moved codebase.
-`parallel-workflow` calls for it on any non-trivial or reopened issue.
-
-Highest value on a large-feature parent with sub-issues, on anything scoped a while ago, and on
-anything reopened or reworked — where plan and reality have drifted most. Pull the issue, its
-relations, and its sub-issues (`task-tracker`) so you audit what's there, not memory.
+Where it sits: `product-planning`/`grill-me` make the plan (forward, idea → breakdown); **`analyze`
+audits it before code** (backward); `self-review` audits the code. It doesn't re-plan — it reuses
+`grill-me` for the requirement pass and `.claude/references/good-diff.md` for the scope pass, and
+adds the one check only it can: whether a breakdown still holds together against the moved codebase.
+Pull the issue, its relations, and any sub-issues (`task-tracker`) so you audit what's there, not
+memory.
 
 ## The three passes
 
@@ -39,7 +41,8 @@ either handled or *explicitly* ruled out of scope. A silent axis is a requiremen
 
 ### 2. Breakdown integrity
 
-Analyze's own contribution — does the parent still match its sub-issues and their relations?
+Analyze's own contribution, and the pass that needs a breakdown — skip it on a single issue with no
+sub-issues. Does the parent still match its sub-issues and their relations?
 
 - **Stale blockers** — a `blocked-by` pointing at an issue since closed, merged, or superseded. A
   dead blocker makes startable work look blocked; a blocker dropped in prose only makes blocked work
@@ -59,8 +62,9 @@ Analyze's own contribution — does the parent still match its sub-issues and th
 ### 3. One-purpose / scope
 
 Apply the does-one-thing and one-boundary bars (`.claude/references/good-diff.md`, Tests 1 and 4)
-to each sub-issue. One that's grown a second purpose, or now spans two apps or an app plus a shared
-package, is a split — flag it before it's built.
+to the issue you're building, and to each sub-issue if it's broken down. One that's grown a second
+purpose, or now spans two apps or an app plus a shared package, is a split — flag it before it's
+built.
 
 ## Output
 
