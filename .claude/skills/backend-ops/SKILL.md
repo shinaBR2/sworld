@@ -14,17 +14,17 @@ These CLIs are operator tools run straight from source with `tsx` — they don't
 
 The CLIs that create rows (`audio.ts`, `convert.ts`, `stream-m3u8.ts`, `upload-subtitle.ts`) take the acting account from `user-id` in `~/.sworld-cli/config.json`, and `--user-id <user-id>` overrides it for a single run. Pass `--user-id` whenever the op should be owned by an account other than the configured one. `repair-fmp4.ts` is the exception — it reworks an existing video and takes the owner from the row, so it has no `--user-id`.
 
-Account names and their ids are identity data: they belong in local machine config, not in a skill. This repo is public, so read them from the local config or ask the user — never hardcode one here or in a committed script. (Infrastructure identifiers like the bucket and Hasura endpoint below are already public and are fine to keep.)
+Account names and their ids are identity data: they belong in local machine config, not in a skill. This repo is public, so read them from the local config or ask the user — never hardcode one here or in a committed script. The bucket and Hasura endpoint are the same kind of thing — config values (below), named by concept here rather than restated as literals.
 
 ## Assets live in GCP Cloud Storage
 
-All media/assets are in GCS, bucket **`sworld-prod.appspot.com`**. Public URL = `https://storage.googleapis.com/sworld-prod.appspot.com/<objectPath>`.
+All media/assets are in GCS, in the bucket named by `gcp-bucket` in the CLI config (below). Public URL = `https://storage.googleapis.com/<gcp-bucket>/<objectPath>`.
 
 Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.mp4`/`.m4s`), `audios/<userId>/<file>.mp3`, subtitles `videos/<userId>/<videoId>/<lang>.vtt`.
 
 ## Credentials (already configured — reuse, don't ask)
 
-- **`~/.sworld-cli/config.json`**: `gcp-key` (path to the service-account JSON — read the value from the config, don't hardcode a path), `gcp-bucket` (the bucket named above), `hasura-endpoint` (`https://free-lamprey-59.hasura.app/v1/graphql`), `hasura-secret` (admin), `user-id` (the account ops run as — see above).
+- **`~/.sworld-cli/config.json`**: `gcp-key` (path to the service-account JSON — read the value from the config, don't hardcode a path), `gcp-bucket` (the GCS bucket), `hasura-endpoint` (the prod Hasura GraphQL URL), `hasura-secret` (admin), `user-id` (the account ops run as — see above).
 - GCS auth: `new Storage({ keyFilename })` with that `gcp-key`. `gcloud` ADC is NOT set up — always use the key file.
 - **`apps/backend/.env`** also has: `GCP_STORAGE_BUCKET`, `HASURA_ADMIN_SECRET` + `HASURA_ENDPOINT`, Cloudinary, OpenAI, etc. It is gitignored, so a fresh clone or worktree has only `.env.example` — copy the real file in. `packages/core/.env` also has `HASURA_GRAPHQL_URL` + `HASURA_ADMIN_SECRET` for quick admin queries via curl.
 

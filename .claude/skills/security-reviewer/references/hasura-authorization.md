@@ -142,7 +142,7 @@ there's **another** way in. So for each such table, confirm:
 ## Business invariant: `public` is owner-only, on every content table
 
 "Public" is an act of owning the database, not a user capability. Only the admin secret / direct DB
-access (i.e. `shinabr2`, the DB owner) may set a content row's `public` flag — **no** non-admin role
+access (the DB owner) may set a content row's `public` flag — **no** non-admin role
 (`user`, `vip`, or any future role) may write a publicity field, on **any** content table, on insert
 or update. `select` is unaffected — reading publicity is fine for everyone. Covered today: `audios`,
 `playlist`, `videos`. Enforced by omitting `public` from the non-admin `insert`/`update` column
