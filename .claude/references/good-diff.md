@@ -31,7 +31,7 @@ small and surgical it has to be:
 
 | Risk | What it touches | The bar |
 |------|-----------------|---------|
-| **Highest — can break production** | a migration, auth, a permission rule, a shared contract many callers depend on | keep it tiny and surgical |
+| **Highest — can break production** | a migration, auth, a permission rule, a shared contract whose consumers this diff can't update in step | keep it tiny and surgical |
 | **Middle — user-facing** | UI, copy, behaviour a user sees | keep it to one visible change |
 | **Lowest — refactor / tech-debt** | a rename, pulling shared code into a helper, passing a value down through many files, adding a constant nothing reads yet | can span many files and still be good — the risk is low even when the size is large |
 
@@ -60,8 +60,7 @@ diff.**
 A good diff stays on one side of a boundary: it doesn't touch the data layer and
 the frontend together, or two apps, or two shared packages at once. Even at a few
 lines that's bad — each side is reviewed and rolled back on its own terms, so a
-crossing can't be reviewed or reverted cleanly. Exactly which directories count
-as one side is `micro-prs`' rule 2.
+crossing can't be reviewed or reverted cleanly.
 
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
@@ -77,8 +76,10 @@ line-count sizing hints — is `micro-prs`'.
 
 **Good**
 
-- *Rename `getUser` → `fetchUser` across 30 files in one package.* One purpose; a
-  pure refactor (lowest risk); the existing tests stay green. Large, but good.
+- *Rename `getUser` → `fetchUser` across 30 files in one package, every caller
+  updated in the same diff.* One purpose; a pure refactor (lowest risk — nothing
+  outside the diff depends on the old name); the existing tests stay green. Large,
+  but good.
 - *Fix an off-by-one in pagination, with a test that reproduces it.* One purpose
   (the fix and its own test); one visible change; the test fails without the fix.
 - *Add a `MAX_UPLOAD_SIZE` constant a later PR will use.* One purpose;
