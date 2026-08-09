@@ -57,16 +57,17 @@ diff.**
 
 ## Test 4 — one side of a boundary
 
-A good diff stays on one side of a boundary: it doesn't touch the data layer and
-the frontend together, or two apps, or two shared packages at once. Even at a few
-lines that's bad — each side is reviewed and rolled back on its own terms, so a
-crossing can't be reviewed or reverted cleanly.
+A good diff stays within one side of a boundary. A side is one app, or one shared
+package — touch two of them in one diff and it's a crossing. Even a few lines that
+way is bad: each side is reviewed and rolled back on its own terms, so a crossing
+can't be reviewed or reverted cleanly. Which directories make up each side is
+`micro-prs`' rule 2.
 
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
 diff, one purpose (Test 1). But when the source sits across a boundary — a Hasura
-schema change whose types regenerate in the frontend — the two are *separate* PRs
-in order, not one diff; that sequencing is `micro-prs`'.
+schema change in `apps/hasura` whose types regenerate in `packages/core` — the two
+are *separate* PRs in order, not one diff; that sequencing is `micro-prs`'.
 
 These four tests judge whether a diff is *good*. How to actually split one that
 fails a test — which side lands first, blockers before dependents, the
