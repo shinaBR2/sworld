@@ -68,7 +68,7 @@ The issue/project **title** should be specific enough that a developer knows wha
 - No square-bracket prefixes — put the domain in the title naturally
 - No Claude / AI attribution
 
-A **slug** is still useful — it's the kebab-case short form derived from the title, used to name the worktree and branch when the work starts (see `parallel-workflow`). Keep it short: `sticky-progress-bar`, `bulk-import-tracks`.
+A **slug** is still useful — it's the kebab-case short form derived from the title, used to name the worktree and branch when the work starts (see `task-tracker`). Keep it short: `sticky-progress-bar`, `bulk-import-tracks`.
 
 Good titles:
 

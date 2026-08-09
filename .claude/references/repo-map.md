@@ -24,7 +24,7 @@ defines the workspace and `turbo.json` drives the task graph.
 | `packages/core/` | shared data — queries, mutations, hooks, transformers | `architecture` / `mutation-data-flow` |
 | `packages/tsconfig/` | shared TypeScript config | — |
 | `.claude/skills/`, `.claude/references/` | these skills and the references they point at | `skill-creator` |
-| `.claude/worktrees/` | per-issue worktrees | `parallel-workflow` / `task-tracker` (naming) |
+| `.claude/worktrees/` | per-issue worktrees | `task-tracker` (naming) |
 
 The paths above are the map. The *conventions* about what goes where inside a
 package are each owned by a skill (listed): the `universal/` vs `<app>/` split

@@ -61,8 +61,6 @@ Common shapes:
 - **151–300 lines** — needs justification: why can't this be smaller?
 - **300+ lines** — almost certainly more than one job. Re-check the scope.
 
-See `parallel-workflow` for the file-count view and the good-PR criteria — same idea from the other axis.
-
 ## Ship incomplete work safely with flags
 
 Feature flags let you merge half-built work without exposing it:

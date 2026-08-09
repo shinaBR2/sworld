@@ -17,7 +17,8 @@ description: >-
 An existing ticket and its breakdown are a set of claims about what to build and in what order. Before
 you build against them, check the claims hold — because the cheapest place to catch a missing
 requirement or a wrong dependency is here, not three sub-issues deep into implementation. This is the
-step between "read the issue" and "start coding" that `parallel-workflow`'s *Before starting* points at.
+step between "read the issue" and "start coding" that `parallel-workflow` calls for on a non-trivial or
+reopened issue.
 
 It is the **audit** direction, and it's why it's its own skill:
 
@@ -67,7 +68,7 @@ Does the parent still match its sub-issues and their relations? This is analyze'
 - **Orphans & gaps** — a sub-issue not reflected in the parent's plan, or planned work with no sub-issue.
 - **Deploy-order encoded as a real relation** — a "must ship before X" that lives only in prose is a trap
   under this workspace's merge-is-deploy model (a schema migration a consumer's query needs must be a
-  `blocks` relation, not a sentence someone has to remember). See `parallel-workflow` and `writing-task-specs`.
+  `blocks` relation, not a sentence someone has to remember). See `dependency-analysis` and `writing-task-specs`.
 - **Waves earned** — re-run `dependency-analysis`' test over each `blocked-by`: it survives only if it is a
   genuine dependency, not ordering invented to make the plan feel structured.
 
