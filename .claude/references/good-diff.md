@@ -1,9 +1,8 @@
 # What makes a good diff
 
-The single home for the "is this a good diff / good PR?" criteria. Applies to
-both a local diff and a PR — same two tests. A good diff passes both. Skills
-that judge a diff's shape point here instead of restating the rules
-(`self-review`, `micro-prs`).
+The single home for the "is this a good diff / good PR?" judging criteria.
+Applies to both a local diff and a PR — same two tests, and a good diff passes
+both. `self-review` and `micro-prs` link here when they need the full criteria.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
 fails a test, the fix is almost always to split it.
