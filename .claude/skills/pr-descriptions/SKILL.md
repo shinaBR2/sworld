@@ -54,14 +54,16 @@ Full worked examples (a refactor, a bug fix, a flag-gated feature): `references/
 
 ## Before opening
 
-Review the actual diff against `origin/main` first — context drifts, and the description
-must match the branch — and state what you reviewed, don't just assert it. Open it assigned
-to the user (`--assignee "@me"`), never as a **draft**: the only reviewers are the
-code-review bots, and a draft can stop them running.
+Review the actual diff against `origin/main` first — fetch it, the local copy goes stale as
+other work lands — because the description must match the branch; state what you actually
+reviewed, don't just assert it. Open the PR assigned to the user (`--assignee "@me"`), never
+as a **draft**: the only reviewers are the code-review bots, and a draft can stop them
+running. Pass the multi-line body through the heredoc idiom so the markdown survives
+(`.claude/references/github-cli.md`).
 
 ## Updating an existing PR
 
 Rewrite the title and Summary to describe the branch's *whole current state*, not a
 changelog of recent changes (no "also adds" / "now includes"). The edit command has a
 silent-failure trap — use the reliable path and re-confirm the change landed, per
-`.claude/references/github-cli.md` (which also owns the multi-line-body heredoc idiom).
+`.claude/references/github-cli.md`.
