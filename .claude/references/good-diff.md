@@ -49,8 +49,9 @@ particular, ships with a test that reproduces the bug.
 Not every diff adds a test: a pure refactor changes no behaviour, so it rides on
 the existing tests staying green; a docs change, or adding a constant nothing
 reads yet, owes none. The test is only owed where behaviour a user or a caller
-can observe changes — and *changing* a live constant's value (a limit, a
-timeout) is exactly that, so it needs one.
+can observe changes — *changing* a live limit's value (a size cap, a page size)
+is exactly that, and the test is the case at the new boundary the old value would
+have rejected.
 
 The finding: **an observable change in behaviour with no test is not a good
 diff.**
@@ -90,10 +91,9 @@ line-count sizing hints — is `micro-prs`'.
 
 - *"Add dark mode **and** fix the login redirect."* Two purposes that each stand
   alone — split them (fails Test 1).
-- *A three-line permission-rule tightening buried in a 200-line handler
-  refactor.* The highest-risk change is hidden inside a large low-risk one, so
-  neither can be reviewed or reverted cleanly — isolate the permission change
-  (fails Test 2).
+- *Adding one new auth check by restructuring the whole 120-line middleware
+  around it.* One purpose, but a highest-risk change spread across 120 lines can't
+  be reviewed or reverted as the tight, surgical edit it should be (fails Test 2).
 - *A new checkout flow shipped with no tests.* Behaviour a user can observe
   changes, with nothing proving it works or guarding it (fails Test 3).
 - *A three-file change to a Hasura permission and the React component that reads
