@@ -53,7 +53,7 @@ Every issue moves through the **SWorld team lifecycle**, in order:
 Backlog → Todo → In Progress → In Review → Done
 ```
 
-- **Backlog** — captured, not yet ready to work (e.g. an unscoped user story).
+- **Backlog** — captured, not yet ready to work (e.g. a feature's parent ticket carrying just its user story, not yet broken into children).
 - **Todo** — ready to pick up.
 - **In Progress** — actively being worked (set before starting).
 - **In Review** — a PR is open for it.
@@ -98,7 +98,7 @@ What an in-repo tracker would keep in a file's frontmatter, Linear keeps as nati
 | which app | the **project** |
 | `parent:` (which feature) | the **parent** issue (`SWO-NNN`) |
 | `blocked-by:` | a **`blocked-by` relation** between issues |
-| bug / user-story tagging | the `bug` / `user-story` **label** (how each is found and filtered) |
+| bug / user-story tagging | one or more **labels** (a bug carries the `bug` label) |
 
 ## The GitHub link
 

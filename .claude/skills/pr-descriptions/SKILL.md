@@ -139,5 +139,5 @@ Before opening the PR:
 - Summary is 1–3 sentences and does not restate the diff
 - PR type decided: user-facing, or starts with `No user-facing changes.`
 - User-facing test steps name the exact page, the exact thing to look at, and plain pass/fail — no file/function names
-- No AI attribution anywhere
+- No AI attribution anywhere (AGENTS.md)
 - PR is linked to its tracker issue — `SWO-NNN` is in the branch name and/or the body (see `task-tracker`)
