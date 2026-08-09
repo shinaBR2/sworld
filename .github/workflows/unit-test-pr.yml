@@ -46,10 +46,8 @@ jobs:
           # filter. .claude needs no such re-arm: pnpm-workspace.yaml is apps/* +
           # packages/* only, so nothing under .claude is a workspace package and
           # turbo can never run a test there. Root '*.md' is documentation that
-          # can't affect vitest; it MUST be folded into this brace, not a separate
-          # `!*.md` line (paths-filter OR's patterns, so a standalone `!*.md` would
-          # force the gate on for every non-md PR). Full reasoning in
-          # typecheck-pr.yml.
+          # can't affect vitest, so it's folded into the brace here too — why it
+          # must be one brace and not a separate `!*.md` line is in typecheck-pr.yml.
           filters: |
             test:
               - '!{apps/hasura/**,.claude/**,*.md}'
