@@ -66,10 +66,9 @@ rule 2.
 
 Generated code that lands beside its own source is not a second side: a frontend
 GraphQL query change and its regenerated types (both in `packages/core`) are one
-diff, one purpose (Test 1). But when the source sits across a boundary — a Hasura
-schema change in `apps/hasura` whose types regenerate in `packages/core` — that's a
-crossing like any other (Test 4), not one diff. How the resulting PRs are split and
-ordered is `micro-prs`'.
+diff, one purpose (Test 1). But when the source and its generated code sit on
+opposite sides of a boundary, changing both in one diff is a crossing (Test 4),
+not one diff; how that splits is `micro-prs`'.
 
 These four tests judge whether a diff is *good*. How to actually split one that
 fails a test — which side lands first, blockers before dependents, the
