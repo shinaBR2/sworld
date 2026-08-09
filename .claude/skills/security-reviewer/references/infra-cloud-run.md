@@ -28,7 +28,7 @@ can't see; say what to confirm in the console.
   `hono-backend.md`), so a missing secret shows up at request time, not startup.
 - **Container:** the `apps/backend/Dockerfile.*` files **build and boot** — they install the
   `backend...` workspace slice with pnpm against the single root `pnpm-lock.yaml` from a
-  monorepo-root build context, on `linux/amd64` to match Cloud Run (SWO-545). Review their contents
+  monorepo-root build context, on `linux/amd64` to match Cloud Run. Review their contents
   as real, live infrastructure — a finding in them is a finding in an image that runs, and merging pushes that image to Cloud Run (see Deploy above).
 
 ## The invocation model — get this right
