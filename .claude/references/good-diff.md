@@ -1,7 +1,7 @@
 # What makes a good diff
 
-The single home for the three tests that answer "is this a good diff / good
-PR?". Applies to both a local diff and a PR — a good diff passes all three.
+The single home for the four tests that answer "is this a good diff / good
+PR?". Applies to both a local diff and a PR — a good diff passes all four.
 `self-review` and `micro-prs` link here when they need the full criteria.
 
 This is a tool for *judging* a diff, not a checklist to satisfy. When a diff
@@ -54,17 +54,28 @@ The test is only owed where behaviour a user or a caller can observe changes.
 The finding: **an observable change in behaviour with no test is not a good
 diff.**
 
-These three tests judge a diff's *purpose*, *risk*, and *test coverage* — not how
-to split the work. The rule that one diff stays inside one app or one shared
-package, and the line-count sizing hints, are `micro-prs`' — a large multi-file
-diff still has to obey them.
+## Test 4 — one side of a boundary
+
+A good diff stays on one side of a boundary. A diff that touches both the data
+layer (`apps/hasura`) and the frontend, or two apps at once, is bad **even at a
+few lines** — each side is reviewed and rolled back differently, so a
+boundary-crossing diff can't be reviewed or reverted cleanly.
+
+The one exception is generated code: a source change and the code generated
+*from* it are one purpose — a GraphQL query change and its regenerated types ship
+together (that's Test 1: the generated half only exists to serve the source
+half).
+
+These four tests judge whether a diff is *good*. How to actually split one that
+fails a test — which side lands first, blockers before dependents, the
+line-count sizing hints — is `micro-prs`'.
 
 ## Worked examples
 
 **Good**
 
-- *Rename `getUser` → `fetchUser` across 30 files.* One purpose; a pure refactor
-  (lowest risk); the existing tests stay green. Large, but good.
+- *Rename `getUser` → `fetchUser` across 30 files in one package.* One purpose; a
+  pure refactor (lowest risk); the existing tests stay green. Large, but good.
 - *Fix an off-by-one in pagination, with a test that reproduces it.* One purpose
   (the fix and its own test); one visible change; the test fails without the fix.
 - *Add a `MAX_UPLOAD_SIZE` constant a later PR will use.* One purpose;
@@ -80,3 +91,6 @@ diff still has to obey them.
   (fails Test 2).
 - *A new checkout flow shipped with no tests.* Behaviour a user can observe
   changes, with nothing proving it works or guarding it (fails Test 3).
+- *A three-file change to a Hasura permission and the React component that reads
+  it.* Two sides of a boundary in one diff — they review and roll back
+  separately; split by side (fails Test 4).
