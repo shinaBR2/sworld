@@ -8,7 +8,7 @@ user-invocable: false
 
 The **data path** — how server data is fetched, transformed, and consumed.
 Placement (which package/folder) is `frontend-ui-architecture`; the structural
-anatomy is a fact in `references/architecture.md`.
+anatomy is a fact in `.claude/references/architecture.md`.
 
 ## Server state
 

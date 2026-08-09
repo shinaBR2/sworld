@@ -29,12 +29,12 @@ restart, never hand an unsettled PR back.
 
 1. **Merge status.** Merged → run `cleanup` (pass the PR number); done. Closed → tell the user; done. Open → Step 2.
 2. **Conflicts.** Conflicting → merge latest `main`, resolve, push, wait, restart. Clean → Step 3.
-3. **CodeRabbit finished?** Determine it per `references/github-cli.md` (which status values count as done). Not yet → wait, restart. Done → Step 4.
+3. **CodeRabbit finished?** Determine it per `.claude/references/github-cli.md` (which status values count as done). Not yet → wait, restart. Done → Step 4.
 4. **Unresolved comments.** Any unresolved thread → read it, fix the code, push, wait, restart. None → Step 5. (Never manually resolve a bot's thread — fix the code and let it re-resolve.)
 5. **CI green.** Any failure → fix, push, wait, restart. Any check pending → wait, restart. All green → **settled: report to the user.**
 
 ## Notes
 
-- Auth, and how to read CodeRabbit's status (Step 3) and the review threads (Step 4): `references/github-cli.md`.
+- Auth, and how to read CodeRabbit's status (Step 3) and the review threads (Step 4): `.claude/references/github-cli.md`.
 - A `skipped` check is green, not pending (path-filtered jobs skip the expensive half) — never wait on it. An E2E job that failed at an infra step (deps, runner, cache) on a PR that doesn't touch tests is not a real failure — treat it as green.
 - Waiting means a **background** `sleep`, never a foreground wait or the Monitor tool — a hook denies it.

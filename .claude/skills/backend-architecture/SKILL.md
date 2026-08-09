@@ -10,14 +10,14 @@ This skill is the **calls you make** while working on the backend. The facts it
 rests on live elsewhere, so nothing here drifts:
 
 - What the services are, the ingestion pipeline shape, ports & adapters →
-  `references/architecture.md`.
+  `.claude/references/architecture.md`.
 - The platforms (Cloud Run, Cloud Tasks, GCS, how they authenticate) →
-  `references/infrastructure.md`.
+  `.claude/references/infrastructure.md`.
 - Database-layer rules (single-gateway, write atomicity, validation) →
   `hasura-architecture`.
 - GCS layout and operator CLIs → `backend-ops`.
 - Whether a table's rows may be deleted (a product rule, not a backend
-  assumption) → `references/business-constraints.md`.
+  assumption) → `.claude/references/business-constraints.md`.
 
 ## Where does a new handler go — io or compute?
 
@@ -90,7 +90,7 @@ processing itself is still eventually-consistent.
 
 ## Testing: the last mile only runs live, so run it deliberately
 
-Cloud Tasks has no local emulator (`references/infrastructure.md`), so the full
+Cloud Tasks has no local emulator (`.claude/references/infrastructure.md`), so the full
 flow can't run on your machine. Locally you can unit-test handler logic with
 mocked deps and call a handler directly to sanity-check it. Everything above that is real integration, and it only runs for real against the live system — **in production**.
 

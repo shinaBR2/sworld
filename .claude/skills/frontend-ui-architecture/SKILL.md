@@ -13,7 +13,7 @@ Two rules decide **WHERE** frontend code lives. They are the most load-bearing s
 - `writing-task-specs` — a sub-task is one app/package; placement follows the rules below.
 - `self-review` — review checks code landed in the right package/folder.
 
-This skill is only about **where**. For **how** to style, see `mui`. This skill owns the placement *rule*; the top-level structural facts it rests on (the package homes, the system anatomy) are `references/repo-map.md` and `references/architecture.md`.
+This skill is only about **where**. For **how** to style, see `mui`. This skill owns the placement *rule*; the top-level structural facts it rests on (the package homes, the system anatomy) are `.claude/references/repo-map.md` and `.claude/references/architecture.md`.
 
 ## Rule 1 — `packages/ui` is the single source of truth for ALL UI
 
@@ -34,7 +34,7 @@ Both packages use the **same** filing system. Folder location — not per-change
 | `*/universal/*` | used by EVERY app | `ui/universal/header`, `ui/universal/containers/generic` | `core/universal/hooks/useRequest` |
 | `*/<site>/*` | one app only | `ui/listen/minimalism`, `ui/watch/video-detail-page` | `core/listen/query-hooks` |
 
-`<site>` is one app (the roster is `references/apps.md`) or a domain area within one (e.g. main's `journal`, `finance`).
+`<site>` is one app (the roster is `.claude/references/apps.md`) or a domain area within one (e.g. main's `journal`, `finance`).
 
 **Placement decision, every time:**
 

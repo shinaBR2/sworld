@@ -13,7 +13,7 @@ user-invocable: false
 
 ## Scope: one repo, the whole product
 
-Everything ships from a single repo (its shape and folder map: `references/repo-map.md`) — one branch, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
+Everything ships from a single repo (its shape and folder map: `.claude/references/repo-map.md`) — one branch, one PR flow. These rules apply to every part of it, frontend or not: tracker issue first, dedicated worktree, commit often / push immediately, self-review loop before PR, CI loop after. Two adjustments by area:
 
 - **Trust boundaries get the deep treatment.** Hasura permissions/metadata and Hono Action/Event/webhook handlers are trust boundaries — a change touching them MUST also run `security-reviewer` inside the self-review loop (step 11).
 - **Hasura changes are not done when their PR is clean.** A schema change ripples into the frontend: after the migration, re-run `pnpm codegen` in `packages/core` (it introspects the LOCAL Hasura) and land the regenerated types as a follow-up PR, linked in the tracker with a blocking relation from the Hasura issue. That these are two PRs in that order — schema first, because the schema must be live before the generated types mean anything — is `micro-prs`' slicing rule ("Blockers land first"), not restated here.
@@ -71,7 +71,7 @@ Once a breakdown or plan is approved, work through it without pausing to reconfi
 
 ## PR auth
 
-Every command that talks to the PR host — in this flow and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — needs the token and scoping described in `references/github-cli.md`. Read that before the first one.
+Every command that talks to the PR host — in this flow and in `ci-loop`, `cleanup`, `wait-for-pr-merge`, `pr-descriptions` — needs the token and scoping described in `.claude/references/github-cli.md`. Read that before the first one.
 
 ## PR submission
 
