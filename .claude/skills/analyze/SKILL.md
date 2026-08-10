@@ -68,7 +68,7 @@ built.
 
 ## Output
 
-A short report — most serious findings first — each tagged by what it needs:
+A short report — the findings that block or change the build first — each tagged by what it needs:
 
 - **Reconcile now** — bookkeeping the analysis can just fix (delete a stale relation, realign the
   parent's drifted Goal). Do it and say what changed.
