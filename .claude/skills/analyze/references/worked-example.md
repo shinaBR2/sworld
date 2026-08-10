@@ -20,3 +20,5 @@ self-review:
 
 The first two are *Owner decision* findings (they change what gets built); the
 integrity ones are *Reconcile now*.
+
+Verdict: blocked on the owner resolving the two Owner-decision findings before this is safe to build.
