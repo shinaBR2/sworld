@@ -17,7 +17,7 @@ overrides:
   brace-expansion@>=2.0.0 <2.1.4: 2.1.4
   brace-expansion@>=3.0.0 <5.0.9: 5.0.9
   convict@<=6.2.4: 6.2.5
-  dompurify@<=3.4.11: 3.4.12
+  dompurify@<=3.4.12: 3.4.13
   esbuild@>=0.27.3 <0.28.1: 0.28.1
   estree-util-value-to-estree@<3.3.3: 3.3.3
   fast-uri@>=3.0.0 <3.1.5: 3.1.5
@@ -27,14 +27,15 @@ overrides:
   immutable@<4.3.9: 4.3.9
   ip-address@>=10.0.0 <10.3.1: 10.3.1
   joi@<17.13.4: 17.13.4
-  js-yaml@>=3.0.0 <3.15.0: 3.15.0
-  js-yaml@>=4.0.0 <4.3.0: 4.3.0
+  js-yaml@>=3.0.0 <3.15.1: 3.15.1
+  js-yaml@>=4.0.0 <4.3.1: 4.3.1
   launch-editor@<=2.14.0: 2.14.1
   lodash@>=4.0.0 <=4.17.23: 4.18.1
   markdown-it@<=14.1.1: 14.2.0
   mdast-util-to-hast@>=13.0.0 <13.2.1: 13.2.1
   minimatch@>=5.0.0 <5.1.8: 5.1.8
   minimatch@>=9.0.0 <9.0.7: 9.0.7
+  nanoid@>=3.0.0 <3.3.17: 3.3.17
   path-to-regexp@<0.1.13: 0.1.13
   picomatch@>=4.0.0 <4.0.4: 4.0.4
   postcss@<=8.5.22: 8.5.23
@@ -7593,8 +7594,8 @@ packages:
     resolution: {integrity: sha512-gYzvtM72ZtxQO0T048kd6HWSbbGCNOUwcnfQ01cqIJ4X2IYKFFHZ5mKvrQETcFXxsRObZulDaKmy//R7TPtsBg==}
     engines: {node: '>=20.19.0'}
 
-  dompurify@3.4.12:
-    resolution: {integrity: sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==}
+  dompurify@3.4.13:
+    resolution: {integrity: sha512-2vmYIoqjze2d+kakP8S/nS5shfsl587kzwEjcGlTdiksUVgFHnFCsLYDVj/JNqJVOQZGSYBTmuycv0PodwmnMQ==}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -9196,12 +9197,12 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@3.15.0:
-    resolution: {integrity: sha512-ttBQIIQPDeLjpPOohtUdXuXUVoA2uIB6fEH9HyJ7234s5mBJ5wTx20njxplLZQgLaOfpmPQA7X2t5AX6tIPbog==}
+  js-yaml@3.15.1:
+    resolution: {integrity: sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==}
     hasBin: true
 
-  js-yaml@4.3.0:
-    resolution: {integrity: sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==}
+  js-yaml@4.3.1:
+    resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
     hasBin: true
 
   jsdom@25.0.1:
@@ -9954,13 +9955,8 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nanoid@3.3.15:
-    resolution: {integrity: sha512-y7Wygv/7mEOvxTuEQDB8StXdMRBWf1kR/tlhAzBRUFkB2jfcLOAxO/SHmOO2zgz1pVgK29/kyupn059/bCHdjA==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
-  nanoid@3.3.16:
-    resolution: {integrity: sha512-bzlKTyNJ7+LdGIIwy8ijFpIqEQIvafahV7eYykJ8Cvh42EdJeODoJ6gUJXpQJvej1BddH8OqTXZNE/KfbWAu8Q==}
+  nanoid@3.3.17:
+    resolution: {integrity: sha512-xQLf0A3HOMlgHq0n247/LRuAOYmB7dXJ/DvAxGvsSBij45XtBSmQycu+F8ODbHwns/XyFZagyL1+J0Offw1E0g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -15000,7 +14996,7 @@ snapshots:
   '@changesets/parse@0.4.1':
     dependencies:
       '@changesets/types': 6.1.0
-      js-yaml: 3.15.0
+      js-yaml: 3.15.1
 
   '@changesets/pre@2.0.2':
     dependencies:
@@ -15080,7 +15076,7 @@ snapshots:
       fingerprint-generator: 2.1.82
       fingerprint-injector: 2.1.82(playwright@1.61.1)
       lodash.merge: 4.6.2
-      nanoid: 3.3.15
+      nanoid: 3.3.17
       ow: 0.28.2
       p-limit: 3.1.0
       proxy-chain: 2.7.1
@@ -15947,7 +15943,7 @@ snapshots:
       '@types/react-router-config': 5.0.11
       combine-promises: 1.2.0
       fs-extra: 11.3.0
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       lodash: 4.18.1
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
@@ -16572,7 +16568,7 @@ snapshots:
       '@docusaurus/utils-common': 3.10.1(acorn@8.17.0)(postcss@8.5.23)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       fs-extra: 11.3.0
       joi: 17.13.4
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       lodash: 4.18.1
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -16607,7 +16603,7 @@ snapshots:
       globby: 11.1.0
       gray-matter: 4.0.3
       jiti: 1.21.7
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       lodash: 4.18.1
       micromatch: 4.0.8
       p-queue: 6.6.2
@@ -16649,7 +16645,7 @@ snapshots:
       globby: 11.1.0
       gray-matter: 4.0.3
       jiti: 1.21.7
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       lodash: 4.18.1
       micromatch: 4.0.8
       p-queue: 6.6.2
@@ -17029,7 +17025,7 @@ snapshots:
       globals: 14.0.0
       ignore: 5.3.2
       import-fresh: 3.3.1
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       minimatch: 3.1.5
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
@@ -17548,7 +17544,7 @@ snapshots:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       jose: 5.10.0
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       lodash: 4.18.1
       scuid: 1.1.0
       tslib: 2.8.1
@@ -21249,7 +21245,7 @@ snapshots:
   cosmiconfig@8.3.6(typescript@5.8.2):
     dependencies:
       import-fresh: 3.3.1
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
@@ -21258,7 +21254,7 @@ snapshots:
   cosmiconfig@8.3.6(typescript@5.9.3):
     dependencies:
       import-fresh: 3.3.1
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
@@ -21672,7 +21668,7 @@ snapshots:
     dependencies:
       domelementtype: 3.0.0
 
-  dompurify@3.4.12:
+  dompurify@3.4.13:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -22841,7 +22837,7 @@ snapshots:
 
   gray-matter@4.0.3:
     dependencies:
-      js-yaml: 3.15.0
+      js-yaml: 3.15.1
       kind-of: 6.0.3
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
@@ -23673,12 +23669,12 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@3.15.0:
+  js-yaml@3.15.1:
     dependencies:
       argparse: 1.0.10
       esprima: 4.0.1
 
-  js-yaml@4.3.0:
+  js-yaml@4.3.1:
     dependencies:
       argparse: 2.0.1
 
@@ -24709,9 +24705,7 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoid@3.3.15: {}
-
-  nanoid@3.3.16: {}
+  nanoid@3.3.17: {}
 
   nanoid@5.1.16: {}
 
@@ -25691,7 +25685,7 @@ snapshots:
 
   postcss@8.5.23:
     dependencies:
-      nanoid: 3.3.16
+      nanoid: 3.3.17
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -25700,7 +25694,7 @@ snapshots:
       '@posthog/core': 1.38.0
       '@posthog/types': 1.391.1
       core-js: 3.41.0
-      dompurify: 3.4.12
+      dompurify: 3.4.13
       fflate: 0.4.8
       preact: 10.29.3
       query-selector-shadow-dom: 1.0.1
@@ -26109,7 +26103,7 @@ snapshots:
   read-yaml-file@1.1.0:
     dependencies:
       graceful-fs: 4.2.11
-      js-yaml: 3.15.0
+      js-yaml: 3.15.1
       pify: 4.0.1
       strip-bom: 3.0.0
 
