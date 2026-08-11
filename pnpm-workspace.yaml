@@ -30,6 +30,10 @@ minimumReleaseAgeExclude:
   - "undici"
   - "fast-uri"
   - "ip-address"
+  # nanoid 3.3.17 (2026-08-07) — Dependabot security patch published <7 days
+  # ago (GHSA infinite-loop fixes). Well-scrutinised patch; drop once aged past
+  # the 7-day window.
+  - "nanoid"
 # Dependency lifecycle scripts are blocked (pnpm 10 default); nothing in the
 # workspace needs one — build/test verified green with all scripts ignored.
 onlyBuiltDependencies: []
