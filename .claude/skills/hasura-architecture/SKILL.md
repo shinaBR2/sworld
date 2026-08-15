@@ -28,10 +28,6 @@ Classic lost-update: two clients read the same counter, each computes `current +
 
 **Fix: send the delta, not the computed value.** Hasura's `_inc` (numeric columns) and the JSONB operators (`_append`, `_prepend`, `_delete_key`, etc.) apply the change atomically inside Postgres — there's no client-side "read the current value" step to race on at all.
 
-```graphql
-mutation { update_videos(where: {...}, _inc: {view_count: 1}) { affected_rows } }
-```
-
 Reach for optimistic concurrency instead — filter the mutation's `where` on a value you already read (e.g. `updated_at: {_eq: <value you saw>}`) — only when the change genuinely isn't expressible as a delta (a full-object replace where you need to detect "did anything change since I read this").
 
 ### Race 2 — two writers both try to be "the one that creates X"
@@ -74,8 +70,6 @@ Authorization (row ownership — `user_id = X-Hasura-User-Id` in a permission's 
 1. **Database schema constraints** — types, `NOT NULL`, `CHECK`, foreign keys, unique constraints. The floor, always enforced, no round-trip cost. A rule like "an amount must be positive" belongs here as a `CHECK` before anything higher up.
 2. **Hasura's `validate_input`** — for plain, auto-generated CRUD mutations (insert/update/delete) that need a business rule the schema can't express. Configured per role, per operation, inside that role's permission block; routes the mutation's input to an HTTP webhook *before* the Postgres transaction starts. Adds webhook latency to every mutation it's attached to, so add it deliberately per table/role rather than by default.
 3. **Application-layer validation inside an Action's handler** — for writes that already go through a custom handler (an Action), rather than auto-generated CRUD. The handler is already in the request path, so validation just lives in its own code.
-
-Match the layer to how the write happens: plain CRUD with a rule the schema can't express → `validate_input`. Already-custom-handler writes → validate in that handler. Everything → schema constraints as the baseline regardless.
 
 ## What this skill does NOT cover
 
