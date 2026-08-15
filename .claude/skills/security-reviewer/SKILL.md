@@ -40,9 +40,6 @@ Three ideas drive everything below.
    scary-looking config, and separate **real vulnerabilities** from **defence-in-depth hardening** in
    every report.
 
-A weakness rarely stays local — but neither does a false alarm. Trace where it reaches, and be
-honest about whether it reaches anywhere at all.
-
 ## The stack and its five trust boundaries
 
 Everything below lives in **one repo** — the frontends, the Hono backend (`apps/backend`) and the
@@ -76,8 +73,8 @@ migrations under `apps/hasura`. The old `sworld-backend` / `sworld-hasura-v2` re
 pre-consolidation copies — never review or cite them; they are not what deploys.
 
 Dependencies are **out of scope here**: one root `pnpm-lock.yaml` covers every app and package,
-including the backend, and the `supply-chain-security` skill owns that whole layer (pinning,
-lockfile hygiene, cooldown, lifecycle scripts). Point at it rather than re-deriving it.
+including the backend, and the `supply-chain-security` skill owns that whole layer. Point at it
+rather than re-deriving it.
 
 **Ignore — and never report findings against — dead or unmaintained code.** If a path predates the
 current architecture, isn't maintained, and isn't deployed, its patterns are *not* how the live
@@ -95,14 +92,10 @@ how roles are issued from any in-repo claim-shaping code.
    finding? Write the chain down — that's the part a generic review misses.
 4. **Verify before asserting — name the exploit path.** For every finding, state the concrete steps
    an attacker takes through *this* stack. If you can't trace one, it's hardening, not a vuln. Rule
-   out the cheap ways to be wrong: dead code (below), config that only applies to local
-   docker-compose rather than production Hasura Cloud, a Hasura `filter: {}` whose root fields are
-   disabled (`references/hasura-authorization.md`), or a layer that's intentionally open because a
-   *different* layer is the gate (e.g. Hono is reachable from the internet by design — the signature
-   is the gate, not host IAM). Label every finding's confidence: **confirmed** (you traced the path),
-   **needs-verification** (likely, but depends on host / Auth0 / prod state not in the repo), or
-   **defence-in-depth** (not exploitable now, but removes a layer). Then check it against the **Known
-   false positives** list before you write it down.
+   out the cheap ways to be wrong first — they're catalogued in **Known false positives** below and
+   in each layer's reference file. Label every finding's confidence: **confirmed** (you traced the
+   path), **needs-verification** (likely, but depends on host / Auth0 / prod state not in the repo),
+   or **defence-in-depth** (not exploitable now, but removes a layer).
 5. **Report** using the output format at the end, keeping real vulnerabilities and hardening separate.
 
 ## Per-layer checklist
