@@ -443,22 +443,24 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     const internal = getInternalVideoElement();
     if (!internal) return;
 
-    // We manage the default subtitle exactly once per video — this first ready
-    // with the element present. After this the viewer owns the caption choice,
-    // so mark it done whether or not the track is found, and never touch it
-    // again (a later ready must not snap captions back on).
-    hasEnabledSubtitleRef.current = true;
-
     // Match the exact <track> by its source URL, then use that element's own
     // TextTrack. This pinpoints the intended subtitle even when two share a
     // language, and structurally ignores hls.js in-band text tracks (which are
     // not <track> elements) that would otherwise shift a positional match.
+    // react-player renders the <track> nodes as JSX children of the <video>, so
+    // they are committed to the DOM in the same render as the element itself —
+    // whenever the element is present, its tracks are too. No insertion race to
+    // retry around.
     const trackElement = Array.from(internal.querySelectorAll('track')).find(
       (el) => el.getAttribute('src') === defaultSubtitle.src,
     );
-    if (trackElement?.track) {
-      trackElement.track.mode = 'showing';
-    }
+    if (!trackElement?.track) return;
+
+    // Latch only once we've actually switched the track on: after this the
+    // viewer owns the caption choice, so a later onReady must never snap it
+    // back on.
+    trackElement.track.mode = 'showing';
+    hasEnabledSubtitleRef.current = true;
   }, [subtitles, getInternalVideoElement]);
 
   // Resume from the saved position once the media is ready to seek.
