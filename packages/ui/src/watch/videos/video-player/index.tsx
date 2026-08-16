@@ -425,7 +425,25 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // Resume from the saved position once the media is ready to seek.
   const handleReady = useCallback(() => {
     const player = playerRef.current;
-    if (!player || hasResumedRef.current) return;
+    if (!player) return;
+
+    // Force the chosen subtitle track on ourselves rather than trusting the
+    // <track default> attribute. react-player inserts the tracks a beat after
+    // the <video> loads, so the browser's one-shot auto-enable of the default
+    // track races the insertion — the VTT is fetched but its cues never show.
+    // Setting mode explicitly makes it deterministic. Track order mirrors the
+    // subtitles array react-player renders from, so indices line up.
+    const defaultIndex = subtitles?.findIndex((s) => s.isDefault) ?? -1;
+    if (defaultIndex >= 0) {
+      const internal = player.getInternalPlayer?.();
+      const track =
+        internal instanceof HTMLVideoElement
+          ? internal.textTracks?.[defaultIndex]
+          : undefined;
+      if (track) track.mode = 'showing';
+    }
+
+    if (hasResumedRef.current) return;
     hasResumedRef.current = true;
 
     const progressSeconds = video.progressSeconds ?? 0;
@@ -445,7 +463,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       Math.max(0, progressSeconds - RESUME_REWIND_SECONDS),
       'seconds',
     );
-  }, [video.progressSeconds]);
+  }, [video.progressSeconds, subtitles]);
 
   useEffect(() => {
     return () => {
