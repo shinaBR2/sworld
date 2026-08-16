@@ -171,13 +171,24 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // Resume only once per video, and never override a position the viewer has
   // since changed themselves.
   const hasResumedRef = useRef(false);
+  // Enable the default subtitle only once per video, so a later onReady never
+  // snaps captions back on after the viewer has turned them off.
+  const hasEnabledSubtitleRef = useRef(false);
 
-  // Reset the resume guard whenever the source video changes (e.g. advancing to
-  // the next video in a playlist reuses this same player instance).
+  // Reset the per-video guards whenever the source video changes (e.g. advancing
+  // to the next video in a playlist reuses this same player instance).
   // biome-ignore lint/correctness/useExhaustiveDependencies: video.id is the intended reset trigger, not a value read in the body
   useEffect(() => {
     hasResumedRef.current = false;
+    hasEnabledSubtitleRef.current = false;
   }, [video.id]);
+
+  // The file player's internal player is the underlying <video> element (null
+  // until it mounts, e.g. before the light-mode thumbnail is clicked).
+  const getInternalVideoElement = useCallback((): HTMLVideoElement | null => {
+    const internal = playerRef.current?.getInternalPlayer?.();
+    return internal instanceof HTMLVideoElement ? internal : null;
+  }, []);
 
   const setPlayerRef = useCallback(
     // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
@@ -193,17 +204,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           playerRef.current?.getCurrentTime?.() ?? null;
       }
 
-      // Expose the underlying <video> element (the file player's internal
-      // player) so the parent can draw the current frame to a canvas for
-      // client-side thumbnail capture.
+      // Expose the underlying <video> element so the parent can draw the current
+      // frame to a canvas for client-side thumbnail capture.
       if (getVideoElementRef) {
-        getVideoElementRef.current = () => {
-          const internal = playerRef.current?.getInternalPlayer?.();
-          return internal instanceof HTMLVideoElement ? internal : null;
-        };
+        getVideoElementRef.current = getInternalVideoElement;
       }
     },
-    [getCurrentTimeRef, getVideoElementRef],
+    [getCurrentTimeRef, getVideoElementRef, getInternalVideoElement],
   );
 
   // Wrap the progress-tracking pause/play handlers so the parent also learns
@@ -422,10 +429,48 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     [onError],
   );
 
+  // Turn the chosen subtitle on ourselves rather than trusting the <track
+  // default> attribute. That attribute only auto-enables the track during the
+  // <video>'s initial parse; react-player renders the <track> nodes as children
+  // of the video, so the one-shot auto-enable can miss and the VTT is fetched
+  // but its cues never show — intermittently. Setting mode explicitly on ready
+  // makes it deterministic.
+  const enableDefaultSubtitle = useCallback(() => {
+    if (hasEnabledSubtitleRef.current) return;
+    const defaultSubtitle = subtitles?.find((s) => s.isDefault);
+    if (!defaultSubtitle) return;
+
+    const internal = getInternalVideoElement();
+    if (!internal) return;
+
+    // Match the exact <track> by its source URL, then use that element's own
+    // TextTrack. This pinpoints the intended subtitle even when two share a
+    // language, and structurally ignores hls.js in-band text tracks (which are
+    // not <track> elements) that would otherwise shift a positional match.
+    // react-player renders the <track> nodes as JSX children of the <video>, so
+    // they are committed to the DOM in the same render as the element itself —
+    // whenever the element is present, its tracks are too. No insertion race to
+    // retry around.
+    const trackElement = Array.from(internal.querySelectorAll('track')).find(
+      (el) => el.getAttribute('src') === defaultSubtitle.src,
+    );
+    if (!trackElement?.track) return;
+
+    // Latch only once we've actually switched the track on: after this the
+    // viewer owns the caption choice, so a later onReady must never snap it
+    // back on.
+    trackElement.track.mode = 'showing';
+    hasEnabledSubtitleRef.current = true;
+  }, [subtitles, getInternalVideoElement]);
+
   // Resume from the saved position once the media is ready to seek.
   const handleReady = useCallback(() => {
     const player = playerRef.current;
-    if (!player || hasResumedRef.current) return;
+    if (!player) return;
+
+    enableDefaultSubtitle();
+
+    if (hasResumedRef.current) return;
     hasResumedRef.current = true;
 
     const progressSeconds = video.progressSeconds ?? 0;
@@ -445,7 +490,7 @@ const VideoPlayer = (props: VideoPlayerProps) => {
       Math.max(0, progressSeconds - RESUME_REWIND_SECONDS),
       'seconds',
     );
-  }, [video.progressSeconds]);
+  }, [video.progressSeconds, enableDefaultSubtitle]);
 
   useEffect(() => {
     return () => {
