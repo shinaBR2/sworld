@@ -183,6 +183,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
     hasEnabledSubtitleRef.current = false;
   }, [video.id]);
 
+  // The file player's internal player is the underlying <video> element (null
+  // until it mounts, e.g. before the light-mode thumbnail is clicked).
+  const getInternalVideoElement = useCallback((): HTMLVideoElement | null => {
+    const internal = playerRef.current?.getInternalPlayer?.();
+    return internal instanceof HTMLVideoElement ? internal : null;
+  }, []);
+
   const setPlayerRef = useCallback(
     // biome-ignore lint/suspicious/noExplicitAny: ReactPlayer passes an implementation-specific instance
     (player: any) => {
@@ -197,17 +204,13 @@ const VideoPlayer = (props: VideoPlayerProps) => {
           playerRef.current?.getCurrentTime?.() ?? null;
       }
 
-      // Expose the underlying <video> element (the file player's internal
-      // player) so the parent can draw the current frame to a canvas for
-      // client-side thumbnail capture.
+      // Expose the underlying <video> element so the parent can draw the current
+      // frame to a canvas for client-side thumbnail capture.
       if (getVideoElementRef) {
-        getVideoElementRef.current = () => {
-          const internal = playerRef.current?.getInternalPlayer?.();
-          return internal instanceof HTMLVideoElement ? internal : null;
-        };
+        getVideoElementRef.current = getInternalVideoElement;
       }
     },
-    [getCurrentTimeRef, getVideoElementRef],
+    [getCurrentTimeRef, getVideoElementRef, getInternalVideoElement],
   );
 
   // Wrap the progress-tracking pause/play handlers so the parent also learns
@@ -431,24 +434,32 @@ const VideoPlayer = (props: VideoPlayerProps) => {
   // <video>'s initial parse; react-player renders the <track> nodes as children
   // of the video, so the one-shot auto-enable can miss and the VTT is fetched
   // but its cues never show — intermittently. Setting mode explicitly on ready
-  // makes it deterministic. Match by language, not list position: on HLS,
-  // hls.js injects its own in-band text tracks, which would shift any index.
+  // makes it deterministic.
   const enableDefaultSubtitle = useCallback(() => {
     if (hasEnabledSubtitleRef.current) return;
     const defaultSubtitle = subtitles?.find((s) => s.isDefault);
     if (!defaultSubtitle) return;
 
-    const internal = playerRef.current?.getInternalPlayer?.();
-    if (!(internal instanceof HTMLVideoElement)) return;
+    const internal = getInternalVideoElement();
+    if (!internal) return;
 
-    const track = Array.from(internal.textTracks ?? []).find(
-      (t) => t.kind === 'subtitles' && t.language === defaultSubtitle.lang,
-    );
-    if (!track) return;
-
-    track.mode = 'showing';
+    // We manage the default subtitle exactly once per video — this first ready
+    // with the element present. After this the viewer owns the caption choice,
+    // so mark it done whether or not the track is found, and never touch it
+    // again (a later ready must not snap captions back on).
     hasEnabledSubtitleRef.current = true;
-  }, [subtitles]);
+
+    // Match the exact <track> by its source URL, then use that element's own
+    // TextTrack. This pinpoints the intended subtitle even when two share a
+    // language, and structurally ignores hls.js in-band text tracks (which are
+    // not <track> elements) that would otherwise shift a positional match.
+    const trackElement = Array.from(internal.querySelectorAll('track')).find(
+      (el) => el.getAttribute('src') === defaultSubtitle.src,
+    );
+    if (trackElement?.track) {
+      trackElement.track.mode = 'showing';
+    }
+  }, [subtitles, getInternalVideoElement]);
 
   // Resume from the saved position once the media is ready to seek.
   const handleReady = useCallback(() => {
