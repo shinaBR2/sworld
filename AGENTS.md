@@ -10,12 +10,18 @@ we can have in the product.
 ## Never — no exceptions
 
 - **Never start coding before you understand the problem and have a plan.** Know
-  *why* it's needed and what problem it solves, cold, before a single line.
+  *why* it's needed and what problem it solves, cold, before a single line. Pushback is good, never work blindly.
 - **Never use jargon.**
 - **Never assume.** Verify first. Work from evidence, never a guess.
 - **Never merge without a green build and my explicit go-ahead.**
 - **Never put AI attribution on anything we ship.** No "Generated with…", no
   `Co-Authored-By` — not in commits, PRs, tickets, or code.
+- **Never touch main worktree** Never create/checkout any branch; the main worktree must always be the `main` branch; always work under the worktree
+
+## Always
+
+- Talk in simple language when communicating
+- 
 
 ## How we work
 
@@ -26,9 +32,6 @@ we can have in the product.
 - **Speak plainly — no jargon, ever.** Being easy to understand is the most
   important thing in any communication. Explain from the end user's point of view
   first, then the technical side, and always so the newest developer can follow.
-- **Match the codebase's spelling.** It's British (behaviour, colour, initialise)
-  — keep it that way in code, docs, tickets, and PRs. This is consistency, not
-  dogma; a US/UK mix is the thing to avoid.
 - **Start at the high level.** Foundations and fundamentals come before
   implementation detail, always.
 - **Default to less.** Before adding anything, ask whether removing or reusing
@@ -40,18 +43,13 @@ we can have in the product.
   isolated worktree. One consequence follows directly: because work is always
   landing, the local `main` is almost always behind — that's expected, not a
   problem to design around. So always start from the latest by pulling `main`
-  fresh; never build on a stale baseline. (The `parallel-workflow` skill owns the
-  how.)
+  fresh; never build on a stale baseline. (must load `parallel-workflow` skill)
 - **Avoid drift.** Every fact has exactly one home. Prefer a skill over memory,
   one source over a copy. Never restate what another place already owns — a copy
   always drifts.
 - **Review your own work before you ship it.**
-- **Don't ask obvious questions.** If I'd say yes 100% of the time, just do it. If
-  my "no" would change nothing, there's no point asking. When you *should* ask is
-  a short list — read `.claude/references/when-to-ask.md` before deciding to.
-
-## Compact instructions
-
-When compacting, preserve: the current task/goal, decisions already made, the
-files touched and pending edits, and any commands still to run. Drop verbose tool
-output — keep only the conclusions drawn from it.
+- **Don't ask obvious questions.** If I'd say yes 100% of the time, just do it; only ask if
+  + You genuinely can't decide.
+  + It changes the scope of the work.
+  + It's dangerous — it affects end users, or it can't be undone.
+  + It contradicts the original request.
