@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.16",
-    "@tiptap/core": "^3.0.0",
+    "@tiptap/core": "^3.30.4",
     "@tiptap/extension-code-block": "^3.21.0",
     "@tiptap/extension-placeholder": "^3.0.0",
     "@tiptap/markdown": "^3.21.0",
