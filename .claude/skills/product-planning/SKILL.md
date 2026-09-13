@@ -13,38 +13,20 @@ description: >-
   code — though its critical-thinking instinct still applies even then.
 ---
 
-# Deep product planning
+* product-planning: the rigorous, first-principles thinking pass before any ticket or line of code, to stop us building the wrong thing well.
 
-The thinking pass *before* any ticket or line of code — to stop us building the wrong thing
-well. This is a tool for *judging* the thinking, not a checklist or a sequence of steps.
-The principles all apply at once; only one comes first — should this exist at all?
+* Rules
+  * This is a tool for judging whether the thinking is clear, not a checklist or a sequence of steps — the principles all apply at once, and only one comes first: should this exist at all?
+  * Before anything else, ask whether we should build this at all — the simplest path, whether to reuse or extend instead of adding, whether it's a real first-order problem or a symptom of another, and whether code can be deleted instead of written.
+  * Interrogate and pressure-test the thinking and ask the hard questions (`grill-me`), but never gate on it — the user is the decision-maker, so surface the concern plainly, offer options, then do what they choose, and treat an incomplete or half-baked plan as never a reason to block.
+  * Never block on the quality or completeness of the planning itself — but still decline requests that are unsafe, unauthorised, or out of scope.
+  * When the risk is in the idea — a real-world concept whose misunderstanding cascades (say, can one order contain items from more than one seller?) — make the concept rock-solid and write it down before the code, as a short tracker document (`task-tracker`) covering what it is, how it behaves, and its rules.
+  * When it's a clear, well-defined problem go straight to building it, and when in doubt treat it as a concept.
+  * Capture the problem, the options and the trade-offs in one high-level parent (`writing-task-specs`) that proves it's understood, pointing at the concept document where one exists rather than restating it, then keep it high-level and stop.
+  * Breaking the parent into sub-issues (sized by `.claude/references/good-diff.md`, sequenced by `dependency-analysis`) is a separate, later pass, done only once the shape is agreed.
 
-## Default to less — should we build this at all?
-
-The mindset, asked before anything else. What's the simplest path? Can we reuse or extend
-instead of adding? Is this a real first-order problem, or a symptom of another? Can we
-delete code instead of writing it?
-
-## Push back and ask — but never gate
-
-Interrogate the thinking: pressure-test it, ask the hard questions, don't just accept it
-(`grill-me`). But the user is the decision-maker — surface the concern plainly, offer
-options, then do what they choose. An incomplete or half-baked plan is never a reason to
-block. (Planning quality only: still decline unsafe, unauthorised, or out-of-scope
-requests.)
-
-## Is the risk in the idea, or in the code?
-
-The fork that sets the depth. If it's the *idea* — a real-world concept whose
-misunderstanding cascades (say, *can one order contain items from more than one seller?*) —
-make the concept rock-solid first, and write it down before the code: what it is, how it
-behaves, its rules, as a short tracker document (`task-tracker`). If it's a clear,
-well-defined problem, go straight to building it. When in doubt, treat it as a concept.
-
-## Parent stays high-level; scope the children later
-
-Capture the problem, the options and the trade-offs in one high-level parent
-(`writing-task-specs`) that proves it's understood — pointing at the concept document where
-one exists rather than restating it. Keep it high-level, then stop. Breaking it into
-sub-issues (sized by `.claude/references/good-diff.md`, sequenced by `dependency-analysis`)
-is a separate, later pass, only once the shape is agreed.
+* Steps
+  1. Ask whether this should exist at all, before anything else.
+  2. Decide where the risk sits — in the idea or in the code.
+  3. If it's the idea, write the concept down as a short tracker document before any code; if it's a clear problem, go straight to building.
+  4. Capture one high-level parent that proves the shape is understood, then stop.

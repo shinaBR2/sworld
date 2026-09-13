@@ -4,52 +4,25 @@ description: How to perform sworld operational tasks from apps/backend in the sw
 user-invocable: false
 ---
 
-# Backend Ops
+* backend-ops: performing sworld operational tasks — media ingestion, asset uploads, and prod data access — directly from `apps/backend`.
 
-How to perform sworld operational tasks (create audios/videos, upload assets, touch prod data) from **`apps/backend`** in the sworld monorepo. This is separate from the `parallel-workflow` PR process — these are direct, already-authorized ops tasks, not feature work. Don't re-ask the user for credentials or access; they're already configured.
+* Rules
+  * These are direct, already-authorised ops tasks, separate from the `parallel-workflow` PR process and not feature work, so never re-ask the user for credentials or access.
+  * The operator CLIs run straight from source with `tsx` and never go through the container images, so running one never waits on a backend deploy.
+  * The CLIs read and write the live Hasura and GCS, so a command that depends on a new schema still needs that migration deployed first.
+  * The row-creating CLIs (`audio.ts`, `convert.ts`, `stream-m3u8.ts`, `upload-subtitle.ts`) take the acting account from `user-id` in `~/.sworld-cli/config.json`, and `--user-id <user-id>` overrides it for a single run.
+  * Pass `--user-id` whenever the op should be owned by an account other than the configured one.
+  * `repair-fmp4.ts` is the exception — it reworks an existing video and takes the owner from the row, so it has no `--user-id`.
+  * Account names and their ids, the bucket, and the Hasura endpoint are config values read from the local config or the user — never hardcode one here or in a committed script, since the repo is public.
+  * Reach prod data only through Hasura (`hasura-architecture` owns that rule): use the Hasura admin endpoint and secret — which bypasses all row permissions — for scripted reads (dup checks) and writes (insert audios rows, link playlist_audios), and the Hasura Console for anything interactive.
+  * Run the operator CLIs from `apps/backend` via `pnpm exec tsx src/cli/<name>.ts`, discovering each one's current flags from `… <name>.ts --help` or `src/cli/README.md` rather than assuming them.
+    * command purposes: [`references/operator-clis.md`](references/operator-clis.md)
+  * Only publish an audio (`public: true`) on explicit instruction, since publishing is an act of owning the database, not a user capability.
+  * For "create audios", run `audio.ts` on the file or folder as the intended acting account without explaining the plumbing unless asked — the CLI already parses `name`/`artist` from the filename (`Title - Artist.mp3`), reports and skips (never defaults) a file with no parseable artist and no override because `artist_name` is NOT NULL, defaults `public: false`, skips an existing `(user_id, name)` as a dup, ends a batch with a `Created / Skipped / Failed` tally, and owns new rows by the acting account falling back to the configured one.
 
-These CLIs are operator tools run straight from source with `tsx` — they don't go through the container images at all, so running one never waits on a backend deploy. They do read and write the **live** Hasura and GCS, though, so a command that depends on a new schema still needs that migration deployed first.
-
-## Which account an op runs as
-
-The CLIs that create rows (`audio.ts`, `convert.ts`, `stream-m3u8.ts`, `upload-subtitle.ts`) take the acting account from `user-id` in `~/.sworld-cli/config.json`, and `--user-id <user-id>` overrides it for a single run. Pass `--user-id` whenever the op should be owned by an account other than the configured one. `repair-fmp4.ts` is the exception — it reworks an existing video and takes the owner from the row, so it has no `--user-id`.
-
-Account names and their ids are identity data: they belong in local machine config, not in a skill. This repo is public, so read them from the local config or ask the user — never hardcode one here or in a committed script. The bucket and Hasura endpoint are the same kind of thing — config values (below), named by concept here rather than restated as literals.
-
-## Assets live in GCP Cloud Storage
-
-All media/assets are in GCS, in the bucket named by `gcp-bucket` in the CLI config (below). Public URL = `https://storage.googleapis.com/<gcp-bucket>/<objectPath>`.
-
-Layout: `videos/<userId>/<videoId>/…` (HLS: `playlist.m3u8` + segments/`init.mp4`/`.m4s`), `audios/<userId>/<file>.mp3`, subtitles `videos/<userId>/<videoId>/<lang>.vtt`.
-
-## Credentials (already configured — reuse, don't ask)
-
-- **`~/.sworld-cli/config.json`**: `gcp-key` (path to the service-account JSON — read the value from the config, don't hardcode a path), `gcp-bucket` (the GCS bucket), `hasura-endpoint` (the prod Hasura GraphQL URL), `hasura-secret` (admin), `user-id` (the account ops run as — see above).
-- GCS auth: `new Storage({ keyFilename })` with that `gcp-key`. `gcloud` ADC is NOT set up — always use the key file.
-- **`apps/backend/.env`** also has: `GCP_STORAGE_BUCKET`, `HASURA_ADMIN_SECRET` + `HASURA_ENDPOINT`, Cloudinary, OpenAI, etc. It is gitignored, so a fresh clone or worktree has only `.env.example` — copy the real file in. `packages/core/.env` also has `HASURA_GRAPHQL_URL` + `HASURA_ADMIN_SECRET` for quick admin queries via curl.
-
-## Reaching production data
-
-Ops tasks reach prod data through Hasura, same as everything else — `hasura-architecture` owns that rule; follow it there rather than reasoning about it here.
-
-- **Scripted reads/writes** — **Hasura admin** (endpoint + admin secret above) with GraphQL. Admin bypasses all row permissions, so use it for reads (dup checks) and writes (insert audios rows, link playlist_audios, etc.).
-- **Anything interactive** — the **Hasura Console**.
-
-## Operator CLIs in `apps/backend/src/cli/`
-
-Run them from `apps/backend` (that's where `tsx` and the backend's dependencies resolve), via
-`pnpm exec tsx src/cli/<name>.ts`. Discover each one's current flags from the CLI itself
-(`… <name>.ts --help`) or the full docs in `src/cli/README.md` — the per-command *purposes* below are
-stable, the exact flags aren't:
-
-- **convert.ts** — local video file → fMP4 HLS, upload to GCS, create/finalize the `videos` row.
-- **stream-m3u8.ts** — fix a failed video: process an `.m3u8` (master or media) → GCS, finalize an existing `videos` row. Also owns the shared CLI config (`config set`).
-- **upload-subtitle.ts** — upload a `.vtt` (local or URL) → GCS, insert/update the `subtitles` row.
-- **repair-fmp4.ts** — repackage a video's stored `.ts` → fMP4 (fixes garbled desktop-Chrome audio).
-- **audio.ts** — publish a local `.mp3` to the listen library: no transcode, just upload verbatim to GCS + insert the `audios` row (a single file, or a whole folder). Handles dup-checking and filename metadata parsing itself — see below.
-
-## Recurring task: "create audios"
-
-The owner's most common recurring ops ask: they have local `.mp3` files and ask to "create new audios." Just run `audio.ts` on the file (or a whole folder — dry-run it first) as the intended acting account — don't explain the plumbing (GCS, CLI internals) unless asked; keep it simple. Its `--help` has the exact flags.
-
-The CLI already handles the flow the owner cares about: `name`/`artist` parsed from the filename (`Title - Artist.mp3`); `artist_name` is NOT NULL, so a file with no parseable artist and no override is reported and skipped, not silently defaulted; `public: false` by default — only publish on explicit instruction, since publishing is an act of owning the database, not a user capability; an existing `(user_id, name)` is skipped as a dup; and a batch ends with a `Created / Skipped / Failed` tally. New rows are owned by the account passed as the acting user, falling back to the configured one.
+* Steps
+  1. In a fresh clone or worktree, copy the real `apps/backend/.env` in, since it's gitignored (only `.env.example` ships).
+     * credentials + asset layout: [`references/gcs-and-credentials.md`](references/gcs-and-credentials.md)
+  2. Pick the CLI and its acting account, passing `--user-id` when the owner should differ from the configured one.
+     * command purposes: [`references/operator-clis.md`](references/operator-clis.md)
+  3. Dry-run first when running against a whole folder, then run for real from `apps/backend`.

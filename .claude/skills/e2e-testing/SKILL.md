@@ -4,36 +4,22 @@ description: The rules for this repo's Playwright e2e tests — locate by access
 user-invocable: false
 ---
 
-# E2E Testing
+* e2e-testing: writes and edits this repo's Playwright e2e specs so they prove the built frontend behaves correctly for a user.
 
-Each app keeps its own E2E suite, run on Playwright. They exist to prove one thing: **the built frontend behaves correctly for a user** — the right page renders, a route change works, a click updates what's on screen. Keep them lean and smoke-level; detailed component states belong in Storybook, which is faster and closer to the component.
+* Rules
+  * Each app's e2e suite exists to prove the built frontend behaves correctly for a user — the right page renders, a route change works, a click updates the screen — so keep specs lean and smoke-level, leaving detailed component states to Storybook.
+  * Locate elements by accessibility only — `getByRole`, `getByLabel`, `getByText` — never a CSS class, `data-testid`, xpath, or DOM traversal, which bind the test to implementation detail.
+  * When an element has no accessible handle, fix the component (prefer a native semantic element for its free role and keyboard behaviour; add an `aria-label` or `role` only when native semantics can't express it) rather than slapping a `role` on a generic `div`.
+  * Assert exact values (`{ exact: true }`, `toHaveText`, `toHaveValue`); `code-conventions` owns the exact-vs-fuzzy matcher rule and it applies here unchanged.
+  * The server is always mocked — a seeded fake auth session plus `page.route()` intercepts answering the app's queries with fixed data — and the test asserts the frontend does the right thing given known-correct data.
+  * Never point a spec at a live backend, because whether the real server returns correct data is the backend's problem, not an e2e test's, and a live backend makes the test slow, flaky, and about the wrong layer.
+  * When a write must change what a later read returns, make the mock stateful (update its state on the mutation) so the refetch sees the new value, since a static mock will fight optimistic updates.
+  * Run headless by default, because CI runs headless and that is the environment that has to pass; a headed browser is only a debugging convenience, never the target.
+  * Never run two e2e builds at once on the same machine — the preview server binds a fixed port and parallel runs collide.
+  * Keep the mock constants in step with the e2e build's `VITE_*` values, because the fake session only works if its audience and client id match what the build baked in.
+  * Run the suite through the app's own e2e script, which builds and serves the mock bundle itself, never a hand-started dev server.
 
-Three rules hold for every spec.
-
-## 1. Locate by accessibility, nothing else
-
-Query only what the user can perceive: `getByRole`, `getByLabel`, `getByText`. Never a CSS class, `data-testid`, xpath, or DOM traversal — those bind the test to implementation detail and break on any refactor that doesn't change behaviour.
-
-If an element has no accessible handle, **fix the component** — prefer a native semantic element (a real button, link, or heading), which brings a role and keyboard behaviour for free; add an `aria-label` or `role` only when native semantics can't express it. Then select it. The test drives real accessibility into the app; slapping a `role` on a generic `div` just to satisfy the locator is working around a missing handle, not fixing it.
-
-Assert exact values (`{ exact: true }`, `toHaveText`, `toHaveValue`). `code-conventions` owns the exact-vs-fuzzy matcher rule and it applies here unchanged.
-
-## 2. Mock the server; test the frontend, not the data
-
-The server is always mocked — a seeded fake auth session plus `page.route()` intercepts that answer the app's queries with fixed data. The test then asserts the frontend does the right thing **given known-correct data**.
-
-Whether the real server returns correct data is the backend's problem, not an e2e test's. Never point a spec at a live backend: it makes the test slow, flaky, and about the wrong layer. If a write must change what a later read returns, make the mock stateful (update its state on the mutation) so the refetch sees the new value — a static mock will fight optimistic updates.
-
-## 3. Headless, the way CI runs
-
-Run headless by default — CI runs headless, so that's the environment that has to pass. A headed browser is only ever a debugging convenience, never the target. Don't run two e2e builds at once on the same machine: the preview server binds a fixed port and parallel runs collide.
-
-## How a spec is wired
-
-The build under test is a real production bundle built with fixed mock `VITE_*` values and served locally by the Playwright config — no deployed environment, no real backend:
-
-- **Auth is seeded, not performed.** A well-formed fake Auth0 session is written into `localStorage` before any app script runs, so the app boots signed-in with no Auth0 network call.
-- **The API is intercepted.** `page.route()` on the Hasura endpoint answers each query with deterministic data — a fixed fixture for a read-only spec, or, where a write must be reflected, data drawn from the mock's own state (rule 2) so the refetch sees the new value; external hosts (auth, error tracking) are aborted so a stray request can't flake the run.
-- **Keep the mock constants in step with the e2e build's `VITE_*` values** — the fake session only works if its audience and client id match what the build baked in.
-
-Run the suite through the app's own e2e script, which builds and serves the mock bundle itself. Don't point it at a hand-started dev server — that isn't the mock build the specs depend on.
+* Steps
+  * Build the spec against a real production bundle with fixed mock `VITE_*` values, served locally by the Playwright config — no deployed environment, no real backend.
+  * Seed a well-formed fake Auth0 session into `localStorage` before any app script runs, so the app boots signed-in with no Auth0 network call.
+  * Intercept the Hasura endpoint with `page.route()`, answering each query with deterministic data (a fixed fixture for a read-only spec, or data drawn from the mock's own state where a write must be reflected) and aborting external hosts (auth, error tracking) so a stray request can't flake the run.
