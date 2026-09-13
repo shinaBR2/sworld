@@ -4,75 +4,26 @@ description: Cross-cutting Hasura/database-layer principles — the single-gatew
 user-invocable: false
 ---
 
-# Hasura Architecture
+* hasura-architecture: makes you structure sworld's database-layer work correctly — the single gateway, when a write needs concurrency-safety, and where data is validated.
 
-sworld's data layer has one non-negotiable shape: **Hasura is the only thing that ever talks to Postgres.** Everything else in this skill is about using Hasura's own tools correctly once you're inside that boundary — when a write needs real concurrency-safety, and what actually validates data before it lands.
+* Rules
+  * Nothing but Hasura ever talks to Postgres: no service, frontend app, or script has a direct Postgres client, ORM, or connection string, and the Hono backend reaches the database only through Hasura's GraphQL API, exactly as the frontend does — one gateway means one place that enforces permissions, one that validates input, and one schema that can drift, whereas any direct connection (even "just for this one ops task") creates a second path Hasura's rules don't cover.
+  * Human and ops database access uses the Hasura Console, never a direct SQL client such as psql or a database provider's console.
+  * The Console's "Run SQL" tab executes raw SQL through Hasura's admin API and bypasses Hasura's own permission and validation layer, so it is fine for migrations but must never be used to route around a permission or validation rule you would otherwise have to build properly.
+  * Concurrency-safety is needed only when two writers can race for the same outcome, not as a box to tick on every write — the default of one query to fetch, manipulate, then one mutation to persist is correct for the overwhelming majority of writes.
+  * When two writers would each compute the same next value (a lost update), send the delta rather than the computed value, using `_inc` on numeric columns or the JSONB operators (`_append`, `_prepend`, `_delete_key`) which apply the change atomically inside Postgres.
+  * Reach for optimistic concurrency — filtering the mutation's `where` on a value you already read, e.g. `updated_at: {_eq: <value you saw>}` — only when the change genuinely can't be expressed as a delta, such as a full-object replace where you must detect whether anything changed since you read it.
+  * When two writers both try to create the same record, use a unique constraint plus Hasura's `on_conflict`, because `INSERT ... ON CONFLICT` performs the existence check and the write in one atomic statement.
+    * upsert example and the `update_columns` vs `DO NOTHING` choice: [`references/concurrency-patterns.md`](references/concurrency-patterns.md)
+  * A Hasura Action's handler that makes its own query call and then its own separate mutation call is issuing two independent HTTP requests that share no transaction, so any Race 1 or Race 2 protection must be applied inside the handler with `_inc`, optimistic concurrency, or `on_conflict` itself.
+  * Multiple mutation fields inside one mutation request run sequentially in a single Postgres transaction that rolls back as a whole if any field fails, but that guarantee does not extend to an Action or Remote Schema call mixed with direct table mutations — only the plain table mutations are transactional together.
+  * Reach for a custom Postgres function (invoked as a custom mutation) that does the whole read-decide-write in one transaction only when `_inc`, `on_conflict`, and optimistic concurrency genuinely can't express the logic, never as a default.
+  * Authorization (row ownership via `user_id = X-Hasura-User-Id` in a permission's `check`/`filter`) is a separate concern from data validity: permissions decide who can touch a row, and the validation layers decide whether the data is valid regardless of who writes it.
+  * Data validity lives in three layers — database schema constraints (types, `NOT NULL`, `CHECK`, foreign keys, unique constraints; the always-enforced floor with no round-trip cost, where a rule like "an amount must be positive" belongs as a `CHECK`), Hasura's `validate_input` webhook (per role and operation inside that role's permission block, for CRUD business rules the schema can't express, added deliberately because it adds webhook latency to every mutation it's attached to), and application-layer validation inside an Action's handler that is already in the request path.
+  * This skill owns only the database-layer decisions: frontend query/transformer conventions are `architecture`, the Cloud Run/Cloud Task service pipeline and Events-vs-Actions routing are `backend-architecture`, and frontend mutation payload-building is `mutation-data-flow`.
 
-## The single-gateway rule
-
-No service, no frontend app, no script talks to Postgres directly. The Hono backend reaches the database exclusively through Hasura's GraphQL API — same as the frontend. There is no direct Postgres client, no ORM, no raw connection string anywhere in application code.
-
-Human/ops access follows the same rule: **use the Hasura Console, never a direct SQL client (psql, a database provider's console, etc.).** The Console is still a client of Hasura — it reaches Postgres through Hasura's own connection, not around it. The one nuance worth remembering: the Console's "Run SQL" tab executes raw SQL through Hasura's admin API, which bypasses Hasura's own permission and validation layer even though the connection itself is still Hasura-mediated. Fine for migrations; don't reach for it as a way to route around a permission or validation rule you'd otherwise have to build properly.
-
-**Why:** one gateway means one place that enforces permissions, one place that validates input, one schema that's ever out of sync with reality. A direct connection anywhere — even "just for this one ops task" — creates a second path that Hasura's rules don't cover.
-
-## Writes: default is fine, until two things can race
-
-**Default pattern: one query to fetch what you need, manipulate, one mutation to persist it.** This is correct and sufficient for the overwhelming majority of writes — a user editing their own single row has no real contention to guard against.
-
-This stops being sufficient specifically when **two writers can race for the same outcome** — not because "atomic" is a box to check on every write. Two concrete race shapes come up, each with its own Hasura-native fix:
-
-### Race 1 — two writers compute the same "next value"
-
-Classic lost-update: two clients read the same counter, each computes `current + delta` locally, and whichever writes last wins — the other's change is silently gone.
-
-**Fix: send the delta, not the computed value.** Hasura's `_inc` (numeric columns) and the JSONB operators (`_append`, `_prepend`, `_delete_key`, etc.) apply the change atomically inside Postgres — there's no client-side "read the current value" step to race on at all.
-
-Reach for optimistic concurrency instead — filter the mutation's `where` on a value you already read (e.g. `updated_at: {_eq: <value you saw>}`) — only when the change genuinely isn't expressible as a delta (a full-object replace where you need to detect "did anything change since I read this").
-
-### Race 2 — two writers both try to be "the one that creates X"
-
-Two concurrent requests both check "does this record already exist?" and both decide to create it, because the check and the create aren't atomic together.
-
-**Fix: a unique constraint plus Hasura's `on_conflict`.** `INSERT ... ON CONFLICT` is one Postgres statement — the existence check and the write happen atomically, with no gap between them for a second writer to land in.
-
-```graphql
-mutation CreateThing($object: things_insert_input!) {
-  insert_things_one(
-    object: $object
-    on_conflict: { constraint: things_natural_key, update_columns: [natural_key] }
-  ) {
-    id
-  }
-}
-```
-
-`update_columns: [natural_key]` looks like a no-op — it re-sets the column to its own value — but it can be deliberate: it forces Postgres onto the `DO UPDATE` path instead of `DO NOTHING`, which is the only way `returning` gives back the *existing* row on conflict. `DO NOTHING` returns null instead. Use it when the caller needs the existing row (e.g. to short-circuit work that's already been done); use `DO NOTHING` when it only needs the insert to be idempotent.
-
-### The gap this closes: Actions don't get free atomicity across their own calls
-
-A Hasura Action's handler making its own query call and then its own separate mutation call is **two independent HTTP requests** — Hasura's transaction guarantee (below) does not span them. If the write in that handler needs Race 1 or Race 2 protection, the handler must use `_inc`/optimistic concurrency/`on_conflict` itself — issuing a query then a mutation does not make the pair atomic just because they're both Hasura calls.
-
-### What Hasura's transaction guarantee actually covers
-
-Multiple **mutation fields inside one mutation request** run sequentially in a single Postgres transaction — if any fails, everything in that request rolls back. So a single mutation that, say, updates a task row, inserts a notification row, and updates the target row is genuinely all-or-nothing.
-
-**The gap:** if a request mixes an **Action or Remote Schema** with direct table mutations, the rollback guarantee does not extend to the Action/Remote Schema call — only the plain table mutations are transactional together. Don't rely on "it's all in one Hasura request" to make an Action-plus-table-write combination atomic; it isn't.
-
-### For logic too complex for any of the above
-
-A custom Postgres function (invoked as a custom mutation) that does the whole read-decide-write inside one Postgres transaction is the only way to get true atomicity for logic more complex than a delta or an upsert. Reach for this only when `_inc`/`on_conflict`/optimistic concurrency genuinely can't express the logic, not as a default.
-
-## Validation: three layers, not one
-
-Authorization (row ownership — `user_id = X-Hasura-User-Id` in a permission's `check`/`filter`) is a **different concern** from data validity. Keep them separate: permissions decide *who* can touch a row; the layers below decide whether the *data* is valid regardless of who's writing it.
-
-1. **Database schema constraints** — types, `NOT NULL`, `CHECK`, foreign keys, unique constraints. The floor, always enforced, no round-trip cost. A rule like "an amount must be positive" belongs here as a `CHECK` before anything higher up.
-2. **Hasura's `validate_input`** — for plain, auto-generated CRUD mutations (insert/update/delete) that need a business rule the schema can't express. Configured per role, per operation, inside that role's permission block; routes the mutation's input to an HTTP webhook *before* the Postgres transaction starts. Adds webhook latency to every mutation it's attached to, so add it deliberately per table/role rather than by default.
-3. **Application-layer validation inside an Action's handler** — for writes that already go through a custom handler (an Action), rather than auto-generated CRUD. The handler is already in the request path, so validation just lives in its own code.
-
-## What this skill does NOT cover
-
-- Frontend query/transformer conventions (one page = one query = one transformer, react-query) — see `architecture`.
-- The Cloud Run service topology, Cloud Task lifecycle, Events vs Actions routing — see `backend-architecture`.
-- Frontend mutation payload-building — see `mutation-data-flow`.
+* Steps
+  * Route the write through Hasura, never around it.
+  * Use the default single-query-then-single-mutation and stop there unless two writers can race for the same outcome.
+  * If they can race, pick the pattern by race shape — a delta for a shared computed value, `on_conflict` for a duplicate create, and optimistic concurrency or a custom Postgres function only when neither fits.
+  * Place each validation rule in the right one of the three layers, kept separate from permissions.

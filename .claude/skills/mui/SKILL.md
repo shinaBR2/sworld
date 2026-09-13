@@ -4,40 +4,21 @@ description: Enforces MUI component and styling conventions. Auto-triggers when 
 user-invocable: false
 ---
 
-# MUI Rules
+* mui: builds and styles a component inside `packages/ui` the house way.
 
-**How** to build and style a component *inside* `packages/ui`. For **where** UI
-lives — source of truth, which package and folder — see `frontend-ui-architecture`.
-The container/presentational split is `code-conventions`.
+* Rules
+  * This skill governs HOW to build and style a component inside `packages/ui`; WHERE UI lives is `frontend-ui-architecture` and the container/presentational split is `code-conventions`.
+  * Every styling decision answers to one test: swapping the theme provider must be the ENTIRE re-skin of an app, so wrapping the app in a different provider must leave every screen looking right with zero extra work.
+  * A look that applies everywhere (colours, surfaces, radii, typography, per-component looks) is global and belongs in the theme (`packages/ui`'s minimalism theme), via palette plus `components` styleOverrides.
+  * A look for one component in one spot is situational and belongs in the `sx` prop on that component.
+  * A screen that looks wrong after a provider swap is a styling hack — a component hardcoding what the theme owns — so fix it by moving the look into the theme or reducing it to a genuine one-off `sx`, never by patching around it with app-specific styling.
+  * When many components need the same look, that look belongs in the theme's `styleOverrides`, once.
+  * Import from `@mui/material` directly, with no custom wrappers unless strictly required.
+  * Style with `sx` or the theme, never `className`.
+  * No raw `px`, because it ignores the user's font-size setting — type carries its own unit (`rem`, unitless line-height) and spacing goes through `theme.spacing` or the `sx` shorthand.
+  * No hardcoded colours — no hex/rgb and nothing mode-blind (`grey[100]`, `'white'`) — use mode-aware palette tokens (`background.paper`, `action.hover`, `text.secondary`, …) so every colour survives both light and dark mode, adding a missing token to the theme first.
 
-## The styling doctrine — one litmus test
-
-Every styling decision answers to one test: **swapping the theme provider must be
-the ENTIRE re-skin of an app.** Wrap the app in a different provider and every
-screen must look right with zero extra work.
-
-That leaves exactly two homes for a style, and no third:
-
-- **Global** — any look that applies everywhere (colours, surfaces, radii,
-  typography, per-component looks) → the **theme** (`packages/ui`'s minimalism
-  theme), via palette + `components` styleOverrides.
-- **Situational** — one component, one spot → the `sx` prop on that component.
-
-A screen that looks wrong after a provider swap is a styling hack: a component
-hardcoding what the theme owns. Fix it — move the look into the theme, or reduce
-it to a genuine one-off `sx` — never patch around it with app-specific styling. If
-many components need the same look, that look belongs in the theme's
-`styleOverrides`, once.
-
-## House do/don'ts (inside `packages/ui`)
-
-- **Import from `@mui/material` directly** — no custom wrappers unless strictly
-  required. (How apps *consume* UI is `frontend-ui-architecture`'s rule.)
-- **Style with `sx` or the theme, never `className`.**
-- **No raw `px`** — it ignores the user's font-size setting. Type carries its own
-  unit (`rem`, unitless line-height); spacing goes through `theme.spacing` or the
-  `sx` shorthand.
-- **No hardcoded colours** — no hex/rgb, and nothing mode-blind (`grey[100]`,
-  `'white'`). Use mode-aware palette tokens (`background.paper`, `action.hover`,
-  `text.secondary`, …) so every colour survives both light and dark mode; missing
-  one? Add it to the theme first.
+* Steps
+  * Decide each style's home: a global look goes in the theme, a genuine one-off goes in `sx`.
+  * Before writing a colour, reach for a mode-aware palette token, adding one to the theme if it's missing.
+  * Sanity-check by imagining a theme-provider swap — if any screen would break, move the offending look into the theme.

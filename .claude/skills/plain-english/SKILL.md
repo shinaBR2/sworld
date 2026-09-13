@@ -3,42 +3,15 @@ name: plain-english
 description: The jargon-free "plain words" writing rule and the block templates that apply it — the mandatory opening summary a reader with zero context can understand in ten seconds, with no code, file paths, symbol names, or unexplained acronyms. Referenced by `writing-task-specs` (a ticket's "In plain words" opening) and `pr-descriptions` (PR summary and user-facing test plan) rather than duplicated in each. Auto-triggers whenever drafting any of those, or any other doc that needs to read cleanly for a non-technical reader.
 ---
 
-# Plain English
+* plain-english: the jargon-free "plain words" writing rule and the block templates that apply it, so any document reads cleanly for someone with zero context.
 
-One law, reused everywhere a document needs to be readable by someone with zero context. It used to get restated slightly differently every time a skill needed it — this is the single canonical version; `writing-task-specs` and `pr-descriptions` both apply it instead of each keeping their own copy.
-
-## The law
-
-- No code, no file paths, no function or symbol names.
-- No bare acronym or internal term (a protocol name, an internal field name, "the singleton", a three-letter domain code) — if the reader has to already know the term to parse the sentence, rewrite the sentence.
-- Round numbers when a figure matters ("$120k", not "$119,847.32").
-- Describe what a user sees or experiences, not how the system does it internally.
-- A reader with zero context gets the gist in ten seconds, unaided.
-
-## The test before publishing a sentence
-
-Read it back as someone who has never seen this codebase, this domain, or this feature before. If any single word would send them off to look something up before the sentence makes sense, rewrite it.
-
-## Applying it by context
-
-The law doesn't change — only the header and length it sits under. This table is the source of truth for both; a consuming skill picks the row for the block it's writing. Where a shape template echoes a length as a fill-in hint, this table still governs if the two ever differ:
-
-| Context | Header | Length | Used by |
-|---|---|---|---|
-| Any ticket (bug, feature, parent, or child sub-ticket) | `**In plain words**` | short — a sentence or two for a bug or child sub-ticket, up to a few for a feature or parent | `writing-task-specs` |
-| PR summary | the description's opening sentences | 1–3 sentences | `pr-descriptions` |
-| PR test plan (user-facing change) | Test plan steps | click-by-click | `pr-descriptions` |
-
-## Before / after
-
-Bad — jargon leaks into the reader-facing sentence:
-
-> The client factory now resolves credentials per-request from the user's own record instead of a shared process-wide singleton, fixing cross-user session leakage.
-
-Good:
-
-> Right now, one part of the app could accidentally use someone else's login instead of your own. This fixes it so every action always uses your own account, never someone else's.
-
-## Why this is its own skill, not copy-pasted text
-
-The rule already has two independent, real consumers — `writing-task-specs`'s ticket opening and `pr-descriptions`'s summary/test-plan — not a hypothetical future one. Duplicating prose risks drift: one copy gets refined during a review and the other quietly falls behind. Whenever this law changes, it changes once, here, and both consumers pick it up.
+* Rules
+  * No code, no file paths, no function or symbol names.
+  * No bare acronym or internal term (a protocol name, an internal field name, "the singleton", a three-letter domain code) — if the reader has to already know the term to parse the sentence, rewrite the sentence.
+  * Round numbers when a figure matters ("$120k", not "$119,847.32").
+  * Describe what a user sees or experiences, not how the system does it internally.
+    * example: [`references/before-after.md`](references/before-after.md)
+  * A reader with zero context gets the gist in ten seconds, unaided.
+  * Before publishing a sentence, read it back as someone who has never seen this codebase, this domain, or this feature, and if any single word would send them off to look something up before the sentence makes sense, rewrite it.
+  * Apply the same law under the header and length that fit the context you're writing (any ticket, a PR summary, or a PR test plan).
+    * contexts: [`references/applying-by-context.md`](references/applying-by-context.md)
